@@ -29,12 +29,12 @@ export const useUpdateRelationManyFieldInput = ({
     );
 
     const updatedFieldValue = isSelected
-      ? [...(fieldValue ?? []), entityToAddOrRemove?.record]
+      ? [...(fieldValue ?? []), entityToAddOrRemove]
       : (fieldValue ?? []).filter(
-          (value) => value.id !== objectRecord?.recordIdentifier.id,
+          (value: any) => value.id !== objectRecord?.recordIdentifier.id,
         );
     setFieldValue(
-      updatedFieldValue.filter((value) =>
+      updatedFieldValue.filter((value: any) =>
         isDefined(value),
       ) as EntityForSelect[],
     );

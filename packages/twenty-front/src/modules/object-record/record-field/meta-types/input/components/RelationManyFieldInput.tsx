@@ -63,8 +63,8 @@ export const RelationManyFieldInput = ({
     () =>
       allRecords.filter(
         (entity) =>
-          fieldValue?.some((f) => {
-            return f.id === entity.recordIdentifier.id;
+          fieldValue?.some((value: any) => {
+            return value.id === entity.recordIdentifier.id;
           }),
       ),
     [allRecords, fieldValue],

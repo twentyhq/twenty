@@ -99,13 +99,28 @@ export type FieldDefinitionRelationType =
   | 'TO_MANY_OBJECTS'
   | 'TO_ONE_OBJECT';
 
-export type FieldRelationMetadata = {
+export type FieldRelationMetadata =
+  | FieldRelationManyMetadata
+  | FieldRelationOneMetadata;
+
+export type FieldRelationOneMetadata = {
   fieldName: string;
   objectMetadataNameSingular?: string;
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
-  relationType?: FieldDefinitionRelationType;
+  relationType?: 'TO_ONE_OBJECT';
+  targetFieldMetadataName?: string;
+  useEditButton?: boolean;
+};
+
+export type FieldRelationManyMetadata = {
+  fieldName: string;
+  objectMetadataNameSingular?: string;
+  relationFieldMetadataId: string;
+  relationObjectMetadataNamePlural: string;
+  relationObjectMetadataNameSingular: string;
+  relationType?: 'FROM_MANY_OBJECTS';
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
 };
@@ -174,9 +189,11 @@ export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
-export type FieldRelationValue<T extends EntityForSelect | EntityForSelect[]> =
-  T | null;
+export type FieldRelationOneValue = EntityForSelect | null;
 
+export type FieldRelationManyValue = EntityForSelect | null;
+
+export type FieldRelationValue = FieldRelationOneValue | FieldRelationManyValue;
 // See https://zod.dev/?id=json-type
 type Literal = string | number | boolean | null;
 export type Json = Literal | { [key: string]: Json } | Json[];

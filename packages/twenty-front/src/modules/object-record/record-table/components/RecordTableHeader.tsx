@@ -55,7 +55,8 @@ export const RecordTableHeader = ({
 }: {
   createRecord: () => void;
 }) => {
-  const { visibleTableColumnsSelector } = useRecordTableStates();
+  const { visibleTableColumnsSelector, hiddenTableColumnsSelector } =
+    useRecordTableStates();
 
   const scrollWrapper = useScrollWrapperScopedRef();
   const isTableWiderThanScreen =
@@ -63,7 +64,7 @@ export const RecordTableHeader = ({
     (scrollWrapper.current?.scrollWidth ?? 0);
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
-  const hiddenTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector());
 
   const theme = useTheme();
 
