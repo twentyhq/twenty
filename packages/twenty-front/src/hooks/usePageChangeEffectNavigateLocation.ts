@@ -85,8 +85,7 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.Completed &&
-    isMatchingOnboardingRoute &&
-    !isMatchingOpenRoute
+    isMatchingOnboardingRoute
   ) {
     return defaultHomePagePath;
   }
@@ -94,7 +93,6 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     onboardingStatus === OnboardingStatus.CompletedWithoutSubscription &&
     isMatchingOnboardingRoute &&
-    !isMatchingOpenRoute &&
     !isMatchingLocation(AppPath.PlanRequired)
   ) {
     return defaultHomePagePath;
