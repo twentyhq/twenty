@@ -8,7 +8,7 @@ import { ArgsAliasFactory } from './args-alias.factory';
 
 @Injectable()
 export class ArgsStringFactory {
-  constructor(private readonly argsAliasFactory: ArgsAliasFactory) {}
+  constructor(private readonly argsAliasFactory: ArgsAliasFactory) { }
 
   create(
     initialArgs: Record<string, any> | undefined,
@@ -63,6 +63,10 @@ export class ArgsStringFactory {
   private buildStringifiedOrderBy(
     keyValuePairArray: Array<Record<string, any>>,
   ): string {
+    // check if we dont have an empty object in array [{}]
+    if (keyValuePairArray.length !== 0 && Object.keys(keyValuePairArray[0].length === 0)) {
+      return `[]`;
+    }
     // if position argument is present we want to put it at the very last
     let orderByString = keyValuePairArray
       .sort((_, obj) => (Object.hasOwnProperty.call(obj, 'position') ? -1 : 0))
@@ -77,6 +81,8 @@ export class ArgsStringFactory {
     if (orderByString.endsWith(', ')) {
       orderByString = orderByString.slice(0, -2);
     }
+
+    console.log(orderByString);
 
     return `[${orderByString}]`;
   }
