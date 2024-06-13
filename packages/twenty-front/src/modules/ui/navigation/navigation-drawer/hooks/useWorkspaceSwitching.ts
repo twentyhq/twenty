@@ -1,14 +1,15 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { AppPath } from '@/types/AppPath';
 import { useGenerateJwtMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { sleep } from '~/utils/sleep';
 
 export const useWorkspaceSwitching = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
+  const setIsCurrentUserLoaded = useSetRecoilState(isCurrentUserLoadedState);
   const [generateJWT] = useGenerateJwtMutation();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -30,7 +31,7 @@ export const useWorkspaceSwitching = () => {
 
     const { tokens } = jwt.data.generateJWT;
     setTokenPair(tokens);
-    await sleep(200);
+    setIsCurrentUserLoaded(false);
     window.location.href = AppPath.Index;
   };
 
