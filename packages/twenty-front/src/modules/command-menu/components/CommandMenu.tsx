@@ -1,10 +1,12 @@
 import { useMemo, useRef } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles } from 'twenty-ui';
 
+import { useOpenAskAIRightDrawer } from '@/activities/ask-ai/right-drawer/hooks/useOpenAskAIRightDrawer';
+import { askAIQueryState } from '@/activities/ask-ai/right-drawer/states/askAIQueryState';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -22,7 +24,6 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useGetAskAiLazyQuery } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
@@ -253,6 +254,8 @@ export const CommandMenu = () => {
   });
 
   const isAskAIEnabled = useIsFeatureEnabled('IS_ASK_AI_ENABLED');
+  const setAskAIQuery = useSetRecoilState(askAIQueryState);
+  const openAskAIRightDrawer = useOpenAskAIRightDrawer();
 
   const askAiCommand: Command = {
     id: 'ask-ai',
@@ -260,13 +263,9 @@ export const CommandMenu = () => {
     Icon: IconSparkles,
     label: 'Ask AI',
     type: CommandType.Navigate,
-    onCommandClick: async () => {
-      const queryResult = await getAskAI({
-        variables: { text: commandMenuSearch },
-      });
-      console.log('queryResult', queryResult);
-      alert(JSON.stringify(queryResult.data?.getAskAI, undefined, 2));
-      // TODO: Call openActivityRightDrawer
+    onCommandClick: () => {
+      setAskAIQuery(commandMenuSearch);
+      openAskAIRightDrawer();
     },
   };
 
@@ -278,8 +277,6 @@ export const CommandMenu = () => {
     .concat(people.map((person) => person.id))
     .concat(companies.map((company) => company.id))
     .concat(activities.map((activity) => activity.id));
-
-  const [getAskAI] = useGetAskAiLazyQuery();
 
   return (
     <>
