@@ -3,20 +3,24 @@ import { Injectable } from '@nestjs/common';
 import { ChatOpenAI } from '@langchain/openai';
 import { SqlDatabase } from 'langchain/sql_db';
 import { PromptTemplate } from '@langchain/core/prompts';
-import {
-  RunnablePassthrough,
-  RunnableSequence,
-} from '@langchain/core/runnables';
+import { RunnableSequence } from '@langchain/core/runnables';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { CallbackHandler, Langfuse } from 'langfuse-langchain';
 
 import { AskAIQueryResult } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
+
+interface AskAIPromptTemplateInput {
+  schema: string;
+  question: string;
+}
 
 @Injectable()
 export class AskAIService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
   ) {}
 
   async query(workspaceId: string, text: string): Promise<AskAIQueryResult> {
@@ -40,18 +44,16 @@ export class AskAIService {
 
     if (!process.env.LANGFUSE_ASK_AI_PROMPT_NAME) throw new Error();
 
-    const promptTemplate = PromptTemplate.fromTemplate(
-      (
-        await langfuse.getPrompt(process.env.LANGFUSE_ASK_AI_PROMPT_NAME)
-      ).getLangchainPrompt(),
-    );
+    const promptTemplate =
+      PromptTemplate.fromTemplate<AskAIPromptTemplateInput>(
+        (
+          await langfuse.getPrompt(process.env.LANGFUSE_ASK_AI_PROMPT_NAME)
+        ).getLangchainPrompt(),
+      );
 
     const model = new ChatOpenAI();
 
     const sqlQueryGeneratorChain = RunnableSequence.from([
-      RunnablePassthrough.assign({
-        schema: async () => db.getTableInfo(),
-      }),
       promptTemplate,
       model.bind({ stop: ['\nSQLResult:'] }),
       new StringOutputParser(),
@@ -65,6 +67,7 @@ export class AskAIService {
 
     const sqlQuery = await sqlQueryGeneratorChain.invoke(
       {
+        schema: await db.getTableInfo(),
         question: text,
       },
       {
@@ -72,12 +75,11 @@ export class AskAIService {
       },
     );
 
-    const sqlQueryResult =
-      await this.workspaceDataSourceService.executeRawQuery(
-        sqlQuery,
-        undefined,
-        workspaceId,
-      );
+    const sqlQueryResult = await this.workspaceQueryRunnerService.executeSQL(
+      workspaceDataSource,
+      workspaceId,
+      sqlQuery,
+    );
 
     return {
       sqlQuery,

@@ -8,6 +8,7 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import isEmpty from 'lodash.isempty';
+import { DataSource } from 'typeorm';
 
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import {
@@ -570,15 +571,12 @@ export class WorkspaceQueryRunnerService {
     return sanitizedRecord;
   }
 
-  async execute(
-    query: string,
+  async executeSQL(
+    workspaceDataSource: DataSource,
     workspaceId: string,
-  ): Promise<PGGraphQLResult | undefined> {
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
-
+    sqlQuery: string,
+    parameters?: any[],
+  ) {
     try {
       return await workspaceDataSource?.transaction(
         async (transactionManager) => {
@@ -588,10 +586,7 @@ export class WorkspaceQueryRunnerService {
           )};
         `);
 
-          const results = transactionManager.query<PGGraphQLResult>(
-            `SELECT graphql.resolve($1);`,
-            [query],
-          );
+          const results = transactionManager.query(sqlQuery, parameters);
 
           return results;
         },
@@ -603,6 +598,23 @@ export class WorkspaceQueryRunnerService {
 
       throw error;
     }
+  }
+
+  async execute(
+    query: string,
+    workspaceId: string,
+  ): Promise<PGGraphQLResult | undefined> {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
+    return this.executeSQL(
+      workspaceDataSource,
+      workspaceId,
+      `SELECT graphql.resolve($1);`,
+      [query],
+    );
   }
 
   private async parseResult<Result>(
