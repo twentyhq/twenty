@@ -17,7 +17,7 @@ import { getUniqueContactsAndHandles } from 'src/modules/connected-account/auto-
 import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
-import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
+import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -40,7 +40,7 @@ export class CreateCompanyAndContactService {
   ) {}
 
   async createCompaniesAndPeople(
-    connectedAccountHandle: string,
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     contactsToCreate: Contacts,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -59,9 +59,9 @@ export class CreateCompanyAndContactService {
       );
 
     const contactsToCreateFromOtherCompanies =
-      filterOutContactsFromCompanyOrWorkspace(
+      filterOutSelfAndContactsFromCompanyOrWorkspace(
         contactsToCreate,
-        connectedAccountHandle,
+        connectedAccount,
         workspaceMembers,
       );
 
@@ -147,7 +147,7 @@ export class CreateCompanyAndContactService {
     await workspaceDataSource?.transaction(
       async (transactionManager: EntityManager) => {
         const createdPeople = await this.createCompaniesAndPeople(
-          connectedAccount.handle,
+          connectedAccount,
           contactsToCreate,
           workspaceId,
           transactionManager,
