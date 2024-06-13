@@ -90,15 +90,15 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   authFailedAt: Date;
 
-  @WorkspaceGate({
-    featureFlag: FeatureFlagKeys.IsProfileEmailsReadEnabled,
-  })
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.emailAliases,
     type: FieldMetadataType.TEXT,
     label: 'Email Aliases',
     description: 'Email Aliases',
     icon: 'IconMail',
+  })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKeys.IsProfileEmailsReadEnabled,
   })
   emailAliases: string;
 

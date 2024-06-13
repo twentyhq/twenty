@@ -58,7 +58,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         value: true,
       });
 
-    const emailAliases = connectedAccount.emailAliases.split(',');
+    const emailAliases = connectedAccount.emailAliases?.split(',') || [];
 
     const isContactCreationForSentAndReceivedEmailsEnabled =
       isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag?.value;

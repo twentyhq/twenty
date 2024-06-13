@@ -11,7 +11,7 @@ export function filterOutSelfAndContactsFromCompanyOrWorkspace(
 ): Contacts {
   const selfDomainName = getDomainNameFromHandle(connectedAccount.handle);
 
-  const emailAliases = connectedAccount.emailAliases.split(',');
+  const emailAliases = connectedAccount.emailAliases?.split(',') || [];
 
   const workspaceMembersMap = workspaceMembers.reduce(
     (map, workspaceMember) => {

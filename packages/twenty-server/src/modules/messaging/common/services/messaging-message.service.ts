@@ -110,7 +110,7 @@ export class MessagingMessageService {
 
     const newMessageId = v4();
 
-    const messageDirection = connectedAccount.emailAliases.includes(
+    const messageDirection = connectedAccount.emailAliases?.includes(
       message.fromHandle,
     )
       ? 'outgoing'
