@@ -38,6 +38,7 @@ export const useTimelineActivities = (
       workspaceMember: true,
       person: true,
     },
+    fetchPolicy: 'cache-and-network',
   });
 
   return {
