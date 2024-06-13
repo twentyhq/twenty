@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
@@ -34,6 +35,7 @@ import { MessagingGmailPartialMessageListFetchService } from 'src/modules/messag
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     OAuth2ClientManagerModule,
     EmailAliasManagerModule,
+    FeatureFlagModule,
   ],
   providers: [
     MessagingGmailClientProvider,
