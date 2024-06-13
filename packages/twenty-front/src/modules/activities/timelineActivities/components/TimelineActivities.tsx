@@ -23,11 +23,11 @@ const StyledMainContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: auto;
 
   justify-content: center;
   padding-top: ${({ theme }) => theme.spacing(6)};
   padding-right: ${({ theme }) => theme.spacing(6)};
-  padding-bottom: ${({ theme }) => theme.spacing(16)};
   padding-left: ${({ theme }) => theme.spacing(6)};
   gap: ${({ theme }) => theme.spacing(4)};
 `;
