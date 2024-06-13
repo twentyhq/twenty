@@ -3,57 +3,56 @@ import { useRecoilCallback } from 'recoil';
 import { isNavigationSectionOpenComponentState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
-export const useNavigationSection = () => {
+export const useNavigationSection = (scopeId: string) => {
   const closeNavigationSection = useRecoilCallback(
     ({ set }) =>
-      (componentId: string) => {
+      () => {
         set(
           isNavigationSectionOpenComponentState({
-            scopeId: componentId,
+            scopeId,
           }),
           false,
         );
       },
-    [],
+    [scopeId],
   );
 
   const openNavigationSection = useRecoilCallback(
     ({ set }) =>
-      (componentId: string) => {
+      () => {
         set(
           isNavigationSectionOpenComponentState({
-            scopeId: componentId,
+            scopeId,
           }),
           true,
         );
       },
-    [],
+    [scopeId],
   );
 
   const toggleNavigationSection = useRecoilCallback(
     ({ snapshot }) =>
-      (componentId: string) => {
-        console.log('componentId', componentId);
+      () => {
         const isNavigationSectionOpen = snapshot
-          .getLoadable(
-            isNavigationSectionOpenComponentState({ scopeId: componentId }),
-          )
+          .getLoadable(isNavigationSectionOpenComponentState({ scopeId }))
           .getValue();
 
-        console.log(isNavigationSectionOpen);
-
         if (isNavigationSectionOpen) {
-          closeNavigationSection(componentId);
+          closeNavigationSection();
         } else {
-          openNavigationSection(componentId);
+          openNavigationSection();
         }
       },
-    [closeNavigationSection, openNavigationSection],
+    [closeNavigationSection, openNavigationSection, scopeId],
+  );
+
+  const isNavigationSectionOpenState = extractComponentState(
+    isNavigationSectionOpenComponentState,
+    scopeId,
   );
 
   return {
-    isNavigationSectionOpenState: (scopeId: string) =>
-      extractComponentState(isNavigationSectionOpenComponentState, scopeId),
+    isNavigationSectionOpenState,
     closeNavigationSection,
     openNavigationSection,
     toggleNavigationSection,

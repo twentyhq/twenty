@@ -16,13 +16,8 @@ import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemV
 
 export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
   const { toggleNavigationSection, isNavigationSectionOpenState } =
-    useNavigationSection();
-  const isNavigationSectionOpen = useRecoilValue(
-    isNavigationSectionOpenState(
-      'objects-' + (isRemote ? 'remote' : 'workspace'),
-    ),
-  );
-  console.log('isNavigationSectionOpen', isNavigationSectionOpen);
+    useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
+  const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const filteredActiveObjectMetadataItems = activeObjectMetadataItems.filter(
@@ -43,11 +38,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle
           label={isRemote ? 'Remote' : 'Workspace'}
-          onClick={() =>
-            toggleNavigationSection(
-              'objects-' + (isRemote ? 'remote' : 'workspace'),
-            )
-          }
+          onClick={() => toggleNavigationSection()}
         />
 
         {isNavigationSectionOpen &&
