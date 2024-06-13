@@ -100,7 +100,7 @@ export const NoteCard = ({
           <StyledCardContent>{body}</StyledCardContent>
         </StyledCardDetailsContainer>
         <StyledFooter>
-          <ActivityTargetsInlineCell activity={note} readonly />
+          <ActivityTargetsInlineCell activity={note} readonly maxWidth={200} />
           {note.comments && note.comments.length > 0 && (
             <StyledCommentIcon>
               <IconComment size={theme.icon.size.md} />
