@@ -23,6 +23,8 @@ import { MessagingErrorHandlingService } from 'src/modules/messaging/common/serv
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/common/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
+import { IsFeatureEnabledService } from 'src/engine/core-modules/feature-flag/services/is-feature-enabled.service';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class MessagingGmailMessagesImportService {
@@ -44,6 +46,7 @@ export class MessagingGmailMessagesImportService {
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     private readonly emailAliasManagerService: EmailAliasManagerService,
+    private readonly isFeatureEnabledService: IsFeatureEnabledService,
   ) {}
 
   async processMessageBatchImport(
@@ -79,21 +82,28 @@ export class MessagingGmailMessagesImportService {
       workspaceId,
     );
 
-    try {
-      await this.emailAliasManagerService.refreshEmailAliases(
-        connectedAccount,
+    if (
+      await this.isFeatureEnabledService.isFeatureEnabled(
+        FeatureFlagKeys.IsProfileEmailsReadEnabled,
         workspaceId,
-      );
-    } catch (error) {
-      await this.gmailErrorHandlingService.handleGmailError(
-        {
-          code: error.code,
-          reason: error.message,
-        },
-        'messages-import',
-        messageChannel,
-        workspaceId,
-      );
+      )
+    ) {
+      try {
+        await this.emailAliasManagerService.refreshEmailAliases(
+          connectedAccount,
+          workspaceId,
+        );
+      } catch (error) {
+        await this.gmailErrorHandlingService.handleGmailError(
+          {
+            code: error.code,
+            reason: error.message,
+          },
+          'messages-import',
+          messageChannel,
+          workspaceId,
+        );
+      }
     }
 
     const messageIdsToFetch =
