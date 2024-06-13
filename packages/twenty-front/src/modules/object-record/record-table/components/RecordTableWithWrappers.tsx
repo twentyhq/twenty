@@ -111,6 +111,7 @@ export const RecordTableWithWrappers = ({
                 // we cannot rely on count states because this is not available for remote objects
                 tableRowIds.length === 0 && (
                   <RecordTableEmptyState
+                    objectNameSingular={objectNameSingular}
                     objectLabel={objectLabel}
                     createRecord={createRecord}
                     isRemote={isRemote}

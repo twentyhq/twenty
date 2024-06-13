@@ -95,17 +95,33 @@ export const computeFilterParameters = (): OpenAPIV3_1.ParameterObject => {
   };
 };
 
-export const computeLastCursorParameters = (): OpenAPIV3_1.ParameterObject => {
-  return {
-    name: 'last_cursor',
-    in: 'query',
-    description: 'Returns objects starting from a specific cursor.',
-    required: false,
-    schema: {
-      type: 'string',
-    },
+export const computeStartingAfterParameters =
+  (): OpenAPIV3_1.ParameterObject => {
+    return {
+      name: 'starting_after',
+      in: 'query',
+      description:
+        'Returns objects starting after a specific cursor. You can find cursors in **startCursor** and **endCursor** in **pageInfo** in response data',
+      required: false,
+      schema: {
+        type: 'string',
+      },
+    };
   };
-};
+
+export const computeEndingBeforeParameters =
+  (): OpenAPIV3_1.ParameterObject => {
+    return {
+      name: 'ending_before',
+      in: 'query',
+      description:
+        'Returns objects ending before a specific cursor. You can find cursors in **startCursor** and **endCursor** in **pageInfo** in response data',
+      required: false,
+      schema: {
+        type: 'string',
+      },
+    };
+  };
 
 export const computeIdPathParameter = (): OpenAPIV3_1.ParameterObject => {
   return {

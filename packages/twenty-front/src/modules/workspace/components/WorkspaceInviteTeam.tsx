@@ -1,17 +1,16 @@
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Key } from 'ts-key-enum';
-import { IconCopy, IconMail, IconSend } from 'twenty-ui';
+import { IconMail, IconSend } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { extractEmailsList } from '@/workspace/utils/extractEmailList';
+import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { useSendInviteLinkMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -35,7 +34,7 @@ const validationSchema = () =>
         if (!value.length) {
           return;
         }
-        const emails = extractEmailsList(value);
+        const emails = sanitizeEmailList(value.split(','));
         if (emails.length === 0) {
           ctx.addIssue({
             code: z.ZodIssueCode.invalid_string,
@@ -69,7 +68,6 @@ type FormInput = {
 };
 
 export const WorkspaceInviteTeam = () => {
-  const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
   const [sendInviteLink] = useSendInviteLinkMutation();
 
@@ -82,14 +80,13 @@ export const WorkspaceInviteTeam = () => {
   });
 
   const submit = handleSubmit(async (data) => {
-    const emailsList = extractEmailsList(data.emails);
+    const emailsList = sanitizeEmailList(data.emails.split(','));
     const result = await sendInviteLink({ variables: { emails: emailsList } });
     if (isDefined(result.errors)) {
       throw result.errors;
     }
     enqueueSnackBar('Invite link sent to email addresses', {
       variant: SnackBarVariant.Success,
-      icon: <IconCopy size={theme.icon.size.md} />,
       duration: 2000,
     });
   });

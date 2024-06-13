@@ -7,6 +7,7 @@ import { profilingQueueState } from '~/testing/profiling/states/profilingQueueSt
 import { profilingSessionRunsState } from '~/testing/profiling/states/profilingSessionRunsState';
 import { profilingSessionStatusState } from '~/testing/profiling/states/profilingSessionStatusState';
 import { getTestArray } from '~/testing/profiling/utils/getTestArray';
+import { sleep } from '~/utils/sleep';
 
 export const ProfilingQueueEffect = ({
   profilingId,
@@ -84,7 +85,7 @@ export const ProfilingQueueEffect = ({
             ? TIME_BETWEEN_TEST_RUNS_IN_MS * 2
             : TIME_BETWEEN_TEST_RUNS_IN_MS;
 
-          await new Promise((resolve) => setTimeout(resolve, timeInMs));
+          await sleep(timeInMs);
 
           const nextIndex = currentProfilingRunIndex + 1;
 

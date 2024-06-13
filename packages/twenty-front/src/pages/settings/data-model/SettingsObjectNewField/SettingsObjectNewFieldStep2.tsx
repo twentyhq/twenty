@@ -13,6 +13,7 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -161,66 +162,68 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const excludedFieldTypes: SettingsSupportedFieldType[] = (
     [
-      FieldMetadataType.Email,
-      FieldMetadataType.FullName,
-      FieldMetadataType.Link,
+      // FieldMetadataType.Email,
+      // FieldMetadataType.FullName,
+      // FieldMetadataType.Link,
       FieldMetadataType.Numeric,
       FieldMetadataType.Probability,
-      FieldMetadataType.Uuid,
-      FieldMetadataType.Phone,
+      // FieldMetadataType.Uuid,
+      // FieldMetadataType.Phone,
     ] as const
   ).filter(isDefined);
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        <SettingsPageContainer>
-          <SettingsHeaderContainer>
-            <Breadcrumb
-              links={[
-                { children: 'Objects', href: '/settings/objects' },
-                {
-                  children: activeObjectMetadataItem.labelPlural,
-                  href: `/settings/objects/${objectSlug}`,
-                },
-                { children: 'New Field' },
-              ]}
-            />
-            {!activeObjectMetadataItem.isRemote && (
-              <SaveAndCancelButtons
-                isSaveDisabled={!canSave}
-                onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                onSave={formConfig.handleSubmit(handleSave)}
+    <RecordFieldValueSelectorContextProvider>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <FormProvider {...formConfig}>
+        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+          <SettingsPageContainer>
+            <SettingsHeaderContainer>
+              <Breadcrumb
+                links={[
+                  { children: 'Objects', href: '/settings/objects' },
+                  {
+                    children: activeObjectMetadataItem.labelPlural,
+                    href: `/settings/objects/${objectSlug}`,
+                  },
+                  { children: 'New Field' },
+                ]}
               />
-            )}
-          </SettingsHeaderContainer>
-          <Section>
-            <H2Title
-              title="Name and description"
-              description="The name and description of this field"
-            />
-            <SettingsDataModelFieldAboutForm />
-          </Section>
-          <Section>
-            <H2Title
-              title="Type and values"
-              description="The field's type and values."
-            />
-            <StyledSettingsObjectFieldTypeSelect
-              excludedFieldTypes={excludedFieldTypes}
-            />
-            <SettingsDataModelFieldSettingsFormCard
-              fieldMetadataItem={{
-                icon: formConfig.watch('icon'),
-                label: formConfig.watch('label') || 'Employees',
-                type: formConfig.watch('type'),
-              }}
-              objectMetadataItem={activeObjectMetadataItem}
-            />
-          </Section>
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </FormProvider>
+              {!activeObjectMetadataItem.isRemote && (
+                <SaveAndCancelButtons
+                  isSaveDisabled={!canSave}
+                  onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+                  onSave={formConfig.handleSubmit(handleSave)}
+                />
+              )}
+            </SettingsHeaderContainer>
+            <Section>
+              <H2Title
+                title="Name and description"
+                description="The name and description of this field"
+              />
+              <SettingsDataModelFieldAboutForm />
+            </Section>
+            <Section>
+              <H2Title
+                title="Type and values"
+                description="The field's type and values."
+              />
+              <StyledSettingsObjectFieldTypeSelect
+                excludedFieldTypes={excludedFieldTypes}
+              />
+              <SettingsDataModelFieldSettingsFormCard
+                fieldMetadataItem={{
+                  icon: formConfig.watch('icon'),
+                  label: formConfig.watch('label') || 'Employees',
+                  type: formConfig.watch('type'),
+                }}
+                objectMetadataItem={activeObjectMetadataItem}
+              />
+            </Section>
+          </SettingsPageContainer>
+        </SubMenuTopBarContainer>
+      </FormProvider>
+    </RecordFieldValueSelectorContextProvider>
   );
 };

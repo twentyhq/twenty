@@ -124,14 +124,13 @@ export class GoogleCalendarSyncService {
 
     const blocklist = await this.getBlocklist(workspaceMemberId, workspaceId);
 
-    let filteredEvents = filterOutBlocklistedEvents(events, blocklist).filter(
-      (event) => event.status !== 'cancelled',
-    );
+    let filteredEvents = filterOutBlocklistedEvents(
+      calendarChannel.handle,
+      events,
+      blocklist,
+    ).filter((event) => event.status !== 'cancelled');
 
     if (emailOrDomainToReimport) {
-      // We still need to filter the events to only keep the ones that have the email or domain we want to reimport
-      // because the q parameter in the list method also filters the events that have the email or domain in their summary, description ...
-      // The q parameter allows us to narrow down the events
       filteredEvents = filteredEvents.filter(
         (event) =>
           event.attendees?.some(

@@ -66,12 +66,14 @@ export class BlocklistItemDeleteMessagesJob
 
     const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
 
-    await this.messageChannelMessageAssociationRepository.deleteByMessageParticipantHandleAndMessageChannelIdsAndRoles(
-      handle,
-      messageChannelIds,
-      rolesToDelete,
-      workspaceId,
-    );
+    for (const messageChannelId of messageChannelIds) {
+      await this.messageChannelMessageAssociationRepository.deleteByMessageParticipantHandleAndMessageChannelIdAndRoles(
+        handle,
+        messageChannelId,
+        rolesToDelete,
+        workspaceId,
+      );
+    }
 
     await this.threadCleanerService.cleanWorkspaceThreads(workspaceId);
 

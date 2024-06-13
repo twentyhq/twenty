@@ -8,7 +8,7 @@ import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext'
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/queries/getTimelineCalendarEventsFromCompanyId';
 import { getTimelineCalendarEventsFromPersonId } from '@/activities/calendar/queries/getTimelineCalendarEventsFromPersonId';
-import { FetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
+import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -128,7 +128,7 @@ export const Calendar = ({
             </Section>
           );
         })}
-        <FetchMoreLoader
+        <CustomResolverFetchMoreLoader
           loading={isFetchingMore || firstQueryLoading}
           onLastRowVisible={fetchMoreRecords}
         />
