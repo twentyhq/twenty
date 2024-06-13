@@ -79,10 +79,22 @@ export class MessagingGmailMessagesImportService {
       workspaceId,
     );
 
-    await this.emailAliasManagerService.refreshEmailAliases(
-      connectedAccount,
-      workspaceId,
-    );
+    try {
+      await this.emailAliasManagerService.refreshEmailAliases(
+        connectedAccount,
+        workspaceId,
+      );
+    } catch (error) {
+      await this.gmailErrorHandlingService.handleGmailError(
+        {
+          code: error.code,
+          reason: error.message,
+        },
+        'messages-import',
+        messageChannel,
+        workspaceId,
+      );
+    }
 
     const messageIdsToFetch =
       (await this.cacheStorage.setPop(
