@@ -17,6 +17,7 @@ import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/typ
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
+
 @Injectable()
 export class EntityEventsToDbListener {
   constructor(
@@ -38,6 +39,8 @@ export class EntityEventsToDbListener {
       payload.properties.after,
       payload.objectMetadata,
     );
+
+    console.log('handle update');
 
     return this.handle(payload);
   }
@@ -67,11 +70,15 @@ export class EntityEventsToDbListener {
       return;
     }
 
+    console.log('add job !');
+
+    console.log('Adding job: CreateAuditLogFromInternalEvent');
     this.messageQueueService.add<ObjectRecordBaseEvent>(
       CreateAuditLogFromInternalEvent.name,
       payload,
     );
 
+    console.log('Adding job: UpsertTimelineActivityFromInternalEvent');
     this.messageQueueService.add<ObjectRecordBaseEvent>(
       UpsertTimelineActivityFromInternalEvent.name,
       payload,

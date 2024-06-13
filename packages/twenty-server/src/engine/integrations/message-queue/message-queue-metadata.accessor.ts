@@ -41,7 +41,11 @@ export class MessageQueueMetadataAccessor {
   getProcessMetadata(
     target: Type<any> | Function,
   ): MessageQueueProcessOptions | undefined {
-    return this.reflector.get(PROCESS_METADATA, target);
+    const metadata = this.reflector.get(PROCESS_METADATA, target);
+
+    console.log(`Process metadata for target ${target}:`, metadata);
+
+    return metadata;
   }
 
   getWorkerOptionsMetadata(
