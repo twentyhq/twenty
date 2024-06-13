@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 
-import {
-  EventCard,
-  EventCardToggleButton,
-} from '@/activities/timelineActivities/rows/components/EventCard';
+import { EventCard } from '@/activities/timelineActivities/rows/components/EventCard';
+import { EventCardToggleButton } from '@/activities/timelineActivities/rows/components/EventCardToggleButton';
 import {
   EventRowDynamicComponentProps,
-  StyledItemAction,
-  StyledItemAuthorText,
-  StyledItemLabelIdentifier,
+  StyledEventRowItemAction,
+  StyledEventRowItemColumn,
 } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
 import { EventCardMessage } from '@/activities/timelineActivities/rows/message/components/EventCardMessage';
 
@@ -27,36 +24,28 @@ const StyledRowContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const EventRowMessage: React.FC<EventRowMessageProps> = ({
-  labelIdentifierValue,
+export const EventRowMessage = ({
   event,
   authorFullName,
+  labelIdentifierValue,
 }: EventRowMessageProps) => {
   const [, eventAction] = event.name.split('.');
   const [isOpen, setIsOpen] = useState(false);
 
-  const renderRow = () => {
-    switch (eventAction) {
-      case 'linked': {
-        return (
-          <>
-            <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
-            <StyledItemAction>linked an email with</StyledItemAction>
-            <StyledItemLabelIdentifier>
-              {labelIdentifierValue}
-            </StyledItemLabelIdentifier>
-          </>
-        );
-      }
-      default:
-        throw new Error('Invalid event action for message event type.');
-    }
-  };
+  if (['linked'].includes(eventAction) === false) {
+    throw new Error('Invalid event action for message event type.');
+  }
 
   return (
     <StyledEventRowMessageContainer>
       <StyledRowContainer>
-        {renderRow()}
+        <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
+        <StyledEventRowItemAction>
+          linked an email with
+        </StyledEventRowItemAction>
+        <StyledEventRowItemColumn>
+          {labelIdentifierValue}
+        </StyledEventRowItemColumn>
         <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
       </StyledRowContainer>
       <EventCard isOpen={isOpen}>

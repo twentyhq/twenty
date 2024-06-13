@@ -407,7 +407,7 @@ export type Mutation = {
   renewToken: AuthTokens;
   sendInviteLink: SendInviteLink;
   signUp: LoginToken;
-  skipSyncEmailOnboardingStep: SkipSyncEmailOnboardingStep;
+  skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   track: Analytics;
@@ -634,6 +634,18 @@ export type ObjectFieldsConnection = {
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
+};
+
+/** Onboarding step */
+export enum OnboardingStep {
+  InviteTeam = 'INVITE_TEAM',
+  SyncEmail = 'SYNC_EMAIL'
+}
+
+export type OnboardingStepSuccess = {
+  __typename?: 'OnboardingStepSuccess';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean']['output'];
 };
 
 export type PageInfo = {
@@ -888,12 +900,6 @@ export type SessionEntity = {
   url?: Maybe<Scalars['String']['output']>;
 };
 
-export type SkipSyncEmailOnboardingStep = {
-  __typename?: 'SkipSyncEmailOnboardingStep';
-  /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean']['output'];
-};
-
 /** Sort Directions */
 export enum SortDirection {
   Asc = 'ASC',
@@ -1078,12 +1084,12 @@ export type User = {
   firstName: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   lastName: Scalars['String']['output'];
+  onboardingStep?: Maybe<OnboardingStep>;
   passwordHash?: Maybe<Scalars['String']['output']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetToken?: Maybe<Scalars['String']['output']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']['output']>;
-  state: UserState;
   supportUserHash?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   workspaceMember?: Maybe<WorkspaceMember>;
@@ -1116,11 +1122,6 @@ export type UserMappingOptionsUpdateInput = {
 export type UserMappingOptionsUser = {
   __typename?: 'UserMappingOptionsUser';
   user?: Maybe<Scalars['String']['output']>;
-};
-
-export type UserState = {
-  __typename?: 'UserState';
-  skipSyncEmailOnboardingStep?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type UserWorkspace = {

@@ -4,7 +4,7 @@ import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { formatToHumanReadableDate } from '~/utils';
+import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 type SettingsAccountsEmailsBlocklistTableRowProps = {
   blocklistItem: BlocklistItem;

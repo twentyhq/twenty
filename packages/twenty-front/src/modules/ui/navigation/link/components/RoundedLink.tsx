@@ -1,50 +1,71 @@
-import * as React from 'react';
-import { Link as ReactLink } from 'react-router-dom';
-import styled from '@emotion/styled';
-import { Chip, ChipSize, ChipVariant } from 'twenty-ui';
+import { MouseEvent } from 'react';
+import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { FONT_COMMON, THEME_COMMON } from 'twenty-ui';
 
 type RoundedLinkProps = {
   href: string;
-  children?: React.ReactNode;
-  className?: string;
+  label?: string;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
-const StyledLink = styled(ReactLink)`
-  font-size: ${({ theme }) => theme.font.size.md};
+const fontSizeMd = FONT_COMMON.size.md;
+const spacing1 = THEME_COMMON.spacing(1);
+const spacing3 = THEME_COMMON.spacing(3);
+
+const spacingMultiplicator = THEME_COMMON.spacingMultiplicator;
+
+const StyledLink = styled.a`
+  align-items: center;
+  background-color: var(--twentycrm-background-transparent-light);
+  border: 1px solid var(--twentycrm-border-color-medium);
+
+  border-radius: 50px;
+  color: var(--twentycrm-font-color-primary);
+
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: ${fontSizeMd};
+
+  gap: ${spacing1};
+
+  height: ${spacing3};
+  justify-content: center;
+
+  max-width: calc(100% - ${spacingMultiplicator} * 2px);
+
   max-width: 100%;
-  height: ${({ theme }) => theme.spacing(5)};
+
+  min-width: fit-content;
+
+  overflow: hidden;
+  padding: ${spacing1} ${spacing1};
+
+  text-decoration: none;
+  text-overflow: ellipsis;
+  user-select: none;
+  white-space: nowrap;
 `;
 
-const StyledChip = styled(Chip)`
-  border-color: ${({ theme }) => theme.border.color.strong};
-  box-sizing: border-box;
-  padding: ${({ theme }) => theme.spacing(0, 2)};
-  max-width: 100%;
-  height: ${({ theme }) => theme.spacing(5)};
-  min-width: 40px;
-`;
+export const RoundedLink = ({ label, href, onClick }: RoundedLinkProps) => {
+  if (!isNonEmptyString(label)) {
+    return <></>;
+  }
 
-export const RoundedLink = ({
-  children,
-  className,
-  href,
-  onClick,
-}: RoundedLinkProps) => {
-  if (!children) return null;
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+
+    onClick?.(event);
+  };
 
   return (
     <StyledLink
-      className={className}
+      href={href}
       target="_blank"
-      to={href}
-      onClick={onClick}
+      rel="noreferrer"
+      onClick={handleClick}
     >
-      <StyledChip
-        label={`${children}`}
-        variant={ChipVariant.Rounded}
-        size={ChipSize.Large}
-      />
+      {label}
     </StyledLink>
   );
 };

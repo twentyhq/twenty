@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import {
   EventRowDynamicComponentProps,
-  StyledItemAction,
-  StyledItemAuthorText,
+  StyledEventRowItemAction,
+  StyledEventRowItemColumn,
 } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
@@ -14,7 +14,7 @@ const StyledLinkedActivity = styled.span`
   text-decoration: underline;
 `;
 
-export const EventRowActivity: React.FC<EventRowActivityProps> = ({
+export const EventRowActivity = ({
   event,
   authorFullName,
 }: EventRowActivityProps) => {
@@ -28,8 +28,8 @@ export const EventRowActivity: React.FC<EventRowActivityProps> = ({
 
   return (
     <>
-      <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
-      <StyledItemAction>{eventAction}</StyledItemAction>
+      <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
+      <StyledEventRowItemAction>{eventAction}</StyledEventRowItemAction>
       <StyledLinkedActivity
         onClick={() => openActivityRightDrawer(event.linkedRecordId)}
       >

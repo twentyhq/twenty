@@ -16,6 +16,7 @@ import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/worksp
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
+import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
@@ -37,6 +38,7 @@ import { WorkspaceService } from './services/workspace.service';
         UserWorkspaceModule,
         WorkspaceManagerModule,
         DataSourceModule,
+        OnboardingModule,
         TypeORMModule,
       ],
       services: [WorkspaceService],

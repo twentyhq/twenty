@@ -1,11 +1,13 @@
-import { useFullNameField } from '@/object-record/record-field/meta-types/hooks/useFullNameField';
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { useFullNameFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useFullNameFieldDisplay';
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
 
 export const FullNameFieldDisplay = () => {
-  const { fieldValue } = useFullNameField();
+  const { fieldValue } = useFullNameFieldDisplay();
 
-  const content = [fieldValue.firstName, fieldValue.lastName]
-    .filter(Boolean)
+  const content = [fieldValue?.firstName, fieldValue?.lastName]
+    .filter(isNonEmptyString)
     .join(' ');
 
   return <TextDisplay text={content} />;

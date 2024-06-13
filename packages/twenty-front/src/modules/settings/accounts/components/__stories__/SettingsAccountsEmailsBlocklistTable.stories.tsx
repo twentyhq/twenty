@@ -4,7 +4,7 @@ import { ComponentDecorator } from 'twenty-ui';
 
 import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
 import { SettingsAccountsEmailsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistTable';
-import { formatToHumanReadableDate } from '~/utils';
+import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const handleBlockedEmailRemoveJestFn = fn();
 
