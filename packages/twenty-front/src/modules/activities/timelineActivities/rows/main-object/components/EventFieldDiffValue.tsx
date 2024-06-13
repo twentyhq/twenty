@@ -15,6 +15,9 @@ type EventFieldDiffValueProps = {
 const StyledEventFieldDiffValue = styled.div`
   align-items: center;
   display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const EventFieldDiffValue = ({

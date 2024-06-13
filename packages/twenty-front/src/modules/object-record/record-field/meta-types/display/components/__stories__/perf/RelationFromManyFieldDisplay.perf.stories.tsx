@@ -12,6 +12,7 @@ import {
   useSetRecordValue,
 } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
@@ -52,6 +53,7 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/RelationFromManyFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
+    ChipGeneratorsDecorator,
     (Story) => (
       <RecordFieldValueSelectorContextProvider>
         <FieldContext.Provider

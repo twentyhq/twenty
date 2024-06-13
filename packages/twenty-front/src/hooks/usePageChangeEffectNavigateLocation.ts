@@ -25,6 +25,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.CreateWorkspace) ||
     isMatchingLocation(AppPath.CreateProfile) ||
     isMatchingLocation(AppPath.SyncEmails) ||
+    isMatchingLocation(AppPath.InviteTeam) ||
     isMatchingLocation(AppPath.PlanRequired) ||
     isMatchingLocation(AppPath.PlanRequiredSuccess);
 
@@ -77,6 +78,13 @@ export const usePageChangeEffectNavigateLocation = () => {
     !isMatchingLocation(AppPath.SyncEmails)
   ) {
     return AppPath.SyncEmails;
+  }
+
+  if (
+    onboardingStatus === OnboardingStatus.OngoingInviteTeam &&
+    !isMatchingLocation(AppPath.InviteTeam)
+  ) {
+    return AppPath.InviteTeam;
   }
 
   if (

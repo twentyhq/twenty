@@ -1,9 +1,8 @@
+import { usePhoneFieldDisplay } from '@/object-record/record-field/meta-types/hooks/usePhoneFieldDisplay';
 import { PhoneDisplay } from '@/ui/field/display/components/PhoneDisplay';
 
-import { usePhoneField } from '../../hooks/usePhoneField';
-
 export const PhoneFieldDisplay = () => {
-  const { fieldValue } = usePhoneField();
+  const { fieldValue } = usePhoneFieldDisplay();
 
   return <PhoneDisplay value={fieldValue} />;
 };

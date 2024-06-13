@@ -11,7 +11,7 @@ const meta: Meta<typeof RoundedLink> = {
   decorators: [ComponentWithRouterDecorator],
   args: {
     href: '/test',
-    children: 'Rounded chip',
+    label: 'Rounded chip',
   },
 };
 

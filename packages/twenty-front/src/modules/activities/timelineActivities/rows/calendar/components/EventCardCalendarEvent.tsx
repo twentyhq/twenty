@@ -27,6 +27,7 @@ const StyledCalendarEventContent = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: center;
+  overflow: hidden;
 `;
 
 const StyledCalendarEventTop = styled.div`
@@ -39,7 +40,9 @@ const StyledCalendarEventTop = styled.div`
 const StyledCalendarEventTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledCalendarEventBody = styled.div`
