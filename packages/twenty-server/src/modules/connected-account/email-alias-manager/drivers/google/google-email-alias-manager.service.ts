@@ -33,7 +33,7 @@ export class GoogleEmailAliasManagerService {
     const emailAliases =
       emailAddresses
         ?.filter((emailAddress) => {
-          return emailAddress.metadata?.primary === false;
+          return emailAddress.metadata?.primary !== true;
         })
         .map((emailAddress) => {
           return emailAddress.value || '';

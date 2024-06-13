@@ -54,6 +54,10 @@ export class GoogleAPIsStrategy extends PassportStrategy(
       scope.push('https://www.googleapis.com/auth/calendar.events');
     }
 
+    if (scopeConfig?.isProfileEmailsReadEnabled) {
+      scope.push('https://www.googleapis.com/auth/profile.emails.read');
+    }
+
     super({
       clientID: environmentService.get('AUTH_GOOGLE_CLIENT_ID'),
       clientSecret: environmentService.get('AUTH_GOOGLE_CLIENT_SECRET'),
