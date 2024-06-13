@@ -3,8 +3,6 @@ export const sleep = async (
   callback?: (resolve: (value: any) => void) => void,
 ) =>
   new Promise((resolve) => {
-    const handler = callback
-      ? (resolve: (value: any) => void) => callback(resolve)
-      : resolve;
+    const handler = callback ? () => callback(resolve) : resolve;
     setTimeout(handler, ms);
   });
