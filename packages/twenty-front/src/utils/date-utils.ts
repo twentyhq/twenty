@@ -162,13 +162,18 @@ export const formatISOStringToHumanReadableDateTime = (date: string) => {
 
   const year = date.slice(0, 4);
   const month = date.slice(5, 7);
-  const day = date.slice(8, 10);
 
   const monthLabel = monthLabels[parseInt(month, 10) - 1];
 
   const jsDate = new Date(date);
 
-  return `${day} ${monthLabel} ${year} - ${jsDate.getHours()}:${jsDate.getMinutes()}`;
+  const day = jsDate.getDate();
+
+  const hours = `0${jsDate.getHours()}`.slice(-2);
+
+  const minutes = `0${jsDate.getMinutes()}`.slice(-2);
+
+  return `${day} ${monthLabel} ${year} - ${hours}:${minutes}`;
 };
 
 export const formatISOStringToHumanReadableDate = (date: string) => {
