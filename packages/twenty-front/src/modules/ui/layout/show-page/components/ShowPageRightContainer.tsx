@@ -15,8 +15,6 @@ import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
-import { Timeline } from '@/activities/timeline/components/Timeline';
-import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
 import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
 import { TimelineActivitiesQueryEffect } from '@/activities/timelineActivities/components/TimelineActivitiesQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -24,7 +22,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -84,7 +81,6 @@ export const ShowPageRightContainer = ({
   ].includes(targetObjectNameSingular);
 
   const shouldDisplayCalendarTab = isCompanyOrPerson;
-  const shouldDisplayLogTab = useIsFeatureEnabled('IS_EVENT_OBJECT_ENABLED');
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
   const isMobile = useIsMobile() || isRightDrawer;
@@ -122,17 +118,12 @@ export const ShowPageRightContainer = ({
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case 'timeline':
-        return shouldDisplayLogTab ? (
+        return (
           <>
             <TimelineActivitiesQueryEffect
               targetableObject={targetableObject}
             />
             <TimelineActivities targetableObject={targetableObject} />
-          </>
-        ) : (
-          <>
-            <TimelineQueryEffect targetableObject={targetableObject} />
-            <Timeline loading={loading} targetableObject={targetableObject} />
           </>
         );
       case 'summary':
