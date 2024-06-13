@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
 
 import { ObjectMetadataNavItemsSkeletonLoader } from '@/object-metadata/components/ObjectMetadataNavItemsSkeletonLoader';
@@ -10,11 +10,19 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
+import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 
 export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const { toggleNavigationSection, isNavigationSectionOpenState } =
+    useNavigationSection();
+  const isNavigationSectionOpen = useRecoilValue(
+    isNavigationSectionOpenState(
+      'objects-' + (isRemote ? 'remote' : 'workspace'),
+    ),
+  );
+  console.log('isNavigationSectionOpen', isNavigationSectionOpen);
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const filteredActiveObjectMetadataItems = activeObjectMetadataItems.filter(
@@ -35,10 +43,14 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle
           label={isRemote ? 'Remote' : 'Workspace'}
-          onClick={() => setCollapsed((collapsed) => !collapsed)}
+          onClick={() =>
+            toggleNavigationSection(
+              'objects-' + (isRemote ? 'remote' : 'workspace'),
+            )
+          }
         />
 
-        {!collapsed &&
+        {isNavigationSectionOpen &&
           [
             ...filteredActiveObjectMetadataItems
               .filter((item) =>

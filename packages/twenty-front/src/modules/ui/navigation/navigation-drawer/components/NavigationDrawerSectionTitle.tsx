@@ -14,11 +14,11 @@ const StyledTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   padding: ${({ theme }) => theme.spacing(1)};
-  padding-top: 0;
+  height: ${({ theme }) => theme.spacing(4)};
 
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => theme.background.tertiary};
+    background-color: ${({ theme }) => theme.background.transparent.light};
   }
 `;
 
