@@ -84,8 +84,6 @@ export class ArgsStringFactory {
       orderByString = orderByString.slice(0, -2);
     }
 
-    console.log(orderByString);
-
     return `[${orderByString}]`;
   }
 }
