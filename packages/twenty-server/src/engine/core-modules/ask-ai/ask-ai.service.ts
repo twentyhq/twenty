@@ -23,7 +23,12 @@ export class AskAIService {
     private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
   ) {}
 
-  async query(workspaceId: string, text: string): Promise<AskAIQueryResult> {
+  async query(
+    userId: string,
+    userEmail: string,
+    workspaceId: string,
+    text: string,
+  ): Promise<AskAIQueryResult> {
     const workspaceSchemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -63,6 +68,7 @@ export class AskAIService {
       secretKey: process.env.LANGFUSE_SECRET_KEY,
       publicKey: process.env.LANGFUSE_PUBLIC_KEY,
       baseUrl: 'https://cloud.langfuse.com',
+      metadata: { workspaceId, userId, userEmail },
     });
 
     const sqlQuery = await sqlQueryGeneratorChain.invoke(
