@@ -2,13 +2,14 @@ import styled from '@emotion/styled';
 
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type NavigationDrawerSectionTitleProps = {
-  onClick: () => void;
+  onClick?: () => void;
   label: string;
 };
 
-const StyledTitle = styled.div`
+const StyledTitle = styled.div<{ onClick?: () => void }>`
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.xs};
@@ -16,10 +17,13 @@ const StyledTitle = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(4)};
 
-  &:hover {
-    cursor: pointer;
-    background-color: ${({ theme }) => theme.background.transparent.light};
-  }
+  ${({ onClick, theme }) =>
+    !isUndefinedOrNull(onClick)
+      ? `&:hover {
+          cursor: pointer;
+          background-color:${theme.background.transparent.light};
+        }`
+      : ''}
 `;
 
 export const NavigationDrawerSectionTitle = ({
