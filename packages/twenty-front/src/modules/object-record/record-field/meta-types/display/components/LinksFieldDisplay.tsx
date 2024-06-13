@@ -1,9 +1,9 @@
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
-import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
+import { useLinksFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useLinksFieldDisplay';
 import { LinksDisplay } from '@/ui/field/display/components/LinksDisplay';
 
 export const LinksFieldDisplay = () => {
-  const { fieldValue } = useLinksField();
+  const { fieldValue } = useLinksFieldDisplay();
 
   const { isFocused } = useFieldFocus();
 
