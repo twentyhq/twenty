@@ -5,6 +5,7 @@ import { tokenPairState } from '@/auth/states/tokenPairState';
 import { AppPath } from '@/types/AppPath';
 import { useGenerateJwtMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { sleep } from '~/utils/sleep';
 
 export const useWorkspaceSwitching = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -29,6 +30,7 @@ export const useWorkspaceSwitching = () => {
 
     const { tokens } = jwt.data.generateJWT;
     setTokenPair(tokens);
+    await sleep(0); // This hacky workaround is necessary to ensure the tokens stored in the cookie are updated correctly.
     window.location.href = AppPath.Index;
   };
 
