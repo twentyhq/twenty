@@ -23,9 +23,11 @@ export const useTimelineActivities = (
         eq: targetableObject.id,
       },
     },
-    orderBy: {
-      createdAt: 'DescNullsFirst',
-    },
+    orderBy: [
+      {
+        createdAt: 'DescNullsFirst',
+      },
+    ],
     recordGqlFields: {
       id: true,
       createdAt: true,
