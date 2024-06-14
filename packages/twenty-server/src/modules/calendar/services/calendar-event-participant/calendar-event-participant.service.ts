@@ -133,21 +133,31 @@ export class CalendarEventParticipantService {
     workspaceMemberId?: string,
   ) {
     const calendarEventParticipantsToUpdate =
-      await this.calendarEventParticipantRepository.getByHandles(
-        [email],
-        workspaceId,
-      );
+      await this.calendarEventParticipantRepository.find({
+        where: {
+          handle: email,
+        },
+      });
 
     const calendarEventParticipantIdsToUpdate =
       calendarEventParticipantsToUpdate.map((participant) => participant.id);
 
     if (personId) {
-      const updatedCalendarEventParticipants =
-        await this.calendarEventParticipantRepository.updateParticipantsPersonIdAndReturn(
-          calendarEventParticipantIdsToUpdate,
+      await this.calendarEventParticipantRepository.update(
+        {
+          id: Any(calendarEventParticipantIdsToUpdate),
+        },
+        {
           personId,
-          workspaceId,
-        );
+        },
+      );
+
+      const updatedCalendarEventParticipants =
+        await this.calendarEventParticipantRepository.find({
+          where: {
+            id: Any(calendarEventParticipantIdsToUpdate),
+          },
+        });
 
       this.eventEmitter.emit(`calendarEventParticipant.matched`, {
         workspaceId,
@@ -156,10 +166,13 @@ export class CalendarEventParticipantService {
       });
     }
     if (workspaceMemberId) {
-      await this.calendarEventParticipantRepository.updateParticipantsWorkspaceMemberId(
-        calendarEventParticipantIdsToUpdate,
-        workspaceMemberId,
-        workspaceId,
+      await this.calendarEventParticipantRepository.update(
+        {
+          id: Any(calendarEventParticipantIdsToUpdate),
+        },
+        {
+          workspaceMemberId,
+        },
       );
     }
   }
@@ -171,15 +184,23 @@ export class CalendarEventParticipantService {
     workspaceMemberId?: string,
   ) {
     if (personId) {
-      await this.calendarEventParticipantRepository.removePersonIdByHandle(
-        handle,
-        workspaceId,
+      await this.calendarEventParticipantRepository.update(
+        {
+          handle,
+        },
+        {
+          personId: null,
+        },
       );
     }
     if (workspaceMemberId) {
-      await this.calendarEventParticipantRepository.removeWorkspaceMemberIdByHandle(
-        handle,
-        workspaceId,
+      await this.calendarEventParticipantRepository.update(
+        {
+          handle,
+        },
+        {
+          workspaceMemberId: null,
+        },
       );
     }
   }
