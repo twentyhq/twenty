@@ -8,8 +8,7 @@ const StyledOuterContainer = styled.div`
   display: flex;
 
   gap: ${({ theme }) => (useIsMobile() ? theme.spacing(3) : '0')};
-  height: ${() => (useIsMobile() ? '100%' : '100%')};
-  overflow-x: ${() => (useIsMobile() ? 'hidden' : 'auto')};
+  height: 100%;
   width: 100%;
 `;
 
@@ -17,7 +16,6 @@ const StyledInnerContainer = styled.div`
   display: flex;
   flex-direction: ${() => (useIsMobile() ? 'column' : 'row')};
   width: 100%;
-  overflow-x: ${() => (useIsMobile() ? 'hidden' : 'auto')};
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
