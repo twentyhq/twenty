@@ -194,7 +194,7 @@ export class MessageQueueExplorer implements OnModuleInit {
     job: MessageQueueJob<MessageQueueJobData>,
   ) {
     for (const [methodName, metadata] of processMetadataCollection) {
-      if (job.name === metadata?.jobName || !metadata?.jobName) {
+      if (job.name === metadata?.jobName) {
         try {
           await instance[methodName].call(instance, job.data);
         } catch (err) {

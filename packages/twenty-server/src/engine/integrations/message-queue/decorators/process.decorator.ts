@@ -4,7 +4,7 @@ import { isString } from '@nestjs/common/utils/shared.utils';
 import { PROCESS_METADATA } from 'src/engine/integrations/message-queue/message-queue.constants';
 
 export interface MessageQueueProcessOptions {
-  jobName?: string;
+  jobName: string;
   concurrency?: number;
 }
 
