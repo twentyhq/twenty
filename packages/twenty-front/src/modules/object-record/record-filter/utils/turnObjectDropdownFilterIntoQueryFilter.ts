@@ -305,7 +305,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                 rawUIFilter.operand,
                 correspondingField,
                 objectRecordFilters,
-                'Relation',
+                rawUIFilter.definition.type,
               );
               break;
             default:
