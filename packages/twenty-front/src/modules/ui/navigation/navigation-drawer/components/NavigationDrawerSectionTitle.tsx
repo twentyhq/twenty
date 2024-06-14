@@ -10,12 +10,14 @@ type NavigationDrawerSectionTitleProps = {
 };
 
 const StyledTitle = styled.div<{ onClick?: () => void }>`
+  align-items: center;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  padding: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(1)};
 
   ${({ onClick, theme }) =>
     !isUndefinedOrNull(onClick)
