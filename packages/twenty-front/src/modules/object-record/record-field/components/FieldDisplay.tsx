@@ -5,6 +5,7 @@ import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/displ
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
+import { isFieldChipDisplay } from '@/object-record/utils/getRecordChipGeneratorPerObjectPerField';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
@@ -42,11 +43,7 @@ import { isFieldUuid } from '../types/guards/isFieldUuid';
 export const FieldDisplay = () => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
-  const isChipDisplay =
-    isLabelIdentifier &&
-    (isFieldText(fieldDefinition) ||
-      isFieldFullName(fieldDefinition) ||
-      isFieldNumber(fieldDefinition));
+  const isChipDisplay = isFieldChipDisplay(fieldDefinition, isLabelIdentifier);
 
   return isChipDisplay ? (
     <ChipFieldDisplay />

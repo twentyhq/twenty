@@ -38,6 +38,7 @@ export const getResolverArgs = (
         orderBy: {
           kind: InputTypeDefinitionKind.OrderBy,
           isNullable: true,
+          isArray: true,
         },
       };
     case 'findOne':

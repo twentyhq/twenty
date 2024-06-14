@@ -30,9 +30,11 @@ describe('turnSortsIntoOrderBy', () => {
   it('should sort by recordPosition if no sorts', () => {
     const fields = [{ id: 'field1', name: 'createdAt' }] as FieldMetadataItem[];
     expect(turnSortsIntoOrderBy({ ...objectMetadataItem, fields }, [])).toEqual(
-      {
-        position: 'AscNullsFirst',
-      },
+      [
+        {
+          position: 'AscNullsFirst',
+        },
+      ],
     );
   });
 
@@ -47,10 +49,7 @@ describe('turnSortsIntoOrderBy', () => {
     const fields = [{ id: 'field1', name: 'field1' }] as FieldMetadataItem[];
     expect(
       turnSortsIntoOrderBy({ ...objectMetadataItem, fields }, sorts),
-    ).toEqual({
-      field1: 'AscNullsFirst',
-      position: 'AscNullsFirst',
-    });
+    ).toEqual([{ field1: 'AscNullsFirst' }, { position: 'AscNullsFirst' }]);
   });
 
   it('should create OrderByField with multiple sorts', () => {
@@ -72,11 +71,11 @@ describe('turnSortsIntoOrderBy', () => {
     ] as FieldMetadataItem[];
     expect(
       turnSortsIntoOrderBy({ ...objectMetadataItem, fields }, sorts),
-    ).toEqual({
-      field1: 'AscNullsFirst',
-      field2: 'DescNullsLast',
-      position: 'AscNullsFirst',
-    });
+    ).toEqual([
+      { field1: 'AscNullsFirst' },
+      { field2: 'DescNullsLast' },
+      { position: 'AscNullsFirst' },
+    ]);
   });
 
   it('should ignore if field not found', () => {
@@ -87,9 +86,9 @@ describe('turnSortsIntoOrderBy', () => {
         definition: sortDefinition,
       },
     ];
-    expect(turnSortsIntoOrderBy(objectMetadataItem, sorts)).toEqual({
-      position: 'AscNullsFirst',
-    });
+    expect(turnSortsIntoOrderBy(objectMetadataItem, sorts)).toEqual([
+      { position: 'AscNullsFirst' },
+    ]);
   });
 
   it('should not return position for remotes', () => {
@@ -102,6 +101,6 @@ describe('turnSortsIntoOrderBy', () => {
     ];
     expect(
       turnSortsIntoOrderBy({ ...objectMetadataItem, isRemote: true }, sorts),
-    ).toEqual({});
+    ).toEqual([]);
   });
 });

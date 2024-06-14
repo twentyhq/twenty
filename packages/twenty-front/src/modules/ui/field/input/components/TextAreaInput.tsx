@@ -30,6 +30,7 @@ const StyledTextArea = styled(TextareaAutosize)`
   display: flex;
   justify-content: center;
   resize: none;
+  max-height: 400px;
   width: calc(100% - ${({ theme }) => theme.spacing(7)});
 `;
 
@@ -39,6 +40,7 @@ const StyledTextAreaContainer = styled.div`
   width: 100%;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${({ theme }) => theme.background.primary};
 `;
 
 const StyledLightIconButtonContainer = styled.div`

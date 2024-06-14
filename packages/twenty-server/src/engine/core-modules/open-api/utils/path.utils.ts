@@ -42,14 +42,15 @@ export const computeManyResultPath = (
     get: {
       tags: [item.namePlural],
       summary: `Find Many ${item.namePlural}`,
-      description: `**order_by**, **filter**, **limit**, **depth** or **last_cursor** can be provided to request your **${item.namePlural}**`,
+      description: `**order_by**, **filter**, **limit**, **depth**, **starting_after** or **ending_before** can be provided to request your **${item.namePlural}**`,
       operationId: `findMany${capitalize(item.namePlural)}`,
       parameters: [
         { $ref: '#/components/parameters/orderBy' },
         { $ref: '#/components/parameters/filter' },
         { $ref: '#/components/parameters/limit' },
         { $ref: '#/components/parameters/depth' },
-        { $ref: '#/components/parameters/lastCursor' },
+        { $ref: '#/components/parameters/startingAfter' },
+        { $ref: '#/components/parameters/endingBefore' },
       ],
       responses: {
         '200': getFindManyResponse200(item),

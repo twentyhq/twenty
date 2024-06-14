@@ -33,20 +33,23 @@ const TokenForm = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [locationSetting, setLocationSetting] = useState(
-    (window &&
+    (typeof window !== 'undefined' &&
       window.localStorage.getItem('baseUrl') &&
       JSON.parse(window.localStorage.getItem('baseUrl') ?? '')
         ?.locationSetting) ??
       'production',
   );
   const [baseUrl, setBaseUrl] = useState(
-    (window.localStorage.getItem('baseUrl') &&
+    (typeof window !== 'undefined' &&
+      window.localStorage.getItem('baseUrl') &&
       JSON.parse(window.localStorage.getItem('baseUrl') ?? '')?.baseUrl) ??
       'https://api.twenty.com',
   );
 
-  const tokenLocal = window?.localStorage?.getItem?.(
-    'TryIt_securitySchemeValues',
+  const tokenLocal = (
+    typeof window !== 'undefined'
+      ? window?.localStorage?.getItem?.('TryIt_securitySchemeValues')
+      : '{}'
   ) as string;
 
   const token = JSON.parse(tokenLocal)?.bearerAuth ?? '';

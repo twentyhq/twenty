@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
 
-import { FetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
+import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
 import { EventList } from '@/activities/timelineActivities/components/EventList';
 import { useTimelineActivities } from '@/activities/timelineActivities/hooks/useTimelineActivities';
@@ -23,11 +23,11 @@ const StyledMainContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: auto;
 
   justify-content: center;
   padding-top: ${({ theme }) => theme.spacing(6)};
   padding-right: ${({ theme }) => theme.spacing(6)};
-  padding-bottom: ${({ theme }) => theme.spacing(16)};
   padding-left: ${({ theme }) => theme.spacing(6)};
   gap: ${({ theme }) => theme.spacing(4)};
 `;
@@ -64,7 +64,10 @@ export const TimelineActivities = ({
         title="All"
         events={timelineActivities ?? []}
       />
-      <FetchMoreLoader loading={loading} onLastRowVisible={fetchMoreRecords} />
+      <CustomResolverFetchMoreLoader
+        loading={loading}
+        onLastRowVisible={fetchMoreRecords}
+      />
     </StyledMainContainer>
   );
 };

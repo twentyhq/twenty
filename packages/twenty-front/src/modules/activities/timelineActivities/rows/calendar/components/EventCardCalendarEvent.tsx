@@ -10,7 +10,7 @@ import {
   formatToHumanReadableDay,
   formatToHumanReadableMonth,
   formatToHumanReadableTime,
-} from '~/utils';
+} from '~/utils/format/formatDate';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -27,6 +27,7 @@ const StyledCalendarEventContent = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: center;
+  overflow: hidden;
 `;
 
 const StyledCalendarEventTop = styled.div`
@@ -39,7 +40,9 @@ const StyledCalendarEventTop = styled.div`
 const StyledCalendarEventTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledCalendarEventBody = styled.div`
@@ -121,7 +124,7 @@ export const EventCardCalendarEvent = ({
       return <div>Calendar event not found</div>;
     }
 
-    return <div>Error loading message</div>;
+    return <div>Error loading calendar event</div>;
   }
 
   if (loading || isUndefined(calendarEvent)) {

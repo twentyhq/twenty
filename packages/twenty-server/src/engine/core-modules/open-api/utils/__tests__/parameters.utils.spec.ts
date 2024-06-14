@@ -2,11 +2,12 @@ import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder
 
 import {
   computeDepthParameters,
+  computeEndingBeforeParameters,
   computeFilterParameters,
   computeIdPathParameter,
-  computeLastCursorParameters,
   computeLimitParameters,
   computeOrderByParameters,
+  computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { DEFAULT_ORDER_DIRECTION } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/order-by-input.factory';
 import { FilterComparators } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/filter-utils/parse-base-filter.utils';
@@ -106,12 +107,27 @@ describe('computeParameters', () => {
       });
     });
   });
-  describe('computeLastCursor', () => {
-    it('should compute last cursor', () => {
-      expect(computeLastCursorParameters()).toEqual({
-        name: 'last_cursor',
+  describe('computeStartingAfter', () => {
+    it('should compute starting after', () => {
+      expect(computeStartingAfterParameters()).toEqual({
+        name: 'starting_after',
         in: 'query',
-        description: 'Returns objects starting from a specific cursor.',
+        description:
+          'Returns objects starting after a specific cursor. You can find cursors in **startCursor** and **endCursor** in **pageInfo** in response data',
+        required: false,
+        schema: {
+          type: 'string',
+        },
+      });
+    });
+  });
+  describe('computeEndingBefore', () => {
+    it('should compute ending_before', () => {
+      expect(computeEndingBeforeParameters()).toEqual({
+        name: 'ending_before',
+        in: 'query',
+        description:
+          'Returns objects ending before a specific cursor. You can find cursors in **startCursor** and **endCursor** in **pageInfo** in response data',
         required: false,
         schema: {
           type: 'string',
