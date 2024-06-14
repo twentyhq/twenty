@@ -16,6 +16,7 @@ export const mockedRemoteServers = [
     },
     updatedAt: '2024-04-30T13:41:25.858Z',
     schema: 'public',
+    label: 'postgres DB',
   },
   {
     __typename: 'RemoteServer',
@@ -27,5 +28,6 @@ export const mockedRemoteServers = [
     },
     foreignDataWrapperType: 'stripe_fdw',
     updatedAt: '2024-04-30T13:41:25.858Z',
+    label: 'stripe DB',
   },
 ];

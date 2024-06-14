@@ -1,8 +1,8 @@
-import { useBooleanField } from '@/object-record/record-field/meta-types/hooks/useBooleanField';
+import { useBooleanFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useBooleanFieldDisplay';
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
 
 export const BooleanFieldDisplay = () => {
-  const { fieldValue } = useBooleanField();
+  const { fieldValue } = useBooleanFieldDisplay();
 
   return <BooleanDisplay value={fieldValue} />;
 };

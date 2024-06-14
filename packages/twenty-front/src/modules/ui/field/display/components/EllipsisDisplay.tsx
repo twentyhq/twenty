@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledEllipsisDisplay = styled.div<{ maxWidth?: number }>`
   max-width: ${({ maxWidth }) => maxWidth ?? '100%'};
@@ -19,7 +19,7 @@ export const EllipsisDisplay = ({
   maxWidth,
   className,
 }: EllipsisDisplayProps) => (
-  <StyledEllipsisDisplay style={{ maxWidth }} className={className}>
+  <StyledEllipsisDisplay maxWidth={maxWidth} className={className}>
     {children}
   </StyledEllipsisDisplay>
 );

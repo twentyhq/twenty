@@ -26,7 +26,7 @@ describe('OrderByInputFactory', () => {
     it('should return default if order by missing', () => {
       const request: any = { query: {} };
 
-      expect(service.create(request, objectMetadata)).toEqual({});
+      expect(service.create(request, objectMetadata)).toEqual([{}]);
     });
 
     it('should create order by parser properly', () => {
@@ -36,10 +36,10 @@ describe('OrderByInputFactory', () => {
         },
       };
 
-      expect(service.create(request, objectMetadata)).toEqual({
-        fieldNumber: OrderByDirection.AscNullsFirst,
-        fieldText: OrderByDirection.DescNullsLast,
-      });
+      expect(service.create(request, objectMetadata)).toEqual([
+        { fieldNumber: OrderByDirection.AscNullsFirst },
+        { fieldText: OrderByDirection.DescNullsLast },
+      ]);
     });
 
     it('should choose default direction if missing', () => {
@@ -49,9 +49,9 @@ describe('OrderByInputFactory', () => {
         },
       };
 
-      expect(service.create(request, objectMetadata)).toEqual({
-        fieldNumber: OrderByDirection.AscNullsFirst,
-      });
+      expect(service.create(request, objectMetadata)).toEqual([
+        { fieldNumber: OrderByDirection.AscNullsFirst },
+      ]);
     });
 
     it('should handler complex fields', () => {
@@ -61,9 +61,9 @@ describe('OrderByInputFactory', () => {
         },
       };
 
-      expect(service.create(request, objectMetadata)).toEqual({
-        fieldCurrency: { amountMicros: OrderByDirection.AscNullsFirst },
-      });
+      expect(service.create(request, objectMetadata)).toEqual([
+        { fieldCurrency: { amountMicros: OrderByDirection.AscNullsFirst } },
+      ]);
     });
 
     it('should handler complex fields with direction', () => {
@@ -73,9 +73,9 @@ describe('OrderByInputFactory', () => {
         },
       };
 
-      expect(service.create(request, objectMetadata)).toEqual({
-        fieldCurrency: { amountMicros: OrderByDirection.DescNullsLast },
-      });
+      expect(service.create(request, objectMetadata)).toEqual([
+        { fieldCurrency: { amountMicros: OrderByDirection.DescNullsLast } },
+      ]);
     });
 
     it('should handler multiple complex fields with direction', () => {
@@ -86,10 +86,10 @@ describe('OrderByInputFactory', () => {
         },
       };
 
-      expect(service.create(request, objectMetadata)).toEqual({
-        fieldCurrency: { amountMicros: OrderByDirection.DescNullsLast },
-        fieldLink: { label: OrderByDirection.AscNullsLast },
-      });
+      expect(service.create(request, objectMetadata)).toEqual([
+        { fieldCurrency: { amountMicros: OrderByDirection.DescNullsLast } },
+        { fieldLink: { label: OrderByDirection.AscNullsLast } },
+      ]);
     });
 
     it('should throw if direction invalid', () => {

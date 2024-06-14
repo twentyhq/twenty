@@ -24,7 +24,7 @@ export const query = gql`
 export const findManyViewsQuery = gql`
   query FindManyViews(
     $filter: ViewFilterInput
-    $orderBy: ViewOrderByInput
+    $orderBy: [ViewOrderByInput]
     $lastCursor: String
     $limit: Int
   ) {

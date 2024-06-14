@@ -66,7 +66,6 @@ export const Invite = () => {
         <>
           <StyledContentContainer>
             <MainButton
-              variant="secondary"
               title="Continue"
               type="submit"
               onClick={handleUserJoinWorkspace}

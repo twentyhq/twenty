@@ -4,7 +4,7 @@ import { expect, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
-import { sleep } from '~/testing/sleep';
+import { sleep } from '~/utils/sleep';
 
 import { IconPicker, IconPickerProps } from '../IconPicker';
 

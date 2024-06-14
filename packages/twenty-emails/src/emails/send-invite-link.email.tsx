@@ -9,6 +9,7 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
+import { getImageAbsoluteURIOrBase64 } from 'src/utils/getImageAbsoluteURIOrBase64';
 
 type SendInviteLinkEmailProps = {
   link: string;
@@ -17,13 +18,16 @@ type SendInviteLinkEmailProps = {
     email: string;
     firstName: string;
   };
+  serverUrl?: string;
 };
 
 export const SendInviteLinkEmail = ({
   link,
   workspace,
   sender,
+  serverUrl,
 }: SendInviteLinkEmailProps) => {
+  const workspaceLogo = getImageAbsoluteURIOrBase64(workspace.logo, serverUrl);
   return (
     <BaseEmail width={333}>
       <Title value="Join your team on Twenty" />
@@ -34,7 +38,7 @@ export const SendInviteLinkEmail = ({
         <br />
       </MainText>
       <HighlightedContainer>
-        {workspace.logo && <Img src={workspace.logo} width={40} height={40} />}
+        {workspaceLogo && <Img src={workspaceLogo} width={40} height={40} />}
         {workspace.name && <HighlightedText value={workspace.name} />}
         <CallToAction href={link} value="Accept invite" />
       </HighlightedContainer>

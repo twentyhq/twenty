@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
 import { IconGoogle } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
+import { useSetNextOnboardingStep } from '@/onboarding/hooks/useSetNextOnboardingStep';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { AppPath } from '@/types/AppPath';
+import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
+  OnboardingStep,
   useSkipSyncEmailOnboardingStepMutation,
 } from '~/generated/graphql';
 
@@ -35,9 +39,9 @@ const StyledActionLinkContainer = styled.div`
 
 export const SyncEmails = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
-  const setIsCurrentUserLoaded = useSetRecoilState(isCurrentUserLoadedState);
+  const setNextOnboardingStep = useSetNextOnboardingStep();
+  const currentUser = useRecoilValue(currentUserState);
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.ShareEverything,
   );
@@ -59,15 +63,25 @@ export const SyncEmails = () => {
 
   const continueWithoutSync = async () => {
     await skipSyncEmailOnboardingStepMutation();
-    setIsCurrentUserLoaded(false);
-    navigate(AppPath.Index);
+    setNextOnboardingStep(OnboardingStep.SyncEmail);
   };
 
-  const isSubmitting = false;
+  useScopedHotkeys(
+    [Key.Enter],
+    async () => {
+      await continueWithoutSync();
+    },
+    PageHotkeyScope.SyncEmail,
+    [continueWithoutSync],
+  );
+
+  if (currentUser?.onboardingStep !== OnboardingStep.SyncEmail) {
+    return <></>;
+  }
 
   return (
     <>
-      <Title withMarginTop={false}>Emails and Calendar</Title>
+      <Title noMarginTop>Emails and Calendar</Title>
       <SubTitle>
         Sync your Emails and Calendar with Twenty. Choose your privacy settings.
       </SubTitle>
@@ -82,7 +96,6 @@ export const SyncEmails = () => {
         onClick={handleButtonClick}
         width={200}
         Icon={() => <IconGoogle size={theme.icon.size.sm} />}
-        disabled={isSubmitting}
       />
       <StyledActionLinkContainer>
         <ActionLink onClick={continueWithoutSync}>

@@ -10,6 +10,7 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { sleep } from '~/utils/sleep';
 
 export const download = (blob: Blob, filename: string) => {
   const url = URL.createObjectURL(blob);

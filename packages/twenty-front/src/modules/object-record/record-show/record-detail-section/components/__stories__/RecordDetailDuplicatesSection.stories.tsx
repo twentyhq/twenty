@@ -6,9 +6,11 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
 
 import { RecordDetailDuplicatesSection } from '../RecordDetailDuplicatesSection';
+
+const companiesMock = getCompaniesMock();
 
 const meta: Meta<typeof RecordDetailDuplicatesSection> = {
   title:
@@ -21,7 +23,7 @@ const meta: Meta<typeof RecordDetailDuplicatesSection> = {
     MemoryRouterDecorator,
   ],
   args: {
-    objectRecordId: mockedCompaniesData[0].id,
+    objectRecordId: companiesMock[0].id,
     objectNameSingular: CoreObjectNameSingular.Company,
   },
   parameters: {
