@@ -119,6 +119,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         link: inviteLink,
         workspace: { name: workspace.displayName, logo: workspace.logo },
         sender: { email: sender.email, firstName: sender.firstName },
+        serverUrl: this.environmentService.get('SERVER_URL'),
       };
       const emailTemplate = SendInviteLinkEmail(emailData);
       const html = render(emailTemplate, {
