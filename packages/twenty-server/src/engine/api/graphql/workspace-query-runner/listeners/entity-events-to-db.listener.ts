@@ -40,8 +40,6 @@ export class EntityEventsToDbListener {
       payload.objectMetadata,
     );
 
-    console.log('handle update');
-
     return this.handle(payload);
   }
 
@@ -70,15 +68,11 @@ export class EntityEventsToDbListener {
       return;
     }
 
-    console.log('add job !');
-
-    console.log('Adding job: CreateAuditLogFromInternalEvent');
     this.messageQueueService.add<ObjectRecordBaseEvent>(
       CreateAuditLogFromInternalEvent.name,
       payload,
     );
 
-    console.log('Adding job: UpsertTimelineActivityFromInternalEvent');
     this.messageQueueService.add<ObjectRecordBaseEvent>(
       UpsertTimelineActivityFromInternalEvent.name,
       payload,

@@ -43,8 +43,6 @@ export class MessageQueueMetadataAccessor {
   ): MessageQueueProcessOptions | undefined {
     const metadata = this.reflector.get(PROCESS_METADATA, target);
 
-    console.log(`Process metadata for target ${target}:`, metadata);
-
     return metadata;
   }
 

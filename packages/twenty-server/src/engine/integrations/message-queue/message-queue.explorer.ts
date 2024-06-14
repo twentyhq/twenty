@@ -7,6 +7,7 @@ import {
 } from '@nestjs/core';
 import { Module } from '@nestjs/core/injector/module';
 import { Injector } from '@nestjs/core/injector/injector';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
 import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
 import {
@@ -56,17 +57,31 @@ export class MessageQueueExplorer implements OnModuleInit {
         ),
       );
 
-    // Group processors by queue name
-    const processorGroups = processors.reduce(
+    const groupedProcessors = this.groupProcessorsByQueueName(processors);
+
+    for (const [queueName, processorGroupCollection] of Object.entries(
+      groupedProcessors,
+    )) {
+      const queueToken = getQueueToken(queueName);
+      const messageQueueService = this.getQueueService(queueToken);
+
+      this.handleProcessorGroupCollection(
+        processorGroupCollection,
+        messageQueueService,
+      );
+    }
+  }
+
+  private groupProcessorsByQueueName(processors: InstanceWrapper[]) {
+    return processors.reduce(
       (acc, wrapper) => {
         const { instance, metatype } = wrapper;
         const methodNames = this.metadataScanner.getAllMethodNames(instance);
         const { queueName } =
           this.metadataAccessor.getProcessorMetadata(
-            // NOTE: We are relying on `instance.constructor` to properly support
-            // `useValue` and `useFactory` providers besides `useClass`.
             instance.constructor || metatype,
           ) ?? {};
+
         const processMethodNames = methodNames.filter((name) =>
           this.metadataAccessor.isProcess(instance[name]),
         );
@@ -102,16 +117,9 @@ export class MessageQueueExplorer implements OnModuleInit {
       },
       {} as Record<string, ProcessorGroup[]>,
     );
-
-    for (const [queueName, processors] of Object.entries(processorGroups)) {
-      const queueToken = getQueueToken(queueName);
-      const messageQueueService = this.getQueueService(queueToken);
-
-      this.handleProcessor(processors, messageQueueService);
-    }
   }
 
-  getQueueService(queueToken: string): MessageQueueService {
+  private getQueueService(queueToken: string): MessageQueueService {
     try {
       return this.moduleRef.get<MessageQueueService>(queueToken, {
         strict: false,
@@ -122,19 +130,19 @@ export class MessageQueueExplorer implements OnModuleInit {
     }
   }
 
-  handleProcessor(
-    processors: ProcessorGroup[],
+  private async handleProcessorGroupCollection(
+    processorGroupCollection: ProcessorGroup[],
     queue: MessageQueueService,
     options?: MessageQueueWorkerOptions,
   ) {
     queue.work(async (job) => {
-      for (const processor of processors) {
-        this.processJob(processor, job);
+      for (const processorGroup of processorGroupCollection) {
+        await this.handleProcessor(processorGroup, job);
       }
     }, options);
   }
 
-  async processJob(
+  private async handleProcessor(
     { instance, host, processMethodNames, isRequestScoped }: ProcessorGroup,
     job: MessageQueueJob<MessageQueueJobData>,
   ) {
@@ -143,8 +151,6 @@ export class MessageQueueExplorer implements OnModuleInit {
         const metadata = this.metadataAccessor.getProcessMetadata(
           instance[name],
         );
-
-        console.log(`Metadata for method ${name}:`, metadata);
 
         return [name, metadata];
       }),
@@ -172,36 +178,30 @@ export class MessageQueueExplorer implements OnModuleInit {
         contextId,
       );
 
-      for (const [methodName, metadata] of processMetadataCollection) {
-        if (job.name === metadata?.jobName || !metadata?.jobName) {
-          try {
-            await contextInstance[methodName].call(contextInstance, job.data);
-          } catch (err) {
-            if (!shouldFilterException(err)) {
-              this.exceptionHandlerService.captureExceptions([err]);
-            }
-            throw err;
-          }
-        }
-      }
-    } else {
-      console.log('INFO: Processing job', {
-        instance,
-        job,
+      await this.invokeProcessMethods(
+        contextInstance,
         processMetadataCollection,
-        processMethodNames,
-      });
-      for (const [methodName, metadata] of processMetadataCollection) {
-        console.log(`Checking job name ${job.name} against metadata`, metadata);
-        if (job.name === metadata?.jobName) {
-          try {
-            await instance[methodName].call(instance, job.data);
-          } catch (err) {
-            if (!shouldFilterException(err)) {
-              this.exceptionHandlerService.captureExceptions([err]);
-            }
-            throw err;
+        job,
+      );
+    } else {
+      await this.invokeProcessMethods(instance, processMetadataCollection, job);
+    }
+  }
+
+  private async invokeProcessMethods(
+    instance: object,
+    processMetadataCollection: Map<string, any>,
+    job: MessageQueueJob<MessageQueueJobData>,
+  ) {
+    for (const [methodName, metadata] of processMetadataCollection) {
+      if (job.name === metadata?.jobName || !metadata?.jobName) {
+        try {
+          await instance[methodName].call(instance, job.data);
+        } catch (err) {
+          if (!shouldFilterException(err)) {
+            this.exceptionHandlerService.captureExceptions([err]);
           }
+          throw err;
         }
       }
     }
