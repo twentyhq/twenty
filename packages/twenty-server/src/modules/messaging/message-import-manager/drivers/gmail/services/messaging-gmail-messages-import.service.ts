@@ -153,7 +153,9 @@ export class MessagingGmailMessagesImportService {
       );
     } catch (error) {
       this.logger.log(
-        `Messaging import for workspace ${workspaceId} and message channel ${messageChannel.id} failed with error: ${error}`,
+        `Messaging import for workspace ${workspaceId} and connected account ${
+          connectedAccount.id
+        } failed with error: ${JSON.stringify(error)}`,
       );
 
       await this.cacheStorage.setAdd(
