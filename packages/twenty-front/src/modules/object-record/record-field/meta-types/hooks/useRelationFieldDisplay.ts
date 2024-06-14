@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
+import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
@@ -50,7 +51,7 @@ export const useRelationFieldDisplay = () => {
   const generateRecordChipData =
     chipGeneratorPerObjectPerField[
       fieldDefinition.metadata.objectMetadataNameSingular
-    ][fieldDefinition.metadata.fieldName];
+    ]?.[fieldDefinition.metadata.fieldName] ?? generateDefaultRecordChipData;
 
   return {
     fieldDefinition,

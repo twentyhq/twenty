@@ -111,6 +111,7 @@ export class MessagingGmailMessagesImportService {
       );
 
       const messagesToSave = filterEmails(
+        messageChannel.handle,
         allMessages,
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
@@ -151,6 +152,10 @@ export class MessagingGmailMessagesImportService {
         workspaceId,
       );
     } catch (error) {
+      this.logger.log(
+        `Messaging import for workspace ${workspaceId} and message channel ${messageChannel.id} failed with error: ${error}`,
+      );
+
       await this.cacheStorage.setAdd(
         `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
         messageIdsToFetch,

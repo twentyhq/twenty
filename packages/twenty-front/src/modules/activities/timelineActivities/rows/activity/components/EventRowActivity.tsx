@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import {
@@ -6,6 +7,7 @@ import {
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
 } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
 
@@ -26,15 +28,23 @@ export const EventRowActivity = ({
     throw new Error('Could not find linked record id for event');
   }
 
+  const [activityInStore] = useRecoilState(
+    recordStoreFamilyState(event.linkedRecordId),
+  );
+
   return (
     <>
       <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
       <StyledEventRowItemAction>{eventAction}</StyledEventRowItemAction>
-      <StyledLinkedActivity
-        onClick={() => openActivityRightDrawer(event.linkedRecordId)}
-      >
-        {event.linkedRecordCachedName}
-      </StyledLinkedActivity>
+      {activityInStore ? (
+        <StyledLinkedActivity
+          onClick={() => openActivityRightDrawer(event.linkedRecordId)}
+        >
+          {event.linkedRecordCachedName}
+        </StyledLinkedActivity>
+      ) : (
+        <span>{event.linkedRecordCachedName}</span>
+      )}
     </>
   );
 };

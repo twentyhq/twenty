@@ -9,7 +9,7 @@ import { RelationPickerDecorator } from '~/testing/decorators/RelationPickerDeco
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getPeopleMock } from '~/testing/mock-data/people';
-import { sleep } from '~/testing/sleep';
+import { sleep } from '~/utils/sleep';
 
 import { EntityForSelect } from '../../types/EntityForSelect';
 import { SingleEntitySelect } from '../SingleEntitySelect';

@@ -43,6 +43,7 @@ const StyledItemTitleDate = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: flex-end;
   margin-left: auto;
+  align-self: baseline;
 `;
 
 const StyledVerticalLineContainer = styled.div`
