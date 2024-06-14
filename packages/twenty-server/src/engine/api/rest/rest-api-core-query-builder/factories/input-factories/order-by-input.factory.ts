@@ -7,7 +7,7 @@ import {
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
-import { checkFields } from 'src/engine/api/rest/rest-api-core-query-builder/utils/check-fields.utils';
+import { checkArrayFields } from 'src/engine/api/rest/rest-api-core-query-builder/utils/check-order-by.utils';
 
 export const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 
@@ -17,12 +17,12 @@ export class OrderByInputFactory {
     const orderByQuery = request.query.order_by;
 
     if (typeof orderByQuery !== 'string') {
-      return {};
+      return [{}];
     }
 
     //orderByQuery = field_1[AscNullsFirst],field_2[DescNullsLast],field_3
     const orderByItems = orderByQuery.split(',');
-    let result = {};
+    let result: Array<Record<string, OrderByDirection>> = [];
     let itemDirection = '';
     let itemFields = '';
 
@@ -65,10 +65,14 @@ export class OrderByInputFactory {
           }
         }, itemDirection);
 
-      result = { ...result, ...fieldResult };
+      const resultFields = Object.keys(fieldResult).map((key) => ({
+        [key]: fieldResult[key],
+      }));
+
+      result = [...result, ...resultFields];
     }
 
-    checkFields(objectMetadata.objectMetadataItem, Object.keys(result));
+    checkArrayFields(objectMetadata.objectMetadataItem, result);
 
     return result;
   }

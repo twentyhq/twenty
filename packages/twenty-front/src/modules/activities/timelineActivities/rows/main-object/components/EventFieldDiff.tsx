@@ -5,6 +5,7 @@ import { EventFieldDiffValue } from '@/activities/timelineActivities/rows/main-o
 import { EventFieldDiffValueEffect } from '@/activities/timelineActivities/rows/main-object/components/EventFieldDiffValueEffect';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
 type EventFieldDiffProps = {
   diffRecord: Record<string, any>;
@@ -33,19 +34,21 @@ export const EventFieldDiff = ({
   }
 
   return (
-    <StyledEventFieldDiffContainer>
-      <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />→
-      <EventFieldDiffValueEffect
-        diffArtificialRecordStoreId={diffArtificialRecordStoreId}
-        mainObjectMetadataItem={mainObjectMetadataItem}
-        fieldMetadataItem={fieldMetadataItem}
-        diffRecord={diffRecord}
-      />
-      <EventFieldDiffValue
-        diffArtificialRecordStoreId={diffArtificialRecordStoreId}
-        mainObjectMetadataItem={mainObjectMetadataItem}
-        fieldMetadataItem={fieldMetadataItem}
-      />
-    </StyledEventFieldDiffContainer>
+    <RecordFieldValueSelectorContextProvider>
+      <StyledEventFieldDiffContainer>
+        <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />→
+        <EventFieldDiffValueEffect
+          diffArtificialRecordStoreId={diffArtificialRecordStoreId}
+          mainObjectMetadataItem={mainObjectMetadataItem}
+          fieldMetadataItem={fieldMetadataItem}
+          diffRecord={diffRecord}
+        />
+        <EventFieldDiffValue
+          diffArtificialRecordStoreId={diffArtificialRecordStoreId}
+          mainObjectMetadataItem={mainObjectMetadataItem}
+          fieldMetadataItem={fieldMetadataItem}
+        />
+      </StyledEventFieldDiffContainer>
+    </RecordFieldValueSelectorContextProvider>
   );
 };

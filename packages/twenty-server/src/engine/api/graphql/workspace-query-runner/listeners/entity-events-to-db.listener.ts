@@ -1,16 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { objectRecordChangedValues } from 'src/engine/integrations/event-emitter/utils/object-record-changed-values';
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
@@ -22,8 +15,6 @@ export class EntityEventsToDbListener {
   constructor(
     @Inject(MessageQueue.entityEventsToDbQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   @OnEvent('*.created')
@@ -50,20 +41,6 @@ export class EntityEventsToDbListener {
 
   private async handle(payload: ObjectRecordBaseEvent) {
     if (!payload.objectMetadata.isAuditLogged) {
-      return;
-    }
-
-    const isEventObjectEnabledFeatureFlag =
-      await this.featureFlagRepository.findOneBy({
-        workspaceId: payload.workspaceId,
-        key: FeatureFlagKeys.IsEventObjectEnabled,
-        value: true,
-      });
-
-    if (
-      !isEventObjectEnabledFeatureFlag ||
-      !isEventObjectEnabledFeatureFlag.value
-    ) {
       return;
     }
 

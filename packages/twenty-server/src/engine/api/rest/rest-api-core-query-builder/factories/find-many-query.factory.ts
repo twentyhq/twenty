@@ -14,7 +14,7 @@ export class FindManyQueryFactory {
     return `
       query FindMany${capitalize(objectNamePlural)}(
         $filter: ${objectNameSingular}FilterInput,
-        $orderBy: ${objectNameSingular}OrderByInput,
+        $orderBy: [${objectNameSingular}OrderByInput],
         $startingAfter: String,
         $endingBefore: String,
         $limit: Int = 60

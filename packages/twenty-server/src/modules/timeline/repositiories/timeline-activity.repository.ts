@@ -35,6 +35,17 @@ export class TimelineActivityRepository {
       workspaceId,
     );
 
+    // If the diff is empty, we don't need to insert or update an activity
+    // this should be handled differently, events should not be triggered when we will use proper DB events.
+    const isDiffEmpty =
+      properties.diff !== null &&
+      properties.diff &&
+      Object.keys(properties.diff).length === 0;
+
+    if (isDiffEmpty) {
+      return;
+    }
+
     if (recentTimelineActivity.length !== 0) {
       const newProps = objectRecordDiffMerge(
         recentTimelineActivity[0].properties,

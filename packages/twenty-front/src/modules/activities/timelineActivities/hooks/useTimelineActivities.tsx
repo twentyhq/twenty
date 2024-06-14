@@ -23,9 +23,11 @@ export const useTimelineActivities = (
         eq: targetableObject.id,
       },
     },
-    orderBy: {
-      createdAt: 'DescNullsFirst',
-    },
+    orderBy: [
+      {
+        createdAt: 'DescNullsFirst',
+      },
+    ],
     recordGqlFields: {
       id: true,
       createdAt: true,
@@ -38,6 +40,7 @@ export const useTimelineActivities = (
       workspaceMember: true,
       person: true,
     },
+    fetchPolicy: 'cache-and-network',
   });
 
   return {
