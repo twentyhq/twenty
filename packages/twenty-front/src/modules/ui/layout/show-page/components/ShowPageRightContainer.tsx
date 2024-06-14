@@ -136,7 +136,7 @@ export const ShowPageRightContainer = ({
       title: 'Logs',
       Icon: IconTimelineEvent,
       hide: !shouldDisplayLogTab,
-      hasBetaPill: true,
+      pill: 'Beta',
     },
   ];
 
