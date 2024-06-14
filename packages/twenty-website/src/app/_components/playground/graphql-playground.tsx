@@ -12,8 +12,6 @@ import Playground from './playground';
 import 'graphiql/graphiql.css';
 import '@graphiql/plugin-explorer/dist/style.css';
 
-export const dynamic = 'force-dynamic';
-
 const StyledContainer = styled.div`
   height: 100%;
 `;
