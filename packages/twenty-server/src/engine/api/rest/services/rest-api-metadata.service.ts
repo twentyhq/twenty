@@ -113,12 +113,18 @@ export class RestApiMetadataService {
   generateFindManyQuery(objectNameSingular: string, objectNamePlural: string) {
     const fields = this.fetchMetadataFields(objectNamePlural);
 
+    let filterType = '';
+    let filterValue = '';
+
+    if (objectNamePlural !== 'relations') {
+      filterType = `($filter: ${objectNameSingular}Filter)`;
+      filterValue = 'filter: $filter,';
+    }
+
     return `
-      query FindMany${capitalize(objectNamePlural)}(
-        $filter: ${objectNameSingular}Filter,
-        ) {
+      query FindMany${capitalize(objectNamePlural)}${filterType} {
         ${objectNamePlural}(
-        filter: $filter,
+        ${filterValue}
         paging: { first: 1000 }
         ) {
           edges {
