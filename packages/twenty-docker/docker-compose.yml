@@ -2,10 +2,22 @@ version: "3.9"
 name: twenty
 
 services:
+  change-vol-ownership:
+    image: ubuntu
+    user: root
+    volumes:
+      - server-local-data:/tmp/server-local-data
+      - docker-data:/tmp/docker-data
+    command: >
+      bash -c "
+      chown -R 1000:1000 /tmp/server-local-data
+      && chown -R 1000:1000 /tmp/docker-data"
+
   server:
     image: twentycrm/twenty:${TAG}
     volumes:
-      - server-local-data:/app/${STORAGE_LOCAL_PATH:-.local-storage}
+      - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
+      - docker-data:/app/docker-data
     ports:
       - "3000:3000"
     environment:
@@ -27,6 +39,8 @@ services:
       REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
       FILE_TOKEN_SECRET: ${FILE_TOKEN_SECRET}
     depends_on:
+      change-vol-ownership:
+        condition: service_completed_successfully
       db:
         condition: service_healthy
     healthcheck:
@@ -38,8 +52,6 @@ services:
 
   worker:
     image: twentycrm/twenty:${TAG}
-    volumes:
-      - worker-local-data:/app/${STORAGE_LOCAL_PATH:-.local-storage}
     command: ["yarn", "worker:prod"]
     environment:
       PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
@@ -47,7 +59,7 @@ services:
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
       MESSAGE_QUEUE_TYPE: ${MESSAGE_QUEUE_TYPE}
 
-      ENABLE_DB_MIGRATIONS: "true"
+      ENABLE_DB_MIGRATIONS: "false" # it already runs on the server
 
       STORAGE_TYPE: ${STORAGE_TYPE}
       STORAGE_S3_REGION: ${STORAGE_S3_REGION}
@@ -59,6 +71,8 @@ services:
       FILE_TOKEN_SECRET: ${FILE_TOKEN_SECRET}
     depends_on:
       db:
+        condition: service_healthy
+      server:
         condition: service_healthy
     restart: always
 
@@ -76,6 +90,6 @@ services:
     restart: always
 
 volumes:
+  docker-data:
   db-data:
   server-local-data:
-  worker-local-data:

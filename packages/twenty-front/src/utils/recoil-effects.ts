@@ -5,17 +5,17 @@ import { cookieStorage } from '~/utils/cookie-storage';
 import { isDefined } from './isDefined';
 
 export const localStorageEffect =
-  <T>(key: string): AtomEffect<T> =>
-  ({ setSelf, onSet }) => {
-    const savedValue = localStorage.getItem(key);
+  <T>(key?: string): AtomEffect<T> =>
+  ({ setSelf, onSet, node }) => {
+    const savedValue = localStorage.getItem(key ?? node.key);
     if (savedValue != null) {
       setSelf(JSON.parse(savedValue));
     }
 
     onSet((newValue, _, isReset) => {
       isReset
-        ? localStorage.removeItem(key)
-        : localStorage.setItem(key, JSON.stringify(newValue));
+        ? localStorage.removeItem(key ?? node.key)
+        : localStorage.setItem(key ?? node.key, JSON.stringify(newValue));
     });
   };
 

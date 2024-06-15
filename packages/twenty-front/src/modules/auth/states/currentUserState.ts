@@ -4,7 +4,7 @@ import { User } from '~/generated/graphql';
 
 export type CurrentUser = Pick<
   User,
-  'id' | 'email' | 'supportUserHash' | 'canImpersonate' | 'state'
+  'id' | 'email' | 'supportUserHash' | 'canImpersonate' | 'onboardingStep'
 >;
 
 export const currentUserState = createState<CurrentUser | null>({

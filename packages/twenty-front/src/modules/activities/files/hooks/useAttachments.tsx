@@ -17,9 +17,11 @@ export const useAttachments = (targetableObject: ActivityTargetableObject) => {
         eq: targetableObject.id,
       },
     },
-    orderBy: {
-      createdAt: 'DescNullsFirst',
-    },
+    orderBy: [
+      {
+        createdAt: 'DescNullsFirst',
+      },
+    ],
   });
 
   return {

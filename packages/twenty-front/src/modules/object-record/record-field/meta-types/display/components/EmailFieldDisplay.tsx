@@ -1,9 +1,8 @@
+import { useEmailFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useEmailFieldDisplay';
 import { EmailDisplay } from '@/ui/field/display/components/EmailDisplay';
 
-import { useEmailField } from '../../hooks/useEmailField';
-
 export const EmailFieldDisplay = () => {
-  const { fieldValue } = useEmailField();
+  const { fieldValue } = useEmailFieldDisplay();
 
   return <EmailDisplay value={fieldValue} />;
 };

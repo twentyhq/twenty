@@ -4,6 +4,7 @@ export type QueryVariables = {
   filter?: object;
   orderBy?: object;
   limit?: number;
-  lastCursor?: string;
+  startingAfter?: string;
+  endingBefore?: string;
   input?: object;
 };

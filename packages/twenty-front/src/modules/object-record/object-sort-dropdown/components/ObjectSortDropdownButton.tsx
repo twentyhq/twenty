@@ -5,10 +5,11 @@ import { IconChevronDown, useIcons } from 'twenty-ui';
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
-import { LightButton } from '@/ui/input/button/components/LightButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
@@ -54,13 +55,14 @@ export const ObjectSortDropdownButton = ({
     setSelectedSortDirection,
     toggleSortDropdown,
     resetState,
-    isSortSelected,
     availableSortDefinitions,
     handleAddSort,
     objectSortDropdownSearchInputState,
     setObjectSortDropdownSearchInput,
     resetSearchInput,
   } = useObjectSortDropdown();
+
+  const { isDropdownOpen } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
 
   const handleButtonClick = () => {
     toggleSortDropdown();
@@ -84,11 +86,12 @@ export const ObjectSortDropdownButton = ({
         dropdownHotkeyScope={hotkeyScope}
         dropdownOffset={{ y: 8 }}
         clickableComponent={
-          <LightButton
-            title="Sort"
-            active={isSortSelected}
+          <StyledHeaderDropdownButton
+            isUnfolded={isDropdownOpen}
             onClick={handleButtonClick}
-          />
+          >
+            Sort
+          </StyledHeaderDropdownButton>
         }
         dropdownComponents={
           <>

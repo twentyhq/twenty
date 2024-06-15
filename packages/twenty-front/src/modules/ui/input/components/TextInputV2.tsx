@@ -117,6 +117,7 @@ export type TextInputV2ComponentProps = Omit<
   onChange?: (text: string) => void;
   fullWidth?: boolean;
   error?: string;
+  noErrorHelper?: boolean;
   RightIcon?: IconComponent;
   LeftIcon?: IconComponent;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -134,6 +135,7 @@ const TextInputV2Component = (
     onKeyDown,
     fullWidth,
     error,
+    noErrorHelper = false,
     required,
     type,
     autoFocus,
@@ -207,7 +209,9 @@ const TextInputV2Component = (
           )}
         </StyledTrailingIconContainer>
       </StyledInputContainer>
-      {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
+      {error && !noErrorHelper && (
+        <StyledErrorHelper>{error}</StyledErrorHelper>
+      )}
     </StyledContainer>
   );
 };

@@ -6,6 +6,7 @@ import { FullNameFieldInput } from '@/object-record/record-field/meta-types/inpu
 import { LinksFieldInput } from '@/object-record/record-field/meta-types/input/components/LinksFieldInput';
 import { MultiSelectFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiSelectFieldInput';
 import { RawJsonFieldInput } from '@/object-record/record-field/meta-types/input/components/RawJsonFieldInput';
+import { RelationManyFieldInput } from '@/object-record/record-field/meta-types/input/components/RelationManyFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
@@ -14,6 +15,7 @@ import { isFieldFullName } from '@/object-record/record-field/types/guards/isFie
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
+import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
@@ -71,7 +73,15 @@ export const FieldInput = ({
       recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputdId)}
     >
       {isFieldRelation(fieldDefinition) ? (
-        <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+        isFieldRelationFromManyObjects(fieldDefinition) ? (
+          <RelationManyFieldInput
+            relationPickerScopeId={getScopeIdFromComponentId(
+              `relation-picker-${fieldDefinition.fieldMetadataId}`,
+            )}
+          />
+        ) : (
+          <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+        )
       ) : isFieldPhone(fieldDefinition) ||
         isFieldDisplayedAsPhone(fieldDefinition) ? (
         <PhoneFieldInput

@@ -12,7 +12,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
-import { sleep } from '~/testing/sleep';
+import { sleep } from '~/utils/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Onboarding/ChooseYourPlan',

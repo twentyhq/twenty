@@ -7,7 +7,7 @@ import { parseDate } from '~/utils/date-utils';
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 type DateTimeDisplayProps = {
-  value: Date | string | null | undefined;
+  value: string | null | undefined;
 };
 
 export const DateTimeDisplay = ({ value }: DateTimeDisplayProps) => {

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { EntityManager } from 'typeorm';
 
@@ -24,20 +25,21 @@ export class MessagingMessageParticipantService {
     @InjectObjectMetadataRepository(PersonWorkspaceEntity)
     private readonly personRepository: PersonRepository,
     private readonly addPersonIdAndWorkspaceMemberIdService: AddPersonIdAndWorkspaceMemberIdService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   public async updateMessageParticipantsAfterPeopleCreation(
     createdPeople: ObjectRecord<PersonWorkspaceEntity>[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<void> {
+  ): Promise<ObjectRecord<MessageParticipantWorkspaceEntity>[]> {
     const participants = await this.messageParticipantRepository.getByHandles(
       createdPeople.map((person) => person.email),
       workspaceId,
       transactionManager,
     );
 
-    if (!participants) return;
+    if (!participants) return [];
 
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
@@ -57,7 +59,7 @@ export class MessagingMessageParticipantService {
       )?.id,
     }));
 
-    if (messageParticipantsToUpdate.length === 0) return;
+    if (messageParticipantsToUpdate.length === 0) return [];
 
     const { flattenedValues, valuesString } =
       getFlattenedValuesAndValuesStringForBatchRawQuery(
@@ -68,22 +70,25 @@ export class MessagingMessageParticipantService {
         },
       );
 
-    await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageParticipant" AS "messageParticipant" SET "personId" = "data"."personId"
+    return (
+      await this.workspaceDataSourceService.executeRawQuery(
+        `UPDATE ${dataSourceSchema}."messageParticipant" AS "messageParticipant" SET "personId" = "data"."personId"
       FROM (VALUES ${valuesString}) AS "data"("id", "personId")
-      WHERE "messageParticipant"."id" = "data"."id"`,
-      flattenedValues,
-      workspaceId,
-      transactionManager,
-    );
+      WHERE "messageParticipant"."id" = "data"."id"
+      RETURNING *`,
+        flattenedValues,
+        workspaceId,
+        transactionManager,
+      )
+    ).flat();
   }
 
   public async saveMessageParticipants(
     participants: ParticipantWithMessageId[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<void> {
-    if (!participants) return;
+  ): Promise<ObjectRecord<MessageParticipantWorkspaceEntity>[]> {
+    if (!participants) return [];
 
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
@@ -108,10 +113,10 @@ export class MessagingMessageParticipantService {
         },
       );
 
-    if (messageParticipantsToSave.length === 0) return;
+    if (messageParticipantsToSave.length === 0) return [];
 
-    await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ${valuesString}`,
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ${valuesString} RETURNING *`,
       flattenedValues,
       workspaceId,
       transactionManager,
@@ -135,11 +140,18 @@ export class MessagingMessageParticipantService {
     );
 
     if (personId) {
-      await this.messageParticipantRepository.updateParticipantsPersonId(
-        messageParticipantIdsToUpdate,
-        personId,
+      const updatedMessageParticipants =
+        await this.messageParticipantRepository.updateParticipantsPersonIdAndReturn(
+          messageParticipantIdsToUpdate,
+          personId,
+          workspaceId,
+        );
+
+      this.eventEmitter.emit(`messageParticipant.matched`, {
         workspaceId,
-      );
+        userId: null,
+        messageParticipants: updatedMessageParticipants,
+      });
     }
     if (workspaceMemberId) {
       await this.messageParticipantRepository.updateParticipantsWorkspaceMemberId(

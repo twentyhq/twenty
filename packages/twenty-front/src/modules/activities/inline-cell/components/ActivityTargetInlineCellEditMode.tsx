@@ -171,15 +171,10 @@ export const ActivityTargetInlineCellEditMode = ({
     });
   };
 
-  const handleCancel = () => {
-    closeEditableField();
-  };
-
   return (
     <StyledSelectContainer>
       <MultipleObjectRecordSelect
         selectedObjectRecordIds={selectedTargetObjectIds}
-        onCancel={handleCancel}
         onSubmit={handleSubmit}
       />
     </StyledSelectContainer>

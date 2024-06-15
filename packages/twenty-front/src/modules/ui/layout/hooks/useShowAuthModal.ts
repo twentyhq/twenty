@@ -28,7 +28,8 @@ export const useShowAuthModal = () => {
       OnboardingStatus.OngoingUserCreation === onboardingStatus ||
       OnboardingStatus.OngoingProfileCreation === onboardingStatus ||
       OnboardingStatus.OngoingWorkspaceActivation === onboardingStatus ||
-      OnboardingStatus.OngoingSyncEmail === onboardingStatus
+      OnboardingStatus.OngoingSyncEmail === onboardingStatus ||
+      OnboardingStatus.OngoingInviteTeam === onboardingStatus
     ) {
       return true;
     }

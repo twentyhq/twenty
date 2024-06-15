@@ -15,10 +15,10 @@ import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/strategies/googl
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { UserStateService } from 'src/engine/core-modules/user-state/user-state.service';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 
 @Controller('auth/google-apis')
 export class GoogleAPIsAuthController {
@@ -26,7 +26,7 @@ export class GoogleAPIsAuthController {
     private readonly googleAPIsService: GoogleAPIsService,
     private readonly tokenService: TokenService,
     private readonly environmentService: EnvironmentService,
-    private readonly userStateService: UserStateService,
+    private readonly onboardingService: OnboardingService,
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
   ) {}
@@ -86,7 +86,7 @@ export class GoogleAPIsAuthController {
     )?.userId;
 
     if (userId) {
-      await this.userStateService.skipSyncEmailOnboardingStep(
+      await this.onboardingService.skipSyncEmailOnboardingStep(
         userId,
         workspaceId,
       );
