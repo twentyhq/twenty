@@ -6,12 +6,10 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { workspacesState } from '@/auth/states/workspaces';
-import { DateFormat } from '@/workspace-member/constants/DateFormat';
-import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
-import { formatDateLabel } from '@/workspace-member/utils/formatDateLabel';
-import { formatTimeLabel } from '@/workspace-member/utils/formatTimeLabel';
+import { getDateFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatDateLabel';
+import { getTimeFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatTimeLabel';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -50,16 +48,12 @@ export const UserProviderEffect = () => {
     if (isDefined(workspaceMember)) {
       setCurrentWorkspaceMember({
         ...workspaceMember,
-        preferredTimeZone:
-          workspaceMember.preferredTimeZone === 'system'
+        timeZone:
+          workspaceMember.timeZone === 'system'
             ? detectTimeZone()
-            : workspaceMember.preferredTimeZone,
-        preferredDateFormat: formatDateLabel(
-          workspaceMember.preferredDateFormat,
-        ) as DateFormat,
-        preferredTimeFormat: formatTimeLabel(
-          workspaceMember.preferredTimeFormat,
-        ) as TimeFormat,
+            : workspaceMember.timeZone,
+        dateFormat: getDateFormatFromWorkspaceEnum(workspaceMember.dateFormat),
+        timeFormat: getTimeFormatFromWorkspaceEnum(workspaceMember.timeFormat),
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
       });
     }

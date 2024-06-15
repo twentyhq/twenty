@@ -22,12 +22,10 @@ import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
-import { DateFormat } from '@/workspace-member/constants/DateFormat';
-import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
-import { formatDateLabel } from '@/workspace-member/utils/formatDateLabel';
-import { formatTimeLabel } from '@/workspace-member/utils/formatTimeLabel';
+import { getDateFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatDateLabel';
+import { getTimeFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatTimeLabel';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useChallengeMutation,
@@ -106,16 +104,16 @@ export const useAuth = () => {
       if (isDefined(user.workspaceMember)) {
         workspaceMember = {
           ...user.workspaceMember,
-          preferredTimeZone:
-            user.workspaceMember.preferredTimeZone !== 'system'
-              ? user.workspaceMember.preferredTimeZone
+          timeZone:
+            user.workspaceMember.timeZone !== 'system'
+              ? user.workspaceMember.timeZone
               : detectTimeZone(),
-          preferredDateFormat: formatDateLabel(
-            user.workspaceMember.preferredDateFormat,
-          ) as DateFormat,
-          preferredTimeFormat: formatTimeLabel(
-            user.workspaceMember.preferredTimeFormat,
-          ) as TimeFormat,
+          dateFormat: getDateFormatFromWorkspaceEnum(
+            user.workspaceMember.dateFormat,
+          ),
+          timeFormat: getTimeFormatFromWorkspaceEnum(
+            user.workspaceMember.timeFormat,
+          ),
           colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
         };
         setCurrentWorkspaceMember(workspaceMember);

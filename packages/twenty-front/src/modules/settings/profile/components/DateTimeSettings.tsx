@@ -11,6 +11,8 @@ import { DateTimeSettingsTimeZoneSelect } from '@/settings/profile/components/Da
 import { DateFormat } from '@/workspace-member/constants/DateFormat';
 import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
+import { getWorkspaceEnumFromDateFormat } from '@/workspace-member/utils/formatDateLabel';
+import { getWorkspaceEnumFromTimeFormat } from '@/workspace-member/utils/formatTimeLabel';
 import { isDefined } from '~/utils/isDefined';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 import { logError } from '~/utils/logError';
@@ -26,13 +28,14 @@ export const DateTimeSettings = () => {
     currentWorkspaceMemberState,
   );
   const [timeZone, setTimeZone] = useState(
-    currentWorkspaceMember?.preferredTimeZone ?? detectTimeZone(),
+    currentWorkspaceMember?.timeZone ?? detectTimeZone(),
   );
   const [dateFormat, setDateFormat] = useState(
-    currentWorkspaceMember?.preferredDateFormat ?? DateFormat.MONTH_FIRST,
+    (currentWorkspaceMember?.dateFormat as DateFormat) ??
+      DateFormat.MONTH_FIRST,
   );
   const [timeFormat, setTimeFormat] = useState(
-    currentWorkspaceMember?.preferredTimeFormat ?? TimeFormat.MILITARY,
+    (currentWorkspaceMember?.timeFormat as TimeFormat) ?? TimeFormat.MILITARY,
   );
 
   const { updateOneRecord } = useUpdateOneRecord({
@@ -61,25 +64,31 @@ export const DateTimeSettings = () => {
     if (!isDefined(currentWorkspaceMember)) {
       return;
     }
-    const changedFields: any = {};
+    const changedWorkspaceMemberFields: any = {};
+    const workspaceMemberStateFields: any = {};
 
-    if (timeZone !== currentWorkspaceMember.preferredTimeZone) {
-      changedFields.preferredTimeZone = timeZone;
+    if (timeZone !== currentWorkspaceMember.timeZone) {
+      changedWorkspaceMemberFields.timeZone = timeZone;
+      workspaceMemberStateFields.timeZone = timeZone;
     }
-    if (dateFormat !== currentWorkspaceMember.preferredDateFormat) {
-      changedFields.preferredDateFormat = dateFormat;
+    if (dateFormat !== currentWorkspaceMember.dateFormat) {
+      changedWorkspaceMemberFields.dateFormat =
+        getWorkspaceEnumFromDateFormat(dateFormat);
+      workspaceMemberStateFields.dateFormat = dateFormat;
     }
-    if (timeFormat !== currentWorkspaceMember.preferredTimeFormat) {
-      changedFields.preferredTimeFormat = timeFormat;
+    if (timeFormat !== currentWorkspaceMember.timeFormat) {
+      changedWorkspaceMemberFields.timeFormat =
+        getWorkspaceEnumFromTimeFormat(timeFormat);
+      workspaceMemberStateFields.timeFormat = timeFormat;
     }
 
-    if (!isEmptyObject(changedFields)) {
+    if (!isEmptyObject(changedWorkspaceMemberFields)) {
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
-        ...changedFields,
+        ...workspaceMemberStateFields,
       });
 
-      updateWorkspaceMember(changedFields);
+      updateWorkspaceMember(changedWorkspaceMemberFields);
     }
   }, [
     currentWorkspaceMember,
