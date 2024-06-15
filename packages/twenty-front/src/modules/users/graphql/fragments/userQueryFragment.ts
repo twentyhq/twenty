@@ -20,9 +20,9 @@ export const USER_QUERY_FRAGMENT = gql`
       colorScheme
       avatarUrl
       locale
-      preferredTimeZone
-      preferredDateFormat
-      preferredTimeFormat
+      timeZone
+      dateFormat
+      timeFormat
     }
     defaultWorkspace {
       id

@@ -1,5 +1,9 @@
 import { DateFormat } from '@/workspace-member/constants/DateFormat';
 import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
+import {
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated/graphql';
 
 export type ColorScheme = 'Dark' | 'Light' | 'System';
 
@@ -12,9 +16,9 @@ export type WorkspaceMember = {
   };
   avatarUrl?: string | null;
   locale: string;
-  preferredTimeZone: string;
-  preferredDateFormat: DateFormat;
-  preferredTimeFormat: TimeFormat;
+  timeZone: string;
+  dateFormat: DateFormat | WorkspaceMemberDateFormatEnum;
+  timeFormat: TimeFormat | WorkspaceMemberTimeFormatEnum;
   colorScheme?: ColorScheme;
   createdAt: string;
   updatedAt: string;

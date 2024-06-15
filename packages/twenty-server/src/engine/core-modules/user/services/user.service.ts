@@ -67,6 +67,9 @@ export class UserService extends TypeOrmQueryService<User> {
     userWorkspaceMember.colorScheme = workspaceMembers[0].colorScheme;
     userWorkspaceMember.locale = workspaceMembers[0].locale;
     userWorkspaceMember.avatarUrl = workspaceMembers[0].avatarUrl;
+    userWorkspaceMember.timeZone = workspaceMembers[0].timeZone;
+    userWorkspaceMember.dateFormat = workspaceMembers[0].dateFormat;
+    userWorkspaceMember.timeFormat = workspaceMembers[0].timeFormat;
     userWorkspaceMember.name = {
       firstName: workspaceMembers[0].nameFirstName,
       lastName: workspaceMembers[0].nameLastName,
@@ -81,9 +84,9 @@ export class UserService extends TypeOrmQueryService<User> {
 
     return await workspaceDataSource?.query(
       `
-      SELECT * 
-      FROM ${dataSource.schema}."workspaceMember" AS s 
-      INNER JOIN core.user AS u 
+      SELECT *
+      FROM ${dataSource.schema}."workspaceMember" AS s
+      INNER JOIN core.user AS u
       ON s."userId" = u.id
     `,
     );
