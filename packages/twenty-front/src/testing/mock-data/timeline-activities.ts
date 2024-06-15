@@ -1,6 +1,8 @@
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
-import { DateFormat } from '@/workspace-member/constants/DateFormat';
-import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
+import {
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated/graphql';
 
 export const mockedTimelineActivities: Array<TimelineActivity> = [
   {
@@ -23,9 +25,9 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
         lastName: 'Apple',
       },
       colorScheme: 'Light',
-      preferredTimeZone: 'system',
-      preferredDateFormat: DateFormat.MONTH_FIRST,
-      preferredTimeFormat: TimeFormat.MILITARY,
+      timeZone: 'system',
+      dateFormat: WorkspaceMemberDateFormatEnum.MmmDYyyy,
+      timeFormat: WorkspaceMemberTimeFormatEnum.HhMm,
     },
     workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
     deletedAt: null,
@@ -52,9 +54,9 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
         lastName: 'Apple',
       },
       colorScheme: 'Light',
-      preferredTimeZone: 'system',
-      preferredDateFormat: DateFormat.MONTH_FIRST,
-      preferredTimeFormat: TimeFormat.MILITARY,
+      timeZone: 'system',
+      dateFormat: WorkspaceMemberDateFormatEnum.MmmDYyyy,
+      timeFormat: WorkspaceMemberTimeFormatEnum.HhMm,
     },
     workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
     deletedAt: null,

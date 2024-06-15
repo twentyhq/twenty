@@ -6,38 +6,38 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
-import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
-import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
-import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
-import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-export enum DateFormat {
-  SYSTEM = 'system',
-  MONTH_FIRST = 'MMM_d_yyyy',
-  DAY_FIRST = 'd_MMM_yyyy',
-  YEAR_FIRST = 'yyyy_MMM_d',
+export enum WorkspaceMemberDateFormatEnum {
+  SYSTEM = 'SYSTEM',
+  MMM_D_YYYY = 'MMM_D_YYYY',
+  D_MMM_YYYY = 'D_MMM_YYYY',
+  YYYY_MMM_D = 'YYYY_MMM_D',
 }
 
-export enum TimeFormat {
-  SYSTEM = 'system',
-  MILITARY = 'HH_mm',
-  STANDARD = 'h_mm_aa',
+export enum WorkspaceMemberTimeFormatEnum {
+  SYSTEM = 'SYSTEM',
+  HH_MM = 'HH_MM',
+  H_MM_AA = 'H_MM_AA',
 }
 
 @WorkspaceEntity({
@@ -108,75 +108,80 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   userId: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.preferredTimeZone,
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
     type: FieldMetadataType.TEXT,
     label: 'Time zone',
     defaultValue: "'system'",
     description: 'User time zone',
     icon: 'IconTimezone',
   })
-  preferredTimeZone: string;
+  timeZone: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.preferredDateFormat,
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
     type: FieldMetadataType.SELECT,
     label: 'Date format',
     description: "User's preferred date format",
     icon: 'IconCalendarEvent',
     options: [
       {
-        value: DateFormat.SYSTEM,
+        value: WorkspaceMemberDateFormatEnum.SYSTEM,
         label: 'System',
         position: 0,
         color: 'turquoise',
       },
       {
-        value: DateFormat.MONTH_FIRST,
+        value: WorkspaceMemberDateFormatEnum.MMM_D_YYYY,
         label: 'Month First',
         position: 1,
         color: 'red',
       },
       {
-        value: DateFormat.DAY_FIRST,
+        value: WorkspaceMemberDateFormatEnum.D_MMM_YYYY,
         label: 'Day First',
         position: 2,
         color: 'purple',
       },
       {
-        value: DateFormat.YEAR_FIRST,
+        value: WorkspaceMemberDateFormatEnum.YYYY_MMM_D,
         label: 'Year First',
         position: 3,
         color: 'sky',
       },
     ],
-    defaultValue: `'${DateFormat.SYSTEM}'`,
+    defaultValue: `'${WorkspaceMemberDateFormatEnum.SYSTEM}'`,
   })
-  preferredDateFormat: string;
+  dateFormat: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.preferredTimeFormat,
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
     type: FieldMetadataType.SELECT,
     label: 'Time format',
     description: "User's preferred time format",
     icon: 'IconClock2',
     options: [
-      { value: TimeFormat.SYSTEM, label: 'System', position: 0, color: 'sky' },
       {
-        value: TimeFormat.MILITARY,
+        value: WorkspaceMemberTimeFormatEnum.SYSTEM,
+        label: 'System',
+        position: 0,
+        color: 'sky',
+      },
+      {
+        value: WorkspaceMemberTimeFormatEnum.HH_MM,
         label: 'Military',
         position: 1,
         color: 'red',
       },
       {
-        value: TimeFormat.STANDARD,
+        value: WorkspaceMemberTimeFormatEnum.H_MM_AA,
         label: 'Standard',
         position: 2,
         color: 'purple',
       },
     ],
-    defaultValue: `'${TimeFormat.SYSTEM}'`,
+    defaultValue: `'${WorkspaceMemberTimeFormatEnum.SYSTEM}'`,
   })
-  preferredTimeFormat: string;
+  timeFormat: string;
 
   // Relations
   @WorkspaceRelation({

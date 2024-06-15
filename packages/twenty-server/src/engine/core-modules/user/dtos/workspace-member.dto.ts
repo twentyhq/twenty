@@ -4,18 +4,18 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
-  DateFormat,
-  TimeFormat,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-registerEnumType(DateFormat, {
-  name: 'DateFormat',
+registerEnumType(WorkspaceMemberDateFormatEnum, {
+  name: 'WorkspaceMemberDateFormatEnum',
   description:
     'Date format as Month first, Day first, Year first or system as default',
 });
 
-registerEnumType(TimeFormat, {
-  name: 'TimeFormat',
+registerEnumType(WorkspaceMemberTimeFormatEnum, {
+  name: 'WorkspaceMemberTimeFormatEnum',
   description: 'Time time as Military, Standard or system as default',
 });
 
@@ -45,12 +45,12 @@ export class WorkspaceMember {
   @Field({ nullable: false })
   locale: string;
 
-  @Field({ nullable: false, defaultValue: 'system' })
-  preferredTimeZone: string;
+  @Field({ nullable: false })
+  timeZone: string;
 
-  @Field(() => DateFormat)
-  preferredDateFormat: DateFormat;
+  @Field(() => WorkspaceMemberDateFormatEnum)
+  dateFormat: WorkspaceMemberDateFormatEnum;
 
-  @Field(() => TimeFormat)
-  preferredTimeFormat: TimeFormat;
+  @Field(() => WorkspaceMemberTimeFormatEnum)
+  timeFormat: WorkspaceMemberTimeFormatEnum;
 }

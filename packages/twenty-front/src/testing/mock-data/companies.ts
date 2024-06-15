@@ -1,8 +1,10 @@
 import { Company } from '@/companies/types/Company';
 import { Favorite } from '@/favorites/types/Favorite';
-import { DateFormat } from '@/workspace-member/constants/DateFormat';
-import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import {
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated/graphql';
 
 import { mockedUsersData } from './users';
 
@@ -47,9 +49,9 @@ export const mockedCompaniesData: Array<MockedCompany> = [
       createdAt: '2023-04-26T10:23:42.33625+00:00',
       userId: mockedUsersData[0].id,
       userEmail: 'charles@test.com',
-      preferredTimeZone: 'system',
-      preferredDateFormat: DateFormat.MONTH_FIRST,
-      preferredTimeFormat: TimeFormat.MILITARY,
+      timeZone: 'system',
+      dateFormat: WorkspaceMemberDateFormatEnum.MmmDYyyy,
+      timeFormat: WorkspaceMemberTimeFormatEnum.HhMm,
     },
   },
   {

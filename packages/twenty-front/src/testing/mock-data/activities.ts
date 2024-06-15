@@ -3,9 +3,11 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
 import { Company } from '@/companies/types/Company';
 import { Person } from '@/people/types/Person';
-import { DateFormat } from '@/workspace-member/constants/DateFormat';
-import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import {
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated/graphql';
 
 type MockedActivity = Pick<
   Activity,
@@ -61,9 +63,9 @@ const workspaceMember: WorkspaceMember = {
   userId: 'e2409670-1088-46b4-858e-f20a598d9d0f',
   userEmail: 'charles@test.com',
   colorScheme: 'Light',
-  preferredTimeZone: 'system',
-  preferredDateFormat: DateFormat.MONTH_FIRST,
-  preferredTimeFormat: TimeFormat.MILITARY,
+  timeZone: 'system',
+  dateFormat: WorkspaceMemberDateFormatEnum.MmmDYyyy,
+  timeFormat: WorkspaceMemberTimeFormatEnum.HhMm,
 };
 
 export const mockedTasks: Array<MockedActivity> = [
