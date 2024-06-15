@@ -145,13 +145,6 @@ const fieldNumericMock = {
   defaultValue: null,
 };
 
-const fieldProbabilityMock = {
-  name: 'fieldProbability',
-  type: FieldMetadataType.PROBABILITY,
-  isNullable: true,
-  defaultValue: null,
-};
-
 const fieldFullNameMock = {
   name: 'fieldFullName',
   type: FieldMetadataType.FULL_NAME,
@@ -206,7 +199,6 @@ export const fields = [
   fieldBooleanMock,
   fieldNumberMock,
   fieldNumericMock,
-  fieldProbabilityMock,
   fieldLinkMock,
   fieldLinksMock,
   fieldCurrencyMock,

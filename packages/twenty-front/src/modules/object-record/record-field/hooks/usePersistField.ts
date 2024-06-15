@@ -87,9 +87,6 @@ export const usePersistField = () => {
           isFieldBoolean(fieldDefinition) &&
           isFieldBooleanValue(valueToPersist);
 
-        const fieldIsProbability =
-          isFieldRating(fieldDefinition) && isFieldRatingValue(valueToPersist);
-
         const fieldIsNumber =
           isFieldNumber(fieldDefinition) && isFieldNumberValue(valueToPersist);
 
@@ -124,7 +121,6 @@ export const usePersistField = () => {
           fieldIsText ||
           fieldIsBoolean ||
           fieldIsEmail ||
-          fieldIsProbability ||
           fieldIsNumber ||
           fieldIsDateTime ||
           fieldIsDate ||

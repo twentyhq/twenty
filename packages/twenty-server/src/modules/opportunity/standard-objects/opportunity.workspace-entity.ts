@@ -62,16 +62,6 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   closeDate: Date;
 
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probability,
-    type: FieldMetadataType.TEXT,
-    label: 'Probability',
-    description: 'Opportunity probability',
-    icon: 'IconProgressCheck',
-    defaultValue: "'0'",
-  })
-  probability: string;
-
-  @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
     type: FieldMetadataType.SELECT,
     label: 'Stage',

@@ -29,11 +29,6 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
       return acc;
     }
 
-    // Todo: remove once Rating fieldtype is implemented
-    if (field.name === 'probability') {
-      return acc;
-    }
-
     if (field.type === FieldMetadataType.Relation) {
       if (isDefined(field.fromRelationMetadata)) {
         return acc;
