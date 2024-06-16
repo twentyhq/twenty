@@ -12,7 +12,11 @@ import {
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { billingState } from '@/client-config/states/billingState';
-import { OnboardingStep, WorkspaceMemberDateFormatEnum, WorkspaceMemberTimeFormatEnum } from '~/generated/graphql';
+import {
+  OnboardingStep,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated/graphql';
 
 const tokenPair = {
   accessToken: { token: 'accessToken', expiresAt: 'expiresAt' },
@@ -46,7 +50,7 @@ const currentWorkspaceMember = {
   },
   timeZone: 'system',
   dateFormat: WorkspaceMemberDateFormatEnum.System,
-  timeFormat: WorkspaceMemberTimeFormatEnum.System
+  timeFormat: WorkspaceMemberTimeFormatEnum.System,
 };
 
 const renderHooks = () => {

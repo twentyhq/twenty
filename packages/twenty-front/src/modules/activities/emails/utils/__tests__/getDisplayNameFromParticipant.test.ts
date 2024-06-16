@@ -1,6 +1,10 @@
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 
 import { getDisplayNameFromParticipant } from '../getDisplayNameFromParticipant';
+import {
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated/graphql';
 
 describe('getDisplayNameFromParticipant', () => {
   const participantWithName: EmailThreadMessageParticipant = {
@@ -44,6 +48,9 @@ describe('getDisplayNameFromParticipant', () => {
       updatedAt: '',
       userEmail: '',
       userId: '',
+      timeZone: 'system',
+      dateFormat: WorkspaceMemberDateFormatEnum.System,
+      timeFormat: WorkspaceMemberTimeFormatEnum.System
     },
   };
 

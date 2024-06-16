@@ -8,6 +8,10 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import {
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated/graphql';
 
 import {
   query,
@@ -15,7 +19,6 @@ import {
   variables,
 } from '../__mocks__/useFilteredSearchEntityQuery';
 import { useFilteredSearchEntityQuery } from '../useFilteredSearchEntityQuery';
-import { WorkspaceMemberDateFormatEnum, WorkspaceMemberTimeFormatEnum } from '~/generated/graphql';
 
 const mocks = [
   {
@@ -76,7 +79,7 @@ describe('useFilteredSearchEntityQuery', () => {
           locale: 'en',
           timeZone: 'system',
           dateFormat: WorkspaceMemberDateFormatEnum.System,
-          timeFormat: WorkspaceMemberTimeFormatEnum.System
+          timeFormat: WorkspaceMemberTimeFormatEnum.System,
         });
 
         const mockObjectMetadataItems = getObjectMetadataItemsMock();

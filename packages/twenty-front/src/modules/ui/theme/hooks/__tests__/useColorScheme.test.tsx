@@ -4,7 +4,10 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { WorkspaceMemberDateFormatEnum, WorkspaceMemberTimeFormatEnum } from '~/generated/graphql';
+import {
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated/graphql';
 
 const updateOneRecordMock = jest.fn();
 
@@ -27,7 +30,7 @@ const workspaceMember: Omit<
   locale: 'en',
   timeZone: 'system',
   dateFormat: WorkspaceMemberDateFormatEnum.System,
-  timeFormat: WorkspaceMemberTimeFormatEnum.System
+  timeFormat: WorkspaceMemberTimeFormatEnum.System,
 };
 
 describe('useColorScheme', () => {
