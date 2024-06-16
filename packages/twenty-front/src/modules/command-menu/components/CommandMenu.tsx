@@ -267,9 +267,10 @@ export const CommandMenu = () => {
     },
   };
 
-  const askAiCommandIds: string[] = isAskAIEnabled ? [askAiCommand.id] : [];
+  const askAiCommands: Command[] = isAskAIEnabled ? [askAiCommand] : [];
 
-  const selectableItemIds = askAiCommandIds
+  const selectableItemIds = askAiCommands
+    .map((cmd) => cmd.id)
     .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people.map((person) => person.id))
@@ -296,6 +297,7 @@ export const CommandMenu = () => {
                   hotkeyScope={AppHotkeyScope.CommandMenu}
                   onEnter={(itemId) => {
                     const command = [
+                      ...askAiCommands,
                       ...commandMenuCommands,
                       ...otherCommands,
                     ].find((cmd) => cmd.id === itemId);
