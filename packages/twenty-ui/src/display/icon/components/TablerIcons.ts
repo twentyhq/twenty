@@ -52,6 +52,7 @@ export {
   IconMessageCircle as IconComment,
   IconCopy,
   IconCreditCard,
+  IconCurrencyBaht,
   IconCurrencyDirham,
   IconCurrencyDollar,
   IconCurrencyEuro,
