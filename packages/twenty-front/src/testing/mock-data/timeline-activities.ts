@@ -53,6 +53,9 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
         lastName: 'Apple',
       },
       colorScheme: 'Light',
+      timeZone: 'system',
+      dateFormat: WorkspaceMemberDateFormatEnum.System,
+      timeFormat: WorkspaceMemberTimeFormatEnum.System
     },
     workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
     deletedAt: null,
@@ -78,6 +81,9 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
         lastName: 'Apple',
       },
       colorScheme: 'Light',
+      timeZone: 'system',
+      dateFormat: WorkspaceMemberDateFormatEnum.System,
+      timeFormat: WorkspaceMemberTimeFormatEnum.System
     },
     workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
     deletedAt: null,
@@ -110,6 +116,9 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
         lastName: 'Doe',
       },
       colorScheme: 'Light',
+      timeZone: 'system',
+      dateFormat: WorkspaceMemberDateFormatEnum.System,
+      timeFormat: WorkspaceMemberTimeFormatEnum.System
     },
     workspaceMemberId: '20202020-1553-45c6-a028-5a9064cce07f',
     deletedAt: null,
