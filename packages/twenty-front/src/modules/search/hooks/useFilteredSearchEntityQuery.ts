@@ -49,7 +49,7 @@ export const useFilteredSearchEntityQuery = ({
     useFindManyRecords({
       objectNameSingular,
       filter: selectedIdsFilter,
-      orderBy: { [orderByField]: sortOrder },
+      orderBy: [{ [orderByField]: sortOrder }],
       skip: !selectedIds.length,
     });
 
@@ -93,7 +93,7 @@ export const useFilteredSearchEntityQuery = ({
   } = useFindManyRecords({
     objectNameSingular,
     filter: makeAndFilterVariables([...searchFilters, selectedIdsFilter]),
-    orderBy: { [orderByField]: sortOrder },
+    orderBy: [{ [orderByField]: sortOrder }],
     skip: !selectedIds.length,
   });
 
@@ -106,7 +106,7 @@ export const useFilteredSearchEntityQuery = ({
       objectNameSingular,
       filter: makeAndFilterVariables([...searchFilters, notFilter]),
       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
-      orderBy: { [orderByField]: sortOrder },
+      orderBy: [{ [orderByField]: sortOrder }],
     });
 
   return {

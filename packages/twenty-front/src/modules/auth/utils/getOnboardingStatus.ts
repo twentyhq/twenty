@@ -1,5 +1,7 @@
+import { CurrentUser } from '@/auth/states/currentUserState';
 import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { OnboardingStep } from '~/generated/graphql';
 
 export enum OnboardingStatus {
   Incomplete = 'incomplete',
@@ -9,6 +11,8 @@ export enum OnboardingStatus {
   OngoingUserCreation = 'ongoing_user_creation',
   OngoingWorkspaceActivation = 'ongoing_workspace_activation',
   OngoingProfileCreation = 'ongoing_profile_creation',
+  OngoingSyncEmail = 'ongoing_sync_email',
+  OngoingInviteTeam = 'ongoing_invite_team',
   Completed = 'completed',
   CompletedWithoutSubscription = 'completed_without_subscription',
 }
@@ -17,6 +21,7 @@ export const getOnboardingStatus = ({
   isLoggedIn,
   currentWorkspaceMember,
   currentWorkspace,
+  currentUser,
   isBillingEnabled,
 }: {
   isLoggedIn: boolean;
@@ -25,6 +30,7 @@ export const getOnboardingStatus = ({
     'createdAt' | 'updatedAt' | 'userId' | 'userEmail' | '__typename'
   > | null;
   currentWorkspace: CurrentWorkspace | null;
+  currentUser: CurrentUser | null;
   isBillingEnabled: boolean;
 }) => {
   if (!isLoggedIn) {
@@ -33,7 +39,7 @@ export const getOnboardingStatus = ({
 
   // After SignInUp, the user should have a current workspace assigned.
   // If not, it indicates that the data is still being requested.
-  if (!currentWorkspace) {
+  if (!currentWorkspace || !currentUser) {
     return undefined;
   }
 
@@ -53,6 +59,14 @@ export const getOnboardingStatus = ({
     !currentWorkspaceMember?.name.lastName
   ) {
     return OnboardingStatus.OngoingProfileCreation;
+  }
+
+  if (currentUser.onboardingStep === OnboardingStep.SyncEmail) {
+    return OnboardingStatus.OngoingSyncEmail;
+  }
+
+  if (currentUser.onboardingStep === OnboardingStep.InviteTeam) {
+    return OnboardingStatus.OngoingInviteTeam;
   }
 
   if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {

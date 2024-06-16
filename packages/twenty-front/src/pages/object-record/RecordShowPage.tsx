@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 
+import { TimelineActivityContext } from '@/activities/timelineActivities/contexts/TimelineActivityContext';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
@@ -65,11 +66,17 @@ export const RecordShowPage = () => {
           </>
         </PageHeader>
         <PageBody>
-          <RecordShowContainer
-            objectNameSingular={objectNameSingular}
-            objectRecordId={objectRecordId}
-            loading={loading}
-          />
+          <TimelineActivityContext.Provider
+            value={{
+              labelIdentifierValue: pageName,
+            }}
+          >
+            <RecordShowContainer
+              objectNameSingular={objectNameSingular}
+              objectRecordId={objectRecordId}
+              loading={loading}
+            />
+          </TimelineActivityContext.Provider>
         </PageBody>
       </PageContainer>
     </RecordFieldValueSelectorContextProvider>

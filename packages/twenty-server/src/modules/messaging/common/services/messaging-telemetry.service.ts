@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 type MessagingTelemetryTrackInput = {
   eventName: string;
@@ -13,7 +14,10 @@ type MessagingTelemetryTrackInput = {
 
 @Injectable()
 export class MessagingTelemetryService {
-  constructor(private readonly analyticsService: AnalyticsService) {}
+  constructor(
+    private readonly analyticsService: AnalyticsService,
+    private readonly environmentService: EnvironmentService,
+  ) {}
 
   public async track({
     eventName,
@@ -39,7 +43,7 @@ export class MessagingTelemetryService {
       workspaceId,
       '', // voluntarely not retrieving this
       '', // to avoid slowing down
-      '',
+      this.environmentService.get('SERVER_URL'),
     );
   }
 }

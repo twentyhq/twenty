@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
@@ -25,6 +24,7 @@ import { Button } from '@/ui/input/button/components/Button';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import {
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
@@ -66,7 +66,6 @@ const SWITCH_INFOS = {
 };
 
 export const SettingsBilling = () => {
-  const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -140,10 +139,6 @@ export const SettingsBilling = () => {
     }
   };
 
-  const redirectToSubscribePage = () => {
-    navigate(AppPath.PlanRequired);
-  };
-
   return (
     <SubMenuTopBarContainer Icon={IconCurrencyDollar} title="Billing">
       <SettingsPageContainer>
@@ -158,20 +153,22 @@ export const SettingsBilling = () => {
           />
         )}
         {displaySubscriptionCanceledInfo && (
-          <Info
-            text={'Subscription canceled. Please start a new one'}
-            buttonTitle={'Subscribe'}
-            accent={'danger'}
-            onClick={redirectToSubscribePage}
-          />
+          <UndecoratedLink to={AppPath.PlanRequired}>
+            <Info
+              text={'Subscription canceled. Please start a new one'}
+              buttonTitle={'Subscribe'}
+              accent={'danger'}
+            />
+          </UndecoratedLink>
         )}
         {displaySubscribeInfo ? (
-          <Info
-            text={'Your workspace does not have an active subscription'}
-            buttonTitle={'Subscribe'}
-            accent={'danger'}
-            onClick={redirectToSubscribePage}
-          />
+          <UndecoratedLink to={AppPath.PlanRequired}>
+            <Info
+              text={'Your workspace does not have an active subscription'}
+              buttonTitle={'Subscribe'}
+              accent={'danger'}
+            />
+          </UndecoratedLink>
         ) : (
           <>
             <Section>

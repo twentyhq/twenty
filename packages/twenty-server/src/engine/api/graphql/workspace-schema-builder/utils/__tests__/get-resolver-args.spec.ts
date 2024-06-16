@@ -13,7 +13,11 @@ describe('getResolverArgs', () => {
       before: { type: GraphQLString, isNullable: true },
       after: { type: GraphQLString, isNullable: true },
       filter: { kind: InputTypeDefinitionKind.Filter, isNullable: true },
-      orderBy: { kind: InputTypeDefinitionKind.OrderBy, isNullable: true },
+      orderBy: {
+        kind: InputTypeDefinitionKind.OrderBy,
+        isNullable: true,
+        isArray: true,
+      },
       limit: { type: GraphQLInt, isNullable: true },
     },
     findOne: {

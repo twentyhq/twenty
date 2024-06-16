@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
+import { IconUser } from '@ui/display/icon/components/TablerIcons';
 import {
   CatalogDecorator,
   CatalogStory,
@@ -42,6 +43,30 @@ export const WithLongText: Story = {
   args: {
     color: 'green',
     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+  },
+  parameters: {
+    container: { width: 100 },
+  },
+};
+
+export const WithIcon: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    color: 'green',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+    Icon: IconUser,
+  },
+  parameters: {
+    container: { width: 100 },
+  },
+};
+
+export const DontShrink: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    color: 'green',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+    preventShrink: true,
   },
   parameters: {
     container: { width: 100 },

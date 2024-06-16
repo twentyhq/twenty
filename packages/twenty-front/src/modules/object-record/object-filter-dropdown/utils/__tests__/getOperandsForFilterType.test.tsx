@@ -13,6 +13,7 @@ describe('getOperandsForFilterType', () => {
     ],
     ['ADDRESS', [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain]],
     ['LINK', [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain]],
+    ['LINKS', [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain]],
     ['CURRENCY', [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan]],
     ['NUMBER', [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan]],
     ['DATE_TIME', [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan]],

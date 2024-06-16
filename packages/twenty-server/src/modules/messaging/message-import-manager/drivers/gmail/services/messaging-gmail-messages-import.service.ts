@@ -12,7 +12,7 @@ import { BlocklistRepository } from 'src/modules/connected-account/repositories/
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import {
   MessageChannelWorkspaceEntity,
-  MessageChannelSyncSubStatus,
+  MessageChannelSyncStage,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { createQueriesFromMessageIds } from 'src/modules/messaging/message-import-manager/utils/create-queries-from-message-ids.util';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
@@ -50,8 +50,8 @@ export class MessagingGmailMessagesImportService {
     workspaceId: string,
   ) {
     if (
-      messageChannel.syncSubStatus !==
-      MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING
+      messageChannel.syncStage !==
+      MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
     ) {
       return;
     }
@@ -101,9 +101,8 @@ export class MessagingGmailMessagesImportService {
       const allMessages =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
           messageQueries,
-          connectedAccount.accessToken,
-          workspaceId,
           connectedAccount.id,
+          workspaceId,
         );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
@@ -112,6 +111,7 @@ export class MessagingGmailMessagesImportService {
       );
 
       const messagesToSave = filterEmails(
+        messageChannel.handle,
         allMessages,
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
@@ -137,7 +137,12 @@ export class MessagingGmailMessagesImportService {
         );
       }
 
-      await this.messageChannelRepository.resetThrottlePauseUntilAndThrottleFailureCount(
+      await this.messageChannelRepository.resetThrottleFailureCount(
+        messageChannel.id,
+        workspaceId,
+      );
+
+      await this.messageChannelRepository.resetSyncStageStartedAt(
         messageChannel.id,
         workspaceId,
       );
@@ -147,10 +152,21 @@ export class MessagingGmailMessagesImportService {
         workspaceId,
       );
     } catch (error) {
+      this.logger.log(
+        `Messaging import for workspace ${workspaceId} and connected account ${
+          connectedAccount.id
+        } failed with error: ${JSON.stringify(error)}`,
+      );
+
       await this.cacheStorage.setAdd(
         `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
         messageIdsToFetch,
       );
+
+      if (error.code === undefined) {
+        // This should never happen as all errors must be known
+        throw error;
+      }
 
       await this.gmailErrorHandlingService.handleGmailError(
         {

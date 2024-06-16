@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository, In } from 'typeorm';
@@ -14,13 +14,17 @@ import {
   MessagingMessagesImportJobData,
   MessagingMessagesImportJob,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
+import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import {
+  MessageChannelSyncStage,
+  MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
 export class MessagingMessagesImportCronJob
   implements MessageQueueJob<undefined>
 {
-  private readonly logger = new Logger(MessagingMessagesImportCronJob.name);
-
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -29,6 +33,8 @@ export class MessagingMessagesImportCronJob
     private readonly environmentService: EnvironmentService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
+    private readonly messageChannelRepository: MessageChannelRepository,
   ) {}
 
   async handle(): Promise<void> {
@@ -54,12 +60,24 @@ export class MessagingMessagesImportCronJob
     );
 
     for (const workspaceId of workspaceIdsWithDataSources) {
-      await this.messageQueueService.add<MessagingMessagesImportJobData>(
-        MessagingMessagesImportJob.name,
-        {
-          workspaceId,
-        },
-      );
+      const messageChannels =
+        await this.messageChannelRepository.getAll(workspaceId);
+
+      for (const messageChannel of messageChannels) {
+        if (
+          messageChannel.isSyncEnabled &&
+          messageChannel.syncStage ===
+            MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
+        ) {
+          await this.messageQueueService.add<MessagingMessagesImportJobData>(
+            MessagingMessagesImportJob.name,
+            {
+              workspaceId,
+              messageChannelId: messageChannel.id,
+            },
+          );
+        }
+      }
     }
   }
 }

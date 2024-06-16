@@ -7,11 +7,12 @@ import { DeleteVariablesFactory } from 'src/engine/api/rest/rest-api-core-query-
 import { CreateVariablesFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/create-variables.factory';
 import { UpdateVariablesFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/update-variables.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/get-variables.factory';
-import { LastCursorInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/last-cursor-input.factory';
 import { LimitInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/limit-input.factory';
 import { OrderByInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/order-by-input.factory';
 import { FilterInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/filter-input.factory';
 import { CreateManyQueryFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/create-many-query.factory';
+import { StartingAfterInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/starting-after-input.factory';
+import { EndingBeforeInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/ending-before-input.factory';
 
 export const coreQueryBuilderFactories = [
   DeleteQueryFactory,
@@ -24,7 +25,8 @@ export const coreQueryBuilderFactories = [
   CreateVariablesFactory,
   UpdateVariablesFactory,
   GetVariablesFactory,
-  LastCursorInputFactory,
+  StartingAfterInputFactory,
+  EndingBeforeInputFactory,
   LimitInputFactory,
   OrderByInputFactory,
   FilterInputFactory,

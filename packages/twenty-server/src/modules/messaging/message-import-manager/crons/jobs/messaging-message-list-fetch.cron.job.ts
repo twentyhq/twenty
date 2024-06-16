@@ -12,7 +12,10 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageChannelSyncStage,
+  MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessageListFetchJobData,
   MessagingMessageListFetchJob,
@@ -59,35 +62,26 @@ export class MessagingMessageListFetchCronJob
     );
 
     for (const workspaceId of workspaceIdsWithDataSources) {
-      await this.enqueueSyncs(workspaceId);
-    }
-  }
-
-  private async enqueueSyncs(workspaceId: string): Promise<void> {
-    try {
       const messageChannels =
         await this.messageChannelRepository.getAll(workspaceId);
 
       for (const messageChannel of messageChannels) {
-        if (!messageChannel?.isSyncEnabled) {
-          continue;
+        if (
+          (messageChannel.isSyncEnabled &&
+            messageChannel.syncStage ===
+              MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING) ||
+          messageChannel.syncStage ===
+            MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING
+        ) {
+          await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+            MessagingMessageListFetchJob.name,
+            {
+              workspaceId,
+              messageChannelId: messageChannel.id,
+            },
+          );
         }
-
-        await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-          MessagingMessageListFetchJob.name,
-          {
-            workspaceId,
-            connectedAccountId: messageChannel.connectedAccountId,
-          },
-        );
       }
-    } catch (error) {
-      this.logger.error(
-        `Error while fetching workspace messages for workspace ${workspaceId}`,
-      );
-      this.logger.error(error);
-
-      return;
     }
   }
 }

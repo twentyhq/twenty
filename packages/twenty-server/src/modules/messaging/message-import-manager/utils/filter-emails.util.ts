@@ -2,14 +2,20 @@ import { isEmailBlocklisted } from 'src/modules/calendar-messaging-participant/u
 import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
 
 // Todo: refactor this into several utils
-export const filterEmails = (messages: GmailMessage[], blocklist: string[]) => {
+export const filterEmails = (
+  messageChannelHandle: string,
+  messages: GmailMessage[],
+  blocklist: string[],
+) => {
   return filterOutBlocklistedMessages(
+    messageChannelHandle,
     filterOutIcsAttachments(filterOutNonPersonalEmails(messages)),
     blocklist,
   );
 };
 
 const filterOutBlocklistedMessages = (
+  messageChannelHandle: string,
   messages: GmailMessage[],
   blocklist: string[],
 ) => {
@@ -19,7 +25,12 @@ const filterOutBlocklistedMessages = (
     }
 
     return message.participants.every(
-      (participant) => !isEmailBlocklisted(participant.handle, blocklist),
+      (participant) =>
+        !isEmailBlocklisted(
+          messageChannelHandle,
+          participant.handle,
+          blocklist,
+        ),
     );
   });
 };

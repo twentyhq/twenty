@@ -5,6 +5,8 @@ import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { Request } from 'express';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { CalendarChannelVisibility } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
+import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export type GoogleAPIsRequest = Omit<
   Request,
@@ -19,6 +21,9 @@ export type GoogleAPIsRequest = Omit<
     accessToken: string;
     refreshToken: string;
     transientToken: string;
+    redirectLocation?: string;
+    calendarVisibility?: CalendarChannelVisibility;
+    messageVisibility?: MessageChannelVisibility;
   };
 };
 
@@ -64,6 +69,9 @@ export class GoogleAPIsStrategy extends PassportStrategy(
       prompt: 'consent',
       state: JSON.stringify({
         transientToken: req.params.transientToken,
+        redirectLocation: req.params.redirectLocation,
+        calendarVisibility: req.params.calendarVisibility,
+        messageVisibility: req.params.messageVisibility,
       }),
     };
 
@@ -92,6 +100,9 @@ export class GoogleAPIsStrategy extends PassportStrategy(
       accessToken,
       refreshToken,
       transientToken: state.transientToken,
+      redirectLocation: state.redirectLocation,
+      calendarVisibility: state.calendarVisibility,
+      messageVisibility: state.messageVisibility,
     };
 
     done(null, user);

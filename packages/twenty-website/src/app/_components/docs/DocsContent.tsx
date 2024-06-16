@@ -1,6 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleContent';
@@ -15,7 +16,6 @@ const StyledContainer = styled('div')`
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    borderBottom: `1px solid ${Theme.background.transparent.medium}`,
     fontFamily: `${Theme.font.family}`,
   })};
   width: 100%;
@@ -37,8 +37,9 @@ const StyledWrapper = styled.div`
     width: 440px;
   }
 
-  @media (min-width: 801px) {
+  @media (min-width: 801px) and (max-width: 1500px) {
     max-width: 720px;
+    min-width: calc(100% - 184px);
     margin: ${Theme.spacing(10)} 92px ${Theme.spacing(20)};
   }
 
@@ -96,28 +97,30 @@ const StyledRectangle = styled.div`
   background: ${Theme.background.transparent.medium};
 `;
 
-const StyledImageContainer = styled.div`
-  border: 2px solid ${Theme.text.color.primary};
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const StyledImageContainer = styled.div<{ loaded: string }>`
+  position: relative;
+  width: 100%;
+  padding-top: 46%;
   overflow: hidden;
   border-radius: 16px;
-  max-width: fit-content;
+  border: 2px solid rgba(20, 20, 20, 0.08);
+  background: #fafafa;
+  transition: border-color 150ms ease-in-out;
+  ${({ loaded }) =>
+    loaded === 'true' &&
+    `border-color: ${Theme.text.color.primary};
+  `}
+`;
 
-  img {
-    height: 100%;
-    max-width: 100%;
-    width: 100%;
-    @media (min-width: 1000px) {
-      width: 720px;
-    }
-  }
+const StyledImage = styled(Image)<{ loaded: string }>`
+  opacity: ${({ loaded }) => (loaded === 'true' ? 1 : 0)};
+  transition: opacity 250ms ease-in-out;
 `;
 
 export default function DocsContent({ item }: { item: FileContent }) {
   const pathname = usePathname();
   const { uri, label } = getUriAndLabel(pathname);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const BREADCRUMB_ITEMS = [
     {
@@ -136,12 +139,16 @@ export default function DocsContent({ item }: { item: FileContent }) {
             separator="/"
           />
           <StyledHeading>{item.itemInfo.title}</StyledHeading>
-          <StyledImageContainer>
+          <StyledImageContainer loaded={imageLoaded.toString()}>
             {item.itemInfo.image && (
-              <img
+              <StyledImage
                 id={`img-${item.itemInfo.title}`}
                 src={item.itemInfo.image}
                 alt={item.itemInfo.title}
+                fill
+                style={{ objectFit: 'cover' }}
+                onLoad={() => setImageLoaded(true)}
+                loaded={imageLoaded.toString()}
               />
             )}
           </StyledImageContainer>

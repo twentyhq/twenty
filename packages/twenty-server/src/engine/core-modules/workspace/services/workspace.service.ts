@@ -5,6 +5,8 @@ import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
+import { SendInviteLinkEmail } from 'twenty-emails';
+import { render } from '@react-email/render';
 
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -13,6 +15,10 @@ import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/a
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
+import { EmailService } from 'src/engine/integrations/email/email.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -25,6 +31,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly billingService: BillingService,
+    private readonly environmentService: EnvironmentService,
+    private readonly emailService: EmailService,
+    private readonly onboardingService: OnboardingService,
   ) {
     super(workspaceRepository);
   }
@@ -89,7 +98,52 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       userId,
       workspaceId,
     });
+    await this.onboardingService.skipInviteTeamOnboardingStep(workspaceId);
     await this.reassignOrRemoveUserDefaultWorkspace(workspaceId, userId);
+  }
+
+  async sendInviteLink(
+    emails: string[],
+    workspace: Workspace,
+    sender: User,
+  ): Promise<SendInviteLink> {
+    if (!workspace?.inviteHash) {
+      return { success: false };
+    }
+
+    const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
+    const inviteLink = `${frontBaseURL}/invite/${workspace.inviteHash}`;
+
+    for (const email of emails) {
+      const emailData = {
+        link: inviteLink,
+        workspace: { name: workspace.displayName, logo: workspace.logo },
+        sender: { email: sender.email, firstName: sender.firstName },
+        serverUrl: this.environmentService.get('SERVER_URL'),
+      };
+      const emailTemplate = SendInviteLinkEmail(emailData);
+      const html = render(emailTemplate, {
+        pretty: true,
+      });
+
+      const text = render(emailTemplate, {
+        plainText: true,
+      });
+
+      await this.emailService.send({
+        from: `${this.environmentService.get(
+          'EMAIL_FROM_NAME',
+        )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+        to: email,
+        subject: 'Join your team on Twenty',
+        text,
+        html,
+      });
+    }
+
+    await this.onboardingService.skipInviteTeamOnboardingStep(workspace.id);
+
+    return { success: true };
   }
 
   private async reassignOrRemoveUserDefaultWorkspace(

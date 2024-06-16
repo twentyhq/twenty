@@ -12,6 +12,7 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { AskAIModule } from 'src/engine/core-modules/ask-ai/ask-ai.module';
+import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { FileModule } from './file/file.module';
@@ -36,6 +37,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
     UserModule,
     WorkspaceModule,
     AskAIModule,
+    PostgresCredentialsModule,
   ],
   exports: [
     AnalyticsModule,

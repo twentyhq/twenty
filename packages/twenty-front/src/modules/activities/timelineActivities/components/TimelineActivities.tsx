@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
 
+import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
 import { EventList } from '@/activities/timelineActivities/components/EventList';
 import { useTimelineActivities } from '@/activities/timelineActivities/hooks/useTimelineActivities';
@@ -22,8 +23,13 @@ const StyledMainContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: auto;
 
   justify-content: center;
+  padding-top: ${({ theme }) => theme.spacing(6)};
+  padding-right: ${({ theme }) => theme.spacing(6)};
+  padding-left: ${({ theme }) => theme.spacing(6)};
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 export const TimelineActivities = ({
@@ -31,7 +37,8 @@ export const TimelineActivities = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { timelineActivities } = useTimelineActivities(targetableObject);
+  const { timelineActivities, loading, fetchMoreRecords } =
+    useTimelineActivities(targetableObject);
 
   if (!isNonEmptyArray(timelineActivities)) {
     return (
@@ -56,6 +63,10 @@ export const TimelineActivities = ({
         targetableObject={targetableObject}
         title="All"
         events={timelineActivities ?? []}
+      />
+      <CustomResolverFetchMoreLoader
+        loading={loading}
+        onLastRowVisible={fetchMoreRecords}
       />
     </StyledMainContainer>
   );

@@ -8,6 +8,7 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(3)};
+  z-index: 1001;
 `;
 
 type NavigationBarProps = {

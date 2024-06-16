@@ -13,8 +13,10 @@ export const makeTimelineActivitiesQueryVariables = ({
         in: [...activityIds].sort(sortByAscString),
       },
     },
-    orderBy: {
-      createdAt: 'DescNullsFirst',
-    },
+    orderBy: [
+      {
+        createdAt: 'DescNullsFirst',
+      },
+    ],
   };
 };

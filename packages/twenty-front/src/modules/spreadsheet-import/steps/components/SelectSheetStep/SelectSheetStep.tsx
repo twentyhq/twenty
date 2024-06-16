@@ -55,17 +55,17 @@ export const SelectSheetStep = ({
         <StyledRadioContainer>
           <RadioGroup onValueChange={(value) => setValue(value)} value={value}>
             {sheetNames.map((sheetName) => (
-              <Radio value={sheetName} key={sheetName} />
+              <Radio value={sheetName} key={sheetName} label={sheetName} />
             ))}
           </RadioGroup>
         </StyledRadioContainer>
       </StyledContent>
       <StepNavigationButton
         onClick={() => handleOnContinue(value)}
+        onBack={onBack}
         isLoading={isLoading}
-        title="Next"
+        title="Continue"
       />
-      <StepNavigationButton onClick={onBack} title="Back" />
     </>
   );
 };
