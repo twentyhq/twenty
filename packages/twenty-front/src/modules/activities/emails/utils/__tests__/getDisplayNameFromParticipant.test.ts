@@ -50,7 +50,7 @@ describe('getDisplayNameFromParticipant', () => {
       userId: '',
       timeZone: 'system',
       dateFormat: WorkspaceMemberDateFormatEnum.System,
-      timeFormat: WorkspaceMemberTimeFormatEnum.System
+      timeFormat: WorkspaceMemberTimeFormatEnum.System,
     },
   };
 
