@@ -1,10 +1,13 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui';
 import { v4 } from 'uuid';
 
+import {
+  ObjectRecordAndSelected,
+  objectRecordMultiSelectFamilyState,
+} from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
-import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
@@ -16,45 +19,93 @@ export const StyledSelectableItem = styled(SelectableItem)`
 `;
 
 export const MultipleObjectRecordSelectItem = ({
-  objectRecordForSelect,
-  onSelectedChange,
-  selected,
+  objectRecordId,
+  onChange,
 }: {
-  objectRecordForSelect: ObjectRecordForSelect;
-  onSelectedChange?: (selected: boolean) => void;
-  selected: boolean;
+  objectRecordId: string;
+  onChange?: (
+    changedRecordForSelectId: string,
+    newSelectedValue: boolean,
+  ) => void;
 }) => {
+  console.log('MultipleObjectRecordSelectItem rerender', objectRecordId);
   const { isSelectedItemIdSelector } = useSelectableList(
     MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
   );
 
   const isSelectedByKeyboard = useRecoilValue(
-    isSelectedItemIdSelector(objectRecordForSelect.record.id),
+    isSelectedItemIdSelector(objectRecordId),
   );
 
+  const { selected, ...record } = useRecoilValue(
+    objectRecordMultiSelectFamilyState(objectRecordId),
+  ) as ObjectRecordAndSelected;
+
+  const handleSelectChange = useRecoilCallback(
+    ({ set }) =>
+      (newSelectedValue: boolean) => {
+        // const selectedObjectRecordsIds = snapshot
+        //   .getLoadable(selectedObjectRecordsIdsState)
+        //   .getValue();
+
+        // const record = snapshot
+        //   .getLoadable(
+        //     objectRecordMultiSelectFamilyState(changedRecordForSelectId),
+        //   )
+        //   .getValue();
+
+        // const newSelectedRecordsIds = newSelectedValue
+        //   ? [...selectedObjectRecordsIds, changedRecordForSelectId]
+        //   : selectedObjectRecordsIds.filter(
+        //       (selectedRecordId: string) =>
+        //         selectedRecordId !== changedRecordForSelectId,
+        //     );
+
+        // // const newSelectedRecordsIds = newSelectedValue
+        // //   ? [...selectedObjectRecordsIds, changedRecordForSelectId]
+        // //   : selectedObjectRecordsIds.filter(
+        // //       (selectedRecordId: string) =>
+        // //         selectedRecordId !== changedRecordForSelectId,
+        // //     );
+
+        // console.log('settingNewSelectedRecordsIds', newSelectedRecordsIds);
+        // set(objectRecordMultiSelectFamilyState(objectRecordId), {
+        //   ...record,
+        //   selected: newSelectedValue,
+        // });
+        // TODO update selectedObjectRecordsIdsState, needed for activityTarge since we send at submit ? or we need to iterate on the objects and add all those with selected: true
+
+        // set(selectedObjectRecordsIdsState, newSelectedRecordsIds);
+
+        onChange?.(objectRecordId, newSelectedValue);
+      },
+    [objectRecordId, onChange],
+  );
+
+  const { recordIdentifier } = record;
+
+  if (!recordIdentifier) {
+    return null;
+  }
+
   return (
-    <StyledSelectableItem
-      itemId={objectRecordForSelect.record.id}
-      key={objectRecordForSelect.record.id + v4()}
-    >
+    <StyledSelectableItem itemId={objectRecordId} key={objectRecordId + v4()}>
       <MenuItemMultiSelectAvatar
-        selected={selected}
-        onSelectChange={onSelectedChange}
+        onSelectChange={(isNewlySelectedValue) =>
+          handleSelectChange(isNewlySelectedValue)
+        }
         isKeySelected={isSelectedByKeyboard}
+        selected={selected}
         avatar={
           <Avatar
-            avatarUrl={getImageAbsoluteURIOrBase64(
-              objectRecordForSelect.recordIdentifier.avatarUrl,
-            )}
-            entityId={objectRecordForSelect.record.id}
-            placeholder={objectRecordForSelect.recordIdentifier.name}
+            avatarUrl={getImageAbsoluteURIOrBase64(recordIdentifier.avatarUrl)}
+            entityId={objectRecordId}
+            placeholder={recordIdentifier.name}
             size="md"
-            type={
-              objectRecordForSelect.recordIdentifier.avatarType ?? 'rounded'
-            }
+            type={recordIdentifier.avatarType ?? 'rounded'}
           />
         }
-        text={objectRecordForSelect.recordIdentifier.name}
+        text={recordIdentifier.name}
       />
     </StyledSelectableItem>
   );

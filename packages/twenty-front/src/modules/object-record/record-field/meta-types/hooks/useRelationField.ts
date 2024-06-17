@@ -30,6 +30,12 @@ export const useRelationField = <
     recordStoreFamilySelector({ recordId: entityId, fieldName }),
   );
 
+  console.log('fieldValue', fieldValue);
+
+  const setFieldValueWithLog = (a: any) => {
+    console.log('setting field value', a);
+    return setFieldValue(a);
+  };
   const { getDraftValueSelector } = useRecordFieldInput<FieldRelationValue<T>>(
     `${entityId}-${fieldName}`,
   );
@@ -41,7 +47,7 @@ export const useRelationField = <
     fieldDefinition,
     fieldValue,
     initialSearchValue,
-    setFieldValue,
+    setFieldValue: setFieldValueWithLog,
     maxWidth: button && maxWidth ? maxWidth - 28 : maxWidth,
     entityId,
   };

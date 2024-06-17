@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
 import { isNonEmptyArray, isNull } from '@sniptt/guards';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
+import { objectRecordsMultiSelectState } from '@/activities/states/objectRecordsMultiSelectState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
@@ -18,7 +19,6 @@ import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { MultipleObjectRecordSelect } from '@/object-record/relation-picker/components/MultipleObjectRecordSelect';
-import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 
 const StyledSelectContainer = styled.div`
@@ -37,6 +37,9 @@ export const ActivityTargetInlineCellEditMode = ({
   activityTargetWithTargetRecords,
 }: ActivityTargetInlineCellEditModeProps) => {
   const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
+  const objectRecordsMultiSelect = useRecoilValue(
+    objectRecordsMultiSelectState,
+  );
 
   const selectedTargetObjectIds = activityTargetWithTargetRecords.map(
     (activityTarget) => ({
@@ -74,24 +77,22 @@ export const ActivityTargetInlineCellEditMode = ({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
 
-  const handleSubmit = async (selectedRecords: ObjectRecordForSelect[]) => {
+  const handleSubmit = async (selectedRecordsIds: string[]) => {
     closeEditableField();
 
     const activityTargetsToDelete = activityTargetWithTargetRecords.filter(
       (activityTargetObjectRecord) =>
-        !selectedRecords.some(
-          (selectedRecord) =>
-            selectedRecord.recordIdentifier.id ===
-            activityTargetObjectRecord.targetObject.id,
+        !selectedRecordsIds.some(
+          (selectedRecordId) =>
+            selectedRecordId === activityTargetObjectRecord.targetObject.id,
         ),
     );
 
-    const selectedTargetObjectsToCreate = selectedRecords.filter(
-      (selectedRecord) =>
+    const selectedTargetObjectsToCreate = selectedRecordsIds.filter(
+      (selectedRecordId) =>
         !activityTargetWithTargetRecords.some(
           (activityTargetWithTargetRecord) =>
-            activityTargetWithTargetRecord.targetObject.id ===
-            selectedRecord.recordIdentifier.id,
+            activityTargetWithTargetRecord.targetObject.id === selectedRecordId,
         ),
     );
 
@@ -102,7 +103,17 @@ export const ActivityTargetInlineCellEditMode = ({
     let activityTargetsAfterUpdate = Array.from(existingActivityTargets);
 
     const activityTargetsToCreate = selectedTargetObjectsToCreate.map(
-      (selectedRecord) => {
+      (selectedRecordId) => {
+        const selectedRecord = objectRecordsMultiSelect.find(
+          (objectRecord) => objectRecord.record.id === selectedRecordId,
+        );
+
+        if (!selectedRecord) {
+          throw new Error(
+            `Could not find selected record with id ${selectedRecordId}`,
+          );
+        }
+
         const emptyActivityTarget = prefillRecord<ActivityTarget>({
           objectMetadataItem: objectMetadataItemActivityTarget,
           input: {
@@ -116,7 +127,7 @@ export const ActivityTargetInlineCellEditMode = ({
             })]: selectedRecord.record,
             [getActivityTargetObjectFieldIdName({
               nameSingular: selectedRecord.objectMetadataItem.nameSingular,
-            })]: selectedRecord.recordIdentifier.id,
+            })]: selectedRecordId,
           },
         });
 

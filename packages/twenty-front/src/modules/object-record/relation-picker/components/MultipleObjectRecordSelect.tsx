@@ -1,9 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { objectRecordsMultiSelectState } from '@/activities/states/objectRecordsMultiSelectState';
+import { selectedObjectRecordsIdsState } from '@/activities/states/selectedObjectRecordsIdsState';
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
+import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
 import {
-  ObjectRecordForSelect,
   SelectedObjectRecordId,
   useMultiObjectSearch,
 } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
@@ -14,55 +17,53 @@ export const StyledSelectableItem = styled(SelectableItem)`
   width: 100%;
 `;
 export const MultipleObjectRecordSelect = ({
-  onChange,
   onSubmit,
   selectedObjectRecordIds,
 }: {
-  onChange?: (
-    changedRecordForSelect: ObjectRecordForSelect,
-    newSelectedValue: boolean,
-  ) => void;
-  onSubmit?: (objectRecordsForSelect: ObjectRecordForSelect[]) => void;
+  onSubmit?: (objectRecordsIds: string[]) => void;
   selectedObjectRecordIds: SelectedObjectRecordId[];
 }) => {
-  const [searchFilter, setSearchFilter] = useState<string>('');
-
-  const {
-    filteredSelectedObjectRecords,
-    loading,
-    objectRecordsToSelect,
-    selectedObjectRecords,
-  } = useMultiObjectSearch({
-    searchFilterValue: searchFilter,
-    selectedObjectRecordIds,
-    excludedObjectRecordIds: [],
-    limit: 10,
-  });
-
-  const selectedObjectRecordsForSelect = useMemo(
-    () =>
-      selectedObjectRecords.filter((selectedObjectRecord) =>
-        selectedObjectRecordIds.some(
-          (selectedObjectRecordId) =>
-            selectedObjectRecordId.id ===
-            selectedObjectRecord.recordIdentifier.id,
-        ),
-      ),
-    [selectedObjectRecords, selectedObjectRecordIds],
+  const { relationPickerSearchFilterState } = useRelationPickerScopedStates();
+  const relationPickerSearchFilter = useRecoilValue(
+    relationPickerSearchFilterState,
   );
+  const { filteredSelectedObjectRecords, loading, objectRecordsToSelect } =
+    useMultiObjectSearch({
+      searchFilterValue: relationPickerSearchFilter,
+      selectedObjectRecordIds,
+      excludedObjectRecordIds: [],
+      limit: 10,
+    });
+
+  const setObjectRecordsMultiSelect = useSetRecoilState(
+    objectRecordsMultiSelectState,
+  );
+
+  const selectedObjectRecordsIds = useRecoilValue(
+    selectedObjectRecordsIdsState,
+  );
+
+  const handleSubmit = () => {
+    onSubmit?.(selectedObjectRecordsIds);
+  };
+
+  useEffect(() => {
+    setObjectRecordsMultiSelect([
+      ...(filteredSelectedObjectRecords ?? []),
+      ...(objectRecordsToSelect ?? []),
+    ]);
+  }, [
+    filteredSelectedObjectRecords,
+    objectRecordsToSelect,
+    setObjectRecordsMultiSelect,
+  ]);
 
   return (
     <MultiRecordSelect
-      onChange={onChange}
-      onSubmit={onSubmit}
-      selectedObjectRecords={selectedObjectRecordsForSelect}
-      allRecords={[
-        ...(filteredSelectedObjectRecords ?? []),
-        ...(objectRecordsToSelect ?? []),
-      ]}
+      onSubmit={handleSubmit}
       loading={loading}
-      searchFilter={searchFilter}
-      setSearchFilter={setSearchFilter}
+      // searchFilter={searchFilter}
+      // setSearchFilter={setSearchFilter}
     />
   );
 };

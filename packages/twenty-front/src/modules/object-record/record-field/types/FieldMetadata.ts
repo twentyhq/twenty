@@ -191,9 +191,11 @@ export type FieldMultiSelectValue = string[] | null;
 
 export type FieldRelationOneValue = EntityForSelect | null;
 
-export type FieldRelationManyValue = EntityForSelect | null;
+export type FieldRelationManyValue = EntityForSelect[] | [];
 
-export type FieldRelationValue = FieldRelationOneValue | FieldRelationManyValue;
+export type FieldRelationValue<
+  T extends FieldRelationOneValue | FieldRelationManyValue,
+> = T;
 // See https://zod.dev/?id=json-type
 type Literal = string | number | boolean | null;
 export type Json = Literal | { [key: string]: Json } | Json[];

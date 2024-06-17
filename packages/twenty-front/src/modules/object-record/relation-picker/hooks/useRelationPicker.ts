@@ -13,6 +13,7 @@ export const useRelationPicker = (props?: useRelationPickeProps) => {
     RelationPickerScopeInternalContext,
     props?.relationPickerScopeId,
   );
+  console.log('scopeId', scopeId);
 
   const {
     searchQueryState,
