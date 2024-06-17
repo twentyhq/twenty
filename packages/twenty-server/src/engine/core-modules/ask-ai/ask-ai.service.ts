@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { SqlDatabase } from 'langchain/sql_db';
 import { PromptTemplate } from '@langchain/core/prompts';
-import { RunnableSequence } from '@langchain/core/runnables';
+import { RunnableSequence, RunnableFunc } from '@langchain/core/runnables';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { CallbackHandler, Langfuse } from 'langfuse-langchain';
 
@@ -57,10 +57,14 @@ export class AskAIService {
         ).getLangchainPrompt(),
       );
 
+    const removeSQLMarkdown: RunnableFunc<string, string> = (input) =>
+      input.replace(/^```sql/, '').replace(/```$/, '');
+
     const sqlQueryGeneratorChain = RunnableSequence.from([
       promptTemplate,
       this.chatModelService.getChatModel(),
       new StringOutputParser(),
+      removeSQLMarkdown,
     ]);
 
     const langfuseHandler = new CallbackHandler({
