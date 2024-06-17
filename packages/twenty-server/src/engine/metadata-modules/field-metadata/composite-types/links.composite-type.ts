@@ -20,7 +20,7 @@ export const linksCompositeType: CompositeType = {
     {
       name: 'secondaryLinks',
       type: FieldMetadataType.RAW_JSON,
-      hidden: 'input',
+      hidden: false,
       isRequired: false,
     },
   ],
