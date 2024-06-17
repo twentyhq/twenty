@@ -35,7 +35,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
     filterDefinitionUsedInDropdown?.type,
   );
 
-  const handleOperangeChange = (newOperand: ViewFilterOperand) => {
+  const handleOperandChange = (newOperand: ViewFilterOperand) => {
     const isEmptyOperand = [
       ViewFilterOperand.IsEmpty,
       ViewFilterOperand.IsNotEmpty,
@@ -80,7 +80,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
         <MenuItem
           key={`select-filter-operand-${index}`}
           onClick={() => {
-            handleOperangeChange(filterOperand);
+            handleOperandChange(filterOperand);
           }}
           text={getOperandLabel(filterOperand)}
         />
