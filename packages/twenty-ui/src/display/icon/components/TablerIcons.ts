@@ -136,6 +136,7 @@ export {
   IconReload,
   IconRepeat,
   IconRocket,
+  IconRotate,
   IconSearch,
   IconSend,
   IconSettings,

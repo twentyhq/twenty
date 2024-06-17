@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
+import { IconRotate } from 'twenty-ui';
 
 import { SQLQueryBuilder } from '@/activities/ask-ai/right-drawer/components/SQLQueryBuilder';
 import { askAIQueryState } from '@/activities/ask-ai/right-drawer/states/askAIQueryState';
+import { Button } from '@/ui/input/button/components/Button';
 import {
   AutosizeTextInput,
   AutosizeTextInputVariant,
@@ -34,7 +36,7 @@ const StyledAskAIQuery = styled.div`
 `;
 
 const StyledSQLQueryResult = styled.div`
-  padding-top: 24px;
+  padding: 24px 0px;
 `;
 
 const StyledNewMessageArea = styled.div`
@@ -69,6 +71,17 @@ export const RightDrawerAIChat = () => {
             <StyledSQLQueryResult>
               {data?.getAskAI.sqlQueryResult}
             </StyledSQLQueryResult>
+            <div>
+              <Button
+                onClick={() => {
+                  setAskAIQuery('');
+                  setMessageInputVisible(true);
+                }}
+                title="Ask again"
+                Icon={IconRotate}
+                accent="blue"
+              />
+            </div>
           </>
         )}
       </StyledChatArea>
