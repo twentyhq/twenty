@@ -40,6 +40,7 @@ export const RightDrawerEmailThread = () => {
 
   const { thread, messages, fetchMoreMessages, loading } =
     useRightDrawerEmailThread();
+  const visibleMessages = getVisibleMessages(messages);
   useEffect(() => {
     if (!visibleMessages[0]?.messageThread) {
       return;
@@ -70,7 +71,6 @@ export const RightDrawerEmailThread = () => {
     return null;
   }
 
-  const visibleMessages = getVisibleMessages(messages);
   const visibleMessagesCount = visibleMessages.length;
   const is5OrMoreMessages = visibleMessagesCount >= 5;
   const firstMessages = visibleMessages.slice(
