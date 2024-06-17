@@ -3,6 +3,7 @@ import { capitalize } from 'src/utils/capitalize';
 
 export const getFindManyResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+  fromMetadata = false,
 ) => {
   return {
     description: 'Successful operation',
@@ -32,9 +33,11 @@ export const getFindManyResponse200 = (
                 endCursor: { type: 'string' },
               },
             },
-            totalCount: {
-              type: 'integer',
-            },
+            ...(!fromMetadata && {
+              totalCount: {
+                type: 'integer',
+              },
+            }),
           },
           example: {
             data: {

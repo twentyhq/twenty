@@ -7,4 +7,9 @@ export type QueryVariables = {
   startingAfter?: string;
   endingBefore?: string;
   input?: object;
+  paging?: {
+    first?: number;
+    after?: string;
+    before?: string;
+  };
 };

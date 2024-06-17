@@ -9,6 +9,9 @@ import { RestApiMetadataController } from 'src/engine/api/rest/controllers/rest-
 import { RestApiMetadataService } from 'src/engine/api/rest/services/rest-api-metadata.service';
 import { RestApiCoreBatchController } from 'src/engine/api/rest/controllers/rest-api-core-batch.controller';
 import { RestApiService } from 'src/engine/api/rest/services/rest-api.service';
+import { EndingBeforeInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/ending-before-input.factory';
+import { LimitInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/limit-input.factory';
+import { StartingAfterInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/starting-after-input.factory';
 
 @Module({
   imports: [CoreQueryBuilderModule, AuthModule, HttpModule],
@@ -17,7 +20,14 @@ import { RestApiService } from 'src/engine/api/rest/services/rest-api.service';
     RestApiCoreBatchController,
     RestApiCoreController,
   ],
-  providers: [RestApiMetadataService, RestApiCoreService, RestApiService],
+  providers: [
+    RestApiMetadataService,
+    RestApiCoreService,
+    RestApiService,
+    StartingAfterInputFactory,
+    EndingBeforeInputFactory,
+    LimitInputFactory,
+  ],
   exports: [RestApiMetadataService],
 })
 export class RestApiModule {}

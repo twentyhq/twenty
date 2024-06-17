@@ -8,12 +8,18 @@ import {
   GraphqlApiType,
   RestApiService,
 } from 'src/engine/api/rest/services/rest-api.service';
+import { LimitInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/limit-input.factory';
+import { StartingAfterInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/starting-after-input.factory';
+import { EndingBeforeInputFactory } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/ending-before-input.factory';
 
 @Injectable()
 export class RestApiMetadataService {
   constructor(
     private readonly tokenService: TokenService,
     private readonly restApiService: RestApiService,
+    private readonly startingAfterInputFactory: StartingAfterInputFactory,
+    private readonly endingBeforeInputFactory: EndingBeforeInputFactory,
+    private readonly limitInputFactory: LimitInputFactory,
   ) {}
 
   fetchMetadataFields(objectNamePlural: string) {
@@ -114,15 +120,22 @@ export class RestApiMetadataService {
     const fields = this.fetchMetadataFields(objectNamePlural);
 
     return `
-      query FindMany${capitalize(objectNamePlural)} {
+      query FindMany${capitalize(objectNamePlural)}(
+        $paging: CursorPaging!
+      ) {
         ${objectNamePlural}(
-        paging: { first: 1000 }
+          paging: $paging
         ) {
           edges {
             node {
               id
               ${fields}
-              }
+            }
+          }
+          pageInfo {
+            hasNextPage
+            startCursor
+            endCursor
           }
         }
       }
@@ -144,6 +157,16 @@ export class RestApiMetadataService {
     `;
   }
 
+  generateFindManyVariables(request) {
+    return {
+      paging: {
+        first: this.limitInputFactory.create(request, 1000),
+        after: this.startingAfterInputFactory.create(request),
+        before: this.endingBeforeInputFactory.create(request),
+      },
+    };
+  }
+
   async get(request) {
     await this.tokenService.validateToken(request);
 
@@ -156,7 +179,7 @@ export class RestApiMetadataService {
 
     const data: Query = {
       query,
-      variables: id ? { id } : request.body,
+      variables: id ? { id } : this.generateFindManyVariables(request),
     };
 
     return await this.restApiService.call(

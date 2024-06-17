@@ -133,8 +133,13 @@ export class OpenApiService {
         get: {
           tags: [item.namePlural],
           summary: `Find Many ${item.namePlural}`,
+          parameters: [
+            { $ref: '#/components/parameters/limit' },
+            { $ref: '#/components/parameters/startingAfter' },
+            { $ref: '#/components/parameters/endingBefore' },
+          ],
           responses: {
-            '200': getFindManyResponse200(item),
+            '200': getFindManyResponse200(item, true),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -193,7 +198,7 @@ export class OpenApiService {
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeMetadataSchemaComponents(metadata),
-      parameters: computeParameterComponents(),
+      parameters: computeParameterComponents(true),
       responses: {
         '400': get400ErrorResponses(),
         '401': get401ErrorResponses(),
