@@ -66,6 +66,18 @@ const applyEmptyFilters = (
         ],
       };
       break;
+    case 'LINKS':
+      // eslint-disable-next-line no-case-declarations
+      const linksFilters = generateILikeFiltersForCompositeFields(
+        '',
+        correspondingField.name,
+        ['primaryLinkLabel', 'primaryLinkUrl'],
+        true,
+      );
+      emptyRecordFilter = {
+        or: linksFilters,
+      };
+      break;
     case 'ADDRESS':
       emptyRecordFilter = {
         and: [
@@ -409,6 +421,15 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                 };
               }),
             });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              rawUIFilter.definition.type,
+            );
             break;
           default:
             throw new Error(

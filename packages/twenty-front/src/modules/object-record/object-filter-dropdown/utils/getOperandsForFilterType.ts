@@ -19,13 +19,12 @@ export const getOperandsForFilterType = (
     case 'ADDRESS':
     case 'PHONE':
     case 'LINK':
+    case 'LINKS':
       return [
         ViewFilterOperand.Contains,
         ViewFilterOperand.DoesNotContain,
         ...emptyOperands,
       ];
-    case 'LINKS':
-      return [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain];
     case 'CURRENCY':
     case 'NUMBER':
     case 'DATE_TIME':
