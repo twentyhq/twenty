@@ -10,6 +10,7 @@ import {
   URLFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { FilterType } from '@/object-record/object-filter-dropdown/types/FilterType';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
@@ -28,19 +29,14 @@ const applyEmptyFilters = (
   operand: ViewFilterOperand,
   correspondingField: Pick<Field, 'id' | 'name'>,
   objectRecordFilters: RecordGqlOperationFilter[],
-  filterType:
-    | 'URL'
-    | 'Address'
-    | 'String'
-    | 'Number'
-    | 'Date'
-    | 'Relation'
-    | 'CompositeString' = 'String',
+  filterType: FilterType,
 ) => {
   let emptyRecordFilter: RecordGqlOperationFilter = {};
 
   switch (filterType) {
-    case 'String':
+    case 'TEXT':
+    case 'EMAIL':
+    case 'PHONE':
       emptyRecordFilter = {
         or: [
           { [correspondingField.name]: { ilike: '' } as StringFilter },
@@ -48,20 +44,19 @@ const applyEmptyFilters = (
         ],
       };
       break;
-    case 'CompositeString':
+    case 'FULL_NAME':
       // eslint-disable-next-line no-case-declarations
       const fullNameFilters = generateILikeFiltersForCompositeFields(
         '',
         correspondingField.name,
         ['firstName', 'lastName'],
+        true,
       );
       emptyRecordFilter = {
-        not: {
-          or: fullNameFilters,
-        },
+        and: fullNameFilters,
       };
       break;
-    case 'URL':
+    case 'LINK':
       emptyRecordFilter = {
         or: [
           { [correspondingField.name]: { url: { ilike: '' } } as URLFilter },
@@ -71,51 +66,60 @@ const applyEmptyFilters = (
         ],
       };
       break;
-    case 'Address':
+    case 'ADDRESS':
       emptyRecordFilter = {
-        or: [
+        and: [
           {
-            [correspondingField.name]: {
-              addressStreet1: { ilike: '' },
-            } as AddressFilter,
+            or: [
+              {
+                [correspondingField.name]: {
+                  addressStreet1: { ilike: '' },
+                } as AddressFilter,
+              },
+              {
+                [correspondingField.name]: {
+                  addressStreet1: { is: 'NULL' },
+                } as AddressFilter,
+              },
+            ],
           },
           {
-            [correspondingField.name]: {
-              addressStreet2: { ilike: '' },
-            } as AddressFilter,
+            or: [
+              {
+                [correspondingField.name]: {
+                  addressStreet2: { ilike: '' },
+                } as AddressFilter,
+              },
+              {
+                [correspondingField.name]: {
+                  addressStreet2: { is: 'NULL' },
+                } as AddressFilter,
+              },
+            ],
           },
           {
-            [correspondingField.name]: {
-              addressCity: { ilike: '' },
-            } as AddressFilter,
-          },
-          {
-            [correspondingField.name]: {
-              addressStreet1: { is: 'NULL' },
-            } as AddressFilter,
-          },
-          {
-            [correspondingField.name]: {
-              addressStreet2: { is: 'NULL' },
-            } as AddressFilter,
-          },
-          {
-            [correspondingField.name]: {
-              addressCity: { is: 'NULL' },
-            } as AddressFilter,
+            or: [
+              {
+                [correspondingField.name]: {
+                  addressCity: { ilike: '' },
+                } as AddressFilter,
+              },
+              {
+                [correspondingField.name]: {
+                  addressCity: { is: 'NULL' },
+                } as AddressFilter,
+              },
+            ],
           },
         ],
       };
       break;
-    case 'Number':
+    case 'NUMBER':
       emptyRecordFilter = {
-        or: [
-          { [correspondingField.name]: { eq: 0 } as FloatFilter },
-          { [correspondingField.name]: { is: 'NULL' } as FloatFilter },
-        ],
+        or: [{ [correspondingField.name]: { is: 'NULL' } as FloatFilter }],
       };
       break;
-    case 'Date':
+    case 'DATE_TIME':
       emptyRecordFilter = {
         or: [
           { [correspondingField.name]: { eq: '' } as DateFilter },
@@ -123,13 +127,13 @@ const applyEmptyFilters = (
         ],
       };
       break;
-    case 'Relation':
+    case 'RELATION':
       emptyRecordFilter = {
         [correspondingField.name + 'Id']: { is: 'NULL' } as UUIDFilter,
       };
       break;
     default:
-      throw new Error(`Unknown filter type ${filterType}`);
+      throw new Error(`Unsupported empty filter type ${filterType}`);
   }
 
   switch (operand) {
@@ -198,6 +202,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
+              rawUIFilter.definition.type,
             );
             break;
           default:
@@ -228,7 +233,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              'Date',
+              rawUIFilter.definition.type,
             );
             break;
           default:
@@ -259,7 +264,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              'Number',
+              rawUIFilter.definition.type,
             );
             break;
           default:
@@ -338,6 +343,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
+              rawUIFilter.definition.type,
             );
             break;
           default:
@@ -374,7 +380,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              'URL',
+              rawUIFilter.definition.type,
             );
             break;
           default:
@@ -439,7 +445,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              'CompositeString',
+              rawUIFilter.definition.type,
             );
             break;
           default:
@@ -517,7 +523,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
-              'Address',
+              rawUIFilter.definition.type,
             );
             break;
           default:

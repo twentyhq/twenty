@@ -37,6 +37,11 @@ export const MultipleFiltersDropdownContent = ({
   const selectedOperandInDropdown = useRecoilValue(
     selectedOperandInDropdownState,
   );
+  const isEmptyOperand =
+    selectedOperandInDropdown &&
+    [ViewFilterOperand.IsEmpty, ViewFilterOperand.IsNotEmpty].includes(
+      selectedOperandInDropdown,
+    );
 
   return (
     <>
@@ -44,10 +49,7 @@ export const MultipleFiltersDropdownContent = ({
         <ObjectFilterDropdownFilterSelect />
       ) : isObjectFilterDropdownOperandSelectUnfolded ? (
         <ObjectFilterDropdownOperandSelect />
-      ) : selectedOperandInDropdown &&
-        [ViewFilterOperand.IsEmpty, ViewFilterOperand.IsNotEmpty].includes(
-          selectedOperandInDropdown,
-        ) ? (
+      ) : isEmptyOperand ? (
         <ObjectFilterDropdownOperandButton />
       ) : (
         selectedOperandInDropdown && (
