@@ -1,5 +1,4 @@
 import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
-import { onError } from '@apollo/client/link/error';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -42,6 +41,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   skip,
   recordGqlFields,
   fetchPolicy,
+  onError,
 }: UseFindManyRecordsParams<T>) => {
   const { enqueueSnackBar } = useSnackBar();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
@@ -105,6 +105,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     fetchMoreRecords,
     totalCount,
     records,
+    hasNextPage,
   } = useFindManyRecordsState<T>({
     objectNameSingular,
     filter,

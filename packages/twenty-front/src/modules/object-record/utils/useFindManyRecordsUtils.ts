@@ -215,5 +215,6 @@ export const useFindManyRecordsState = <T extends ObjectRecord = ObjectRecord>({
     fetchMoreRecords,
     totalCount,
     records,
+    hasNextPage,
   };
 };
