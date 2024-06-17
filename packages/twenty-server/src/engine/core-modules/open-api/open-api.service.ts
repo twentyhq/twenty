@@ -162,7 +162,7 @@ export class OpenApiService {
           summary: `Find One ${item.nameSingular}`,
           parameters: [{ $ref: '#/components/parameters/idPath' }],
           responses: {
-            '200': getFindOneResponse200(item),
+            '200': getFindOneResponse200(item, true),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
