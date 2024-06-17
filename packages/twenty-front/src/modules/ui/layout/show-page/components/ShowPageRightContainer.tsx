@@ -28,8 +28,7 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   flex: 1 0 0;
   flex-direction: column;
   justify-content: start;
-  overflow: ${(isMobile) => (isMobile ? 'none' : 'hidden')};
-  width: calc(100% + 4px);
+  width: 100%;
 `;
 
 const StyledTabListContainer = styled.div`

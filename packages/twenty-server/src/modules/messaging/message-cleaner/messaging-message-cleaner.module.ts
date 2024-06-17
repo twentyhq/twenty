@@ -16,10 +16,7 @@ import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cl
   ],
   providers: [
     MessagingMessageCleanerService,
-    {
-      provide: MessagingConnectedAccountDeletionCleanupJob.name,
-      useClass: MessagingConnectedAccountDeletionCleanupJob,
-    },
+    MessagingConnectedAccountDeletionCleanupJob,
     MessagingMessageCleanerConnectedAccountListener,
   ],
   exports: [MessagingMessageCleanerService],

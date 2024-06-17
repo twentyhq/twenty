@@ -22,22 +22,10 @@ import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import
   providers: [
     MessagingMessageListFetchCronCommand,
     MessagingMessagesImportCronCommand,
-    {
-      provide: MessagingMessageListFetchJob.name,
-      useClass: MessagingMessageListFetchJob,
-    },
-    {
-      provide: MessagingMessagesImportJob.name,
-      useClass: MessagingMessagesImportJob,
-    },
-    {
-      provide: MessagingMessageListFetchCronJob.name,
-      useClass: MessagingMessageListFetchCronJob,
-    },
-    {
-      provide: MessagingMessagesImportCronJob.name,
-      useClass: MessagingMessagesImportCronJob,
-    },
+    MessagingMessageListFetchJob,
+    MessagingMessagesImportJob,
+    MessagingMessageListFetchCronJob,
+    MessagingMessagesImportCronJob,
   ],
   exports: [],
 })

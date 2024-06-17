@@ -133,7 +133,10 @@ export class OpenApiService {
         get: {
           tags: [item.namePlural],
           summary: `Find Many ${item.namePlural}`,
-          parameters: [{ $ref: '#/components/parameters/filter' }],
+          parameters:
+            item.namePlural !== 'relations'
+              ? [{ $ref: '#/components/parameters/filter' }]
+              : undefined,
           responses: {
             '200': getFindManyResponse200(item),
             '400': { $ref: '#/components/responses/400' },

@@ -17382,6 +17382,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.omitby@npm:^4.6.9":
+  version: 4.6.9
+  resolution: "@types/lodash.omitby@npm:4.6.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: e8850219326634c5b531e3398d24701000328e4366504d9315c1660c2fe2a0d4fc9aa2983b8c652ee7239921cd16103b37b1e44efdf25658de2a36f64b76888a
+  languageName: node
+  linkType: hard
+
 "@types/lodash.pick@npm:^4.3.7":
   version: 4.4.9
   resolution: "@types/lodash.pick@npm:4.4.9"
@@ -34759,6 +34768,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.omitby@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "lodash.omitby@npm:4.6.0"
+  checksum: 4608b1d8c4063b63349a3462852465fbe74781d737fbb26a0a7f00b0e65f6ccbc13fa490a38f9380103d93fc398e3873983038efadfafc67ccafbb25d9bc7bf4
+  languageName: node
+  linkType: hard
+
 "lodash.once@npm:^4.0.0":
   version: 4.1.1
   resolution: "lodash.once@npm:4.1.1"
@@ -47176,6 +47192,7 @@ __metadata:
     "@types/lodash.isequal": "npm:^4.5.8"
     "@types/lodash.isobject": "npm:^3.0.7"
     "@types/lodash.omit": "npm:^4.5.9"
+    "@types/lodash.omitby": "npm:^4.6.9"
     "@types/lodash.snakecase": "npm:^4.1.7"
     "@types/lodash.uniq": "npm:^4.5.9"
     "@types/lodash.uniqby": "npm:^4.7.9"
@@ -47188,6 +47205,7 @@ __metadata:
     jsdom: "npm:~22.1.0"
     jwt-decode: "npm:^4.0.0"
     lodash.differencewith: "npm:^4.5.0"
+    lodash.omitby: "npm:^4.6.0"
     lodash.uniq: "npm:^4.5.0"
     lodash.uniqby: "npm:^4.7.0"
     passport: "npm:^0.7.0"

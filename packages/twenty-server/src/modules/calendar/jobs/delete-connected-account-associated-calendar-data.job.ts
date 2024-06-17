@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { CalendarEventCleanerService } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
 
 export type DeleteConnectedAccountAssociatedCalendarDataJobData = {
@@ -9,11 +10,8 @@ export type DeleteConnectedAccountAssociatedCalendarDataJobData = {
   connectedAccountId: string;
 };
 
-@Injectable()
-export class DeleteConnectedAccountAssociatedCalendarDataJob
-  implements
-    MessageQueueJob<DeleteConnectedAccountAssociatedCalendarDataJobData>
-{
+@Processor(MessageQueue.calendarQueue)
+export class DeleteConnectedAccountAssociatedCalendarDataJob {
   private readonly logger = new Logger(
     DeleteConnectedAccountAssociatedCalendarDataJob.name,
   );
@@ -22,6 +20,7 @@ export class DeleteConnectedAccountAssociatedCalendarDataJob
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
   ) {}
 
+  @Process(DeleteConnectedAccountAssociatedCalendarDataJob.name)
   async handle(
     data: DeleteConnectedAccountAssociatedCalendarDataJobData,
   ): Promise<void> {

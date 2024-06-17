@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
@@ -34,15 +34,16 @@ import {
   MessagingMessageListFetchJob,
   MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 
 @Injectable()
 export class GoogleAPIsService {
   constructor(
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
-    @Inject(MessageQueue.messagingQueue)
+    @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    @Inject(MessageQueue.calendarQueue)
+    @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
     private readonly environmentService: EnvironmentService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
