@@ -15,28 +15,23 @@ export const turnSortsIntoOrderBy = (
 ): RecordGqlOperationOrderBy => {
   const fields: Pick<Field, 'id' | 'name'>[] = objectMetadataItem?.fields ?? [];
   const fieldsById = mapArrayToObject(fields, ({ id }) => id);
-  const sortsOrderBy = Object.fromEntries(
-    sorts
-      .map((sort) => {
-        const correspondingField = fieldsById[sort.fieldMetadataId];
+  const sortsOrderBy = sorts
+    .map((sort) => {
+      const correspondingField = fieldsById[sort.fieldMetadataId];
 
-        if (isUndefinedOrNull(correspondingField)) {
-          return undefined;
-        }
+      if (isUndefinedOrNull(correspondingField)) {
+        return undefined;
+      }
 
-        const direction: OrderBy =
-          sort.direction === 'asc' ? 'AscNullsFirst' : 'DescNullsLast';
+      const direction: OrderBy =
+        sort.direction === 'asc' ? 'AscNullsFirst' : 'DescNullsLast';
 
-        return [correspondingField.name, direction];
-      })
-      .filter(isDefined),
-  );
+      return { [correspondingField.name]: direction };
+    })
+    .filter(isDefined);
 
   if (hasPositionField(objectMetadataItem)) {
-    return {
-      ...sortsOrderBy,
-      position: 'AscNullsFirst',
-    };
+    return [...sortsOrderBy, { position: 'AscNullsFirst' }];
   }
 
   return sortsOrderBy;

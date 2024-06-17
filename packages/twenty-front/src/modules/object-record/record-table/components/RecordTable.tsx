@@ -43,15 +43,14 @@ const StyledTable = styled.table<{
       border-right-color: transparent;
     }
     :first-of-type {
-      border-left-color: transparent;
-      border-right-color: transparent;
+      border-top-color: transparent;
+      border-bottom-color: transparent;
     }
   }
 
   td {
     border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
     color: ${({ theme }) => theme.font.color.primary};
-    padding: 0;
     border-right: 1px solid ${({ theme }) => theme.border.color.light};
 
     text-align: left;
@@ -60,8 +59,8 @@ const StyledTable = styled.table<{
       border-right-color: transparent;
     }
     :first-of-type {
-      border-left-color: transparent;
-      border-right-color: transparent;
+      border-top-color: transparent;
+      border-bottom-color: transparent;
     }
   }
 
@@ -70,35 +69,58 @@ const StyledTable = styled.table<{
     border-right: 1px solid ${({ theme }) => theme.border.color.light};
   }
 
-  thead th:nth-of-type(-n + 2),
-  tbody td:nth-of-type(-n + 2) {
+  thead th {
     position: sticky;
-    z-index: 2;
-    border-right: none;
+    top: 0;
+    z-index: 9;
+  }
+
+  thead th:nth-of-type(1),
+  thead th:nth-of-type(2),
+  thead th:nth-of-type(3) {
+    z-index: 12;
+    background-color: ${({ theme }) => theme.background.primary};
+  }
+
+  thead th:nth-of-type(1) {
+    width: 9px;
+    left: 0;
+    border-right-color: ${({ theme }) => theme.background.primary};
+  }
+
+  thead th:nth-of-type(2) {
+    left: 9px;
+    border-right-color: ${({ theme }) => theme.background.primary};
+  }
+
+  thead th:nth-of-type(3) {
+    left: 39px;
+  }
+
+  tbody td:nth-of-type(1),
+  tbody td:nth-of-type(2),
+  tbody td:nth-of-type(3) {
+    position: sticky;
+    z-index: 1;
   }
 
   tbody td:nth-of-type(1) {
     left: 0;
+    z-index: 7;
   }
 
-  // Label identifier column
-  thead th:nth-of-type(1),
-  thead th:nth-of-type(2) {
-    left: 0;
-    top: 0;
+  tbody td:nth-of-type(2) {
+    left: 9px;
+    z-index: 5;
+  }
+
+  tbody td:nth-of-type(3) {
+    left: 39px;
     z-index: 6;
   }
 
-  thead th:nth-of-type(n + 3) {
-    top: 0;
-    z-index: 5;
-    position: sticky;
-  }
-
-  thead th:nth-of-type(2),
-  tbody td:nth-of-type(2) {
-    left: calc(${({ theme }) => theme.table.checkboxColumnWidth} - 2px);
-
+  thead th:nth-of-type(3),
+  tbody td:nth-of-type(3) {
     ${({ freezeFirstColumns }) =>
       freezeFirstColumns &&
       css`
@@ -124,11 +146,6 @@ const StyledTable = styled.table<{
               : RGBA(theme.grayScale.gray100, 0.25)} inset;
         `}
     }
-  }
-
-  thead th:nth-of-type(3),
-  tbody td:nth-of-type(3) {
-    border-left: 1px solid ${({ theme }) => theme.border.color.light};
   }
 `;
 
@@ -229,7 +246,10 @@ export const RecordTable = ({
           <StyledTable className="entity-table-cell">
             <RecordTableHeader createRecord={createRecord} />
             <RecordTableBodyEffect objectNameSingular={objectNameSingular} />
-            <RecordTableBody objectNameSingular={objectNameSingular} />
+            <RecordTableBody
+              objectNameSingular={objectNameSingular}
+              recordTableId={recordTableId}
+            />
           </StyledTable>
         </RecordTableContext.Provider>
       )}

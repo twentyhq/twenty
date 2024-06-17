@@ -1,22 +1,11 @@
 import styled from '@emotion/styled';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui';
 
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { Card } from '@/ui/layout/card/components/Card';
 
 type EventCardProps = {
   children: React.ReactNode;
   isOpen: boolean;
 };
-
-type EventCardToggleButtonProps = {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-};
-
-const StyledButtonContainer = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-`;
 
 const StyledCardContainer = styled.div`
   align-items: flex-start;
@@ -50,21 +39,5 @@ export const EventCard = ({ children, isOpen }: EventCardProps) => {
         <StyledCard fullWidth>{children}</StyledCard>
       </StyledCardContainer>
     )
-  );
-};
-
-export const EventCardToggleButton = ({
-  isOpen,
-  setIsOpen,
-}: EventCardToggleButtonProps) => {
-  return (
-    <StyledButtonContainer>
-      <IconButton
-        Icon={isOpen ? IconChevronUp : IconChevronDown}
-        onClick={() => setIsOpen(!isOpen)}
-        size="small"
-        variant="secondary"
-      />
-    </StyledButtonContainer>
   );
 };

@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export const query = gql`
   query FindManyPeople(
     $filter: PersonFilterInput
-    $orderBy: PersonOrderByInput
+    $orderBy: [PersonOrderByInput]
     $lastCursor: String
     $limit: Int = 60
   ) {
@@ -166,7 +166,7 @@ export const variables = {
         { not: { id: { in: ['1', '2'] } } },
       ],
     },
-    orderBy: { name: 'AscNullsLast' },
+    orderBy: [{ name: 'AscNullsLast' }],
   },
   filteredSelectedEntities: {
     limit: 60,
@@ -176,12 +176,12 @@ export const variables = {
         { id: { in: ['1'] } },
       ],
     },
-    orderBy: { name: 'AscNullsLast' },
+    orderBy: [{ name: 'AscNullsLast' }],
   },
   selectedEntities: {
     limit: 60,
     filter: { id: { in: ['1'] } },
-    orderBy: { name: 'AscNullsLast' },
+    orderBy: [{ name: 'AscNullsLast' }],
   },
 };
 

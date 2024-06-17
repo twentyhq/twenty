@@ -8,16 +8,18 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { RelationPickerDecorator } from '~/testing/decorators/RelationPickerDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedPeopleData } from '~/testing/mock-data/people';
-import { sleep } from '~/testing/sleep';
+import { getPeopleMock } from '~/testing/mock-data/people';
+import { sleep } from '~/utils/sleep';
 
 import { EntityForSelect } from '../../types/EntityForSelect';
 import { SingleEntitySelect } from '../SingleEntitySelect';
 
-const entities = mockedPeopleData.map<EntityForSelect>((person) => ({
+const peopleMock = getPeopleMock();
+
+const entities = peopleMock.map<EntityForSelect>((person) => ({
   id: person.id,
   name: person.name.firstName + ' ' + person.name.lastName,
-  avatarUrl: person.avatarUrl,
+  avatarUrl: 'https://picsum.photos/200',
   avatarType: 'rounded',
   record: { ...person, __typename: 'Person' },
 }));

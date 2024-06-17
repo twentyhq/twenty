@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { FieldLinkValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
@@ -6,34 +6,31 @@ import {
   LinkType,
   SocialLink,
 } from '@/ui/navigation/link/components/SocialLink';
-import { checkUrlType } from '~/utils/checkUrlType';
-import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';
-import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
 type LinkDisplayProps = {
   value?: FieldLinkValue;
 };
 
 export const LinkDisplay = ({ value }: LinkDisplayProps) => {
-  const handleClick = (event: MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
-  };
+  const url = value?.url;
 
-  const absoluteUrl = getAbsoluteUrl(value?.url || '');
-  const displayedValue = value?.label || getUrlHostName(absoluteUrl);
-  const type = checkUrlType(absoluteUrl);
-
-  if (type === LinkType.LinkedIn || type === LinkType.Twitter) {
-    return (
-      <SocialLink href={absoluteUrl} onClick={handleClick} type={type}>
-        {displayedValue}
-      </SocialLink>
-    );
+  if (!isNonEmptyString(url)) {
+    return <></>;
   }
 
-  return (
-    <RoundedLink href={absoluteUrl} onClick={handleClick}>
-      {displayedValue}
-    </RoundedLink>
-  );
+  const displayedValue = isNonEmptyString(value?.label)
+    ? value?.label
+    : url?.replace(/^http[s]?:\/\/(?:[w]+\.)?/gm, '').replace(/^[w]+\./gm, '');
+
+  const type = displayedValue.startsWith('linkedin.')
+    ? LinkType.LinkedIn
+    : displayedValue.startsWith('twitter.')
+      ? LinkType.Twitter
+      : LinkType.Url;
+
+  if (type === LinkType.LinkedIn || type === LinkType.Twitter) {
+    return <SocialLink href={url} type={type} label={displayedValue} />;
+  }
+
+  return <RoundedLink href={url} label={displayedValue} />;
 };

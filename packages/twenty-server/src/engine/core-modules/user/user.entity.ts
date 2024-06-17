@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import {
   Entity,
@@ -18,7 +18,12 @@ import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-mem
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { UserState } from 'src/engine/core-modules/user-state/dtos/user-state.dto';
+import { OnboardingStep } from 'src/engine/core-modules/onboarding/enums/onboarding-step.enum';
+
+registerEnumType(OnboardingStep, {
+  name: 'OnboardingStep',
+  description: 'Onboarding step',
+});
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
@@ -114,6 +119,6 @@ export class User {
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
   workspaces: Relation<UserWorkspace[]>;
 
-  @Field(() => UserState, { nullable: false })
-  state: UserState;
+  @Field(() => OnboardingStep, { nullable: true })
+  onboardingStep: OnboardingStep;
 }

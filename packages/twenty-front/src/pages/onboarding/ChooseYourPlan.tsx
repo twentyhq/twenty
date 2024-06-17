@@ -143,7 +143,7 @@ export const ChooseYourPlan = () => {
   return (
     prices?.getProductPrices?.productPrices && (
       <>
-        <Title withMarginTop={false}>Choose your Plan</Title>
+        <Title noMarginTop>Choose your Plan</Title>
         <SubTitle>
           Enjoy a {billing?.billingFreeTrialDurationInDays}-day free trial
         </SubTitle>

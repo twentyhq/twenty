@@ -22,28 +22,28 @@ export class RestApiCoreController {
   async handleApiGet(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.get(request);
 
-    res.status(200).send(cleanGraphQLResponse(result.data));
+    res.status(200).send(cleanGraphQLResponse(result.data.data));
   }
 
   @Delete()
   async handleApiDelete(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.delete(request);
 
-    res.status(200).send(cleanGraphQLResponse(result.data));
+    res.status(200).send(cleanGraphQLResponse(result.data.data));
   }
 
   @Post()
   async handleApiPost(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.createOne(request);
 
-    res.status(201).send(cleanGraphQLResponse(result.data));
+    res.status(201).send(cleanGraphQLResponse(result.data.data));
   }
 
   @Patch()
   async handleApiPatch(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.update(request);
 
-    res.status(200).send(cleanGraphQLResponse(result.data));
+    res.status(200).send(cleanGraphQLResponse(result.data.data));
   }
 
   // This endpoint is not documented in the OpenAPI schema.
@@ -53,6 +53,6 @@ export class RestApiCoreController {
   async handleApiPut(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.update(request);
 
-    res.status(200).send(cleanGraphQLResponse(result.data));
+    res.status(200).send(cleanGraphQLResponse(result.data.data));
   }
 }

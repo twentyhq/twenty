@@ -1,9 +1,8 @@
+import { useCurrencyFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useCurrencyFieldDisplay';
 import { CurrencyDisplay } from '@/ui/field/display/components/CurrencyDisplay';
 
-import { useCurrencyField } from '../../hooks/useCurrencyField';
-
 export const CurrencyFieldDisplay = () => {
-  const { fieldValue } = useCurrencyField();
+  const { fieldValue } = useCurrencyFieldDisplay();
 
   return <CurrencyDisplay currencyValue={fieldValue} />;
 };

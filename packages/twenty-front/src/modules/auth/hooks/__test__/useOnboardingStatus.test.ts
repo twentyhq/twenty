@@ -12,6 +12,7 @@ import {
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { billingState } from '@/client-config/states/billingState';
+import { OnboardingStep } from '~/generated/graphql';
 
 const tokenPair = {
   accessToken: { token: 'accessToken', expiresAt: 'expiresAt' },
@@ -26,7 +27,7 @@ const currentUser = {
   email: 'test@test',
   supportUserHash: '1',
   canImpersonate: false,
-  state: { skipSyncEmailOnboardingStep: true },
+  onboardingStep: null,
 } as CurrentUser;
 const currentWorkspace = {
   activationStatus: 'active',
@@ -196,7 +197,7 @@ describe('useOnboardingStatus', () => {
       setBilling(billing);
       setCurrentUser({
         ...currentUser,
-        state: { skipSyncEmailOnboardingStep: false },
+        onboardingStep: OnboardingStep.SyncEmail,
       });
       setCurrentWorkspace({
         ...currentWorkspace,
@@ -212,6 +213,39 @@ describe('useOnboardingStatus', () => {
     });
 
     expect(result.current.onboardingStatus).toBe('ongoing_sync_email');
+  });
+
+  it('should return "ongoing_invite_team"', async () => {
+    const { result } = renderHooks();
+    const {
+      setTokenPair,
+      setBilling,
+      setCurrentUser,
+      setCurrentWorkspace,
+      setCurrentWorkspaceMember,
+    } = result.current;
+
+    act(() => {
+      setTokenPair(tokenPair);
+      setBilling(billing);
+      setCurrentUser({
+        ...currentUser,
+        onboardingStep: OnboardingStep.InviteTeam,
+      });
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        subscriptionStatus: 'active',
+      });
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      });
+    });
+
+    expect(result.current.onboardingStatus).toBe('ongoing_invite_team');
   });
 
   it('should return "completed"', async () => {

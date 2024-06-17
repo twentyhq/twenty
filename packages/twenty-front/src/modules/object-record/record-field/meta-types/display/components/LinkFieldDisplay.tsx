@@ -1,9 +1,8 @@
+import { useLinkFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useLinkFieldDisplay';
 import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
 
-import { useLinkField } from '../../hooks/useLinkField';
-
 export const LinkFieldDisplay = () => {
-  const { fieldValue } = useLinkField();
+  const { fieldValue } = useLinkFieldDisplay();
 
   return <LinkDisplay value={fieldValue} />;
 };
