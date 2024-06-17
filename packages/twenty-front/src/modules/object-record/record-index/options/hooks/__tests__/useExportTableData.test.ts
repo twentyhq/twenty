@@ -7,7 +7,6 @@ import {
   download,
   generateCsv,
 } from '../useExportTableData';
-import { sleep } from '../useTableData';
 
 jest.useFakeTimers();
 
