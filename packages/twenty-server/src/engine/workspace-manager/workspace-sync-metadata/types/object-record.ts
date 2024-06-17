@@ -1,19 +1,17 @@
-import { ObjectLiteral } from 'typeorm';
-
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 
-export type ObjectRecord<T extends ObjectLiteral> = {
-  [K in keyof T as T[K] extends BaseWorkspaceEntity
-    ? `${Extract<K, string>}Id`
-    : K]: T[K] extends BaseWorkspaceEntity
-    ? string
-    : T[K] extends BaseWorkspaceEntity[]
-      ? string[]
-      : T[K];
-} & {
-  [K in keyof T]: T[K] extends BaseWorkspaceEntity
-    ? ObjectRecord<T[K]>
-    : T[K] extends BaseWorkspaceEntity[]
-      ? ObjectRecord<T[K][number]>[]
-      : T[K];
+type RelationKeys<T> = {
+  [K in keyof T]: T[K] extends BaseWorkspaceEntity ? K : never;
+}[keyof T];
+
+type ForeignKeyMap<T> = {
+  [K in RelationKeys<T> as `${K & string}Id`]?: string | null | undefined;
 };
+
+type RecursiveObjectRecord<T> = {
+  [P in keyof T]: T[P] extends BaseWorkspaceEntity
+    ? ObjectRecord<T[P]> & ForeignKeyMap<T[P]>
+    : T[P];
+};
+
+export type ObjectRecord<T> = RecursiveObjectRecord<T> & ForeignKeyMap<T>;

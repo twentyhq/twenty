@@ -4,7 +4,9 @@ import {
   EntityManager,
   FindManyOptions,
   FindOneOptions,
+  FindOperator,
   FindOptionsWhere,
+  FindOptionsWhereProperty,
   InsertResult,
   ObjectId,
   ObjectLiteral,
@@ -25,6 +27,14 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { isPlainObject } from 'src/utils/is-plain-object';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
+type FindOptionsWhereEntity<Entity> = {
+  [P in keyof Entity]?: P extends `${infer _}Id`
+    ? Entity[P] | FindOperator<Entity[P]> | undefined | null
+    : P extends 'toString'
+      ? unknown
+      : FindOptionsWhereProperty<NonNullable<ObjectRecord<Entity>[P]>>;
+};
+
 export class WorkspaceRepository<
   Entity extends ObjectLiteral,
   Record extends ObjectLiteral = ObjectRecord<Entity>,
@@ -33,11 +43,11 @@ export class WorkspaceRepository<
    * FIND METHODS
    */
   override async find(
-    options?: FindManyOptions<Record>,
+    options?: FindManyOptions<FindOptionsWhereEntity<Record>>,
     entityManager?: EntityManager,
   ): Promise<Record[]> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions(options);
+    const computedOptions = this.transformOptions(options as any);
     const result = await manager.find(this.target, computedOptions);
     const formattedResult = this.formatResult(result);
 

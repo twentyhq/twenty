@@ -1,3 +1,5 @@
+import { FindManyOptions } from 'typeorm';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
@@ -15,6 +17,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
@@ -132,3 +135,16 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     CalendarChannelEventAssociationWorkspaceEntity[]
   >;
 }
+
+type Test = ObjectRecord<CalendarChannelWorkspaceEntity>;
+
+type BaseOption = FindManyOptions<Test>;
+
+const baseOption: BaseOption = {};
+const accountOwnerId: string | null | undefined = null;
+
+baseOption.where = {
+  connectedAccount: {
+    accountOwnerId,
+  },
+};
