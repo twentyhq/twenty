@@ -28,12 +28,17 @@ export class GetVariablesFactory {
       return { filter: { id: { eq: id } } };
     }
 
+    const limit = this.limitInputFactory.create(request);
+    const endingBefore = this.endingBeforeInputFactory.create(request);
+    const startingAfter = this.startingAfterInputFactory.create(request);
+
     return {
       filter: this.filterInputFactory.create(request, objectMetadata),
       orderBy: this.orderByInputFactory.create(request, objectMetadata),
-      limit: this.limitInputFactory.create(request),
-      startingAfter: this.startingAfterInputFactory.create(request),
-      endingBefore: this.endingBeforeInputFactory.create(request),
+      first: !endingBefore ? limit : undefined,
+      last: endingBefore ? limit : undefined,
+      startingAfter,
+      endingBefore,
     };
   }
 }

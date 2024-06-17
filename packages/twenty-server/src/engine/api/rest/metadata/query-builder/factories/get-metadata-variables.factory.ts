@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
@@ -20,11 +20,22 @@ export class GetMetadataVariablesFactory {
       return { id };
     }
 
+    const limit = this.limitInputFactory.create(request, 1000);
+    const before = this.endingBeforeInputFactory.create(request);
+    const after = this.startingAfterInputFactory.create(request);
+
+    if (before && after) {
+      throw new BadRequestException(
+        `Only one of 'endingBefore' and 'startingAfter' may be provided`,
+      );
+    }
+
     return {
       paging: {
-        first: this.limitInputFactory.create(request, 1000),
-        after: this.startingAfterInputFactory.create(request),
-        before: this.endingBeforeInputFactory.create(request),
+        first: !before ? limit : undefined,
+        last: before ? limit : undefined,
+        after,
+        before,
       },
     };
   }

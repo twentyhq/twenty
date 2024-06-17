@@ -3,6 +3,7 @@ export type MetadataQueryVariables = {
   input?: object;
   paging?: {
     first?: number;
+    last?: number;
     after?: string;
     before?: string;
   };

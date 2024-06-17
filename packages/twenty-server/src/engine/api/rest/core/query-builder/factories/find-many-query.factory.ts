@@ -17,10 +17,16 @@ export class FindManyQueryFactory {
         $orderBy: [${objectNameSingular}OrderByInput],
         $startingAfter: String,
         $endingBefore: String,
-        $limit: Int = 60
+        $first: Int,
+        $last: Int
         ) {
         ${objectNamePlural}(
-        filter: $filter, orderBy: $orderBy, first: $limit, after: $startingAfter, before: $endingBefore
+          filter: $filter,
+          orderBy: $orderBy,
+          first: $first,
+          last: $last,
+          after: $startingAfter,
+          before: $endingBefore
         ) {
           edges {
             node {

@@ -3,7 +3,8 @@ export type QueryVariables = {
   data?: object | null;
   filter?: object;
   orderBy?: object;
-  limit?: number;
+  last?: number;
+  first?: number;
   startingAfter?: string;
   endingBefore?: string;
   input?: object;
