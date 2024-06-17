@@ -1,5 +1,6 @@
 import { ChangeEvent } from 'react';
 import { useRecoilValue } from 'recoil';
+import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
@@ -27,6 +28,7 @@ export const ObjectFilterDropdownNumberInput = () => {
         placeholder={filterDefinitionUsedInDropdown.label}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           selectFilter?.({
+            id: v4(),
             fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
             value: event.target.value,
             operand: selectedOperandInDropdown,

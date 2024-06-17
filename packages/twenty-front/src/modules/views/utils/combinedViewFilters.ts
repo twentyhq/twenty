@@ -29,7 +29,7 @@ export const combinedViewFilters = (
 
   return Object.values(
     combinedViewFilters.reduce(
-      (acc, obj) => ({ ...acc, [obj.fieldMetadataId]: obj }),
+      (acc, obj) => ({ ...acc, [obj.id]: obj }),
       {},
     ),
   );

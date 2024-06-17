@@ -1,4 +1,5 @@
 import { useRecoilValue } from 'recoil';
+import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
@@ -92,6 +93,7 @@ export const ObjectFilterDropdownRecordSelect = () => {
           : EMPTY_FILTER_VALUE;
 
       selectFilter({
+        id: v4(),
         definition: filterDefinitionUsedInDropdown,
         operand: selectedOperandInDropdown,
         displayValue: filterDisplayValue,

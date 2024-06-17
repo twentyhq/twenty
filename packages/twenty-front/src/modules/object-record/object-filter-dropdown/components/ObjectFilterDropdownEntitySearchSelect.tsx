@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { v4 } from 'uuid';
 
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -56,6 +57,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
     setObjectFilterDropdownSelectedEntityId(selectedEntity.id);
 
     selectFilter?.({
+      id: v4(),
       displayValue: selectedEntity.name,
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
       operand: selectedOperandInDropdown,
@@ -88,6 +90,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
     closeDropdown();
 
     selectFilter?.({
+      id: v4(),
       displayValue: filterDefinitionUsedInDropdown.selectAllLabel,
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
       operand: ViewFilterOperand.IsNotNull,

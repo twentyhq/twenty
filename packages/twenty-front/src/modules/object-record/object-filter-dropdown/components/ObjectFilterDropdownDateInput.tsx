@@ -1,4 +1,5 @@
 import { useRecoilValue } from 'recoil';
+import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
@@ -23,6 +24,7 @@ export const ObjectFilterDropdownDateInput = () => {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
 
     selectFilter?.({
+      id: v4(),
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
       value: isDefined(date) ? date.toISOString() : '',
       operand: selectedOperandInDropdown,

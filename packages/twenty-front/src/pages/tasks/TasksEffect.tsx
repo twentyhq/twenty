@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { v4 } from 'uuid';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -29,6 +30,7 @@ export const TasksEffect = ({ filterDropdownId }: TasksEffectProps) => {
   useEffect(() => {
     if (isDefined(currentWorkspaceMember)) {
       setSelectedFilter({
+        id: v4(),
         fieldMetadataId: 'assigneeId',
         value: JSON.stringify(currentWorkspaceMember.id),
         operand: ViewFilterOperand.Is,
