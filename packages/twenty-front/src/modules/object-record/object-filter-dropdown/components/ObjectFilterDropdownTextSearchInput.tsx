@@ -15,6 +15,8 @@ export const ObjectFilterDropdownTextSearchInput = () => {
     selectFilter,
   } = useFilterDropdown();
 
+  const [filterId] = useState(v4());
+
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
   );
@@ -38,7 +40,7 @@ export const ObjectFilterDropdownTextSearchInput = () => {
           setObjectFilterDropdownSearchInput(event.target.value);
 
           selectFilter?.({
-            id: selectedFilter?.id ? selectedFilter.id : v4(),
+            id: selectedFilter?.id ? selectedFilter.id : filterId,
             fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
             value: event.target.value,
             operand: selectedOperandInDropdown,

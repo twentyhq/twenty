@@ -157,9 +157,7 @@ export const ViewBarDetails = ({
               filterScopeId={viewFilter.id}
             >
               <DropdownScope dropdownScopeId={viewFilter.id}>
-                <ViewBarFilterEffect
-                  filterDropdownId={viewFilter.id}
-                />
+                <ViewBarFilterEffect filterDropdownId={viewFilter.id} />
                 <EditableFilterDropdownButton
                   viewFilter={viewFilter}
                   hotkeyScope={{

@@ -23,6 +23,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
     objectFilterDropdownSearchInputState,
     selectedOperandInDropdownState,
     objectFilterDropdownSelectedOptionValuesState,
+    selectedFilterState,
     selectFilter,
   } = useFilterDropdown();
 
@@ -38,6 +39,8 @@ export const ObjectFilterDropdownOptionSelect = () => {
   const objectFilterDropdownSelectedOptionValues = useRecoilValue(
     objectFilterDropdownSelectedOptionValuesState,
   );
+
+  const selectedFilter = useRecoilValue(selectedFilterState);
 
   const fieldMetaDataId = filterDefinitionUsedInDropdown?.fieldMetadataId ?? '';
 
@@ -97,7 +100,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
           : EMPTY_FILTER_VALUE;
 
       selectFilter({
-        id: v4(),
+        id: selectedFilter?.id ? selectedFilter.id : v4(),
         definition: filterDefinitionUsedInDropdown,
         operand: selectedOperandInDropdown,
         displayValue: filterDisplayValue,

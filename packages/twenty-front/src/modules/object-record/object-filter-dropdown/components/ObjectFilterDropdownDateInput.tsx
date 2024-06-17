@@ -9,6 +9,7 @@ export const ObjectFilterDropdownDateInput = () => {
   const {
     filterDefinitionUsedInDropdownState,
     selectedOperandInDropdownState,
+    selectedFilterState,
     setIsObjectFilterDropdownUnfolded,
     selectFilter,
   } = useFilterDropdown();
@@ -20,11 +21,13 @@ export const ObjectFilterDropdownDateInput = () => {
     selectedOperandInDropdownState,
   );
 
+  const selectedFilter = useRecoilValue(selectedFilterState);
+
   const handleChange = (date: Date | null) => {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
 
     selectFilter?.({
-      id: v4(),
+      id: selectedFilter?.id ? selectedFilter.id : v4(),
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
       value: isDefined(date) ? date.toISOString() : '',
       operand: selectedOperandInDropdown,

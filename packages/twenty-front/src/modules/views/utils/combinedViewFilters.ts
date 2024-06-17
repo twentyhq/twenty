@@ -28,9 +28,6 @@ export const combinedViewFilters = (
     .concat(toCreateViewFilters);
 
   return Object.values(
-    combinedViewFilters.reduce(
-      (acc, obj) => ({ ...acc, [obj.id]: obj }),
-      {},
-    ),
+    combinedViewFilters.reduce((acc, obj) => ({ ...acc, [obj.id]: obj }), {}),
   );
 };
