@@ -15,7 +15,7 @@ const StyledCardContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   width: 400px;
   padding: ${({ theme }) => theme.spacing(2)} 0px
-    ${({ theme }) => theme.spacing(4)} 0px;
+    ${({ theme }) => theme.spacing(1)} 0px;
 `;
 
 const StyledCard = styled(Card)`
