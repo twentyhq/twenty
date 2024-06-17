@@ -15,7 +15,7 @@ declare module 'graphql' {
   }
 }
 
-export class BaseGraphQLError extends Error implements GraphQLError {
+export class BaseGraphQLError extends GraphQLError {
   public extensions: Record<string, any>;
   override readonly name!: string;
   readonly locations: ReadonlyArray<SourceLocation> | undefined;
@@ -84,7 +84,7 @@ export class SyntaxError extends BaseGraphQLError {
 
 export class ValidationError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, 'GRAPHQL_VALIDATION_FAILED');
+    super(message, 'GRAPHQL_VALIDATION_FAILED', { http: { status: 400 } });
 
     Object.defineProperty(this, 'name', { value: 'ValidationError' });
   }
@@ -92,7 +92,7 @@ export class ValidationError extends BaseGraphQLError {
 
 export class AuthenticationError extends BaseGraphQLError {
   constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'UNAUTHENTICATED', extensions);
+    super(message, 'UNAUTHENTICATED', { ...extensions, http: { status: 401 } });
 
     Object.defineProperty(this, 'name', { value: 'AuthenticationError' });
   }
@@ -100,7 +100,7 @@ export class AuthenticationError extends BaseGraphQLError {
 
 export class ForbiddenError extends BaseGraphQLError {
   constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'FORBIDDEN', extensions);
+    super(message, 'FORBIDDEN', { ...extensions, http: { status: 403 } });
 
     Object.defineProperty(this, 'name', { value: 'ForbiddenError' });
   }
@@ -136,7 +136,7 @@ export class UserInputError extends BaseGraphQLError {
 
 export class NotFoundError extends BaseGraphQLError {
   constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'NOT_FOUND', extensions);
+    super(message, 'NOT_FOUND', { ...extensions, http: { status: 404 } });
 
     Object.defineProperty(this, 'name', { value: 'NotFoundError' });
   }
@@ -144,7 +144,10 @@ export class NotFoundError extends BaseGraphQLError {
 
 export class MethodNotAllowedError extends BaseGraphQLError {
   constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'METHOD_NOT_ALLOWED', extensions);
+    super(message, 'METHOD_NOT_ALLOWED', {
+      ...extensions,
+      http: { status: 405 },
+    });
 
     Object.defineProperty(this, 'name', { value: 'MethodNotAllowedError' });
   }
@@ -152,7 +155,7 @@ export class MethodNotAllowedError extends BaseGraphQLError {
 
 export class ConflictError extends BaseGraphQLError {
   constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'CONFLICT', extensions);
+    super(message, 'CONFLICT', { ...extensions, http: { status: 409 } });
 
     Object.defineProperty(this, 'name', { value: 'ConflictError' });
   }
@@ -160,7 +163,7 @@ export class ConflictError extends BaseGraphQLError {
 
 export class TimeoutError extends BaseGraphQLError {
   constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'TIMEOUT', extensions);
+    super(message, 'TIMEOUT', { ...extensions, http: { status: 408 } });
 
     Object.defineProperty(this, 'name', { value: 'TimeoutError' });
   }

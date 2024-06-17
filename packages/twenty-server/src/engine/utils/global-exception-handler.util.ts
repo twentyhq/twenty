@@ -43,6 +43,7 @@ export const shouldFilterException = (exception: Error): boolean => {
   ) {
     return true;
   }
+
   if (exception instanceof HttpException && exception.getStatus() < 500) {
     return true;
   }
@@ -50,7 +51,7 @@ export const shouldFilterException = (exception: Error): boolean => {
   return false;
 };
 
-export const handleException = (
+const handleException = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,
@@ -72,7 +73,7 @@ export const convertExceptionToGraphQLError = (
   return convertExceptionToGraphql(exception);
 };
 
-export const convertHttpExceptionToGraphql = (exception: HttpException) => {
+const convertHttpExceptionToGraphql = (exception: HttpException) => {
   const status = exception.getStatus();
   let error: BaseGraphQLError;
 
