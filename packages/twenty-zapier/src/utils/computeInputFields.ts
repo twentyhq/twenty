@@ -25,6 +25,8 @@ const getTypeFromFieldMetadataType = (
     case FieldMetadataType.NUMBER:
       return 'integer';
     case FieldMetadataType.NUMERIC:
+    case FieldMetadataType.PROBABILITY:
+      return 'number';
     default:
       return undefined;
   }
@@ -181,6 +183,7 @@ export const computeInputFields = (
       case FieldMetadataType.BOOLEAN:
       case FieldMetadataType.NUMBER:
       case FieldMetadataType.NUMERIC:
+      case FieldMetadataType.PROBABILITY:
       case FieldMetadataType.RATING: {
         const nodeFieldType = getTypeFromFieldMetadataType(nodeField.type);
         if (!nodeFieldType) {

@@ -2420,6 +2420,7 @@ export enum FieldMetadataType {
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
   Position = 'POSITION',
+  Probability = 'PROBABILITY',
   Rating = 'RATING',
   RawJson = 'RAW_JSON',
   Relation = 'RELATION',
@@ -4841,6 +4842,8 @@ export type Opportunity = {
   pointOfContactId?: Maybe<Scalars['UUID']>;
   /** Opportunity record position */
   position?: Maybe<Scalars['Position']>;
+  /** Opportunity probability */
+  probability?: Maybe<Scalars['String']>;
   /** Opportunity stage */
   stage?: Maybe<OpportunityStageEnum>;
   /** Timeline Activities linked to the opportunity. */
@@ -4923,6 +4926,8 @@ export type OpportunityCreateInput = {
   pointOfContactId?: InputMaybe<Scalars['UUID']>;
   /** Opportunity record position */
   position?: InputMaybe<Scalars['Position']>;
+  /** Opportunity probability */
+  probability?: InputMaybe<Scalars['String']>;
   /** Opportunity stage */
   stage?: InputMaybe<OpportunityStageEnum>;
   /** Update date */
@@ -4956,6 +4961,8 @@ export type OpportunityFilterInput = {
   pointOfContactId?: InputMaybe<IdFilter>;
   /** Opportunity record position */
   position?: InputMaybe<FloatFilter>;
+  /** Opportunity probability */
+  probability?: InputMaybe<StringFilter>;
   /** Opportunity stage */
   stage?: InputMaybe<OpportunityStageEnumFilter>;
   /** Update date */
@@ -4980,6 +4987,8 @@ export type OpportunityOrderByInput = {
   pointOfContactId?: InputMaybe<OrderByDirection>;
   /** Opportunity record position */
   position?: InputMaybe<OrderByDirection>;
+  /** Opportunity probability */
+  probability?: InputMaybe<OrderByDirection>;
   /** Opportunity stage */
   stage?: InputMaybe<OrderByDirection>;
   /** Update date */
@@ -5025,6 +5034,8 @@ export type OpportunityUpdateInput = {
   pointOfContactId?: InputMaybe<Scalars['UUID']>;
   /** Opportunity record position */
   position?: InputMaybe<Scalars['Position']>;
+  /** Opportunity probability */
+  probability?: InputMaybe<Scalars['String']>;
   /** Opportunity stage */
   stage?: InputMaybe<OpportunityStageEnum>;
   /** Update date */
