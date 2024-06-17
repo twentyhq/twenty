@@ -11,7 +11,9 @@ export class UpdateMetadataQueryFactory {
     const fields = fetchMetadataFields(objectNamePlural);
 
     return `
-      mutation Update${objectNameCapitalized}($input: UpdateOne${objectNameCapitalized}Input!) {
+      mutation Update${objectNameCapitalized}($input: UpdateOne${objectNameCapitalized}${
+        objectNameSingular === 'field' ? 'Metadata' : ''
+      }Input!) {
         updateOne${objectNameCapitalized}(input: $input) {
           id
           ${fields}

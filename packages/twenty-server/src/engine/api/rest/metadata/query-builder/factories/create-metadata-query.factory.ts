@@ -11,7 +11,9 @@ export class CreateMetadataQueryFactory {
     const fields = fetchMetadataFields(objectNamePlural);
 
     return `
-      mutation Create${objectNameCapitalized}($input: CreateOne${objectNameCapitalized}Input!) {
+      mutation Create${objectNameCapitalized}($input: CreateOne${objectNameCapitalized}${
+        objectNameSingular === 'field' ? 'Metadata' : ''
+      }Input!) {
         createOne${objectNameCapitalized}(input: $input) {
           id
           ${fields}
