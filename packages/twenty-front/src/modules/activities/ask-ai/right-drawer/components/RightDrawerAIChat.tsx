@@ -36,7 +36,7 @@ const StyledAskAIQuery = styled.div`
 `;
 
 const StyledSQLQueryResult = styled.div`
-  padding: 24px 0px;
+  padding-bottom: 24px;
 `;
 
 const StyledNewMessageArea = styled.div`
@@ -68,9 +68,13 @@ export const RightDrawerAIChat = () => {
               loading={loading}
               sqlQuery={data?.getAskAI.sqlQuery}
             />
-            <StyledSQLQueryResult>
-              {data?.getAskAI.sqlQueryResult}
-            </StyledSQLQueryResult>
+            {!loading && (
+              <StyledSQLQueryResult>
+                {typeof data?.getAskAI.sqlQueryResult === 'string'
+                  ? data?.getAskAI.sqlQueryResult
+                  : 'Invalid SQL query.'}
+              </StyledSQLQueryResult>
+            )}
             <div>
               <Button
                 onClick={() => {

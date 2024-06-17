@@ -58,7 +58,10 @@ export class AskAIService {
       );
 
     const removeSQLMarkdown: RunnableFunc<string, string> = (input) =>
-      input.replace(/^```sql/, '').replace(/```$/, '');
+      input
+        .replace(/^```sql/, '')
+        .replace(/```$/, '')
+        .trim();
 
     const sqlQueryGeneratorChain = RunnableSequence.from([
       promptTemplate,
@@ -84,15 +87,21 @@ export class AskAIService {
       },
     );
 
-    const sqlQueryResult = await this.workspaceQueryRunnerService.executeSQL(
-      workspaceDataSource,
-      workspaceId,
-      sqlQuery,
-    );
+    try {
+      const sqlQueryResult = await this.workspaceQueryRunnerService.executeSQL(
+        workspaceDataSource,
+        workspaceId,
+        sqlQuery,
+      );
 
-    return {
-      sqlQuery,
-      sqlQueryResult: JSON.stringify(sqlQueryResult),
-    };
+      return {
+        sqlQuery,
+        sqlQueryResult: JSON.stringify(sqlQueryResult),
+      };
+    } catch (e) {
+      return {
+        sqlQuery,
+      };
+    }
   }
 }
