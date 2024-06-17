@@ -30,7 +30,7 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
       useFactory: loggerModuleFactory,
       inject: [EnvironmentService],
     }),
-    MessageQueueModule.forRoot({
+    MessageQueueModule.registerAsync({
       useFactory: messageQueueModuleFactory,
       inject: [EnvironmentService],
     }),

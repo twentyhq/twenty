@@ -1,9 +1,13 @@
+import { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+
 import PgBoss from 'pg-boss';
 
 import {
   QueueCronJobOptions,
   QueueJobOptions,
 } from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
+import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
+import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
@@ -13,26 +17,37 @@ export type PgBossDriverOptions = PgBoss.ConstructorOptions;
 
 const DEFAULT_PG_BOSS_CRON_PATTERN_WHEN_NOT_PROVIDED = '*/1 * * * *';
 
-export class PgBossDriver implements MessageQueueDriver {
+export class PgBossDriver
+  implements MessageQueueDriver, OnModuleInit, OnModuleDestroy
+{
   private pgBoss: PgBoss;
 
   constructor(options: PgBossDriverOptions) {
     this.pgBoss = new PgBoss(options);
   }
 
-  async stop() {
-    await this.pgBoss.stop();
+  async onModuleInit() {
+    await this.pgBoss.start();
   }
 
-  async init(): Promise<void> {
-    await this.pgBoss.start();
+  async onModuleDestroy() {
+    await this.pgBoss.stop();
   }
 
   async work<T>(
     queueName: string,
-    handler: ({ data, id }: { data: T; id: string }) => Promise<void>,
+    handler: (job: MessageQueueJob<T>) => Promise<void>,
+    options?: MessageQueueWorkerOptions,
   ) {
-    return this.pgBoss.work(`${queueName}.*`, handler);
+    return this.pgBoss.work<T>(
+      `${queueName}.*`,
+      {
+        teamConcurrency: options?.concurrency,
+      },
+      async (job) => {
+        await handler({ data: job.data, id: job.id, name: job.name });
+      },
+    );
   }
 
   async addCron<T>(

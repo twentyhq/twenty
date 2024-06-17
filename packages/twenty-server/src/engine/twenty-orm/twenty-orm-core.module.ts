@@ -7,10 +7,6 @@ import {
   Provider,
   Type,
 } from '@nestjs/common';
-import {
-  ConfigurableModuleClass,
-  MODULE_OPTIONS_TOKEN,
-} from '@nestjs/common/cache/cache.module-definition';
 
 import { importClassesFromDirectories } from 'typeorm/util/DirectoryExportedClassesLoader';
 import { Logger as TypeORMLogger } from 'typeorm/logger/Logger';
@@ -30,6 +26,10 @@ import { ScopedWorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factorie
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { splitClassesAndStrings } from 'src/engine/twenty-orm/utils/split-classes-and-strings.util';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
+import {
+  ConfigurableModuleClass,
+  MODULE_OPTIONS_TOKEN,
+} from 'src/engine/twenty-orm/twenty-orm.module-definition';
 
 @Global()
 @Module({
@@ -46,7 +46,6 @@ export class TwentyORMCoreModule
   static register(options: TwentyORMOptions): DynamicModule {
     const dynamicModule = super.register(options);
 
-    console.log('register', options);
     const providers: Provider[] = [
       {
         provide: TWENTY_ORM_WORKSPACE_DATASOURCE,

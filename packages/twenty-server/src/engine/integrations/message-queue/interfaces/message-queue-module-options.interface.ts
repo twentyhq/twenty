@@ -1,5 +1,3 @@
-import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
-
 import { BullMQDriverOptions } from 'src/engine/integrations/message-queue/drivers/bullmq.driver';
 import { PgBossDriverOptions } from 'src/engine/integrations/message-queue/drivers/pg-boss.driver';
 
@@ -28,10 +26,3 @@ export type MessageQueueModuleOptions =
   | PgBossDriverFactoryOptions
   | BullMQDriverFactoryOptions
   | SyncDriverFactoryOptions;
-
-export type MessageQueueModuleAsyncOptions = {
-  useFactory: (
-    ...args: any[]
-  ) => MessageQueueModuleOptions | Promise<MessageQueueModuleOptions>;
-} & Pick<ModuleMetadata, 'imports'> &
-  Pick<FactoryProvider, 'inject'>;

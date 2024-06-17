@@ -3,6 +3,7 @@ import {
   QueueJobOptions,
 } from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueueJobData } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
+import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
@@ -16,6 +17,7 @@ export interface MessageQueueDriver {
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
+    options?: MessageQueueWorkerOptions,
   );
   addCron<T extends MessageQueueJobData | undefined>(
     queueName: MessageQueue,
@@ -24,6 +26,5 @@ export interface MessageQueueDriver {
     options?: QueueCronJobOptions,
   );
   removeCron(queueName: MessageQueue, jobName: string, pattern?: string);
-  stop?(): Promise<void>;
   register?(queueName: MessageQueue): void;
 }

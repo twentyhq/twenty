@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
@@ -10,16 +10,15 @@ import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/cale
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 export type BlocklistItemDeleteCalendarEventsJobData = {
   workspaceId: string;
   blocklistItemId: string;
 };
 
-@Injectable()
-export class BlocklistItemDeleteCalendarEventsJob
-  implements MessageQueueJob<BlocklistItemDeleteCalendarEventsJobData>
-{
+@Processor(MessageQueue.calendarQueue)
+export class BlocklistItemDeleteCalendarEventsJob {
   private readonly logger = new Logger(
     BlocklistItemDeleteCalendarEventsJob.name,
   );
@@ -36,6 +35,7 @@ export class BlocklistItemDeleteCalendarEventsJob
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
   ) {}
 
+  @Process(BlocklistItemDeleteCalendarEventsJob.name)
   async handle(data: BlocklistItemDeleteCalendarEventsJobData): Promise<void> {
     const { workspaceId, blocklistItemId } = data;
 
