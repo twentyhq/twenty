@@ -7695,7 +7695,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/core@npm:>0.1.0  <0.3.0, @langchain/core@npm:>=0.2.5 <0.3.0, @langchain/core@npm:~0.2.0":
+"@langchain/core@npm:>0.1.0  <0.3.0, @langchain/core@npm:>0.1.56 <0.3.0, @langchain/core@npm:>=0.2.5 <0.3.0, @langchain/core@npm:~0.2.0":
   version: 0.2.6
   resolution: "@langchain/core@npm:0.2.6"
   dependencies:
@@ -7712,6 +7712,32 @@ __metadata:
     zod: "npm:^3.22.4"
     zod-to-json-schema: "npm:^3.22.3"
   checksum: 4ae46528854f9dfc9e6e91c9351275cecc5cb4d246c8a2ae1326fbe046bb8637e5e26743e1ebd86f06f2ef12dc1741ea3f4480701be1e89ceecc5146b8c873b1
+  languageName: node
+  linkType: hard
+
+"@langchain/mistralai@npm:^0.0.24":
+  version: 0.0.24
+  resolution: "@langchain/mistralai@npm:0.0.24"
+  dependencies:
+    "@langchain/core": "npm:>0.1.56 <0.3.0"
+    "@mistralai/mistralai": "npm:^0.4.0"
+    uuid: "npm:^9.0.0"
+    zod: "npm:^3.22.4"
+    zod-to-json-schema: "npm:^3.22.4"
+  checksum: abbc862685dfa48e9f4418ff94843b38d779514f46d5a971dc0c98b55a44d6fe91f3610432ccc0af39496ef075fbffd3e514e4104af5968938e0270e1a07716d
+  languageName: node
+  linkType: hard
+
+"@langchain/openai@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "@langchain/openai@npm:0.1.3"
+  dependencies:
+    "@langchain/core": "npm:>=0.2.5 <0.3.0"
+    js-tiktoken: "npm:^1.0.12"
+    openai: "npm:^4.49.1"
+    zod: "npm:^3.22.4"
+    zod-to-json-schema: "npm:^3.22.3"
+  checksum: b693bd9d5ec118136f99279c50b531865702d0fa41479cde4ced05bb20b487cc75656761e491b380e69ff191b38b8a41e4573a485b4da42f57061adb7aa692eb
   languageName: node
   linkType: hard
 
@@ -8031,6 +8057,15 @@ __metadata:
   version: 0.14.2
   resolution: "@microsoft/tsdoc@npm:0.14.2"
   checksum: c018857ad439144559ce34a397a29ace7cf5b24b999b8e3c1b88d878338088b3a453eaac4435beaf2c7eae13c4c0aac81e42f96f0f1d48e8d4eeb438eb3bb82f
+  languageName: node
+  linkType: hard
+
+"@mistralai/mistralai@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@mistralai/mistralai@npm:0.4.0"
+  dependencies:
+    node-fetch: "npm:^2.6.7"
+  checksum: 1857ceb56f9119e8248ebb3947f8ee1da6e0731aeced38e1de44823448376ddc733182dd782e50a0e448ddd6b01789bd9dc622e0594e7a354af302a06ced77e7
   languageName: node
   linkType: hard
 
@@ -39510,6 +39545,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"openai@npm:^4.49.1":
+  version: 4.51.0
+  resolution: "openai@npm:4.51.0"
+  dependencies:
+    "@types/node": "npm:^18.11.18"
+    "@types/node-fetch": "npm:^2.6.4"
+    abort-controller: "npm:^3.0.0"
+    agentkeepalive: "npm:^4.2.1"
+    form-data-encoder: "npm:1.7.2"
+    formdata-node: "npm:^4.3.2"
+    node-fetch: "npm:^2.6.7"
+    web-streams-polyfill: "npm:^3.2.1"
+  bin:
+    openai: bin/cli
+  checksum: c9adcca092aa528fe3556d9e91e022f67515e76c31ee6899d781b5bf17fbfd783e7aca15da4b6dca4bed53d12da021973789f5ae584d2769c5c560976939c45b
+  languageName: node
+  linkType: hard
+
 "openapi-types@npm:^12.1.3":
   version: 12.1.3
   resolution: "openapi-types@npm:12.1.3"
@@ -47586,6 +47639,8 @@ __metadata:
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch"
+    "@langchain/mistralai": "npm:^0.0.24"
+    "@langchain/openai": "npm:^0.1.3"
     "@nestjs/cache-manager": "npm:^2.2.1"
     "@nestjs/cli": "npm:10.3.0"
     "@nestjs/devtools-integration": "npm:^0.1.6"
@@ -51066,7 +51121,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod-to-json-schema@npm:^3.22.3":
+"zod-to-json-schema@npm:^3.22.3, zod-to-json-schema@npm:^3.22.4":
   version: 3.23.0
   resolution: "zod-to-json-schema@npm:3.23.0"
   peerDependencies:

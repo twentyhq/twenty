@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { ChatOpenAI } from '@langchain/openai';
 import { SqlDatabase } from 'langchain/sql_db';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { RunnableSequence } from '@langchain/core/runnables';
@@ -10,6 +9,7 @@ import { CallbackHandler, Langfuse } from 'langfuse-langchain';
 import { AskAIQueryResult } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
+import { ChatModelService } from 'src/modules/ai/services/chat-model/chat-model.service';
 
 interface AskAIPromptTemplateInput {
   schema: string;
@@ -21,6 +21,7 @@ export class AskAIService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
+    private readonly chatModelService: ChatModelService,
   ) {}
 
   async query(
@@ -56,11 +57,9 @@ export class AskAIService {
         ).getLangchainPrompt(),
       );
 
-    const model = new ChatOpenAI();
-
     const sqlQueryGeneratorChain = RunnableSequence.from([
       promptTemplate,
-      model.bind({ stop: ['\nSQLResult:'] }),
+      this.chatModelService.getChatModel(),
       new StringOutputParser(),
     ]);
 
