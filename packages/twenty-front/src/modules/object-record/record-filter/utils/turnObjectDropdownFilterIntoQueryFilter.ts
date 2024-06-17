@@ -6,6 +6,7 @@ import {
   DateFilter,
   FloatFilter,
   RecordGqlOperationFilter,
+  RelationFilter,
   StringFilter,
   URLFilter,
   UUIDFilter,
@@ -141,7 +142,7 @@ const applyEmptyFilters = (
       break;
     case 'RELATION':
       emptyRecordFilter = {
-        [correspondingField.name + 'Id']: { is: 'NULL' } as UUIDFilter,
+        [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
       };
       break;
     default:
@@ -302,7 +303,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               objectRecordFilters.push({
                 [correspondingField.name + 'Id']: {
                   in: parsedRecordIds,
-                } as UUIDFilter,
+                } as RelationFilter,
               });
               break;
             case ViewFilterOperand.IsNot:
@@ -311,7 +312,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                   not: {
                     [correspondingField.name + 'Id']: {
                       in: parsedRecordIds,
-                    } as UUIDFilter,
+                    } as RelationFilter,
                   },
                 });
               }
