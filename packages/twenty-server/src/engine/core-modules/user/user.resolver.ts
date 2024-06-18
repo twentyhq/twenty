@@ -8,6 +8,8 @@ import {
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ModuleRef, createContextId } from '@nestjs/core';
+import { Injector } from '@nestjs/core/injector/injector';
 
 import crypto from 'crypto';
 
@@ -41,6 +43,8 @@ const getHMACKey = (email?: string, key?: string | null) => {
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
 export class UserResolver {
+  private readonly injector = new Injector();
+
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -48,6 +52,7 @@ export class UserResolver {
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
+    private readonly moduleRef: ModuleRef,
   ) {}
 
   @Query(() => User)
@@ -122,9 +127,36 @@ export class UserResolver {
       return null;
     }
 
-    return this.onboardingService.getOnboardingStep(
-      user,
-      user.defaultWorkspace,
+    // TODO: We should move that in an util function
+    const modules = this.moduleRef['container'].getModules();
+    const host = [...modules.values()].find((module) =>
+      module.providers.has(OnboardingService),
     );
+    const contextId = createContextId();
+
+    if (!host) {
+      throw new Error('host is not defined');
+    }
+
+    if (this.moduleRef.registerRequestByContextId) {
+      this.moduleRef.registerRequestByContextId(
+        {
+          // Add workspaceId to the request object
+          req: {
+            workspaceId: user.defaultWorkspaceId,
+          },
+        },
+        contextId,
+      );
+    }
+
+    const contextInstance = await this.injector.loadPerContext(
+      this.onboardingService,
+      host,
+      host.providers,
+      contextId,
+    );
+
+    return contextInstance.getOnboardingStep(user, user.defaultWorkspace);
   }
 }

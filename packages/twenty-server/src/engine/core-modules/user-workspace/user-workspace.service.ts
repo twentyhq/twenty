@@ -8,7 +8,6 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
@@ -26,7 +25,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly workspaceMemberRepository: WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private eventEmitter: EventEmitter2,
   ) {
     super(userWorkspaceRepository);
