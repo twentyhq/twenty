@@ -218,10 +218,9 @@ export const computeSchemaComponents = (
   );
 };
 
-export const computeParameterComponents = (): Record<
-  string,
-  OpenAPIV3_1.ParameterObject
-> => {
+export const computeParameterComponents = (
+  fromMetadata = false,
+): Record<string, OpenAPIV3_1.ParameterObject> => {
   return {
     idPath: computeIdPathParameter(),
     startingAfter: computeStartingAfterParameters(),
@@ -229,7 +228,7 @@ export const computeParameterComponents = (): Record<
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
     orderBy: computeOrderByParameters(),
-    limit: computeLimitParameters(),
+    limit: computeLimitParameters(fromMetadata),
   };
 };
 
@@ -240,7 +239,7 @@ export const computeMetadataSchemaComponents = (
     (schemas, item) => {
       switch (item.nameSingular) {
         case 'object': {
-          schemas[`${capitalize(item.nameSingular)} with Relations`] = {
+          schemas[`${capitalize(item.nameSingular)}`] = {
             type: 'object',
             description: `An object`,
             properties: {
@@ -290,7 +289,7 @@ export const computeMetadataSchemaComponents = (
           return schemas;
         }
         case 'field': {
-          schemas[`${capitalize(item.nameSingular)} with Relations`] = {
+          schemas[`${capitalize(item.nameSingular)}`] = {
             type: 'object',
             description: `A field`,
             properties: {
@@ -358,7 +357,7 @@ export const computeMetadataSchemaComponents = (
           return schemas;
         }
         case 'relation': {
-          schemas[`${capitalize(item.nameSingular)} with Relations`] = {
+          schemas[`${capitalize(item.nameSingular)}`] = {
             type: 'object',
             description: 'A relation',
             properties: {
