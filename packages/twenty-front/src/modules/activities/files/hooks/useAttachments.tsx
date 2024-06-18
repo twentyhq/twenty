@@ -4,13 +4,12 @@ import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivi
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
-// do we need to test this?
 export const useAttachments = (targetableObject: ActivityTargetableObject) => {
   const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
     nameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const { records: attachments } = useFindManyRecords<Attachment>({
+  const { records: attachments, loading } = useFindManyRecords<Attachment>({
     objectNameSingular: CoreObjectNameSingular.Attachment,
     filter: {
       [targetableObjectFieldIdName]: {
@@ -26,5 +25,6 @@ export const useAttachments = (targetableObject: ActivityTargetableObject) => {
 
   return {
     attachments,
+    loading,
   };
 };
