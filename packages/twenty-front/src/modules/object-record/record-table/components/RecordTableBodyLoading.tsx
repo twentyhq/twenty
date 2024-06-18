@@ -19,7 +19,7 @@ export const RecordTableBodyLoading = () => {
           <td>
             <CheckboxCell />
           </td>
-          {visibleTableColumns.map((column, columnIndex) => (
+          {visibleTableColumns.map((column) => (
             <RecordTableCellLoading
               key={column.fieldMetadataId}
               skeletonWidth={
