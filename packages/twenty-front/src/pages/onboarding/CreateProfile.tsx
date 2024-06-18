@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -22,6 +23,7 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { OnboardingStep } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -59,6 +61,7 @@ export const CreateProfile = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
+  const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
 
   const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -111,6 +114,13 @@ export const CreateProfile = () => {
               colorScheme: 'System',
             }) as any,
         );
+        setCurrentUser(
+          (current) =>
+            ({
+              ...current,
+              onboardingStep: OnboardingStep.SyncEmail,
+            }) as any,
+        );
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: SnackBarVariant.Error,
@@ -119,6 +129,7 @@ export const CreateProfile = () => {
     },
     [
       currentWorkspaceMember?.id,
+      setCurrentUser,
       enqueueSnackBar,
       setCurrentWorkspaceMember,
       updateOneRecord,

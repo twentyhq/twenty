@@ -1,4 +1,5 @@
 export enum OnboardingStep {
+  PROFILE_CREATION = 'PROFILE_CREATION',
   SYNC_EMAIL = 'SYNC_EMAIL',
   INVITE_TEAM = 'INVITE_TEAM',
 }

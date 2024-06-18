@@ -1,7 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 
@@ -13,14 +12,12 @@ import {
 
 export const useOnboardingStatus = (): OnboardingStatus | undefined => {
   const billing = useRecoilValue(billingState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentUser = useRecoilValue(currentUserState);
   const isLoggedIn = useIsLogged();
 
   return getOnboardingStatus({
     isLoggedIn,
-    currentWorkspaceMember,
     currentWorkspace,
     currentUser,
     isBillingEnabled: billing?.isBillingEnabled || false,

@@ -8,6 +8,8 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 
 enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
@@ -30,19 +32,21 @@ export class OnboardingService {
     private readonly keyValuePairService: KeyValuePairService<OnboardingKeyValueType>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
+    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
+    private readonly workspaceMemberRepository: WorkspaceMemberRepository,
   ) {}
 
-  private async isSyncEmailOnboardingStep(user: User, workspace: Workspace) {
+  private async isSyncEmailOnboardingStep(user: User) {
     const syncEmailValue = await this.keyValuePairService.get({
       userId: user.id,
-      workspaceId: workspace.id,
+      workspaceId: user.defaultWorkspaceId,
       key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
     });
     const isSyncEmailSkipped = syncEmailValue === OnboardingStepValues.SKIPPED;
     const connectedAccounts =
       await this.connectedAccountRepository.getAllByUserId(
         user.id,
-        workspace.id,
+        user.defaultWorkspaceId,
       );
 
     return !isSyncEmailSkipped && !connectedAccounts?.length;
@@ -64,15 +68,24 @@ export class OnboardingService {
     );
   }
 
-  async getOnboardingStep(
-    user: User,
-    workspace: Workspace,
-  ): Promise<OnboardingStep | null> {
-    if (await this.isSyncEmailOnboardingStep(user, workspace)) {
+  async getOnboardingStep(user: User): Promise<OnboardingStep | null> {
+    const workspaceMember = await this.workspaceMemberRepository.getById(
+      user.id,
+      user.defaultWorkspaceId,
+    );
+
+    if (
+      workspaceMember &&
+      (!workspaceMember.name.firstName || !workspaceMember.name.lastName)
+    ) {
+      return OnboardingStep.PROFILE_CREATION;
+    }
+
+    if (await this.isSyncEmailOnboardingStep(user)) {
       return OnboardingStep.SYNC_EMAIL;
     }
 
-    if (await this.isInviteTeamOnboardingStep(workspace)) {
+    if (await this.isInviteTeamOnboardingStep(user.defaultWorkspace)) {
       return OnboardingStep.INVITE_TEAM;
     }
 

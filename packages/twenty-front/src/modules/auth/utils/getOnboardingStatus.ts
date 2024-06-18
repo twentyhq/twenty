@@ -1,6 +1,5 @@
 import { CurrentUser } from '@/auth/states/currentUserState';
 import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { OnboardingStep } from '~/generated/graphql';
 
 export enum OnboardingStatus {
@@ -19,16 +18,11 @@ export enum OnboardingStatus {
 
 export const getOnboardingStatus = ({
   isLoggedIn,
-  currentWorkspaceMember,
   currentWorkspace,
   currentUser,
   isBillingEnabled,
 }: {
   isLoggedIn: boolean;
-  currentWorkspaceMember: Omit<
-    WorkspaceMember,
-    'createdAt' | 'updatedAt' | 'userId' | 'userEmail' | '__typename'
-  > | null;
   currentWorkspace: CurrentWorkspace | null;
   currentUser: CurrentUser | null;
   isBillingEnabled: boolean;
@@ -54,10 +48,7 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingWorkspaceActivation;
   }
 
-  if (
-    !currentWorkspaceMember?.name.firstName ||
-    !currentWorkspaceMember?.name.lastName
-  ) {
+  if (currentUser.onboardingStep === OnboardingStep.ProfileCreation) {
     return OnboardingStatus.OngoingProfileCreation;
   }
 

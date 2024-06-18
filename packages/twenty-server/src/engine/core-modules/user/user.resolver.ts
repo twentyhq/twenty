@@ -122,9 +122,6 @@ export class UserResolver {
       return null;
     }
 
-    return this.onboardingService.getOnboardingStep(
-      user,
-      user.defaultWorkspace,
-    );
+    return this.onboardingService.getOnboardingStep(user);
   }
 }

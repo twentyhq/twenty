@@ -1,6 +1,5 @@
 import { CurrentUser } from '@/auth/states/currentUserState';
 import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { OnboardingStep } from '~/generated/graphql';
 
 import { getOnboardingStatus } from '../getOnboardingStatus';
@@ -9,7 +8,6 @@ describe('getOnboardingStatus', () => {
   it('should return the correct status', () => {
     const ongoingUserCreation = getOnboardingStatus({
       isLoggedIn: false,
-      currentWorkspaceMember: null,
       currentWorkspace: null,
       currentUser: null,
       isBillingEnabled: false,
@@ -17,7 +15,6 @@ describe('getOnboardingStatus', () => {
 
     const ongoingWorkspaceActivation = getOnboardingStatus({
       isLoggedIn: true,
-      currentWorkspaceMember: null,
       currentWorkspace: {
         id: '1',
         activationStatus: 'inactive',
@@ -30,29 +27,18 @@ describe('getOnboardingStatus', () => {
 
     const ongoingProfileCreation = getOnboardingStatus({
       isLoggedIn: true,
-      currentWorkspaceMember: {
-        id: '1',
-        name: {},
-      } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
         activationStatus: 'active',
       } as CurrentWorkspace,
       currentUser: {
-        onboardingStep: null,
+        onboardingStep: OnboardingStep.ProfileCreation,
       } as CurrentUser,
       isBillingEnabled: false,
     });
 
     const ongoingSyncEmail = getOnboardingStatus({
       isLoggedIn: true,
-      currentWorkspaceMember: {
-        id: '1',
-        name: {
-          firstName: 'John',
-          lastName: 'Doe',
-        },
-      } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
         activationStatus: 'active',
@@ -65,13 +51,6 @@ describe('getOnboardingStatus', () => {
 
     const ongoingInviteTeam = getOnboardingStatus({
       isLoggedIn: true,
-      currentWorkspaceMember: {
-        id: '1',
-        name: {
-          firstName: 'John',
-          lastName: 'Doe',
-        },
-      } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
         activationStatus: 'active',
@@ -84,13 +63,6 @@ describe('getOnboardingStatus', () => {
 
     const completed = getOnboardingStatus({
       isLoggedIn: true,
-      currentWorkspaceMember: {
-        id: '1',
-        name: {
-          firstName: 'John',
-          lastName: 'Doe',
-        },
-      } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
         activationStatus: 'active',
@@ -103,13 +75,6 @@ describe('getOnboardingStatus', () => {
 
     const incomplete = getOnboardingStatus({
       isLoggedIn: true,
-      currentWorkspaceMember: {
-        id: '1',
-        name: {
-          firstName: 'John',
-          lastName: 'Doe',
-        },
-      } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
         activationStatus: 'active',
@@ -123,13 +88,6 @@ describe('getOnboardingStatus', () => {
 
     const incompleteButBillingDisabled = getOnboardingStatus({
       isLoggedIn: true,
-      currentWorkspaceMember: {
-        id: '1',
-        name: {
-          firstName: 'John',
-          lastName: 'Doe',
-        },
-      } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
         activationStatus: 'active',
@@ -143,13 +101,6 @@ describe('getOnboardingStatus', () => {
 
     const canceled = getOnboardingStatus({
       isLoggedIn: true,
-      currentWorkspaceMember: {
-        id: '1',
-        name: {
-          firstName: 'John',
-          lastName: 'Doe',
-        },
-      } as WorkspaceMember,
       currentWorkspace: {
         id: '1',
         activationStatus: 'active',
