@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleContent';
@@ -111,7 +112,7 @@ const StyledImageContainer = styled.div<{ loaded: string }>`
   `}
 `;
 
-const StyledImage = styled(img)<{ loaded: string }>`
+const StyledImage = styled(Image)<{ loaded: string }>`
   opacity: ${({ loaded }) => (loaded === 'true' ? 1 : 0)};
   transition: opacity 250ms ease-in-out;
 `;
@@ -148,6 +149,7 @@ export default function DocsContent({ item }: { item: FileContent }) {
                 style={{ objectFit: 'cover' }}
                 onLoad={() => setImageLoaded(true)}
                 loaded={imageLoaded.toString()}
+                unoptimized
               />
             )}
           </StyledImageContainer>
