@@ -9,6 +9,7 @@ import {
   IconCurrencyKroneSwedish,
   IconCurrencyPound,
   IconCurrencyRiyal,
+  IconCurrencyWon,
   IconCurrencyYen,
   IconCurrencyYuan,
 } from 'twenty-ui';
@@ -78,5 +79,9 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   AED: {
     label: 'UAE dirham',
     Icon: IconCurrencyDirham,
+  },
+  KRW: {
+    label: 'South Korean won',
+    Icon: IconCurrencyWon,
   },
 };

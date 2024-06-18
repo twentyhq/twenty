@@ -18,6 +18,7 @@ export const mapViewFiltersToFilters = (
       if (!availableFilterDefinition) return null;
 
       return {
+        id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
         value: viewFilter.value,
         displayValue: viewFilter.displayValue,
