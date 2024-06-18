@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
@@ -20,12 +21,14 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @Module({
   imports: [
     CalendarProvidersModule,
-    ObjectMetadataRepositoryModule.forFeature([
-      ConnectedAccountWorkspaceEntity,
+    TwentyORMModule.forFeature([
       CalendarEventWorkspaceEntity,
       CalendarChannelWorkspaceEntity,
       CalendarChannelEventAssociationWorkspaceEntity,
       CalendarEventParticipantWorkspaceEntity,
+    ]),
+    ObjectMetadataRepositoryModule.forFeature([
+      ConnectedAccountWorkspaceEntity,
       BlocklistWorkspaceEntity,
       PersonWorkspaceEntity,
       WorkspaceMemberWorkspaceEntity,
