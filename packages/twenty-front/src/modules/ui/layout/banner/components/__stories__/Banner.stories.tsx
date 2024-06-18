@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { Banner } from '../Banner';
+import { BannerButton } from '../BannerButton';
 
 const meta: Meta<typeof Banner> = {
   title: 'UI/Layout/Banner/Banner',
@@ -11,6 +12,7 @@ const meta: Meta<typeof Banner> = {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <Banner {...args}>
       Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
+      <BannerButton>Reconnect</BannerButton>
     </Banner>
   ),
   argTypes: {

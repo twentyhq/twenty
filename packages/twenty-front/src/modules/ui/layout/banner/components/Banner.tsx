@@ -16,6 +16,7 @@ const StyledBanner = styled.div`
   font-style: normal;
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: 150%;
+  box-sizing: border-box;
 `;
 
 export { StyledBanner as Banner };
