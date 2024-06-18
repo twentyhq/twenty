@@ -19,7 +19,7 @@ type UseLoadRecordIndexBoardProps = {
   viewBarId: string;
   recordBoardId: string;
 };
-// this is not used anywhere! Whew!
+
 export const useLoadRecordIndexBoard = ({
   objectNameSingular,
   viewBarId,
