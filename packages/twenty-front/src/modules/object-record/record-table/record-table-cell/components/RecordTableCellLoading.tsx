@@ -1,13 +1,14 @@
+import { StyledTd } from '@/object-record/record-table/components/RecordTableRow';
 import { RecordTableCellSkeletonLoader } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSkeletonLoader';
 
 export const RecordTableCellLoading = ({
   skeletonWidth,
 }: {
-  skeletonWidth?: number;
+  skeletonWidth: number;
 }) => {
   return (
-    <td>
+    <StyledTd>
       <RecordTableCellSkeletonLoader skeletonWidth={skeletonWidth} />
-    </td>
+    </StyledTd>
   );
 };

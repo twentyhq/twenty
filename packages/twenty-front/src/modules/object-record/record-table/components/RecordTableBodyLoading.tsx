@@ -1,6 +1,11 @@
 import { useRecoilValue } from 'recoil';
 
 import { CheckboxCell } from '@/object-record/record-table/components/CheckboxCell';
+import { GripCell } from '@/object-record/record-table/components/GripCell';
+import {
+  StyledTd,
+  StyledTr,
+} from '@/object-record/record-table/components/RecordTableRow';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
 
@@ -12,22 +17,26 @@ export const RecordTableBodyLoading = () => {
   return (
     <tbody>
       {Array.from({ length: 8 }).map((_, rowIndex) => (
-        <tr
+        <StyledTr
+          isDragging={false}
           data-testid={`row-id-${rowIndex}`}
           data-selectable-id={`row-id-${rowIndex}`}
         >
-          <td>
+          <StyledTd data-select-disable>
+            <GripCell isDragging={false} />
+          </StyledTd>
+          <StyledTd>
             <CheckboxCell />
-          </td>
+          </StyledTd>
           {visibleTableColumns.map((column) => (
             <RecordTableCellLoading
               key={column.fieldMetadataId}
               skeletonWidth={
-                skeletonColumnsWithSmallWidth.includes(column.label) ? 108 : 132
+                skeletonColumnsWithSmallWidth.includes(column.label) ? 108 : 139
               }
             />
           ))}
-        </tr>
+        </StyledTr>
       ))}
     </tbody>
   );

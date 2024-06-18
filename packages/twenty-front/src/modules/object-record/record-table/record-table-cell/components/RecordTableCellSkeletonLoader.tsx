@@ -8,9 +8,9 @@ const StyledSkeletonContainer = styled.div`
 `;
 
 const StyledRecordTableCellLoader = ({
-  skeletonWidth = 132,
+  skeletonWidth,
 }: {
-  skeletonWidth?: number;
+  skeletonWidth: number;
 }) => {
   const theme = useTheme();
   return (
@@ -27,7 +27,7 @@ const StyledRecordTableCellLoader = ({
 export const RecordTableCellSkeletonLoader = ({
   skeletonWidth,
 }: {
-  skeletonWidth?: number;
+  skeletonWidth: number;
 }) => {
   return (
     <StyledSkeletonContainer>
