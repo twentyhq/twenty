@@ -110,13 +110,13 @@ export const useTasks = ({
   const { activities: completeTasksData } = useActivities({
     targetableObjects,
     activitiesFilters: completedQueryVariables.filter ?? {},
-    activitiesOrderByVariables: completedQueryVariables.orderBy ?? {},
+    activitiesOrderByVariables: completedQueryVariables.orderBy ?? [{}],
   });
 
   const { activities: incompleteTaskData } = useActivities({
     targetableObjects,
     activitiesFilters: incompleteQueryVariables.filter ?? {},
-    activitiesOrderByVariables: incompleteQueryVariables.orderBy ?? {},
+    activitiesOrderByVariables: incompleteQueryVariables.orderBy ?? [{}],
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {

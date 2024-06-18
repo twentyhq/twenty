@@ -5,11 +5,12 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { capitalize } from 'src/utils/capitalize';
 import {
   computeDepthParameters,
+  computeEndingBeforeParameters,
   computeFilterParameters,
   computeIdPathParameter,
-  computeLastCursorParameters,
   computeLimitParameters,
   computeOrderByParameters,
+  computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
@@ -223,7 +224,8 @@ export const computeParameterComponents = (): Record<
 > => {
   return {
     idPath: computeIdPathParameter(),
-    lastCursor: computeLastCursorParameters(),
+    startingAfter: computeStartingAfterParameters(),
+    endingBefore: computeEndingBeforeParameters(),
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
     orderBy: computeOrderByParameters(),
@@ -238,7 +240,7 @@ export const computeMetadataSchemaComponents = (
     (schemas, item) => {
       switch (item.nameSingular) {
         case 'object': {
-          schemas[`${capitalize(item.nameSingular)}`] = {
+          schemas[`${capitalize(item.nameSingular)} with Relations`] = {
             type: 'object',
             description: `An object`,
             properties: {
@@ -288,7 +290,7 @@ export const computeMetadataSchemaComponents = (
           return schemas;
         }
         case 'field': {
-          schemas[`${capitalize(item.nameSingular)}`] = {
+          schemas[`${capitalize(item.nameSingular)} with Relations`] = {
             type: 'object',
             description: `A field`,
             properties: {
@@ -356,7 +358,7 @@ export const computeMetadataSchemaComponents = (
           return schemas;
         }
         case 'relation': {
-          schemas[`${capitalize(item.nameSingular)}`] = {
+          schemas[`${capitalize(item.nameSingular)} with Relations`] = {
             type: 'object',
             description: 'A relation',
             properties: {

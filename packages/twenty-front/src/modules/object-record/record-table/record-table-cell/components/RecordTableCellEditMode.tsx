@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
 const StyledEditableCellEditModeContainer = styled.div<RecordTableCellEditModeProps>`
+  position: absolute;
   align-items: center;
   display: flex;
   min-width: 200px;

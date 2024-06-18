@@ -1,57 +1,66 @@
-import { ModuleRef } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 
-import { MessageQueueDriver } from 'src/engine/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
-  MessageQueueCronJobData,
-  MessageQueueJob,
   MessageQueueJobData,
+  MessageQueueJob,
 } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { getJobClassName } from 'src/engine/integrations/message-queue/utils/get-job-class-name.util';
+
+import { MessageQueueDriver } from './interfaces/message-queue-driver.interface';
 
 export class SyncDriver implements MessageQueueDriver {
   private readonly logger = new Logger(SyncDriver.name);
-  constructor(private readonly jobsModuleRef: ModuleRef) {}
+  private workersMap: {
+    [queueName: string]: (job: MessageQueueJob<any>) => Promise<void> | void;
+  } = {};
+
+  constructor() {}
 
   async add<T extends MessageQueueJobData>(
-    _queueName: MessageQueue,
+    queueName: MessageQueue,
     jobName: string,
     data: T,
   ): Promise<void> {
-    const jobClassName = getJobClassName(jobName);
-    const job: MessageQueueJob<MessageQueueJobData> = this.jobsModuleRef.get(
-      jobClassName,
-      { strict: false },
-    );
-
-    await job.handle(data);
+    await this.processJob(queueName, { id: '', name: jobName, data });
   }
 
   async addCron<T extends MessageQueueJobData | undefined>(
-    _queueName: MessageQueue,
+    queueName: MessageQueue,
     jobName: string,
     data: T,
   ): Promise<void> {
     this.logger.log(`Running cron job with SyncDriver`);
-
-    const jobClassName = getJobClassName(jobName);
-    const job: MessageQueueCronJobData<MessageQueueJobData | undefined> =
-      this.jobsModuleRef.get(jobClassName, {
-        strict: true,
-      });
-
-    await job.handle(data);
+    await this.processJob(queueName, {
+      id: '',
+      name: jobName,
+      // TODO: Fix this type issue
+      data: data as any,
+    });
   }
 
-  async removeCron(_queueName: MessageQueue, jobName: string) {
-    this.logger.log(`Removing '${jobName}' cron job with SyncDriver`);
-
-    return;
+  async removeCron(queueName: MessageQueue, jobName: string) {
+    this.logger.log(`Removing '${queueName}' cron job with SyncDriver`);
   }
 
-  work() {
-    return;
+  work<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    handler: (job: MessageQueueJob<T>) => Promise<void> | void,
+  ) {
+    this.logger.log(`Registering handler for queue: ${queueName}`);
+    this.workersMap[queueName] = handler;
+  }
+
+  async processJob<T extends MessageQueueJobData>(
+    queueName: string,
+    job: MessageQueueJob<T>,
+  ) {
+    const worker = this.workersMap[queueName];
+
+    if (worker) {
+      await worker(job);
+    } else {
+      this.logger.error(`No handler found for job: ${queueName}`);
+    }
   }
 }

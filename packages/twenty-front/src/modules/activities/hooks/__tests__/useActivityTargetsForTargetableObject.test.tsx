@@ -34,7 +34,7 @@ const mocks: MockedResponse[] = [
       query: gql`
         query FindManyActivityTargets(
           $filter: ActivityTargetFilterInput
-          $orderBy: ActivityTargetOrderByInput
+          $orderBy: [ActivityTargetOrderByInput]
           $lastCursor: String
           $limit: Int
         ) {

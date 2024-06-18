@@ -6,23 +6,9 @@ import {
   displayedExportProgress,
   download,
   generateCsv,
-  sleep,
 } from '../useExportTableData';
 
 jest.useFakeTimers();
-
-describe('sleep', () => {
-  it('waits the provided number of milliseconds', async () => {
-    const spy = jest.fn();
-    sleep(1000).then(spy);
-
-    jest.advanceTimersByTime(999);
-    expect(spy).not.toHaveBeenCalled();
-    jest.advanceTimersByTime(1);
-    await Promise.resolve(); // let queued promises execute
-    expect(spy).toHaveBeenCalledTimes(1);
-  });
-});
 
 describe('download', () => {
   it('creates a download link and clicks it', () => {

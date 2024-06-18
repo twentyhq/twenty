@@ -1,6 +1,7 @@
 import { CurrentUser } from '@/auth/states/currentUserState';
 import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { OnboardingStep } from '~/generated/graphql';
 
 export enum OnboardingStatus {
   Incomplete = 'incomplete',
@@ -11,6 +12,7 @@ export enum OnboardingStatus {
   OngoingWorkspaceActivation = 'ongoing_workspace_activation',
   OngoingProfileCreation = 'ongoing_profile_creation',
   OngoingSyncEmail = 'ongoing_sync_email',
+  OngoingInviteTeam = 'ongoing_invite_team',
   Completed = 'completed',
   CompletedWithoutSubscription = 'completed_without_subscription',
 }
@@ -59,8 +61,12 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingProfileCreation;
   }
 
-  if (!currentUser.state.skipSyncEmailOnboardingStep) {
+  if (currentUser.onboardingStep === OnboardingStep.SyncEmail) {
     return OnboardingStatus.OngoingSyncEmail;
+  }
+
+  if (currentUser.onboardingStep === OnboardingStep.InviteTeam) {
+    return OnboardingStatus.OngoingInviteTeam;
   }
 
   if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {

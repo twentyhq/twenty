@@ -25,8 +25,13 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.CreateWorkspace) ||
     isMatchingLocation(AppPath.CreateProfile) ||
     isMatchingLocation(AppPath.SyncEmails) ||
+    isMatchingLocation(AppPath.InviteTeam) ||
     isMatchingLocation(AppPath.PlanRequired) ||
     isMatchingLocation(AppPath.PlanRequiredSuccess);
+
+  if (isMatchingOpenRoute) {
+    return;
+  }
 
   if (
     onboardingStatus === OnboardingStatus.OngoingUserCreation &&
@@ -80,9 +85,15 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
+    onboardingStatus === OnboardingStatus.OngoingInviteTeam &&
+    !isMatchingLocation(AppPath.InviteTeam)
+  ) {
+    return AppPath.InviteTeam;
+  }
+
+  if (
     onboardingStatus === OnboardingStatus.Completed &&
-    isMatchingOnboardingRoute &&
-    !isMatchingOpenRoute
+    isMatchingOnboardingRoute
   ) {
     return defaultHomePagePath;
   }
@@ -90,7 +101,6 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     onboardingStatus === OnboardingStatus.CompletedWithoutSubscription &&
     isMatchingOnboardingRoute &&
-    !isMatchingOpenRoute &&
     !isMatchingLocation(AppPath.PlanRequired)
   ) {
     return defaultHomePagePath;

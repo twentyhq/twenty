@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 export type UnmatchParticipantJobData = {
   workspaceId: string;
@@ -12,15 +11,14 @@ export type UnmatchParticipantJobData = {
   workspaceMemberId?: string;
 };
 
-@Injectable()
-export class UnmatchParticipantJob
-  implements MessageQueueJob<UnmatchParticipantJobData>
-{
+@Processor(MessageQueue.messagingQueue)
+export class UnmatchParticipantJob {
   constructor(
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
   ) {}
 
+  @Process(UnmatchParticipantJob.name)
   async handle(data: UnmatchParticipantJobData): Promise<void> {
     const { workspaceId, email, personId, workspaceMemberId } = data;
 

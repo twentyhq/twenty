@@ -8,11 +8,15 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
-import { mockedPeopleData } from '~/testing/mock-data/people';
+import { getPeopleMock } from '~/testing/mock-data/people';
 
 import { RecordDetailRelationSection } from '../RecordDetailRelationSection';
+
+const companiesMock = getCompaniesMock();
+
+const peopleMock = getPeopleMock();
 
 const meta: Meta<typeof RecordDetailRelationSection> = {
   title:
@@ -22,7 +26,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
     (Story) => (
       <FieldContext.Provider
         value={{
-          entityId: mockedCompaniesData[0].id,
+          entityId: companiesMock[0].id,
           basePathToShowPage: '/object-record/',
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
@@ -44,7 +48,7 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
   ],
   parameters: {
     msw: graphqlMocks,
-    records: mockedCompaniesData,
+    records: companiesMock,
   },
 };
 
@@ -58,10 +62,10 @@ export const WithRecords: Story = {
   parameters: {
     records: [
       {
-        ...mockedCompaniesData[0],
-        people: mockedPeopleData,
+        ...companiesMock[0],
+        people: peopleMock,
       },
-      ...mockedPeopleData,
+      ...peopleMock,
     ],
   },
 };

@@ -1,5 +1,6 @@
 import {
   IconComponent,
+  IconCurrencyBaht,
   IconCurrencyDirham,
   IconCurrencyDollar,
   IconCurrencyEuro,
@@ -61,6 +62,10 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   SEK: {
     label: 'Swedish krona',
     Icon: IconCurrencyKroneSwedish,
+  },
+  BHT: {
+    label: 'Thai Baht',
+    Icon: IconCurrencyBaht,
   },
   MAD: {
     label: 'Moroccan dirham',

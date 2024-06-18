@@ -109,7 +109,7 @@ export const usePrepareFindManyActivitiesQuery = () => {
       objectRecordsToOverwrite: filteredActivities,
       queryVariables: {
         ...nextFindManyActivitiesQueryFilter,
-        orderBy: { createdAt: 'DescNullsFirst' },
+        orderBy: [{ createdAt: 'DescNullsFirst' }],
       },
       recordGqlFields: FIND_ACTIVITIES_OPERATION_SIGNATURE.fields,
       computeReferences: true,

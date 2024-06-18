@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react-swc';
+import wyw from '@wyw-in-js/vite';
 import path from 'path';
 import { defineConfig, loadEnv } from 'vite';
 import checker from 'vite-plugin-checker';
@@ -48,6 +49,26 @@ export default defineConfig(({ command, mode }) => {
       }),
       svgr(),
       checker(checkers),
+      // TODO: fix this, we have to restrict the include to only the components that are using linaria
+      // Otherwise the build will fail because wyw tries to include emotion styled components
+      wyw({
+        include: [
+          '**/CurrencyDisplay.tsx',
+          '**/EllipsisDisplay.tsx',
+          '**/ContactLink.tsx',
+          '**/BooleanDisplay.tsx',
+          '**/LinksDisplay.tsx',
+          '**/RoundedLink.tsx',
+          '**/OverflowingTextWithTooltip.tsx',
+          '**/Chip.tsx',
+          '**/Tag.tsx',
+          '**/MultiSelectFieldDisplay.tsx',
+          '**/RatingInput.tsx',
+        ],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
     ],
 
     build: {

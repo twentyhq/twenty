@@ -2,9 +2,12 @@ import { useContext } from 'react';
 
 import { BooleanFieldDisplay } from '@/object-record/record-field/meta-types/display/components/BooleanFieldDisplay';
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
+import { RatingFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RatingFieldDisplay';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
+import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
+import { isFieldChipDisplay } from '@/object-record/utils/getRecordChipGeneratorPerObjectPerField';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
@@ -42,11 +45,7 @@ import { isFieldUuid } from '../types/guards/isFieldUuid';
 export const FieldDisplay = () => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
-  const isChipDisplay =
-    isLabelIdentifier &&
-    (isFieldText(fieldDefinition) ||
-      isFieldFullName(fieldDefinition) ||
-      isFieldNumber(fieldDefinition));
+  const isChipDisplay = isFieldChipDisplay(fieldDefinition, isLabelIdentifier);
 
   return isChipDisplay ? (
     <ChipFieldDisplay />
@@ -85,5 +84,7 @@ export const FieldDisplay = () => {
     <JsonFieldDisplay />
   ) : isFieldBoolean(fieldDefinition) ? (
     <BooleanFieldDisplay />
+  ) : isFieldRating(fieldDefinition) ? (
+    <RatingFieldDisplay />
   ) : null;
 };

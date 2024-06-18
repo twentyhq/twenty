@@ -14,12 +14,13 @@ export class FindManyQueryFactory {
     return `
       query FindMany${capitalize(objectNamePlural)}(
         $filter: ${objectNameSingular}FilterInput,
-        $orderBy: ${objectNameSingular}OrderByInput,
-        $lastCursor: String,
+        $orderBy: [${objectNameSingular}OrderByInput],
+        $startingAfter: String,
+        $endingBefore: String,
         $limit: Int = 60
         ) {
         ${objectNamePlural}(
-        filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor
+        filter: $filter, orderBy: $orderBy, first: $limit, after: $startingAfter, before: $endingBefore
         ) {
           edges {
             node {
@@ -41,6 +42,7 @@ export class FindManyQueryFactory {
             startCursor
             endCursor
           }
+          totalCount
         }
       }
     `;

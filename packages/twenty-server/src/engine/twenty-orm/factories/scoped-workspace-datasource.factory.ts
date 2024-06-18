@@ -3,7 +3,6 @@ import { REQUEST } from '@nestjs/core';
 
 import { EntitySchema } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 
 @Injectable({ scope: Scope.REQUEST })
@@ -14,12 +13,13 @@ export class ScopedWorkspaceDatasourceFactory {
   ) {}
 
   public async create(entities: EntitySchema[]) {
-    const workspace: Workspace | undefined = this.request['req']?.['workspace'];
+    const workspaceId: string | undefined =
+      this.request['req']?.['workspaceId'];
 
-    if (!workspace) {
+    if (!workspaceId) {
       return null;
     }
 
-    return this.workspaceDataSourceFactory.create(entities, workspace.id);
+    return this.workspaceDataSourceFactory.create(entities, workspaceId);
   }
 }

@@ -10,7 +10,6 @@ import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timel
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
@@ -19,9 +18,6 @@ import { ClientConfigModule } from './client-config/client-config.module';
 
 @Module({
   imports: [
-    TwentyORMModule.register({
-      workspaceEntities: ['dist/src/**/*.workspace-entity{.ts,.js}'],
-    }),
     HealthModule,
     AnalyticsModule,
     AuthModule,

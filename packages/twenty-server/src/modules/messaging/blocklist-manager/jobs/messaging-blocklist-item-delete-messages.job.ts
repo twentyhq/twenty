@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
@@ -16,10 +17,8 @@ export type BlocklistItemDeleteMessagesJobData = {
   blocklistItemId: string;
 };
 
-@Injectable()
-export class BlocklistItemDeleteMessagesJob
-  implements MessageQueueJob<BlocklistItemDeleteMessagesJobData>
-{
+@Processor(MessageQueue.messagingQueue)
+export class BlocklistItemDeleteMessagesJob {
   private readonly logger = new Logger(BlocklistItemDeleteMessagesJob.name);
 
   constructor(
@@ -34,6 +33,7 @@ export class BlocklistItemDeleteMessagesJob
     private readonly threadCleanerService: MessagingMessageCleanerService,
   ) {}
 
+  @Process(BlocklistItemDeleteMessagesJob.name)
   async handle(data: BlocklistItemDeleteMessagesJobData): Promise<void> {
     const { workspaceId, blocklistItemId } = data;
 
@@ -66,12 +66,14 @@ export class BlocklistItemDeleteMessagesJob
 
     const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
 
-    await this.messageChannelMessageAssociationRepository.deleteByMessageParticipantHandleAndMessageChannelIdsAndRoles(
-      handle,
-      messageChannelIds,
-      rolesToDelete,
-      workspaceId,
-    );
+    for (const messageChannelId of messageChannelIds) {
+      await this.messageChannelMessageAssociationRepository.deleteByMessageParticipantHandleAndMessageChannelIdAndRoles(
+        handle,
+        messageChannelId,
+        rolesToDelete,
+        workspaceId,
+      );
+    }
 
     await this.threadCleanerService.cleanWorkspaceThreads(workspaceId);
 
