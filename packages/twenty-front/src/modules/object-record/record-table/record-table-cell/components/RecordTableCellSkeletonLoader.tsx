@@ -7,7 +7,7 @@ const StyledSkeletonContainer = styled.div`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledRecordTableCellContainerLoader = ({
+const StyledRecordTableCellLoader = ({
   skeletonWidth = 132,
 }: {
   skeletonWidth?: number;
@@ -24,14 +24,14 @@ const StyledRecordTableCellContainerLoader = ({
   );
 };
 
-export const RecordTableCellContainerSkeletonLoader = ({
+export const RecordTableCellSkeletonLoader = ({
   skeletonWidth,
 }: {
   skeletonWidth?: number;
 }) => {
   return (
     <StyledSkeletonContainer>
-      <StyledRecordTableCellContainerLoader skeletonWidth={skeletonWidth} />
+      <StyledRecordTableCellLoader skeletonWidth={skeletonWidth} />
     </StyledSkeletonContainer>
   );
 };

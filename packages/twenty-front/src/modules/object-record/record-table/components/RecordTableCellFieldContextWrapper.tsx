@@ -14,11 +14,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export const RecordTableCellFieldContextWrapper = ({
-  skeletonWidth,
-}: {
-  skeletonWidth?: number;
-}) => {
+export const RecordTableCellFieldContextWrapper = () => {
   const { objectMetadataItem } = useContext(RecordTableContext);
   const { columnDefinition } = useContext(RecordTableCellContext);
   const { recordId, pathToShowPage } = useContext(RecordTableRowContext);
@@ -53,10 +49,7 @@ export const RecordTableCellFieldContextWrapper = ({
         }),
       }}
     >
-      <RecordTableCell
-        customHotkeyScope={{ scope: customHotkeyScope }}
-        skeletonWidth={skeletonWidth}
-      />
+      <RecordTableCell customHotkeyScope={{ scope: customHotkeyScope }} />
     </FieldContext.Provider>
   );
 };

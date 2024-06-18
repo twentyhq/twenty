@@ -1,9 +1,8 @@
 import { useRecoilValue } from 'recoil';
 
 import { CheckboxCell } from '@/object-record/record-table/components/CheckboxCell';
-import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/components/RecordTableCellFieldContextWrapper';
-import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
 
 export const RecordTableBodyLoading = () => {
   const { visibleTableColumnsSelector } = useRecordTableStates();
@@ -21,21 +20,12 @@ export const RecordTableBodyLoading = () => {
             <CheckboxCell />
           </td>
           {visibleTableColumns.map((column, columnIndex) => (
-            <RecordTableCellContext.Provider
-              value={{
-                columnDefinition: column,
-                columnIndex,
-              }}
+            <RecordTableCellLoading
               key={column.fieldMetadataId}
-            >
-              <RecordTableCellFieldContextWrapper
-                skeletonWidth={
-                  skeletonColumnsWithSmallWidth.includes(column.label)
-                    ? 108
-                    : 132
-                }
-              />
-            </RecordTableCellContext.Provider>
+              skeletonWidth={
+                skeletonColumnsWithSmallWidth.includes(column.label) ? 108 : 132
+              }
+            />
           ))}
         </tr>
       ))}

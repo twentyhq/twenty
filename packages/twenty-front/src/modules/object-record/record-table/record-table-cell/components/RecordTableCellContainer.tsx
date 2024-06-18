@@ -1,13 +1,10 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
-import { useRecoilValue } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { RecordTableCellContainerSkeletonLoader } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainerSkeletonLoader';
 import { RecordTableCellSoftFocusMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSoftFocusMode';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
@@ -29,7 +26,6 @@ export type RecordTableCellContainerProps = {
   maxContentWidth?: number;
   onSubmit?: () => void;
   onCancel?: () => void;
-  skeletonWidth?: number;
 };
 
 const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -40,11 +36,9 @@ export const RecordTableCellContainer = ({
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
-  skeletonWidth,
 }: RecordTableCellContainerProps) => {
   const { setIsFocused } = useFieldFocus();
   const { openTableCell } = useOpenRecordTableCellFromCell();
-  const { isRecordTableInitialLoadingState } = useRecordTableStates();
 
   const { isSelected, recordId, isPendingRow } = useContext(
     RecordTableRowContext,
@@ -59,9 +53,7 @@ export const RecordTableCellContainer = ({
   const [isInEditMode, setIsInEditMode] = useState(shouldBeInitiallyInEditMode);
 
   const cellPosition = useCurrentTableCellPosition();
-  const isRecordTableInitialLoading = useRecoilValue(
-    isRecordTableInitialLoadingState,
-  );
+
   const handleContextMenu = (event: React.MouseEvent) => {
     onContextMenu(event, recordId);
   };
@@ -150,16 +142,8 @@ export const RecordTableCellContainer = ({
             [styles.cellBaseContainerSoftFocus]: hasSoftFocus,
           })}
         >
-          {isRecordTableInitialLoading ? (
-            <RecordTableCellContainerSkeletonLoader
-              skeletonWidth={skeletonWidth}
-            />
-          ) : (
-            isInEditMode && (
-              <RecordTableCellEditMode>
-                {editModeContent}
-              </RecordTableCellEditMode>
-            )
+          {isInEditMode && (
+            <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
           )}
           {hasSoftFocus ? (
             <RecordTableCellSoftFocusMode
