@@ -3,7 +3,7 @@ import { Command, CommandRunner } from 'nest-commander';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { MessagingMessageChannelSyncStatusMonitoringCronJob } from 'src/modules/messaging/message-channel-monitoring/crons/jobs/messaging-message-channel-sync-status-monitoring.cron';
+import { MessagingMessageChannelSyncStatusMonitoringCronJob } from 'src/modules/messaging/monitoring/crons/jobs/messaging-message-channel-sync-status-monitoring.cron';
 
 const MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN =
   '0 * * * *';
