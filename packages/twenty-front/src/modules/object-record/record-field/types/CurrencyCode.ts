@@ -14,4 +14,5 @@ export enum CurrencyCode {
   MAD = 'MAD',
   QAR = 'QAR',
   AED = 'AED',
+  KRW = 'KRW',
 }
