@@ -18,18 +18,14 @@ const StyledSkeletonSubSection = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledSkeletonColumn = styled.div`
+const StyledSkeletonSubSectionContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   justify-content: center;
 `;
 
-const StyledSkeletonLoader = ({
-  isSecondColumn,
-}: {
-  isSecondColumn: boolean;
-}) => {
+const SkeletonColumnLoader = ({ height }: { height: number }) => {
   const theme = useTheme();
   return (
     <SkeletonTheme
@@ -37,12 +33,16 @@ const StyledSkeletonLoader = ({
       highlightColor={theme.background.transparent.lighter}
       borderRadius={80}
     >
-      <Skeleton width={24} height={isSecondColumn ? 120 : 84} />
+      <Skeleton width={24} height={height} />
     </SkeletonTheme>
   );
 };
 
-export const TimelineSkeletonLoader = () => {
+export const SkeletonLoader = ({
+  withSubSections = false,
+}: {
+  withSubSections?: boolean;
+}) => {
   const theme = useTheme();
   const skeletonItems = Array.from({ length: 3 }).map((_, index) => ({
     id: `skeleton-item-${index}`,
@@ -56,16 +56,17 @@ export const TimelineSkeletonLoader = () => {
     >
       <StyledSkeletonContainer>
         <Skeleton width={440} height={16} />
-        {skeletonItems.map(({ id }, index) => (
-          <StyledSkeletonSubSection key={id}>
-            <StyledSkeletonLoader isSecondColumn={index === 1} />
-            <StyledSkeletonColumn>
-              <Skeleton width={400} height={24} />
-              <Skeleton width={400} height={24} />
-              {index === 1 && <Skeleton width={400} height={24} />}
-            </StyledSkeletonColumn>
-          </StyledSkeletonSubSection>
-        ))}
+        {withSubSections &&
+          skeletonItems.map(({ id }, index) => (
+            <StyledSkeletonSubSection key={id}>
+              <SkeletonColumnLoader height={index === 1 ? 120 : 84} />
+              <StyledSkeletonSubSectionContent>
+                <Skeleton width={400} height={24} />
+                <Skeleton width={400} height={24} />
+                {index === 1 && <Skeleton width={400} height={24} />}
+              </StyledSkeletonSubSectionContent>
+            </StyledSkeletonSubSection>
+          ))}
       </StyledSkeletonContainer>
     </SkeletonTheme>
   );
