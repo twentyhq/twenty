@@ -47,8 +47,8 @@ export const AlgoliaDocSearch = ({ pathname }: AlgoliaDocSearchProps) => {
           </a>
         </section>
       )}
-      appId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID as string}
-      apiKey={process.env.NEXT_PUBLIC_ALGOLIA_API_KEY as string}
+      appId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID ?? ''}
+      apiKey={process.env.NEXT_PUBLIC_ALGOLIA_API_KEY ?? ''}
       indexName={`twenty-${indexName}`}
     />
   );
