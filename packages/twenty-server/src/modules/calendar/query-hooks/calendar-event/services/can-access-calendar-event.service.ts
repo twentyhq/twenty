@@ -6,7 +6,6 @@ import { Any } from 'typeorm';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
 import {
   CalendarChannelWorkspaceEntity,
@@ -31,13 +30,13 @@ export class CanAccessCalendarEventService {
   public async canAccessCalendarEvent(
     userId: string,
     workspaceId: string,
-    calendarChannelCalendarEventAssociations: ObjectRecord<CalendarChannelEventAssociationWorkspaceEntity>[],
+    calendarChannelCalendarEventAssociations: CalendarChannelEventAssociationWorkspaceEntity[],
   ) {
     const calendarChannels = await this.calendarChannelRepository.find({
       where: {
         id: Any(
           calendarChannelCalendarEventAssociations.map(
-            (association) => association.calendarChannelId,
+            (association) => association.calendarChannel.id,
           ),
         ),
       },
@@ -61,7 +60,7 @@ export class CanAccessCalendarEventService {
 
     const calendarChannelsConnectedAccounts =
       await this.connectedAccountRepository.getByIds(
-        calendarChannels.map((channel) => channel.connectedAccountId),
+        calendarChannels.map((channel) => channel.connectedAccount.id),
         workspaceId,
       );
 

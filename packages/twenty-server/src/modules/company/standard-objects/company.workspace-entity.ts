@@ -68,7 +68,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUsers',
   })
   @WorkspaceIsNullable()
-  employees: number;
+  employees: number | null;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
@@ -78,7 +78,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBrandLinkedin',
   })
   @WorkspaceIsNullable()
-  linkedinLink: LinkMetadata;
+  linkedinLink: LinkMetadata | null;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.xLink,
@@ -88,7 +88,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBrandX',
   })
   @WorkspaceIsNullable()
-  xLink: LinkMetadata;
+  xLink: LinkMetadata | null;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.annualRecurringRevenue,
@@ -99,7 +99,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMoneybag',
   })
   @WorkspaceIsNullable()
-  annualRecurringRevenue: CurrencyMetadata;
+  annualRecurringRevenue: CurrencyMetadata | null;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.idealCustomerProfile,
@@ -121,7 +121,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  position: number;
+  position: number | null;
 
   // Relations
   @WorkspaceRelation({
@@ -149,7 +149,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  accountOwner: Relation<WorkspaceMemberWorkspaceEntity>;
+  accountOwner: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.activityTargets,

@@ -45,7 +45,7 @@ export class CalendarEventParticipantListener {
       });
 
     const calendarEventParticipantsWithPersonId =
-      calendarEventParticipants.filter((participant) => participant.personId);
+      calendarEventParticipants.filter((participant) => participant.person?.id);
 
     if (calendarEventParticipantsWithPersonId.length === 0) {
       return;
@@ -58,7 +58,7 @@ export class CalendarEventParticipantListener {
         name: 'calendarEvent.linked',
         properties: null,
         objectName: 'calendarEvent',
-        recordId: participant.personId,
+        recordId: participant.person?.id ?? null,
         workspaceMemberId: payload.userId,
         workspaceId: payload.workspaceId,
         linkedObjectMetadataId: calendarEventObjectMetadata.id,

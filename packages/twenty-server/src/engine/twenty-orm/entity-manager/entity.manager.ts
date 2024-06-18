@@ -5,7 +5,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 export class WorkspaceEntityManager extends EntityManager {
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-  ) {
+  ): WorkspaceRepository<Entity> {
     // find already created repository instance and return it if found
     const repoFromMap = this.repositories.get(target);
 

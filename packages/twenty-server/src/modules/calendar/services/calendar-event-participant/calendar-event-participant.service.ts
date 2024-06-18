@@ -148,7 +148,9 @@ export class CalendarEventParticipantService {
           id: Any(calendarEventParticipantIdsToUpdate),
         },
         {
-          personId,
+          person: {
+            id: personId,
+          },
         },
       );
 
@@ -171,7 +173,9 @@ export class CalendarEventParticipantService {
           id: Any(calendarEventParticipantIdsToUpdate),
         },
         {
-          workspaceMemberId,
+          workspaceMember: {
+            id: workspaceMemberId,
+          },
         },
       );
     }
@@ -189,7 +193,7 @@ export class CalendarEventParticipantService {
           handle,
         },
         {
-          personId: null,
+          person: null,
         },
       );
     }
@@ -199,7 +203,7 @@ export class CalendarEventParticipantService {
           handle,
         },
         {
-          workspaceMemberId: null,
+          workspaceMember: null,
         },
       );
     }

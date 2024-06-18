@@ -34,8 +34,11 @@ export class CalendarEventFindManyPreQueryHook
     const calendarChannelCalendarEventAssociations =
       await this.calendarChannelEventAssociationRepository.find({
         where: {
-          calendarEventId: payload?.filter?.id?.eq,
+          calendarEvent: {
+            id: payload?.filter?.id?.eq,
+          },
         },
+        relations: ['calendarChannel.connectedAccount'],
       });
 
     if (calendarChannelCalendarEventAssociations.length === 0) {

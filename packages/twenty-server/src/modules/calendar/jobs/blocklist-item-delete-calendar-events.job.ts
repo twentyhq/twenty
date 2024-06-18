@@ -58,13 +58,21 @@ export class BlocklistItemDeleteCalendarEventsJob {
       `Deleting calendar events from ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
     );
 
+    if (!workspaceMemberId) {
+      throw new Error(
+        `Workspace member ID is undefined for blocklist item ${blocklistItemId} in workspace ${workspaceId}`,
+      );
+    }
+
     const calendarChannels = await this.calendarChannelRepository.find({
       where: {
         connectedAccount: {
-          accountOwnerId: workspaceMemberId,
+          accountOwner: {
+            id: workspaceMemberId,
+          },
         },
       },
-      relations: ['connectedAccount'],
+      relations: ['connectedAccount.accountOwner'],
     });
 
     const calendarChannelIds = calendarChannels.map(({ id }) => id);

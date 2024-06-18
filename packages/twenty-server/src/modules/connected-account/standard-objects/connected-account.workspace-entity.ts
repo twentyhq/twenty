@@ -86,7 +86,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconX',
   })
   @WorkspaceIsNullable()
-  authFailedAt: Date;
+  authFailedAt: Date | null;
 
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,

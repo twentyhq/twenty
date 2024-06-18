@@ -53,5 +53,5 @@ export class ViewSortWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'viewSorts',
   })
   @WorkspaceIsNullable()
-  view: Relation<ViewWorkspaceEntity>;
+  view: Relation<ViewWorkspaceEntity> | null;
 }

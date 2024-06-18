@@ -6,10 +6,10 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 type MessagingTelemetryTrackInput = {
   eventName: string;
   workspaceId: string;
-  userId?: string;
-  connectedAccountId?: string;
-  messageChannelId?: string;
-  message?: string;
+  userId?: string | null;
+  connectedAccountId?: string | null;
+  messageChannelId?: string | null;
+  message?: string | null;
 };
 
 @Injectable()

@@ -32,7 +32,9 @@ export class CalendarEventFindOnePreQueryHook implements WorkspacePreQueryHook {
     const calendarChannelCalendarEventAssociations =
       await this.calendarChannelEventAssociationRepository.find({
         where: {
-          calendarEventId: payload?.filter?.id?.eq,
+          calendarEvent: {
+            id: payload?.filter?.id?.eq,
+          },
         },
       });
 

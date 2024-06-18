@@ -130,7 +130,7 @@ export class CreateCompanyAndContactService {
   }
 
   async createCompaniesAndContactsAndUpdateParticipants(
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     contactsToCreate: Contacts,
     workspaceId: string,
   ) {
@@ -171,13 +171,13 @@ export class CreateCompanyAndContactService {
 
     this.eventEmitter.emit(`messageParticipant.matched`, {
       workspaceId,
-      userId: connectedAccount.accountOwnerId,
+      userId: connectedAccount.accountOwner.id,
       messageParticipants: updatedMessageParticipants,
     });
 
     this.eventEmitter.emit(`calendarEventParticipant.matched`, {
       workspaceId,
-      userId: connectedAccount.accountOwnerId,
+      userId: connectedAccount.accountOwner.id,
       calendarEventParticipants: updatedCalendarEventParticipants,
     });
   }

@@ -34,7 +34,7 @@ export class WorkspaceGoogleCalendarSyncService {
         GoogleCalendarSyncJob.name,
         {
           workspaceId,
-          connectedAccountId: calendarChannel.connectedAccountId,
+          connectedAccountId: calendarChannel.connectedAccount.id,
         },
         {
           retryLimit: 2,

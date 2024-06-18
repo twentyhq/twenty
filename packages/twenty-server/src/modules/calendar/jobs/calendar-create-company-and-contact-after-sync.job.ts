@@ -10,6 +10,9 @@ import { CreateCompanyAndContactService } from 'src/modules/connected-account/au
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 
 export type CalendarCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
@@ -40,8 +43,11 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
     );
     const { workspaceId, calendarChannelId } = data;
 
-    const calendarChannel = await this.calendarChannelRepository.findOneBy({
-      id: calendarChannelId,
+    const calendarChannel = await this.calendarChannelRepository.findOne({
+      where: {
+        id: calendarChannelId,
+      },
+      relations: ['connectedAccount.accountOwner'],
     });
 
     if (!calendarChannel) {
@@ -50,20 +56,16 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
       );
     }
 
-    const { handle, isContactAutoCreationEnabled, connectedAccountId } = calendarChannel;
+    const { handle, isContactAutoCreationEnabled, connectedAccount } =
+      calendarChannel;
 
     if (!isContactAutoCreationEnabled || !handle) {
       return;
     }
 
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
-      workspaceId,
-    );
-
     if (!connectedAccount) {
       throw new Error(
-        `Connected account with id ${connectedAccountId} not found in workspace ${workspaceId}`,
+        `Connected account not found in workspace ${workspaceId}`,
       );
     }
 
@@ -72,11 +74,13 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
         where: {
           calendarEvent: {
             calendarChannelEventAssociations: {
-              calendarChannelId,
+              calendarChannel: {
+                id: calendarChannelId,
+              },
             },
             calendarEventParticipants: {
-              personId: IsNull(),
-              workspaceMemberId: IsNull(),
+              person: IsNull(),
+              workspaceMember: IsNull(),
             },
           },
         },

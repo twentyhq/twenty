@@ -39,6 +39,7 @@ import {
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class GoogleCalendarSyncService {
@@ -92,7 +93,9 @@ export class GoogleCalendarSyncService {
     }
 
     const calendarChannel = await this.calendarChannelRepository.findOneBy({
-      connectedAccountId,
+      connectedAccount: {
+        id: connectedAccountId,
+      },
     });
 
     const syncToken = calendarChannel?.syncCursor || undefined;
@@ -117,6 +120,12 @@ export class GoogleCalendarSyncService {
       );
 
       return;
+    }
+
+    if (!workspaceMemberId) {
+      throw new Error(
+        `Workspace member ID is undefined for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+      );
     }
 
     const blocklist = await this.getBlocklist(workspaceMemberId, workspaceId);
@@ -184,7 +193,9 @@ export class GoogleCalendarSyncService {
           eventExternalId: Any(
             formattedEvents.map((calendarEvent) => calendarEvent.id),
           ),
-          calendarChannelId,
+          calendarChannel: {
+            id: calendarChannelId,
+          },
         },
       });
 
@@ -223,7 +234,9 @@ export class GoogleCalendarSyncService {
 
       await this.calendarChannelEventAssociationRepository.delete({
         eventExternalId: Any(cancelledEventExternalIds),
-        calendarChannelId,
+        calendarChannel: {
+          id: calendarChannelId,
+        },
       });
 
       endTime = Date.now();
@@ -481,11 +494,13 @@ export class GoogleCalendarSyncService {
         const existingCalendarEventParticipants =
           await this.calendarEventParticipantsRepository.find({
             where: {
-              calendarEventId: Any(
-                participantsToUpdate.map(
-                  (participant) => participant.calendarEventId,
+              calendarEvent: {
+                id: Any(
+                  participantsToUpdate
+                    .map((participant) => participant.calendarEventId)
+                    .filter(isDefined),
                 ),
-              ),
+              },
             },
           });
 
@@ -513,7 +528,7 @@ export class GoogleCalendarSyncService {
           },
           {
             calendarEventParticipantsToDelete:
-              [] as ObjectRecord<CalendarEventParticipantWorkspaceEntity>[],
+              [] as CalendarEventParticipantWorkspaceEntity[],
             newCalendarEventParticipants: [] as CalendarEventParticipant[],
           },
         );
