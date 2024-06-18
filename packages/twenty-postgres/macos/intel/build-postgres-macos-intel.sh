@@ -48,7 +48,7 @@ EOF
 echo_header $BLUE "                    DATABASE SETUP"
 
 PG_MAIN_VERSION=15
-PG_GRAPHQL_VERSION=1.5.1
+PG_GRAPHQL_VERSION=1.5.6
 CARGO_PGRX_VERSION=0.11.2
 
 current_directory=$(pwd)
