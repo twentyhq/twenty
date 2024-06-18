@@ -6,7 +6,7 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import { MessagingMessageChannelSyncStatusMonitoringCronJob } from 'src/modules/messaging/message-channel-monitoring/crons/jobs/messaging-message-channel-sync-status-monitoring.cron';
 
 const MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN =
-  '*/5 * * * *';
+  '0 * * * *';
 
 @Command({
   name: 'cron:messaging:monitoring:message-channel-sync-status',

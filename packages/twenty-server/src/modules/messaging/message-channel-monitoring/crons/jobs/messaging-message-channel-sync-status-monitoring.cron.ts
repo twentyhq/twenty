@@ -36,6 +36,11 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
   async handle(): Promise<void> {
     this.logger.log('Starting message channel sync status monitoring...');
 
+    await this.messagingTelemetryService.track({
+      eventName: 'message_channel.monitoring.sync_status.start',
+      message: 'Starting message channel sync status monitoring',
+    });
+
     const workspaceIds = (
       await this.workspaceRepository.find({
         where: this.environmentService.get('IS_BILLING_ENABLED')

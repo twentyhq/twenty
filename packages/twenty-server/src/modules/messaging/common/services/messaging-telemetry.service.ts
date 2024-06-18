@@ -5,7 +5,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 
 type MessagingTelemetryTrackInput = {
   eventName: string;
-  workspaceId: string;
+  workspaceId?: string;
   userId?: string;
   connectedAccountId?: string;
   messageChannelId?: string;
