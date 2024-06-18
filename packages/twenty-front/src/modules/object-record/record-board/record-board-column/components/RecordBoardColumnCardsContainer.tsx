@@ -12,7 +12,7 @@ import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/r
 import { RecordBoardColumnNewButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewButton';
 import { RecordBoardColumnNewOpportunityButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewOpportunityButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { isRecordIndexLoadingFamilyState } from '@/object-record/states/isRecordIndexLoadingFamilyState';
+import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -47,8 +47,10 @@ export const RecordBoardColumnCardsContainer = ({
   const { columnDefinition } = useContext(RecordBoardColumnContext);
   const { objectMetadataItem } = useContext(RecordBoardContext);
 
-  const isRecordIndexLoading = useRecoilValue(
-    isRecordIndexLoadingFamilyState(objectMetadataItem.nameSingular),
+  const columnId = columnDefinition.id;
+
+  const isRecordIndexBoardColumnLoading = useRecoilValue(
+    isRecordIndexBoardColumnLoadingFamilyState(columnId),
   );
 
   const { isCompactModeActiveState } = useRecordBoardStates();
@@ -73,7 +75,7 @@ export const RecordBoardColumnCardsContainer = ({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
-      {isRecordIndexLoading ? (
+      {isRecordIndexBoardColumnLoading ? (
         Array.from(
           { length: getNumberOfSkeletons(columnDefinition.position) },
           (_, index) => (

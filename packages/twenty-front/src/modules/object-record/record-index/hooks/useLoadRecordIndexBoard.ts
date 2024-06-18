@@ -12,7 +12,6 @@ import { recordIndexFiltersState } from '@/object-record/record-index/states/rec
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
-import { isRecordIndexLoadingFamilyState } from '@/object-record/states/isRecordIndexLoadingFamilyState';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 
 type UseLoadRecordIndexBoardProps = {
@@ -20,7 +19,7 @@ type UseLoadRecordIndexBoardProps = {
   viewBarId: string;
   recordBoardId: string;
 };
-
+// this is not used anywhere! Whew!
 export const useLoadRecordIndexBoard = ({
   objectNameSingular,
   viewBarId,
@@ -77,13 +76,6 @@ export const useLoadRecordIndexBoard = ({
     useSetRecordCountInCurrentView(viewBarId);
 
   const setIsCompactModeActive = useSetRecoilState(isCompactModeActiveState);
-  const setIsRecordIndexLoading = useSetRecoilState(
-    isRecordIndexLoadingFamilyState(objectNameSingular),
-  );
-
-  useEffect(() => {
-    setIsRecordIndexLoading(loading && records.length === 0);
-  }, [records, loading, setIsRecordIndexLoading]);
 
   useEffect(() => {
     setRecordIdsInBoard(records);
