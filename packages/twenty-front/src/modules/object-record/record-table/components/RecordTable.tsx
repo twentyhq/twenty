@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT, RGBA } from 'twenty-ui';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/components/RecordTableBodyEffect';
@@ -22,6 +23,9 @@ import { useUpsertRecordV2 } from '@/object-record/record-table/record-table-cel
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { DateFormat } from '@/workspace-member/constants/DateFormat';
+import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
+import { detectDateFormat } from '@/workspace-member/utils/detectDateFormat';
 
 const StyledTable = styled.table<{
   freezeFirstColumns?: boolean;
@@ -223,6 +227,7 @@ export const RecordTable = ({
   });
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   return (
     <RecordTableScope
@@ -232,6 +237,15 @@ export const RecordTable = ({
       {!!objectNameSingular && (
         <RecordTableContext.Provider
           value={{
+            dateTimeFormat: {
+              timeZone: currentWorkspaceMember?.timeZone ?? detectDateFormat(),
+              dateFormat:
+                (currentWorkspaceMember?.dateFormat as DateFormat) ??
+                DateFormat.MONTH_FIRST,
+              timeFormat:
+                (currentWorkspaceMember?.timeFormat as TimeFormat) ??
+                TimeFormat.MILITARY,
+            },
             objectMetadataItem,
             onUpsertRecord: handleUpsertRecord,
             onOpenTableCell: handleOpenTableCell,

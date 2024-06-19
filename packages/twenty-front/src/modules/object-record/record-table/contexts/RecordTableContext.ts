@@ -7,8 +7,15 @@ import { OpenTableCellArgs } from '@/object-record/record-table/record-table-cel
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { DateFormat } from '@/workspace-member/constants/DateFormat';
+import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 
 export type RecordTableContextProps = {
+  dateTimeFormat: {
+    timeZone: string;
+    dateFormat: DateFormat;
+    timeFormat: TimeFormat;
+  };
   objectMetadataItem: ObjectMetadataItem;
   onUpsertRecord: ({
     persistField,
