@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
+import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE = '[]';
@@ -14,11 +18,15 @@ export const ObjectFilterDropdownRecordSelect = () => {
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,
     selectedOperandInDropdownState,
+    selectedFilterState,
     setObjectFilterDropdownSelectedRecordIds,
     objectFilterDropdownSelectedRecordIdsState,
     selectFilter,
     emptyFilterButKeepDefinition,
   } = useFilterDropdown();
+
+  const { removeCombinedViewFilter } = useCombinedViewFilters();
+  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
@@ -32,6 +40,9 @@ export const ObjectFilterDropdownRecordSelect = () => {
   const objectFilterDropdownSelectedRecordIds = useRecoilValue(
     objectFilterDropdownSelectedRecordIdsState,
   );
+  const [fieldId] = useState(v4());
+
+  const selectedFilter = useRecoilValue(selectedFilterState);
 
   const objectNameSingular =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';
@@ -60,6 +71,7 @@ export const ObjectFilterDropdownRecordSelect = () => {
 
     if (newSelectedRecordIds.length === 0) {
       emptyFilterButKeepDefinition();
+      removeCombinedViewFilter(fieldId);
       return;
     }
 
@@ -91,7 +103,17 @@ export const ObjectFilterDropdownRecordSelect = () => {
           ? JSON.stringify(newSelectedRecordIds)
           : EMPTY_FILTER_VALUE;
 
+      const viewFilter =
+        currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
+          (viewFilter) =>
+            viewFilter.fieldMetadataId ===
+            filterDefinitionUsedInDropdown.fieldMetadataId,
+        );
+
+      const filterId = viewFilter?.id ?? fieldId;
+
       selectFilter({
+        id: selectedFilter?.id ? selectedFilter.id : filterId,
         definition: filterDefinitionUsedInDropdown,
         operand: selectedOperandInDropdown,
         displayValue: filterDisplayValue,

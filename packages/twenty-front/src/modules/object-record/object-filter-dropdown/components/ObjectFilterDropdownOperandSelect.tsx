@@ -1,4 +1,5 @@
 import { useRecoilValue } from 'recoil';
+import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -42,6 +43,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
       isDefined(selectedFilter)
     ) {
       selectFilter?.({
+        id: selectedFilter.id ? selectedFilter.id : v4(),
         fieldMetadataId: selectedFilter.fieldMetadataId,
         displayValue: selectedFilter.displayValue,
         operand: newOperand,

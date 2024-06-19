@@ -23,12 +23,12 @@ type RecordTableRowProps = {
   isPendingRow?: boolean;
 };
 
-const StyledTd = styled.td`
+export const StyledTd = styled.td`
   position: relative;
   user-select: none;
 `;
 
-const StyledTr = styled.tr<{ isDragging: boolean }>`
+export const StyledTr = styled.tr<{ isDragging: boolean }>`
   border: 1px solid transparent;
   transition: border-left-color 0.2s ease-in-out;
 

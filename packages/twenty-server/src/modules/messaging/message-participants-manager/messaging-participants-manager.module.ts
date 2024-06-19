@@ -25,10 +25,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
   ],
   providers: [
-    {
-      provide: MessagingCreateCompanyAndContactAfterSyncJob.name,
-      useClass: MessagingCreateCompanyAndContactAfterSyncJob,
-    },
+    MessagingCreateCompanyAndContactAfterSyncJob,
     MessageParticipantListener,
   ],
 })

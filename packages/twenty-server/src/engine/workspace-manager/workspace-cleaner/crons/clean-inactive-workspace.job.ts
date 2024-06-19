@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
 import { render } from '@react-email/render';
 import { In } from 'typeorm';
@@ -6,8 +6,6 @@ import {
   CleanInactiveWorkspaceEmail,
   DeleteInactiveWorkspaceEmail,
 } from 'twenty-emails';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -20,6 +18,9 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { CleanInactiveWorkspacesCommandOptions } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-inactive-workspaces.command';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
@@ -28,10 +29,8 @@ type WorkspaceToDeleteData = {
   daysSinceInactive: number;
 };
 
-@Injectable()
-export class CleanInactiveWorkspaceJob
-  implements MessageQueueJob<CleanInactiveWorkspacesCommandOptions>
-{
+@Processor(MessageQueue.cronQueue)
+export class CleanInactiveWorkspaceJob {
   private readonly logger = new Logger(CleanInactiveWorkspaceJob.name);
   private readonly inactiveDaysBeforeDelete;
   private readonly inactiveDaysBeforeEmail;
@@ -193,6 +192,7 @@ export class CleanInactiveWorkspaceJob
     });
   }
 
+  @Process(CleanInactiveWorkspaceJob.name)
   async handle(data: CleanInactiveWorkspacesCommandOptions): Promise<void> {
     const isDryRun = data.dryRun || false;
 

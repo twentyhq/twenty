@@ -1,12 +1,14 @@
 'use client';
 import styled from '@emotion/styled';
-import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 import { getCardPath } from '@/shared-utils/getCardPath';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled(Link)`
+  text-decoration: none;
   color: ${Theme.border.color.plain};
   border: 2px solid ${Theme.border.color.plain};
   border-radius: ${Theme.border.radius.md};
@@ -58,13 +60,12 @@ export default function DocsCard({
   card: DocsArticlesProps;
   isSection?: boolean;
 }) {
-  const router = useRouter();
   const pathname = usePathname();
   const path = getCardPath(card, pathname, isSection);
 
   if (card.title) {
     return (
-      <StyledContainer onClick={() => router.push(path)}>
+      <StyledContainer href={path}>
         <StyledImage src={card.image} alt={card.title} />
         <StyledHeading>{card.title}</StyledHeading>
         <StyledSubHeading>{card.info}</StyledSubHeading>

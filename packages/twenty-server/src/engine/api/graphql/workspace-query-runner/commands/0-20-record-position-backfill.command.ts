@@ -1,11 +1,10 @@
-import { Inject } from '@nestjs/common';
-
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import {
   RecordPositionBackfillJob,
   RecordPositionBackfillJobData,
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/record-position-backfill.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 
@@ -20,7 +19,7 @@ export type RecordPositionBackfillCommandOptions = {
 })
 export class RecordPositionBackfillCommand extends CommandRunner {
   constructor(
-    @Inject(MessageQueue.recordPositionBackfillQueue)
+    @InjectMessageQueue(MessageQueue.recordPositionBackfillQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
     super();

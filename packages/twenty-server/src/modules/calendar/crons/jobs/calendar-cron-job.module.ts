@@ -13,11 +13,6 @@ import { WorkspaceGoogleCalendarSyncModule } from 'src/modules/calendar/services
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
     WorkspaceGoogleCalendarSyncModule,
   ],
-  providers: [
-    {
-      provide: GoogleCalendarSyncCronJob.name,
-      useClass: GoogleCalendarSyncCronJob,
-    },
-  ],
+  providers: [GoogleCalendarSyncCronJob],
 })
 export class CalendarCronJobModule {}
