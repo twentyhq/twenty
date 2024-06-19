@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
-import { OnboardingStep } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { isDefined } from '~/utils/isDefined';
 
@@ -27,12 +27,12 @@ export const useShowAuthModal = () => {
     if (
       isDefined(onboardingStatus) &&
       [
-        OnboardingStep.SubscriptionIncomplete,
-        OnboardingStep.UserCreation,
-        OnboardingStep.ProfileCreation,
-        OnboardingStep.WorkspaceActivation,
-        OnboardingStep.SyncEmail,
-        OnboardingStep.InviteTeam,
+        OnboardingStatus.SubscriptionIncomplete,
+        OnboardingStatus.UserCreation,
+        OnboardingStatus.ProfileCreation,
+        OnboardingStatus.WorkspaceActivation,
+        OnboardingStatus.SyncEmail,
+        OnboardingStatus.InviteTeam,
       ].includes(onboardingStatus)
     ) {
       return true;
@@ -41,8 +41,8 @@ export const useShowAuthModal = () => {
       return (
         isDefined(onboardingStatus) &&
         [
-          OnboardingStep.CompletedWithoutSubscription,
-          OnboardingStep.SubscriptionCanceled,
+          OnboardingStatus.CompletedWithoutSubscription,
+          OnboardingStatus.SubscriptionCanceled,
         ].includes(onboardingStatus)
       );
     }

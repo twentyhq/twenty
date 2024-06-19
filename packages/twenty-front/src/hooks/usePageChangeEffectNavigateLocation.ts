@@ -1,7 +1,7 @@
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { OnboardingStep } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated/graphql';
 import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { isDefined } from '~/utils/isDefined';
@@ -34,14 +34,14 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStep.UserCreation &&
+    onboardingStatus === OnboardingStatus.UserCreation &&
     !isMatchingOngoingUserCreationRoute
   ) {
     return AppPath.SignInUp;
   }
 
   if (
-    onboardingStatus === OnboardingStep.SubscriptionIncomplete &&
+    onboardingStatus === OnboardingStatus.SubscriptionIncomplete &&
     !isMatchingLocation(AppPath.PlanRequired)
   ) {
     return AppPath.PlanRequired;
@@ -50,8 +50,8 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     isDefined(onboardingStatus) &&
     [
-      OnboardingStep.SubscriptionUnpaid,
-      OnboardingStep.SubscriptionCanceled,
+      OnboardingStatus.SubscriptionUnpaid,
+      OnboardingStatus.SubscriptionCanceled,
     ].includes(onboardingStatus) &&
     !(
       isMatchingLocation(AppPath.SettingsCatchAll) ||
@@ -64,7 +64,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStep.WorkspaceActivation &&
+    onboardingStatus === OnboardingStatus.WorkspaceActivation &&
     !isMatchingLocation(AppPath.CreateWorkspace) &&
     !isMatchingLocation(AppPath.PlanRequiredSuccess)
   ) {
@@ -72,35 +72,35 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStep.ProfileCreation &&
+    onboardingStatus === OnboardingStatus.ProfileCreation &&
     !isMatchingLocation(AppPath.CreateProfile)
   ) {
     return AppPath.CreateProfile;
   }
 
   if (
-    onboardingStatus === OnboardingStep.SyncEmail &&
+    onboardingStatus === OnboardingStatus.SyncEmail &&
     !isMatchingLocation(AppPath.SyncEmails)
   ) {
     return AppPath.SyncEmails;
   }
 
   if (
-    onboardingStatus === OnboardingStep.InviteTeam &&
+    onboardingStatus === OnboardingStatus.InviteTeam &&
     !isMatchingLocation(AppPath.InviteTeam)
   ) {
     return AppPath.InviteTeam;
   }
 
   if (
-    onboardingStatus === OnboardingStep.Completed &&
+    onboardingStatus === OnboardingStatus.Completed &&
     isMatchingOnboardingRoute
   ) {
     return defaultHomePagePath;
   }
 
   if (
-    onboardingStatus === OnboardingStep.CompletedWithoutSubscription &&
+    onboardingStatus === OnboardingStatus.CompletedWithoutSubscription &&
     isMatchingOnboardingRoute &&
     !isMatchingLocation(AppPath.PlanRequired)
   ) {

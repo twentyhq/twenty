@@ -20,7 +20,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import {
-  OnboardingStep,
+  OnboardingStatus,
   useActivateWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -107,7 +107,7 @@ export const CreateWorkspace = () => {
     }
   };
 
-  if (onboardingStatus !== OnboardingStep.WorkspaceActivation) {
+  if (onboardingStatus !== OnboardingStatus.WorkspaceActivation) {
     return null;
   }
 

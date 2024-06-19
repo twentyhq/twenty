@@ -1,5 +1,5 @@
 import { CurrentUser } from '@/auth/states/currentUserState';
-import { OnboardingStep } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated/graphql';
 
 import { getOnboardingStatus } from '../getOnboardingStatus';
 
@@ -13,77 +13,77 @@ describe('getOnboardingStatus', () => {
     const ongoingWorkspaceActivation = getOnboardingStatus({
       isLoggedIn: true,
       currentUser: {
-        onboardingStep: OnboardingStep.WorkspaceActivation,
+        onboardingStatus: OnboardingStatus.WorkspaceActivation,
       } as CurrentUser,
     });
 
     const ongoingProfileCreation = getOnboardingStatus({
       isLoggedIn: true,
       currentUser: {
-        onboardingStep: OnboardingStep.ProfileCreation,
+        onboardingStatus: OnboardingStatus.ProfileCreation,
       } as CurrentUser,
     });
 
     const ongoingSyncEmail = getOnboardingStatus({
       isLoggedIn: true,
       currentUser: {
-        onboardingStep: OnboardingStep.SyncEmail,
+        onboardingStatus: OnboardingStatus.SyncEmail,
       } as CurrentUser,
     });
 
     const ongoingInviteTeam = getOnboardingStatus({
       isLoggedIn: true,
       currentUser: {
-        onboardingStep: OnboardingStep.InviteTeam,
+        onboardingStatus: OnboardingStatus.InviteTeam,
       } as CurrentUser,
     });
 
     const completed = getOnboardingStatus({
       isLoggedIn: true,
       currentUser: {
-        onboardingStep: null,
+        onboardingStatus: null,
       } as CurrentUser,
     });
 
     const incomplete = getOnboardingStatus({
       isLoggedIn: true,
       currentUser: {
-        onboardingStep: OnboardingStep.SubscriptionIncomplete,
+        onboardingStatus: OnboardingStatus.SubscriptionIncomplete,
       } as CurrentUser,
     });
 
     const incompleteButBillingDisabled = getOnboardingStatus({
       isLoggedIn: true,
       currentUser: {
-        onboardingStep: null,
+        onboardingStatus: null,
       } as CurrentUser,
     });
 
     const canceled = getOnboardingStatus({
       isLoggedIn: true,
       currentUser: {
-        onboardingStep: OnboardingStep.SubscriptionCanceled,
+        onboardingStatus: OnboardingStatus.SubscriptionCanceled,
       } as CurrentUser,
     });
 
     const past_due = getOnboardingStatus({
       isLoggedIn: true,
       currentUser: {
-        onboardingStep: OnboardingStep.SubscriptionPastDue,
+        onboardingStatus: OnboardingStatus.SubscriptionPastDue,
       } as CurrentUser,
     });
 
     const unpaid = getOnboardingStatus({
       isLoggedIn: true,
       currentUser: {
-        onboardingStep: OnboardingStep.SubscriptionUnpaid,
+        onboardingStatus: OnboardingStatus.SubscriptionUnpaid,
       } as CurrentUser,
     });
 
     const completeWithoutSubscription = getOnboardingStatus({
       isLoggedIn: true,
       currentUser: {
-        onboardingStep: OnboardingStep.CompletedWithoutSubscription,
+        onboardingStatus: OnboardingStatus.CompletedWithoutSubscription,
       } as CurrentUser,
     });
 

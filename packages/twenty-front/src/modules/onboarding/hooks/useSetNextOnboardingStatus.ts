@@ -8,24 +8,24 @@ import {
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { OnboardingStep } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated/graphql';
 
-const getNextOnboardingStep = (
-  currentOnboardingStep: OnboardingStep,
+const getNextOnboardingStatus = (
+  currentOnboardingStatus: OnboardingStatus,
   workspaceMembers: WorkspaceMember[],
   currentWorkspace: CurrentWorkspace | null,
 ) => {
-  if (currentOnboardingStep === OnboardingStep.SyncEmail) {
+  if (currentOnboardingStatus === OnboardingStatus.SyncEmail) {
     return workspaceMembers && workspaceMembers.length > 1
       ? null
-      : OnboardingStep.InviteTeam;
+      : OnboardingStatus.InviteTeam;
   }
   return currentWorkspace?.currentBillingSubscription
-    ? OnboardingStep.Completed
-    : OnboardingStep.CompletedWithoutSubscription;
+    ? OnboardingStatus.Completed
+    : OnboardingStatus.CompletedWithoutSubscription;
 };
 
-export const useSetNextOnboardingStep = () => {
+export const useSetNextOnboardingStatus = () => {
   const setCurrentUser = useSetRecoilState(currentUserState);
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -33,13 +33,13 @@ export const useSetNextOnboardingStep = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   return useRecoilCallback(
-    () => (currentOnboardingStep: OnboardingStep) => {
+    () => (currentOnboardingStatus: OnboardingStatus) => {
       setCurrentUser(
         (current) =>
           ({
             ...current,
-            onboardingStep: getNextOnboardingStep(
-              currentOnboardingStep,
+            onboardingStatus: getNextOnboardingStatus(
+              currentOnboardingStatus,
               workspaceMembers,
               currentWorkspace,
             ),

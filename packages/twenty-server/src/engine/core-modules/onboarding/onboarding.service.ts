@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
-import { OnboardingStep } from 'src/engine/core-modules/onboarding/enums/onboarding-step.enum';
+import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -42,7 +42,7 @@ export class OnboardingService {
     private readonly workspaceMemberRepository: WorkspaceMemberRepository,
   ) {}
 
-  private async isSyncEmailOnboardingStep(user: User) {
+  private async isSyncEmailOnboardingStatus(user: User) {
     const syncEmailValue = await this.keyValuePairService.get({
       userId: user.id,
       workspaceId: user.defaultWorkspaceId,
@@ -58,7 +58,7 @@ export class OnboardingService {
     return !isSyncEmailSkipped && !connectedAccounts?.length;
   }
 
-  private async isInviteTeamOnboardingStep(workspace: Workspace) {
+  private async isInviteTeamOnboardingStatus(workspace: Workspace) {
     const inviteTeamValue = await this.keyValuePairService.get({
       workspaceId: workspace.id,
       key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
@@ -74,10 +74,10 @@ export class OnboardingService {
     );
   }
 
-  async getOnboardingStep(user: User): Promise<OnboardingStep | null> {
+  async getOnboardingStatus(user: User): Promise<OnboardingStatus | null> {
     if (this.environmentService.get('IS_BILLING_ENABLED')) {
       if (user.defaultWorkspace.subscriptionStatus === 'incomplete') {
-        return OnboardingStep.SUBSCRIPTION_INCOMPLETE;
+        return OnboardingStatus.SUBSCRIPTION_INCOMPLETE;
       }
     }
 
@@ -86,7 +86,7 @@ export class OnboardingService {
         user.defaultWorkspaceId,
       ))
     ) {
-      return OnboardingStep.WORKSPACE_ACTIVATION;
+      return OnboardingStatus.WORKSPACE_ACTIVATION;
     }
 
     const workspaceMember = await this.workspaceMemberRepository.getById(
@@ -98,28 +98,28 @@ export class OnboardingService {
       workspaceMember &&
       (!workspaceMember.name.firstName || !workspaceMember.name.lastName)
     ) {
-      return OnboardingStep.PROFILE_CREATION;
+      return OnboardingStatus.PROFILE_CREATION;
     }
 
-    if (await this.isSyncEmailOnboardingStep(user)) {
-      return OnboardingStep.SYNC_EMAIL;
+    if (await this.isSyncEmailOnboardingStatus(user)) {
+      return OnboardingStatus.SYNC_EMAIL;
     }
 
-    if (await this.isInviteTeamOnboardingStep(user.defaultWorkspace)) {
-      return OnboardingStep.INVITE_TEAM;
+    if (await this.isInviteTeamOnboardingStatus(user.defaultWorkspace)) {
+      return OnboardingStatus.INVITE_TEAM;
     }
 
     if (this.environmentService.get('IS_BILLING_ENABLED')) {
       if (user.defaultWorkspace.subscriptionStatus === 'canceled') {
-        return OnboardingStep.SUBSCRIPTION_CANCELED;
+        return OnboardingStatus.SUBSCRIPTION_CANCELED;
       }
 
       if (user.defaultWorkspace.subscriptionStatus === 'past_due') {
-        return OnboardingStep.SUBSCRIPTION_PAST_DUE;
+        return OnboardingStatus.SUBSCRIPTION_PAST_DUE;
       }
 
       if (user.defaultWorkspace.subscriptionStatus === 'unpaid') {
-        return OnboardingStep.SUBSCRIPTION_UNPAID;
+        return OnboardingStatus.SUBSCRIPTION_UNPAID;
       }
 
       if (
@@ -127,11 +127,11 @@ export class OnboardingService {
           workspaceId: user.defaultWorkspaceId,
         }))
       ) {
-        return OnboardingStep.COMPLETED_WITHOUT_SUBSCRIPTION;
+        return OnboardingStatus.COMPLETED_WITHOUT_SUBSCRIPTION;
       }
     }
 
-    return OnboardingStep.COMPLETED;
+    return OnboardingStatus.COMPLETED;
   }
 
   async skipInviteTeamOnboardingStep(workspaceId: string) {

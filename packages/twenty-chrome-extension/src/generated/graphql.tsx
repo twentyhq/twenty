@@ -74,7 +74,7 @@ export type ActivityActivityTargetsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityTargetOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
 
@@ -86,7 +86,7 @@ export type ActivityAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -98,7 +98,7 @@ export type ActivityCommentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CommentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CommentOrderByInput>>>;
 };
 
 /** An activity */
@@ -1009,7 +1009,7 @@ export type CalendarChannelCalendarChannelEventAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarChannelEventAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>>;
 };
 
 /** Calendar Channels */
@@ -1296,7 +1296,7 @@ export type CalendarEventCalendarChannelEventAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarChannelEventAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>>;
 };
 
 
@@ -1308,7 +1308,7 @@ export type CalendarEventCalendarEventParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarEventParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarEventParticipantOrderByInput>>>;
 };
 
 /** Calendar events */
@@ -1786,6 +1786,7 @@ export type Company = {
   idealCustomerProfile?: Maybe<Scalars['Boolean']>;
   /** The company Linkedin account */
   linkedinLink?: Maybe<Link>;
+  multiSelect?: Maybe<Array<Maybe<CompanyMultiSelectEnum>>>;
   /** The company name */
   name?: Maybe<Scalars['String']>;
   /** Opportunities linked to the company. */
@@ -1811,7 +1812,7 @@ export type CompanyActivityTargetsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityTargetOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
 
@@ -1823,7 +1824,7 @@ export type CompanyAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -1835,7 +1836,7 @@ export type CompanyFavoritesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FavoriteOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
 
@@ -1847,7 +1848,7 @@ export type CompanyOpportunitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<OpportunityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<OpportunityOrderByInput>>>;
 };
 
 
@@ -1859,7 +1860,7 @@ export type CompanyPeopleArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<PersonOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<PersonOrderByInput>>>;
 };
 
 
@@ -1871,7 +1872,7 @@ export type CompanyTimelineActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TimelineActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<TimelineActivityOrderByInput>>>;
 };
 
 /** A company */
@@ -1902,6 +1903,7 @@ export type CompanyCreateInput = {
   idealCustomerProfile?: InputMaybe<Scalars['Boolean']>;
   /** The company Linkedin account */
   linkedinLink?: InputMaybe<LinkCreateInput>;
+  multiSelect?: InputMaybe<Array<InputMaybe<CompanyMultiSelectEnum>>>;
   /** The company name */
   name?: InputMaybe<Scalars['String']>;
   /** Company record position */
@@ -1939,6 +1941,7 @@ export type CompanyFilterInput = {
   idealCustomerProfile?: InputMaybe<BooleanFilter>;
   /** The company Linkedin account */
   linkedinLink?: InputMaybe<LinkFilterInput>;
+  multiSelect?: InputMaybe<Array<InputMaybe<CompanyMultiSelectEnumFilter>>>;
   /** The company name */
   name?: InputMaybe<StringFilter>;
   not?: InputMaybe<CompanyFilterInput>;
@@ -1949,6 +1952,24 @@ export type CompanyFilterInput = {
   updatedAt?: InputMaybe<DateFilter>;
   /** The company Twitter/X account */
   xLink?: InputMaybe<LinkFilterInput>;
+};
+
+export enum CompanyMultiSelectEnum {
+  /** Option 1 */
+  Option_1 = 'OPTION_1',
+  /** Option 2 */
+  Option_2 = 'OPTION_2',
+  /** Option 3 */
+  Option_3 = 'OPTION_3',
+  /** Option 4 */
+  Option_4 = 'OPTION_4'
+}
+
+export type CompanyMultiSelectEnumFilter = {
+  eq?: InputMaybe<CompanyMultiSelectEnum>;
+  in?: InputMaybe<Array<InputMaybe<CompanyMultiSelectEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<CompanyMultiSelectEnum>;
 };
 
 /** A company */
@@ -1971,6 +1992,7 @@ export type CompanyOrderByInput = {
   idealCustomerProfile?: InputMaybe<OrderByDirection>;
   /** The company Linkedin account */
   linkedinLink?: InputMaybe<LinkOrderByInput>;
+  multiSelect?: InputMaybe<Array<InputMaybe<OrderByDirection>>>;
   /** The company name */
   name?: InputMaybe<OrderByDirection>;
   /** Company record position */
@@ -2001,6 +2023,7 @@ export type CompanyUpdateInput = {
   idealCustomerProfile?: InputMaybe<Scalars['Boolean']>;
   /** The company Linkedin account */
   linkedinLink?: InputMaybe<LinkUpdateInput>;
+  multiSelect?: InputMaybe<Array<InputMaybe<CompanyMultiSelectEnum>>>;
   /** The company name */
   name?: InputMaybe<Scalars['String']>;
   /** Company record position */
@@ -2050,7 +2073,7 @@ export type ConnectedAccountCalendarChannelsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarChannelOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelOrderByInput>>>;
 };
 
 
@@ -2062,7 +2085,7 @@ export type ConnectedAccountMessageChannelsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelOrderByInput>>>;
 };
 
 /** A connected account */
@@ -2597,7 +2620,7 @@ export type MessageMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelMessageAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
 };
 
 
@@ -2609,7 +2632,7 @@ export type MessageMessageParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageParticipantOrderByInput>>>;
 };
 
 /** Message Channels */
@@ -2659,7 +2682,7 @@ export type MessageChannelMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelMessageAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
 };
 
 /** Message Channels */
@@ -3300,7 +3323,7 @@ export type MessageThreadMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelMessageAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
 };
 
 
@@ -3312,7 +3335,7 @@ export type MessageThreadMessagesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageOrderByInput>>>;
 };
 
 /** Message Thread */
@@ -3517,7 +3540,9 @@ export type Mutation = {
   deleteWebhooks?: Maybe<Array<Webhook>>;
   deleteWorkspaceMember?: Maybe<WorkspaceMember>;
   deleteWorkspaceMembers?: Maybe<Array<WorkspaceMember>>;
+  disablePostgresProxy: PostgresCredentials;
   emailPasswordResetLink: EmailPasswordResetLink;
+  enablePostgresProxy: PostgresCredentials;
   exchangeAuthorizationCode: ExchangeAuthCode;
   executeQuickActionOnActivity?: Maybe<Activity>;
   executeQuickActionOnActivityTarget?: Maybe<ActivityTarget>;
@@ -4803,10 +4828,19 @@ export type ObjectFieldsConnection = {
   pageInfo: PageInfo;
 };
 
-/** Onboarding step */
-export enum OnboardingStep {
+/** Onboarding status */
+export enum OnboardingStatus {
+  Completed = 'COMPLETED',
+  CompletedWithoutSubscription = 'COMPLETED_WITHOUT_SUBSCRIPTION',
   InviteTeam = 'INVITE_TEAM',
-  SyncEmail = 'SYNC_EMAIL'
+  ProfileCreation = 'PROFILE_CREATION',
+  SubscriptionCanceled = 'SUBSCRIPTION_CANCELED',
+  SubscriptionIncomplete = 'SUBSCRIPTION_INCOMPLETE',
+  SubscriptionPastDue = 'SUBSCRIPTION_PAST_DUE',
+  SubscriptionUnpaid = 'SUBSCRIPTION_UNPAID',
+  SyncEmail = 'SYNC_EMAIL',
+  UserCreation = 'USER_CREATION',
+  WorkspaceActivation = 'WORKSPACE_ACTIVATION'
 }
 
 export type OnboardingStepSuccess = {
@@ -4861,7 +4895,7 @@ export type OpportunityActivityTargetsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityTargetOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
 
@@ -4873,7 +4907,7 @@ export type OpportunityAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -4885,7 +4919,7 @@ export type OpportunityFavoritesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FavoriteOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
 
@@ -4897,7 +4931,7 @@ export type OpportunityTimelineActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TimelineActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<TimelineActivityOrderByInput>>>;
 };
 
 /** An opportunity */
@@ -5120,7 +5154,7 @@ export type PersonActivityTargetsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityTargetOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
 
@@ -5132,7 +5166,7 @@ export type PersonAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -5144,7 +5178,7 @@ export type PersonCalendarEventParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarEventParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarEventParticipantOrderByInput>>>;
 };
 
 
@@ -5156,7 +5190,7 @@ export type PersonFavoritesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FavoriteOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
 
@@ -5168,7 +5202,7 @@ export type PersonMessageParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageParticipantOrderByInput>>>;
 };
 
 
@@ -5180,7 +5214,7 @@ export type PersonPointOfContactForOpportunitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<OpportunityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<OpportunityOrderByInput>>>;
 };
 
 
@@ -5192,7 +5226,7 @@ export type PersonTimelineActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TimelineActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<TimelineActivityOrderByInput>>>;
 };
 
 /** A person */
@@ -5332,6 +5366,13 @@ export type PersonUpdateInput = {
   xLink?: InputMaybe<LinkUpdateInput>;
 };
 
+export type PostgresCredentials = {
+  id: Scalars['UUID'];
+  password: Scalars['String'];
+  user: Scalars['String'];
+  workspaceId: Scalars['String'];
+};
+
 export type ProductPriceEntity = {
   created: Scalars['Float'];
   recurringInterval: Scalars['String'];
@@ -5394,6 +5435,7 @@ export type Query = {
   favoriteDuplicates?: Maybe<FavoriteConnection>;
   favorites?: Maybe<FavoriteConnection>;
   findWorkspaceFromInviteHash: Workspace;
+  getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -5454,7 +5496,7 @@ export type QueryActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityOrderByInput>>>;
 };
 
 
@@ -5487,7 +5529,7 @@ export type QueryActivityTargetsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityTargetOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
 
@@ -5509,7 +5551,7 @@ export type QueryApiKeysArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ApiKeyOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ApiKeyOrderByInput>>>;
 };
 
 
@@ -5531,7 +5573,7 @@ export type QueryAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -5553,7 +5595,7 @@ export type QueryAuditLogsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AuditLogOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AuditLogOrderByInput>>>;
 };
 
 
@@ -5580,7 +5622,7 @@ export type QueryBlocklistsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<BlocklistOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<BlocklistOrderByInput>>>;
 };
 
 
@@ -5613,7 +5655,7 @@ export type QueryCalendarChannelEventAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarChannelEventAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>>;
 };
 
 
@@ -5624,7 +5666,7 @@ export type QueryCalendarChannelsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarChannelOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelOrderByInput>>>;
 };
 
 
@@ -5657,7 +5699,7 @@ export type QueryCalendarEventParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarEventParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarEventParticipantOrderByInput>>>;
 };
 
 
@@ -5668,7 +5710,7 @@ export type QueryCalendarEventsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarEventOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarEventOrderByInput>>>;
 };
 
 
@@ -5701,7 +5743,7 @@ export type QueryCommentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CommentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CommentOrderByInput>>>;
 };
 
 
@@ -5712,7 +5754,7 @@ export type QueryCompaniesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CompanyOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CompanyOrderByInput>>>;
 };
 
 
@@ -5745,7 +5787,7 @@ export type QueryConnectedAccountsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ConnectedAccountOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ConnectedAccountOrderByInput>>>;
 };
 
 
@@ -5767,7 +5809,7 @@ export type QueryFavoritesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FavoriteOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
 
@@ -5843,7 +5885,7 @@ export type QueryMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelMessageAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
 };
 
 
@@ -5854,7 +5896,7 @@ export type QueryMessageChannelsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelOrderByInput>>>;
 };
 
 
@@ -5882,7 +5924,7 @@ export type QueryMessageParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageParticipantOrderByInput>>>;
 };
 
 
@@ -5904,7 +5946,7 @@ export type QueryMessageThreadsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageThreadOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageThreadOrderByInput>>>;
 };
 
 
@@ -5915,7 +5957,7 @@ export type QueryMessagesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageOrderByInput>>>;
 };
 
 
@@ -5926,7 +5968,7 @@ export type QueryOpportunitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<OpportunityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<OpportunityOrderByInput>>>;
 };
 
 
@@ -5948,7 +5990,7 @@ export type QueryPeopleArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<PersonOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<PersonOrderByInput>>>;
 };
 
 
@@ -5970,7 +6012,7 @@ export type QueryTimelineActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TimelineActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<TimelineActivityOrderByInput>>>;
 };
 
 
@@ -6019,7 +6061,7 @@ export type QueryViewFieldsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewFieldOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewFieldOrderByInput>>>;
 };
 
 
@@ -6041,7 +6083,7 @@ export type QueryViewFiltersArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewFilterOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewFilterOrderByInput>>>;
 };
 
 
@@ -6063,7 +6105,7 @@ export type QueryViewSortsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewSortOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewSortOrderByInput>>>;
 };
 
 
@@ -6074,7 +6116,7 @@ export type QueryViewsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewOrderByInput>>>;
 };
 
 
@@ -6096,7 +6138,7 @@ export type QueryWebhooksArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<WebhookOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<WebhookOrderByInput>>>;
 };
 
 
@@ -6118,7 +6160,7 @@ export type QueryWorkspaceMembersArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<WorkspaceMemberOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<WorkspaceMemberOrderByInput>>>;
 };
 
 export type RawJsonFilter = {
@@ -6232,7 +6274,6 @@ export type Support = {
 };
 
 export type Telemetry = {
-  anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
 };
 
@@ -6534,7 +6575,7 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['UUID'];
   lastName: Scalars['String'];
-  onboardingStep?: Maybe<OnboardingStep>;
+  onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetToken?: Maybe<Scalars['String']>;
@@ -6623,7 +6664,7 @@ export type ViewViewFieldsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewFieldOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewFieldOrderByInput>>>;
 };
 
 
@@ -6635,7 +6676,7 @@ export type ViewViewFiltersArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewFilterOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewFilterOrderByInput>>>;
 };
 
 
@@ -6647,7 +6688,7 @@ export type ViewViewSortsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewSortOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewSortOrderByInput>>>;
 };
 
 /** (System) Views */
@@ -7304,7 +7345,7 @@ export type WorkspaceMemberAccountOwnerForCompaniesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CompanyOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CompanyOrderByInput>>>;
 };
 
 
@@ -7316,7 +7357,7 @@ export type WorkspaceMemberAssignedActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityOrderByInput>>>;
 };
 
 
@@ -7328,7 +7369,7 @@ export type WorkspaceMemberAuditLogsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AuditLogOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AuditLogOrderByInput>>>;
 };
 
 
@@ -7340,7 +7381,7 @@ export type WorkspaceMemberAuthoredActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityOrderByInput>>>;
 };
 
 
@@ -7352,7 +7393,7 @@ export type WorkspaceMemberAuthoredAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -7364,7 +7405,7 @@ export type WorkspaceMemberAuthoredCommentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CommentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CommentOrderByInput>>>;
 };
 
 
@@ -7376,7 +7417,7 @@ export type WorkspaceMemberBlocklistArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<BlocklistOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<BlocklistOrderByInput>>>;
 };
 
 
@@ -7388,7 +7429,7 @@ export type WorkspaceMemberCalendarEventParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarEventParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarEventParticipantOrderByInput>>>;
 };
 
 
@@ -7400,7 +7441,7 @@ export type WorkspaceMemberConnectedAccountsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ConnectedAccountOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ConnectedAccountOrderByInput>>>;
 };
 
 
@@ -7412,7 +7453,7 @@ export type WorkspaceMemberFavoritesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FavoriteOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
 
@@ -7424,7 +7465,7 @@ export type WorkspaceMemberMessageParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageParticipantOrderByInput>>>;
 };
 
 
@@ -7436,7 +7477,7 @@ export type WorkspaceMemberTimelineActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TimelineActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<TimelineActivityOrderByInput>>>;
 };
 
 /** A workspace member */

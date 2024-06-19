@@ -22,7 +22,7 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { OnboardingStep } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -117,7 +117,7 @@ export const CreateProfile = () => {
           (current) =>
             ({
               ...current,
-              onboardingStep: OnboardingStep.SyncEmail,
+              onboardingStatus: OnboardingStatus.SyncEmail,
             }) as any,
         );
       } catch (error: any) {
@@ -147,7 +147,7 @@ export const CreateProfile = () => {
     PageHotkeyScope.CreateProfile,
   );
 
-  if (onboardingStatus !== OnboardingStep.ProfileCreation) {
+  if (onboardingStatus !== OnboardingStatus.ProfileCreation) {
     return null;
   }
 

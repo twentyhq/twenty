@@ -10,7 +10,7 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { OnboardingStep } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated/graphql';
 
 const tokenPair = {
   accessToken: { token: 'accessToken', expiresAt: 'expiresAt' },
@@ -25,7 +25,7 @@ const currentUser = {
   email: 'test@test',
   supportUserHash: '1',
   canImpersonate: false,
-  onboardingStep: null,
+  onboardingStatus: null,
 } as CurrentUser;
 const currentWorkspace = {
   activationStatus: 'active',
@@ -76,7 +76,7 @@ describe('useOnboardingStatus', () => {
       setTokenPair(tokenPair);
       setCurrentUser({
         ...currentUser,
-        onboardingStep: OnboardingStep.SubscriptionIncomplete,
+        onboardingStatus: OnboardingStatus.SubscriptionIncomplete,
       });
       setCurrentWorkspace(currentWorkspace);
     });
@@ -93,7 +93,7 @@ describe('useOnboardingStatus', () => {
       setTokenPair(tokenPair);
       setCurrentUser({
         ...currentUser,
-        onboardingStep: OnboardingStep.SubscriptionCanceled,
+        onboardingStatus: OnboardingStatus.SubscriptionCanceled,
       });
       setCurrentWorkspace(currentWorkspace);
     });
@@ -110,7 +110,7 @@ describe('useOnboardingStatus', () => {
       setTokenPair(tokenPair);
       setCurrentUser({
         ...currentUser,
-        onboardingStep: OnboardingStep.WorkspaceActivation,
+        onboardingStatus: OnboardingStatus.WorkspaceActivation,
       });
       setCurrentWorkspace(currentWorkspace);
     });
@@ -129,7 +129,7 @@ describe('useOnboardingStatus', () => {
       setTokenPair(tokenPair);
       setCurrentUser({
         ...currentUser,
-        onboardingStep: OnboardingStep.ProfileCreation,
+        onboardingStatus: OnboardingStatus.ProfileCreation,
       });
       setCurrentWorkspace({
         ...currentWorkspace,
@@ -149,7 +149,7 @@ describe('useOnboardingStatus', () => {
       setTokenPair(tokenPair);
       setCurrentUser({
         ...currentUser,
-        onboardingStep: OnboardingStep.SyncEmail,
+        onboardingStatus: OnboardingStatus.SyncEmail,
       });
       setCurrentWorkspace({
         ...currentWorkspace,
@@ -169,7 +169,7 @@ describe('useOnboardingStatus', () => {
       setTokenPair(tokenPair);
       setCurrentUser({
         ...currentUser,
-        onboardingStep: OnboardingStep.InviteTeam,
+        onboardingStatus: OnboardingStatus.InviteTeam,
       });
       setCurrentWorkspace({
         ...currentWorkspace,
@@ -206,7 +206,7 @@ describe('useOnboardingStatus', () => {
       setTokenPair(tokenPair);
       setCurrentUser({
         ...currentUser,
-        onboardingStep: OnboardingStep.SubscriptionPastDue,
+        onboardingStatus: OnboardingStatus.SubscriptionPastDue,
       });
       setCurrentWorkspace(currentWorkspace);
     });
@@ -223,7 +223,7 @@ describe('useOnboardingStatus', () => {
       setTokenPair(tokenPair);
       setCurrentUser({
         ...currentUser,
-        onboardingStep: OnboardingStep.SubscriptionUnpaid,
+        onboardingStatus: OnboardingStatus.SubscriptionUnpaid,
       });
       setCurrentWorkspace(currentWorkspace);
     });
@@ -240,7 +240,7 @@ describe('useOnboardingStatus', () => {
       setTokenPair(tokenPair);
       setCurrentUser({
         ...currentUser,
-        onboardingStep: OnboardingStep.CompletedWithoutSubscription,
+        onboardingStatus: OnboardingStatus.CompletedWithoutSubscription,
       });
       setCurrentWorkspace(currentWorkspace);
     });

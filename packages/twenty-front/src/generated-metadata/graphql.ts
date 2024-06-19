@@ -398,7 +398,9 @@ export type Mutation = {
   deleteOneRelation: Relation;
   deleteOneRemoteServer: RemoteServer;
   deleteUser: User;
+  disablePostgresProxy: PostgresCredentials;
   emailPasswordResetLink: EmailPasswordResetLink;
+  enablePostgresProxy: PostgresCredentials;
   exchangeAuthorizationCode: ExchangeAuthCode;
   generateApiKeyToken: ApiKeyToken;
   generateJWT: AuthTokens;
@@ -636,10 +638,19 @@ export type ObjectFieldsConnection = {
   pageInfo: PageInfo;
 };
 
-/** Onboarding step */
-export enum OnboardingStep {
+/** Onboarding status */
+export enum OnboardingStatus {
+  Completed = 'COMPLETED',
+  CompletedWithoutSubscription = 'COMPLETED_WITHOUT_SUBSCRIPTION',
   InviteTeam = 'INVITE_TEAM',
-  SyncEmail = 'SYNC_EMAIL'
+  ProfileCreation = 'PROFILE_CREATION',
+  SubscriptionCanceled = 'SUBSCRIPTION_CANCELED',
+  SubscriptionIncomplete = 'SUBSCRIPTION_INCOMPLETE',
+  SubscriptionPastDue = 'SUBSCRIPTION_PAST_DUE',
+  SubscriptionUnpaid = 'SUBSCRIPTION_UNPAID',
+  SyncEmail = 'SYNC_EMAIL',
+  UserCreation = 'USER_CREATION',
+  WorkspaceActivation = 'WORKSPACE_ACTIVATION'
 }
 
 export type OnboardingStepSuccess = {
@@ -658,6 +669,14 @@ export type PageInfo = {
   hasPreviousPage?: Maybe<Scalars['Boolean']['output']>;
   /** The cursor of the first returned record. */
   startCursor?: Maybe<Scalars['ConnectionCursor']['output']>;
+};
+
+export type PostgresCredentials = {
+  __typename?: 'PostgresCredentials';
+  id: Scalars['UUID']['output'];
+  password: Scalars['String']['output'];
+  user: Scalars['String']['output'];
+  workspaceId: Scalars['String']['output'];
 };
 
 export type ProductPriceEntity = {
@@ -688,6 +707,7 @@ export type Query = {
   findManyRemoteServersByType: Array<RemoteServer>;
   findOneRemoteServerById: RemoteServer;
   findWorkspaceFromInviteHash: Workspace;
+  getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -1084,7 +1104,7 @@ export type User = {
   firstName: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   lastName: Scalars['String']['output'];
-  onboardingStep?: Maybe<OnboardingStep>;
+  onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']['output']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetToken?: Maybe<Scalars['String']['output']>;

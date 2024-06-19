@@ -1,19 +1,5 @@
 import { CurrentUser } from '@/auth/states/currentUserState';
-import { OnboardingStep } from '~/generated/graphql';
-
-export enum OnboardingStatus {
-  Incomplete = 'incomplete',
-  Canceled = 'canceled',
-  Unpaid = 'unpaid',
-  PastDue = 'past_due',
-  OngoingUserCreation = 'ongoing_user_creation',
-  OngoingWorkspaceActivation = 'ongoing_workspace_activation',
-  OngoingProfileCreation = 'ongoing_profile_creation',
-  OngoingSyncEmail = 'ongoing_sync_email',
-  OngoingInviteTeam = 'ongoing_invite_team',
-  Completed = 'completed',
-  CompletedWithoutSubscription = 'completed_without_subscription',
-}
+import { OnboardingStatus } from '~/generated/graphql';
 
 export const getOnboardingStatus = ({
   isLoggedIn,
@@ -23,7 +9,7 @@ export const getOnboardingStatus = ({
   currentUser: CurrentUser | null;
 }) => {
   if (!isLoggedIn) {
-    return OnboardingStep.UserCreation;
+    return OnboardingStatus.UserCreation;
   }
 
   // After SignInUp, the user should have a current workspace assigned.
@@ -32,5 +18,5 @@ export const getOnboardingStatus = ({
     return undefined;
   }
 
-  return currentUser.onboardingStep;
+  return currentUser.onboardingStatus;
 };

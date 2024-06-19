@@ -25,7 +25,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import {
-  OnboardingStep,
+  OnboardingStatus,
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
@@ -87,21 +87,21 @@ export const SettingsBilling = () => {
     loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
 
   const switchIntervalButtonDisabled =
-    onboardingStatus !== OnboardingStep.Completed;
+    onboardingStatus !== OnboardingStatus.Completed;
 
   const cancelPlanButtonDisabled =
     billingPortalButtonDisabled ||
-    onboardingStatus !== OnboardingStep.Completed;
+    onboardingStatus !== OnboardingStatus.Completed;
 
   const displayPaymentFailInfo =
-    onboardingStatus === OnboardingStep.SubscriptionPastDue ||
-    onboardingStatus === OnboardingStep.SubscriptionUnpaid;
+    onboardingStatus === OnboardingStatus.SubscriptionPastDue ||
+    onboardingStatus === OnboardingStatus.SubscriptionUnpaid;
 
   const displaySubscriptionCanceledInfo =
-    onboardingStatus === OnboardingStep.SubscriptionCanceled;
+    onboardingStatus === OnboardingStatus.SubscriptionCanceled;
 
   const displaySubscribeInfo =
-    onboardingStatus === OnboardingStep.CompletedWithoutSubscription;
+    onboardingStatus === OnboardingStatus.CompletedWithoutSubscription;
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
