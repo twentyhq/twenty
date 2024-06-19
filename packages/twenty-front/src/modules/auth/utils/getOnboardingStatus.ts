@@ -1,5 +1,4 @@
 import { CurrentUser } from '@/auth/states/currentUserState';
-import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { OnboardingStep } from '~/generated/graphql';
 
 export enum OnboardingStatus {
@@ -18,14 +17,10 @@ export enum OnboardingStatus {
 
 export const getOnboardingStatus = ({
   isLoggedIn,
-  currentWorkspace,
   currentUser,
-  isBillingEnabled,
 }: {
   isLoggedIn: boolean;
-  currentWorkspace: CurrentWorkspace | null;
   currentUser: CurrentUser | null;
-  isBillingEnabled: boolean;
 }) => {
   if (!isLoggedIn) {
     return OnboardingStatus.OngoingUserCreation;
@@ -33,7 +28,7 @@ export const getOnboardingStatus = ({
 
   // After SignInUp, the user should have a current workspace assigned.
   // If not, it indicates that the data is still being requested.
-  if (!currentWorkspace || !currentUser) {
+  if (!currentUser) {
     return undefined;
   }
 

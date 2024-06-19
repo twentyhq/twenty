@@ -10,7 +10,6 @@ import {
 } from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { billingState } from '@/client-config/states/billingState';
 import { OnboardingStep } from '~/generated/graphql';
 
 const tokenPair = {
@@ -41,7 +40,6 @@ const renderHooks = () => {
   const { result } = renderHook(
     () => {
       const onboardingStatus = useOnboardingStatus();
-      const setBilling = useSetRecoilState(billingState);
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
       const setCurrentUser = useSetRecoilState(currentUserState);
       const setTokenPair = useSetRecoilState(tokenPairState);
@@ -49,7 +47,6 @@ const renderHooks = () => {
 
       return {
         onboardingStatus,
-        setBilling,
         setCurrentUser,
         setCurrentWorkspace,
         setTokenPair,
@@ -72,12 +69,11 @@ describe('useOnboardingStatus', () => {
 
   it('should return "incomplete"', async () => {
     const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentUser, setCurrentWorkspace } =
+    const { setTokenPair, setCurrentUser, setCurrentWorkspace } =
       result.current;
 
     act(() => {
       setTokenPair(tokenPair);
-      setBilling(billing);
       setCurrentUser({
         ...currentUser,
         onboardingStep: OnboardingStep.SubscriptionIncomplete,
@@ -90,12 +86,11 @@ describe('useOnboardingStatus', () => {
 
   it('should return "canceled"', async () => {
     const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentUser, setCurrentWorkspace } =
+    const { setTokenPair, setCurrentUser, setCurrentWorkspace } =
       result.current;
 
     act(() => {
       setTokenPair(tokenPair);
-      setBilling(billing);
       setCurrentUser({
         ...currentUser,
         onboardingStep: OnboardingStep.SubscriptionCanceled,
@@ -108,12 +103,11 @@ describe('useOnboardingStatus', () => {
 
   it('should return "ongoing_workspace_activation"', async () => {
     const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentUser, setCurrentWorkspace } =
+    const { setTokenPair, setCurrentUser, setCurrentWorkspace } =
       result.current;
 
     act(() => {
       setTokenPair(tokenPair);
-      setBilling(billing);
       setCurrentUser({
         ...currentUser,
         onboardingStep: OnboardingStep.WorkspaceActivation,
@@ -128,12 +122,11 @@ describe('useOnboardingStatus', () => {
 
   it('should return "ongoing_profile_creation"', async () => {
     const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentUser, setCurrentWorkspace } =
+    const { setTokenPair, setCurrentUser, setCurrentWorkspace } =
       result.current;
 
     act(() => {
       setTokenPair(tokenPair);
-      setBilling(billing);
       setCurrentUser({
         ...currentUser,
         onboardingStep: OnboardingStep.ProfileCreation,
@@ -149,12 +142,11 @@ describe('useOnboardingStatus', () => {
 
   it('should return "ongoing_sync_email"', async () => {
     const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentUser, setCurrentWorkspace } =
+    const { setTokenPair, setCurrentUser, setCurrentWorkspace } =
       result.current;
 
     act(() => {
       setTokenPair(tokenPair);
-      setBilling(billing);
       setCurrentUser({
         ...currentUser,
         onboardingStep: OnboardingStep.SyncEmail,
@@ -170,12 +162,11 @@ describe('useOnboardingStatus', () => {
 
   it('should return "ongoing_invite_team"', async () => {
     const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentUser, setCurrentWorkspace } =
+    const { setTokenPair, setCurrentUser, setCurrentWorkspace } =
       result.current;
 
     act(() => {
       setTokenPair(tokenPair);
-      setBilling(billing);
       setCurrentUser({
         ...currentUser,
         onboardingStep: OnboardingStep.InviteTeam,
@@ -191,12 +182,11 @@ describe('useOnboardingStatus', () => {
 
   it('should return "completed"', async () => {
     const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentUser, setCurrentWorkspace } =
+    const { setTokenPair, setCurrentUser, setCurrentWorkspace } =
       result.current;
 
     act(() => {
       setTokenPair(tokenPair);
-      setBilling(billing);
       setCurrentUser(currentUser);
       setCurrentWorkspace({
         ...currentWorkspace,
@@ -209,12 +199,11 @@ describe('useOnboardingStatus', () => {
 
   it('should return "past_due"', async () => {
     const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentUser, setCurrentWorkspace } =
+    const { setTokenPair, setCurrentUser, setCurrentWorkspace } =
       result.current;
 
     act(() => {
       setTokenPair(tokenPair);
-      setBilling(billing);
       setCurrentUser({
         ...currentUser,
         onboardingStep: OnboardingStep.SubscriptionPastDue,
@@ -227,12 +216,11 @@ describe('useOnboardingStatus', () => {
 
   it('should return "unpaid"', async () => {
     const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentUser, setCurrentWorkspace } =
+    const { setTokenPair, setCurrentUser, setCurrentWorkspace } =
       result.current;
 
     act(() => {
       setTokenPair(tokenPair);
-      setBilling(billing);
       setCurrentUser({
         ...currentUser,
         onboardingStep: OnboardingStep.SubscriptionUnpaid,
@@ -245,12 +233,11 @@ describe('useOnboardingStatus', () => {
 
   it('should return "completed_without_subscription"', async () => {
     const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentUser, setCurrentWorkspace } =
+    const { setTokenPair, setCurrentUser, setCurrentWorkspace } =
       result.current;
 
     act(() => {
       setTokenPair(tokenPair);
-      setBilling(billing);
       setCurrentUser({
         ...currentUser,
         onboardingStep: OnboardingStep.CompletedWithoutSubscription,
