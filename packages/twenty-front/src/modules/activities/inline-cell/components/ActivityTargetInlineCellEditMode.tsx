@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { isNonEmptyArray, isNull } from '@sniptt/guards';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { isNull } from '@sniptt/guards';
+import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { ActivityTargetObjectRecordEffect } from '@/activities/inline-cell/components/ActivityTargetObjectRecordEffect';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
-import { objectRecordsMultiSelectState } from '@/activities/states/objectRecordsMultiSelectState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
@@ -16,9 +16,17 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { activityTargetObjectRecordFamilyState } from '@/object-record/record-field/states/activityTargetObjectRecordFamilyState';
+import { objectRecordMultiSelectCheckedRecordsIdsState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsState';
+import {
+  ObjectRecordAndSelected,
+  objectRecordMultiSelectFamilyState,
+} from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { MultipleObjectRecordSelect } from '@/object-record/relation-picker/components/MultipleObjectRecordSelect';
+import { MultiRecordsEffect } from '@/object-record/relation-picker/components/MultiRecordsEffect';
+import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
+import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 
 const StyledSelectContainer = styled.div`
@@ -37,9 +45,6 @@ export const ActivityTargetInlineCellEditMode = ({
   activityTargetWithTargetRecords,
 }: ActivityTargetInlineCellEditModeProps) => {
   const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
-  const objectRecordsMultiSelect = useRecoilValue(
-    objectRecordsMultiSelectState,
-  );
 
   const selectedTargetObjectIds = activityTargetWithTargetRecords.map(
     (activityTarget) => ({
@@ -77,117 +82,162 @@ export const ActivityTargetInlineCellEditMode = ({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
 
-  const handleSubmit = async (selectedRecordsIds: string[]) => {
-    closeEditableField();
+  const handleSubmit = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const activityTargetsAfterUpdate =
+          activityTargetWithTargetRecords.filter((activityTarget) => {
+            const record = snapshot
+              .getLoadable(
+                objectRecordMultiSelectFamilyState(
+                  activityTarget.targetObject.id,
+                ),
+              )
+              .getValue() as ObjectRecordAndSelected;
 
-    const activityTargetsToDelete = activityTargetWithTargetRecords.filter(
-      (activityTargetObjectRecord) =>
-        !selectedRecordsIds.some(
-          (selectedRecordId) =>
-            selectedRecordId === activityTargetObjectRecord.targetObject.id,
-        ),
-    );
+            return record.selected;
+          });
+        setActivityFromStore((currentActivity) => {
+          if (isNull(currentActivity)) {
+            return null;
+          }
 
-    const selectedTargetObjectsToCreate = selectedRecordsIds.filter(
-      (selectedRecordId) =>
-        !activityTargetWithTargetRecords.some(
-          (activityTargetWithTargetRecord) =>
-            activityTargetWithTargetRecord.targetObject.id === selectedRecordId,
-        ),
-    );
-
-    const existingActivityTargets = activityTargetWithTargetRecords.map(
-      (activityTargetObjectRecord) => activityTargetObjectRecord.activityTarget,
-    );
-
-    let activityTargetsAfterUpdate = Array.from(existingActivityTargets);
-
-    const activityTargetsToCreate = selectedTargetObjectsToCreate.map(
-      (selectedRecordId) => {
-        const selectedRecord = objectRecordsMultiSelect.find(
-          (objectRecord) => objectRecord.record.id === selectedRecordId,
-        );
-
-        if (!selectedRecord) {
-          throw new Error(
-            `Could not find selected record with id ${selectedRecordId}`,
-          );
-        }
-
-        const emptyActivityTarget = prefillRecord<ActivityTarget>({
-          objectMetadataItem: objectMetadataItemActivityTarget,
-          input: {
-            id: v4(),
-            activityId: activity.id,
-            activity,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            [getActivityTargetObjectFieldName({
-              nameSingular: selectedRecord.objectMetadataItem.nameSingular,
-            })]: selectedRecord.record,
-            [getActivityTargetObjectFieldIdName({
-              nameSingular: selectedRecord.objectMetadataItem.nameSingular,
-            })]: selectedRecordId,
-          },
+          return {
+            ...currentActivity,
+            activityTargets: activityTargetsAfterUpdate,
+          };
         });
-
-        return emptyActivityTarget;
+        closeEditableField();
       },
-    );
+    [activityTargetWithTargetRecords, closeEditableField, setActivityFromStore],
+  );
 
-    activityTargetsAfterUpdate.push(...activityTargetsToCreate);
-
-    if (isNonEmptyArray(activityTargetsToDelete)) {
-      activityTargetsAfterUpdate = activityTargetsAfterUpdate.filter(
-        (activityTarget) =>
-          !activityTargetsToDelete.some(
-            (activityTargetToDelete) =>
-              activityTargetToDelete.activityTarget.id === activityTarget.id,
-          ),
-      );
-    }
-
-    if (isActivityInCreateMode) {
-      createManyActivityTargetsInCache(activityTargetsToCreate);
-      upsertActivity({
-        activity,
-        input: {
-          activityTargets: activityTargetsAfterUpdate,
-        },
-      });
-    } else {
-      if (activityTargetsToCreate.length > 0) {
-        await createManyActivityTargets(activityTargetsToCreate);
-      }
-
-      if (activityTargetsToDelete.length > 0) {
-        await deleteManyActivityTargets(
-          activityTargetsToDelete.map(
-            (activityTargetObjectRecord) =>
-              activityTargetObjectRecord.activityTarget.id,
-          ),
+  const handleChange = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (recordId: string) => {
+        const existingActivityTargets = activityTargetWithTargetRecords.map(
+          (activityTargetObjectRecord) =>
+            activityTargetObjectRecord.activityTarget,
         );
-      }
-    }
 
-    setActivityFromStore((currentActivity) => {
-      if (isNull(currentActivity)) {
-        return null;
-      }
+        let activityTargetsAfterUpdate = Array.from(existingActivityTargets);
 
-      return {
-        ...currentActivity,
-        activityTargets: activityTargetsAfterUpdate,
-      };
-    });
-  };
+        const previouslyCheckedRecordsIds = snapshot
+          .getLoadable(objectRecordMultiSelectCheckedRecordsIdsState)
+          .getValue();
+
+        const isNewlySelected = !previouslyCheckedRecordsIds.includes(recordId);
+
+        if (isNewlySelected) {
+          const record = snapshot
+            .getLoadable(objectRecordMultiSelectFamilyState(recordId))
+            .getValue() as ObjectRecordAndSelected;
+
+          if (!record) {
+            throw new Error(
+              `Could not find selected record with id ${recordId}`,
+            );
+          }
+
+          console.log('ading id to state', recordId);
+          set(objectRecordMultiSelectCheckedRecordsIdsState, (prev) => [
+            ...prev,
+            recordId,
+          ]);
+
+          const newActivityTargetId = v4();
+          const newActivityTarget = prefillRecord<ActivityTarget>({
+            objectMetadataItem: objectMetadataItemActivityTarget,
+            input: {
+              id: newActivityTargetId,
+              activityId: activity.id,
+              activity,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              [getActivityTargetObjectFieldName({
+                nameSingular: record.objectMetadataItem.nameSingular,
+              })]: record.record,
+              [getActivityTargetObjectFieldIdName({
+                nameSingular: record.objectMetadataItem.nameSingular,
+              })]: recordId,
+            },
+          });
+
+          activityTargetsAfterUpdate.push(newActivityTarget);
+
+          if (isActivityInCreateMode) {
+            createManyActivityTargetsInCache([newActivityTarget]);
+            upsertActivity({
+              activity,
+              input: {
+                activityTargets: activityTargetsAfterUpdate,
+              },
+            });
+          } else {
+            console.log('creating activity target');
+            await createManyActivityTargets([newActivityTarget]);
+          }
+
+          set(activityTargetObjectRecordFamilyState(recordId), {
+            activityTargetId: newActivityTargetId,
+          });
+        } else {
+          const activityTargetToDeleteId = snapshot
+            .getLoadable(activityTargetObjectRecordFamilyState(recordId))
+            .getValue().activityTargetId;
+
+          if (!activityTargetToDeleteId) {
+            throw new Error('Could not delete this activity target.');
+          }
+
+          console.log('removing id from state', recordId);
+          set(
+            objectRecordMultiSelectCheckedRecordsIdsState,
+            previouslyCheckedRecordsIds.filter((id) => id !== recordId),
+          );
+          activityTargetsAfterUpdate = activityTargetsAfterUpdate.filter(
+            (activityTarget) => activityTarget.id !== activityTargetToDeleteId,
+          );
+
+          if (isActivityInCreateMode) {
+            upsertActivity({
+              activity,
+              input: {
+                activityTargets: activityTargetsAfterUpdate,
+              },
+            });
+          } else {
+            await deleteManyActivityTargets([activityTargetToDeleteId]);
+          }
+
+          set(activityTargetObjectRecordFamilyState(recordId), {
+            activityTargetId: null,
+          });
+        }
+      },
+    [
+      activity,
+      activityTargetWithTargetRecords,
+      createManyActivityTargets,
+      createManyActivityTargetsInCache,
+      deleteManyActivityTargets,
+      isActivityInCreateMode,
+      objectMetadataItemActivityTarget,
+      upsertActivity,
+    ],
+  );
 
   return (
     <StyledSelectContainer>
-      <MultipleObjectRecordSelect
-        selectedObjectRecordIds={selectedTargetObjectIds}
-        onSubmit={handleSubmit}
-      />
+      <RelationPickerScope
+        relationPickerScopeId={`relation-picker-to-do`} // TO DO - replace with actual scope id
+      >
+        <ActivityTargetObjectRecordEffect
+          activityTargetWithTargetRecords={activityTargetWithTargetRecords}
+        />
+        <MultiRecordsEffect selectedObjectRecordIds={selectedTargetObjectIds} />
+        <MultiRecordSelect onSubmit={handleSubmit} onChange={handleChange} />
+      </RelationPickerScope>
     </StyledSelectContainer>
   );
 };

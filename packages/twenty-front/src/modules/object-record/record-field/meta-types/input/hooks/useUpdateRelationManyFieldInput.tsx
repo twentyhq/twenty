@@ -1,13 +1,22 @@
+import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
-import { FieldRelationManyValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { objectRecordMultiSelectCheckedRecordsIdsState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsState';
+import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
+import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useUpdateRelationManyFieldInput = () => {
-  const { fieldDefinition, entityId } =
-    useRelationField<FieldRelationManyValue>();
+  const { entityId, fieldDefinition } = useContext(FieldContext);
+
+  assertFieldMetadata(
+    FieldMetadataType.Relation,
+    isFieldRelation,
+    fieldDefinition,
+  );
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular:
@@ -17,30 +26,31 @@ export const useUpdateRelationManyFieldInput = () => {
   const fieldName = fieldDefinition.metadata.targetFieldMetadataName;
 
   const handleChange = useRecoilCallback(
-    ({ snapshot }) =>
-      (objectRecordId: string, isSelected: boolean) => {
-        // const entityToAddOrRemove = entities.entitiesToSelect.find(
-        //   (entity) => entity.id === objectRecordId,
-        // );
-        // const currentRecord = snapshot
-        //   .getLoadable(objectRecordMultiSelectFamilyState(objectRecordId))
-        //   .getValue();
-
-        // const updatedFieldValue = isSelected
-        //   ? [...(fieldValue ?? []), currentRecord]
-        //   : (fieldValue ?? []).filter(
-        //       (value: any) => value.id !== objectRecordId,
-        //     );
-        // setFieldValue(
-        //   updatedFieldValue.filter((value: any) =>
-        //     isDefined(value),
-        //   ) as EntityForSelect[],
-        // );
+    ({ snapshot, set }) =>
+      (objectRecordId: string) => {
         if (isDefined(objectRecordId)) {
+          const previouslyCheckedRecordsIds = snapshot
+            .getLoadable(objectRecordMultiSelectCheckedRecordsIdsState)
+            .getValue();
+
+          const isNewlySelected =
+            !previouslyCheckedRecordsIds.includes(objectRecordId);
+          if (isNewlySelected) {
+            set(objectRecordMultiSelectCheckedRecordsIdsState, (prev) => [
+              ...prev,
+              objectRecordId,
+            ]);
+          } else {
+            set(
+              objectRecordMultiSelectCheckedRecordsIdsState,
+              previouslyCheckedRecordsIds.filter((id) => id !== objectRecordId),
+            );
+          }
+
           updateOneRecord({
             idToUpdate: objectRecordId,
             updateOneRecordInput: {
-              [`${fieldName}Id`]: isSelected ? entityId : null,
+              [`${fieldName}Id`]: isNewlySelected ? entityId : null,
             },
           });
         }

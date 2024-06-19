@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui';
 import { v4 } from 'uuid';
 
@@ -23,12 +23,8 @@ export const MultipleObjectRecordSelectItem = ({
   onChange,
 }: {
   objectRecordId: string;
-  onChange?: (
-    changedRecordForSelectId: string,
-    newSelectedValue: boolean,
-  ) => void;
+  onChange?: (changedRecordForSelectId: string) => void;
 }) => {
-  console.log('MultipleObjectRecordSelectItem rerender', objectRecordId);
   const { isSelectedItemIdSelector } = useSelectableList(
     MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
   );
@@ -41,46 +37,9 @@ export const MultipleObjectRecordSelectItem = ({
     objectRecordMultiSelectFamilyState(objectRecordId),
   ) as ObjectRecordAndSelected;
 
-  const handleSelectChange = useRecoilCallback(
-    ({ set }) =>
-      (newSelectedValue: boolean) => {
-        // const selectedObjectRecordsIds = snapshot
-        //   .getLoadable(selectedObjectRecordsIdsState)
-        //   .getValue();
-
-        // const record = snapshot
-        //   .getLoadable(
-        //     objectRecordMultiSelectFamilyState(changedRecordForSelectId),
-        //   )
-        //   .getValue();
-
-        // const newSelectedRecordsIds = newSelectedValue
-        //   ? [...selectedObjectRecordsIds, changedRecordForSelectId]
-        //   : selectedObjectRecordsIds.filter(
-        //       (selectedRecordId: string) =>
-        //         selectedRecordId !== changedRecordForSelectId,
-        //     );
-
-        // // const newSelectedRecordsIds = newSelectedValue
-        // //   ? [...selectedObjectRecordsIds, changedRecordForSelectId]
-        // //   : selectedObjectRecordsIds.filter(
-        // //       (selectedRecordId: string) =>
-        // //         selectedRecordId !== changedRecordForSelectId,
-        // //     );
-
-        // console.log('settingNewSelectedRecordsIds', newSelectedRecordsIds);
-        // set(objectRecordMultiSelectFamilyState(objectRecordId), {
-        //   ...record,
-        //   selected: newSelectedValue,
-        // });
-        // TODO update selectedObjectRecordsIdsState, needed for activityTarge since we send at submit ? or we need to iterate on the objects and add all those with selected: true
-
-        // set(selectedObjectRecordsIdsState, newSelectedRecordsIds);
-
-        onChange?.(objectRecordId, newSelectedValue);
-      },
-    [objectRecordId, onChange],
-  );
+  const handleSelectChange = (_isNewlySelectedValue: boolean) => {
+    onChange?.(objectRecordId);
+  };
 
   const { recordIdentifier } = record;
 
@@ -91,8 +50,8 @@ export const MultipleObjectRecordSelectItem = ({
   return (
     <StyledSelectableItem itemId={objectRecordId} key={objectRecordId + v4()}>
       <MenuItemMultiSelectAvatar
-        onSelectChange={(isNewlySelectedValue) =>
-          handleSelectChange(isNewlySelectedValue)
+        onSelectChange={(_isNewlySelectedValue) =>
+          handleSelectChange(_isNewlySelectedValue)
         }
         isKeySelected={isSelectedByKeyboard}
         selected={selected}

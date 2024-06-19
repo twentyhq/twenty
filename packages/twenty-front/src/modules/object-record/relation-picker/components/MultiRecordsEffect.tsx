@@ -1,52 +1,57 @@
-import { useEffect, useMemo } from 'react';
-import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
+import { useEffect } from 'react';
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil';
 
 import { objectRecordsIdsMultiSelectState } from '@/activities/states/objectRecordsIdsMultiSelectState';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
 import { objectRecordMultiSelectCheckedRecordsIdsState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsState';
 import {
   ObjectRecordAndSelected,
   objectRecordMultiSelectFamilyState,
 } from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
 import { recordMultiSelectIsLoadingState } from '@/object-record/record-field/states/recordMultiSelectIsLoadingState';
-import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
-import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
+import {
+  ObjectRecordForSelect,
+  SelectedObjectRecordId,
+  useMultiObjectSearch,
+} from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
+import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const MultiRecordsEffect = () => {
-  const { fieldValue, fieldDefinition } = useRelationField<EntityForSelect[]>();
+export const MultiRecordsEffect = ({
+  selectedObjectRecordIds,
+}: {
+  selectedObjectRecordIds: SelectedObjectRecordId[];
+}) => {
   const [objectRecordsIdsMultiSelect, setObjectRecordsIdsMultiSelect] =
     useRecoilState(objectRecordsIdsMultiSelectState);
-
-  const { entities } = useRelationPickerEntitiesOptions({
-    relationObjectNameSingular:
-      fieldDefinition.metadata.relationObjectMetadataNameSingular,
-  });
 
   const setRecordMultiSelectIsLoading = useSetRecoilState(
     recordMultiSelectIsLoadingState,
   );
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular:
-      fieldDefinition.metadata.relationObjectMetadataNameSingular,
-  });
-
-  const allRecords = useMemo(
-    () => [
-      ...entities.entitiesToSelect.map((entity) => {
-        const { record, ...recordIdentifier } = entity;
-        return {
-          objectMetadataItem: objectMetadataItem,
-          record: record,
-          recordIdentifier: recordIdentifier,
-        };
-      }),
-    ],
-    [entities.entitiesToSelect, objectMetadataItem],
+  const relationPickerScopedId = useAvailableScopeIdOrThrow(
+    RelationPickerScopeInternalContext,
   );
+
+  const { relationPickerSearchFilterState } = useRelationPickerScopedStates({
+    relationPickerScopedId,
+  });
+  const relationPickerSearchFilter = useRecoilValue(
+    relationPickerSearchFilterState,
+  );
+  const { filteredSelectedObjectRecords, loading, objectRecordsToSelect } =
+    useMultiObjectSearch({
+      searchFilterValue: relationPickerSearchFilter,
+      selectedObjectRecordIds,
+      excludedObjectRecordIds: [],
+      limit: 10,
+    });
 
   const [
     objectRecordMultiSelectCheckedRecordsIds,
@@ -65,8 +70,8 @@ export const MultiRecordsEffect = () => {
 
           const newRecordWithSelected = {
             ...newRecord,
-            selected: objectRecordMultiSelectCheckedRecordsIds.includes(
-              newRecord.record.id,
+            selected: objectRecordMultiSelectCheckedRecordsIds.some(
+              (checkedRecordId) => checkedRecordId === newRecord.record.id,
             ),
           };
 
@@ -89,27 +94,32 @@ export const MultiRecordsEffect = () => {
   );
 
   useEffect(() => {
+    const allRecords = [
+      ...(filteredSelectedObjectRecords ?? []),
+      ...(objectRecordsToSelect ?? []),
+    ];
     updateRecords(allRecords);
     const allRecordsIds = allRecords.map((record) => record.record.id);
     if (!isDeeplyEqual(allRecordsIds, objectRecordsIdsMultiSelect)) {
       setObjectRecordsIdsMultiSelect(allRecordsIds);
     }
   }, [
-    allRecords,
+    filteredSelectedObjectRecords,
     objectRecordsIdsMultiSelect,
+    objectRecordsToSelect,
     setObjectRecordsIdsMultiSelect,
     updateRecords,
   ]);
 
   useEffect(() => {
     setObjectRecordMultiSelectCheckedRecordsIds(
-      fieldValue.map((fieldValueItem: any) => fieldValueItem.id),
+      selectedObjectRecordIds.map((rec) => rec.id),
     );
-  }, [fieldValue, setObjectRecordMultiSelectCheckedRecordsIds]);
+  }, [selectedObjectRecordIds, setObjectRecordMultiSelectCheckedRecordsIds]);
 
   useEffect(() => {
-    setRecordMultiSelectIsLoading(entities.loading);
-  }, [entities.loading, setRecordMultiSelectIsLoading]);
+    setRecordMultiSelectIsLoading(loading);
+  }, [loading, setRecordMultiSelectIsLoading]);
 
   return <></>;
 };

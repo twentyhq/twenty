@@ -30,10 +30,7 @@ export const useRelationField = <
     recordStoreFamilySelector({ recordId: entityId, fieldName }),
   );
 
-  console.log('fieldValue', fieldValue);
-
   const setFieldValueWithLog = (a: any) => {
-    console.log('setting field value', a);
     return setFieldValue(a);
   };
   const { getDraftValueSelector } = useRecordFieldInput<FieldRelationValue<T>>(
