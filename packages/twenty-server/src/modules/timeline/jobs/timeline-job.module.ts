@@ -16,14 +16,8 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     TimelineActivityModule,
   ],
   providers: [
-    {
-      provide: CreateAuditLogFromInternalEvent.name,
-      useClass: CreateAuditLogFromInternalEvent,
-    },
-    {
-      provide: UpsertTimelineActivityFromInternalEvent.name,
-      useClass: UpsertTimelineActivityFromInternalEvent,
-    },
+    CreateAuditLogFromInternalEvent,
+    UpsertTimelineActivityFromInternalEvent,
   ],
 })
 export class TimelineJobModule {}

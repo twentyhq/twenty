@@ -7,8 +7,6 @@ export const metadata = {
   icons: '/images/core/logo.svg',
 };
 
-export const dynamic = 'force-dynamic';
-
 export default async function DocsHome() {
   const filePath = 'src/content/developers/';
   const docsArticleCards = getDocsArticles(filePath);

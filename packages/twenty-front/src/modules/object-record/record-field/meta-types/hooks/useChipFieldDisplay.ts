@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
+import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
@@ -37,7 +38,7 @@ export const useChipFieldDisplay = () => {
   const generateRecordChipData =
     chipGeneratorPerObjectPerField[
       fieldDefinition.metadata.objectMetadataNameSingular
-    ][fieldDefinition.metadata.fieldName];
+    ]?.[fieldDefinition.metadata.fieldName] ?? generateDefaultRecordChipData;
 
   return {
     objectNameSingular,

@@ -63,6 +63,7 @@ export default defineConfig(({ command, mode }) => {
           '**/Chip.tsx',
           '**/Tag.tsx',
           '**/MultiSelectFieldDisplay.tsx',
+          '**/RatingInput.tsx',
         ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],

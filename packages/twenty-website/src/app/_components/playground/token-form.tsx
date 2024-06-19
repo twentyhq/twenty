@@ -195,7 +195,9 @@ const TokenForm = ({
             className="select"
             onChange={(event) =>
               router.replace(
-                '/' + pathname.split('/').at(-2) + '/' + event.target.value,
+                pathname.split('/').slice(0, -1).join('/') +
+                  '/' +
+                  event.target.value,
               )
             }
             value={pathname.split('/').at(-1)}

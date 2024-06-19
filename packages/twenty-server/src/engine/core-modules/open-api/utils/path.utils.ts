@@ -105,7 +105,7 @@ export const computeSingleResultPath = (
     },
     patch: {
       tags: [item.namePlural],
-      summary: `Update One ${item.namePlural}`,
+      summary: `Update One ${item.nameSingular}`,
       operationId: `UpdateOne${capitalize(item.nameSingular)}`,
       parameters: [
         { $ref: '#/components/parameters/idPath' },

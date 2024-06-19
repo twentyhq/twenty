@@ -3,6 +3,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useSetRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 export const EventFieldDiffValueEffect = ({
@@ -16,9 +17,10 @@ export const EventFieldDiffValueEffect = ({
   mainObjectMetadataItem: ObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem;
 }) => {
-  const setEntityFields = useSetRecoilState(
+  const setEntity = useSetRecoilState(
     recordStoreFamilyState(diffArtificialRecordStoreId),
   );
+  const setRecordValue = useSetRecordValue();
 
   useEffect(() => {
     if (!diffRecord) return;
@@ -29,13 +31,15 @@ export const EventFieldDiffValueEffect = ({
       [fieldMetadataItem.name]: diffRecord,
     };
 
-    setEntityFields(forgedObjectRecord);
+    setEntity(forgedObjectRecord);
+    setRecordValue(forgedObjectRecord.id, forgedObjectRecord);
   }, [
     diffRecord,
     diffArtificialRecordStoreId,
     fieldMetadataItem.name,
     mainObjectMetadataItem.nameSingular,
-    setEntityFields,
+    setEntity,
+    setRecordValue,
   ]);
 
   return <></>;

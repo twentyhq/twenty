@@ -32,26 +32,11 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
     GoogleCalendarSyncModule,
   ],
   providers: [
-    {
-      provide: BlocklistItemDeleteCalendarEventsJob.name,
-      useClass: BlocklistItemDeleteCalendarEventsJob,
-    },
-    {
-      provide: BlocklistReimportCalendarEventsJob.name,
-      useClass: BlocklistReimportCalendarEventsJob,
-    },
-    {
-      provide: GoogleCalendarSyncJob.name,
-      useClass: GoogleCalendarSyncJob,
-    },
-    {
-      provide: CalendarCreateCompanyAndContactAfterSyncJob.name,
-      useClass: CalendarCreateCompanyAndContactAfterSyncJob,
-    },
-    {
-      provide: DeleteConnectedAccountAssociatedCalendarDataJob.name,
-      useClass: DeleteConnectedAccountAssociatedCalendarDataJob,
-    },
+    BlocklistItemDeleteCalendarEventsJob,
+    BlocklistReimportCalendarEventsJob,
+    GoogleCalendarSyncJob,
+    CalendarCreateCompanyAndContactAfterSyncJob,
+    DeleteConnectedAccountAssociatedCalendarDataJob,
   ],
 })
 export class CalendarJobModule {}

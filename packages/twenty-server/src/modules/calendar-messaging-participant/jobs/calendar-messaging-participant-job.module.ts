@@ -7,15 +7,6 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
 
 @Module({
   imports: [CalendarEventParticipantModule, MessagingCommonModule],
-  providers: [
-    {
-      provide: MatchParticipantJob.name,
-      useClass: MatchParticipantJob,
-    },
-    {
-      provide: UnmatchParticipantJob.name,
-      useClass: UnmatchParticipantJob,
-    },
-  ],
+  providers: [MatchParticipantJob, UnmatchParticipantJob],
 })
 export class CalendarMessagingParticipantJobModule {}
