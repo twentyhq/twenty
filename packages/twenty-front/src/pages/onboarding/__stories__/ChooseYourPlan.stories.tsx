@@ -5,6 +5,7 @@ import { graphql, HttpResponse } from 'msw';
 
 import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { OnboardingStatus } from '~/generated/graphql';
 import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
 import {
   PageDecorator,
@@ -25,7 +26,10 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
           return HttpResponse.json({
             data: {
-              currentUser: mockedOnboardingUsersData[0],
+              currentUser: {
+                ...mockedOnboardingUsersData[0],
+                onboardingStatus: OnboardingStatus.SubscriptionIncomplete,
+              },
             },
           });
         }),
