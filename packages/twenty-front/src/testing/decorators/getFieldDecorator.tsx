@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { Decorator } from '@storybook/react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -12,9 +11,6 @@ import {
 } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { DateFormat } from '@/workspace-member/constants/DateFormat';
-import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
-import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import { getPeopleMock } from '~/testing/mock-data/people';
@@ -49,28 +45,6 @@ const RecordMockSetterEffect = ({
   }, [setRecordInBothStores, companies, people]);
 
   return null;
-};
-
-const WorkspaceMemberEffect = () => {
-  const [, setCurrentWorkspaceMember] = useRecoilState(
-    currentWorkspaceMemberState,
-  );
-
-  useEffect(() => {
-    setCurrentWorkspaceMember({
-      id: '1',
-      name: {
-        firstName: '',
-        lastName: '',
-      },
-      locale: '',
-      timeZone: detectTimeZone(),
-      dateFormat: DateFormat.MONTH_FIRST,
-      timeFormat: TimeFormat.MILITARY,
-    });
-  }, [setCurrentWorkspaceMember]);
-
-  return <></>;
 };
 
 export const getFieldDecorator =
@@ -146,7 +120,6 @@ export const getFieldDecorator =
           }}
         >
           <RecordMockSetterEffect companies={companies} people={people} />
-          <WorkspaceMemberEffect />
           <Story />
         </FieldContext.Provider>
       </RecordFieldValueSelectorContextProvider>
