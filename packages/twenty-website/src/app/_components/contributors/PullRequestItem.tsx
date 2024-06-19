@@ -6,6 +6,7 @@ import { PullRequestIcon } from '@/app/_components/ui/icons/SvgIcons';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { formatIntoRelativeDate } from '@/shared-utils/formatIntoRelativeDate';
 
+// TODO: use twenty-ui Tooltip
 const StyledTooltip = styled(Tooltip)``;
 
 const Item = styled.div`
