@@ -12,6 +12,7 @@ import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/r
 import { RecordBoardColumnNewButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewButton';
 import { RecordBoardColumnNewOpportunityButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewOpportunityButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { getNumberOfCardsPerColumnForSkeletonLoading } from '@/object-record/record-board/record-board-column/utils/getNumberOfCardsPerColumnForSkeletonLoading';
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
 
 const StyledColumnCardsContainer = styled.div`
@@ -53,21 +54,16 @@ export const RecordBoardColumnCardsContainer = ({
     isRecordIndexBoardColumnLoadingFamilyState(columnId),
   );
 
-  const { isCompactModeActiveState } = useRecordBoardStates();
+  const { isCompactModeActiveState, visibleFieldDefinitionsState } =
+    useRecordBoardStates();
+
+  const visibleFieldDefinitions = useRecoilValue(
+    visibleFieldDefinitionsState(),
+  );
+
+  const numberOfFields = visibleFieldDefinitions.length;
 
   const isCompactModeActive = useRecoilValue(isCompactModeActiveState);
-
-  const getNumberOfSkeletons = (position: number): number => {
-    const skeletonCounts: Record<number, number> = {
-      0: 2,
-      1: 1,
-      2: 3,
-      3: 0,
-      4: 1,
-    };
-
-    return skeletonCounts[position] || 0;
-  };
 
   return (
     <StyledColumnCardsContainer
@@ -77,12 +73,17 @@ export const RecordBoardColumnCardsContainer = ({
     >
       {isRecordIndexBoardColumnLoading ? (
         Array.from(
-          { length: getNumberOfSkeletons(columnDefinition.position) },
+          {
+            length: getNumberOfCardsPerColumnForSkeletonLoading(
+              columnDefinition.position,
+            ),
+          },
           (_, index) => (
             <StyledSkeletonCardContainer
               key={`${columnDefinition.id}-${index}`}
             >
               <RecordBoardColumnCardContainerSkeletonLoader
+                numberOfFields={numberOfFields}
                 titleSkeletonWidth={isCompactModeActive ? 72 : 54}
                 isCompactModeActive={isCompactModeActive}
               />

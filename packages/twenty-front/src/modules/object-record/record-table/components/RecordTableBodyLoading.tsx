@@ -12,7 +12,6 @@ import { RecordTableCellLoading } from '@/object-record/record-table/record-tabl
 export const RecordTableBodyLoading = () => {
   const { visibleTableColumnsSelector } = useRecordTableStates();
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
-  const skeletonColumnsWithSmallWidth = ['Domain Name', 'ICP', 'ARR', 'X'];
 
   return (
     <tbody>
@@ -29,12 +28,7 @@ export const RecordTableBodyLoading = () => {
             <CheckboxCell />
           </StyledTd>
           {visibleTableColumns.map((column) => (
-            <RecordTableCellLoading
-              key={column.fieldMetadataId}
-              skeletonWidth={
-                skeletonColumnsWithSmallWidth.includes(column.label) ? 108 : 139
-              }
-            />
+            <RecordTableCellLoading key={column.fieldMetadataId} />
           ))}
         </StyledTr>
       ))}

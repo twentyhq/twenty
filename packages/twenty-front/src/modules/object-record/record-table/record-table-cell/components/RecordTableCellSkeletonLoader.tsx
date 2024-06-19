@@ -7,11 +7,7 @@ const StyledSkeletonContainer = styled.div`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledRecordTableCellLoader = ({
-  skeletonWidth,
-}: {
-  skeletonWidth: number;
-}) => {
+const StyledRecordTableCellLoader = ({ width }: { width?: number }) => {
   const theme = useTheme();
   return (
     <SkeletonTheme
@@ -19,19 +15,15 @@ const StyledRecordTableCellLoader = ({
       highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
-      <Skeleton width={skeletonWidth} height={16} />
+      <Skeleton width={width} height={16} />
     </SkeletonTheme>
   );
 };
 
-export const RecordTableCellSkeletonLoader = ({
-  skeletonWidth,
-}: {
-  skeletonWidth: number;
-}) => {
+export const RecordTableCellSkeletonLoader = () => {
   return (
     <StyledSkeletonContainer>
-      <StyledRecordTableCellLoader skeletonWidth={skeletonWidth} />
+      <StyledRecordTableCellLoader />
     </StyledSkeletonContainer>
   );
 };

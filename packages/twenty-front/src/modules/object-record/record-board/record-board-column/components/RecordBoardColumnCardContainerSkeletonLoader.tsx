@@ -21,16 +21,20 @@ const StyledSeparator = styled.div`
 `;
 
 export const RecordBoardColumnCardContainerSkeletonLoader = ({
+  numberOfFields,
   titleSkeletonWidth,
   isCompactModeActive,
 }: {
+  numberOfFields: number;
   titleSkeletonWidth: number;
   isCompactModeActive: boolean;
 }) => {
   const theme = useTheme();
-  const skeletonItems = Array.from({ length: 6 }).map((_, index) => ({
-    id: `skeleton-item-${index}`,
-  }));
+  const skeletonItems = Array.from({ length: numberOfFields }).map(
+    (_, index) => ({
+      id: `skeleton-item-${index}`,
+    }),
+  );
   return (
     <SkeletonTheme
       baseColor={theme.background.tertiary}
