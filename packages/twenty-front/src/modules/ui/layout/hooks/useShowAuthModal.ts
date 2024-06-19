@@ -6,7 +6,6 @@ import { AppPath } from '@/types/AppPath';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { OnboardingStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { isDefined } from '~/utils/isDefined';
 
 export const useShowAuthModal = () => {
   const isMatchingLocation = useIsMatchingLocation();
@@ -25,25 +24,19 @@ export const useShowAuthModal = () => {
       return isDefaultLayoutAuthModalVisible;
     }
     if (
-      isDefined(onboardingStatus) &&
-      [
-        OnboardingStatus.SubscriptionIncomplete,
-        OnboardingStatus.UserCreation,
-        OnboardingStatus.ProfileCreation,
-        OnboardingStatus.WorkspaceActivation,
-        OnboardingStatus.SyncEmail,
-        OnboardingStatus.InviteTeam,
-      ].includes(onboardingStatus)
+      onboardingStatus === OnboardingStatus.SubscriptionIncomplete ||
+      onboardingStatus === OnboardingStatus.UserCreation ||
+      onboardingStatus === OnboardingStatus.ProfileCreation ||
+      onboardingStatus === OnboardingStatus.WorkspaceActivation ||
+      onboardingStatus === OnboardingStatus.SyncEmail ||
+      onboardingStatus === OnboardingStatus.InviteTeam
     ) {
       return true;
     }
     if (isMatchingLocation(AppPath.PlanRequired)) {
       return (
-        isDefined(onboardingStatus) &&
-        [
-          OnboardingStatus.CompletedWithoutSubscription,
-          OnboardingStatus.SubscriptionCanceled,
-        ].includes(onboardingStatus)
+        onboardingStatus === OnboardingStatus.CompletedWithoutSubscription ||
+        onboardingStatus === OnboardingStatus.SubscriptionCanceled
       );
     }
     return false;
