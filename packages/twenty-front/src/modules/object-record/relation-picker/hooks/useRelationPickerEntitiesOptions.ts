@@ -7,19 +7,17 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 
 export const useRelationPickerEntitiesOptions = ({
   relationObjectNameSingular,
-  relationPickerScopeId = 'relation-picker',
   selectedRelationRecordIds = [],
   excludedRelationRecordIds = [],
 }: {
   relationObjectNameSingular: string;
-  relationPickerScopeId?: string;
   selectedRelationRecordIds?: string[];
   excludedRelationRecordIds?: string[];
 }) => {
   const scopeId = useAvailableScopeIdOrThrow(
     RelationPickerScopeInternalContext,
-    relationPickerScopeId,
   );
+
   const { searchQueryState, relationPickerSearchFilterState } =
     useRelationPickerScopedStates({
       relationPickerScopedId: scopeId,
@@ -42,6 +40,12 @@ export const useRelationPickerEntitiesOptions = ({
     excludeEntityIds: excludedRelationRecordIds,
     objectNameSingular: relationObjectNameSingular,
   });
+
+  console.log(
+    entities.entitiesToSelect.length,
+    entities,
+    entities.entitiesToSelect,
+  );
 
   return { entities, relationPickerSearchFilter };
 };
