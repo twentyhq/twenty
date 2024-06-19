@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import { v4 as uuidV4 } from 'uuid';
 
-import { AppTooltip } from './AppTooltip';
+import { AppTooltip, TooltipDelay } from './AppTooltip';
 
 import styles from './OverflowingTextWithTooltip.module.css';
 
@@ -63,12 +63,12 @@ export const OverflowingTextWithTooltip = ({
             <AppTooltip
               anchorSelect={`#${textElementId}`}
               content={mutliline ? undefined : text ?? ''}
-              delayHide={1}
               offset={5}
               isOpen
               noArrow
               place="bottom"
               positionStrategy="absolute"
+              delay={TooltipDelay.mediumDelay}
             >
               {mutliline ? <pre>{text}</pre> : ''}
             </AppTooltip>

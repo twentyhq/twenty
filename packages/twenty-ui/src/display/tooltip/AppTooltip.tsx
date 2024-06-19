@@ -78,6 +78,7 @@ export const AppTooltip = ({
         className,
         content,
         delayShow: delayInMs,
+        delayHide: delayInMs,
         isOpen,
         noArrow,
         offset,
