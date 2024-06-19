@@ -167,8 +167,12 @@ yarn command:prod cron:messaging:message-list-fetch
 ### Data enrichment and AI
 
 <ArticleTable options={[
-    ['OPENROUTER_API_KEY', '', "The API key for openrouter.ai, an abstraction layer over models from Mistral, OpenAI and more"]
-    ]}></ArticleTable>
+    ['OPENROUTER_API_KEY', '', "The API key for openrouter.ai, an abstraction layer over models from Mistral, OpenAI and more"],
+    ['OPENAI_API_KEY', 'sk-proj-abcdabcd...', "OpenAI API key"],
+    ['LANGFUSE_SECRET_KEY', 'sk-lf-abcdabcd-abcd...', "Langfuse secret key"],
+    ['LANGFUSE_PUBLIC_KEY', 'pk-lf-abcdabcd-abcd...', "Langfuse public key"],
+    ['LANGFUSE_ASK_AI_PROMPT_NAME', 'ask-ai-development', "The name of the Langfuse prompt for the Ask AI feature"]
+]}></ArticleTable>
 
 
 ### Support Chat
