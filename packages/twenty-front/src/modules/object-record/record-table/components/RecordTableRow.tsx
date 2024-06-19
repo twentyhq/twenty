@@ -23,9 +23,17 @@ type RecordTableRowProps = {
   isPendingRow?: boolean;
 };
 
-export const StyledTd = styled.td`
+export const StyledTd = styled.td<{ isSelected?: boolean }>`
+  background: var(--twentycrm-background-primary);
   position: relative;
   user-select: none;
+
+  ${({ isSelected }) =>
+    isSelected &&
+    `
+    background: var(--twentycrm-accent-quaternary);
+
+  `}
 `;
 
 export const StyledTr = styled.tr<{ isDragging: boolean }>`
@@ -33,7 +41,6 @@ export const StyledTr = styled.tr<{ isDragging: boolean }>`
   transition: border-left-color 0.2s ease-in-out;
 
   td:nth-of-type(-n + 2) {
-    background-color: ${({ theme }) => theme.background.primary};
     border-right-color: ${({ theme }) => theme.background.primary};
   }
 
@@ -127,7 +134,10 @@ export const RecordTableRow = ({
             >
               <GripCell isDragging={draggableSnapshot.isDragging} />
             </StyledTd>
-            <StyledTd>
+            <StyledTd
+              isSelected={currentRowSelected}
+              style={{ borderRight: 'transparent' }}
+            >
               {!draggableSnapshot.isDragging && <CheckboxCell />}
             </StyledTd>
             {inView || draggableSnapshot.isDragging
@@ -145,9 +155,12 @@ export const RecordTableRow = ({
                   </RecordTableCellContext.Provider>
                 ))
               : visibleTableColumns.map((column) => (
-                  <StyledTd key={column.fieldMetadataId}></StyledTd>
+                  <StyledTd
+                    isSelected={currentRowSelected}
+                    key={column.fieldMetadataId}
+                  ></StyledTd>
                 ))}
-            <StyledTd />
+            <StyledTd isSelected={currentRowSelected} />
           </StyledTr>
         )}
       </Draggable>
