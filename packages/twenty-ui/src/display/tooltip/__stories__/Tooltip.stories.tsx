@@ -6,7 +6,11 @@ import {
   ComponentDecorator,
 } from '@ui/testing';
 
-import { AppTooltip as Tooltip, TooltipPosition, TooltipDelay } from '../AppTooltip';
+import {
+  AppTooltip as Tooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from '../AppTooltip';
 
 const meta: Meta<typeof Tooltip> = {
   title: 'UI/Display/Tooltip',
@@ -19,7 +23,7 @@ type Story = StoryObj<typeof Tooltip>;
 export const Default: Story = {
   args: {
     place: TooltipPosition.Bottom,
-    delay : TooltipDelay.mediumDelay,
+    delay: TooltipDelay.mediumDelay,
     content: 'Tooltip Test',
     isOpen: true,
     anchorSelect: '#hover-text',
@@ -29,7 +33,7 @@ export const Default: Story = {
     anchorSelect,
     className,
     content,
-    delayHide,
+    delay,
     isOpen,
     noArrow,
     offset,
@@ -45,8 +49,47 @@ export const Default: Story = {
           anchorSelect,
           className,
           content,
-          delayHide,
+          delay,
           isOpen,
+          noArrow,
+          offset,
+          place,
+          positionStrategy,
+        }}
+      />
+    </>
+  ),
+};
+
+export const Hoverable: Story = {
+  args: {
+    place: TooltipPosition.Bottom,
+    delay: TooltipDelay.mediumDelay,
+    content: 'Tooltip Test',
+    isOpen: true,
+    anchorSelect: '#hover-text',
+  },
+  decorators: [ComponentDecorator],
+  render: ({
+    anchorSelect,
+    className,
+    content,
+    delay,
+    noArrow,
+    offset,
+    place,
+    positionStrategy,
+  }) => (
+    <>
+      <p id="hover-text" data-testid="tooltip">
+        Hover me!
+      </p>
+      <Tooltip
+        {...{
+          anchorSelect,
+          className,
+          content,
+          delay,
           noArrow,
           offset,
           place,
