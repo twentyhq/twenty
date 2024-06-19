@@ -12,7 +12,7 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
+import { mockedOnboardingUserData } from '~/testing/mock-data/users';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Onboarding/InviteTeam',
@@ -25,10 +25,9 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
           return HttpResponse.json({
             data: {
-              currentUser: {
-                ...mockedOnboardingUsersData[0],
-                onboardingStatus: OnboardingStatus.InviteTeam,
-              },
+              currentUser: mockedOnboardingUserData(
+                OnboardingStatus.InviteTeam,
+              ),
             },
           });
         }),

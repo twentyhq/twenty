@@ -13,7 +13,7 @@ import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/Sn
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { App } from '~/App';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedUsersData } from '~/testing/mock-data/users';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 const meta: Meta<typeof App> = {
   title: 'App/App',
@@ -67,9 +67,9 @@ export const DarkMode: Story = {
           return HttpResponse.json({
             data: {
               currentUser: {
-                ...mockedUsersData[0],
+                ...mockedUserData,
                 workspaceMember: {
-                  ...mockedUsersData[0].workspaceMember,
+                  ...mockedUserData.workspaceMember,
                   colorScheme: 'Dark',
                 },
               },
