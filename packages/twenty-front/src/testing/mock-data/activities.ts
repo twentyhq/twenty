@@ -7,10 +7,6 @@ import { DateFormat } from '@/workspace-member/constants/DateFormat';
 import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
-import {
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
-} from '~/generated/graphql';
 
 type MockedActivity = Pick<
   Activity,

@@ -2,12 +2,7 @@ import { DateFormat } from '@/workspace-member/constants/DateFormat';
 import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
-import {
-  User,
-  Workspace,
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
-} from '~/generated/graphql';
+import { User, Workspace } from '~/generated/graphql';
 
 type MockedUser = Pick<
   User,
