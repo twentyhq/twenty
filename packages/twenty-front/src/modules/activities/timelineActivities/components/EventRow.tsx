@@ -1,6 +1,6 @@
-import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 import {
+  AppTooltip,
   IconCheckbox,
   IconCirclePlus,
   IconEditCircle,
@@ -96,21 +96,6 @@ const StyledVerticalLine = styled.div`
   background: ${({ theme }) => theme.border.color.light};
   flex-shrink: 0;
   width: 2px;
-`;
-
-const StyledTooltip = styled(Tooltip)`
-  background-color: ${({ theme }) => theme.background.primary};
-
-  box-shadow: 0px 2px 4px 3px
-    ${({ theme }) => theme.background.transparent.light};
-
-  box-shadow: 2px 4px 16px 6px
-    ${({ theme }) => theme.background.transparent.light};
-
-  color: ${({ theme }) => theme.font.color.primary};
-
-  opacity: 1;
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
@@ -255,7 +240,7 @@ export const EventRow = ({
           <StyledItemTitleDate id={`id-${event.id}`}>
             {beautifiedCreatedAt}
           </StyledItemTitleDate>
-          <StyledTooltip
+          <AppTooltip
             anchorSelect={`#id-${event.id}`}
             content={exactCreatedAt}
             clickable

@@ -48,6 +48,7 @@ export type AppTooltipProps = {
   place?: PlacesType;
   delay?: TooltipDelay;
   positionStrategy?: PositionStrategy;
+  clickable?: boolean;
 };
 
 export const AppTooltip = ({
@@ -57,10 +58,11 @@ export const AppTooltip = ({
   isOpen,
   noArrow,
   offset,
-  delay,
+  delay = TooltipDelay.mediumDelay,
   place,
   positionStrategy,
   children,
+  clickable,
 }: AppTooltipProps) => {
   const delayInMs =
     delay === TooltipDelay.noDelay
@@ -82,6 +84,7 @@ export const AppTooltip = ({
         place,
         positionStrategy,
         children,
+        clickable,
       }}
     />
   );

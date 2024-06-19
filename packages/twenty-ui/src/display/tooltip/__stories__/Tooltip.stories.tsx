@@ -39,6 +39,7 @@ export const Default: Story = {
     offset,
     place,
     positionStrategy,
+    clickable,
   }) => (
     <>
       <p id="hover-text" data-testid="tooltip">
@@ -55,6 +56,7 @@ export const Default: Story = {
           offset,
           place,
           positionStrategy,
+          clickable,
         }}
       />
     </>
