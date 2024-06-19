@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -31,6 +31,7 @@ type SettingsDataModelFieldSelectFormOptionRowProps = {
   onSetAsDefault?: () => void;
   onRemoveAsDefault?: () => void;
   option: FieldMetadataItemOption;
+  focused?: boolean;
 };
 
 const StyledRow = styled.div`
@@ -63,7 +64,10 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   onSetAsDefault,
   onRemoveAsDefault,
   option,
+  focused,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const theme = useTheme();
 
   const dropdownIds = useMemo(() => {
@@ -78,6 +82,12 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   const { closeDropdown: closeActionsDropdown } = useDropdown(
     dropdownIds.actions,
   );
+
+  useEffect(() => {
+    if (focused === true) {
+      inputRef.current?.focus();
+    }
+  }, [focused]);
 
   return (
     <StyledRow className={className}>
@@ -112,6 +122,8 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         }
       />
       <StyledOptionInput
+        ref={inputRef}
+        disableHotkeys
         value={option.label}
         onChange={(label) =>
           onChange({
