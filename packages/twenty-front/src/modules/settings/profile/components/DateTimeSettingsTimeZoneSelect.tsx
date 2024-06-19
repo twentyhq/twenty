@@ -18,7 +18,9 @@ export const DateTimeSettingsTimeZoneSelect = ({
     label="Time zone"
     fullWidth
     value={findAvailableTimeZoneOption(value)?.value}
-    options={AVAILABLE_TIMEZONE_OPTIONS}
+    options={AVAILABLE_TIMEZONE_OPTIONS.sort((_, b) =>
+      b.label.includes('(System preferred)') ? 0 : -1,
+    )}
     onChange={onChange}
     withSearchInput
   />

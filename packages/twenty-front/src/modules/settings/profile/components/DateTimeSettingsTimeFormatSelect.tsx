@@ -2,6 +2,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 
 import { Select } from '@/ui/input/components/Select';
 import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
+import { detectTimeFormat } from '@/workspace-member/utils/detectTimeFormat';
 
 type DateTimeSettingsTimeFormatSelectProps = {
   value: TimeFormat;
@@ -16,6 +17,7 @@ export const DateTimeSettingsTimeFormatSelect = ({
 }: DateTimeSettingsTimeFormatSelectProps) => (
   <Select
     dropdownId="datetime-settings-time-format"
+    dropdownWidth={218}
     label="Time format"
     fullWidth
     value={value}
@@ -25,7 +27,9 @@ export const DateTimeSettingsTimeFormatSelect = ({
           Date.now(),
           timeZone,
           TimeFormat.MILITARY,
-        )})`,
+        )}) ${
+          detectTimeFormat() === TimeFormat.MILITARY ? '(System Preferred)' : ''
+        }`,
         value: TimeFormat.MILITARY,
       },
       {
@@ -33,10 +37,12 @@ export const DateTimeSettingsTimeFormatSelect = ({
           Date.now(),
           timeZone,
           TimeFormat.STANDARD,
-        )})`,
+        )}) ${
+          detectTimeFormat() === TimeFormat.STANDARD ? '(System Preferred)' : ''
+        }`,
         value: TimeFormat.STANDARD,
       },
-    ]}
+    ].sort((_, b) => (b.label.includes('(System Preferred)') ? 0 : -1))}
     onChange={onChange}
   />
 );
