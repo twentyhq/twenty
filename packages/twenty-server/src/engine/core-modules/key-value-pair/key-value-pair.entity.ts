@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -20,6 +21,14 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Entity({ name: 'keyValuePair', schema: 'core' })
 @ObjectType('KeyValuePair')
 @Unique('IndexOnKeyUserIdWorkspaceIdUnique', ['key', 'userId', 'workspaceId'])
+@Index('IndexOnKeyWorkspaceIdAndNullUserIdUnique', ['key', 'workspaceId'], {
+  unique: true,
+  where: '"userId" is NULL',
+})
+@Index('IndexOnKeyUserIdAndNullWorkspaceIdUnique', ['key', 'userId'], {
+  unique: true,
+  where: '"workspaceId" is NULL',
+})
 export class KeyValuePair {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

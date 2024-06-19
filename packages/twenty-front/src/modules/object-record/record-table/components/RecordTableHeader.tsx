@@ -70,6 +70,7 @@ export const RecordTableHeader = ({
   return (
     <StyledTableHead data-select-disable>
       <tr>
+        <th></th>
         <th
           style={{
             width: 30,

@@ -1,1 +1,1 @@
-export * from './message-queue.interface';
+export * from './message-queue-module-options.interface';

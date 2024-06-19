@@ -3,9 +3,11 @@ import {
   mockedObjectMetadataItems,
   mockedPersonObjectMetadataItem,
 } from '~/testing/mock-data/metadata';
-import { mockedPeopleData } from '~/testing/mock-data/people';
+import { getPeopleMock } from '~/testing/mock-data/people';
 
 import { getRecordNodeFromRecord } from '../getRecordNodeFromRecord';
+
+const peopleMock = getPeopleMock();
 
 describe('getRecordNodeFromRecord', () => {
   it('computes relation records cache references by default', () => {
@@ -19,7 +21,7 @@ describe('getRecordNodeFromRecord', () => {
       name: true,
       company: true,
     };
-    const record = mockedPeopleData[0];
+    const record = peopleMock[0];
 
     // When
     const result = getRecordNodeFromRecord({
@@ -33,12 +35,12 @@ describe('getRecordNodeFromRecord', () => {
     expect(result).toEqual({
       __typename: 'Person',
       company: {
-        __ref: 'Company:5c21e19e-e049-4393-8c09-3e3f8fb09ecb',
+        __ref: `Company:${record.company.id}`,
       },
       name: {
         __typename: 'FullName',
-        firstName: 'Alexandre',
-        lastName: 'Prot',
+        firstName: record.name.firstName,
+        lastName: record.name.lastName,
       },
     });
   });
@@ -54,7 +56,7 @@ describe('getRecordNodeFromRecord', () => {
       name: true,
       company: true,
     };
-    const record = mockedPeopleData[0];
+    const record = peopleMock[0];
     const computeReferences = false;
 
     // When
@@ -72,8 +74,8 @@ describe('getRecordNodeFromRecord', () => {
       company: record.company,
       name: {
         __typename: 'FullName',
-        firstName: 'Alexandre',
-        lastName: 'Prot',
+        firstName: record.name.firstName,
+        lastName: record.name.lastName,
       },
     });
   });

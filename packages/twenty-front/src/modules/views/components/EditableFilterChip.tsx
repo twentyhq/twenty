@@ -16,8 +16,8 @@ export const EditableFilterChip = ({
   const { getIcon } = useIcons();
   return (
     <SortOrFilterChip
-      key={viewFilter.fieldMetadataId}
-      testId={viewFilter.fieldMetadataId}
+      key={viewFilter.id}
+      testId={viewFilter.id}
       labelKey={viewFilter.definition.label}
       labelValue={`${getOperandLabelShort(viewFilter.operand)} ${
         viewFilter.displayValue

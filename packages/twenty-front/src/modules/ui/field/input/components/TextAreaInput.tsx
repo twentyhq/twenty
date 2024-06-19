@@ -30,6 +30,7 @@ const StyledTextArea = styled(TextareaAutosize)`
   display: flex;
   justify-content: center;
   resize: none;
+  max-height: 400px;
   width: calc(100% - ${({ theme }) => theme.spacing(7)});
 `;
 

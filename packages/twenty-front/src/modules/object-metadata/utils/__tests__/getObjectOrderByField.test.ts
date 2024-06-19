@@ -9,8 +9,8 @@ describe('getObjectOrderByField', () => {
       (item) => item.nameSingular === 'person',
     )!;
     const res = getOrderByFieldForObjectMetadataItem(objectMetadataItem);
-    expect(res).toEqual({
-      name: { firstName: 'AscNullsLast', lastName: 'AscNullsLast' },
-    });
+    expect(res).toEqual([
+      { name: { firstName: 'AscNullsLast', lastName: 'AscNullsLast' } },
+    ]);
   });
 });

@@ -34,6 +34,7 @@ export * from './constants/TextInputStyle';
 export * from './constants/ThemeCommon';
 export * from './constants/ThemeDark';
 export * from './constants/ThemeLight';
+export * from './provider/ThemeContextProvider';
 export * from './provider/ThemeProvider';
 export * from './types/ThemeType';
 export * from './utils/getNextThemeColor';

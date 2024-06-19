@@ -24,7 +24,7 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
 
   const { activities, loading } = useActivities({
     activitiesFilters: notesQueryVariables.filter ?? {},
-    activitiesOrderByVariables: notesQueryVariables.orderBy ?? {},
+    activitiesOrderByVariables: notesQueryVariables.orderBy ?? [{}],
     targetableObjects: [targetableObject],
   });
 

@@ -151,7 +151,7 @@ export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
           <DropdownMenuSeparator />
         </>
       )}
-      {isInputDisplayed ? (
+      {isInputDisplayed || !links.length ? (
         <DropdownMenuInput
           autoFocus
           placeholder="URL"

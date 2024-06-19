@@ -1,17 +1,24 @@
 import { Tag } from 'twenty-ui';
 
-import { useSelectField } from '../../hooks/useSelectField';
+import { useSelectFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useSelectFieldDisplay';
+import { isDefined } from '~/utils/isDefined';
 
 export const SelectFieldDisplay = () => {
-  const { fieldValue, fieldDefinition } = useSelectField();
+  const { fieldValue, fieldDefinition } = useSelectFieldDisplay();
 
   const selectedOption = fieldDefinition.metadata.options?.find(
     (option) => option.value === fieldValue,
   );
 
-  return selectedOption ? (
-    <Tag color={selectedOption.color} text={selectedOption.label} />
-  ) : (
-    <></>
+  if (!isDefined(selectedOption)) {
+    return <></>;
+  }
+
+  return (
+    <Tag
+      preventShrink
+      color={selectedOption.color}
+      text={selectedOption.label}
+    />
   );
 };

@@ -3,6 +3,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { typeORMCoreModuleOptions } from 'src/database/typeorm/core/core.datasource';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 
 import { TypeORMService } from './typeorm.service';
 
@@ -27,6 +28,9 @@ const coreTypeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
     TypeOrmModule.forRootAsync({
       useFactory: coreTypeORMFactory,
       name: 'core',
+    }),
+    TwentyORMModule.register({
+      workspaceEntities: ['dist/src/**/*.workspace-entity{.ts,.js}'],
     }),
     EnvironmentModule,
   ],

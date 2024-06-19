@@ -2,9 +2,11 @@ import { useContext } from 'react';
 
 import { BooleanFieldDisplay } from '@/object-record/record-field/meta-types/display/components/BooleanFieldDisplay';
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
+import { RatingFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RatingFieldDisplay';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
+import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldChipDisplay } from '@/object-record/utils/getRecordChipGeneratorPerObjectPerField';
 
 import { FieldContext } from '../contexts/FieldContext';
@@ -82,5 +84,7 @@ export const FieldDisplay = () => {
     <JsonFieldDisplay />
   ) : isFieldBoolean(fieldDefinition) ? (
     <BooleanFieldDisplay />
+  ) : isFieldRating(fieldDefinition) ? (
+    <RatingFieldDisplay />
   ) : null;
 };

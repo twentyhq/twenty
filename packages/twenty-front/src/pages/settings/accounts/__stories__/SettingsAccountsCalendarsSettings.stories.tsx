@@ -10,7 +10,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
-import { sleep } from '~/testing/sleep';
+import { sleep } from '~/utils/sleep';
 
 import { SettingsAccountsCalendarsSettings } from '../SettingsAccountsCalendarsSettings';
 

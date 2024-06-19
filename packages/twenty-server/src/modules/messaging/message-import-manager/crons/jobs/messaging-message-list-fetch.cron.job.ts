@@ -1,9 +1,7 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository, In } from 'typeorm';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
@@ -20,11 +18,12 @@ import {
   MessagingMessageListFetchJobData,
   MessagingMessageListFetchJob,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
-@Injectable()
-export class MessagingMessageListFetchCronJob
-  implements MessageQueueJob<undefined>
-{
+@Processor(MessageQueue.cronQueue)
+export class MessagingMessageListFetchCronJob {
   private readonly logger = new Logger(MessagingMessageListFetchCronJob.name);
 
   constructor(
@@ -32,13 +31,14 @@ export class MessagingMessageListFetchCronJob
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(DataSourceEntity, 'metadata')
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
-    @Inject(MessageQueue.messagingQueue)
+    @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     private readonly environmentService: EnvironmentService,
   ) {}
 
+  @Process(MessagingMessageListFetchCronJob.name)
   async handle(): Promise<void> {
     const workspaceIds = (
       await this.workspaceRepository.find({
