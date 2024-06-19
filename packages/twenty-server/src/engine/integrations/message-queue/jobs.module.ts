@@ -25,6 +25,7 @@ import { CalendarJobModule } from 'src/modules/calendar/jobs/calendar-job.module
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/auto-companies-and-contacts-creation-job.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
+import { CalendarModule } from 'src/modules/calendar/calendar.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module
     UserWorkspaceModule,
     WorkspaceModule,
     MessagingModule,
+    CalendarModule,
     CalendarEventParticipantModule,
     TimelineActivityModule,
     StripeModule,

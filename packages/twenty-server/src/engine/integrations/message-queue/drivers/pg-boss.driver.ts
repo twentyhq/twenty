@@ -41,9 +41,11 @@ export class PgBossDriver
   ) {
     return this.pgBoss.work<T>(
       `${queueName}.*`,
-      {
-        teamConcurrency: options?.concurrency,
-      },
+      options?.concurrency
+        ? {
+            teamConcurrency: options.concurrency,
+          }
+        : {},
       async (job) => {
         await handler({ data: job.data, id: job.id, name: job.name });
       },

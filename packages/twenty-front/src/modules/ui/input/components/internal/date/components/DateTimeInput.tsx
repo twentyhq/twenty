@@ -12,10 +12,13 @@ import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate'
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 
 const StyledInputContainer = styled.div`
-  width: 100%;
-  display: flex;
+  align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-top-left-radius: ${({ theme }) => theme.border.radius.md};
+  border-top-right-radius: ${({ theme }) => theme.border.radius.md};
+  display: flex;
   height: ${({ theme }) => theme.spacing(8)};
+  width: 100%;
 `;
 
 const StyledInput = styled.input<{ hasError?: boolean }>`
@@ -23,7 +26,7 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
   border: none;
   color: ${({ theme }) => theme.font.color.primary};
   outline: none;
-  padding: 8px;
+  padding: 4px 8px 4px 8px;
   font-weight: 500;
   font-size: ${({ theme }) => theme.font.size.md};
   width: 100%;

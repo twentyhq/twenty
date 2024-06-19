@@ -82,9 +82,15 @@ export class AuthResolver {
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
   ) {
-    return await this.workspaceRepository.findOneBy({
+    const workspace = await this.workspaceRepository.findOneBy({
       inviteHash: workspaceInviteHashValidInput.inviteHash,
     });
+
+    if (!workspace) {
+      throw new BadRequestException('Workspace does not exist');
+    }
+
+    return workspace;
   }
 
   @UseGuards(CaptchaGuard)

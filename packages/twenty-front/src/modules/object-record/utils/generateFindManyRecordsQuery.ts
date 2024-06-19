@@ -21,9 +21,9 @@ query FindMany${capitalize(
   objectMetadataItem.namePlural,
 )}($filter: ${capitalize(
   objectMetadataItem.nameSingular,
-)}FilterInput, $orderBy: ${capitalize(
+)}FilterInput, $orderBy: [${capitalize(
   objectMetadataItem.nameSingular,
-)}OrderByInput, $lastCursor: String, $limit: Int) {
+)}OrderByInput], $lastCursor: String, $limit: Int) {
   ${
     objectMetadataItem.namePlural
   }(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor){

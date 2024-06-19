@@ -1,5 +1,4 @@
 import { useRecoilCallback } from 'recoil';
-import { v4 } from 'uuid';
 
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -43,13 +42,11 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
         }
 
         const matchingFilterInCurrentView = currentView.viewFilters.find(
-          (viewFilter) =>
-            viewFilter.fieldMetadataId === upsertedFilter.fieldMetadataId,
+          (viewFilter) => viewFilter.id === upsertedFilter.id,
         );
 
         const matchingFilterInUnsavedFilters = unsavedToUpsertViewFilters.find(
-          (viewFilter) =>
-            viewFilter.fieldMetadataId === upsertedFilter.fieldMetadataId,
+          (viewFilter) => viewFilter.id === upsertedFilter.id,
         );
 
         if (isDefined(matchingFilterInUnsavedFilters)) {
@@ -81,7 +78,6 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
           ...unsavedToUpsertViewFilters,
           {
             ...upsertedFilter,
-            id: v4(),
             __typename: 'ViewFilter',
           } satisfies ViewFilter,
         ]);
@@ -95,7 +91,7 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
   );
   const removeCombinedViewFilter = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (fieldMetadataId: string) => {
+      async (fieldId: string) => {
         const unsavedToUpsertViewFilters = getSnapshotValue(
           snapshot,
           unsavedToUpsertViewFiltersState,
@@ -119,18 +115,18 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
         }
 
         const matchingFilterInCurrentView = currentView.viewFilters.find(
-          (viewFilter) => viewFilter.fieldMetadataId === fieldMetadataId,
+          (viewFilter) => viewFilter.id === fieldId,
         );
 
         const matchingFilterInUnsavedFilters = unsavedToUpsertViewFilters.find(
-          (viewFilter) => viewFilter.fieldMetadataId === fieldMetadataId,
+          (viewFilter) => viewFilter.id === fieldId,
         );
 
         if (isDefined(matchingFilterInUnsavedFilters)) {
           set(
             unsavedToUpsertViewFiltersState,
             unsavedToUpsertViewFilters.filter(
-              (viewFilter) => viewFilter.fieldMetadataId !== fieldMetadataId,
+              (viewFilter) => viewFilter.id !== fieldId,
             ),
           );
         }

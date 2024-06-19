@@ -21,7 +21,7 @@ type StyledDropdownButtonProps = {
 
 export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   align-items: center;
-  background: ${({ theme }) => theme.background.primary};
+  background: none;
   border-radius: ${({ theme }) => theme.border.radius.xs} 0 0
     ${({ theme }) => theme.border.radius.xs};
   color: ${({ color }) => color ?? 'none'};
