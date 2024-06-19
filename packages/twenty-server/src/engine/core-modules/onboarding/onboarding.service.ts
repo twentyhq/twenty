@@ -42,6 +42,31 @@ export class OnboardingService {
     private readonly workspaceMemberRepository: WorkspaceMemberRepository,
   ) {}
 
+  private async isSubscriptionIncompleteOnboardingStatus(user: User) {
+    return (
+      this.environmentService.get('IS_BILLING_ENABLED') &&
+      user.defaultWorkspace.subscriptionStatus === 'incomplete'
+    );
+  }
+
+  private async isWorkspaceActivationOnboardingStatus(user: User) {
+    return !(await this.workspaceManagerService.doesDataSourceExist(
+      user.defaultWorkspaceId,
+    ));
+  }
+
+  private async isProfileCreationOnboardingStatus(user: User) {
+    const workspaceMember = await this.workspaceMemberRepository.getById(
+      user.id,
+      user.defaultWorkspaceId,
+    );
+
+    return (
+      workspaceMember &&
+      (!workspaceMember.name.firstName || !workspaceMember.name.lastName)
+    );
+  }
+
   private async isSyncEmailOnboardingStatus(user: User) {
     const syncEmailValue = await this.keyValuePairService.get({
       userId: user.id,
@@ -74,30 +99,49 @@ export class OnboardingService {
     );
   }
 
+  private async isSubscriptionCanceledOnboardingStatus(user: User) {
+    return (
+      this.environmentService.get('IS_BILLING_ENABLED') &&
+      user.defaultWorkspace.subscriptionStatus === 'canceled'
+    );
+  }
+
+  private async isSubscriptionPastDueOnboardingStatus(user: User) {
+    return (
+      this.environmentService.get('IS_BILLING_ENABLED') &&
+      user.defaultWorkspace.subscriptionStatus === 'past_due'
+    );
+  }
+
+  private async isSubscriptionUnpaidOnboardingStatus(user: User) {
+    return (
+      this.environmentService.get('IS_BILLING_ENABLED') &&
+      user.defaultWorkspace.subscriptionStatus === 'unpaid'
+    );
+  }
+
+  private async isCompletedWithoutSubscriptionOnboardingStatus(user: User) {
+    const currentBillingSubscription =
+      await this.billingService.getCurrentBillingSubscription({
+        workspaceId: user.defaultWorkspaceId,
+      });
+
+    return (
+      this.environmentService.get('IS_BILLING_ENABLED') &&
+      !currentBillingSubscription
+    );
+  }
+
   async getOnboardingStatus(user: User): Promise<OnboardingStatus | null> {
-    if (this.environmentService.get('IS_BILLING_ENABLED')) {
-      if (user.defaultWorkspace.subscriptionStatus === 'incomplete') {
-        return OnboardingStatus.SUBSCRIPTION_INCOMPLETE;
-      }
+    if (await this.isSubscriptionIncompleteOnboardingStatus(user)) {
+      return OnboardingStatus.SUBSCRIPTION_INCOMPLETE;
     }
 
-    if (
-      !(await this.workspaceManagerService.doesDataSourceExist(
-        user.defaultWorkspaceId,
-      ))
-    ) {
+    if (await this.isWorkspaceActivationOnboardingStatus(user)) {
       return OnboardingStatus.WORKSPACE_ACTIVATION;
     }
 
-    const workspaceMember = await this.workspaceMemberRepository.getById(
-      user.id,
-      user.defaultWorkspaceId,
-    );
-
-    if (
-      workspaceMember &&
-      (!workspaceMember.name.firstName || !workspaceMember.name.lastName)
-    ) {
+    if (await this.isProfileCreationOnboardingStatus(user)) {
       return OnboardingStatus.PROFILE_CREATION;
     }
 
@@ -109,26 +153,20 @@ export class OnboardingService {
       return OnboardingStatus.INVITE_TEAM;
     }
 
-    if (this.environmentService.get('IS_BILLING_ENABLED')) {
-      if (user.defaultWorkspace.subscriptionStatus === 'canceled') {
-        return OnboardingStatus.SUBSCRIPTION_CANCELED;
-      }
+    if (await this.isSubscriptionCanceledOnboardingStatus(user)) {
+      return OnboardingStatus.SUBSCRIPTION_CANCELED;
+    }
 
-      if (user.defaultWorkspace.subscriptionStatus === 'past_due') {
-        return OnboardingStatus.SUBSCRIPTION_PAST_DUE;
-      }
+    if (await this.isSubscriptionPastDueOnboardingStatus(user)) {
+      return OnboardingStatus.SUBSCRIPTION_PAST_DUE;
+    }
 
-      if (user.defaultWorkspace.subscriptionStatus === 'unpaid') {
-        return OnboardingStatus.SUBSCRIPTION_UNPAID;
-      }
+    if (await this.isSubscriptionUnpaidOnboardingStatus(user)) {
+      return OnboardingStatus.SUBSCRIPTION_UNPAID;
+    }
 
-      if (
-        !(await this.billingService.getCurrentBillingSubscription({
-          workspaceId: user.defaultWorkspaceId,
-        }))
-      ) {
-        return OnboardingStatus.COMPLETED_WITHOUT_SUBSCRIPTION;
-      }
+    if (await this.isCompletedWithoutSubscriptionOnboardingStatus(user)) {
+      return OnboardingStatus.COMPLETED_WITHOUT_SUBSCRIPTION;
     }
 
     return OnboardingStatus.COMPLETED;
