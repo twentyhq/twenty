@@ -8,8 +8,6 @@ import {
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ModuleRef, createContextId } from '@nestjs/core';
-import { Injector } from '@nestjs/core/injector/injector';
 
 import crypto from 'crypto';
 
@@ -31,6 +29,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { OnboardingStep } from 'src/engine/core-modules/onboarding/enums/onboarding-step.enum';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -43,8 +42,6 @@ const getHMACKey = (email?: string, key?: string | null) => {
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
 export class UserResolver {
-  private readonly injector = new Injector();
-
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -52,7 +49,7 @@ export class UserResolver {
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
-    private readonly moduleRef: ModuleRef,
+    private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
   ) {}
 
   @Query(() => User)
@@ -127,34 +124,9 @@ export class UserResolver {
       return null;
     }
 
-    // TODO: We should move that in an util function
-    const modules = this.moduleRef['container'].getModules();
-    const host = [...modules.values()].find((module) =>
-      module.providers.has(OnboardingService),
-    );
-    const contextId = createContextId();
-
-    if (!host) {
-      throw new Error('host is not defined');
-    }
-
-    if (this.moduleRef.registerRequestByContextId) {
-      this.moduleRef.registerRequestByContextId(
-        {
-          // Add workspaceId to the request object
-          req: {
-            workspaceId: user.defaultWorkspaceId,
-          },
-        },
-        contextId,
-      );
-    }
-
-    const contextInstance = await this.injector.loadPerContext(
+    const contextInstance = await this.loadServiceWithWorkspaceContext.load(
       this.onboardingService,
-      host,
-      host.providers,
-      contextId,
+      user.defaultWorkspaceId,
     );
 
     return contextInstance.getOnboardingStep(user, user.defaultWorkspace);
