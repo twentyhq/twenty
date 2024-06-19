@@ -8,5 +8,5 @@ spec:
   capacity:
     storage: 10Gi
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain

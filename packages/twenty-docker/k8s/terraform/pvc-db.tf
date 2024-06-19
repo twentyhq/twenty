@@ -4,7 +4,7 @@ resource "kubernetes_persistent_volume_claim" "db" {
     namespace = kubernetes_namespace.twentycrm.metadata.0.name
   }
   spec {
-    access_modes = ["ReadWriteMany"]
+    access_modes = ["ReadWriteOnce"]
     resources {
       requests = {
         storage = local.twentycrm_db_pvc_requests

@@ -7,7 +7,7 @@ spec:
   storageClassName: default
   volumeName: twentycrm-server-pv
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi
