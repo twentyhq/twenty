@@ -46,10 +46,12 @@ export interface FindDuplicatesResolverArgs<Data extends Record = Record> {
 
 export interface CreateOneResolverArgs<Data extends Record = Record> {
   data: Data;
+  upsert?: boolean;
 }
 
 export interface CreateManyResolverArgs<Data extends Record = Record> {
   data: Data[];
+  upsert?: boolean;
 }
 
 export interface UpdateOneResolverArgs<Data extends Record = Record> {

@@ -76,16 +76,6 @@ export class WorkspaceQueryBuilderFactory {
     );
   }
 
-  findDuplicatesExistingRecord(
-    id: string | number,
-    options: WorkspaceQueryBuilderOptions,
-  ): string {
-    return this.findDuplicatesQueryFactory.buildQueryForExistingRecord(
-      id,
-      options,
-    );
-  }
-
   createMany<Record extends IRecord = IRecord>(
     args: CreateManyResolverArgs<Record>,
     options: WorkspaceQueryBuilderOptions,

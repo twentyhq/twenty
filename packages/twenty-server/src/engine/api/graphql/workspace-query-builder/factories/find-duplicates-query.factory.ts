@@ -5,13 +5,11 @@ import isEmpty from 'lodash.isempty';
 import { WorkspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { FindDuplicatesResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { stringifyWithoutKeyQuote } from 'src/engine/api/graphql/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { ArgsAliasFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/args-alias.factory';
-import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/api/graphql/workspace-resolver-builder/constants/duplicate-criteria.constants';
-import { settings } from 'src/engine/constants/settings';
+import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
 
 import { FieldsStringFactory } from './fields-string.factory';
 
@@ -22,6 +20,7 @@ export class FindDuplicatesQueryFactory {
   constructor(
     private readonly fieldsStringFactory: FieldsStringFactory,
     private readonly argsAliasFactory: ArgsAliasFactory,
+    private readonly duplicateService: DuplicateService,
   ) {}
 
   async create<Filter extends RecordFilter = RecordFilter>(
@@ -41,7 +40,7 @@ export class FindDuplicatesQueryFactory {
       currentRecord,
     );
 
-    const duplicateCondition = this.buildDuplicateCondition(
+    const duplicateCondition = this.duplicateService.buildDuplicateCondition(
       options.objectMetadataItem,
       argsData,
       args.id,
@@ -74,82 +73,6 @@ export class FindDuplicatesQueryFactory {
     return this.argsAliasFactory.create(
       args.data ?? {},
       options.fieldMetadataCollection,
-    );
-  }
-
-  buildQueryForExistingRecord(
-    id: string | number,
-    options: WorkspaceQueryBuilderOptions,
-  ) {
-    const idQueryField = typeof id === 'string' ? `"${id}"` : id;
-
-    return `
-      query {
-        ${computeObjectTargetTable(
-          options.objectMetadataItem,
-        )}Collection(filter: { id: { eq: ${idQueryField} }}){
-          edges {
-            node {
-              __typename
-              ${this.getApplicableDuplicateCriteriaCollection(
-                options.objectMetadataItem,
-              )
-                .flatMap((dc) => dc.columnNames)
-                .join('\n')}
-            }
-          }
-        }
-      }
-    `;
-  }
-
-  private buildDuplicateCondition(
-    objectMetadataItem: ObjectMetadataInterface,
-    argsData?: Record<string, unknown>,
-    filteringByExistingRecordId?: string,
-  ) {
-    if (!argsData) {
-      return;
-    }
-
-    const criteriaCollection =
-      this.getApplicableDuplicateCriteriaCollection(objectMetadataItem);
-
-    const criteriaWithMatchingArgs = criteriaCollection.filter((criteria) =>
-      criteria.columnNames.every((columnName) => {
-        const value = argsData[columnName] as string | undefined;
-
-        return (
-          !!value && value.length >= settings.minLengthOfStringForDuplicateCheck
-        );
-      }),
-    );
-
-    const filterCriteria = criteriaWithMatchingArgs.map((criteria) =>
-      Object.fromEntries(
-        criteria.columnNames.map((columnName) => [
-          columnName,
-          { eq: argsData[columnName] },
-        ]),
-      ),
-    );
-
-    return {
-      // when filtering by an existing record, we need to filter that explicit record out
-      ...(filteringByExistingRecordId && {
-        id: { neq: filteringByExistingRecordId },
-      }),
-      // keep condition as "or" to get results by more duplicate criteria
-      or: filterCriteria,
-    };
-  }
-
-  private getApplicableDuplicateCriteriaCollection(
-    objectMetadataItem: ObjectMetadataInterface,
-  ) {
-    return DUPLICATE_CRITERIA_COLLECTION.filter(
-      (duplicateCriteria) =>
-        duplicateCriteria.objectName === objectMetadataItem.nameSingular,
     );
   }
 }

@@ -10,21 +10,26 @@ export const DUPLICATE_CRITERIA_COLLECTION: RecordDuplicateCriteria[] = [
   {
     objectName: 'company',
     columnNames: ['domainName'],
+    useAsUniqueKeyForUpsert: true,
   },
   {
     objectName: 'company',
     columnNames: ['name'],
+    useAsUniqueKeyForUpsert: true,
   },
   {
     objectName: 'person',
     columnNames: ['nameFirstName', 'nameLastName'],
+    useAsUniqueKeyForUpsert: false,
   },
   {
     objectName: 'person',
     columnNames: ['linkedinLinkUrl'],
+    useAsUniqueKeyForUpsert: false,
   },
   {
     objectName: 'person',
     columnNames: ['email'],
+    useAsUniqueKeyForUpsert: true,
   },
 ];

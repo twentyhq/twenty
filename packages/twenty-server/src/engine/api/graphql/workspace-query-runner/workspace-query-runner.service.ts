@@ -52,6 +52,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -77,6 +78,7 @@ export class WorkspaceQueryRunnerService {
     private readonly eventEmitter: EventEmitter2,
     private readonly workspacePreQueryHookService: WorkspacePreQueryHookService,
     private readonly environmentService: EnvironmentService,
+    private readonly duplicateService: DuplicateService,
   ) {}
 
   async findMany<
@@ -193,24 +195,11 @@ export class WorkspaceQueryRunnerService {
     let existingRecord: Record<string, unknown> | undefined;
 
     if (computedArgs.id) {
-      const existingRecordQuery =
-        this.workspaceQueryBuilderFactory.findDuplicatesExistingRecord(
-          computedArgs.id,
-          options,
-        );
-
-      const existingRecordResult = await this.execute(
-        existingRecordQuery,
+      existingRecord = await this.duplicateService.findExistingRecord(
+        computedArgs.id,
+        objectMetadataItem,
         workspaceId,
       );
-
-      const parsedResult = await this.parseResult<Record<string, unknown>>(
-        existingRecordResult,
-        objectMetadataItem,
-        '',
-      );
-
-      existingRecord = parsedResult?.edges?.[0]?.node;
 
       if (!existingRecord) {
         throw new NotFoundError(`Object with id ${args.id} not found`);
@@ -247,6 +236,10 @@ export class WorkspaceQueryRunnerService {
     const { workspaceId, userId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
+
+    if (args.upsert) {
+      return await this.upsertMany(args, options);
+    }
 
     args.data.forEach((record) => {
       if (record?.id) {
@@ -305,11 +298,62 @@ export class WorkspaceQueryRunnerService {
     return parsedResults;
   }
 
+  async upsertMany<Record extends IRecord = IRecord>(
+    args: CreateManyResolverArgs<Record>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<Record[] | undefined> {
+    const results = await Promise.all(
+      args.data.map(async (payload) => {
+        const existingRecord = payload.id
+          ? await this.findOne(
+              { filter: { id: { eq: payload.id } } } as FindOneResolverArgs,
+              options,
+            )
+          : null;
+
+        if (existingRecord) {
+          const result = await this.updateOne(
+            { id: payload.id, data: payload },
+            options,
+          );
+
+          return result;
+        }
+
+        const existingDuplicate = await this.duplicateService.findDuplicate(
+          payload,
+          options.objectMetadataItem,
+          options.workspaceId,
+        );
+
+        if (existingDuplicate) {
+          console.log('updating');
+          const result = await this.updateOne(
+            { id: existingDuplicate.id, data: payload },
+            options,
+          );
+
+          return result;
+        }
+
+        const result =
+          (await this.createMany({ data: [payload] }, options)) ?? [];
+
+        return result[0];
+      }),
+    );
+
+    return results.filter((result) => result !== undefined) as Record[];
+  }
+
   async createOne<Record extends IRecord = IRecord>(
     args: CreateOneResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    const results = await this.createMany({ data: [args.data] }, options);
+    const results = await this.createMany(
+      { data: [args.data], upsert: args.upsert },
+      options,
+    );
 
     return results?.[0];
   }

@@ -177,30 +177,4 @@ describe('FindDuplicatesQueryFactory', () => {
       }`);
     });
   });
-
-  describe('buildQueryForExistingRecord', () => {
-    it(`should include all the fields that exist for person inside "duplicateCriteriaCollection" constant`, async () => {
-      const query = service.buildQueryForExistingRecord('uuid', {
-        ...workspaceQueryBuilderOptionsMock,
-        objectMetadataItem: {
-          ...workspaceQueryBuilderOptionsMock.objectMetadataItem,
-          nameSingular: 'person',
-        },
-      });
-
-      expect(query.trim()).toEqual(`query {
-        personCollection(filter: { id: { eq: "uuid" }}){
-          edges {
-            node {
-              __typename
-              nameFirstName
-nameLastName
-linkedinLinkUrl
-email
-            }
-          }
-        }
-      }`);
-    });
-  });
 });
