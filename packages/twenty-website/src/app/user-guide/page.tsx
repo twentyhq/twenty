@@ -8,8 +8,6 @@ export const metadata = {
   icons: '/images/core/logo.svg',
 };
 
-export const dynamic = 'force-dynamic';
-
 export default async function UserGuideHome() {
   const filePath = 'src/content/user-guide/';
   const docsArticleCards = getDocsArticles(filePath);
