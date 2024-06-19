@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
@@ -8,11 +7,12 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { DateTimeSettingsDateFormatSelect } from '@/settings/profile/components/DateTimeSettingsDateFormatSelect';
 import { DateTimeSettingsTimeFormatSelect } from '@/settings/profile/components/DateTimeSettingsTimeFormatSelect';
 import { DateTimeSettingsTimeZoneSelect } from '@/settings/profile/components/DateTimeSettingsTimeZoneSelect';
+import { DateFormat } from '@/workspace-member/constants/DateFormat';
+import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { dateTimeFormatState } from '@/workspace-member/states/dateTimeFormatState';
 import { getWorkspaceEnumFromDateFormat } from '@/workspace-member/utils/formatDateLabel';
 import { getWorkspaceEnumFromTimeFormat } from '@/workspace-member/utils/formatTimeLabel';
 import { isDefined } from '~/utils/isDefined';
-import { isEmptyObject } from '~/utils/isEmptyObject';
 import { logError } from '~/utils/logError';
 
 const StyledContainer = styled.div`
@@ -27,91 +27,90 @@ export const DateTimeSettings = () => {
   );
   const [dateTimeFormat, setDateTimeFormat] =
     useRecoilState(dateTimeFormatState);
-  const [timeZone, setTimeZone] = useState(dateTimeFormat.timeZone);
-  const [dateFormat, setDateFormat] = useState(dateTimeFormat.dateFormat);
-  const [timeFormat, setTimeFormat] = useState(dateTimeFormat.timeFormat);
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
-  const updateWorkspaceMember = useCallback(
-    async (changedFields: any) => {
-      if (!currentWorkspaceMember?.id) {
-        throw new Error('User is not logged in');
-      }
-
-      try {
-        await updateOneRecord({
-          idToUpdate: currentWorkspaceMember.id,
-          updateOneRecordInput: changedFields,
-        });
-      } catch (error) {
-        logError(error);
-      }
-    },
-    [currentWorkspaceMember, updateOneRecord],
-  );
-
-  useEffect(() => {
-    if (!isDefined(currentWorkspaceMember)) {
-      return;
-    }
-    const changedWorkspaceMemberFields: any = {};
-    const dateTimeFormatStateFields: any = {};
-
-    if (timeZone !== dateTimeFormat.timeZone) {
-      changedWorkspaceMemberFields.timeZone = timeZone;
-      dateTimeFormatStateFields.timeZone = timeZone;
-    }
-    if (dateFormat !== dateTimeFormat.dateFormat) {
-      changedWorkspaceMemberFields.dateFormat =
-        getWorkspaceEnumFromDateFormat(dateFormat);
-      dateTimeFormatStateFields.dateFormat = dateFormat;
-    }
-    if (timeFormat !== dateTimeFormat.timeFormat) {
-      changedWorkspaceMemberFields.timeFormat =
-        getWorkspaceEnumFromTimeFormat(timeFormat);
-      dateTimeFormatStateFields.timeFormat = timeFormat;
+  const updateWorkspaceMember = async (changedFields: any) => {
+    if (!currentWorkspaceMember?.id) {
+      throw new Error('User is not logged in');
     }
 
-    if (!isEmptyObject(changedWorkspaceMemberFields)) {
-      setCurrentWorkspaceMember({
-        ...currentWorkspaceMember,
-        ...dateTimeFormatStateFields,
+    try {
+      await updateOneRecord({
+        idToUpdate: currentWorkspaceMember.id,
+        updateOneRecordInput: changedFields,
       });
-
-      setDateTimeFormat({
-        ...dateTimeFormatStateFields,
-      });
-
-      updateWorkspaceMember(changedWorkspaceMemberFields);
+    } catch (error) {
+      logError(error);
     }
-  }, [
-    currentWorkspaceMember,
-    dateTimeFormat,
-    timeZone,
-    dateFormat,
-    timeFormat,
-    updateWorkspaceMember,
-    setCurrentWorkspaceMember,
-    setDateTimeFormat,
-  ]);
+  };
 
   if (!isDefined(currentWorkspaceMember)) return;
 
+  const handleTimeZoneChange = (timeZone: string) => {
+    const workspaceMember = {
+      ...currentWorkspaceMember,
+      timeZone,
+    };
+    setCurrentWorkspaceMember(workspaceMember);
+
+    setDateTimeFormat({
+      ...dateTimeFormat,
+      timeZone,
+    });
+
+    updateWorkspaceMember(workspaceMember);
+  };
+
+  const handleDateFormatChange = (dateFormat: DateFormat) => {
+    const workspaceMember = {
+      ...currentWorkspaceMember,
+      dateFormat: getWorkspaceEnumFromDateFormat(dateFormat),
+    };
+
+    setCurrentWorkspaceMember(workspaceMember);
+
+    setDateTimeFormat({
+      ...dateTimeFormat,
+      dateFormat,
+    });
+
+    updateWorkspaceMember(workspaceMember);
+  };
+
+  const handleTimeFormatChange = (timeFormat: TimeFormat) => {
+    const workspaceMember = {
+      ...currentWorkspaceMember,
+      timeFormat: getWorkspaceEnumFromTimeFormat(timeFormat),
+    };
+
+    setCurrentWorkspaceMember(workspaceMember);
+
+    setDateTimeFormat({
+      ...dateTimeFormat,
+      timeFormat,
+    });
+
+    updateWorkspaceMember(workspaceMember);
+  };
+
   return (
     <StyledContainer>
-      <DateTimeSettingsTimeZoneSelect value={timeZone} onChange={setTimeZone} />
+      <DateTimeSettingsTimeZoneSelect
+        value={dateTimeFormat.timeZone}
+        onChange={handleTimeZoneChange}
+      />
       <DateTimeSettingsDateFormatSelect
-        value={dateFormat}
-        onChange={setDateFormat}
-        timeZone={timeZone}
+        value={dateTimeFormat.dateFormat}
+        onChange={handleDateFormatChange}
+        timeZone={dateTimeFormat.timeZone}
       />
       <DateTimeSettingsTimeFormatSelect
-        value={timeFormat}
-        onChange={setTimeFormat}
-        timeZone={timeZone}
+        value={dateTimeFormat.timeFormat}
+        onChange={handleTimeFormatChange}
+        timeZone={dateTimeFormat.timeZone}
       />
     </StyledContainer>
   );
