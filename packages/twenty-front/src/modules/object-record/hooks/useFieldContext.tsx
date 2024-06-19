@@ -69,8 +69,10 @@ export const useFieldContext = ({
               isLabelIdentifier,
               fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                 field: fieldMetadataItem,
+                showLabel: true,
                 position: fieldPosition,
                 objectMetadataItem,
+                labelWidth: 90,
               }),
               useUpdateRecord:
                 customUseUpdateOneObjectHook ?? useUpdateOneObjectMutation,

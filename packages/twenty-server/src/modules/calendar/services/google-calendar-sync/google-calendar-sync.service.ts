@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Repository } from 'typeorm';
 import { calendar_v3 as calendarV3 } from 'googleapis';
@@ -33,9 +34,10 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
-  CreateCompanyAndContactJobData,
   CreateCompanyAndContactJob,
+  CreateCompanyAndContactJobData,
 } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class GoogleCalendarSyncService {
@@ -62,8 +64,9 @@ export class GoogleCalendarSyncService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
     private readonly calendarEventParticipantsService: CalendarEventParticipantService,
-    @InjectMessageQueue(MessageQueue.emailQueue)
+    @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   public async startGoogleCalendarSync(
@@ -121,14 +124,13 @@ export class GoogleCalendarSyncService {
 
     const blocklist = await this.getBlocklist(workspaceMemberId, workspaceId);
 
-    let filteredEvents = filterOutBlocklistedEvents(events, blocklist).filter(
-      (event) => event.status !== 'cancelled',
-    );
+    let filteredEvents = filterOutBlocklistedEvents(
+      calendarChannel.handle,
+      events,
+      blocklist,
+    ).filter((event) => event.status !== 'cancelled');
 
     if (emailOrDomainToReimport) {
-      // We still need to filter the events to only keep the ones that have the email or domain we want to reimport
-      // because the q parameter in the list method also filters the events that have the email or domain in their summary, description ...
-      // The q parameter allows us to narrow down the events
       filteredEvents = filteredEvents.filter(
         (event) =>
           event.attendees?.some(
@@ -389,7 +391,7 @@ export class GoogleCalendarSyncService {
       eventExternalId: string;
       calendarChannelId: string;
     }[],
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     calendarChannel: CalendarChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
@@ -409,8 +411,11 @@ export class GoogleCalendarSyncService {
     let startTime: number;
     let endTime: number;
 
+    const savedCalendarEventParticipantsToEmit: ObjectRecord<CalendarEventParticipantWorkspaceEntity>[] =
+      [];
+
     try {
-      dataSourceMetadata?.transaction(async (transactionManager) => {
+      await dataSourceMetadata?.transaction(async (transactionManager) => {
         startTime = Date.now();
 
         await this.calendarEventRepository.saveCalendarEvents(
@@ -484,10 +489,15 @@ export class GoogleCalendarSyncService {
 
         startTime = Date.now();
 
-        await this.calendarEventParticipantsService.saveCalendarEventParticipants(
-          participantsToSave,
-          workspaceId,
-          transactionManager,
+        const savedCalendarEventParticipants =
+          await this.calendarEventParticipantsService.saveCalendarEventParticipants(
+            participantsToSave,
+            workspaceId,
+            transactionManager,
+          );
+
+        savedCalendarEventParticipantsToEmit.push(
+          ...savedCalendarEventParticipants,
         );
 
         endTime = Date.now();
@@ -499,12 +509,18 @@ export class GoogleCalendarSyncService {
         );
       });
 
+      this.eventEmitter.emit(`calendarEventParticipant.matched`, {
+        workspaceId,
+        userId: connectedAccount.accountOwnerId,
+        calendarEventParticipants: savedCalendarEventParticipantsToEmit,
+      });
+
       if (calendarChannel.isContactAutoCreationEnabled) {
         await this.messageQueueService.add<CreateCompanyAndContactJobData>(
           CreateCompanyAndContactJob.name,
           {
             workspaceId,
-            connectedAccountHandle: connectedAccount.handle,
+            connectedAccount,
             contactsToCreate: participantsToSave,
           },
         );

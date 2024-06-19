@@ -8,17 +8,16 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
-import { sleep } from '~/testing/sleep';
+import { sleep } from '~/utils/sleep';
 
 import { SettingsAccountsCalendarsSettings } from '../SettingsAccountsCalendarsSettings';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccountsCalendarsSettings',
   component: SettingsAccountsCalendarsSettings,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: {
     routePath: getSettingsPagePath(SettingsPath.AccountsCalendarsSettings),
     routeParams: { ':accountUuid': mockedConnectedAccounts[0].id },

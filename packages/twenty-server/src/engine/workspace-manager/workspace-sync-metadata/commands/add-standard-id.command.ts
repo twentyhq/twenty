@@ -58,8 +58,6 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_AIRTABLE_INTEGRATION_ENABLED: true,
             IS_POSTGRESQL_INTEGRATION_ENABLED: true,
             IS_STRIPE_INTEGRATION_ENABLED: false,
-            IS_GMAIL_SYNC_V2_ENABLED: true,
-            IS_LINKS_FIELD_ENABLED: true,
             IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED: true,
           },
         );
@@ -75,8 +73,6 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_AIRTABLE_INTEGRATION_ENABLED: true,
           IS_POSTGRESQL_INTEGRATION_ENABLED: true,
           IS_STRIPE_INTEGRATION_ENABLED: false,
-          IS_GMAIL_SYNC_V2_ENABLED: true,
-          IS_LINKS_FIELD_ENABLED: true,
           IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED: true,
         },
       );

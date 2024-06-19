@@ -1,10 +1,13 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableCellSoftFocusMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSoftFocusMode';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
+import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
@@ -12,7 +15,6 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
 import { RecordTableCellEditMode } from './RecordTableCellEditMode';
-import { RecordTableCellSoftFocusMode } from './RecordTableCellSoftFocusMode';
 
 import styles from './RecordTableCellContainer.module.css';
 
@@ -36,13 +38,19 @@ export const RecordTableCellContainer = ({
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
   const { setIsFocused } = useFieldFocus();
+  const { openTableCell } = useOpenRecordTableCellFromCell();
 
-  const { isSelected, recordId } = useContext(RecordTableRowContext);
+  const { isSelected, recordId, isPendingRow } = useContext(
+    RecordTableRowContext,
+  );
+  const { isLabelIdentifier } = useContext(FieldContext);
   const { onContextMenu, onCellMouseEnter } = useContext(RecordTableContext);
 
-  const [isHovered, setIsHovered] = useState(false);
+  const shouldBeInitiallyInEditMode =
+    isPendingRow === true && isLabelIdentifier;
+
   const [hasSoftFocus, setHasSoftFocus] = useState(false);
-  const [isInEditMode, setIsInEditMode] = useState(false);
+  const [isInEditMode, setIsInEditMode] = useState(shouldBeInitiallyInEditMode);
 
   const cellPosition = useCurrentTableCellPosition();
 
@@ -50,22 +58,29 @@ export const RecordTableCellContainer = ({
     onContextMenu(event, recordId);
   };
 
-  const handleContainerMouseEnter = () => {
+  const handleContainerMouseMove = () => {
     if (!hasSoftFocus) {
       onCellMouseEnter({
         cellPosition,
-        isHovered,
-        setIsHovered,
       });
     }
   };
 
   const handleContainerMouseLeave = () => {
-    setIsHovered(false);
+    setHasSoftFocus(false);
+    setIsFocused(false);
+  };
+
+  const handleContainerClick = () => {
+    if (!hasSoftFocus) {
+      openTableCell();
+    }
   };
 
   useEffect(() => {
     const customEventListener = (event: any) => {
+      event.stopPropagation();
+
       const newHasSoftFocus = event.detail;
 
       setHasSoftFocus(newHasSoftFocus);
@@ -119,23 +134,22 @@ export const RecordTableCellContainer = ({
         value={editHotkeyScope ?? DEFAULT_CELL_SCOPE}
       >
         <div
-          onMouseEnter={handleContainerMouseEnter}
           onMouseLeave={handleContainerMouseLeave}
-          onMouseMove={handleContainerMouseEnter}
+          onMouseMove={handleContainerMouseMove}
+          onClick={handleContainerClick}
           className={clsx({
             [styles.cellBaseContainer]: true,
             [styles.cellBaseContainerSoftFocus]: hasSoftFocus,
           })}
         >
-          {isInEditMode ? (
+          {isInEditMode && (
             <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
-          ) : hasSoftFocus ? (
-            <>
-              <RecordTableCellSoftFocusMode
-                editModeContent={editModeContent}
-                nonEditModeContent={nonEditModeContent}
-              />
-            </>
+          )}
+          {hasSoftFocus ? (
+            <RecordTableCellSoftFocusMode
+              editModeContent={editModeContent}
+              nonEditModeContent={nonEditModeContent}
+            />
           ) : (
             <RecordTableCellDisplayMode>
               {nonEditModeContent}

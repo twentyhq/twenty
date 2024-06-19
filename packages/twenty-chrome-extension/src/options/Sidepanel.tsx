@@ -46,42 +46,101 @@ const Sidepanel = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const setIframeState = useCallback(async () => {
-    const store = await chrome.storage.local.get();
-    if (isDefined(store.isAuthenticated)) setIsAuthenticated(true);
-    const { tab: activeTab } = await chrome.runtime.sendMessage({
-      action: 'getActiveTab',
-    });
+    const store = await chrome.storage.local.get([
+      'isAuthenticated',
+      'sidepanelUrl',
+      'clientUrl',
+      'accessToken',
+      'refreshToken',
+    ]);
 
     if (
-      isDefined(activeTab) &&
-      isDefined(store[`sidepanelUrl_${activeTab.id}`])
+      store.isAuthenticated === true &&
+      isDefined(store.accessToken) &&
+      isDefined(store.refreshToken) &&
+      new Date(store.accessToken.expiresAt).getTime() >= Date.now()
     ) {
-      const url = store[`sidepanelUrl_${activeTab.id}`];
-      setClientUrl(url);
-    } else if (isDefined(store.clientUrl)) {
-      setClientUrl(store.clientUrl);
+      setIsAuthenticated(true);
+      if (isDefined(store.sidepanelUrl)) {
+        if (isDefined(store.clientUrl)) {
+          setClientUrl(`${store.clientUrl}${store.sidepanelUrl}`);
+        } else {
+          setClientUrl(
+            `${import.meta.env.VITE_FRONT_BASE_URL}${store.sidepanelUrl}`,
+          );
+        }
+      }
+    } else {
+      chrome.storage.local.set({ isAuthenticated: false });
+      if (isDefined(store.clientUrl)) {
+        setClientUrl(store.clientUrl);
+      }
     }
   }, [setClientUrl]);
 
   useEffect(() => {
-    const initState = async () => {
-      const store = await chrome.storage.local.get();
-      if (isDefined(store.isAuthenticated)) setIsAuthenticated(true);
-      void setIframeState();
-    };
-    void initState();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    void setIframeState();
+  }, [setIframeState]);
+
+  useEffect(() => {
+    window.addEventListener('message', async (event) => {
+      const store = await chrome.storage.local.get([
+        'clientUrl',
+        'accessToken',
+        'refreshToken',
+      ]);
+      const clientUrl = isDefined(store.clientUrl)
+        ? store.clientUrl
+        : import.meta.env.VITE_FRONT_BASE_URL;
+
+      if (
+        isDefined(store.accessToken) &&
+        isDefined(store.refreshToken) &&
+        event.origin === clientUrl &&
+        event.data === 'loaded'
+      ) {
+        event.source?.postMessage(
+          {
+            type: 'tokens',
+            value: {
+              accessToken: {
+                token: store.accessToken.token,
+                expiresAt: store.accessToken.expiresAt,
+              },
+              refreshToken: {
+                token: store.refreshToken.token,
+                expiresAt: store.refreshToken.expiresAt,
+              },
+            },
+          },
+          clientUrl,
+        );
+      }
+    });
   }, []);
 
   useEffect(() => {
-    void setIframeState();
-  }, [setIframeState, clientUrl]);
-
-  useEffect(() => {
-    chrome.storage.local.onChanged.addListener((store) => {
-      if (isDefined(store.isAuthenticated)) {
-        if (store.isAuthenticated.newValue === true) {
+    chrome.storage.local.onChanged.addListener(async (updatedStore) => {
+      if (isDefined(updatedStore.isAuthenticated)) {
+        if (updatedStore.isAuthenticated.newValue === true) {
           setIframeState();
+        }
+      }
+
+      if (isDefined(updatedStore.sidepanelUrl)) {
+        if (isDefined(updatedStore.sidepanelUrl.newValue)) {
+          const store = await chrome.storage.local.get(['clientUrl']);
+          const clientUrl = isDefined(store.clientUrl)
+            ? store.clientUrl
+            : import.meta.env.VITE_FRONT_BASE_URL;
+
+          iframeRef.current?.contentWindow?.postMessage(
+            {
+              type: 'navigate',
+              value: updatedStore.sidepanelUrl.newValue,
+            },
+            clientUrl,
+          );
         }
       }
     });

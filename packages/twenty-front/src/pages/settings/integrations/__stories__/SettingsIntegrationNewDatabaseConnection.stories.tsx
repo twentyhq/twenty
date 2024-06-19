@@ -6,14 +6,13 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { sleep } from '~/testing/sleep';
+import { sleep } from '~/utils/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Integrations/SettingsIntegrationNewDatabaseConnection',
   component: SettingsIntegrationNewDatabaseConnection,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: {
     routePath: '/settings/integrations/:databaseKey/new',
     routeParams: { ':databaseKey': 'postgresql' },

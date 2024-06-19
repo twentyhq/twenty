@@ -1,19 +1,18 @@
-import { Injectable } from '@nestjs/common';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 export type HandleWorkspaceMemberDeletedJobData = {
   workspaceId: string;
   userId: string;
 };
-@Injectable()
-export class HandleWorkspaceMemberDeletedJob
-  implements MessageQueueJob<HandleWorkspaceMemberDeletedJobData>
-{
+
+@Processor(MessageQueue.workspaceQueue)
+export class HandleWorkspaceMemberDeletedJob {
   constructor(private readonly workspaceService: WorkspaceService) {}
 
+  @Process(HandleWorkspaceMemberDeletedJob.name)
   async handle(data: HandleWorkspaceMemberDeletedJobData): Promise<void> {
     const { workspaceId, userId } = data;
 

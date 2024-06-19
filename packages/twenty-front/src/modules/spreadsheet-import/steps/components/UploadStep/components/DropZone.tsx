@@ -124,6 +124,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
       const arrayBuffer = await readFileAsync(file);
       const workbook = XLSX.read(arrayBuffer, {
         cellDates: true,
+        codepage: 65001, // UTF-8 codepage
         dateNF: dateFormat,
         raw: parseRaw,
         dense: true,

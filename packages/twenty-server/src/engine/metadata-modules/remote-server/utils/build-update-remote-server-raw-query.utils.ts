@@ -40,6 +40,14 @@ export const buildUpdateRemoteServerRawQuery = (
     options.push(foreignDataWrapperOptionsQuery);
   }
 
+  if (remoteServerToUpdate.schema) {
+    options.push(`"schema" = $${parametersPositions['schema']}`);
+  }
+
+  if (remoteServerToUpdate.label) {
+    options.push(`"label" = $${parametersPositions['label']}`);
+  }
+
   if (options.length < 1) {
     throw new BadRequestException('No fields to update');
   }
@@ -74,6 +82,16 @@ const buildParametersAndPositions = (
         parametersPositions[key] = parameters.length;
       },
     );
+  }
+
+  if (remoteServerToUpdate.schema) {
+    parameters.push(remoteServerToUpdate.schema);
+    parametersPositions['schema'] = parameters.length;
+  }
+
+  if (remoteServerToUpdate.label) {
+    parameters.push(remoteServerToUpdate.label);
+    parametersPositions['label'] = parameters.length;
   }
 
   return [parameters, parametersPositions];

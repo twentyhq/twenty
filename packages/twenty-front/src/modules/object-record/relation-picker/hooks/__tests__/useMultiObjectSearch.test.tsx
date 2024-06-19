@@ -11,7 +11,7 @@ import { FieldMetadataType } from '~/generated/graphql';
 const query = gql`
   query CombinedFindManyRecords(
     $filterNameSingular: NameSingularFilterInput
-    $orderByNameSingular: NameSingularOrderByInput
+    $orderByNameSingular: [NameSingularOrderByInput]
     $lastCursorNameSingular: String
     $limitNameSingular: Int
   ) {
@@ -50,7 +50,7 @@ const mocks = [
       query,
       variables: {
         filterNameSingular: { id: { in: ['1'] } },
-        orderByNameSingular: { createdAt: 'DescNullsLast' },
+        orderByNameSingular: [{ createdAt: 'DescNullsLast' }],
         limitNameSingular: 60,
       },
     },
@@ -63,7 +63,7 @@ const mocks = [
       query,
       variables: {
         filterNameSingular: { and: [{}, { id: { in: ['1'] } }] },
-        orderByNameSingular: { createdAt: 'DescNullsLast' },
+        orderByNameSingular: [{ createdAt: 'DescNullsLast' }],
         limitNameSingular: 60,
       },
     },
@@ -77,7 +77,7 @@ const mocks = [
       variables: {
         limitNameSingular: 60,
         filterNameSingular: { not: { id: { in: ['1'] } } },
-        orderByNameSingular: { createdAt: 'DescNullsLast' },
+        orderByNameSingular: [{ createdAt: 'DescNullsLast' }],
       },
     },
     result: jest.fn(() => ({

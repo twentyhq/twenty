@@ -13,13 +13,18 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { getPeopleMock } from '~/testing/mock-data/people';
 import {
   mockDefaultWorkspace,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
-import { sleep } from '~/testing/sleep';
+import { sleep } from '~/utils/sleep';
 
 import { CommandMenu } from '../CommandMenu';
+
+const peopleMock = getPeopleMock();
+const companiesMock = getCompaniesMock();
 
 const openTimeout = 50;
 
@@ -94,8 +99,12 @@ export const MatchingPersonCompanyActivityCreateNavigate: Story = {
     const searchInput = await canvas.findByPlaceholderText('Search');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'n');
-    expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
-    expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
+    expect(
+      await canvas.findByText(
+        peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
+      ),
+    ).toBeInTheDocument();
+    expect(await canvas.findByText(companiesMock[0].name)).toBeInTheDocument();
     expect(await canvas.findByText('My very first note')).toBeInTheDocument();
     expect(await canvas.findByText('Create Note')).toBeInTheDocument();
     expect(await canvas.findByText('Go to Companies')).toBeInTheDocument();
@@ -119,7 +128,11 @@ export const AtleastMatchingOnePerson: Story = {
     const searchInput = await canvas.findByPlaceholderText('Search');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'alex');
-    expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
+    expect(
+      await canvas.findByText(
+        peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
+      ),
+    ).toBeInTheDocument();
   },
 };
 

@@ -1,9 +1,8 @@
+import { useTextFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useTextFieldDisplay';
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
 
-import { useTextField } from '../../hooks/useTextField';
-
 export const TextFieldDisplay = () => {
-  const { fieldValue, maxWidth } = useTextField();
+  const { fieldValue, maxWidth } = useTextFieldDisplay();
 
   return <TextDisplay text={fieldValue} maxWidth={maxWidth} />;
 };

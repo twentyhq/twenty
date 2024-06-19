@@ -1,0 +1,89 @@
+---
+title: Fields   
+info: Understand the role of fields and how to handle them.
+icon: IconChecklist
+image: /images/user-guide/fields/field.png
+sectionInfo: Discover how to use standard and custom objects in your workspace.
+---
+
+
+## About Fields
+
+Fields in an object are akin to the column names in an Excel spreadsheet, indicating the type of data stored — such as text, numbers, or dates — under specific names. These fields can be standard (created by default) or custom (user-created).
+
+### Standard Fields
+
+The platform includes Standard Fields by default as predefined fields designed to meet common, universal requirements in business modeling.
+
+As an example, "First Name" and "Last Name" are standard fields within the `people object`. They're text fields, meant to capture and store the respective names of individuals. 
+
+As essential parts of the data model, you can't delete them, but only deactivate them.
+
+<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}}/>
+
+### Custom Fields
+
+A `Custom Field` is a user-defined attribute you can add to a standard or custom object to store specific information that's not captured by the default fields. These fields can carry different types of data such as text, number, date, Select values, etc. Custom fields allow you to tailor your database to the unique needs of your business.
+
+For instance, a custom field for SpaceX could be "Rocket Active Status", indicating if a rocket is operational.
+
+<img src="/images/user-guide/fields/custom-fields.png"style={{width:'100%'}}/>
+
+## Create a Custom Field
+
+To add a custom field to any object, follow these steps:
+	1.	Go to `Settings` in the left sidebar.
+	2.	Go to `Data Model`, then select the object you wish to customize
+	3.	Proceed by clicking on `Add Field`.
+	4.	Choose a field name and type that suits your requirements. Consider adding a field description for better understanding.
+
+Your newly created field is now available within the application's fields. To display it on a specific view, click on the options menu, then select "Fields".
+
+<div style={{padding:'71.15% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
+  <iframe 
+    src="https://player.vimeo.com/video/927628219?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479" 
+    frameBorder="0" 
+    allow="autoplay; fullscreen; picture-in-picture; clipboard-write" 
+    style={{
+      position:'absolute',
+      top:0,
+      left:0,
+      width:'100%',
+      height:'100%',
+      borderRadius: '16px', 
+      border:'2px solid black'
+    }}
+    title="Export data"
+  ></iframe>
+</div>
+<script src="https://player.vimeo.com/api/player.js"></script>
+
+For creating `Custom Fields` in a more expeditious manner, make use of the **+** button located in the top right of the chosen object table, and then select the Customize fields option. This pathway affords you rapid access to the Data Model Settings page.
+
+<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}}/>
+
+## Deactivate a field
+
+You can deactivate a field in the app to stop it from functioning without disrupting your data model. Deactivation is like a soft deletion, making the field unavailable for use in the app.
+
+Here's how you can do it:
+
+1. Locate the field you wish to deactivate. You'll find these under various object sections.
+
+2. To the right of the line, three vertically aligned dots symbolize a menu button. Click on this to unveil a dropdown list of options.
+
+3. In the dropdown menu, find and click on the "deactivate" option.
+
+<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}}/>
+
+And, voila! You've deactivated a field. But what does this imply for your CRM operations?
+
+1. **In-App Functionality:** A deactivated field will no longer be functional within the app. You won't be able to assign values to these fields anymore.
+
+2. **Relation Fields:** If the deactivated field happens to be a relation field, the system doesn't delete the existing relation. It does prevent you from assigning or linking records to each other via this field in the app, moving forward.
+
+3. **API:** You can still use deactivated Fields and their data through the API.
+
+You can reactivate Standard and Custom Fields or have the option to permanently delete them.
+
+<ArticleEditContent></ArticleEditContent>

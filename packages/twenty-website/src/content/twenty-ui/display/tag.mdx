@@ -1,0 +1,41 @@
+---
+title: Tag
+icon: TbTag
+image: /images/user-guide/table-views/table.png
+---
+
+Component to visually categorize or label content. 
+
+<ArticleTabs label1="Usage" label2="Props">
+
+<ArticleTab>
+
+<SandpackEditor content={`import { Tag } from "@/ui/display/tag/components/Tag";
+
+export const MyComponent = () => {
+  return (
+    <Tag
+      className
+      color="red"
+      text="Urgent"
+      onClick={() => console.log("click")}
+    />
+  );
+};`} />
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['className', 'string', 'Optional name for additional styling', ''],
+  ['color', 'string', 'Color of the tag. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `gray`', ''],
+  ['text', 'string', 'The content of the tag', ''],
+  ['onClick', 'function', 'Optional function called when a user clicks on the tag', '']
+]} />
+
+</ArticleTab>
+
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>

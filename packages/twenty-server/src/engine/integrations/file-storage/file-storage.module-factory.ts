@@ -5,6 +5,7 @@ import {
   FileStorageModuleOptions,
   StorageDriverType,
 } from 'src/engine/integrations/file-storage/interfaces';
+import { resolveAbsolutePath } from 'src/utils/resolve-absolute-path';
 
 /**
  * FileStorage Module factory
@@ -23,7 +24,7 @@ export const fileStorageModuleFactory = async (
       return {
         type: StorageDriverType.Local,
         options: {
-          storagePath: process.cwd() + '/' + storagePath,
+          storagePath: resolveAbsolutePath(storagePath),
         },
       };
     }

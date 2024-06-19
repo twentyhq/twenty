@@ -29,6 +29,7 @@ export type GenericFieldContextType = {
   basePathToShowPage?: string;
   clearable?: boolean;
   maxWidth?: number;
+  isCentered?: boolean;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

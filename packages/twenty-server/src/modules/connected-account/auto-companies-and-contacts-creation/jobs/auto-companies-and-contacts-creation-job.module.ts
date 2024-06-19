@@ -5,11 +5,6 @@ import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-c
 
 @Module({
   imports: [AutoCompaniesAndContactsCreationModule],
-  providers: [
-    {
-      provide: CreateCompanyAndContactJob.name,
-      useClass: CreateCompanyAndContactJob,
-    },
-  ],
+  providers: [CreateCompanyAndContactJob],
 })
 export class AutoCompaniesAndContactsCreationJobModule {}

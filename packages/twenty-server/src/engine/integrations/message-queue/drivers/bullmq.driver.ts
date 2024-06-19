@@ -1,9 +1,14 @@
+import { OnModuleDestroy } from '@nestjs/common';
+
+import omitBy from 'lodash.omitby';
 import { JobsOptions, Queue, QueueOptions, Worker } from 'bullmq';
 
 import {
   QueueCronJobOptions,
   QueueJobOptions,
 } from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
+import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
+import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
@@ -11,7 +16,7 @@ import { MessageQueueDriver } from './interfaces/message-queue-driver.interface'
 
 export type BullMQDriverOptions = QueueOptions;
 
-export class BullMQDriver implements MessageQueueDriver {
+export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
   private queueMap: Record<MessageQueue, Queue> = {} as Record<
     MessageQueue,
     Queue
@@ -27,7 +32,7 @@ export class BullMQDriver implements MessageQueueDriver {
     this.queueMap[queueName] = new Queue(queueName, this.options);
   }
 
-  async stop() {
+  async onModuleDestroy() {
     const workers = Object.values(this.workerMap);
     const queues = Object.values(this.queueMap);
 
@@ -39,14 +44,22 @@ export class BullMQDriver implements MessageQueueDriver {
 
   async work<T>(
     queueName: MessageQueue,
-    handler: ({ data, id }: { data: T; id: string }) => Promise<void>,
+    handler: (job: MessageQueueJob<T>) => Promise<void>,
+    options?: MessageQueueWorkerOptions,
   ) {
     const worker = new Worker(
       queueName,
       async (job) => {
-        await handler(job as { data: T; id: string });
+        // TODO: Correctly support for job.id
+        await handler({ data: job.data, id: job.id ?? '', name: job.name });
       },
-      this.options,
+      omitBy(
+        {
+          ...this.options,
+          concurrency: options?.concurrency,
+        },
+        (value) => value === undefined,
+      ),
     );
 
     this.workerMap[queueName] = worker;

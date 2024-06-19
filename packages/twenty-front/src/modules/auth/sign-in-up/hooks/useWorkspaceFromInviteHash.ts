@@ -22,8 +22,8 @@ export const useWorkspaceFromInviteHash = () => {
   const { data: workspaceFromInviteHash, loading } =
     useGetWorkspaceFromInviteHashQuery({
       variables: { inviteHash: workspaceInviteHash || '' },
-      onError: () => {
-        enqueueSnackBar('workspace does not exist', {
+      onError: (error) => {
+        enqueueSnackBar(error.message, {
           variant: SnackBarVariant.Error,
         });
         navigate(AppPath.Index);

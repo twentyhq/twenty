@@ -1,0 +1,82 @@
+---
+title: Icons
+icon: TbIcons
+image: /images/user-guide/objects/objects.png
+---
+
+A list of icons used throughout our app. 
+
+## Tabler Icons
+
+We use Tabler icons for React throughout the app. 
+
+<ArticleTabs label1="Installation" label2="Usage" label3="Props">
+
+<ArticleTab>
+<br/>
+
+```
+yarn add @tabler/icons-react
+```
+
+</ArticleTab>
+
+<ArticleTab>
+
+You can import each icon as a component. Here's an example:
+<br />
+
+<SandpackEditor content={`import { IconArrowLeft } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return <IconArrowLeft color="red" size={48} />;
+};`} />
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['size', 'number', 'The height and width of the icon in pixels', '24'],
+  ['color', 'string', 'The color of the icons', 'currentColor'],
+  ['stroke', 'number', 'The stroke width of the icon in pixels', '2']
+]} />
+
+</ArticleTab>
+
+</ArticleTabs>
+
+
+
+## Custom Icons
+
+In addition to Tabler icons, the app also uses some custom icons.  
+
+### Icon Address Book
+
+Displays an address book icon. 
+
+<ArticleTabs label1="Installation" label2="Usage">
+
+<ArticleTab>
+
+<SandpackEditor content={`import { IconAddressBook } from 'twenty-ui';
+
+export const MyComponent = () => {
+  return <IconAddressBook size={24} stroke={2} />;
+};`} />
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['size', 'number', 'The height and width of the icon in pixels', '24'],
+  ['stroke', 'number', 'The stroke width of the icon in pixels', '2']
+]} />
+
+</ArticleTab>
+
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>

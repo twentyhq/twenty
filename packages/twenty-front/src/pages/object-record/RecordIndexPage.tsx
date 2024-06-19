@@ -35,7 +35,6 @@ export const RecordIndexPage = () => {
 
   const handleAddButtonClick = async () => {
     setPendingRecordId(v4());
-
     setSelectedTableCellEditMode(-1, 0);
     setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
   };

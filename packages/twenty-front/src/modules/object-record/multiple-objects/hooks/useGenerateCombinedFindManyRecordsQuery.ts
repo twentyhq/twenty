@@ -32,9 +32,9 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
   const orderByPerMetadataItemArray = operationSignatures
     .map(
       ({ objectNameSingular }) =>
-        `$orderBy${capitalize(objectNameSingular)}: ${capitalize(
+        `$orderBy${capitalize(objectNameSingular)}: [${capitalize(
           objectNameSingular,
-        )}OrderByInput`,
+        )}OrderByInput]`,
     )
     .join(', ');
 

@@ -13,6 +13,8 @@ import { useRecoilValue } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
+import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
+import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { billingState } from '@/client-config/states/billingState';
@@ -36,17 +38,19 @@ import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 import { Authorize } from '~/pages/auth/Authorize';
-import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan';
-import { CreateProfile } from '~/pages/auth/CreateProfile';
-import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { Invite } from '~/pages/auth/Invite';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
-import { PaymentSuccess } from '~/pages/auth/PaymentSuccess';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
+import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
+import { CreateProfile } from '~/pages/onboarding/CreateProfile';
+import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
+import { InviteTeam } from '~/pages/onboarding/InviteTeam';
+import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
+import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
 import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/SettingsAccountsCalendarsSettings';
@@ -85,36 +89,41 @@ const ProvidersThatNeedRouterContext = () => {
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
-    <ApolloProvider>
-      <ClientConfigProviderEffect />
-      <ClientConfigProvider>
-        <UserProviderEffect />
-        <UserProvider>
-          <ApolloMetadataClientProvider>
-            <ObjectMetadataItemsProvider>
-              <PrefetchDataProvider>
-                <AppThemeProvider>
-                  <SnackBarProvider>
-                    <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                      <DialogManager>
-                        <StrictMode>
-                          <PromiseRejectionEffect />
-                          <CommandMenuEffect />
-                          <GotoHotkeysEffect />
-                          <PageTitle title={pageTitle} />
-                          <Outlet />
-                        </StrictMode>
-                      </DialogManager>
-                    </DialogManagerScope>
-                  </SnackBarProvider>
-                </AppThemeProvider>
-              </PrefetchDataProvider>
-              <PageChangeEffect />
-            </ObjectMetadataItemsProvider>
-          </ApolloMetadataClientProvider>
-        </UserProvider>
-      </ClientConfigProvider>
-    </ApolloProvider>
+    <>
+      <ApolloProvider>
+        <ClientConfigProviderEffect />
+        <ClientConfigProvider>
+          <ChromeExtensionSidecarEffect />
+          <ChromeExtensionSidecarProvider>
+            <UserProviderEffect />
+            <UserProvider>
+              <ApolloMetadataClientProvider>
+                <ObjectMetadataItemsProvider>
+                  <PrefetchDataProvider>
+                    <AppThemeProvider>
+                      <SnackBarProvider>
+                        <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                          <DialogManager>
+                            <StrictMode>
+                              <PromiseRejectionEffect />
+                              <CommandMenuEffect />
+                              <GotoHotkeysEffect />
+                              <PageTitle title={pageTitle} />
+                              <Outlet />
+                            </StrictMode>
+                          </DialogManager>
+                        </DialogManagerScope>
+                      </SnackBarProvider>
+                    </AppThemeProvider>
+                  </PrefetchDataProvider>
+                  <PageChangeEffect />
+                </ObjectMetadataItemsProvider>
+              </ApolloMetadataClientProvider>
+            </UserProvider>
+          </ChromeExtensionSidecarProvider>
+        </ClientConfigProvider>
+      </ApolloProvider>
+    </>
   );
 };
 
@@ -134,6 +143,8 @@ const createRouter = (isBillingEnabled?: boolean) =>
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
+          <Route path={AppPath.SyncEmails} element={<SyncEmails />} />
+          <Route path={AppPath.InviteTeam} element={<InviteTeam />} />
           <Route path={AppPath.PlanRequired} element={<ChooseYourPlan />} />
           <Route
             path={AppPath.PlanRequiredSuccess}

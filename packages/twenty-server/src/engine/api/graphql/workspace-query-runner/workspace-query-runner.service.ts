@@ -1,8 +1,8 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   Logger,
+  RequestTimeoutException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -49,7 +49,9 @@ import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-r
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assertIsValidUuid.util';
+import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -70,7 +72,7 @@ export class WorkspaceQueryRunnerService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
     private readonly queryResultGettersFactory: QueryResultGettersFactory,
-    @Inject(MessageQueue.webhookQueue)
+    @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
     private readonly workspacePreQueryHookService: WorkspacePreQueryHookService,
@@ -577,28 +579,30 @@ export class WorkspaceQueryRunnerService {
         workspaceId,
       );
 
-    await workspaceDataSource?.query(`
-        SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
-          workspaceId,
-        )};
-      `);
+    try {
+      return await workspaceDataSource?.transaction(
+        async (transactionManager) => {
+          await transactionManager.query(`
+          SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
+            workspaceId,
+          )};
+        `);
 
-    return await workspaceDataSource?.transaction(
-      async (transactionManager) => {
-        await transactionManager.query(`
-        SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
-          workspaceId,
-        )};
-      `);
+          const results = transactionManager.query<PGGraphQLResult>(
+            `SELECT graphql.resolve($1);`,
+            [query],
+          );
 
-        const results = transactionManager.query<PGGraphQLResult>(
-          `SELECT graphql.resolve($1);`,
-          [query],
-        );
+          return results;
+        },
+      );
+    } catch (error) {
+      if (isQueryTimeoutError(error)) {
+        throw new RequestTimeoutException(error.message);
+      }
 
-        return results;
-      },
-    );
+      throw error;
+    }
   }
 
   private async parseResult<Result>(

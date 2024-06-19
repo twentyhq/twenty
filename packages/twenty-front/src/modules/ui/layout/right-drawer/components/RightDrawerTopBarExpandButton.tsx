@@ -1,20 +1,21 @@
-import { useRecoilState } from 'recoil';
 import {
   IconLayoutSidebarRightCollapse,
   IconLayoutSidebarRightExpand,
 } from 'twenty-ui';
 
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-
-import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 
 export const RightDrawerTopBarExpandButton = () => {
-  const [isRightDrawerExpanded, setIsRightDrawerExpanded] = useRecoilState(
-    isRightDrawerExpandedState,
-  );
+  const { isRightDrawerExpanded, downsizeRightDrawer, expandRightDrawer } =
+    useRightDrawer();
 
   const handleButtonClick = () => {
-    setIsRightDrawerExpanded(!isRightDrawerExpanded);
+    if (isRightDrawerExpanded === true) {
+      downsizeRightDrawer();
+      return;
+    }
+    expandRightDrawer();
   };
 
   return (

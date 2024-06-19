@@ -86,9 +86,7 @@ export const addPerson = async () => {
   const personId = await createPerson(personData);
 
   if (isDefined(personId)) {
-    await changeSidePanelUrl(
-      `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${personId}`,
-    );
+    await changeSidePanelUrl(`/object/person/${personId}`);
   }
 
   return personId;
@@ -98,15 +96,13 @@ export const insertButtonForPerson = async () => {
   const personButtonDiv = createDefaultButton('twenty-person-btn');
 
   if (isDefined(personButtonDiv)) {
-    const addedProfileDiv: HTMLDivElement | null = document.querySelector(
-      '.pv-top-card-v2-ctas__custom',
-    );
+    const addedProfileDiv = document.querySelector('.artdeco-card > .ph5');
 
     if (isDefined(addedProfileDiv)) {
       Object.assign(personButtonDiv.style, {
-        marginRight: '.8rem',
+        marginTop: '.8rem',
       });
-      addedProfileDiv.prepend(personButtonDiv);
+      addedProfileDiv.append(personButtonDiv);
     }
 
     const personButtonSpan = personButtonDiv.getElementsByTagName('span')[0];
@@ -115,19 +111,16 @@ export const insertButtonForPerson = async () => {
     const openPersonOnSidePanel = (personId: string) => {
       personButtonSpan.textContent = 'View in Twenty';
       personButtonDiv.onClickHandler(async () => {
-        await changeSidePanelUrl(
-          `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${personId}`,
-        );
+        await changeSidePanelUrl(`/object/person/${personId}`);
         chrome.runtime.sendMessage({ action: 'openSidepanel' });
       });
     };
 
     if (isDefined(person)) {
-      await changeSidePanelUrl(
-        `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${person.id}`,
-      );
+      await changeSidePanelUrl(`/object/person/${person.id}`);
       if (isDefined(person.id)) openPersonOnSidePanel(person.id);
     } else {
+      await changeSidePanelUrl(`/objects/people`);
       personButtonSpan.textContent = 'Add to Twenty';
       personButtonDiv.onClickHandler(async () => {
         personButtonSpan.textContent = 'Saving...';

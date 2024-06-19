@@ -6,7 +6,12 @@ import gfm from 'remark-gfm';
 
 import ArticleEditContent from '@/app/_components/ui/layout/articles/ArticleEditContent';
 import ArticleLink from '@/app/_components/ui/layout/articles/ArticleLink';
+import ArticlePropsTable from '@/app/_components/ui/layout/articles/ArticlePropsTable';
+import ArticleTab from '@/app/_components/ui/layout/articles/ArticleTab';
+import ArticleTable from '@/app/_components/ui/layout/articles/ArticleTable';
+import ArticleTabs from '@/app/_components/ui/layout/articles/ArticleTabs';
 import ArticleWarning from '@/app/_components/ui/layout/articles/ArticleWarning';
+import SandpackEditor from '@/app/_components/ui/layout/articles/SandpackEditor';
 
 interface ItemInfo {
   title: string;
@@ -115,6 +120,21 @@ export async function compileMDXFile(filePath: string) {
       ArticleLink(properties) {
         return <ArticleLink {...properties} />;
       },
+      ArticleTabs(properties) {
+        return <ArticleTabs {...properties} />;
+      },
+      ArticleTab(properties) {
+        return <ArticleTab {...properties} />;
+      },
+      ArticleTable(properties) {
+        return <ArticleTable {...properties} />;
+      },
+      ArticlePropsTable(properties) {
+        return <ArticlePropsTable {...properties} />;
+      },
+      SandpackEditor(properties) {
+        return <SandpackEditor {...properties} />;
+      },
     },
     options: {
       parseFrontmatter: true,
@@ -145,7 +165,6 @@ export async function getPost(
     return null;
   }
   const { content, frontmatter } = await compileMDXFile(filePath);
-
   return {
     content,
     itemInfo: { ...frontmatter, type: 'file', path: slug },

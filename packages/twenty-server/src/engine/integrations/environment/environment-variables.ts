@@ -86,11 +86,6 @@ export class EnvironmentVariables {
   @IsBoolean()
   TELEMETRY_ENABLED = true;
 
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  TELEMETRY_ANONYMIZATION_ENABLED = true;
-
   @CastToPositiveNumber()
   @IsNumber()
   @IsOptional()
@@ -380,7 +375,7 @@ export class EnvironmentVariables {
 
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
-  CHROME_EXTENSION_REDIRECT_URL: string;
+  CHROME_EXTENSION_ID: string;
 }
 
 export const validate = (

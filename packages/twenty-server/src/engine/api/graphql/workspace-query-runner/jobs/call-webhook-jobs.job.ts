@@ -1,6 +1,5 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -11,6 +10,9 @@ import {
   CallWebhookJob,
   CallWebhookJobData,
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 export enum CallWebhookJobsJobOperation {
   create = 'create',
@@ -25,19 +27,18 @@ export type CallWebhookJobsJobData = {
   operation: CallWebhookJobsJobOperation;
 };
 
-@Injectable()
-export class CallWebhookJobsJob
-  implements MessageQueueJob<CallWebhookJobsJobData>
-{
+@Processor(MessageQueue.webhookQueue)
+export class CallWebhookJobsJob {
   private readonly logger = new Logger(CallWebhookJobsJob.name);
 
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly dataSourceService: DataSourceService,
-    @Inject(MessageQueue.webhookQueue)
+    @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
+  @Process(CallWebhookJobsJob.name)
   async handle(data: CallWebhookJobsJobData): Promise<void> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(

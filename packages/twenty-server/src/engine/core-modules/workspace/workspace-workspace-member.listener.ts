@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
@@ -9,11 +9,12 @@ import {
   HandleWorkspaceMemberDeletedJob,
   HandleWorkspaceMemberDeletedJobData,
 } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 
 @Injectable()
 export class WorkspaceWorkspaceMemberListener {
   constructor(
-    @Inject(MessageQueue.workspaceQueue)
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 

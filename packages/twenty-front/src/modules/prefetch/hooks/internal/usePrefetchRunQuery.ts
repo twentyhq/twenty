@@ -15,7 +15,7 @@ export type UsePrefetchRunQuery = {
 export const usePrefetchRunQuery = <T extends ObjectRecord>({
   prefetchKey,
 }: UsePrefetchRunQuery) => {
-  const setPrefetchDataIsLoadedLoaded = useSetRecoilState(
+  const setPrefetchDataIsLoaded = useSetRecoilState(
     prefetchIsLoadedFamilyState(prefetchKey),
   );
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -28,6 +28,7 @@ export const usePrefetchRunQuery = <T extends ObjectRecord>({
     });
 
   const upsertRecordsInCache = (records: T[]) => {
+    setPrefetchDataIsLoaded(false);
     upsertFindManyRecordsQueryInCache({
       queryVariables: PREFETCH_CONFIG[prefetchKey].variables,
       recordGqlFields:
@@ -36,12 +37,12 @@ export const usePrefetchRunQuery = <T extends ObjectRecord>({
       objectRecordsToOverwrite: records,
       computeReferences: false,
     });
-    setPrefetchDataIsLoadedLoaded(true);
+    setPrefetchDataIsLoaded(true);
   };
 
   return {
     objectMetadataItem,
-    setPrefetchDataIsLoadedLoaded,
+    setPrefetchDataIsLoaded,
     upsertRecordsInCache,
   };
 };

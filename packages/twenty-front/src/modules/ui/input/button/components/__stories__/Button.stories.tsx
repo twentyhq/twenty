@@ -30,6 +30,7 @@ export const Default: Story = {
     title: 'Button',
     size: 'small',
     variant: 'primary',
+    inverted: false,
     accent: 'danger',
     disabled: false,
     focus: false,

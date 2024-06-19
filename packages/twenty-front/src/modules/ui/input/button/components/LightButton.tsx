@@ -95,7 +95,7 @@ export const LightButton = ({
       className={className}
       active={active}
     >
-      {!!Icon && <Icon size={theme.icon.size.sm} />}
+      {!!Icon && <Icon size={theme.icon.size.md} />}
       {title}
     </StyledButton>
   );

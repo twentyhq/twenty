@@ -1,28 +1,21 @@
-import { Injectable } from '@nestjs/common';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
 import { RecordPositionBackfillService } from 'src/engine/api/graphql/workspace-query-runner/services/record-position-backfill-service';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 export type RecordPositionBackfillJobData = {
   workspaceId: string;
-  objectMetadata: { nameSingular: string; isCustom: boolean };
-  recordId: string;
+  dryRun: boolean;
 };
 
-@Injectable()
-export class RecordPositionBackfillJob
-  implements MessageQueueJob<RecordPositionBackfillJobData>
-{
+@Processor(MessageQueue.recordPositionBackfillQueue)
+export class RecordPositionBackfillJob {
   constructor(
     private readonly recordPositionBackfillService: RecordPositionBackfillService,
   ) {}
 
+  @Process(RecordPositionBackfillJob.name)
   async handle(data: RecordPositionBackfillJobData): Promise<void> {
-    this.recordPositionBackfillService.backfill(
-      data.workspaceId,
-      data.objectMetadata,
-      data.recordId,
-    );
+    this.recordPositionBackfillService.backfill(data.workspaceId, data.dryRun);
   }
 }

@@ -1,11 +1,12 @@
 import React, { useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import SharedNavigationModal from '@/ui/navigation/shared/components/NavigationModal';
 
 import { contextMenuEntriesState } from '../states/contextMenuEntriesState';
 import { contextMenuIsOpenState } from '../states/contextMenuIsOpenState';
@@ -40,15 +41,8 @@ export const ContextMenu = () => {
   const contextMenuPosition = useRecoilValue(contextMenuPositionState);
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const contextMenuEntries = useRecoilValue(contextMenuEntriesState);
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  useListenClickOutside({
-    refs: [wrapperRef],
-    callback: () => {
-      setContextMenuOpenState(false);
-    },
-  });
+  const actionBarEntries = useRecoilValue(actionBarEntriesState);
 
   if (!contextMenuIsOpen) {
     return null;
@@ -61,18 +55,24 @@ export const ContextMenu = () => {
     : undefined;
 
   return (
-    <StyledContainerContextMenu
-      className="context-menu"
-      ref={wrapperRef}
-      position={contextMenuPosition}
-    >
-      <DropdownMenu data-select-disable width={width}>
-        <DropdownMenuItemsContainer>
-          {contextMenuEntries.map((item, index) => {
-            return <ContextMenuItem key={index} item={item} />;
-          })}
-        </DropdownMenuItemsContainer>
-      </DropdownMenu>
-    </StyledContainerContextMenu>
+    <>
+      <StyledContainerContextMenu
+        className="context-menu"
+        ref={wrapperRef}
+        position={contextMenuPosition}
+      >
+        <DropdownMenu data-select-disable width={width}>
+          <DropdownMenuItemsContainer>
+            {contextMenuEntries.map((item, index) => {
+              return <ContextMenuItem key={index} item={item} />;
+            })}
+          </DropdownMenuItemsContainer>
+        </DropdownMenu>
+      </StyledContainerContextMenu>
+      <SharedNavigationModal
+        actionBarEntries={actionBarEntries}
+        customClassName="context-menu"
+      />
+    </>
   );
 };
