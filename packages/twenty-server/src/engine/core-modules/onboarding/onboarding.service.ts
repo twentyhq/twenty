@@ -10,6 +10,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
+import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
@@ -28,6 +29,7 @@ type OnboardingKeyValueType = {
 @Injectable()
 export class OnboardingService {
   constructor(
+    private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly keyValuePairService: KeyValuePairService<OnboardingKeyValueType>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
@@ -69,6 +71,14 @@ export class OnboardingService {
   }
 
   async getOnboardingStep(user: User): Promise<OnboardingStep | null> {
+    if (
+      !(await this.workspaceManagerService.doesDataSourceExist(
+        user.defaultWorkspaceId,
+      ))
+    ) {
+      return OnboardingStep.WORKSPACE_ACTIVATION;
+    }
+
     const workspaceMember = await this.workspaceMemberRepository.getById(
       user.id,
       user.defaultWorkspaceId,

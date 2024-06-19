@@ -20,7 +20,7 @@ describe('getOnboardingStatus', () => {
         activationStatus: 'inactive',
       } as CurrentWorkspace,
       currentUser: {
-        onboardingStep: null,
+        onboardingStep: OnboardingStep.WorkspaceActivation,
       } as CurrentUser,
       isBillingEnabled: false,
     });

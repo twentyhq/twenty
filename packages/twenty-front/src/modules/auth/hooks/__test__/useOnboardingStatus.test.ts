@@ -36,14 +36,6 @@ const currentWorkspace = {
     status: 'trialing',
   },
 } as CurrentWorkspace;
-const currentWorkspaceMember = {
-  id: '1',
-  locale: '',
-  name: {
-    firstName: '',
-    lastName: '',
-  },
-};
 
 const renderHooks = () => {
   const { result } = renderHook(
@@ -122,12 +114,11 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser(currentUser);
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        activationStatus: 'inactive',
-        subscriptionStatus: 'active',
+      setCurrentUser({
+        ...currentUser,
+        onboardingStep: OnboardingStep.WorkspaceActivation,
       });
+      setCurrentWorkspace(currentWorkspace);
     });
 
     expect(result.current.onboardingStatus).toBe(

@@ -465,7 +465,8 @@ export type ObjectFieldsConnection = {
 export enum OnboardingStep {
   InviteTeam = 'INVITE_TEAM',
   ProfileCreation = 'PROFILE_CREATION',
-  SyncEmail = 'SYNC_EMAIL'
+  SyncEmail = 'SYNC_EMAIL',
+  WorkspaceActivation = 'WORKSPACE_ACTIVATION'
 }
 
 export type OnboardingStepSuccess = {

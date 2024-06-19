@@ -44,7 +44,7 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.Incomplete;
   }
 
-  if (currentWorkspace.activationStatus !== 'active') {
+  if (currentUser.onboardingStep === OnboardingStep.WorkspaceActivation) {
     return OnboardingStatus.OngoingWorkspaceActivation;
   }
 
