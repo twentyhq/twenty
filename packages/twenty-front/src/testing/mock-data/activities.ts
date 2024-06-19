@@ -3,7 +3,10 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
 import { Company } from '@/companies/types/Company';
 import { Person } from '@/people/types/Person';
+import { DateFormat } from '@/workspace-member/constants/DateFormat';
+import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
@@ -63,9 +66,9 @@ const workspaceMember: WorkspaceMember = {
   userId: 'e2409670-1088-46b4-858e-f20a598d9d0f',
   userEmail: 'charles@test.com',
   colorScheme: 'Light',
-  timeZone: 'system',
-  dateFormat: WorkspaceMemberDateFormatEnum.MmmDYyyy,
-  timeFormat: WorkspaceMemberTimeFormatEnum.HhMm,
+  timeZone: detectTimeZone(),
+  dateFormat: DateFormat.MONTH_FIRST,
+  timeFormat: TimeFormat.MILITARY,
 };
 
 export const mockedTasks: Array<MockedActivity> = [
