@@ -3,7 +3,6 @@ import { H1Title, H2Title, IconSettings } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ChangePassword } from '@/settings/profile/components/ChangePassword';
-import { DateTimeSettings } from '@/settings/profile/components/DateTimeSettings';
 import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
@@ -33,13 +32,6 @@ export const SettingsProfile = () => (
           description="The email associated to your account"
         />
         <EmailField />
-      </Section>
-      <Section>
-        <H2Title
-          title="Date and time"
-          description="Configure how dates are displayed across the app"
-        />
-        <DateTimeSettings />
       </Section>
       <Section>
         <ChangePassword />
