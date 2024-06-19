@@ -203,8 +203,8 @@ export class UpdateMessageChannelSyncStatusEnumCommand extends CommandRunner {
         },
         {
           id: v4(),
-          value: MessageChannelSyncStatus.COMPLETED,
-          label: 'Completed',
+          value: MessageChannelSyncStatus.ACTIVE,
+          label: 'Active',
           position: 5,
           color: 'green',
         },

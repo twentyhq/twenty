@@ -204,8 +204,8 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'blue',
       },
       {
-        value: MessageChannelSyncStatus.COMPLETED,
-        label: 'Completed',
+        value: MessageChannelSyncStatus.ACTIVE,
+        label: 'Active',
         position: 5,
         color: 'green',
       },
