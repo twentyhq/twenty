@@ -20,7 +20,7 @@ type MessagingSingleMessageImportCommandOptions = {
 })
 export class MessagingSingleMessageImportCommand extends CommandRunner {
   constructor(
-    @InjectMessageQueue(MessageQueue.cronQueue)
+    @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
     super();
