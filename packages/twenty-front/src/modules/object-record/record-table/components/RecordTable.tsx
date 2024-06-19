@@ -25,7 +25,7 @@ import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocus
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { DateFormat } from '@/workspace-member/constants/DateFormat';
 import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
-import { detectDateFormat } from '@/workspace-member/utils/detectDateFormat';
+import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 
 const StyledTable = styled.table<{
   freezeFirstColumns?: boolean;
@@ -238,7 +238,7 @@ export const RecordTable = ({
         <RecordTableContext.Provider
           value={{
             dateTimeFormat: {
-              timeZone: currentWorkspaceMember?.timeZone ?? detectDateFormat(),
+              timeZone: currentWorkspaceMember?.timeZone ?? detectTimeZone(),
               dateFormat:
                 (currentWorkspaceMember?.dateFormat as DateFormat) ??
                 DateFormat.MONTH_FIRST,
