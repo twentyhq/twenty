@@ -30,7 +30,6 @@ type SettingsDataModelFieldSelectFormOptionRowProps = {
   onRemove?: () => void;
   onSetAsDefault?: () => void;
   onRemoveAsDefault?: () => void;
-  handleKeyDown?: () => void;
   option: FieldMetadataItemOption;
 };
 
