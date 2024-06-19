@@ -17,9 +17,6 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
-import { DateFormat } from '@/workspace-member/constants/DateFormat';
-import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
-import { detectDateFormat } from '@/workspace-member/utils/detectDateFormat';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
@@ -67,11 +64,6 @@ const meta: Meta = {
         <RecordFieldValueSelectorContextProvider>
           <RecordTableContext.Provider
             value={{
-              dateTimeFormat: {
-                timeZone: detectDateFormat(),
-                dateFormat: DateFormat.MONTH_FIRST,
-                timeFormat: TimeFormat.MILITARY,
-              },
               objectMetadataItem: mockPerformance.objectMetadataItem as any,
               onUpsertRecord: () => {},
               onOpenTableCell: () => {},

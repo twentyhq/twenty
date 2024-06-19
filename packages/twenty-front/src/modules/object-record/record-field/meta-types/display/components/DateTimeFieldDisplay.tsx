@@ -2,15 +2,7 @@ import { useDateTimeFieldDisplay } from '@/object-record/record-field/meta-types
 import { DateTimeDisplay } from '@/ui/field/display/components/DateTimeDisplay';
 
 export const DateTimeFieldDisplay = () => {
-  const { fieldValue, timeZone, dateFormat, timeFormat } =
-    useDateTimeFieldDisplay();
+  const { fieldValue } = useDateTimeFieldDisplay();
 
-  return (
-    <DateTimeDisplay
-      value={fieldValue}
-      timeZone={timeZone}
-      dateFormat={dateFormat}
-      timeFormat={timeFormat}
-    />
-  );
+  return <DateTimeDisplay value={fieldValue} />;
 };

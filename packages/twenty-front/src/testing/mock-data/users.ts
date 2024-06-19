@@ -1,8 +1,11 @@
-import { DateFormat } from '@/workspace-member/constants/DateFormat';
-import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
-import { User, Workspace } from '~/generated/graphql';
+import {
+  User,
+  Workspace,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated/graphql';
 
 type MockedUser = Pick<
   User,
@@ -81,8 +84,8 @@ export const mockedWorkspaceMemberData: WorkspaceMember = {
   userId: '2603c1f9-0172-4ea6-986c-eeaccdf7f4cf',
   userEmail: 'charles@test.com',
   timeZone: detectTimeZone(),
-  dateFormat: DateFormat.MONTH_FIRST,
-  timeFormat: TimeFormat.MILITARY,
+  dateFormat: WorkspaceMemberDateFormatEnum.MmmDYyyy,
+  timeFormat: WorkspaceMemberTimeFormatEnum.HhMm,
 };
 
 export const mockedUsersData: Array<MockedUser> = [

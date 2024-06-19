@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Decorator } from '@storybook/react';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
@@ -10,11 +10,10 @@ import {
   useSetRecordValue,
 } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { mockPerformance } from '@/object-record/record-table/components/__stories__/perf/mock';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { DateFormat } from '@/workspace-member/constants/DateFormat';
 import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
+import { dateTimeFormatState } from '@/workspace-member/states/dateTimeFormatState';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
@@ -29,6 +28,7 @@ const RecordMockSetterEffect = ({
   people: ObjectRecord[];
 }) => {
   const setRecordValue = useSetRecordValue();
+  const [, setDateTimeFormat] = useRecoilState(dateTimeFormatState);
 
   const setRecordInBothStores = useRecoilCallback(
     ({ set }) =>
@@ -38,6 +38,14 @@ const RecordMockSetterEffect = ({
       },
     [setRecordValue],
   );
+
+  useEffect(() => {
+    setDateTimeFormat({
+      timeZone: detectTimeZone(),
+      dateFormat: DateFormat.MONTH_FIRST,
+      timeFormat: TimeFormat.MILITARY,
+    });
+  }, [setDateTimeFormat]);
 
   useEffect(() => {
     for (const company of companies) {
@@ -110,42 +118,23 @@ export const getFieldDecorator =
     });
 
     return (
-      <RecordTableContext.Provider
-        value={{
-          dateTimeFormat: {
-            timeZone: detectTimeZone(),
-            dateFormat: DateFormat.MONTH_FIRST,
-            timeFormat: TimeFormat.MILITARY,
-          },
-          objectMetadataItem: mockPerformance.objectMetadataItem as any,
-          onUpsertRecord: () => {},
-          onOpenTableCell: () => {},
-          onMoveFocus: () => {},
-          onCloseTableCell: () => {},
-          onMoveSoftFocusToCell: () => {},
-          onContextMenu: () => {},
-          onCellMouseEnter: () => {},
-          visibleTableColumns: mockPerformance.visibleTableColumns as any,
-        }}
-      >
-        <RecordFieldValueSelectorContextProvider>
-          <FieldContext.Provider
-            value={{
-              entityId: record.id,
-              basePathToShowPage: '/object-record/',
-              isLabelIdentifier,
-              fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                field: fieldMetadataItem,
-                position: record.position ?? 0,
-                objectMetadataItem,
-              }),
-              hotkeyScope: 'hotkey-scope',
-            }}
-          >
-            <RecordMockSetterEffect companies={companies} people={people} />
-            <Story />
-          </FieldContext.Provider>
-        </RecordFieldValueSelectorContextProvider>
-      </RecordTableContext.Provider>
+      <RecordFieldValueSelectorContextProvider>
+        <FieldContext.Provider
+          value={{
+            entityId: record.id,
+            basePathToShowPage: '/object-record/',
+            isLabelIdentifier,
+            fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+              field: fieldMetadataItem,
+              position: record.position ?? 0,
+              objectMetadataItem,
+            }),
+            hotkeyScope: 'hotkey-scope',
+          }}
+        >
+          <RecordMockSetterEffect companies={companies} people={people} />
+          <Story />
+        </FieldContext.Provider>
+      </RecordFieldValueSelectorContextProvider>
     );
   };

@@ -1,5 +1,3 @@
-import { DateFormat } from '@/workspace-member/constants/DateFormat';
-import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
@@ -18,8 +16,8 @@ export type WorkspaceMember = {
   avatarUrl?: string | null;
   locale: string;
   timeZone: string;
-  dateFormat: DateFormat | WorkspaceMemberDateFormatEnum;
-  timeFormat: TimeFormat | WorkspaceMemberTimeFormatEnum;
+  dateFormat: WorkspaceMemberDateFormatEnum;
+  timeFormat: WorkspaceMemberTimeFormatEnum;
   colorScheme?: ColorScheme;
   createdAt: string;
   updatedAt: string;

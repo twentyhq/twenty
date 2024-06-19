@@ -8,9 +8,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { DateTimeSettingsDateFormatSelect } from '@/settings/profile/components/DateTimeSettingsDateFormatSelect';
 import { DateTimeSettingsTimeFormatSelect } from '@/settings/profile/components/DateTimeSettingsTimeFormatSelect';
 import { DateTimeSettingsTimeZoneSelect } from '@/settings/profile/components/DateTimeSettingsTimeZoneSelect';
-import { DateFormat } from '@/workspace-member/constants/DateFormat';
-import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
-import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
+import { dateTimeFormatState } from '@/workspace-member/states/dateTimeFormatState';
 import { getWorkspaceEnumFromDateFormat } from '@/workspace-member/utils/formatDateLabel';
 import { getWorkspaceEnumFromTimeFormat } from '@/workspace-member/utils/formatTimeLabel';
 import { isDefined } from '~/utils/isDefined';
@@ -27,16 +25,11 @@ export const DateTimeSettings = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
-  const [timeZone, setTimeZone] = useState(
-    currentWorkspaceMember?.timeZone ?? detectTimeZone(),
-  );
-  const [dateFormat, setDateFormat] = useState(
-    (currentWorkspaceMember?.dateFormat as DateFormat) ??
-      DateFormat.MONTH_FIRST,
-  );
-  const [timeFormat, setTimeFormat] = useState(
-    (currentWorkspaceMember?.timeFormat as TimeFormat) ?? TimeFormat.MILITARY,
-  );
+  const [dateTimeFormat, setDateTimeFormat] =
+    useRecoilState(dateTimeFormatState);
+  const [timeZone, setTimeZone] = useState(dateTimeFormat.timeZone);
+  const [dateFormat, setDateFormat] = useState(dateTimeFormat.dateFormat);
+  const [timeFormat, setTimeFormat] = useState(dateTimeFormat.timeFormat);
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
@@ -65,38 +58,44 @@ export const DateTimeSettings = () => {
       return;
     }
     const changedWorkspaceMemberFields: any = {};
-    const workspaceMemberStateFields: any = {};
+    const dateTimeFormatStateFields: any = {};
 
-    if (timeZone !== currentWorkspaceMember.timeZone) {
+    if (timeZone !== dateTimeFormat.timeZone) {
       changedWorkspaceMemberFields.timeZone = timeZone;
-      workspaceMemberStateFields.timeZone = timeZone;
+      dateTimeFormatStateFields.timeZone = timeZone;
     }
-    if (dateFormat !== currentWorkspaceMember.dateFormat) {
+    if (dateFormat !== dateTimeFormat.dateFormat) {
       changedWorkspaceMemberFields.dateFormat =
         getWorkspaceEnumFromDateFormat(dateFormat);
-      workspaceMemberStateFields.dateFormat = dateFormat;
+      dateTimeFormatStateFields.dateFormat = dateFormat;
     }
-    if (timeFormat !== currentWorkspaceMember.timeFormat) {
+    if (timeFormat !== dateTimeFormat.timeFormat) {
       changedWorkspaceMemberFields.timeFormat =
         getWorkspaceEnumFromTimeFormat(timeFormat);
-      workspaceMemberStateFields.timeFormat = timeFormat;
+      dateTimeFormatStateFields.timeFormat = timeFormat;
     }
 
     if (!isEmptyObject(changedWorkspaceMemberFields)) {
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
-        ...workspaceMemberStateFields,
+        ...dateTimeFormatStateFields,
+      });
+
+      setDateTimeFormat({
+        ...dateTimeFormatStateFields,
       });
 
       updateWorkspaceMember(changedWorkspaceMemberFields);
     }
   }, [
     currentWorkspaceMember,
+    dateTimeFormat,
     timeZone,
     dateFormat,
     timeFormat,
     updateWorkspaceMember,
     setCurrentWorkspaceMember,
+    setDateTimeFormat,
   ]);
 
   if (!isDefined(currentWorkspaceMember)) return;

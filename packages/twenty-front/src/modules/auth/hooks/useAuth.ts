@@ -22,6 +22,7 @@ import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
+import { dateTimeFormatState } from '@/workspace-member/states/dateTimeFormatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatDateLabel';
@@ -44,6 +45,7 @@ export const useAuth = () => {
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
+  const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
@@ -104,6 +106,10 @@ export const useAuth = () => {
       if (isDefined(user.workspaceMember)) {
         workspaceMember = {
           ...user.workspaceMember,
+          colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
+        };
+        setCurrentWorkspaceMember(workspaceMember);
+        setDateTimeFormat({
           timeZone:
             user.workspaceMember.timeZone !== 'system'
               ? user.workspaceMember.timeZone
@@ -114,9 +120,7 @@ export const useAuth = () => {
           timeFormat: getTimeFormatFromWorkspaceEnum(
             user.workspaceMember.timeFormat,
           ),
-          colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
-        };
-        setCurrentWorkspaceMember(workspaceMember);
+        });
       }
       const workspace = user.defaultWorkspace ?? null;
       setCurrentWorkspace(workspace);
@@ -142,6 +146,7 @@ export const useAuth = () => {
       setTokenPair,
       setCurrentUser,
       setCurrentWorkspaceMember,
+      setDateTimeFormat,
       setCurrentWorkspace,
       setWorkspaces,
     ],

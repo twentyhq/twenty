@@ -1,29 +1,23 @@
 import formatInTimeZone from 'date-fns-tz/formatInTimeZone';
+import { useRecoilValue } from 'recoil';
 
-import { DateFormat } from '@/workspace-member/constants/DateFormat';
-import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
+import { dateTimeFormatState } from '@/workspace-member/states/dateTimeFormatState';
 import { parseDate } from '~/utils/date-utils';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 type DateTimeDisplayProps = {
   value: string | null | undefined;
-  timeZone: string;
-  dateFormat: DateFormat;
-  timeFormat: TimeFormat;
 };
 
-export const DateTimeDisplay = ({
-  value,
-  timeZone,
-  dateFormat,
-  timeFormat,
-}: DateTimeDisplayProps) => {
+export const DateTimeDisplay = ({ value }: DateTimeDisplayProps) => {
+  const dateTimeFormat = useRecoilValue(dateTimeFormatState);
+
   const formatDatetime = (date: Date | string) => {
     return formatInTimeZone(
       parseDate(date).toJSDate(),
-      timeZone,
-      `${dateFormat} ${timeFormat}`,
+      dateTimeFormat.timeZone,
+      `${dateTimeFormat.dateFormat} ${dateTimeFormat.timeFormat}`,
     );
   };
   return <EllipsisDisplay>{value && formatDatetime(value)}</EllipsisDisplay>;

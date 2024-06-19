@@ -6,6 +6,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { workspacesState } from '@/auth/states/workspaces';
+import { dateTimeFormatState } from '@/workspace-member/states/dateTimeFormatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatDateLabel';
@@ -19,6 +20,7 @@ export const UserProviderEffect = () => {
   const [isCurrentUserLoaded, setIsCurrentUserLoaded] = useRecoilState(
     isCurrentUserLoadedState,
   );
+  const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setWorkspaces = useSetRecoilState(workspacesState);
@@ -48,13 +50,16 @@ export const UserProviderEffect = () => {
     if (isDefined(workspaceMember)) {
       setCurrentWorkspaceMember({
         ...workspaceMember,
+        colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
+      });
+
+      setDateTimeFormat({
         timeZone:
           workspaceMember.timeZone === 'system'
             ? detectTimeZone()
             : workspaceMember.timeZone,
         dateFormat: getDateFormatFromWorkspaceEnum(workspaceMember.dateFormat),
         timeFormat: getTimeFormatFromWorkspaceEnum(workspaceMember.timeFormat),
-        colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
       });
     }
 
@@ -71,6 +76,7 @@ export const UserProviderEffect = () => {
     queryLoading,
     setCurrentWorkspace,
     setCurrentWorkspaceMember,
+    setDateTimeFormat,
     setWorkspaces,
     queryData?.currentUser,
     setIsCurrentUserLoaded,
