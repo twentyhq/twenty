@@ -65,6 +65,20 @@ export const StyledTr = styled.tr<{ isDragging: boolean }>`
   `}
 `;
 
+const SelectableStyledTd = ({
+  isSelected,
+  children,
+  style,
+}: {
+  isSelected: boolean;
+  children?: React.ReactNode;
+  style?: React.CSSProperties;
+}) => (
+  <StyledTd isSelected={isSelected} style={style}>
+    {children}
+  </StyledTd>
+);
+
 export const RecordTableRow = ({
   recordId,
   rowIndex,
@@ -134,12 +148,12 @@ export const RecordTableRow = ({
             >
               <GripCell isDragging={draggableSnapshot.isDragging} />
             </StyledTd>
-            <StyledTd
+            <SelectableStyledTd
               isSelected={currentRowSelected}
               style={{ borderRight: 'transparent' }}
             >
               {!draggableSnapshot.isDragging && <CheckboxCell />}
-            </StyledTd>
+            </SelectableStyledTd>
             {inView || draggableSnapshot.isDragging
               ? visibleTableColumns.map((column, columnIndex) => (
                   <RecordTableCellContext.Provider
@@ -160,7 +174,7 @@ export const RecordTableRow = ({
                     key={column.fieldMetadataId}
                   ></StyledTd>
                 ))}
-            <StyledTd isSelected={currentRowSelected} />
+            <SelectableStyledTd isSelected={currentRowSelected} />
           </StyledTr>
         )}
       </Draggable>
