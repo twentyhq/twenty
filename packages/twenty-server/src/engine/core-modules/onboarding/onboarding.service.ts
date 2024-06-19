@@ -12,6 +12,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 
 enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
@@ -30,6 +31,7 @@ type OnboardingKeyValueType = {
 @Injectable()
 export class OnboardingService {
   constructor(
+    private readonly billingService: BillingService,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly environmentService: EnvironmentService,
     private readonly userWorkspaceService: UserWorkspaceService,
@@ -118,6 +120,14 @@ export class OnboardingService {
 
       if (user.defaultWorkspace.subscriptionStatus === 'unpaid') {
         return OnboardingStep.SUBSCRIPTION_UNPAID;
+      }
+
+      if (
+        !(await this.billingService.getCurrentBillingSubscription({
+          workspaceId: user.defaultWorkspaceId,
+        }))
+      ) {
+        return OnboardingStep.COMPLETED_WITHOUT_SUBSCRIPTION;
       }
     }
 

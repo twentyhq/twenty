@@ -463,6 +463,7 @@ export type ObjectFieldsConnection = {
 
 /** Onboarding step */
 export enum OnboardingStep {
+  CompletedWithoutSubscription = 'COMPLETED_WITHOUT_SUBSCRIPTION',
   InviteTeam = 'INVITE_TEAM',
   ProfileCreation = 'PROFILE_CREATION',
   SubscriptionCanceled = 'SUBSCRIPTION_CANCELED',

@@ -7,6 +7,7 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { EnvironmentModule } from 'src/engine/integrations/environment/environme
     UserWorkspaceModule,
     KeyValuePairModule,
     EnvironmentModule,
+    BillingModule,
   ],
   exports: [OnboardingService],
   providers: [OnboardingService, OnboardingResolver],

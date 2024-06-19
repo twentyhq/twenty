@@ -69,7 +69,9 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.Unpaid;
   }
 
-  if (isBillingEnabled && !currentWorkspace.currentBillingSubscription) {
+  if (
+    currentUser.onboardingStep === OnboardingStep.CompletedWithoutSubscription
+  ) {
     return OnboardingStatus.CompletedWithoutSubscription;
   }
 

@@ -138,6 +138,19 @@ describe('getOnboardingStatus', () => {
       isBillingEnabled: true,
     });
 
+    const completeWithoutSubscription = getOnboardingStatus({
+      isLoggedIn: true,
+      currentWorkspace: {
+        id: '1',
+        activationStatus: 'active',
+        subscriptionStatus: 'unpaid',
+      } as CurrentWorkspace,
+      currentUser: {
+        onboardingStep: OnboardingStep.CompletedWithoutSubscription,
+      } as CurrentUser,
+      isBillingEnabled: false,
+    });
+
     expect(ongoingUserCreation).toBe('ongoing_user_creation');
     expect(ongoingWorkspaceActivation).toBe('ongoing_workspace_activation');
     expect(ongoingProfileCreation).toBe('ongoing_profile_creation');
@@ -149,5 +162,6 @@ describe('getOnboardingStatus', () => {
     expect(past_due).toBe('past_due');
     expect(unpaid).toBe('unpaid');
     expect(incompleteButBillingDisabled).toBe('completed');
+    expect(completeWithoutSubscription).toBe('completed_without_subscription');
   });
 });

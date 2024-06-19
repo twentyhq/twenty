@@ -251,12 +251,11 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser(currentUser);
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        subscriptionStatus: 'trialing',
-        currentBillingSubscription: null,
+      setCurrentUser({
+        ...currentUser,
+        onboardingStep: OnboardingStep.CompletedWithoutSubscription,
       });
+      setCurrentWorkspace(currentWorkspace);
     });
 
     expect(result.current.onboardingStatus).toBe(
