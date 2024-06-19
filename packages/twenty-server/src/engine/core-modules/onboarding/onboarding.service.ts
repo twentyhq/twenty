@@ -131,7 +131,7 @@ export class OnboardingService {
       }
     }
 
-    return null;
+    return OnboardingStep.COMPLETED;
   }
 
   async skipInviteTeamOnboardingStep(workspaceId: string) {
