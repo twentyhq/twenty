@@ -81,7 +81,7 @@ describe('getOnboardingStatus', () => {
         subscriptionStatus: 'incomplete',
       } as CurrentWorkspace,
       currentUser: {
-        onboardingStep: null,
+        onboardingStep: OnboardingStep.SubscriptionIncomplete,
       } as CurrentUser,
       isBillingEnabled: true,
     });

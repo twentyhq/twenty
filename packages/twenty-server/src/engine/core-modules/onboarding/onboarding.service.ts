@@ -11,6 +11,7 @@ import { ConnectedAccountRepository } from 'src/modules/connected-account/reposi
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
@@ -30,6 +31,7 @@ type OnboardingKeyValueType = {
 export class OnboardingService {
   constructor(
     private readonly workspaceManagerService: WorkspaceManagerService,
+    private readonly environmentService: EnvironmentService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly keyValuePairService: KeyValuePairService<OnboardingKeyValueType>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
@@ -71,6 +73,13 @@ export class OnboardingService {
   }
 
   async getOnboardingStep(user: User): Promise<OnboardingStep | null> {
+    if (
+      this.environmentService.get('IS_BILLING_ENABLED') &&
+      user.defaultWorkspace.subscriptionStatus === 'incomplete'
+    ) {
+      return OnboardingStep.SUBSCRIPTION_INCOMPLETE;
+    }
+
     if (
       !(await this.workspaceManagerService.doesDataSourceExist(
         user.defaultWorkspaceId,

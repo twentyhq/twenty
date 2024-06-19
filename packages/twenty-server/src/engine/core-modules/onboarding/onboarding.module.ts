@@ -6,6 +6,7 @@ import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-v
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
     WorkspaceManagerModule,
     UserWorkspaceModule,
     KeyValuePairModule,
+    EnvironmentModule,
   ],
   exports: [OnboardingService],
   providers: [OnboardingService, OnboardingResolver],

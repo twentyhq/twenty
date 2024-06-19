@@ -78,11 +78,11 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser(currentUser);
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        subscriptionStatus: 'incomplete',
+      setCurrentUser({
+        ...currentUser,
+        onboardingStep: OnboardingStep.SubscriptionIncomplete,
       });
+      setCurrentWorkspace(currentWorkspace);
     });
 
     expect(result.current.onboardingStatus).toBe('incomplete');

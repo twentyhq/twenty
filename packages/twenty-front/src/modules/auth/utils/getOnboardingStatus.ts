@@ -37,10 +37,7 @@ export const getOnboardingStatus = ({
     return undefined;
   }
 
-  if (
-    isBillingEnabled &&
-    currentWorkspace.subscriptionStatus === 'incomplete'
-  ) {
+  if (currentUser.onboardingStep === OnboardingStep.SubscriptionIncomplete) {
     return OnboardingStatus.Incomplete;
   }
 
