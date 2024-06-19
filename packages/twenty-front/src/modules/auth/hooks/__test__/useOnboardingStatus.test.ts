@@ -96,11 +96,11 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser(currentUser);
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        subscriptionStatus: 'canceled',
+      setCurrentUser({
+        ...currentUser,
+        onboardingStep: OnboardingStep.SubscriptionCanceled,
       });
+      setCurrentWorkspace(currentWorkspace);
     });
 
     expect(result.current.onboardingStatus).toBe('canceled');
@@ -215,11 +215,11 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser(currentUser);
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        subscriptionStatus: 'past_due',
+      setCurrentUser({
+        ...currentUser,
+        onboardingStep: OnboardingStep.SubscriptionPastDue,
       });
+      setCurrentWorkspace(currentWorkspace);
     });
 
     expect(result.current.onboardingStatus).toBe('past_due');
@@ -233,11 +233,11 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser(currentUser);
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        subscriptionStatus: 'unpaid',
+      setCurrentUser({
+        ...currentUser,
+        onboardingStep: OnboardingStep.SubscriptionUnpaid,
       });
+      setCurrentWorkspace(currentWorkspace);
     });
 
     expect(result.current.onboardingStatus).toBe('unpaid');

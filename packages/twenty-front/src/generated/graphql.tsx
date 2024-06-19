@@ -465,7 +465,10 @@ export type ObjectFieldsConnection = {
 export enum OnboardingStep {
   InviteTeam = 'INVITE_TEAM',
   ProfileCreation = 'PROFILE_CREATION',
+  SubscriptionCanceled = 'SUBSCRIPTION_CANCELED',
   SubscriptionIncomplete = 'SUBSCRIPTION_INCOMPLETE',
+  SubscriptionPastDue = 'SUBSCRIPTION_PAST_DUE',
+  SubscriptionUnpaid = 'SUBSCRIPTION_UNPAID',
   SyncEmail = 'SYNC_EMAIL',
   WorkspaceActivation = 'WORKSPACE_ACTIVATION'
 }

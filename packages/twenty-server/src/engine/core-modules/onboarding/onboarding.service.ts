@@ -73,11 +73,10 @@ export class OnboardingService {
   }
 
   async getOnboardingStep(user: User): Promise<OnboardingStep | null> {
-    if (
-      this.environmentService.get('IS_BILLING_ENABLED') &&
-      user.defaultWorkspace.subscriptionStatus === 'incomplete'
-    ) {
-      return OnboardingStep.SUBSCRIPTION_INCOMPLETE;
+    if (this.environmentService.get('IS_BILLING_ENABLED')) {
+      if (user.defaultWorkspace.subscriptionStatus === 'incomplete') {
+        return OnboardingStep.SUBSCRIPTION_INCOMPLETE;
+      }
     }
 
     if (
@@ -106,6 +105,20 @@ export class OnboardingService {
 
     if (await this.isInviteTeamOnboardingStep(user.defaultWorkspace)) {
       return OnboardingStep.INVITE_TEAM;
+    }
+
+    if (this.environmentService.get('IS_BILLING_ENABLED')) {
+      if (user.defaultWorkspace.subscriptionStatus === 'canceled') {
+        return OnboardingStep.SUBSCRIPTION_CANCELED;
+      }
+
+      if (user.defaultWorkspace.subscriptionStatus === 'past_due') {
+        return OnboardingStep.SUBSCRIPTION_PAST_DUE;
+      }
+
+      if (user.defaultWorkspace.subscriptionStatus === 'unpaid') {
+        return OnboardingStep.SUBSCRIPTION_UNPAID;
+      }
     }
 
     return null;

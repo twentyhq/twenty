@@ -57,15 +57,15 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingInviteTeam;
   }
 
-  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {
+  if (currentUser.onboardingStep === OnboardingStep.SubscriptionCanceled) {
     return OnboardingStatus.Canceled;
   }
 
-  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'past_due') {
+  if (currentUser.onboardingStep === OnboardingStep.SubscriptionPastDue) {
     return OnboardingStatus.PastDue;
   }
 
-  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'unpaid') {
+  if (currentUser.onboardingStep === OnboardingStep.SubscriptionUnpaid) {
     return OnboardingStatus.Unpaid;
   }
 

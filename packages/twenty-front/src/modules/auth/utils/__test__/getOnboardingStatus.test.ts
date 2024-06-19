@@ -107,7 +107,33 @@ describe('getOnboardingStatus', () => {
         subscriptionStatus: 'canceled',
       } as CurrentWorkspace,
       currentUser: {
-        onboardingStep: null,
+        onboardingStep: OnboardingStep.SubscriptionCanceled,
+      } as CurrentUser,
+      isBillingEnabled: true,
+    });
+
+    const past_due = getOnboardingStatus({
+      isLoggedIn: true,
+      currentWorkspace: {
+        id: '1',
+        activationStatus: 'active',
+        subscriptionStatus: 'past_due',
+      } as CurrentWorkspace,
+      currentUser: {
+        onboardingStep: OnboardingStep.SubscriptionPastDue,
+      } as CurrentUser,
+      isBillingEnabled: true,
+    });
+
+    const unpaid = getOnboardingStatus({
+      isLoggedIn: true,
+      currentWorkspace: {
+        id: '1',
+        activationStatus: 'active',
+        subscriptionStatus: 'unpaid',
+      } as CurrentWorkspace,
+      currentUser: {
+        onboardingStep: OnboardingStep.SubscriptionUnpaid,
       } as CurrentUser,
       isBillingEnabled: true,
     });
@@ -120,6 +146,8 @@ describe('getOnboardingStatus', () => {
     expect(completed).toBe('completed');
     expect(incomplete).toBe('incomplete');
     expect(canceled).toBe('canceled');
+    expect(past_due).toBe('past_due');
+    expect(unpaid).toBe('unpaid');
     expect(incompleteButBillingDisabled).toBe('completed');
   });
 });
