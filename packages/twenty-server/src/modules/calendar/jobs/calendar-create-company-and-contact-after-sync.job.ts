@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { IsNull } from 'typeorm';
 
@@ -19,7 +19,10 @@ export type CalendarCreateCompanyAndContactAfterSyncJobData = {
   calendarChannelId: string;
 };
 
-@Processor(MessageQueue.calendarQueue)
+@Processor({
+  queueName: MessageQueue.calendarQueue,
+  scope: Scope.REQUEST,
+})
 export class CalendarCreateCompanyAndContactAfterSyncJob {
   private readonly logger = new Logger(
     CalendarCreateCompanyAndContactAfterSyncJob.name,

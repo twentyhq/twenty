@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { Any, ILike } from 'typeorm';
 
@@ -19,7 +19,10 @@ export type BlocklistItemDeleteCalendarEventsJobData = {
   blocklistItemId: string;
 };
 
-@Processor(MessageQueue.calendarQueue)
+@Processor({
+  queueName: MessageQueue.calendarQueue,
+  scope: Scope.REQUEST,
+})
 export class BlocklistItemDeleteCalendarEventsJob {
   private readonly logger = new Logger(
     BlocklistItemDeleteCalendarEventsJob.name,
