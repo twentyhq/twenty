@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
@@ -10,10 +10,10 @@ import { z } from 'zod';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -56,12 +56,11 @@ type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
   const onboardingStatus = useOnboardingStatus();
+  const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { enqueueSnackBar } = useSnackBar();
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
-  const setCurrentUser = useSetRecoilState(currentUserState);
-
   const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
@@ -113,13 +112,7 @@ export const CreateProfile = () => {
               colorScheme: 'System',
             }) as any,
         );
-        setCurrentUser(
-          (current) =>
-            ({
-              ...current,
-              onboardingStatus: OnboardingStatus.SyncEmail,
-            }) as any,
-        );
+        setNextOnboardingStatus(OnboardingStatus.ProfileCreation);
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: SnackBarVariant.Error,
@@ -128,7 +121,7 @@ export const CreateProfile = () => {
     },
     [
       currentWorkspaceMember?.id,
-      setCurrentUser,
+      setNextOnboardingStatus,
       enqueueSnackBar,
       setCurrentWorkspaceMember,
       updateOneRecord,

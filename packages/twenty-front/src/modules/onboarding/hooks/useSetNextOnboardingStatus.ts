@@ -15,6 +15,9 @@ const getNextOnboardingStatus = (
   workspaceMembers: WorkspaceMember[],
   currentWorkspace: CurrentWorkspace | null,
 ) => {
+  if (currentOnboardingStatus === OnboardingStatus.ProfileCreation) {
+    return OnboardingStatus.SyncEmail;
+  }
   if (currentOnboardingStatus === OnboardingStatus.SyncEmail) {
     return workspaceMembers && workspaceMembers.length > 1
       ? null
