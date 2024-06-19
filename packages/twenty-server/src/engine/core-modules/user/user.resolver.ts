@@ -117,13 +117,7 @@ export class UserResolver {
   }
 
   @ResolveField(() => OnboardingStatus)
-  async onboardingStatus(
-    @Parent() user: User,
-  ): Promise<OnboardingStatus | null> {
-    if (!user) {
-      return null;
-    }
-
+  async onboardingStatus(@Parent() user: User): Promise<OnboardingStatus> {
     return this.onboardingService.getOnboardingStatus(user);
   }
 }
