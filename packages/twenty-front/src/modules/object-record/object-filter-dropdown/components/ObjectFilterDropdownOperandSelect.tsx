@@ -46,6 +46,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
 
     if (isEmptyOperand) {
       selectFilter?.({
+        id: v4(),
         fieldMetadataId: filterDefinitionUsedInDropdown?.fieldMetadataId ?? '',
         displayValue: '',
         operand: newOperand,

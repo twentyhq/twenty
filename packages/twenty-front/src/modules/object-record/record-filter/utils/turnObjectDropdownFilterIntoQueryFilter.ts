@@ -45,18 +45,30 @@ const applyEmptyFilters = (
         ],
       };
       break;
-    case 'FULL_NAME':
-      // eslint-disable-next-line no-case-declarations
+    case 'CURRENCY':
+      emptyRecordFilter = {
+        or: [
+          {
+            [correspondingField.name]: {
+              amountMicros: { is: 'NULL' },
+            } as CurrencyFilter,
+          },
+        ],
+      };
+      break;
+    case 'FULL_NAME': {
       const fullNameFilters = generateILikeFiltersForCompositeFields(
         '',
         correspondingField.name,
         ['firstName', 'lastName'],
         true,
       );
+
       emptyRecordFilter = {
         and: fullNameFilters,
       };
       break;
+    }
     case 'LINK':
       emptyRecordFilter = {
         or: [
@@ -67,18 +79,19 @@ const applyEmptyFilters = (
         ],
       };
       break;
-    case 'LINKS':
-      // eslint-disable-next-line no-case-declarations
+    case 'LINKS': {
       const linksFilters = generateILikeFiltersForCompositeFields(
         '',
         correspondingField.name,
         ['primaryLinkLabel', 'primaryLinkUrl'],
         true,
       );
+
       emptyRecordFilter = {
         or: linksFilters,
       };
       break;
+    }
     case 'ADDRESS':
       emptyRecordFilter = {
         and: [
@@ -129,7 +142,7 @@ const applyEmptyFilters = (
       break;
     case 'NUMBER':
       emptyRecordFilter = {
-        or: [{ [correspondingField.name]: { is: 'NULL' } as FloatFilter }],
+        [correspondingField.name]: { is: 'NULL' } as FloatFilter,
       };
       break;
     case 'DATE_TIME':
@@ -174,15 +187,16 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       (field) => field.id === rawUIFilter.fieldMetadataId,
     );
 
+    const isEmptyOperand = [
+      ViewFilterOperand.IsEmpty,
+      ViewFilterOperand.IsNotEmpty,
+    ].includes(rawUIFilter.operand);
+
     if (!correspondingField) {
       continue;
     }
 
-    if (
-      ![ViewFilterOperand.IsEmpty, ViewFilterOperand.IsNotEmpty].includes(
-        rawUIFilter.operand,
-      )
-    ) {
+    if (!isEmptyOperand) {
       if (!isDefined(rawUIFilter.value) || rawUIFilter.value === '') {
         continue;
       }
@@ -287,36 +301,45 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'RELATION': {
-        try {
-          JSON.parse(rawUIFilter.value);
-        } catch (e) {
-          throw new Error(
-            `Cannot parse filter value for RELATION filter : "${rawUIFilter.value}"`,
-          );
-        }
+        if (!isEmptyOperand) {
+          try {
+            JSON.parse(rawUIFilter.value);
+          } catch (e) {
+            throw new Error(
+              `Cannot parse filter value for RELATION filter : "${rawUIFilter.value}"`,
+            );
+          }
 
-        const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
+          const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
 
-        if (parsedRecordIds.length > 0) {
-          switch (rawUIFilter.operand) {
-            case ViewFilterOperand.Is:
-              objectRecordFilters.push({
-                [correspondingField.name + 'Id']: {
-                  in: parsedRecordIds,
-                } as RelationFilter,
-              });
-              break;
-            case ViewFilterOperand.IsNot:
-              if (parsedRecordIds.length > 0) {
+          if (parsedRecordIds.length > 0) {
+            switch (rawUIFilter.operand) {
+              case ViewFilterOperand.Is:
                 objectRecordFilters.push({
-                  not: {
-                    [correspondingField.name + 'Id']: {
-                      in: parsedRecordIds,
-                    } as RelationFilter,
-                  },
+                  [correspondingField.name + 'Id']: {
+                    in: parsedRecordIds,
+                  } as RelationFilter,
                 });
-              }
-              break;
+                break;
+              case ViewFilterOperand.IsNot:
+                if (parsedRecordIds.length > 0) {
+                  objectRecordFilters.push({
+                    not: {
+                      [correspondingField.name + 'Id']: {
+                        in: parsedRecordIds,
+                      } as RelationFilter,
+                    },
+                  });
+                }
+                break;
+              default:
+                throw new Error(
+                  `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+                );
+            }
+          }
+        } else {
+          switch (rawUIFilter.operand) {
             case ViewFilterOperand.IsEmpty:
             case ViewFilterOperand.IsNotEmpty:
               applyEmptyFilters(
@@ -328,7 +351,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               break;
             default:
               throw new Error(
-                `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+                `Unknown empty operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
               );
           }
         }
