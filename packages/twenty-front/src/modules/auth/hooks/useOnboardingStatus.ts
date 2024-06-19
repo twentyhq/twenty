@@ -1,9 +1,14 @@
 import { useRecoilValue } from 'recoil';
 
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingStatus } from '~/generated/graphql';
 
 export const useOnboardingStatus = (): OnboardingStatus | null | undefined => {
   const currentUser = useRecoilValue(currentUserState);
-  return currentUser?.onboardingStatus || OnboardingStatus.UserCreation;
+  const isLoggedIn = useIsLogged();
+  if (!isLoggedIn) {
+    return OnboardingStatus.UserCreation;
+  }
+  return currentUser?.onboardingStatus;
 };

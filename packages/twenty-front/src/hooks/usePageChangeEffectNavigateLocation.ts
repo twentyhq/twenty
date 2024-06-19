@@ -4,7 +4,6 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { OnboardingStatus } from '~/generated/graphql';
 import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { isDefined } from '~/utils/isDefined';
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isMatchingLocation = useIsMatchingLocation();
@@ -48,11 +47,17 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    isDefined(onboardingStatus) &&
-    [
-      OnboardingStatus.SubscriptionUnpaid,
-      OnboardingStatus.SubscriptionCanceled,
-    ].includes(onboardingStatus) &&
+    onboardingStatus === OnboardingStatus.SubscriptionUnpaid &&
+    !isMatchingLocation(AppPath.SettingsCatchAll)
+  ) {
+    return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
+      SettingsPath.Billing
+    }`;
+  }
+
+  if (
+    (onboardingStatus === OnboardingStatus.SubscriptionUnpaid ||
+      onboardingStatus === OnboardingStatus.SubscriptionCanceled) &&
     !(
       isMatchingLocation(AppPath.SettingsCatchAll) ||
       isMatchingLocation(AppPath.PlanRequired)
@@ -93,7 +98,8 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStatus.Completed &&
+    (onboardingStatus === OnboardingStatus.Completed ||
+      onboardingStatus === OnboardingStatus.SubscriptionPastDue) &&
     isMatchingOnboardingRoute
   ) {
     return defaultHomePagePath;
