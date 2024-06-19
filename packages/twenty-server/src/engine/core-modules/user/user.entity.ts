@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import {
   Entity,
@@ -17,6 +17,13 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { OnboardingStep } from 'src/engine/core-modules/onboarding/enums/onboarding-step.enum';
+
+registerEnumType(OnboardingStep, {
+  name: 'OnboardingStep',
+  description: 'Onboarding step',
+});
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
@@ -100,10 +107,18 @@ export class User {
   })
   appTokens: Relation<AppToken[]>;
 
+  @OneToMany(() => KeyValuePair, (keyValuePair) => keyValuePair.user, {
+    cascade: true,
+  })
+  keyValuePairs: Relation<KeyValuePair[]>;
+
   @Field(() => WorkspaceMember, { nullable: true })
   workspaceMember: Relation<WorkspaceMember>;
 
   @Field(() => [UserWorkspace])
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
   workspaces: Relation<UserWorkspace[]>;
+
+  @Field(() => OnboardingStep, { nullable: true })
+  onboardingStep: OnboardingStep;
 }

@@ -14,6 +14,7 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { CalendarChannelVisibility } from '~/generated/graphql';
 import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isDefined } from '~/utils/isDefined';
@@ -118,7 +119,8 @@ export const CalendarEventRow = ({
   const isCurrentWorkspaceMemberAttending = calendarEvent.participants?.some(
     ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,
   );
-  const showTitle = calendarEvent.visibility === 'SHARE_EVERYTHING';
+  const showTitle =
+    calendarEvent.visibility === CalendarChannelVisibility.ShareEverything;
 
   return (
     <StyledContainer

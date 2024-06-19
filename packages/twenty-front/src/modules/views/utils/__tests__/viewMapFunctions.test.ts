@@ -55,6 +55,7 @@ describe('mapViewFiltersToFilters', () => {
     ];
     const expectedFilters: Filter[] = [
       {
+        id: 'id',
         fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         value: 'testValue',
         displayValue: 'Test Display Value',

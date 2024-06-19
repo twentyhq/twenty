@@ -3,6 +3,7 @@ import { capitalize } from 'src/utils/capitalize';
 
 export const getFindManyResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+  fromMetadata = false,
 ) => {
   return {
     description: 'Successful operation',
@@ -19,11 +20,24 @@ export const getFindManyResponse200 = (
                   items: {
                     $ref: `#/components/schemas/${capitalize(
                       item.nameSingular,
-                    )}`,
+                    )}${!fromMetadata ? ' with Relations' : ''}`,
                   },
                 },
               },
             },
+            pageInfo: {
+              type: 'object',
+              properties: {
+                hasNextPage: { type: 'boolean' },
+                startCursor: { type: 'string' },
+                endCursor: { type: 'string' },
+              },
+            },
+            ...(!fromMetadata && {
+              totalCount: {
+                type: 'integer',
+              },
+            }),
           },
           example: {
             data: {
@@ -33,6 +47,12 @@ export const getFindManyResponse200 = (
                 '...',
               ],
             },
+            pageInfo: {
+              hasNextPage: true,
+              startCursor: '56f411fb-0900-4ffb-b942-d7e8d6709eff',
+              endCursor: '93adf3c6-6cf7-4a86-adcd-75f77857ba67',
+            },
+            totalCount: 132,
           },
         },
       },
@@ -42,6 +62,7 @@ export const getFindManyResponse200 = (
 
 export const getFindOneResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  fromMetadata = false,
 ) => {
   return {
     description: 'Successful operation',
@@ -54,7 +75,9 @@ export const getFindOneResponse200 = (
               type: 'object',
               properties: {
                 [item.nameSingular]: {
-                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}${
+                    !fromMetadata ? ' with Relations' : ''
+                  }`,
                 },
               },
             },

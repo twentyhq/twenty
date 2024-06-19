@@ -22,7 +22,7 @@ type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 
 export const MobileNavigationBar = () => {
   const [isCommandMenuOpened] = useRecoilState(isCommandMenuOpenedState);
-  const { closeCommandMenu, toggleCommandMenu } = useCommandMenu();
+  const { closeCommandMenu, openCommandMenu } = useCommandMenu();
   const isTasksPage = useIsTasksPage();
   const isSettingsPage = useIsSettingsPage();
   const navigate = useNavigate();
@@ -62,8 +62,10 @@ export const MobileNavigationBar = () => {
       name: 'search',
       Icon: IconSearch,
       onClick: () => {
+        if (!isCommandMenuOpened) {
+          openCommandMenu();
+        }
         setIsNavigationDrawerOpen(false);
-        toggleCommandMenu();
       },
     },
     {

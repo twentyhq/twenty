@@ -1,6 +1,6 @@
 {
   "name": "twenty-server",
-  "version": "0.12.1",
+  "version": "0.20.0",
   "description": "",
   "author": "",
   "private": true,
@@ -26,6 +26,7 @@
     "jsdom": "~22.1.0",
     "jwt-decode": "^4.0.0",
     "lodash.differencewith": "^4.5.0",
+    "lodash.omitby": "^4.6.0",
     "lodash.uniq": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
     "passport": "^0.7.0",
@@ -40,6 +41,7 @@
     "@types/lodash.isequal": "^4.5.8",
     "@types/lodash.isobject": "^3.0.7",
     "@types/lodash.omit": "^4.5.9",
+    "@types/lodash.omitby": "^4.6.9",
     "@types/lodash.snakecase": "^4.1.7",
     "@types/lodash.uniq": "^4.5.9",
     "@types/lodash.uniqby": "^4.7.9",

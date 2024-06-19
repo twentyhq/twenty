@@ -1,23 +1,21 @@
-import { Injectable } from '@nestjs/common';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
 import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
-@Injectable()
-export class UpsertTimelineActivityFromInternalEvent
-  implements MessageQueueJob<ObjectRecordBaseEvent>
-{
+@Processor(MessageQueue.entityEventsToDbQueue)
+export class UpsertTimelineActivityFromInternalEvent {
   constructor(
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
     private readonly timelineActivityService: TimelineActivityService,
   ) {}
 
+  @Process(UpsertTimelineActivityFromInternalEvent.name)
   async handle(data: ObjectRecordBaseEvent): Promise<void> {
     if (data.userId) {
       const workspaceMember = await this.workspaceMemberService.getByIdOrFail(

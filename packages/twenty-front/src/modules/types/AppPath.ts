@@ -8,6 +8,8 @@ export enum AppPath {
   // Onboarding
   CreateWorkspace = '/create/workspace',
   CreateProfile = '/create/profile',
+  SyncEmails = '/sync/emails',
+  InviteTeam = '/invite-team',
   PlanRequired = '/plan-required',
   PlanRequiredSuccess = '/plan-required/payment-success',
 

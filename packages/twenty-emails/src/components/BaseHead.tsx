@@ -7,12 +7,8 @@ export const BaseHead = () => {
     <Head>
       <title>Twenty email</title>
       <Font
-        fontFamily="Inter"
+        fontFamily={emailTheme.font.family}
         fallbackFontFamily="sans-serif"
-        webFont={{
-          url: 'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap',
-          format: 'woff2',
-        }}
         fontStyle="normal"
         fontWeight={emailTheme.font.weight.regular}
       />

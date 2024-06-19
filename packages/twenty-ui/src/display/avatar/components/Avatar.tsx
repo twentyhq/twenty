@@ -1,7 +1,8 @@
-import { useState } from 'react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import clsx from 'clsx';
+import { useRecoilState } from 'recoil';
 
+import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
 import { Nullable, stringToHslColor } from '@ui/utilities';
 
 import styles from './Avatar.module.css';
@@ -55,16 +56,20 @@ export const Avatar = ({
   color,
   backgroundColor,
 }: AvatarProps) => {
-  const [isInvalidAvatarUrl, setIsInvalidAvatarUrl] = useState(false);
+  const [invalidAvatarUrls, setInvalidAvatarUrls] = useRecoilState(
+    invalidAvatarUrlsState,
+  );
 
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
 
   const placeholderChar = placeholder?.[0]?.toLocaleUpperCase();
 
-  const showPlaceholder = noAvatarUrl || isInvalidAvatarUrl;
+  const showPlaceholder = noAvatarUrl || invalidAvatarUrls.includes(avatarUrl);
 
   const handleImageError = () => {
-    setIsInvalidAvatarUrl(true);
+    if (isNonEmptyString(avatarUrl)) {
+      setInvalidAvatarUrls((prev) => [...prev, avatarUrl]);
+    }
   };
 
   const fixedColor = color ?? stringToHslColor(entityId ?? '', 75, 25);

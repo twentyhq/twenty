@@ -14,7 +14,7 @@ import {
   GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { formatToHumanReadableDate } from '~/utils';
+import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const StyledRow = styled.div`
   align-items: center;

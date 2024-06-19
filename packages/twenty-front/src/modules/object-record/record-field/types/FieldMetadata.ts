@@ -106,6 +106,7 @@ export type FieldRelationMetadata = {
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
   relationType?: FieldDefinitionRelationType;
+  targetFieldMetadataName?: string;
   useEditButton?: boolean;
 };
 
@@ -173,7 +174,8 @@ export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
-export type FieldRelationValue = EntityForSelect | null;
+export type FieldRelationValue<T extends EntityForSelect | EntityForSelect[]> =
+  T | null;
 
 // See https://zod.dev/?id=json-type
 type Literal = string | number | boolean | null;

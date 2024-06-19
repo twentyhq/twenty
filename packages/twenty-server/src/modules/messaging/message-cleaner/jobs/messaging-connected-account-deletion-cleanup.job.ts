@@ -1,18 +1,17 @@
-import { Injectable, Logger } from '@nestjs/common';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
+import { Logger } from '@nestjs/common';
 
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 export type MessagingConnectedAccountDeletionCleanupJobData = {
   workspaceId: string;
   connectedAccountId: string;
 };
 
-@Injectable()
-export class MessagingConnectedAccountDeletionCleanupJob
-  implements MessageQueueJob<MessagingConnectedAccountDeletionCleanupJobData>
-{
+@Processor(MessageQueue.messagingQueue)
+export class MessagingConnectedAccountDeletionCleanupJob {
   private readonly logger = new Logger(
     MessagingConnectedAccountDeletionCleanupJob.name,
   );
@@ -21,6 +20,7 @@ export class MessagingConnectedAccountDeletionCleanupJob
     private readonly messageCleanerService: MessagingMessageCleanerService,
   ) {}
 
+  @Process(MessagingConnectedAccountDeletionCleanupJob.name)
   async handle(
     data: MessagingConnectedAccountDeletionCleanupJobData,
   ): Promise<void> {

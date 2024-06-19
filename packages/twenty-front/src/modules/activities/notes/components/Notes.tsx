@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui';
 
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
@@ -12,6 +13,7 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
 const StyledNotesContainer = styled.div`
@@ -27,13 +29,22 @@ export const Notes = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { notes } = useNotes(targetableObject);
+  const { notes, loading } = useNotes(targetableObject);
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  if (notes?.length === 0) {
+  const isNotesEmpty = !notes || notes.length === 0;
+
+  if (loading && isNotesEmpty) {
+    return <SkeletonLoader />;
+  }
+
+  if (isNotesEmpty) {
     return (
-      <AnimatedPlaceholderEmptyContainer>
+      <AnimatedPlaceholderEmptyContainer
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
+      >
         <AnimatedPlaceholder type="noNote" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
@@ -62,7 +73,7 @@ export const Notes = ({
     <StyledNotesContainer>
       <NoteList
         title="All"
-        notes={notes ?? []}
+        notes={notes}
         button={
           <Button
             Icon={IconPlus}

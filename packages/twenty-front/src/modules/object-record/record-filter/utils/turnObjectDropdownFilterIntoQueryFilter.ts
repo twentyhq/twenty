@@ -203,6 +203,35 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
+      case 'LINKS': {
+        const linksFilters = generateILikeFiltersForCompositeFields(
+          rawUIFilter.value,
+          correspondingField.name,
+          ['primaryLinkLabel', 'primaryLinkUrl'],
+        );
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Contains:
+            objectRecordFilters.push({
+              or: linksFilters,
+            });
+            break;
+          case ViewFilterOperand.DoesNotContain:
+            objectRecordFilters.push({
+              and: linksFilters.map((filter) => {
+                return {
+                  not: filter,
+                };
+              }),
+            });
+            break;
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
+        break;
+      }
+
       case 'FULL_NAME': {
         const fullNameFilters = generateILikeFiltersForCompositeFields(
           rawUIFilter.value,

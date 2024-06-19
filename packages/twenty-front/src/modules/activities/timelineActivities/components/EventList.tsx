@@ -25,7 +25,6 @@ const StyledTimelineContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: flex-start;
 
-  padding: ${({ theme }) => theme.spacing(4)};
   width: calc(100% - ${({ theme }) => theme.spacing(8)});
 `;
 

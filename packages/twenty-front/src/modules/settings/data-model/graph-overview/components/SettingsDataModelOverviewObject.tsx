@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { NodeProps } from 'reactflow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconTag, useIcons } from 'twenty-ui';
+import { IconChevronDown, useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -18,13 +18,14 @@ type SettingsDataModelOverviewObjectProps = NodeProps<ObjectMetadataItem>;
 
 const StyledNode = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex-direction: column;
   width: 220px;
   padding: ${({ theme }) => theme.spacing(2)};
   gap: ${({ theme }) => theme.spacing(2)};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
 `;
 
 const StyledHeader = styled.div`
@@ -37,7 +38,7 @@ const StyledObjectName = styled.div`
   border: 0;
   border-radius: 4px 4px 0 0;
   display: flex;
-  font-weight: bold;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(1)};
   position: relative;
   text-align: center;
@@ -67,7 +68,7 @@ const StyledCardRowOther = styled.div`
   display: flex;
   height: 24px;
   padding: 0 ${({ theme }) => theme.spacing(2)};
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledCardRowText = styled.div``;
@@ -79,6 +80,7 @@ const StyledObjectInstanceCount = styled.div`
 const StyledObjectLink = styled(Link)`
   align-items: center;
   display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
   text-decoration: none;
   color: ${({ theme }) => theme.font.color.primary};
 
@@ -130,10 +132,8 @@ export const SettingsDataModelOverviewObject = ({
           ))}
         {countNonRelation > 0 && (
           <StyledCardRowOther>
-            <IconTag size={theme.icon.size.md} />
-            <StyledCardRowText>
-              {countNonRelation} other fields
-            </StyledCardRowText>
+            <IconChevronDown size={theme.icon.size.md} />
+            <StyledCardRowText>{countNonRelation} fields</StyledCardRowText>
           </StyledCardRowOther>
         )}
       </StyledInnerCard>

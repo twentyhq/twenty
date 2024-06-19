@@ -27,6 +27,10 @@ export const SettingsAccountsListEmptyStateCard = ({
 }: SettingsAccountsListEmptyStateCardProps) => {
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
 
+  const handleOnClick = async () => {
+    await triggerGoogleApisOAuth();
+  };
+
   return (
     <Card>
       <StyledHeader>{label || 'No connected account'}</StyledHeader>
@@ -35,7 +39,7 @@ export const SettingsAccountsListEmptyStateCard = ({
           Icon={IconGoogle}
           title="Connect with Google"
           variant="secondary"
-          onClick={triggerGoogleApisOAuth}
+          onClick={handleOnClick}
         />
       </StyledBody>
     </Card>

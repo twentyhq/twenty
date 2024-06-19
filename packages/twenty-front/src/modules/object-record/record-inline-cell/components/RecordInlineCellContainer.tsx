@@ -33,6 +33,7 @@ const StyledLabelAndIconContainer = styled.div`
 
 const StyledValueContainer = styled.div`
   display: flex;
+  flex-grow: 1;
   min-width: 0;
 `;
 

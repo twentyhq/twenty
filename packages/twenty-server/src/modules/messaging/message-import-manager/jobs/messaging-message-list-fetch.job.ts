@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -16,14 +17,12 @@ import { MessagingGmailPartialMessageListFetchService } from 'src/modules/messag
 import { isThrottled } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-throttled';
 
 export type MessagingMessageListFetchJobData = {
+  messageChannelId: string;
   workspaceId: string;
-  connectedAccountId: string;
 };
 
-@Injectable()
-export class MessagingMessageListFetchJob
-  implements MessageQueueJob<MessagingMessageListFetchJobData>
-{
+@Processor(MessageQueue.messagingQueue)
+export class MessagingMessageListFetchJob {
   private readonly logger = new Logger(MessagingMessageListFetchJob.name);
 
   constructor(
@@ -36,43 +35,38 @@ export class MessagingMessageListFetchJob
     private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
+  @Process(MessagingMessageListFetchJob.name)
   async handle(data: MessagingMessageListFetchJobData): Promise<void> {
-    const { workspaceId, connectedAccountId } = data;
+    const { messageChannelId, workspaceId } = data;
 
     await this.messagingTelemetryService.track({
       eventName: 'message_list_fetch_job.triggered',
+      messageChannelId,
       workspaceId,
-      connectedAccountId,
     });
 
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
+    const messageChannel = await this.messageChannelRepository.getById(
+      messageChannelId,
       workspaceId,
     );
 
-    if (!connectedAccount) {
+    if (!messageChannel) {
       await this.messagingTelemetryService.track({
-        eventName: 'message_list_fetch_job.error.connected_account_not_found',
+        eventName: 'message_list_fetch_job.error.message_channel_not_found',
+        messageChannelId,
         workspaceId,
-        connectedAccountId,
       });
 
       return;
     }
 
-    const messageChannel =
-      await this.messageChannelRepository.getFirstByConnectedAccountId(
-        connectedAccountId,
+    const connectedAccount =
+      await this.connectedAccountRepository.getByIdOrFail(
+        messageChannel.connectedAccountId,
         workspaceId,
       );
 
-    if (!messageChannel) {
-      await this.messagingTelemetryService.track({
-        eventName: 'message_list_fetch_job.error.message_channel_not_found',
-        workspaceId,
-        connectedAccountId,
-      });
-
+    if (!messageChannel?.isSyncEnabled) {
       return;
     }
 
@@ -88,13 +82,13 @@ export class MessagingMessageListFetchJob
     switch (messageChannel.syncStage) {
       case MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING:
         this.logger.log(
-          `Fetching partial message list for workspace ${workspaceId} and account ${connectedAccount.id}`,
+          `Fetching partial message list for workspace ${workspaceId} and messageChannelId ${messageChannel.id}`,
         );
 
         await this.messagingTelemetryService.track({
           eventName: 'partial_message_list_fetch.started',
           workspaceId,
-          connectedAccountId,
+          connectedAccountId: connectedAccount.id,
           messageChannelId: messageChannel.id,
         });
 
@@ -107,7 +101,7 @@ export class MessagingMessageListFetchJob
         await this.messagingTelemetryService.track({
           eventName: 'partial_message_list_fetch.completed',
           workspaceId,
-          connectedAccountId,
+          connectedAccountId: connectedAccount.id,
           messageChannelId: messageChannel.id,
         });
 
@@ -121,7 +115,7 @@ export class MessagingMessageListFetchJob
         await this.messagingTelemetryService.track({
           eventName: 'full_message_list_fetch.started',
           workspaceId,
-          connectedAccountId,
+          connectedAccountId: connectedAccount.id,
           messageChannelId: messageChannel.id,
         });
 
@@ -134,7 +128,7 @@ export class MessagingMessageListFetchJob
         await this.messagingTelemetryService.track({
           eventName: 'full_message_list_fetch.completed',
           workspaceId,
-          connectedAccountId,
+          connectedAccountId: connectedAccount.id,
           messageChannelId: messageChannel.id,
         });
 

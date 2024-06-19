@@ -2,12 +2,14 @@ import { OpenAPIV3_1 } from 'openapi-types';
 
 import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
-import { FilterComparators } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/filter-utils/parse-base-filter.utils';
-import { Conjunctions } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/filter-utils/parse-filter.utils';
-import { DEFAULT_ORDER_DIRECTION } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/order-by-input.factory';
-import { DEFAULT_CONJUNCTION } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/filter-utils/add-default-conjunction.utils';
+import { FilterComparators } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-base-filter.utils';
+import { Conjunctions } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-filter.utils';
+import { DEFAULT_ORDER_DIRECTION } from 'src/engine/api/rest/input-factories/order-by-input.factory';
+import { DEFAULT_CONJUNCTION } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/add-default-conjunction.utils';
 
-export const computeLimitParameters = (): OpenAPIV3_1.ParameterObject => {
+export const computeLimitParameters = (
+  fromMetadata = false,
+): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'limit',
     in: 'query',
@@ -16,8 +18,8 @@ export const computeLimitParameters = (): OpenAPIV3_1.ParameterObject => {
     schema: {
       type: 'integer',
       minimum: 0,
-      maximum: 60,
-      default: 60,
+      maximum: fromMetadata ? 1000 : 60,
+      default: fromMetadata ? 1000 : 60,
     },
   };
 };
@@ -95,17 +97,33 @@ export const computeFilterParameters = (): OpenAPIV3_1.ParameterObject => {
   };
 };
 
-export const computeLastCursorParameters = (): OpenAPIV3_1.ParameterObject => {
-  return {
-    name: 'last_cursor',
-    in: 'query',
-    description: 'Returns objects starting from a specific cursor.',
-    required: false,
-    schema: {
-      type: 'string',
-    },
+export const computeStartingAfterParameters =
+  (): OpenAPIV3_1.ParameterObject => {
+    return {
+      name: 'starting_after',
+      in: 'query',
+      description:
+        'Returns objects starting after a specific cursor. You can find cursors in **startCursor** and **endCursor** in **pageInfo** in response data',
+      required: false,
+      schema: {
+        type: 'string',
+      },
+    };
   };
-};
+
+export const computeEndingBeforeParameters =
+  (): OpenAPIV3_1.ParameterObject => {
+    return {
+      name: 'ending_before',
+      in: 'query',
+      description:
+        'Returns objects ending before a specific cursor. You can find cursors in **startCursor** and **endCursor** in **pageInfo** in response data',
+      required: false,
+      schema: {
+        type: 'string',
+      },
+    };
+  };
 
 export const computeIdPathParameter = (): OpenAPIV3_1.ParameterObject => {
   return {
