@@ -23,7 +23,7 @@ export const getOnboardingStatus = ({
   currentUser: CurrentUser | null;
 }) => {
   if (!isLoggedIn) {
-    return OnboardingStatus.OngoingUserCreation;
+    return OnboardingStep.UserCreation;
   }
 
   // After SignInUp, the user should have a current workspace assigned.
@@ -32,43 +32,5 @@ export const getOnboardingStatus = ({
     return undefined;
   }
 
-  if (currentUser.onboardingStep === OnboardingStep.SubscriptionIncomplete) {
-    return OnboardingStatus.Incomplete;
-  }
-
-  if (currentUser.onboardingStep === OnboardingStep.WorkspaceActivation) {
-    return OnboardingStatus.OngoingWorkspaceActivation;
-  }
-
-  if (currentUser.onboardingStep === OnboardingStep.ProfileCreation) {
-    return OnboardingStatus.OngoingProfileCreation;
-  }
-
-  if (currentUser.onboardingStep === OnboardingStep.SyncEmail) {
-    return OnboardingStatus.OngoingSyncEmail;
-  }
-
-  if (currentUser.onboardingStep === OnboardingStep.InviteTeam) {
-    return OnboardingStatus.OngoingInviteTeam;
-  }
-
-  if (currentUser.onboardingStep === OnboardingStep.SubscriptionCanceled) {
-    return OnboardingStatus.Canceled;
-  }
-
-  if (currentUser.onboardingStep === OnboardingStep.SubscriptionPastDue) {
-    return OnboardingStatus.PastDue;
-  }
-
-  if (currentUser.onboardingStep === OnboardingStep.SubscriptionUnpaid) {
-    return OnboardingStatus.Unpaid;
-  }
-
-  if (
-    currentUser.onboardingStep === OnboardingStep.CompletedWithoutSubscription
-  ) {
-    return OnboardingStatus.CompletedWithoutSubscription;
-  }
-
-  return OnboardingStatus.Completed;
+  return currentUser.onboardingStep;
 };

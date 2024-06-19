@@ -11,7 +11,6 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
@@ -20,7 +19,10 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { useActivateWorkspaceMutation } from '~/generated/graphql';
+import {
+  OnboardingStep,
+  useActivateWorkspaceMutation,
+} from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`
@@ -105,7 +107,7 @@ export const CreateWorkspace = () => {
     }
   };
 
-  if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceActivation) {
+  if (onboardingStatus !== OnboardingStep.WorkspaceActivation) {
     return null;
   }
 

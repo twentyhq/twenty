@@ -2,10 +2,11 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
+import { OnboardingStep } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { isDefined } from '~/utils/isDefined';
 
 export const useShowAuthModal = () => {
   const isMatchingLocation = useIsMatchingLocation();
@@ -24,19 +25,25 @@ export const useShowAuthModal = () => {
       return isDefaultLayoutAuthModalVisible;
     }
     if (
-      OnboardingStatus.Incomplete === onboardingStatus ||
-      OnboardingStatus.OngoingUserCreation === onboardingStatus ||
-      OnboardingStatus.OngoingProfileCreation === onboardingStatus ||
-      OnboardingStatus.OngoingWorkspaceActivation === onboardingStatus ||
-      OnboardingStatus.OngoingSyncEmail === onboardingStatus ||
-      OnboardingStatus.OngoingInviteTeam === onboardingStatus
+      isDefined(onboardingStatus) &&
+      [
+        OnboardingStep.SubscriptionIncomplete,
+        OnboardingStep.UserCreation,
+        OnboardingStep.ProfileCreation,
+        OnboardingStep.WorkspaceActivation,
+        OnboardingStep.SyncEmail,
+        OnboardingStep.InviteTeam,
+      ].includes(onboardingStatus)
     ) {
       return true;
     }
     if (isMatchingLocation(AppPath.PlanRequired)) {
       return (
-        OnboardingStatus.CompletedWithoutSubscription === onboardingStatus ||
-        OnboardingStatus.Canceled === onboardingStatus
+        isDefined(onboardingStatus) &&
+        [
+          OnboardingStep.CompletedWithoutSubscription,
+          OnboardingStep.SubscriptionCanceled,
+        ].includes(onboardingStatus)
       );
     }
     return false;

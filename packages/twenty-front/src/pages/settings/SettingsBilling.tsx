@@ -12,7 +12,6 @@ import {
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat';
@@ -26,6 +25,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import {
+  OnboardingStep,
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
@@ -87,21 +87,21 @@ export const SettingsBilling = () => {
     loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
 
   const switchIntervalButtonDisabled =
-    onboardingStatus !== OnboardingStatus.Completed;
+    onboardingStatus !== OnboardingStep.Completed;
 
   const cancelPlanButtonDisabled =
     billingPortalButtonDisabled ||
-    onboardingStatus !== OnboardingStatus.Completed;
+    onboardingStatus !== OnboardingStep.Completed;
 
   const displayPaymentFailInfo =
-    onboardingStatus === OnboardingStatus.PastDue ||
-    onboardingStatus === OnboardingStatus.Unpaid;
+    onboardingStatus === OnboardingStep.SubscriptionPastDue ||
+    onboardingStatus === OnboardingStep.SubscriptionUnpaid;
 
   const displaySubscriptionCanceledInfo =
-    onboardingStatus === OnboardingStatus.Canceled;
+    onboardingStatus === OnboardingStep.SubscriptionCanceled;
 
   const displaySubscribeInfo =
-    onboardingStatus === OnboardingStatus.CompletedWithoutSubscription;
+    onboardingStatus === OnboardingStep.CompletedWithoutSubscription;
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
