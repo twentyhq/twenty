@@ -99,7 +99,7 @@ export class UpdateMessageChannelSyncStatusEnumCommand extends CommandRunner {
               'FAILED',
               'ONGOING',
               'NOT_SYNCED',
-              'COMPLETED',
+              'ACTIVE',
               'FAILED_INSUFFICIENT_PERMISSIONS',
               'FAILED_UNKNOWN')`,
             );
