@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui';
 
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/TasksTabListComponentId';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
@@ -13,6 +14,7 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
@@ -40,6 +42,8 @@ export const TaskGroups = ({
     upcomingTasks,
     unscheduledTasks,
     completedTasks,
+    incompleteTasksLoading,
+    completeTasksLoading,
   } = useTasks({
     filterDropdownId: filterDropdownId,
     targetableObjects: targetableObjects ?? [],
@@ -50,15 +54,27 @@ export const TaskGroups = ({
   const { activeTabIdState } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
 
-  if (
+  const isLoading =
+    (activeTabId !== 'done' && incompleteTasksLoading) ||
+    (activeTabId === 'done' && completeTasksLoading);
+
+  const isTasksEmpty =
     (activeTabId !== 'done' &&
       todayOrPreviousTasks?.length === 0 &&
       upcomingTasks?.length === 0 &&
       unscheduledTasks?.length === 0) ||
-    (activeTabId === 'done' && completedTasks?.length === 0)
-  ) {
+    (activeTabId === 'done' && completedTasks?.length === 0);
+
+  if (isLoading && isTasksEmpty) {
+    return <SkeletonLoader />;
+  }
+
+  if (isTasksEmpty) {
     return (
-      <AnimatedPlaceholderEmptyContainer>
+      <AnimatedPlaceholderEmptyContainer
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
+      >
         <AnimatedPlaceholder type="noTask" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>

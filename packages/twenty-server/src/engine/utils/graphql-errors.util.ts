@@ -15,7 +15,22 @@ declare module 'graphql' {
   }
 }
 
-export class BaseGraphQLError extends Error implements GraphQLError {
+export enum ErrorCode {
+  GRAPHQL_PARSE_FAILED = 'GRAPHQL_PARSE_FAILED',
+  GRAPHQL_VALIDATION_FAILED = 'GRAPHQL_VALIDATION_FAILED',
+  UNAUTHENTICATED = 'UNAUTHENTICATED',
+  FORBIDDEN = 'FORBIDDEN',
+  PERSISTED_QUERY_NOT_FOUND = 'PERSISTED_QUERY_NOT_FOUND',
+  PERSISTED_QUERY_NOT_SUPPORTED = 'PERSISTED_QUERY_NOT_SUPPORTED',
+  BAD_USER_INPUT = 'BAD_USER_INPUT',
+  NOT_FOUND = 'NOT_FOUND',
+  METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
+  CONFLICT = 'CONFLICT',
+  TIMEOUT = 'TIMEOUT',
+  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
+}
+
+export class BaseGraphQLError extends GraphQLError {
   public extensions: Record<string, any>;
   override readonly name!: string;
   readonly locations: ReadonlyArray<SourceLocation> | undefined;
@@ -76,7 +91,7 @@ function toGraphQLError(error: BaseGraphQLError): GraphQLError {
 
 export class SyntaxError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, 'GRAPHQL_PARSE_FAILED');
+    super(message, ErrorCode.GRAPHQL_PARSE_FAILED);
 
     Object.defineProperty(this, 'name', { value: 'SyntaxError' });
   }
@@ -84,23 +99,23 @@ export class SyntaxError extends BaseGraphQLError {
 
 export class ValidationError extends BaseGraphQLError {
   constructor(message: string) {
-    super(message, 'GRAPHQL_VALIDATION_FAILED');
+    super(message, ErrorCode.GRAPHQL_VALIDATION_FAILED);
 
     Object.defineProperty(this, 'name', { value: 'ValidationError' });
   }
 }
 
 export class AuthenticationError extends BaseGraphQLError {
-  constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'UNAUTHENTICATED', extensions);
+  constructor(message: string) {
+    super(message, ErrorCode.UNAUTHENTICATED);
 
     Object.defineProperty(this, 'name', { value: 'AuthenticationError' });
   }
 }
 
 export class ForbiddenError extends BaseGraphQLError {
-  constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'FORBIDDEN', extensions);
+  constructor(message: string) {
+    super(message, ErrorCode.FORBIDDEN);
 
     Object.defineProperty(this, 'name', { value: 'ForbiddenError' });
   }
@@ -108,7 +123,7 @@ export class ForbiddenError extends BaseGraphQLError {
 
 export class PersistedQueryNotFoundError extends BaseGraphQLError {
   constructor() {
-    super('PersistedQueryNotFound', 'PERSISTED_QUERY_NOT_FOUND');
+    super('PersistedQueryNotFound', ErrorCode.PERSISTED_QUERY_NOT_FOUND);
 
     Object.defineProperty(this, 'name', {
       value: 'PersistedQueryNotFoundError',
@@ -118,7 +133,10 @@ export class PersistedQueryNotFoundError extends BaseGraphQLError {
 
 export class PersistedQueryNotSupportedError extends BaseGraphQLError {
   constructor() {
-    super('PersistedQueryNotSupported', 'PERSISTED_QUERY_NOT_SUPPORTED');
+    super(
+      'PersistedQueryNotSupported',
+      ErrorCode.PERSISTED_QUERY_NOT_SUPPORTED,
+    );
 
     Object.defineProperty(this, 'name', {
       value: 'PersistedQueryNotSupportedError',
@@ -127,40 +145,40 @@ export class PersistedQueryNotSupportedError extends BaseGraphQLError {
 }
 
 export class UserInputError extends BaseGraphQLError {
-  constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'BAD_USER_INPUT', extensions);
+  constructor(message: string) {
+    super(message, ErrorCode.BAD_USER_INPUT);
 
     Object.defineProperty(this, 'name', { value: 'UserInputError' });
   }
 }
 
 export class NotFoundError extends BaseGraphQLError {
-  constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'NOT_FOUND', extensions);
+  constructor(message: string) {
+    super(message, ErrorCode.NOT_FOUND);
 
     Object.defineProperty(this, 'name', { value: 'NotFoundError' });
   }
 }
 
 export class MethodNotAllowedError extends BaseGraphQLError {
-  constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'METHOD_NOT_ALLOWED', extensions);
+  constructor(message: string) {
+    super(message, ErrorCode.METHOD_NOT_ALLOWED);
 
     Object.defineProperty(this, 'name', { value: 'MethodNotAllowedError' });
   }
 }
 
 export class ConflictError extends BaseGraphQLError {
-  constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'CONFLICT', extensions);
+  constructor(message: string) {
+    super(message, ErrorCode.CONFLICT);
 
     Object.defineProperty(this, 'name', { value: 'ConflictError' });
   }
 }
 
 export class TimeoutError extends BaseGraphQLError {
-  constructor(message: string, extensions?: Record<string, any>) {
-    super(message, 'TIMEOUT', extensions);
+  constructor(message: string) {
+    super(message, ErrorCode.TIMEOUT);
 
     Object.defineProperty(this, 'name', { value: 'TimeoutError' });
   }

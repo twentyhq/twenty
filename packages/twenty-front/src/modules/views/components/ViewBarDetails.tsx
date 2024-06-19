@@ -153,19 +153,17 @@ export const ViewBarDetails = ({
             availableFilterDefinitions,
           ).map((viewFilter) => (
             <ObjectFilterDropdownScope
-              key={viewFilter.fieldMetadataId}
-              filterScopeId={viewFilter.fieldMetadataId}
+              key={viewFilter.id}
+              filterScopeId={viewFilter.id}
             >
-              <DropdownScope dropdownScopeId={viewFilter.fieldMetadataId}>
-                <ViewBarFilterEffect
-                  filterDropdownId={viewFilter.fieldMetadataId}
-                />
+              <DropdownScope dropdownScopeId={viewFilter.id}>
+                <ViewBarFilterEffect filterDropdownId={viewFilter.id} />
                 <EditableFilterDropdownButton
                   viewFilter={viewFilter}
                   hotkeyScope={{
-                    scope: viewFilter.fieldMetadataId,
+                    scope: viewFilter.id,
                   }}
-                  viewFilterDropdownId={viewFilter.fieldMetadataId}
+                  viewFilterDropdownId={viewFilter.id}
                 />
               </DropdownScope>
             </ObjectFilterDropdownScope>
