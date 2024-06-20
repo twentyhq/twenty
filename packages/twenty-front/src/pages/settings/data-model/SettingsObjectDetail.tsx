@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { IconPlus, IconSettings } from 'twenty-ui';
+import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -24,7 +24,6 @@ import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIden
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -32,6 +31,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -54,15 +54,18 @@ export const SettingsObjectDetail = () => {
     if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
   }, [activeObjectMetadataItem, navigate]);
 
-  const { activateMetadataField, disableMetadataField, eraseMetadataField } =
-    useFieldMetadataItem();
+  const {
+    activateMetadataField,
+    deactivateMetadataField,
+    deleteMetadataField,
+  } = useFieldMetadataItem();
 
   if (!activeObjectMetadataItem) return null;
 
   const activeMetadataFields = getActiveFieldMetadataItems(
     activeObjectMetadataItem,
   );
-  const disabledMetadataFields = getDisabledFieldMetadataItems(
+  const deactivatedMetadataFields = getDisabledFieldMetadataItems(
     activeObjectMetadataItem,
   );
 
@@ -75,7 +78,7 @@ export const SettingsObjectDetail = () => {
   };
 
   const handleDisableField = (activeFieldMetadatItem: FieldMetadataItem) => {
-    disableMetadataField(activeFieldMetadatItem);
+    deactivateMetadataField(activeFieldMetadatItem);
   };
 
   const handleSetLabelIdentifierField = (
@@ -87,6 +90,8 @@ export const SettingsObjectDetail = () => {
         labelIdentifierFieldMetadataId: activeFieldMetadatItem.id,
       },
     });
+
+  const shouldDisplayAddFieldButton = !activeObjectMetadataItem.isRemote;
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -151,6 +156,7 @@ export const SettingsObjectDetail = () => {
                       }
                       fieldMetadataItem={activeMetadataField}
                       isRemoteObjectField={activeObjectMetadataItem.isRemote}
+                      // to={`./${getFieldSlug(activeMetadataField)}`}
                       ActionIcon={
                         <SettingsObjectFieldActiveActionDropdown
                           isCustomField={!!activeMetadataField.isCustom}
@@ -178,27 +184,27 @@ export const SettingsObjectDetail = () => {
                 })}
               </TableSection>
             )}
-            {!!disabledMetadataFields.length && (
+            {!!deactivatedMetadataFields.length && (
               <TableSection isInitiallyExpanded={false} title="Inactive">
-                {disabledMetadataFields.map((disabledMetadataField) => (
+                {deactivatedMetadataFields.map((deactivatedMetadataField) => (
                   <SettingsObjectFieldItemTableRow
-                    key={disabledMetadataField.id}
+                    key={deactivatedMetadataField.id}
                     variant={
                       activeObjectMetadataItem.isCustom
                         ? 'identifier'
                         : 'field-type'
                     }
-                    fieldMetadataItem={disabledMetadataField}
+                    fieldMetadataItem={deactivatedMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldInactiveActionDropdown
-                        isCustomField={!!disabledMetadataField.isCustom}
-                        fieldType={disabledMetadataField.type}
-                        scopeKey={disabledMetadataField.id}
+                        isCustomField={!!deactivatedMetadataField.isCustom}
+                        fieldType={deactivatedMetadataField.type}
+                        scopeKey={deactivatedMetadataField.id}
                         onActivate={() =>
-                          activateMetadataField(disabledMetadataField)
+                          activateMetadataField(deactivatedMetadataField)
                         }
-                        onErase={() =>
-                          eraseMetadataField(disabledMetadataField)
+                        onDelete={() =>
+                          deleteMetadataField(deactivatedMetadataField)
                         }
                       />
                     }
@@ -207,21 +213,24 @@ export const SettingsObjectDetail = () => {
               </TableSection>
             )}
           </Table>
-          <StyledDiv>
-            <Button
-              Icon={IconPlus}
-              title="Add Field"
-              size="small"
-              variant="secondary"
-              onClick={() =>
-                navigate(
-                  disabledMetadataFields.length
+          {shouldDisplayAddFieldButton && (
+            <StyledDiv>
+              <UndecoratedLink
+                to={
+                  deactivatedMetadataFields.length
                     ? './new-field/step-1'
-                    : './new-field/step-2',
-                )
-              }
-            />
-          </StyledDiv>
+                    : './new-field/step-2'
+                }
+              >
+                <Button
+                  Icon={IconPlus}
+                  title="Add Field"
+                  size="small"
+                  variant="secondary"
+                />
+              </UndecoratedLink>
+            </StyledDiv>
+          )}
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

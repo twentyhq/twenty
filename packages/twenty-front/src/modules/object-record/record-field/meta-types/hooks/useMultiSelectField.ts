@@ -1,15 +1,15 @@
 import { useContext } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext.ts';
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField.ts';
-import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput.ts';
-import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata.ts';
-import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata.ts';
-import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect.ts';
-import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue.ts';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector.ts';
-import { FieldMetadataType } from '~/generated/graphql.tsx';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
+import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
+import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
+import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { FieldMetadataType } from '~/generated/graphql';
 
 export const useMultiSelectField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);

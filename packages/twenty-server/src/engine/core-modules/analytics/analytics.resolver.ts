@@ -8,16 +8,20 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 import { AnalyticsService } from './analytics.service';
 import { Analytics } from './analytics.entity';
 
-import { CreateAnalyticsInput } from './dto/create-analytics.input';
+import { CreateAnalyticsInput } from './dtos/create-analytics.input';
 
 @UseGuards(OptionalJwtAuthGuard)
 @Resolver(() => Analytics)
 export class AnalyticsResolver {
-  constructor(private readonly analyticsService: AnalyticsService) {}
+  constructor(
+    private readonly analyticsService: AnalyticsService,
+    private readonly environmentService: EnvironmentService,
+  ) {}
 
   @Mutation(() => Analytics)
   track(
@@ -28,9 +32,11 @@ export class AnalyticsResolver {
   ) {
     return this.analyticsService.create(
       createAnalyticsInput,
-      user,
-      workspace,
-      request,
+      user?.id,
+      workspace?.id,
+      workspace?.displayName,
+      workspace?.domainName,
+      this.environmentService.get('SERVER_URL') ?? request.hostname,
     );
   }
 }

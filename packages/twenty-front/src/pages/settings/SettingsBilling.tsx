@@ -1,29 +1,30 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
+  H1Title,
+  H2Title,
   IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
   IconCurrencyDollar,
 } from 'twenty-ui';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus.ts';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat';
-import { AppPath } from '@/types/AppPath.ts';
+import { AppPath } from '@/types/AppPath';
 import { Info } from '@/ui/display/info/components/Info';
-import { H1Title } from '@/ui/display/typography/components/H1Title';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import {
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
@@ -65,7 +66,6 @@ const SWITCH_INFOS = {
 };
 
 export const SettingsBilling = () => {
-  const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -85,6 +85,13 @@ export const SettingsBilling = () => {
 
   const billingPortalButtonDisabled =
     loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
+
+  const switchIntervalButtonDisabled =
+    onboardingStatus !== OnboardingStatus.Completed;
+
+  const cancelPlanButtonDisabled =
+    billingPortalButtonDisabled ||
+    onboardingStatus !== OnboardingStatus.Completed;
 
   const displayPaymentFailInfo =
     onboardingStatus === OnboardingStatus.PastDue ||
@@ -120,20 +127,16 @@ export const SettingsBilling = () => {
         setCurrentWorkspace(newCurrentWorkspace);
       }
       enqueueSnackBar(`Subscription has been switched ${switchingInfo.to}`, {
-        variant: 'success',
+        variant: SnackBarVariant.Success,
       });
     } catch (error: any) {
       enqueueSnackBar(
         `Error while switching subscription ${switchingInfo.to}.`,
         {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         },
       );
     }
-  };
-
-  const redirectToSubscribePage = () => {
-    navigate(AppPath.PlanRequired);
   };
 
   return (
@@ -150,20 +153,22 @@ export const SettingsBilling = () => {
           />
         )}
         {displaySubscriptionCanceledInfo && (
-          <Info
-            text={'Subscription canceled. Please start a new one'}
-            buttonTitle={'Subscribe'}
-            accent={'danger'}
-            onClick={redirectToSubscribePage}
-          />
+          <UndecoratedLink to={AppPath.PlanRequired}>
+            <Info
+              text={'Subscription canceled. Please start a new one'}
+              buttonTitle={'Subscribe'}
+              accent={'danger'}
+            />
+          </UndecoratedLink>
         )}
         {displaySubscribeInfo ? (
-          <Info
-            text={'Your workspace does not have an active subscription'}
-            buttonTitle={'Subscribe'}
-            accent={'danger'}
-            onClick={redirectToSubscribePage}
-          />
+          <UndecoratedLink to={AppPath.PlanRequired}>
+            <Info
+              text={'Your workspace does not have an active subscription'}
+              buttonTitle={'Subscribe'}
+              accent={'danger'}
+            />
+          </UndecoratedLink>
         ) : (
           <>
             <Section>
@@ -176,6 +181,7 @@ export const SettingsBilling = () => {
                 title="View billing details"
                 variant="secondary"
                 onClick={openBillingPortal}
+                disabled={billingPortalButtonDisabled}
               />
             </Section>
             <Section>
@@ -188,7 +194,7 @@ export const SettingsBilling = () => {
                 title={`Switch ${switchingInfo.to}`}
                 variant="secondary"
                 onClick={openSwitchingIntervalModal}
-                disabled={billingPortalButtonDisabled}
+                disabled={switchIntervalButtonDisabled}
               />
             </Section>
             <Section>
@@ -202,7 +208,7 @@ export const SettingsBilling = () => {
                 variant="secondary"
                 accent="danger"
                 onClick={openBillingPortal}
-                disabled={billingPortalButtonDisabled}
+                disabled={cancelPlanButtonDisabled}
               />
             </Section>
           </>

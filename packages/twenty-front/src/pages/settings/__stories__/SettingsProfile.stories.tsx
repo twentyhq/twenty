@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { userEvent, within } from '@storybook/test';
 
 import {
   PageDecorator,
@@ -13,7 +13,10 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsProfile',
   component: SettingsProfile,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/profile' },
+  args: {
+    routePath: '/settings/profile',
+    additionalRoutes: ['/welcome'],
+  },
   parameters: {
     msw: graphqlMocks,
   },
@@ -29,6 +32,7 @@ export const LogOut: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const logoutButton = await canvas.findByText('Logout');
-    await logoutButton.click();
+
+    await userEvent.click(logoutButton);
   },
 };

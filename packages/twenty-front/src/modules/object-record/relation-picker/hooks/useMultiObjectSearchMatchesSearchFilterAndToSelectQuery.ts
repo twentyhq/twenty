@@ -2,9 +2,8 @@ import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
-import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/multiple-objects/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
+import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import {
   MultiObjectRecordQueryResult,
@@ -30,20 +29,19 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const nonSystemObjectMetadataItems = objectMetadataItems.filter(
-    ({ nameSingular, isSystem }) =>
-      !isSystem && nameSingular !== CoreObjectNameSingular.Opportunity,
+  const selectableObjectMetadataItems = objectMetadataItems.filter(
+    ({ isSystem, isRemote }) => !isSystem && !isRemote,
   );
 
   const { searchFilterPerMetadataItemNameSingular } =
     useSearchFilterPerMetadataItem({
-      objectMetadataItems: nonSystemObjectMetadataItems,
+      objectMetadataItems: selectableObjectMetadataItems,
       searchFilterValue,
     });
 
   const objectRecordsToSelectAndMatchesSearchFilterTextFilterPerMetadataItem =
     Object.fromEntries(
-      nonSystemObjectMetadataItems
+      selectableObjectMetadataItems
         .map(({ nameSingular }) => {
           const selectedIds = selectedObjectRecordIds
             .filter(
@@ -76,19 +74,22 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
     );
 
   const { orderByFieldPerMetadataItem } = useOrderByFieldPerMetadataItem({
-    objectMetadataItems: nonSystemObjectMetadataItems,
+    objectMetadataItems: selectableObjectMetadataItems,
   });
 
   const { limitPerMetadataItem } = useLimitPerMetadataItem({
-    objectMetadataItems: nonSystemObjectMetadataItems,
+    objectMetadataItems: selectableObjectMetadataItems,
     limit,
   });
 
-  const multiSelectQuery =
-    useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
-      targetObjectMetadataItems: nonSystemObjectMetadataItems,
-      depth: 0,
-    });
+  const multiSelectQuery = useGenerateCombinedFindManyRecordsQuery({
+    operationSignatures: selectableObjectMetadataItems.map(
+      (objectMetadataItem) => ({
+        objectNameSingular: objectMetadataItem.nameSingular,
+        variables: {},
+      }),
+    ),
+  });
 
   const {
     loading: toSelectAndMatchesSearchFilterObjectRecordsLoading,

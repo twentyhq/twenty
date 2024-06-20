@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
-import { IconMail } from 'twenty-ui';
 
-import { Tag } from '@/ui/display/tag/components/Tag';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type EmailThreadHeaderProps = {
@@ -44,12 +42,13 @@ export const EmailThreadHeader = ({
 }: EmailThreadHeaderProps) => {
   return (
     <StyledContainer>
-      <Tag Icon={IconMail} color="gray" text="Email" onClick={() => {}} />
       <StyledHead>
         <StyledHeading>{subject}</StyledHeading>
-        <StyledContent>
-          Last message {beautifyPastDateRelativeToNow(lastMessageSentAt)}
-        </StyledContent>
+        {lastMessageSentAt && (
+          <StyledContent>
+            Last message {beautifyPastDateRelativeToNow(lastMessageSentAt)}
+          </StyledContent>
+        )}
       </StyledHead>
     </StyledContainer>
   );

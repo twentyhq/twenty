@@ -1,23 +1,40 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { Tag, THEME_COMMON } from 'twenty-ui';
 
-import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField.ts';
-import { Tag } from '@/ui/display/tag/components/Tag';
+import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
+import { useMultiSelectFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useMultiSelectFieldDisplay';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
-const StyledTagContainer = styled.div`
+const spacing1 = THEME_COMMON.spacing(1);
+
+const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-export const MultiSelectFieldDisplay = () => {
-  const { fieldValues, fieldDefinition } = useMultiSelectField();
+  gap: ${spacing1};
+  justify-content: flex-start;
 
-  const selectedOptions = fieldValues
-    ? fieldDefinition.metadata.options.filter((option) =>
-        fieldValues.includes(option.value),
+  max-width: 100%;
+
+  overflow: hidden;
+
+  width: 100%;
+`;
+
+export const MultiSelectFieldDisplay = () => {
+  const { fieldValue, fieldDefinition } = useMultiSelectFieldDisplay();
+
+  const { isFocused } = useFieldFocus();
+
+  const selectedOptions = fieldValue
+    ? fieldDefinition.metadata.options?.filter((option) =>
+        fieldValue.includes(option.value),
       )
     : [];
 
-  return selectedOptions ? (
-    <StyledTagContainer>
+  if (!selectedOptions) return null;
+
+  return isFocused ? (
+    <ExpandableList isChipCountDisplayed={isFocused}>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           key={index}
@@ -25,8 +42,17 @@ export const MultiSelectFieldDisplay = () => {
           text={selectedOption.label}
         />
       ))}
-    </StyledTagContainer>
+    </ExpandableList>
   ) : (
-    <></>
+    <StyledContainer>
+      {selectedOptions.map((selectedOption, index) => (
+        <Tag
+          preventShrink
+          key={index}
+          color={selectedOption.color}
+          text={selectedOption.label}
+        />
+      ))}
+    </StyledContainer>
   );
 };

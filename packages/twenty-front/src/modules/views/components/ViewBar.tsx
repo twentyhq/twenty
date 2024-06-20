@@ -4,18 +4,18 @@ import { useParams } from 'react-router-dom';
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
+import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
 import { QueryParamsViewIdEffect } from '@/views/components/QueryParamsViewIdEffect';
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
+import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
+import { ViewBarSkeletonLoader } from '@/views/components/ViewBarSkeletonLoader';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
-import { capitalize } from '~/utils/string/capitalize';
 
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
@@ -37,19 +37,14 @@ export const ViewBar = ({
 }: ViewBarProps) => {
   const { objectNamePlural } = useParams();
 
-  const { currentViewWithCombinedFiltersAndSorts: currentView } =
-    useGetCurrentView(viewBarId);
-
   const filterDropdownId = 'view-filter';
   const sortDropdownId = 'view-sort';
+
+  const loading = useIsPrefetchLoading();
 
   if (!objectNamePlural) {
     return;
   }
-
-  const pageTitle = currentView?.name
-    ? `${currentView?.name} - ${capitalize(objectNamePlural)}`
-    : capitalize(objectNamePlural);
 
   return (
     <ViewScope
@@ -62,13 +57,11 @@ export const ViewBar = ({
       <QueryParamsFiltersEffect />
       <QueryParamsViewIdEffect />
 
-      <PageTitle title={pageTitle} />
+      <ViewBarPageTitle viewBarId={viewBarId} />
       <TopBar
         className={className}
         leftComponent={
-          <>
-            <ViewPickerDropdown />
-          </>
+          loading ? <ViewBarSkeletonLoader /> : <ViewPickerDropdown />
         }
         displayBottomBorder={false}
         rightComponent={

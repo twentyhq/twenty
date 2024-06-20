@@ -1,9 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { AnimatedCheckmark } from 'twenty-ui';
+import { AnimatedCheckmark, MOBILE_VIEWPORT } from 'twenty-ui';
 
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledContainer = styled.div<{ isLast: boolean }>`

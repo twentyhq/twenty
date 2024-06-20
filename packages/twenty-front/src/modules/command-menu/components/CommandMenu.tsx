@@ -22,6 +22,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
@@ -34,19 +35,16 @@ import { CommandMenuItem } from './CommandMenuItem';
 
 export const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
+  border-left: 1px solid ${({ theme }) => theme.border.color.medium};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   font-family: ${({ theme }) => theme.font.family};
-  left: 50%;
-  max-width: 640px;
+  height: 100%;
   overflow: hidden;
   padding: 0;
   position: fixed;
-  top: 30%;
-  transform: ${() =>
-    useIsMobile() ? 'translateX(-49.5%)' : 'translateX(-50%)'};
-  width: ${() => (useIsMobile() ? 'calc(100% - 40px)' : '100%')};
+  right: 0%;
+  top: 0%;
+  width: ${() => (useIsMobile() ? '100%' : '500px')};
   z-index: 1000;
 `;
 
@@ -59,7 +57,8 @@ export const StyledInput = styled.input`
   font-size: ${({ theme }) => theme.font.size.lg};
   margin: 0;
   outline: none;
-  padding: ${({ theme }) => theme.spacing(5)};
+  height: 24px;
+  padding: ${({ theme }) => theme.spacing(4)};
   width: ${({ theme }) => `calc(100% - ${theme.spacing(10)})`};
 
   &::placeholder {
@@ -79,8 +78,6 @@ const StyledCancelText = styled.span`
 
 export const StyledList = styled.div`
   background: ${({ theme }) => theme.background.secondary};
-  height: 400px;
-  max-height: 400px;
   overscroll-behavior: contain;
   transition: 100ms ease;
   transition-property: height;
@@ -118,6 +115,8 @@ export const CommandMenu = () => {
     setCommandMenuSearch(event.target.value);
   };
 
+  const isMobile = useIsMobile();
+
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
@@ -142,8 +141,10 @@ export const CommandMenu = () => {
     objectNameSingular: CoreObjectNameSingular.Person,
     filter: commandMenuSearch
       ? makeOrFilterVariables([
-          { name: { firstName: { ilike: `%${commandMenuSearch}%` } } },
-          { name: { lastName: { ilike: `%${commandMenuSearch}%` } } },
+          ...generateILikeFiltersForCompositeFields(commandMenuSearch, 'name', [
+            'firstName',
+            'lastName',
+          ]),
           { email: { ilike: `%${commandMenuSearch}%` } },
           { phone: { ilike: `%${commandMenuSearch}%` } },
         ])
@@ -264,7 +265,7 @@ export const CommandMenu = () => {
             placeholder="Search"
             onChange={handleSearchChange}
           />
-          <StyledCancelText>Esc to cancel</StyledCancelText>
+          {!isMobile && <StyledCancelText>Esc to cancel</StyledCancelText>}
           <StyledList>
             <ScrollWrapper>
               <StyledInnerList>

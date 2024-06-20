@@ -17,6 +17,7 @@ export const formatFieldMetadataItemsAsSortDefinitions = ({
         FieldMetadataType.Text,
         FieldMetadataType.Boolean,
         FieldMetadataType.Select,
+        FieldMetadataType.Phone,
       ].includes(field.type)
     ) {
       return acc;

@@ -1,9 +1,10 @@
 import { ApolloCache, gql } from '@apollo/client';
 
-import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
@@ -13,15 +14,20 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   objectMetadataItems,
   cache,
   recordId,
+  recordGqlFields,
 }: {
   cache: ApolloCache<object>;
   recordId: string;
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
+  recordGqlFields?: RecordGqlFields;
 }) => {
   if (isUndefinedOrNull(objectMetadataItem)) {
     return null;
   }
+
+  const appliedRecordGqlFields =
+    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
 
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
@@ -30,6 +36,7 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
         {
           objectMetadataItems,
           objectMetadataItem,
+          recordGqlFields: appliedRecordGqlFields,
         },
       )}
     `;
@@ -49,7 +56,7 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
     return null;
   }
 
-  return getRecordFromRecordNode({
+  return getRecordFromRecordNode<T>({
     recordNode: record,
-  }) as CachedObjectRecord<T>;
+  });
 };

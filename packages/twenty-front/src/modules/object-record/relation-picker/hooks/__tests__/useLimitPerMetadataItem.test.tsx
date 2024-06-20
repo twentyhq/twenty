@@ -20,6 +20,7 @@ describe('useLimitPerMetadataItem', () => {
       isActive: true,
       isCustom: true,
       isSystem: true,
+      isRemote: false,
       labelPlural: 'labelPlural',
       labelSingular: 'labelSingular',
       namePlural: 'namePlural',

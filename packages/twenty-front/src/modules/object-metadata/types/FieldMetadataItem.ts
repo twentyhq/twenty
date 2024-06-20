@@ -1,8 +1,10 @@
-import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
+import { ThemeColor } from 'twenty-ui';
+
 import {
   Field,
   Object as MetadataObject,
   Relation,
+  RelationDefinition,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
@@ -21,6 +23,7 @@ export type FieldMetadataItem = Omit<
   | 'toRelationMetadata'
   | 'defaultValue'
   | 'options'
+  | 'settings'
   | 'relationDefinition'
 > & {
   __typename?: string;
@@ -28,7 +31,7 @@ export type FieldMetadataItem = Omit<
     | (Pick<Relation, 'id' | 'toFieldMetadataId' | 'relationType'> & {
         toObjectMetadata: Pick<
           Relation['toObjectMetadata'],
-          'id' | 'nameSingular' | 'namePlural' | 'isSystem'
+          'id' | 'nameSingular' | 'namePlural' | 'isSystem' | 'isRemote'
         >;
       })
     | null;
@@ -36,13 +39,14 @@ export type FieldMetadataItem = Omit<
     | (Pick<Relation, 'id' | 'fromFieldMetadataId' | 'relationType'> & {
         fromObjectMetadata: Pick<
           Relation['fromObjectMetadata'],
-          'id' | 'nameSingular' | 'namePlural' | 'isSystem'
+          'id' | 'nameSingular' | 'namePlural' | 'isSystem' | 'isRemote'
         >;
       })
     | null;
   defaultValue?: any;
-  options?: FieldMetadataItemOption[];
+  options?: FieldMetadataItemOption[] | null;
   relationDefinition?: {
+    relationId: RelationDefinition['relationId'];
     direction: RelationDefinitionType;
     sourceFieldMetadata: Pick<Field, 'id' | 'name'>;
     sourceObjectMetadata: Pick<

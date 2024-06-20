@@ -14,13 +14,11 @@ export class ClientConfigResolver {
       authProviders: {
         google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
         magicLink: false,
-        password: true,
+        password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
+        microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
       },
       telemetry: {
         enabled: this.environmentService.get('TELEMETRY_ENABLED'),
-        anonymizationEnabled: this.environmentService.get(
-          'TELEMETRY_ANONYMIZATION_ENABLED',
-        ),
       },
       billing: {
         isBillingEnabled: this.environmentService.get('IS_BILLING_ENABLED'),
@@ -43,6 +41,11 @@ export class ClientConfigResolver {
         release: this.environmentService.get('SENTRY_RELEASE'),
         dsn: this.environmentService.get('SENTRY_FRONT_DSN'),
       },
+      captcha: {
+        provider: this.environmentService.get('CAPTCHA_DRIVER'),
+        siteKey: this.environmentService.get('CAPTCHA_SITE_KEY'),
+      },
+      chromeExtensionId: this.environmentService.get('CHROME_EXTENSION_ID'),
     };
 
     return Promise.resolve(clientConfig);

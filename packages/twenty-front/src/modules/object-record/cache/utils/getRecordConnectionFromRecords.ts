@@ -2,18 +2,18 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getConnectionTypename } from '@/object-record/cache/utils/getConnectionTypename';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { getRecordEdgeFromRecord } from '@/object-record/cache/utils/getRecordEdgeFromRecord';
+import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 
 export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
   objectMetadataItems,
   objectMetadataItem,
   records,
-  queryFields,
+  recordGqlFields,
   withPageInfo = true,
   computeReferences = false,
   isRootLevel = true,
-  depth = 1,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: Pick<
@@ -21,11 +21,10 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
     'fields' | 'namePlural' | 'nameSingular'
   >;
   records: T[];
-  queryFields?: Record<string, any>;
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
   withPageInfo?: boolean;
   isRootLevel?: boolean;
   computeReferences?: boolean;
-  depth?: number;
 }) => {
   return {
     __typename: getConnectionTypename(objectMetadataItem.nameSingular),
@@ -33,14 +32,13 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
       return getRecordEdgeFromRecord({
         objectMetadataItems,
         objectMetadataItem,
-        queryFields,
+        recordGqlFields,
         record,
         isRootLevel,
         computeReferences,
-        depth,
       });
     }),
     ...(withPageInfo && { pageInfo: getEmptyPageInfo() }),
     ...(withPageInfo && { totalCount: records.length }),
-  } as ObjectRecordConnection<T>;
+  } as RecordGqlConnection;
 };

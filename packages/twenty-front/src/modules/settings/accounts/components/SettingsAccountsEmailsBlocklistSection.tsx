@@ -1,4 +1,5 @@
 import { useRecoilValue } from 'recoil';
+import { H2Title } from 'twenty-ui';
 
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -8,7 +9,6 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsEmailsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistInput';
 import { SettingsAccountsEmailsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistTable';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
 
 export const SettingsAccountsEmailsBlocklistSection = () => {
@@ -45,6 +45,7 @@ export const SettingsAccountsEmailsBlocklistSection = () => {
         description="Exclude the following people and domains from my email sync"
       />
       <SettingsAccountsEmailsBlocklistInput
+        blockedEmailOrDomainList={blocklist.map((item) => item.handle)}
         updateBlockedEmailList={updateBlockedEmailList}
       />
       <SettingsAccountsEmailsBlocklistTable

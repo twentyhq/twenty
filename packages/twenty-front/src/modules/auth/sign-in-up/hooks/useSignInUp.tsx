@@ -2,9 +2,11 @@ import { useCallback, useState } from 'react';
 import { SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
-import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp.ts';
-import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
+import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { AppPath } from '@/types/AppPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
@@ -28,8 +30,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
 
-  const { navigateAfterSignInUp } = useNavigateAfterSignInUp();
-
   const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
 
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
@@ -48,24 +48,36 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
+  const { readCaptchaToken } = useReadCaptchaToken();
+
   const continueWithEmail = useCallback(() => {
+    requestFreshCaptchaToken();
     setSignInUpStep(SignInUpStep.Email);
     setSignInUpMode(
       isMatchingLocation(AppPath.SignInUp)
         ? SignInUpMode.SignIn
         : SignInUpMode.SignUp,
     );
-  }, [setSignInUpStep, setSignInUpMode, isMatchingLocation]);
+  }, [isMatchingLocation, requestFreshCaptchaToken]);
 
-  const continueWithCredentials = useCallback(() => {
+  const continueWithCredentials = useCallback(async () => {
+    const token = await readCaptchaToken();
     if (!form.getValues('email')) {
       return;
     }
     checkUserExistsQuery({
       variables: {
         email: form.getValues('email').toLowerCase().trim(),
+        captchaToken: token,
+      },
+      onError: (error) => {
+        enqueueSnackBar(`${error.message}`, {
+          variant: SnackBarVariant.Error,
+        });
       },
       onCompleted: (data) => {
+        requestFreshCaptchaToken();
         if (data?.checkUserExists.exists) {
           setSignInUpMode(SignInUpMode.SignIn);
         } else {
@@ -74,45 +86,50 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         setSignInUpStep(SignInUpStep.Password);
       },
     });
-  }, [setSignInUpStep, checkUserExistsQuery, form, setSignInUpMode]);
+  }, [
+    readCaptchaToken,
+    form,
+    checkUserExistsQuery,
+    enqueueSnackBar,
+    requestFreshCaptchaToken,
+  ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
+      const token = await readCaptchaToken();
       try {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
         }
 
-        const {
-          workspace: currentWorkspace,
-          workspaceMember: currentWorkspaceMember,
-        } =
-          signInUpMode === SignInUpMode.SignIn && !isInviteMode
-            ? await signInWithCredentials(
-                data.email.toLowerCase().trim(),
-                data.password,
-              )
-            : await signUpWithCredentials(
-                data.email.toLowerCase().trim(),
-                data.password,
-                workspaceInviteHash,
-              );
-
-        navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
+        signInUpMode === SignInUpMode.SignIn && !isInviteMode
+          ? await signInWithCredentials(
+              data.email.toLowerCase().trim(),
+              data.password,
+              token,
+            )
+          : await signUpWithCredentials(
+              data.email.toLowerCase().trim(),
+              data.password,
+              workspaceInviteHash,
+              token,
+            );
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         });
+        requestFreshCaptchaToken();
       }
     },
     [
+      readCaptchaToken,
       signInUpMode,
       isInviteMode,
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
-      navigateAfterSignInUp,
       enqueueSnackBar,
+      requestFreshCaptchaToken,
     ],
   );
 

@@ -36,6 +36,23 @@ export class CompanyRepository {
     return existingCompanies;
   }
 
+  public async getLastCompanyPosition(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<number> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const result = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT MAX(position) FROM ${dataSourceSchema}.company`,
+      [],
+      workspaceId,
+      transactionManager,
+    );
+
+    return result[0].max ?? 0;
+  }
+
   public async createCompany(
     workspaceId: string,
     companyToCreate: CompanyToCreate,
@@ -44,14 +61,20 @@ export class CompanyRepository {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
+    const lastCompanyPosition = await this.getLastCompanyPosition(
+      workspaceId,
+      transactionManager,
+    );
+
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}.company (id, "domainName", name, address)
-      VALUES ($1, $2, $3, $4)`,
+      `INSERT INTO ${dataSourceSchema}.company (id, "domainName", name, address, position)
+      VALUES ($1, $2, $3, $4, $5)`,
       [
         companyToCreate.id,
         companyToCreate.domainName,
         companyToCreate.name ?? '',
         companyToCreate.city ?? '',
+        lastCompanyPosition + 1,
       ],
       workspaceId,
       transactionManager,

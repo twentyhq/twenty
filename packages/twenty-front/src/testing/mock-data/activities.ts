@@ -35,14 +35,18 @@ type MockedActivity = Pick<
       | 'companyId'
       | 'targetObjectNameSingular'
     > & {
-      activity: Pick<Activity, 'id' | 'createdAt' | 'updatedAt'>;
-      person?: Pick<Person, 'id' | 'name' | 'avatarUrl'> | null;
-      company?: Pick<Company, 'id' | 'name' | 'domainName'> | null;
+      activity: Pick<Activity, 'id' | 'createdAt' | 'updatedAt' | '__typename'>;
+      person?: Pick<Person, 'id' | 'name' | 'avatarUrl' | '__typename'> | null;
+      company?: Pick<
+        Company,
+        'id' | 'name' | 'domainName' | '__typename'
+      > | null;
     }
   >;
 };
 
 const workspaceMember: WorkspaceMember = {
+  __typename: 'WorkspaceMember',
   id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
   name: {
     firstName: 'Charles',
@@ -103,6 +107,7 @@ export const mockedActivities: Array<MockedActivity> = [
         personId: null,
         companyId: '89bb825c-171e-4bcc-9cf7-43448d6fb280',
         company: {
+          __typename: 'Company',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb280',
           name: 'Airbnb',
           domainName: 'airbnb.com',
@@ -110,6 +115,7 @@ export const mockedActivities: Array<MockedActivity> = [
         person: null,
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
         activity: {
+          __typename: 'Activity',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
           createdAt: '2023-04-26T10:12:42.33625+00:00',
           updatedAt: '2023-04-26T10:23:42.33625+00:00',
@@ -124,6 +130,7 @@ export const mockedActivities: Array<MockedActivity> = [
         personId: null,
         companyId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
         company: {
+          __typename: 'Company',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
           name: 'Aircall',
           domainName: 'aircall.io',
@@ -131,6 +138,7 @@ export const mockedActivities: Array<MockedActivity> = [
         person: null,
         activityId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
         activity: {
+          __typename: 'Activity',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb231',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -166,6 +174,7 @@ export const mockedActivities: Array<MockedActivity> = [
         targetObjectNameSingular: 'person',
         personId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b', // Alexandre
         person: {
+          __typename: 'Person',
           id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
           name: {
             firstName: 'Alexandre',
@@ -177,6 +186,7 @@ export const mockedActivities: Array<MockedActivity> = [
         companyId: null,
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
         activity: {
+          __typename: 'Activity',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
           createdAt: '2023-04-26T10:12:42.33625+00:00',
           updatedAt: '2023-04-26T10:23:42.33625+00:00',
@@ -192,6 +202,7 @@ export const mockedActivities: Array<MockedActivity> = [
         targetObjectNameSingular: 'person',
         company: null,
         person: {
+          __typename: 'Person',
           id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
           name: {
             firstName: 'Jean',
@@ -201,6 +212,7 @@ export const mockedActivities: Array<MockedActivity> = [
         },
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
         activity: {
+          __typename: 'Activity',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),

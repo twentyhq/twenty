@@ -24,6 +24,29 @@ const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
   return <></>;
 };
 
+type DateFieldValueGaterProps = Pick<
+  DateTimeFieldInputProps,
+  'onEscape' | 'onEnter' | 'onClickOutside'
+>;
+
+const DateFieldValueGater = ({
+  onEscape,
+  onEnter,
+  onClickOutside,
+}: DateFieldValueGaterProps) => {
+  const { fieldValue } = useDateTimeField();
+
+  return (
+    fieldValue && (
+      <DateTimeFieldInput
+        onEscape={onEscape}
+        onEnter={onEnter}
+        onClickOutside={onClickOutside}
+      />
+    )
+  );
+};
+
 type DateFieldInputWithContextProps = DateTimeFieldInputProps & {
   value: Date;
   entityId?: string;
@@ -47,6 +70,7 @@ const DateFieldInputWithContext = ({
       <FieldContextProvider
         fieldDefinition={{
           fieldMetadataId: 'date',
+          defaultValue: null,
           label: 'Date',
           type: FieldMetadataType.DateTime,
           iconName: 'IconCalendarEvent',
@@ -58,7 +82,7 @@ const DateFieldInputWithContext = ({
         entityId={entityId}
       >
         <DateFieldValueSetterEffect value={value} />
-        <DateTimeFieldInput
+        <DateFieldValueGater
           onEscape={onEscape}
           onEnter={onEnter}
           onClickOutside={onClickOutside}
@@ -102,9 +126,9 @@ type Story = StoryObj<typeof DateFieldInputWithContext>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const div = await canvas.findByText('Feb 1, 2022');
+    const div = await canvas.findByText('February');
 
-    await expect(div.innerText).toContain('Feb 1, 2022');
+    await expect(div.innerText).toContain('February');
   },
 };
 
@@ -114,6 +138,7 @@ export const ClickOutside: Story = {
 
     await expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByText('February');
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
     await userEvent.click(emptyDiv);
 
@@ -122,19 +147,23 @@ export const ClickOutside: Story = {
 };
 
 export const Escape: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
     await expect(escapeJestFn).toHaveBeenCalledTimes(0);
+    const canvas = within(canvasElement);
 
-    await userEvent.keyboard('{esc}');
+    await canvas.findByText('February');
+    await userEvent.keyboard('{escape}');
 
     await expect(escapeJestFn).toHaveBeenCalledTimes(1);
   },
 };
 
 export const Enter: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
     await expect(enterJestFn).toHaveBeenCalledTimes(0);
+    const canvas = within(canvasElement);
 
+    await canvas.findByText('February');
     await userEvent.keyboard('{enter}');
 
     await expect(enterJestFn).toHaveBeenCalledTimes(1);

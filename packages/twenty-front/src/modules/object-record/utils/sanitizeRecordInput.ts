@@ -3,10 +3,11 @@ import { isString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isFieldRelationValue } from '@/object-record/record-field/types/guards/isFieldRelationValue';
+import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { sanitizeLink } from '@/object-record/utils/sanitizeLinkRecordInput';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
 export const sanitizeRecordInput = ({
   objectMetadataItem,
@@ -30,7 +31,7 @@ export const sanitizeRecordInput = ({
 
         if (
           fieldMetadataItem.type === FieldMetadataType.Relation &&
-          isFieldRelationValue(fieldValue)
+          isFieldRelationValue<EntityForSelect>(fieldValue)
         ) {
           const relationIdFieldName = `${fieldMetadataItem.name}Id`;
           const relationIdFieldMetadataItem = objectMetadataItem.fields.find(
@@ -54,6 +55,6 @@ export const sanitizeRecordInput = ({
 
   return {
     ...filteredResultRecord,
-    domainName: sanitizeLink(filteredResultRecord.domainName),
+    domainName: getUrlHostName(filteredResultRecord.domainName),
   };
 };

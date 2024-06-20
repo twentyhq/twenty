@@ -18,7 +18,6 @@ export const CurrentUserDueTaskCountEffect = () => {
 
   const { records: tasks } = useFindManyRecords<Activity>({
     objectNameSingular: CoreObjectNameSingular.Activity,
-    depth: 0,
     filter: {
       type: { eq: 'Task' },
       completedAt: { is: 'NULL' },

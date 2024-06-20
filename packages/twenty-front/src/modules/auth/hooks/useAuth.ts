@@ -11,11 +11,12 @@ import { iconsState } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState.ts';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
+import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
@@ -56,11 +57,12 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const handleChallenge = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string, captchaToken?: string) => {
       const challengeResult = await challenge({
         variables: {
           email,
           password,
+          captchaToken,
         },
       });
 
@@ -133,8 +135,12 @@ export const useAuth = () => {
   );
 
   const handleCrendentialsSignIn = useCallback(
-    async (email: string, password: string) => {
-      const { loginToken } = await handleChallenge(email, password);
+    async (email: string, password: string, captchaToken?: string) => {
+      const { loginToken } = await handleChallenge(
+        email,
+        password,
+        captchaToken,
+      );
       setIsVerifyPendingState(true);
 
       const { user, workspaceMember, workspace } = await handleVerify(
@@ -167,6 +173,9 @@ export const useAuth = () => {
         const supportChat = snapshot.getLoadable(supportChatState).getValue();
         const telemetry = snapshot.getLoadable(telemetryState).getValue();
         const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
+        const captchaProvider = snapshot
+          .getLoadable(captchaProviderState)
+          .getValue();
         const isClientConfigLoaded = snapshot
           .getLoadable(isClientConfigLoadedState)
           .getValue();
@@ -175,8 +184,6 @@ export const useAuth = () => {
           .getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
-          set(isClientConfigLoadedState, isClientConfigLoaded);
-          set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(iconsState, iconsValue);
           set(authProvidersState, authProvidersValue);
           set(billingState, billing);
@@ -184,6 +191,9 @@ export const useAuth = () => {
           set(supportChatState, supportChat);
           set(telemetryState, telemetry);
           set(isDebugModeState, isDebugMode);
+          set(captchaProviderState, captchaProvider);
+          set(isClientConfigLoadedState, isClientConfigLoaded);
+          set(isCurrentUserLoadedState, isCurrentUserLoaded);
           return undefined;
         });
 
@@ -196,7 +206,12 @@ export const useAuth = () => {
   );
 
   const handleCredentialsSignUp = useCallback(
-    async (email: string, password: string, workspaceInviteHash?: string) => {
+    async (
+      email: string,
+      password: string,
+      workspaceInviteHash?: string,
+      captchaToken?: string,
+    ) => {
       setIsVerifyPendingState(true);
 
       const signUpResult = await signUp({
@@ -204,6 +219,7 @@ export const useAuth = () => {
           email,
           password,
           workspaceInviteHash,
+          captchaToken,
         },
       });
 
@@ -234,6 +250,14 @@ export const useAuth = () => {
       }` || '';
   }, []);
 
+  const handleMicrosoftLogin = useCallback((workspaceInviteHash?: string) => {
+    const authServerUrl = REACT_APP_SERVER_BASE_URL;
+    window.location.href =
+      `${authServerUrl}/auth/microsoft/${
+        workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
+      }` || '';
+  }, []);
+
   return {
     challenge: handleChallenge,
     verify: handleVerify,
@@ -244,5 +268,6 @@ export const useAuth = () => {
     signUpWithCredentials: handleCredentialsSignUp,
     signInWithCredentials: handleCrendentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
+    signInWithMicrosoft: handleMicrosoftLogin,
   };
 };

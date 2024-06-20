@@ -49,9 +49,9 @@ const mocks: MockedResponse[] = [
       query: gql`
         query FindManyActivityTargets(
           $filter: ActivityTargetFilterInput
-          $orderBy: ActivityTargetOrderByInput
+          $orderBy: [ActivityTargetOrderByInput]
           $lastCursor: String
-          $limit: Float
+          $limit: Int
         ) {
           activityTargets(
             filter: $filter
@@ -79,7 +79,7 @@ const mocks: MockedResponse[] = [
         }
       `,
       variables: {
-        filter: { activityTargetId: { eq: '123' } },
+        filter: { companyId: { eq: '123' } },
         limit: undefined,
         orderBy: undefined,
       },
@@ -103,9 +103,9 @@ const mocks: MockedResponse[] = [
       query: gql`
         query FindManyActivities(
           $filter: ActivityFilterInput
-          $orderBy: ActivityOrderByInput
+          $orderBy: [ActivityOrderByInput]
           $lastCursor: String
-          $limit: Float
+          $limit: Int
         ) {
           activities(
             filter: $filter
@@ -142,7 +142,7 @@ const mocks: MockedResponse[] = [
       variables: {
         filter: { id: { in: ['234'] } },
         limit: undefined,
-        orderBy: {},
+        orderBy: [{}],
       },
     },
     result: jest.fn(() => ({
@@ -178,9 +178,8 @@ describe('useActivities', () => {
         useActivities({
           targetableObjects: [],
           activitiesFilters: {},
-          activitiesOrderByVariables: {},
+          activitiesOrderByVariables: [{}],
           skip: false,
-          skipActivityTargets: false,
         }),
       { wrapper: Wrapper },
     );
@@ -188,8 +187,6 @@ describe('useActivities', () => {
     expect(result.current).toEqual({
       activities: [],
       loading: false,
-      initialized: true,
-      noActivities: true,
     });
   });
 
@@ -202,12 +199,11 @@ describe('useActivities', () => {
 
         const activities = useActivities({
           targetableObjects: [
-            { targetObjectNameSingular: 'activityTarget', id: '123' },
+            { targetObjectNameSingular: 'company', id: '123' },
           ],
           activitiesFilters: {},
-          activitiesOrderByVariables: {},
+          activitiesOrderByVariables: [{}],
           skip: false,
-          skipActivityTargets: false,
         });
         return { activities, setCurrentWorkspaceMember };
       },
@@ -218,18 +214,9 @@ describe('useActivities', () => {
       result.current.setCurrentWorkspaceMember(mockWorkspaceMembers[0]);
     });
 
-    expect(result.current.activities.loading).toBe(true);
-
-    // Wait for activityTargets to complete fetching
-    await waitFor(() => !result.current.activities.loading);
-
-    expect(result.current.activities.loading).toBe(false);
-
-    // Wait for request to fetch activities to be made
-    await waitFor(() => result.current.activities.loading);
-
-    // Wait for activities to complete fetching
-    await waitFor(() => !result.current.activities.loading);
+    await waitFor(() => {
+      expect(result.current.activities.loading).toBe(false);
+    });
 
     const { activities } = result.current;
 

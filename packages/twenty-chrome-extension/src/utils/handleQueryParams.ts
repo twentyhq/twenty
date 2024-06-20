@@ -14,7 +14,7 @@ const handleQueryParams = (inputData: { [x: string]: unknown }): string => {
       result = result.concat(`${key}: ${quote}${inputData[key]}${quote}, `);
     }
   });
-  if (result.length) result = result.slice(0, -2); // Remove the last ', '
+  if (result.length > 0) result = result.slice(0, -2); // Remove the last ', '
   return result;
 };
 

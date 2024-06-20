@@ -1,6 +1,6 @@
 import { MouseEvent, ReactNode } from 'react';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { Theme, withTheme } from '@emotion/react';
+import { styled } from '@linaria/react';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 
@@ -35,115 +35,83 @@ type ChipProps = {
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 };
 
-const StyledContainer = styled.div<
+const StyledContainer = withTheme(styled.div<
   Pick<
     ChipProps,
     'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant'
-  >
+  > & { theme: Theme }
 >`
   --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --chip-vertical-padding: ${({ theme }) => theme.spacing(1)};
 
+  text-decoration: none;
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme, disabled }) =>
-    disabled ? theme.font.color.light : theme.font.color.secondary};
-  cursor: ${({ clickable, disabled }) =>
-    clickable ? 'pointer' : disabled ? 'not-allowed' : 'inherit'};
+
+  color: ${({ theme, accent, disabled }) =>
+    disabled
+      ? theme.font.color.light
+      : accent === ChipAccent.TextPrimary
+        ? theme.font.color.primary
+        : theme.font.color.secondary};
+
+  cursor: ${({ clickable, disabled, variant }) =>
+    variant === ChipVariant.Transparent
+      ? 'inherit'
+      : clickable
+        ? 'pointer'
+        : disabled
+          ? 'not-allowed'
+          : 'inherit'};
+
   display: inline-flex;
+  justify-content: center;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(3)};
   max-width: ${({ maxWidth }) =>
     maxWidth
       ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
       : '200px'};
+
   overflow: hidden;
   padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
   user-select: none;
 
-  // Accent style overrides
-  ${({ accent, disabled, theme }) => {
-    if (accent === ChipAccent.TextPrimary) {
-      return (
-        !disabled &&
-        css`
-          color: ${theme.font.color.primary};
-        `
-      );
-    }
+  font-weight: ${({ theme, accent }) =>
+    accent === ChipAccent.TextSecondary ? theme.font.weight.medium : 'inherit'};
 
-    if (accent === ChipAccent.TextSecondary) {
-      return css`
-        font-weight: ${theme.font.weight.medium};
-      `;
-    }
-  }}
+  &:hover {
+    background-color: ${({ theme, variant, disabled }) =>
+      variant === ChipVariant.Regular && !disabled
+        ? theme.background.transparent.light
+        : variant === ChipVariant.Highlighted
+          ? theme.background.transparent.medium
+          : 'inherit'};
+  }
 
-  // Size style overrides
-  ${({ theme, size }) =>
-    size === ChipSize.Large &&
-    css`
-      height: ${theme.spacing(4)};
-    `}
+  &:active {
+    background-color: ${({ theme, disabled, variant }) =>
+      variant === ChipVariant.Regular && !disabled
+        ? theme.background.transparent.medium
+        : variant === ChipVariant.Highlighted
+          ? theme.background.transparent.strong
+          : 'inherit'};
+  }
 
-  // Variant style overrides
-  ${({ disabled, theme, variant }) => {
-    if (variant === ChipVariant.Regular) {
-      return (
-        !disabled &&
-        css`
-          :hover {
-            background-color: ${theme.background.transparent.light};
-          }
+  background-color: ${({ theme, variant }) =>
+    variant === ChipVariant.Highlighted
+      ? theme.background.transparent.light
+      : variant === ChipVariant.Rounded
+        ? theme.background.transparent.lighter
+        : 'inherit'};
 
-          :active {
-            background-color: ${theme.background.transparent.medium};
-          }
-        `
-      );
-    }
+  border: ${({ theme, variant }) =>
+    variant === ChipVariant.Rounded
+      ? `1px solid ${theme.border.color.medium}`
+      : 'none'};
 
-    if (variant === ChipVariant.Highlighted) {
-      return css`
-        background-color: ${theme.background.transparent.light};
-
-        ${!disabled &&
-        css`
-          :hover {
-            background-color: ${theme.background.transparent.medium};
-          }
-
-          :active {
-            background-color: ${theme.background.transparent.strong};
-          }
-        `}
-      `;
-    }
-
-    if (variant === ChipVariant.Rounded) {
-      return css`
-        --chip-horizontal-padding: ${theme.spacing(2)};
-        --chip-vertical-padding: 3px;
-
-        background-color: ${theme.background.transparent.lighter};
-        border: 1px solid ${theme.border.color.medium};
-        border-radius: 50px;
-      `;
-    }
-
-    if (variant === ChipVariant.Transparent) {
-      return css`
-        cursor: inherit;
-      `;
-    }
-  }}
-`;
-
-const StyledLabel = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+  border-radius: ${({ theme, variant }) =>
+    variant === ChipVariant.Rounded ? '50px' : theme.border.radius.sm};
+`);
 
 export const Chip = ({
   size = ChipSize.Small,
@@ -154,25 +122,24 @@ export const Chip = ({
   leftComponent,
   rightComponent,
   accent = ChipAccent.TextPrimary,
-  maxWidth,
-  className,
   onClick,
-}: ChipProps) => (
-  <StyledContainer
-    data-testid="chip"
-    clickable={clickable}
-    variant={variant}
-    accent={accent}
-    size={size}
-    disabled={disabled}
-    className={className}
-    maxWidth={maxWidth}
-    onClick={onClick}
-  >
-    {leftComponent}
-    <StyledLabel>
-      <OverflowingTextWithTooltip text={label} />
-    </StyledLabel>
-    {rightComponent}
-  </StyledContainer>
-);
+}: ChipProps) => {
+  return (
+    <StyledContainer
+      data-testid="chip"
+      accent={accent}
+      clickable={clickable}
+      disabled={disabled}
+      size={size}
+      variant={variant}
+      onClick={onClick}
+    >
+      {leftComponent}
+      <OverflowingTextWithTooltip
+        size={size === ChipSize.Large ? 'large' : 'small'}
+        text={label}
+      />
+      {rightComponent}
+    </StyledContainer>
+  );
+};

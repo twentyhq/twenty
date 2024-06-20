@@ -23,6 +23,7 @@ const InternalLinkItem = styled(Link)`
     color: ${Theme.text.color.quarternary};
     text-decoration: underline;
   }
+  font-family: var(--font-gabarito);
 `;
 
 const ExternalLinkItem = styled.a`
@@ -33,6 +34,7 @@ const ExternalLinkItem = styled.a`
 const ActivePage = styled.span`
   color: ${Theme.text.color.primary};
   font-weight: ${Theme.font.weight.medium};
+  font-family: var(--font-gabarito);
 `;
 
 const StyledSection = styled.div`
@@ -63,6 +65,7 @@ interface BreadcrumbsProps {
   }[];
   activePage: string;
   separator: string;
+  style?: boolean;
 }
 
 export const Breadcrumbs = ({

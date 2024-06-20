@@ -96,6 +96,20 @@ export class BillingService {
     return notCanceledSubscriptions?.[0];
   }
 
+  async getBillingSubscription(stripeSubscriptionId: string) {
+    return this.billingSubscriptionRepository.findOneOrFail({
+      where: { stripeSubscriptionId },
+    });
+  }
+
+  async getStripeCustomerId(workspaceId: string) {
+    const subscriptions = await this.billingSubscriptionRepository.find({
+      where: { workspaceId },
+    });
+
+    return subscriptions?.[0]?.stripeCustomerId;
+  }
+
   async getBillingSubscriptionItem(
     workspaceId: string,
     stripeProductId = this.environmentService.get(
@@ -131,11 +145,9 @@ export class BillingService {
     workspaceId: string,
     returnUrlPath?: string,
   ) {
-    const billingSubscription = await this.getCurrentBillingSubscription({
-      workspaceId,
-    });
+    const stripeCustomerId = await this.getStripeCustomerId(workspaceId);
 
-    if (!billingSubscription) {
+    if (!stripeCustomerId) {
       return;
     }
 
@@ -145,7 +157,7 @@ export class BillingService {
       : frontBaseUrl;
 
     const session = await this.stripeService.createBillingPortalSession(
-      billingSubscription.stripeCustomerId,
+      stripeCustomerId,
       returnUrl,
     );
 
@@ -190,19 +202,16 @@ export class BillingService {
       ? frontBaseUrl + successUrlPath
       : frontBaseUrl;
 
-    let quantity = 1;
+    const quantity =
+      (await this.userWorkspaceService.getWorkspaceMemberCount(
+        user.defaultWorkspaceId,
+      )) || 1;
 
     const stripeCustomerId = (
       await this.billingSubscriptionRepository.findOneBy({
         workspaceId: user.defaultWorkspaceId,
       })
     )?.stripeCustomerId;
-
-    try {
-      quantity = await this.userWorkspaceService.getWorkspaceMemberCount(
-        user.defaultWorkspaceId,
-      );
-    } catch (e) {}
 
     const session = await this.stripeService.createCheckoutSession(
       user,
@@ -250,6 +259,18 @@ export class BillingService {
       | Stripe.CustomerSubscriptionCreatedEvent.Data
       | Stripe.CustomerSubscriptionDeletedEvent.Data,
   ) {
+    const workspace = this.workspaceRepository.find({
+      where: { id: workspaceId },
+    });
+
+    if (!workspace) {
+      return;
+    }
+
+    await this.workspaceRepository.update(workspaceId, {
+      subscriptionStatus: data.object.status,
+    });
+
     await this.billingSubscriptionRepository.upsert(
       {
         workspaceId: workspaceId,
@@ -264,17 +285,9 @@ export class BillingService {
       },
     );
 
-    await this.workspaceRepository.update(workspaceId, {
-      subscriptionStatus: data.object.status,
-    });
-
-    const billingSubscription = await this.getCurrentBillingSubscription({
-      workspaceId,
-    });
-
-    if (!billingSubscription) {
-      return;
-    }
+    const billingSubscription = await this.getBillingSubscription(
+      data.object.id,
+    );
 
     await this.billingSubscriptionItemRepository.upsert(
       data.object.items.data.map((item) => {

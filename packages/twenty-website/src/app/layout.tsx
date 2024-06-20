@@ -8,6 +8,8 @@ import EmotionRootStyleRegistry from './emotion-root-style-registry';
 
 import './layout.css';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Twenty.com',
   description: 'Open Source CRM',

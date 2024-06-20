@@ -6,6 +6,14 @@ import { Background } from '@/app/_components/oss-friends/Background';
 import { ContentContainer } from '@/app/_components/oss-friends/ContentContainer';
 import { findAll } from '@/database/database';
 import { pullRequestModel, userModel } from '@/database/model';
+import { TWENTY_TEAM_MEMBERS } from '@/shared-utils/listTeamMembers';
+
+export const metadata = {
+  title: 'Twenty - Contributors',
+  description:
+    'Discover the brilliant minds behind Twenty.com. Meet our contributors and explore how their expertise contributes to making Twenty the leading open-source CRM. Join our community today.',
+  icons: '/images/core/logo.svg',
+};
 
 interface Contributor {
   id: string;
@@ -23,17 +31,7 @@ const Contributors = async () => {
 
   const fitlerContributors = contributors
     .filter((contributor) => contributor.isEmployee === '0')
-    .filter(
-      (contributor) =>
-        ![
-          'dependabot',
-          'cyborch',
-          'emilienchvt',
-          'Samox',
-          'nimraahmed',
-          'gitstart-app',
-        ].includes(contributor.id),
-    )
+    .filter((contributor) => !TWENTY_TEAM_MEMBERS.includes(contributor.id))
     .map((contributor) => {
       contributor.pullRequestCount = pullRequestByAuthor[contributor.id] || 0;
 

@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
+import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const isObjectRecordConnection = (
   objectNameSingular: string,
   value: unknown,
-): value is ObjectRecordConnection => {
+): value is RecordGqlConnection => {
   const objectConnectionTypeName = `${capitalize(
     objectNameSingular,
   )}Connection`;

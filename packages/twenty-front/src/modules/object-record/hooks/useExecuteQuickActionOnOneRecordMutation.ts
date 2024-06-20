@@ -39,7 +39,7 @@ export const useExecuteQuickActionOnOneRecordMutation = ({
     });
 
   const executeQuickActionOnOneRecordMutation = gql`
-    mutation ExecuteQuickActionOnOne${capitalizedObjectName}($idToExecuteQuickActionOn: UUID!)  {
+    mutation ExecuteQuickActionOnOne${capitalizedObjectName}($idToExecuteQuickActionOn: ID!)  {
        ${graphQLFieldForExecuteQuickActionOnOneRecordMutation}(id: $idToExecuteQuickActionOn) ${mapObjectMetadataToGraphQLQuery(
          {
            objectMetadataItems,

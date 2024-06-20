@@ -64,10 +64,25 @@ export type WorkspaceMigrationCreateComment = {
   comment: string;
 };
 
+export type WorkspaceMigrationForeignColumnDefinition =
+  WorkspaceMigrationColumnDefinition & {
+    distantColumnName: string;
+  };
+
+type ReferencedObject = {
+  object: string;
+};
+
+type ReferencedTableWithSchema = {
+  table_name: string;
+  schema_name: string;
+};
+
+export type ReferencedTable = ReferencedObject | ReferencedTableWithSchema;
+
 export type WorkspaceMigrationForeignTable = {
-  columns: WorkspaceMigrationColumnDefinition[];
-  referencedTableName: string;
-  referencedTableSchema: string;
+  columns: WorkspaceMigrationForeignColumnDefinition[];
+  referencedTable: ReferencedObject | ReferencedTableWithSchema;
   foreignDataWrapperId: string;
 };
 
@@ -91,6 +106,7 @@ export enum WorkspaceMigrationTableActionType {
   DROP = 'drop',
   CREATE_FOREIGN_TABLE = 'create_foreign_table',
   DROP_FOREIGN_TABLE = 'drop_foreign_table',
+  ALTER_FOREIGN_TABLE = 'alter_foreign_table',
 }
 
 export type WorkspaceMigrationTableAction = {

@@ -1,3 +1,5 @@
+import { IconComponent } from 'twenty-ui';
+
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldMetadata } from './FieldMetadata';
@@ -23,5 +25,6 @@ export type FieldDefinition<T extends FieldMetadata> = {
   type: FieldMetadataType;
   metadata: T;
   infoTooltipContent?: string;
-  defaultValue: any;
+  defaultValue?: any;
+  editButtonIcon?: IconComponent;
 };

@@ -3,9 +3,10 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '../constants/DesktopNavDrawerWidths';
@@ -69,6 +70,7 @@ export const NavigationDrawer = ({
   const isMobile = useIsMobile();
   const theme = useTheme();
   const isNavigationDrawerOpen = useRecoilValue(isNavigationDrawerOpenState);
+  const isSettingsPage = useIsSettingsPage();
 
   const handleHover = () => {
     setIsHovered(true);
@@ -90,7 +92,7 @@ export const NavigationDrawer = ({
       initial={false}
       animate={{
         width: isMobile ? mobileWidth : desktopWidth,
-        opacity: isNavigationDrawerOpen ? 1 : 0,
+        opacity: isNavigationDrawerOpen || isSettingsPage ? 1 : 0,
       }}
       transition={{
         duration: theme.animation.duration.normal,

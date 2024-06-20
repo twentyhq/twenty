@@ -5,11 +5,12 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { capitalize } from 'src/utils/capitalize';
 import {
   computeDepthParameters,
+  computeEndingBeforeParameters,
   computeFilterParameters,
   computeIdPathParameter,
-  computeLastCursorParameters,
   computeLimitParameters,
   computeOrderByParameters,
+  computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
@@ -19,44 +20,54 @@ type Properties = {
   [name: string]: Property;
 };
 
+const getFieldProperties = (type: FieldMetadataType): Property => {
+  switch (type) {
+    case FieldMetadataType.UUID:
+      return { type: 'string', format: 'uuid' };
+    case FieldMetadataType.TEXT:
+    case FieldMetadataType.PHONE:
+      return { type: 'string' };
+    case FieldMetadataType.EMAIL:
+      return { type: 'string', format: 'email' };
+    case FieldMetadataType.DATE_TIME:
+    case FieldMetadataType.DATE:
+      return { type: 'string', format: 'date' };
+    case FieldMetadataType.NUMBER:
+      return { type: 'integer' };
+    case FieldMetadataType.NUMERIC:
+    case FieldMetadataType.PROBABILITY:
+    case FieldMetadataType.RATING:
+    case FieldMetadataType.POSITION:
+      return { type: 'number' };
+    case FieldMetadataType.BOOLEAN:
+      return { type: 'boolean' };
+    case FieldMetadataType.RAW_JSON:
+      return { type: 'object' };
+    default:
+      return { type: 'string' };
+  }
+};
+
 const getSchemaComponentsProperties = (
   item: ObjectMetadataEntity,
 ): Properties => {
   return item.fields.reduce((node, field) => {
+    if (field.type == FieldMetadataType.RELATION) {
+      return node;
+    }
+
     let itemProperty = {} as Property;
 
     switch (field.type) {
-      case FieldMetadataType.UUID:
-      case FieldMetadataType.TEXT:
-      case FieldMetadataType.PHONE:
-      case FieldMetadataType.EMAIL:
-      case FieldMetadataType.DATE_TIME:
-      case FieldMetadataType.DATE:
-        itemProperty.type = 'string';
-        break;
-      case FieldMetadataType.NUMBER:
-      case FieldMetadataType.NUMERIC:
-      case FieldMetadataType.PROBABILITY:
-      case FieldMetadataType.RATING:
-      case FieldMetadataType.POSITION:
-        itemProperty.type = 'number';
-        break;
-      case FieldMetadataType.BOOLEAN:
-        itemProperty.type = 'boolean';
-        break;
-      case FieldMetadataType.RELATION:
-        if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
-          itemProperty = {
-            type: 'array',
-            items: {
-              $ref: `#/components/schemas/${capitalize(
-                field.fromRelationMetadata?.toObjectMetadata.nameSingular || '',
-              )}`,
-            },
-          };
-        }
+      case FieldMetadataType.SELECT:
+      case FieldMetadataType.MULTI_SELECT:
+        itemProperty = {
+          type: 'string',
+          enum: field.options.map((option: { value: string }) => option.value),
+        };
         break;
       case FieldMetadataType.LINK:
+      case FieldMetadataType.LINKS:
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.FULL_NAME:
       case FieldMetadataType.ADDRESS:
@@ -65,19 +76,46 @@ const getSchemaComponentsProperties = (
           properties: compositeTypeDefintions
             .get(field.type)
             ?.properties?.reduce((properties, property) => {
-              // TODO: This should not be statically typed, instead we should do someting recursive
-              properties[property.name] = { type: 'string' };
+              properties[property.name] = getFieldProperties(property.type);
 
               return properties;
             }, {} as Properties),
         };
         break;
-      case FieldMetadataType.RAW_JSON:
-        itemProperty.type = 'object';
-        break;
       default:
-        itemProperty.type = 'string';
+        itemProperty = getFieldProperties(field.type);
         break;
+    }
+
+    if (field.description) {
+      itemProperty.description = field.description;
+    }
+
+    if (Object.keys(itemProperty).length) {
+      node[field.name] = itemProperty;
+    }
+
+    return node;
+  }, {} as Properties);
+};
+
+const getSchemaComponentsRelationProperties = (
+  item: ObjectMetadataEntity,
+): Properties => {
+  return item.fields.reduce((node, field) => {
+    let itemProperty = {} as Property;
+
+    if (field.type == FieldMetadataType.RELATION) {
+      if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
+        itemProperty = {
+          type: 'array',
+          items: {
+            $ref: `#/components/schemas/${capitalize(
+              field.fromRelationMetadata?.toObjectMetadata.nameSingular || '',
+            )}`,
+          },
+        };
+      }
     }
 
     if (field.description) {
@@ -131,12 +169,48 @@ const computeSchemaComponent = (
   return result;
 };
 
+const computeRelationSchemaComponent = (
+  item: ObjectMetadataEntity,
+): OpenAPIV3_1.SchemaObject => {
+  const result = {
+    description: item.description,
+    allOf: [
+      {
+        $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+      },
+      {
+        type: 'object',
+        properties: getSchemaComponentsRelationProperties(item),
+      },
+    ],
+    example: {},
+  } as OpenAPIV3_1.SchemaObject;
+
+  const requiredFields = getRequiredFields(item);
+
+  if (requiredFields?.length) {
+    result.required = requiredFields;
+    result.example = requiredFields.reduce(
+      (example, requiredField) => {
+        example[requiredField] = '';
+
+        return example;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  return result;
+};
+
 export const computeSchemaComponents = (
   objectMetadataItems: ObjectMetadataEntity[],
 ): Record<string, OpenAPIV3_1.SchemaObject> => {
   return objectMetadataItems.reduce(
     (schemas, item) => {
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent(item);
+      schemas[capitalize(item.nameSingular) + ' with Relations'] =
+        computeRelationSchemaComponent(item);
 
       return schemas;
     },
@@ -144,17 +218,17 @@ export const computeSchemaComponents = (
   );
 };
 
-export const computeParameterComponents = (): Record<
-  string,
-  OpenAPIV3_1.ParameterObject
-> => {
+export const computeParameterComponents = (
+  fromMetadata = false,
+): Record<string, OpenAPIV3_1.ParameterObject> => {
   return {
     idPath: computeIdPathParameter(),
-    lastCursor: computeLastCursorParameters(),
+    startingAfter: computeStartingAfterParameters(),
+    endingBefore: computeEndingBeforeParameters(),
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
     orderBy: computeOrderByParameters(),
-    limit: computeLimitParameters(),
+    limit: computeLimitParameters(fromMetadata),
   };
 };
 
@@ -167,6 +241,7 @@ export const computeMetadataSchemaComponents = (
         case 'object': {
           schemas[`${capitalize(item.nameSingular)}`] = {
             type: 'object',
+            description: `An object`,
             properties: {
               dataSourceId: { type: 'string' },
               nameSingular: { type: 'string' },
@@ -200,6 +275,15 @@ export const computeMetadataSchemaComponents = (
                 },
               },
             },
+            example: {},
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+            example: [{}],
           };
 
           return schemas;
@@ -207,6 +291,7 @@ export const computeMetadataSchemaComponents = (
         case 'field': {
           schemas[`${capitalize(item.nameSingular)}`] = {
             type: 'object',
+            description: `A field`,
             properties: {
               type: { type: 'string' },
               name: { type: 'string' },
@@ -258,6 +343,15 @@ export const computeMetadataSchemaComponents = (
               defaultValue: { type: 'object' },
               options: { type: 'object' },
             },
+            example: {},
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+            example: [{}],
           };
 
           return schemas;
@@ -265,6 +359,7 @@ export const computeMetadataSchemaComponents = (
         case 'relation': {
           schemas[`${capitalize(item.nameSingular)}`] = {
             type: 'object',
+            description: 'A relation',
             properties: {
               relationType: { type: 'string' },
               fromObjectMetadata: {
@@ -292,6 +387,15 @@ export const computeMetadataSchemaComponents = (
               fromFieldMetadataId: { type: 'string' },
               toFieldMetadataId: { type: 'string' },
             },
+            example: {},
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+            example: [{}],
           };
         }
       }

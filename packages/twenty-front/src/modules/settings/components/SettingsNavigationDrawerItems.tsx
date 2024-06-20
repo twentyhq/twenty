@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import {
   IconApps,
@@ -11,32 +9,24 @@ import {
   IconDoorEnter,
   IconHierarchy2,
   IconMail,
+  IconRocket,
   IconSettings,
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { billingState } from '@/client-config/states/billingState.ts';
+import { billingState } from '@/client-config/states/billingState';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsNavigationDrawerItems = () => {
-  const navigate = useNavigate();
   const { signOut } = useAuth();
 
-  const handleLogout = useCallback(() => {
-    signOut();
-    navigate(AppPath.SignInUp);
-  }, [signOut, navigate]);
-
-  const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
   const billing = useRecoilValue(billingState);
 
   return (
@@ -73,7 +63,6 @@ export const SettingsNavigationDrawerItems = () => {
             path={SettingsPath.AccountsCalendars}
             Icon={IconCalendarEvent}
             matchSubPages
-            soon={!isCalendarEnabled}
           />
         </NavigationDrawerItemGroup>
       </NavigationDrawerSection>
@@ -117,9 +106,14 @@ export const SettingsNavigationDrawerItems = () => {
 
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Other" />
+        <SettingsNavigationDrawerItem
+          label="Releases"
+          path={SettingsPath.Releases}
+          Icon={IconRocket}
+        />
         <NavigationDrawerItem
           label="Logout"
-          onClick={handleLogout}
+          onClick={signOut}
           Icon={IconDoorEnter}
         />
       </NavigationDrawerSection>

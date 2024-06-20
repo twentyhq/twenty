@@ -5,6 +5,7 @@ module.exports = {
     'node_modules',
     'mockServiceWorker.js',
     '**/generated*/*',
+    '**/generated/standard-metadata-query-result.ts',
     'tsup.config.ts',
     'build',
     'coverage',

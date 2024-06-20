@@ -7,10 +7,10 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-export const useSetSoftFocus = () => {
-  const setSoftFocusPosition = useSetSoftFocusPosition();
+export const useSetSoftFocus = (recordTableId?: string) => {
+  const setSoftFocusPosition = useSetSoftFocusPosition(recordTableId);
 
-  const { isSoftFocusActiveState } = useRecordTableStates();
+  const { isSoftFocusActiveState } = useRecordTableStates(recordTableId);
 
   const setHotkeyScope = useSetHotkeyScope();
 

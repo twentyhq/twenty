@@ -1,5 +1,5 @@
-import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata.ts';
-import { multiSelectFieldValueSchema } from '@/object-record/record-field/validation-schemas/multiSelectFieldValueSchema.ts';
+import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { multiSelectFieldValueSchema } from '@/object-record/record-field/validation-schemas/multiSelectFieldValueSchema';
 
 export const isFieldMultiSelectValue = (
   fieldValue: unknown,

@@ -77,7 +77,7 @@ export class WorkspaceQueryBuilderFactory {
   }
 
   findDuplicatesExistingRecord(
-    id: string,
+    id: string | number,
     options: WorkspaceQueryBuilderOptions,
   ): string {
     return this.findDuplicatesQueryFactory.buildQueryForExistingRecord(

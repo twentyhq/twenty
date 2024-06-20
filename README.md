@@ -2,22 +2,22 @@
 <br>
 <p align="center">
   <a href="https://www.twenty.com">
-    <img src="./packages/twenty-docs/static/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
+    <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />
   </a>
 </p>
 
 <h2 align="center" >The #1 Open-Source CRM </h3>
 <p align="center">Tailored to your unique business needs</p>
 
-<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://docs.twenty.com">📚 Documentation</a> ·  <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-docs/static/img/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-docs/static/img/figma-icon.png"  width="12" height="12"/>  Figma</a><p>
+<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://twenty.com/developers">📚 Documentation</a> ·  <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a><p>
 <br />
 
 
 <p align="center">
   <a href="https://www.twenty.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/preview-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/preview-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/preview-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/preview-light.png">
       <img src="./packages/twenty-docs/static/img/preview-light.png" alt="Companies view" />
     </picture>
   </a>
@@ -26,7 +26,7 @@
 
 We’ve spent thousands of hours grappling with traditional CRMs like Pipedrive and Salesforce to align them with our business needs, only to end up frustrated — customizations are complex and the closed ecosystems of these platforms can feel restrictive.
 
-We felt the need for a CRM platform that empowers rather than constrains. We believe the next great CRM will come from the open source community. And we’ve packed Twenty with powerful features to give you full control and help you run your business efficiently. 
+We felt the need for a CRM platform that empowers rather than constrains. We believe the next great CRM will come from the open-source community. We’ve packed Twenty with powerful features to give you full control and help you run your business efficiently. 
 
 <br>
 
@@ -38,8 +38,8 @@ password: Applecar2025
 ```
 
 See also:  
-🚀 [Self-hosting](https://docs.twenty.com/start/self-hosting/)  
-🖥️ [Local Setup](https://docs.twenty.com/start/local-setup)  
+🚀 [Self-hosting](https://twenty.com/developers/section/self-hosting)  
+🖥️ [Local Setup](https://twenty.com/developers/local-setup)  
 
 # Why Choose Twenty?
 We understand that the CRM landscape is vast. So why should you choose us?
@@ -61,18 +61,18 @@ Please feel free to flag any specific need you have need by creating an issue.
 
 Below are some features we have implemented to date:
 
-+ [Add, filter, sort, edit and track customers](#add-filter-sort-edit-and-track-customers)
++ [Add, filter, sort, edit, and track customers](#add-filter-sort-edit-and-track-customers)
 + [Create one or several opportunities for each company](#create-one-or-several-opportunities-for-each-company)
 + [See rich notes tasks displayed in a timeline](#see-rich-notes-tasks-displayed-in-a-timeline)
 + [Create tasks on records](#create-tasks-on-records)
 + [Navigate quickly through the app using keyboard shortcuts and search](#navigate-quickly-through-the-app-using-keyboard-shortcuts-and-search)
 
-## Add, filter, sort, edit and track customers:
+## Add, filter, sort, edit, and track customers:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/index-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/index-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/index-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/index-light.png">
       <img src="./packages/twenty-docs/static/img/visualise-customer-light.png" alt="Companies view" />
     </picture>
 </p>
@@ -81,8 +81,8 @@ Below are some features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/kanban-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/kanban-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/kanban-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/kanban-light.png">
       <img src="./packages/twenty-docs/static/img/follow-your-deals-light.png" alt="Companies view" />
     </picture>
 </p>
@@ -91,8 +91,8 @@ Below are some features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/emails-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/emails-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/emails-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/emails-light.png">
       <img src="./packages/twenty-docs/static/img/rich-notes-light.png" alt="Companies view" />
     </picture>
 </p>
@@ -101,8 +101,8 @@ Below are some features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/data-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/data-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/data-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/data-light.png">
       <img src="./packages/twenty-docs/static/img/rich-notes-light.png" alt="Companies view" />
     </picture>
 </p>
@@ -111,8 +111,8 @@ Below are some features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/notes-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/notes-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/notes-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/notes-light.png">
       <img src="./packages/twenty-docs/static/img/rich-notes-light.png" alt="Companies view" />
     </picture>
 </p>
@@ -121,8 +121,8 @@ Below are some features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/tasks-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/tasks-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/tasks-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/tasks-light.png">
       <img src="./packages/twenty-docs/static/img/create-tasks-light.png" alt="Companies view" />
     </picture>
 </p>
@@ -131,8 +131,8 @@ Below are some features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/keyboard-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/keyboard-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/keyboard-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/keyboard-light.png">
       <img src="./packages/twenty-docs/static/img/shortcut-navigation-light.png" alt="Companies view" />
     </picture>
 </p>
@@ -141,8 +141,8 @@ Below are some features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/api-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/api-light.png">
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/api-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/v0.12.0/packages/twenty-docs/static/img/api-light.png">
       <img src="./packages/twenty-docs/static/img/shortcut-navigation-light.png" alt="Companies view" />
     </picture>
 </p>

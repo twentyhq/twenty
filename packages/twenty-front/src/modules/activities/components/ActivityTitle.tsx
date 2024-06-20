@@ -134,6 +134,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
         ...currentActivity,
         id: activity.id,
         title: newTitle,
+        __typename: activity.__typename,
       };
     });
 

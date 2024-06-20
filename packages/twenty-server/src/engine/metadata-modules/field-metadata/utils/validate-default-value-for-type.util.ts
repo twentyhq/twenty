@@ -21,6 +21,7 @@ import {
   FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueUuidFunction,
   FieldMetadataDefaultValueDate,
+  FieldMetadataDefaultValueLinks,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
@@ -49,6 +50,7 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.MULTI_SELECT]: [FieldMetadataDefaultValueStringArray],
   [FieldMetadataType.ADDRESS]: [FieldMetadataDefaultValueAddress],
   [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
+  [FieldMetadataType.LINKS]: [FieldMetadataDefaultValueLinks],
 };
 
 type ValidationResult = {

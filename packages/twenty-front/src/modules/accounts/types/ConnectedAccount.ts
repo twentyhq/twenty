@@ -1,7 +1,6 @@
-import { MessageChannel } from './MessageChannel';
+import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 
-type MessageChannelConnection = { edges: [MessageChannelEdge] };
-type MessageChannelEdge = { node: MessageChannel };
+import { MessageChannel } from './MessageChannel';
 
 export type ConnectedAccount = {
   id: string;
@@ -12,5 +11,7 @@ export type ConnectedAccount = {
   accountOwnerId: string;
   lastSyncHistoryId: string;
   authFailedAt: Date | null;
-  messageChannels: MessageChannelConnection;
+  messageChannels: MessageChannel[];
+  calendarChannels: CalendarChannel[];
+  __typename: 'ConnectedAccount';
 };

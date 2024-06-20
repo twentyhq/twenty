@@ -5,8 +5,8 @@ import differenceWith from 'lodash.differencewith';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
-import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
+import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
 import {
   CalendarEventParticipant,
   CalendarEventParticipantWithId,
@@ -22,7 +22,7 @@ export class CalendarEventParticipantRepository {
     handles: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventParticipantObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -45,6 +45,23 @@ export class CalendarEventParticipantRepository {
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "personId" = $1 WHERE "id" = ANY($2)`,
+      [personId, participantIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateParticipantsPersonIdAndReturn(
+    participantIds: string[],
+    personId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "personId" = $1 WHERE "id" = ANY($2) RETURNING *`,
       [personId, participantIds],
       workspaceId,
       transactionManager,
@@ -104,7 +121,7 @@ export class CalendarEventParticipantRepository {
     calendarEventParticipantIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventParticipantObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
     if (calendarEventParticipantIds.length === 0) {
       return [];
     }
@@ -124,7 +141,7 @@ export class CalendarEventParticipantRepository {
     calendarEventIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventParticipantObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
     if (calendarEventIds.length === 0) {
       return [];
     }
@@ -162,7 +179,6 @@ export class CalendarEventParticipantRepository {
 
   public async updateCalendarEventParticipantsAndReturnNewOnes(
     calendarEventParticipants: CalendarEventParticipant[],
-    iCalUIDCalendarEventIdMap: Map<string, string>,
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<CalendarEventParticipant[]> {
@@ -173,10 +189,10 @@ export class CalendarEventParticipantRepository {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const calendarEventIds = Array.from(iCalUIDCalendarEventIdMap.values());
-
     const existingCalendarEventParticipants = await this.getByCalendarEventIds(
-      calendarEventIds,
+      calendarEventParticipants.map(
+        (calendarEventParticipant) => calendarEventParticipant.calendarEventId,
+      ),
       workspaceId,
       transactionManager,
     );
@@ -205,23 +221,17 @@ export class CalendarEventParticipantRepository {
       transactionManager,
     );
 
-    const values = calendarEventParticipants.map(
-      (calendarEventParticipant) => ({
-        ...calendarEventParticipant,
-        calendarEventId: iCalUIDCalendarEventIdMap.get(
-          calendarEventParticipant.iCalUID,
-        ),
-      }),
-    );
-
     const { flattenedValues, valuesString } =
-      getFlattenedValuesAndValuesStringForBatchRawQuery(values, {
-        calendarEventId: 'uuid',
-        handle: 'text',
-        displayName: 'text',
-        isOrganizer: 'boolean',
-        responseStatus: `${dataSourceSchema}."calendarEventParticipant_responsestatus_enum"`,
-      });
+      getFlattenedValuesAndValuesStringForBatchRawQuery(
+        calendarEventParticipants,
+        {
+          calendarEventId: 'uuid',
+          handle: 'text',
+          displayName: 'text',
+          isOrganizer: 'boolean',
+          responseStatus: `${dataSourceSchema}."calendarEventParticipant_responseStatus_enum"`,
+        },
+      );
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."calendarEventParticipant" AS "calendarEventParticipant"

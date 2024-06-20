@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
+import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 
 const meta: Meta<typeof ActionLink> = {
   title: 'UI/navigation/link/ActionLink',

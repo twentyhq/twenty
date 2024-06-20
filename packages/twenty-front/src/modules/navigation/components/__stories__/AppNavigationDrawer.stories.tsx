@@ -7,6 +7,8 @@ import { currentMobileNavigationDrawerState } from '@/navigation/states/currentM
 import { AppPath } from '@/types/AppPath';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import {
@@ -50,6 +52,8 @@ type StoryArgs = AppNavigationDrawerProps & {
 const meta: Meta<StoryArgs> = {
   title: 'Modules/Navigation/AppNavigationDrawer',
   decorators: [
+    IconsProviderDecorator,
+    ObjectMetadataItemsDecorator,
     (Story, { args }) => (
       <MemoryRouter initialEntries={[args.routePath]}>
         <Story />

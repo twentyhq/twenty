@@ -67,7 +67,7 @@ export const MenuItemSelect = ({
       hovered={hovered}
     >
       <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
-      {selected && <IconCheck size={theme.icon.size.sm} />}
+      {selected && <IconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };

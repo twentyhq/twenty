@@ -1,7 +1,4 @@
-import { SafeParseSuccess } from 'zod';
-
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { mockedCompanyObjectMetadataItem } from '@/object-record/record-field/__mocks__/fieldDefinitions';
+import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
 
 import { objectMetadataItemSchema } from '../objectMetadataItemSchema';
 
@@ -11,13 +8,10 @@ describe('objectMetadataItemSchema', () => {
     const validObjectMetadataItem = mockedCompanyObjectMetadataItem;
 
     // When
-    const result = objectMetadataItemSchema.safeParse(validObjectMetadataItem);
+    const result = objectMetadataItemSchema.parse(validObjectMetadataItem);
 
     // Then
-    expect(result.success).toBe(true);
-    expect((result as SafeParseSuccess<ObjectMetadataItem>).data).toEqual(
-      validObjectMetadataItem,
-    );
+    expect(result).toEqual(validObjectMetadataItem);
   });
 
   it('fails for an invalid object metadata item', () => {

@@ -1,15 +1,14 @@
-import { useEffect, useState } from 'react';
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
+import { findActivitiesOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivitiesOperationSignatureFactory';
 import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
-import { FIND_MANY_ACTIVITIES_QUERY_KEY } from '@/activities/query-keys/FindManyActivitiesQueryKey';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { OrderByField } from '@/object-metadata/types/OrderByField';
+import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
@@ -18,26 +17,19 @@ export const useActivities = ({
   activitiesFilters,
   activitiesOrderByVariables,
   skip,
-  skipActivityTargets,
 }: {
   targetableObjects: ActivityTargetableObject[];
-  activitiesFilters: ObjectRecordQueryFilter;
-  activitiesOrderByVariables: OrderByField;
+  activitiesFilters: RecordGqlOperationFilter;
+  activitiesOrderByVariables: RecordGqlOperationOrderBy;
   skip?: boolean;
-  skipActivityTargets?: boolean;
 }) => {
-  const [initialized, setInitialized] = useState(false);
-
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const {
-    activityTargets,
-    loadingActivityTargets,
-    initialized: initializedActivityTargets,
-  } = useActivityTargetsForTargetableObjects({
-    targetableObjects,
-    skip: skipActivityTargets || skip,
-  });
+  const { activityTargets, loadingActivityTargets } =
+    useActivityTargetsForTargetableObjects({
+      targetableObjects,
+      skip: skip,
+    });
 
   const activityIds = [
     ...new Set(
@@ -51,70 +43,40 @@ export const useActivities = ({
     ),
   ];
 
-  const activityTargetsFound =
-    initializedActivityTargets && isNonEmptyArray(activityTargets);
-
-  const filter: ObjectRecordQueryFilter = {
-    id: activityTargetsFound
-      ? {
-          in: activityIds,
-        }
-      : undefined,
+  const filter: RecordGqlOperationFilter = {
+    id:
+      targetableObjects.length > 0
+        ? {
+            in: activityIds,
+          }
+        : undefined,
     ...activitiesFilters,
   };
 
-  const skipActivities =
-    skip ||
-    (!skipActivityTargets &&
-      (!initializedActivityTargets || !activityTargetsFound));
+  const FIND_ACTIVITIES_OPERATION_SIGNATURE =
+    findActivitiesOperationSignatureFactory({ objectMetadataItems });
 
   const { records: activities, loading: loadingActivities } =
     useFindManyRecords<Activity>({
-      skip: skipActivities,
-      objectNameSingular: FIND_MANY_ACTIVITIES_QUERY_KEY.objectNameSingular,
-      depth: FIND_MANY_ACTIVITIES_QUERY_KEY.depth,
-      queryFields:
-        FIND_MANY_ACTIVITIES_QUERY_KEY.fieldsFactory?.(objectMetadataItems),
+      skip: skip || loadingActivityTargets,
+      objectNameSingular:
+        FIND_ACTIVITIES_OPERATION_SIGNATURE.objectNameSingular,
+      recordGqlFields: FIND_ACTIVITIES_OPERATION_SIGNATURE.fields,
       filter,
       orderBy: activitiesOrderByVariables,
       onCompleted: useRecoilCallback(
         ({ set }) =>
           (activities) => {
-            if (!initialized) {
-              setInitialized(true);
-            }
-
             for (const activity of activities) {
               set(recordStoreFamilyState(activity.id), activity);
             }
           },
-        [initialized],
+        [],
       ),
     });
 
-  const loading = loadingActivities || loadingActivityTargets;
-
-  const noActivities =
-    (!activityTargetsFound && !skipActivityTargets && initialized) ||
-    (initialized && !loading && !isNonEmptyArray(activities));
-
-  useEffect(() => {
-    if (skipActivities || noActivities) {
-      setInitialized(true);
-    }
-  }, [
-    activities,
-    initialized,
-    loading,
-    noActivities,
-    skipActivities,
-    skipActivityTargets,
-  ]);
-
   return {
     activities,
-    loading,
-    initialized,
-    noActivities,
+    loading: loadingActivities || loadingActivityTargets,
   };
 };

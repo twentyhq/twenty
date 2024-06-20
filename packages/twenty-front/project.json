@@ -1,0 +1,148 @@
+{
+  "name": "twenty-front",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "tags": ["scope:frontend"],
+  "targets": {
+    "build": {
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "{projectRoot}/build"
+      }
+    },
+    "start": {
+      "executor": "@nx/vite:dev-server",
+      "options": {
+        "buildTarget": "twenty-front:build",
+        "hmr": true
+      }
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "options": {
+        "buildTarget": "twenty-front:build",
+        "port": 3001,
+        "open": true
+      }
+    },
+    "reset:env": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/.env.example"],
+      "outputs": ["{projectRoot}/.env"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "cp .env.example .env"
+      }
+    },
+    "typecheck": {},
+    "lint": {
+      "options": {
+        "lintFilePatterns": [
+          "{projectRoot}/src/**/*.{ts,tsx,json}",
+          "{projectRoot}/package.json"
+        ],
+        "maxWarnings": 0,
+        "reportUnusedDisableDirectives": "error"
+      },
+      "configurations": {
+        "ci": { "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs" },
+        "fix": {}
+      }
+    },
+    "fmt": {
+      "options": {
+        "files": "src"
+      },
+      "configurations": {
+        "fix": {}
+      }
+    },
+    "test": {},
+    "storybook:build": {
+      "options": {
+        "env": { "NODE_OPTIONS": "--max_old_space_size=5000" }
+      },
+      "configurations": {
+        "test": {}
+      }
+    },
+    "storybook:dev": {
+      "options": { "port": 6006 },
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
+      }
+    },
+    "storybook:static": {
+      "options": { "port": 6006 },
+      "configurations": {
+        "test": {}
+      }
+    },
+    "storybook:coverage": {
+      "configurations": {
+        "text": {},
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
+      }
+    },
+    "storybook:test": {
+      "options": { "port": 6006 },
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
+      }
+    },
+    "storybook:test:nocoverage": {
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
+      }
+    },
+    "storybook:static:test": {
+      "options": {
+        "commands": [
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --configuration=test --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
+        ],
+        "port": 6006
+      },
+      "configurations": {
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" },
+        "performance": { "scope": "performance" }
+      }
+    },
+    "storybook:performance:test": {},
+    "graphql:generate": {
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "data",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "dotenv cross-var graphql-codegen -- --config={args.config}"
+      },
+      "configurations": {
+        "data": {
+          "config": "codegen.cjs"
+        },
+        "metadata": {
+          "config": "codegen-metadata.cjs"
+        }
+      }
+    },
+    "chromatic": {
+      "configurations": {
+        "ci": {}
+      }
+    }
+  }
+}

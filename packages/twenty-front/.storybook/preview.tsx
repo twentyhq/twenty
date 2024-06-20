@@ -1,8 +1,9 @@
+import { useEffect } from 'react';
 import { ThemeProvider } from '@emotion/react';
 import { Preview } from '@storybook/react';
 import { initialize, mswDecorator } from 'msw-storybook-addon';
 import { useDarkMode } from 'storybook-dark-mode';
-import { THEME_DARK, THEME_LIGHT } from 'twenty-ui';
+import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from 'twenty-ui';
 
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
@@ -29,12 +30,18 @@ initialize({
 const preview: Preview = {
   decorators: [
     (Story) => {
-      const mode = useDarkMode() ? 'Dark' : 'Light';
+      const theme = useDarkMode() ? THEME_DARK : THEME_LIGHT;
 
-      const theme = mode === 'Dark' ? THEME_DARK : THEME_LIGHT;
+      useEffect(() => {
+        document.documentElement.className =
+          theme.name === 'dark' ? 'dark' : 'light';
+      }, [theme]);
+
       return (
         <ThemeProvider theme={theme}>
-          <Story />
+          <ThemeContextProvider theme={theme}>
+            <Story />
+          </ThemeContextProvider>
         </ThemeProvider>
       );
     },

@@ -15,7 +15,10 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
-import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
+import {
+  displayedExportProgress,
+  useExportTableData,
+} from '@/object-record/record-index/options/hooks/useExportTableData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
@@ -87,8 +90,22 @@ export const useRecordActionBar = ({
 
   const handleDeleteClick = useCallback(async () => {
     callback?.();
+    selectedRecordIds.forEach((recordId) => {
+      const foundFavorite = favorites?.find(
+        (favorite) => favorite.recordId === recordId,
+      );
+      if (foundFavorite !== undefined) {
+        deleteFavorite(foundFavorite.id);
+      }
+    });
     await deleteManyRecords(selectedRecordIds);
-  }, [callback, deleteManyRecords, selectedRecordIds]);
+  }, [
+    callback,
+    deleteManyRecords,
+    selectedRecordIds,
+    favorites,
+    deleteFavorite,
+  ]);
 
   const handleExecuteQuickActionOnClick = useCallback(async () => {
     callback?.();
@@ -111,7 +128,7 @@ export const useRecordActionBar = ({
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
       {
-        label: `${progress === undefined ? `Export` : `Export (${progress}%)`}`,
+        label: displayedExportProgress(progress),
         Icon: IconFileExport,
         accent: 'default',
         onClick: () => download(),

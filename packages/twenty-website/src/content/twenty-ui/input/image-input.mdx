@@ -1,0 +1,40 @@
+---
+title: Image Input
+icon: TbUpload
+image: /images/user-guide/objects/objects.png
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+Allows users to upload and remove an image. 
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { ImageInput } from "@/ui/input/components/ImageInput";
+
+export const MyComponent = () => {
+  return <ImageInput/>;
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['picture', 'string', 'The image source URL', ''],
+  ['onUpload', 'function', 'The function called when a user uploads a new image. It receives the `File` object as a parameter', ''],
+  ['onRemove', 'function', 'The function called when the user clicks on the remove button', ''],
+  ['onAbort', 'function', 'The function called when a user clicks on the abort button during image upload', ''],
+  ['isUploading', 'boolean', 'Indicates whether an image is currently being uploaded', '`false`'],
+  ['errorMessage', 'string', 'An optional error message to display below the image input', ''],
+  ['disabled', 'boolean', 'If `true`, the entire input is disabled, and the buttons are not clickable', '`false`']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>

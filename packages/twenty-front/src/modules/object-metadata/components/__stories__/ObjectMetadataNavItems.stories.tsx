@@ -4,6 +4,7 @@ import { within } from '@storybook/test';
 
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -14,6 +15,7 @@ const meta: Meta<typeof ObjectMetadataNavItems> = {
   title: 'Modules/ObjectMetadata/ObjectMetadataNavItems',
   component: ObjectMetadataNavItems,
   decorators: [
+    IconsProviderDecorator,
     ObjectMetadataItemsDecorator,
     ComponentWithRouterDecorator,
     ComponentWithRecoilScopeDecorator,

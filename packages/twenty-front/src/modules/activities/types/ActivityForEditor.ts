@@ -5,7 +5,14 @@ import { WorkspaceMember } from '~/generated-metadata/graphql';
 
 export type ActivityForEditor = Pick<
   Activity,
-  'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt' | 'updatedAt'
+  | 'id'
+  | 'title'
+  | 'body'
+  | 'type'
+  | 'completedAt'
+  | 'dueAt'
+  | 'updatedAt'
+  | '__typename'
 > & {
   comments?: Comment[];
 } & {

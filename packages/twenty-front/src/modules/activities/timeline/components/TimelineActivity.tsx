@@ -1,8 +1,7 @@
-import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { Avatar, IconCheckbox, IconNotes } from 'twenty-ui';
+import { AppTooltip, Avatar, IconCheckbox, IconNotes } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { timelineActivityWithoutTargetsFamilyState } from '@/activities/timeline/states/timelineActivityWithoutTargetsFamilyState';
@@ -109,21 +108,6 @@ const StyledVerticalLine = styled.div`
   width: 2px;
 `;
 
-const StyledTooltip = styled(Tooltip)`
-  background-color: ${({ theme }) => theme.background.primary};
-
-  box-shadow: 0px 2px 4px 3px
-    ${({ theme }) => theme.background.transparent.light};
-
-  box-shadow: 2px 4px 16px 6px
-    ${({ theme }) => theme.background.transparent.light};
-
-  color: ${({ theme }) => theme.font.color.primary};
-
-  opacity: 1;
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
   align-items: center;
   align-self: stretch;
@@ -217,7 +201,7 @@ export const TimelineActivity = ({
           <StyledItemTitleDate id={`id-${activityForTimeline.id}`}>
             {beautifiedCreatedAt}
           </StyledItemTitleDate>
-          <StyledTooltip
+          <AppTooltip
             anchorSelect={`#id-${activityForTimeline.id}`}
             content={exactCreatedAt}
             clickable

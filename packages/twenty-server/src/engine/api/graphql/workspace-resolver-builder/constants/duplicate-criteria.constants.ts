@@ -6,7 +6,7 @@ import { RecordDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-
  * So if we need to reference a custom field, we should directly add the column name like `_customColumn`.
  * If we need to terence a composite field, we should add all children of the composite like `nameFirstName` and `nameLastName`
  */
-export const duplicateCriteriaCollection: RecordDuplicateCriteria[] = [
+export const DUPLICATE_CRITERIA_COLLECTION: RecordDuplicateCriteria[] = [
   {
     objectName: 'company',
     columnNames: ['domainName'],

@@ -1,4 +1,6 @@
+import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
+import { isString } from '@sniptt/guards';
 import {
   IconComponent,
   IconGripVertical,
@@ -14,7 +16,7 @@ type MenuItemLeftContentProps = {
   className?: string;
   LeftIcon: IconComponent | null | undefined;
   showGrip?: boolean;
-  text: string;
+  text: ReactNode;
 };
 
 export const MenuItemLeftContent = ({
@@ -38,7 +40,7 @@ export const MenuItemLeftContent = ({
         <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       )}
       <StyledMenuItemLabel hasLeftIcon={!!LeftIcon}>
-        <OverflowingTextWithTooltip text={text} />
+        {isString(text) ? <OverflowingTextWithTooltip text={text} /> : text}
       </StyledMenuItemLabel>
     </StyledMenuItemLeftContent>
   );

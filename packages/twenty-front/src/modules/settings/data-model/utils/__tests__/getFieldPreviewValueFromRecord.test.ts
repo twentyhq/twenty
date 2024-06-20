@@ -1,87 +1,12 @@
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   mockedCompanyObjectMetadataItem,
   mockedPersonObjectMetadataItem,
-} from '@/object-record/record-field/__mocks__/fieldDefinitions';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
+} from '~/testing/mock-data/metadata';
 
 import { getFieldPreviewValueFromRecord } from '../getFieldPreviewValueFromRecord';
 
 describe('getFieldPreviewValueFromRecord', () => {
-  describe('SELECT field', () => {
-    it('returns the select option corresponding to the record field value', () => {
-      // Given
-      const record: ObjectRecord = { id: '', industry: 'GREEN_TECH' };
-      const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-        ({ name }) => name === 'industry',
-      )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues = [
-        {
-          color: 'purple',
-          label: '🏭 Industry',
-          value: 'INDUSTRY',
-        },
-        {
-          color: 'pink',
-          isDefault: true,
-          label: '💊 Health',
-          value: 'HEALTH',
-        },
-        {
-          color: 'turquoise',
-          label: '🌿 Green tech',
-          value: 'GREEN_TECH',
-        },
-      ];
-
-      // When
-      const result = getFieldPreviewValueFromRecord({
-        record,
-        fieldMetadataItem,
-        selectOptions,
-      });
-
-      // Then
-      expect(result).toEqual(selectOptions[2].value);
-    });
-
-    it('returns undefined if the select option was not found', () => {
-      // Given
-      const record: ObjectRecord = { id: '', industry: 'MOBILITY' };
-      const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-        ({ name }) => name === 'industry',
-      )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues = [
-        {
-          color: 'purple',
-          label: '🏭 Industry',
-          value: 'INDUSTRY',
-        },
-        {
-          color: 'pink',
-          isDefault: true,
-          label: '💊 Health',
-          value: 'HEALTH',
-        },
-        {
-          color: 'turquoise',
-          label: '🌿 Green tech',
-          value: 'GREEN_TECH',
-        },
-      ];
-
-      // When
-      const result = getFieldPreviewValueFromRecord({
-        record,
-        fieldMetadataItem,
-        selectOptions,
-      });
-
-      // Then
-      expect(result).toBeUndefined();
-    });
-  });
-
   describe('RELATION field', () => {
     it('returns the first relation record from a list of edges ("to many" relation)', () => {
       // Given
@@ -94,6 +19,7 @@ describe('getFieldPreviewValueFromRecord', () => {
         people: {
           edges: [{ node: firstRelationRecord }, { node: { id: '2' } }],
         },
+        __typename: 'Opportunity',
       };
       const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
         ({ name }) => name === 'people',
@@ -112,7 +38,11 @@ describe('getFieldPreviewValueFromRecord', () => {
     it('returns the record field value ("to one" relation)', () => {
       // Given
       const relationRecord = { id: '20', name: 'Twenty' };
-      const record = { id: '', company: relationRecord };
+      const record = {
+        id: '',
+        company: relationRecord,
+        __typename: 'Opportunity',
+      };
       const fieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
         ({ name }) => name === 'company',
       )!;
@@ -131,7 +61,7 @@ describe('getFieldPreviewValueFromRecord', () => {
   describe('Other fields', () => {
     it('returns the record field value', () => {
       // Given
-      const record = { id: '', name: 'Twenty' };
+      const record = { id: '', name: 'Twenty', __typename: 'Opportunity' };
       const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
         ({ name }) => name === 'name',
       )!;

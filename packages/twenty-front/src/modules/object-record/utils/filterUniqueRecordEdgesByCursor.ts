@@ -1,9 +1,7 @@
-import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
+import { RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
 
-export const filterUniqueRecordEdgesByCursor = <
-  RecordType extends { id: string },
->(
-  arrayToFilter: ObjectRecordEdge<RecordType>[],
+export const filterUniqueRecordEdgesByCursor = (
+  arrayToFilter: RecordGqlEdge[],
 ) => {
   const seenCursors = new Set();
 

@@ -7,36 +7,36 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLModule } from '@nestjs/graphql';
-import { DevtoolsModule } from '@nestjs/devtools-integration';
 
 import { existsSync } from 'fs';
 import { join } from 'path';
 
 import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
 
-import { ApiRestModule } from 'src/engine/api/rest/api-rest.module';
+import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { ModulesModule } from 'src/modules/modules.module';
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { UserWorkspaceMiddleware } from 'src/engine/middlewares/user-workspace.middleware';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
+import { MessageQueueModule } from 'src/engine/integrations/message-queue/message-queue.module';
+import { MessageQueueDriverType } from 'src/engine/integrations/message-queue/interfaces';
 
-import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { IntegrationsModule } from './engine/integrations/integrations.module';
+import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 
 @Module({
   imports: [
     // Nest.js devtools, use devtools.nestjs.com to debug
-    DevtoolsModule.registerAsync({
-      useFactory: (environmentService: EnvironmentService) => ({
-        http: environmentService.get('DEBUG_MODE'),
-        port: environmentService.get('DEBUG_PORT'),
-      }),
-      inject: [EnvironmentService],
-    }),
+    // DevtoolsModule.registerAsync({
+    //   useFactory: (environmentService: EnvironmentService) => ({
+    //     http: environmentService.get('DEBUG_MODE'),
+    //     port: environmentService.get('DEBUG_PORT'),
+    //   }),
+    //   inject: [EnvironmentService],
+    // }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -56,7 +56,7 @@ import { IntegrationsModule } from './engine/integrations/integrations.module';
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
-    ApiRestModule,
+    RestApiModule,
     // Conditional modules
     ...AppModule.getConditionalModules(),
   ],
@@ -74,16 +74,23 @@ export class AppModule {
       );
     }
 
+    // Messaque Queue explorer only for sync driver
+    // Maybe we don't need to conditionaly register the explorer, because we're creating a jobs module
+    // that will expose classes that are only used in the queue worker
+    if (process.env.MESSAGE_QUEUE_TYPE === MessageQueueDriverType.Sync) {
+      modules.push(MessageQueueModule.registerExplorer());
+    }
+
     return modules;
   }
 
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(UserWorkspaceMiddleware)
+      .apply(GraphQLHydrateRequestFromTokenMiddleware)
       .forRoutes({ path: 'graphql', method: RequestMethod.ALL });
 
     consumer
-      .apply(UserWorkspaceMiddleware)
+      .apply(GraphQLHydrateRequestFromTokenMiddleware)
       .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
   }
 }

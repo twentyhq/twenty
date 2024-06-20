@@ -1,19 +1,19 @@
 import { ComponentProps, ReactNode } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import {
   IconChevronLeft,
   IconComponent,
+  MOBILE_VIEWPORT,
   OverflowingTextWithTooltip,
 } from 'twenty-ui';
 
 import { IconButton } from '@/ui/input/button/components/IconButton';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
@@ -103,7 +103,6 @@ export const PageHeader = ({
   loading,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
   const theme = useTheme();
   const isNavigationDrawerOpen = useRecoilValue(isNavigationDrawerOpenState);
 
@@ -116,12 +115,13 @@ export const PageHeader = ({
           </StyledTopBarButtonContainer>
         )}
         {hasBackButton && (
-          <IconButton
-            Icon={IconChevronLeft}
-            size="small"
-            onClick={() => navigate(-1)}
-            variant="tertiary"
-          />
+          <UndecoratedLink to={-1}>
+            <IconButton
+              Icon={IconChevronLeft}
+              size="small"
+              variant="tertiary"
+            />
+          </UndecoratedLink>
         )}
         {loading ? (
           <StyledSkeletonLoader />

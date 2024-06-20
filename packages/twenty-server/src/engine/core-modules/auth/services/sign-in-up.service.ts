@@ -32,6 +32,7 @@ export type SignInUpServiceInput = {
   lastName?: string | null;
   workspaceInviteHash?: string | null;
   picture?: string | null;
+  fromSSO: boolean;
 };
 
 @Injectable()
@@ -54,6 +55,7 @@ export class SignInUpService {
     firstName,
     lastName,
     picture,
+    fromSSO,
   }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
@@ -80,7 +82,7 @@ export class SignInUpService {
       relations: ['defaultWorkspace'],
     });
 
-    if (existingUser && existingUser.passwordHash) {
+    if (existingUser && !fromSSO) {
       const isValid = await compareHash(
         password || '',
         existingUser.passwordHash,
@@ -132,36 +134,26 @@ export class SignInUpService {
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash: workspaceInviteHash,
-      subscriptionStatus: 'active',
     });
 
     assert(
       workspace,
-      'This workspace inviteHash is invalid or the workspace is not active',
+      'This workspace inviteHash is invalid',
+      ForbiddenException,
+    );
+
+    assert(
+      !this.environmentService.get('IS_BILLING_ENABLED') ||
+        workspace.subscriptionStatus !== 'incomplete',
+      'Workspace subscription status is incomplete',
       ForbiddenException,
     );
 
     if (existingUser) {
-      const userWorkspaceExists =
-        await this.userWorkspaceService.checkUserWorkspaceExists(
-          existingUser.id,
-          workspace.id,
-        );
-
-      if (!userWorkspaceExists) {
-        await this.userWorkspaceService.create(existingUser.id, workspace.id);
-
-        await this.userWorkspaceService.createWorkspaceMember(
-          workspace.id,
-          existingUser,
-        );
-      }
-
-      const updatedUser = await this.userRepository.save({
-        id: existingUser.id,
-        defaultWorkspace: workspace,
-        updatedAt: new Date().toISOString(),
-      });
+      const updatedUser = await this.userWorkspaceService.addUserToWorkspace(
+        existingUser,
+        workspace,
+      );
 
       return Object.assign(existingUser, updatedUser);
     }

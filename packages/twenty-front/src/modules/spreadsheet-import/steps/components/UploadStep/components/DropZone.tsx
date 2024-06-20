@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx-ugnis';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 
@@ -114,7 +115,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
       fileRejections.forEach((fileRejection) => {
         enqueueSnackBar(fileRejection.errors[0].message, {
           title: `${fileRejection.file.name} upload rejected`,
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         });
       });
     },
@@ -123,6 +124,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
       const arrayBuffer = await readFileAsync(file);
       const workbook = XLSX.read(arrayBuffer, {
         cellDates: true,
+        codepage: 65001, // UTF-8 codepage
         dateNF: dateFormat,
         raw: parseRaw,
         dense: true,

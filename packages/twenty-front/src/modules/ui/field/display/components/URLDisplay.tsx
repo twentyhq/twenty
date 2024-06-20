@@ -42,17 +42,22 @@ export const URLDisplay = ({ value }: URLDisplayProps) => {
   if (type === LinkType.LinkedIn || type === LinkType.Twitter) {
     return (
       <EllipsisDisplay>
-        <SocialLink href={absoluteUrl} onClick={handleClick} type={type}>
-          {displayedValue}
-        </SocialLink>
+        <SocialLink
+          href={absoluteUrl}
+          onClick={handleClick}
+          type={type}
+          label={displayedValue}
+        />
       </EllipsisDisplay>
     );
   }
   return (
     <EllipsisDisplay>
-      <StyledRawLink href={absoluteUrl} onClick={handleClick}>
-        {displayedValue}
-      </StyledRawLink>
+      <StyledRawLink
+        href={absoluteUrl}
+        onClick={handleClick}
+        label={displayedValue}
+      />
     </EllipsisDisplay>
   );
 };

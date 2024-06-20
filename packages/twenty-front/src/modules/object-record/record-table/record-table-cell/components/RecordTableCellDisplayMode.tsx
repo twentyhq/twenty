@@ -1,29 +1,18 @@
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
-
-import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
+import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 export const RecordTableCellDisplayMode = ({
   children,
 }: React.PropsWithChildren<unknown>) => {
-  const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentTableCell();
+  const isEmpty = useIsFieldEmpty();
 
-  const isFieldInputOnly = useIsFieldInputOnly();
-
-  const { openTableCell } = useOpenRecordTableCell();
-
-  const handleClick = () => {
-    setSoftFocusOnCurrentCell();
-
-    if (!isFieldInputOnly) {
-      openTableCell();
-    }
-  };
+  if (isEmpty) {
+    return <></>;
+  }
 
   return (
-    <RecordTableCellDisplayContainer onClick={handleClick}>
+    <RecordTableCellDisplayContainer>
       {children}
     </RecordTableCellDisplayContainer>
   );

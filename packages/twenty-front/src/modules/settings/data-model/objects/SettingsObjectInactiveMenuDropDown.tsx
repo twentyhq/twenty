@@ -10,14 +10,14 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 type SettingsObjectInactiveMenuDropDownProps = {
   isCustomObject: boolean;
   onActivate: () => void;
-  onErase: () => void;
+  onDelete: () => void;
   scopeKey: string;
 };
 
 export const SettingsObjectInactiveMenuDropDown = ({
   onActivate,
   scopeKey,
-  onErase,
+  onDelete,
   isCustomObject,
 }: SettingsObjectInactiveMenuDropDownProps) => {
   const dropdownId = `${scopeKey}-settings-object-inactive-menu-dropdown`;
@@ -29,8 +29,8 @@ export const SettingsObjectInactiveMenuDropDown = ({
     closeDropdown();
   };
 
-  const handleErase = () => {
-    onErase();
+  const handleDelete = () => {
+    onDelete();
     closeDropdown();
   };
 
@@ -50,10 +50,10 @@ export const SettingsObjectInactiveMenuDropDown = ({
             />
             {isCustomObject && (
               <MenuItem
-                text="Erase"
+                text="Delete"
                 LeftIcon={IconTrash}
                 accent="danger"
-                onClick={handleErase}
+                onClick={handleDelete}
               />
             )}
           </DropdownMenuItemsContainer>

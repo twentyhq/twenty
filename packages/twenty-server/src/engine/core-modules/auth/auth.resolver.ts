@@ -27,11 +27,11 @@ import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-p
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
 import { GenerateJwtInput } from 'src/engine/core-modules/auth/dto/generate-jwt.input';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
 import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
+import { CaptchaGuard } from 'src/engine/integrations/captcha/captcha.guard';
 
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
@@ -55,9 +55,9 @@ export class AuthResolver {
     private authService: AuthService,
     private tokenService: TokenService,
     private userService: UserService,
-    private userWorkspaceService: UserWorkspaceService,
   ) {}
 
+  @UseGuards(CaptchaGuard)
   @Query(() => UserExists)
   async checkUserExists(
     @Args() checkUserExistsInput: CheckUserExistsInput,
@@ -82,11 +82,18 @@ export class AuthResolver {
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
   ) {
-    return await this.workspaceRepository.findOneBy({
+    const workspace = await this.workspaceRepository.findOneBy({
       inviteHash: workspaceInviteHashValidInput.inviteHash,
     });
+
+    if (!workspace) {
+      throw new BadRequestException('Workspace does not exist');
+    }
+
+    return workspace;
   }
 
+  @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
   async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
     const user = await this.authService.challenge(challengeInput);
@@ -95,13 +102,28 @@ export class AuthResolver {
     return { loginToken };
   }
 
+  @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
   async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
-    const user = await this.authService.signInUp(signUpInput);
+    const user = await this.authService.signInUp({
+      ...signUpInput,
+      fromSSO: false,
+    });
 
     const loginToken = await this.tokenService.generateLoginToken(user.email);
 
     return { loginToken };
+  }
+
+  @Mutation(() => ExchangeAuthCode)
+  async exchangeAuthorizationCode(
+    @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
+  ) {
+    const tokens = await this.tokenService.verifyAuthorizationCode(
+      exchangeAuthCodeInput,
+    );
+
+    return tokens;
   }
 
   @Mutation(() => TransientToken)
@@ -147,17 +169,6 @@ export class AuthResolver {
     );
 
     return authorizedApp;
-  }
-
-  @Query(() => ExchangeAuthCode)
-  async exchangeAuthorizationCode(
-    @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
-  ) {
-    const tokens = await this.tokenService.verifyAuthorizationCode(
-      exchangeAuthCodeInput,
-    );
-
-    return tokens;
   }
 
   @Mutation(() => AuthTokens)

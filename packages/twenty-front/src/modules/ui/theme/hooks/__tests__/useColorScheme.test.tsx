@@ -17,6 +17,7 @@ const workspaceMember: Omit<
   WorkspaceMember,
   'createdAt' | 'updatedAt' | 'userId' | 'userEmail'
 > = {
+  __typename: 'WorkspaceMember',
   id: 'id',
   name: {
     firstName: 'firstName',

@@ -8,6 +8,7 @@ import { useCreateActivityInCache } from '@/activities/hooks/useCreateActivityIn
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
@@ -15,7 +16,7 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        query FindOneWorkspaceMember($objectRecordId: UUID!) {
+        query FindOneWorkspaceMember($objectRecordId: ID!) {
           workspaceMember(filter: { id: { eq: $objectRecordId } }) {
             __typename
             colorScheme
@@ -64,18 +65,26 @@ describe('useCreateActivityInCache', () => {
         const setObjectMetadataItems = useSetRecoilState(
           objectMetadataItemsState,
         );
+        const setRecordStore = useSetRecoilState(
+          recordStoreFamilyState('1234'),
+        );
 
         const res = useCreateActivityInCache();
         return {
           ...res,
           setCurrentWorkspaceMember,
           setObjectMetadataItems,
+          setRecordStore,
         };
       },
       { wrapper: Wrapper },
     );
 
     act(() => {
+      result.current.setRecordStore({
+        id: '1234',
+        __typename: 'Person',
+      });
       result.current.setCurrentWorkspaceMember(mockWorkspaceMembers[0]);
       result.current.setObjectMetadataItems(mockObjectMetadataItems);
     });
@@ -83,12 +92,10 @@ describe('useCreateActivityInCache', () => {
     act(() => {
       const res = result.current.createActivityInCache({
         type: 'Note',
-        targetableObjects: [
-          {
-            targetObjectNameSingular: 'person',
-            id: '1234',
-          },
-        ],
+        targetObject: {
+          targetObjectNameSingular: 'person',
+          id: '1234',
+        },
       });
 
       expect(res.createdActivityInCache).toHaveProperty('id');

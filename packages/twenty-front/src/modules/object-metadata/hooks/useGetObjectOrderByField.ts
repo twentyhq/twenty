@@ -1,7 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
-import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { getOrderByFieldForObjectMetadataItem } from '@/object-metadata/utils/getObjectOrderByField';
+import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 
 export const useGetObjectOrderByField = ({
   objectNameSingular,
@@ -12,7 +12,9 @@ export const useGetObjectOrderByField = ({
     objectNameSingular,
   });
 
-  const getObjectOrderByField = (orderBy: OrderBy): OrderByField => {
+  const getObjectOrderByField = (
+    orderBy: OrderBy,
+  ): RecordGqlOperationOrderBy => {
     return getOrderByFieldForObjectMetadataItem(objectMetadataItem, orderBy);
   };
 

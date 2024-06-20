@@ -1,8 +1,10 @@
 export type ColorScheme = 'Dark' | 'Light' | 'System';
 
 export type WorkspaceMember = {
+  __typename: 'WorkspaceMember';
   id: string;
   name: {
+    __typename?: 'FullName';
     firstName: string;
     lastName: string;
   };

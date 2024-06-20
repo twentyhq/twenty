@@ -1,4 +1,4 @@
-import { FieldMetadataType } from '~/generated-metadata/graphql.ts';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldDefinition } from '../FieldDefinition';
 import { FieldDateTimeMetadata, FieldMetadata } from '../FieldMetadata';

@@ -1,10 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ColorSample, ColorSampleProps } from 'twenty-ui';
 
-import {
-  ColorSample,
-  ColorSampleProps,
-} from '@/ui/display/color/components/ColorSample';
 import {
   LightIconButton,
   LightIconButtonProps,

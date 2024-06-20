@@ -31,7 +31,7 @@ export const createApp = async (
     imports: [AppModule],
   });
 
-  if (!!config.moduleBuilderHook) {
+  if (config.moduleBuilderHook) {
     moduleBuilder = config.moduleBuilderHook(moduleBuilder);
   }
 

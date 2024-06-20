@@ -79,9 +79,6 @@ export const useSetHotkeyScope = () =>
 
         scopesToSet.push(newHotkeyScope.scope);
 
-        // TODO: fix eslint rule not understanding a boolean constant
-        //    See issue https://github.com/twentyhq/twenty/issues/4881
-        // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
         if (DEBUG_HOTKEY_SCOPE) {
           logDebug('DEBUG: set new hotkey scope', {
             scopesToSet,

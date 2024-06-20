@@ -14,6 +14,8 @@ import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 
+import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
+
 import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
 import { assert } from 'src/utils/assert';
 import {
@@ -87,6 +89,7 @@ export class AuthService {
     firstName,
     lastName,
     picture,
+    fromSSO,
   }: {
     email: string;
     password?: string;
@@ -94,6 +97,7 @@ export class AuthService {
     lastName?: string | null;
     workspaceInviteHash?: string | null;
     picture?: string | null;
+    fromSSO: boolean;
   }) {
     return await this.signInUpService.signInUp({
       email,
@@ -102,6 +106,7 @@ export class AuthService {
       lastName,
       workspaceInviteHash,
       picture,
+      fromSSO,
     });
   }
 
@@ -194,9 +199,13 @@ export class AuthService {
       {
         id: 'chrome',
         name: 'Chrome Extension',
-        redirectUrl: `${this.environmentService.get(
-          'CHROME_EXTENSION_REDIRECT_URL',
-        )}`,
+        redirectUrl:
+          this.environmentService.get('NODE_ENV') ===
+          NodeEnvironment.development
+            ? authorizeAppInput.redirectUrl
+            : `https://${this.environmentService.get(
+                'CHROME_EXTENSION_ID',
+              )}.chromiumapp.org/`,
       },
     ];
 
@@ -208,8 +217,12 @@ export class AuthService {
       throw new NotFoundException(`Invalid client '${clientId}'`);
     }
 
-    if (!client.redirectUrl && !authorizeAppInput.redirectUrl) {
+    if (!client.redirectUrl || !authorizeAppInput.redirectUrl) {
       throw new NotFoundException(`redirectUrl not found for '${clientId}'`);
+    }
+
+    if (client.redirectUrl !== authorizeAppInput.redirectUrl) {
+      throw new ForbiddenException(`redirectUrl mismatch for '${clientId}'`);
     }
 
     const authorizationCode = crypto.randomBytes(42).toString('hex');

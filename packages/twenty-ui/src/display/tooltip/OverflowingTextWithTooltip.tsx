@@ -1,11 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import styled from '@emotion/styled';
-import { v4 as uuidV4 } from 'uuid';
+import { styled } from '@linaria/react';
 
-import { AppTooltip } from './AppTooltip';
+import { THEME_COMMON } from '@ui/theme';
 
-const StyledOverflowingText = styled.div<{ cursorPointer: boolean }>`
+import { AppTooltip, TooltipDelay } from './AppTooltip';
+
+const spacing4 = THEME_COMMON.spacing(4);
+
+const StyledOverflowingText = styled.div<{
+  cursorPointer: boolean;
+  size: 'large' | 'small';
+}>`
   cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
   font-family: inherit;
   font-size: inherit;
@@ -17,34 +23,45 @@ const StyledOverflowingText = styled.div<{ cursorPointer: boolean }>`
 
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
+
+  & :hover {
+    text-overflow: ${({ cursorPointer }) =>
+      cursorPointer ? 'clip' : 'ellipsis'};
+    white-space: ${({ cursorPointer }) =>
+      cursorPointer ? 'normal' : 'nowrap'};
+  }
 `;
 
 export const OverflowingTextWithTooltip = ({
+  size = 'small',
   text,
-  className,
   mutliline,
 }: {
+  size?: 'large' | 'small';
   text: string | null | undefined;
-  className?: string;
   mutliline?: boolean;
 }) => {
-  const textElementId = `title-id-${uuidV4()}`;
+  const textElementId = `title-id-${+new Date()}`;
 
   const textRef = useRef<HTMLDivElement>(null);
 
   const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
 
-  useEffect(() => {
+  const handleMouseEnter = () => {
     const isOverflowing =
       (text?.length ?? 0) > 0 && textRef.current
         ? textRef.current?.scrollHeight > textRef.current?.clientHeight ||
           textRef.current.scrollWidth > textRef.current.clientWidth
         : false;
 
-    if (isTitleOverflowing !== isOverflowing) {
-      setIsTitleOverflowing(isOverflowing);
-    }
-  }, [isTitleOverflowing, text]);
+    setIsTitleOverflowing(isOverflowing);
+  };
+
+  const handleMouseLeave = () => {
+    setIsTitleOverflowing(false);
+  };
 
   const handleTooltipClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -55,10 +72,12 @@ export const OverflowingTextWithTooltip = ({
     <>
       <StyledOverflowingText
         data-testid="tooltip"
-        className={className}
+        cursorPointer={isTitleOverflowing}
+        size={size}
         ref={textRef}
         id={textElementId}
-        cursorPointer={isTitleOverflowing}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         {text}
       </StyledOverflowingText>
@@ -68,11 +87,12 @@ export const OverflowingTextWithTooltip = ({
             <AppTooltip
               anchorSelect={`#${textElementId}`}
               content={mutliline ? undefined : text ?? ''}
-              delayHide={0}
               offset={5}
+              isOpen
               noArrow
               place="bottom"
               positionStrategy="absolute"
+              delay={TooltipDelay.mediumDelay}
             >
               {mutliline ? <pre>{text}</pre> : ''}
             </AppTooltip>

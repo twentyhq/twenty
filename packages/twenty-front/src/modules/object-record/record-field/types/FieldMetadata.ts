@@ -1,6 +1,7 @@
+import { ThemeColor } from 'twenty-ui';
+
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 
 import { CurrencyCode } from './CurrencyCode';
 
@@ -42,6 +43,11 @@ export type FieldNumberMetadata = {
 export type FieldLinkMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
+  fieldName: string;
+};
+
+export type FieldLinksMetadata = {
+  objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
@@ -100,6 +106,7 @@ export type FieldRelationMetadata = {
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
   relationType?: FieldDefinitionRelationType;
+  targetFieldMetadataName?: string;
   useEditButton?: boolean;
 };
 
@@ -143,6 +150,11 @@ export type FieldBooleanValue = boolean;
 export type FieldPhoneValue = string;
 export type FieldEmailValue = string;
 export type FieldLinkValue = { url: string; label: string };
+export type FieldLinksValue = {
+  primaryLinkLabel: string;
+  primaryLinkUrl: string;
+  secondaryLinks?: { label: string; url: string }[] | null;
+};
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
   amountMicros: number | null;
@@ -162,5 +174,10 @@ export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
-export type FieldRelationValue = EntityForSelect | null;
-export type FieldJsonValue = string;
+export type FieldRelationValue<T extends EntityForSelect | EntityForSelect[]> =
+  T | null;
+
+// See https://zod.dev/?id=json-type
+type Literal = string | number | boolean | null;
+export type Json = Literal | { [key: string]: Json } | Json[];
+export type FieldJsonValue = Record<string, Json> | Json[] | null;

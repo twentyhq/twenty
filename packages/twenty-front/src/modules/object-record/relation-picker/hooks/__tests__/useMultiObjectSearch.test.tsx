@@ -9,11 +9,11 @@ import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useM
 import { FieldMetadataType } from '~/generated/graphql';
 
 const query = gql`
-  query FindManyRecordsMultipleMetadataItems(
+  query CombinedFindManyRecords(
     $filterNameSingular: NameSingularFilterInput
-    $orderByNameSingular: NameSingularOrderByInput
+    $orderByNameSingular: [NameSingularOrderByInput]
     $lastCursorNameSingular: String
-    $limitNameSingular: Float
+    $limitNameSingular: Int
   ) {
     namePlural(
       filter: $filterNameSingular
@@ -50,7 +50,7 @@ const mocks = [
       query,
       variables: {
         filterNameSingular: { id: { in: ['1'] } },
-        orderByNameSingular: { createdAt: 'DescNullsLast' },
+        orderByNameSingular: [{ createdAt: 'DescNullsLast' }],
         limitNameSingular: 60,
       },
     },
@@ -63,7 +63,7 @@ const mocks = [
       query,
       variables: {
         filterNameSingular: { and: [{}, { id: { in: ['1'] } }] },
-        orderByNameSingular: { createdAt: 'DescNullsLast' },
+        orderByNameSingular: [{ createdAt: 'DescNullsLast' }],
         limitNameSingular: 60,
       },
     },
@@ -77,7 +77,7 @@ const mocks = [
       variables: {
         limitNameSingular: 60,
         filterNameSingular: { not: { id: { in: ['1'] } } },
-        orderByNameSingular: { createdAt: 'DescNullsLast' },
+        orderByNameSingular: [{ createdAt: 'DescNullsLast' }],
       },
     },
     result: jest.fn(() => ({
@@ -118,6 +118,7 @@ describe('useMultiObjectSearch', () => {
         isActive: true,
         isCustom: true,
         isSystem: false,
+        isRemote: false,
         labelPlural: 'labelPlural',
         labelSingular: 'labelSingular',
         namePlural: 'namePlural',
@@ -152,6 +153,7 @@ describe('useMultiObjectSearch', () => {
           isActive: true,
           isCustom: true,
           isSystem: false,
+          isRemote: false,
           labelPlural: 'labelPlural',
           labelSingular: 'labelSingular',
           namePlural: 'namePlural',

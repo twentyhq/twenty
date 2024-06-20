@@ -8,19 +8,27 @@ import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { mockedActivities } from '~/testing/mock-data/activities';
 import {
-  mockedCompaniesData,
-  mockedDuplicateCompanyData,
+  getCompaniesMock,
+  getCompanyDuplicateMock,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
+import { mockedObjectMetadataItemsQueryResult } from '~/testing/mock-data/metadata';
+import { getPeopleMock } from '~/testing/mock-data/people';
+import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUsersData } from '~/testing/mock-data/users';
+import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
-import { mockedObjectMetadataItems } from './mock-data/metadata';
-import { mockedPeopleData } from './mock-data/people';
+import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
-import { mockedViewsData } from './mock-data/views';
 
-const metadataGraphql = graphql.link(`${REACT_APP_SERVER_BASE_URL}/metadata`);
+const peopleMock = getPeopleMock();
+const companiesMock = getCompaniesMock();
+const duplicateCompanyMock = getCompanyDuplicateMock();
+
+export const metadataGraphql = graphql.link(
+  `${REACT_APP_SERVER_BASE_URL}/metadata`,
+);
 
 export const graphqlMocks = {
   handlers: [
@@ -49,7 +57,7 @@ export const graphqlMocks = {
       getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? '',
       () => {
         return HttpResponse.json({
-          data: { objects: mockedObjectMetadataItems },
+          data: mockedObjectMetadataItemsQueryResult,
         });
       },
     ),
@@ -104,8 +112,8 @@ export const graphqlMocks = {
     }),
     graphql.query('FindManyCompanies', ({ variables }) => {
       const mockedData = variables.limit
-        ? mockedCompaniesData.slice(0, variables.limit)
-        : mockedCompaniesData;
+        ? companiesMock.slice(0, variables.limit)
+        : companiesMock;
 
       return HttpResponse.json({
         data: {
@@ -153,7 +161,7 @@ export const graphqlMocks = {
             edges: [
               {
                 node: {
-                  ...mockedDuplicateCompanyData,
+                  ...duplicateCompanyMock,
                   favorites: {
                     edges: [],
                     __typename: 'FavoriteConnection',
@@ -193,7 +201,7 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           people: {
-            edges: mockedPeopleData.map((person) => ({
+            edges: peopleMock.map((person) => ({
               node: person,
               cursor: null,
             })),
@@ -312,6 +320,20 @@ export const graphqlMocks = {
               endCursor: null,
             },
           },
+        },
+      });
+    }),
+    graphql.query('GetOneDatabaseConnection', () => {
+      return HttpResponse.json({
+        data: {
+          findOneRemoteServerById: mockedRemoteServers[0],
+        },
+      });
+    }),
+    graphql.query('GetManyRemoteTables', () => {
+      return HttpResponse.json({
+        data: {
+          findDistantTablesWithStatus: mockedRemoteTables,
         },
       });
     }),

@@ -2,6 +2,7 @@
 .DS_Store
 /.idea
 **/**/node_modules/
+.cache
 
 # yarn is the recommended package manager across the project
 **/**/.package-lock.json
@@ -24,3 +25,6 @@ coverage
 dist
 storybook-static
 *.tsbuildinfo
+.eslintcache
+.cache
+.nyc_output

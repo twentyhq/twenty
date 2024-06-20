@@ -3,26 +3,12 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 
 import {
   csvDownloader,
+  displayedExportProgress,
   download,
   generateCsv,
-  percentage,
-  sleep,
 } from '../useExportTableData';
 
 jest.useFakeTimers();
-
-describe('sleep', () => {
-  it('waits the provided number of milliseconds', async () => {
-    const spy = jest.fn();
-    sleep(1000).then(spy);
-
-    jest.advanceTimersByTime(999);
-    expect(spy).not.toHaveBeenCalled();
-    jest.advanceTimersByTime(1);
-    await Promise.resolve(); // let queued promises execute
-    expect(spy).toHaveBeenCalledTimes(1);
-  });
-});
 
 describe('download', () => {
   it('creates a download link and clicks it', () => {
@@ -62,8 +48,8 @@ describe('generateCsv', () => {
       },
     ];
     const csv = generateCsv({ columns, rows });
-    expect(csv).toEqual(`Foo,Empty,Nested Foo,Nested Nested
-some field,,foo,nested`);
+    expect(csv).toEqual(`Foo,Empty,Nested Foo,Nested Nested,Relation
+some field,,foo,nested,a relation`);
   });
 });
 
@@ -92,17 +78,24 @@ describe('csvDownloader', () => {
   });
 });
 
-describe('percentage', () => {
+describe('displayedExportProgress', () => {
   it.each([
-    [20, 50, 40],
-    [0, 100, 0],
-    [10, 10, 100],
-    [10, 10, 100],
-    [7, 9, 78],
+    [undefined, undefined, 'percentage', 'Export'],
+    [20, 50, 'percentage', 'Export (40%)'],
+    [0, 100, 'number', 'Export (0)'],
+    [10, 10, 'percentage', 'Export (100%)'],
+    [10, 10, 'number', 'Export (10)'],
+    [7, 9, 'percentage', 'Export (78%)'],
   ])(
-    'calculates the percentage %p/%p = %p',
-    (part, whole, expectedPercentage) => {
-      expect(percentage(part, whole)).toEqual(expectedPercentage);
+    'displays the export progress',
+    (exportedRecordCount, totalRecordCount, displayType, expected) => {
+      expect(
+        displayedExportProgress({
+          exportedRecordCount,
+          totalRecordCount,
+          displayType: displayType as 'percentage' | 'number',
+        }),
+      ).toEqual(expected);
     },
   );
 });

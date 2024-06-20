@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
   extends: [
     'plugin:@nx/react',
@@ -27,6 +29,11 @@ module.exports = {
                 message:
                   'Please use the custom wrapper: `useScopedHotkeys` from `twenty-ui`',
               },
+              {
+                group: ['lodash'],
+                message:
+                  "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)",
+              },
             ],
           },
         ],
@@ -40,6 +47,7 @@ module.exports = {
         '@nx/workspace-explicit-boolean-predicates-in-if': 'error',
         '@nx/workspace-use-getLoadable-and-getValue-to-get-atoms': 'error',
         '@nx/workspace-useRecoilCallback-has-dependency-array': 'error',
+        '@nx/workspace-no-navigate-prefer-link': 'error',
         'react/no-unescaped-entities': 'off',
         'react/prop-types': 'off',
         'react/jsx-key': 'off',
@@ -72,7 +80,9 @@ module.exports = {
       rules: {
         'storybook/no-uninstalled-addons': [
           'error',
-          { packageJsonLocation: '../../package.json' },
+          {
+            packageJsonLocation: path.resolve(__dirname, './package.json'),
+          },
         ],
       },
     },

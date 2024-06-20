@@ -1,3 +1,5 @@
+import { isString } from '@sniptt/guards';
+
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
@@ -11,10 +13,13 @@ import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldE
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldLink } from '@/object-record/record-field/types/guards/isFieldLink';
+import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
+import { isFieldLinksValue } from '@/object-record/record-field/types/guards/isFieldLinksValue';
 import { isFieldLinkValue } from '@/object-record/record-field/types/guards/isFieldLinkValue';
-import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect.ts';
-import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue.ts';
+import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
+import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
+import { isFieldPhone } from '@/object-record/record-field/types/guards/isFieldPhone';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
@@ -23,8 +28,11 @@ import { isFieldSelectValue } from '@/object-record/record-field/types/guards/is
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { isDefined } from '~/utils/isDefined';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
-const isValueEmpty = (value: unknown) => !isDefined(value) || value === '';
+const isValueEmpty = (value: unknown) =>
+  !isDefined(value) ||
+  (isString(value) && stripSimpleQuotesFromString(value) === '');
 
 export const isFieldValueEmpty = ({
   fieldDefinition,
@@ -45,8 +53,8 @@ export const isFieldValueEmpty = ({
     isFieldEmail(fieldDefinition) ||
     isFieldBoolean(fieldDefinition) ||
     isFieldRelation(fieldDefinition) ||
-    isFieldRawJson(fieldDefinition)
-    //|| isFieldPhone(fieldDefinition)
+    isFieldRawJson(fieldDefinition) ||
+    isFieldPhone(fieldDefinition)
   ) {
     return isValueEmpty(fieldValue);
   }
@@ -75,7 +83,8 @@ export const isFieldValueEmpty = ({
   if (isFieldFullName(fieldDefinition)) {
     return (
       !isFieldFullNameValue(fieldValue) ||
-      isValueEmpty(fieldValue?.firstName + fieldValue?.lastName)
+      (isValueEmpty(fieldValue?.firstName) &&
+        isValueEmpty(fieldValue?.lastName))
     );
   }
 
@@ -92,6 +101,12 @@ export const isFieldValueEmpty = ({
         isValueEmpty(fieldValue?.addressState) &&
         isValueEmpty(fieldValue?.addressPostcode) &&
         isValueEmpty(fieldValue?.addressCountry))
+    );
+  }
+
+  if (isFieldLinks(fieldDefinition)) {
+    return (
+      !isFieldLinksValue(fieldValue) || isValueEmpty(fieldValue.primaryLinkUrl)
     );
   }
 

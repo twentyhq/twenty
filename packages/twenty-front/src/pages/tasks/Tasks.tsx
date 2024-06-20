@@ -6,6 +6,7 @@ import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButt
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/TasksTabListComponentId';
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
+import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -28,7 +29,6 @@ const StyledTabListContainer = styled.div`
   align-items: end;
   display: flex;
   height: 40px;
-  margin-left: ${({ theme }) => `-${theme.spacing(2)}`};
 `;
 
 export const Tasks = () => {
@@ -49,36 +49,38 @@ export const Tasks = () => {
 
   return (
     <PageContainer>
-      <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
-        <TasksEffect filterDropdownId={filterDropdownId} />
-        <PageHeader title="Tasks" Icon={IconCheckbox}>
-          <PageAddTaskButton />
-        </PageHeader>
-        <PageBody>
-          <StyledTasksContainer>
-            <TopBar
-              leftComponent={
-                <StyledTabListContainer>
-                  <TabList
-                    tabListId={TASKS_TAB_LIST_COMPONENT_ID}
-                    tabs={TASK_TABS}
+      <RecordFieldValueSelectorContextProvider>
+        <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
+          <TasksEffect filterDropdownId={filterDropdownId} />
+          <PageHeader title="Tasks" Icon={IconCheckbox}>
+            <PageAddTaskButton />
+          </PageHeader>
+          <PageBody>
+            <StyledTasksContainer>
+              <TopBar
+                leftComponent={
+                  <StyledTabListContainer>
+                    <TabList
+                      tabListId={TASKS_TAB_LIST_COMPONENT_ID}
+                      tabs={TASK_TABS}
+                    />
+                  </StyledTabListContainer>
+                }
+                rightComponent={
+                  <ObjectFilterDropdownButton
+                    filterDropdownId={filterDropdownId}
+                    key="tasks-filter-dropdown-button"
+                    hotkeyScope={{
+                      scope: RelationPickerHotkeyScope.RelationPicker,
+                    }}
                   />
-                </StyledTabListContainer>
-              }
-              rightComponent={
-                <ObjectFilterDropdownButton
-                  filterDropdownId={filterDropdownId}
-                  key="tasks-filter-dropdown-button"
-                  hotkeyScope={{
-                    scope: RelationPickerHotkeyScope.RelationPicker,
-                  }}
-                />
-              }
-            />
-            <TaskGroups filterDropdownId={filterDropdownId} />
-          </StyledTasksContainer>
-        </PageBody>
-      </RecoilScope>
+                }
+              />
+              <TaskGroups filterDropdownId={filterDropdownId} />
+            </StyledTasksContainer>
+          </PageBody>
+        </RecoilScope>
+      </RecordFieldValueSelectorContextProvider>
     </PageContainer>
   );
 };

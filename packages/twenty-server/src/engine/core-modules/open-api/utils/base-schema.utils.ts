@@ -2,6 +2,8 @@ import { OpenAPIV3_1 } from 'openapi-types';
 
 import { computeOpenApiPath } from 'src/engine/core-modules/open-api/utils/path.utils';
 
+export const API_Version = 'v0.1';
+
 export const baseSchema = (
   schemaName: 'core' | 'metadata',
   serverUrl: string,
@@ -19,7 +21,7 @@ export const baseSchema = (
         name: 'AGPL-3.0',
         url: 'https://github.com/twentyhq/twenty?tab=AGPL-3.0-1-ov-file#readme',
       },
-      version: '0.2.0',
+      version: API_Version,
     },
     // Testing purposes
     servers: [

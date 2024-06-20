@@ -1,9 +1,11 @@
+import { useContext, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { GRAY_SCALE } from 'twenty-ui';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 
 const StyledText = styled.div`
   align-items: center;
@@ -16,17 +18,23 @@ const StyledText = styled.div`
 `;
 
 export const RecordBoardColumnFetchMoreLoader = () => {
-  const { isFetchingRecordState, onFetchMoreVisibilityChangeState } =
+  const { columnDefinition } = useContext(RecordBoardColumnContext);
+  const { shouldFetchMoreInColumnFamilyState, isFetchingRecordsByColumnState } =
     useRecordBoardStates();
-  const isFetchingRecord = useRecoilValue(isFetchingRecordState);
 
-  const onFetchMoreVisibilityChange = useRecoilValue(
-    onFetchMoreVisibilityChangeState,
+  const isFetchingRecord = useRecoilValue(
+    isFetchingRecordsByColumnState({ columnId: columnDefinition.id }),
   );
 
-  const { ref } = useInView({
-    onChange: onFetchMoreVisibilityChange,
-  });
+  const setShouldFetchMore = useSetRecoilState(
+    shouldFetchMoreInColumnFamilyState(columnDefinition.id),
+  );
+
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    setShouldFetchMore(inView);
+  }, [setShouldFetchMore, inView]);
 
   return (
     <div ref={ref}>

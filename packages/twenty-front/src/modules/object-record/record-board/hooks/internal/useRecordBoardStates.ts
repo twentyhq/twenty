@@ -3,17 +3,19 @@ import { isFirstRecordBoardColumnComponentFamilyState } from '@/object-record/re
 import { isLastRecordBoardColumnComponentFamilyState } from '@/object-record/record-board/states/isLastRecordBoardColumnComponentFamilyState';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
+import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsByColumnFamilyState';
 import { isRecordBoardFetchingRecordsComponentState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsComponentState';
-import { onRecordBoardFetchMoreVisibilityChangeComponentState } from '@/object-record/record-board/states/onRecordBoardFetchMoreVisibilityChangeComponentState';
 import { recordBoardColumnIdsComponentState } from '@/object-record/record-board/states/recordBoardColumnIdsComponentState';
 import { recordBoardFieldDefinitionsComponentState } from '@/object-record/record-board/states/recordBoardFieldDefinitionsComponentState';
 import { recordBoardFiltersComponentState } from '@/object-record/record-board/states/recordBoardFiltersComponentState';
 import { recordBoardKanbanFieldMetadataNameComponentState } from '@/object-record/record-board/states/recordBoardKanbanFieldMetadataNameComponentState';
 import { recordBoardObjectSingularNameComponentState } from '@/object-record/record-board/states/recordBoardObjectSingularNameComponentState';
 import { recordBoardRecordIdsByColumnIdComponentFamilyState } from '@/object-record/record-board/states/recordBoardRecordIdsByColumnIdComponentFamilyState';
+import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordBoardSortsComponentState } from '@/object-record/record-board/states/recordBoardSortsComponentState';
 import { recordBoardColumnsComponentFamilySelector } from '@/object-record/record-board/states/selectors/recordBoardColumnsComponentFamilySelector';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { recordBoardShouldFetchMoreComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardShouldFetchMoreComponentFamilySelector';
 import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
@@ -39,6 +41,10 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
     ),
     isFetchingRecordState: extractComponentState(
       isRecordBoardFetchingRecordsComponentState,
+      scopeId,
+    ),
+    isFetchingRecordsByColumnState: extractComponentFamilyState(
+      isRecordBoardFetchingRecordsByColumnFamilyState,
       scopeId,
     ),
     columnIdsState: extractComponentState(
@@ -90,8 +96,12 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
       scopeId,
     ),
 
-    onFetchMoreVisibilityChangeState: extractComponentState(
-      onRecordBoardFetchMoreVisibilityChangeComponentState,
+    shouldFetchMoreInColumnFamilyState: extractComponentFamilyState(
+      recordBoardShouldFetchMoreInColumnComponentFamilyState,
+      scopeId,
+    ),
+    shouldFetchMoreSelector: extractComponentReadOnlySelector(
+      recordBoardShouldFetchMoreComponentSelector,
       scopeId,
     ),
   };

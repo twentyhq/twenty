@@ -4,6 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated/graphql';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useNumberField } from '../../../hooks/useNumberField';
@@ -105,7 +106,7 @@ const meta: Meta = {
     onTab: { control: false },
     onShiftTab: { control: false },
   },
-  decorators: [clearMocksDecorator],
+  decorators: [clearMocksDecorator, SnackBarDecorator],
   parameters: {
     clearMocks: true,
   },

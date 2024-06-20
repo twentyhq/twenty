@@ -8,6 +8,7 @@ import { RawData } from '@/spreadsheet-import/types';
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { CircularProgressBar } from '@/ui/feedback/progress-bar/components/CircularProgressBar';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
@@ -58,12 +59,16 @@ export type StepState =
 
 interface UploadFlowProps {
   nextStep: () => void;
+  prevStep: () => void;
 }
 
-export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
+export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
   const theme = useTheme();
   const { initialStepState } = useSpreadsheetImportInternal();
   const [state, setState] = useState<StepState>(
+    initialStepState || { type: StepType.upload },
+  );
+  const [previousState, setPreviousState] = useState<StepState>(
     initialStepState || { type: StepType.upload },
   );
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -80,11 +85,16 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
     (description: string) => {
       enqueueSnackBar(description, {
         title: 'Error',
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
     },
     [enqueueSnackBar],
   );
+
+  const onBack = useCallback(() => {
+    setState(previousState);
+    prevStep();
+  }, [prevStep, previousState]);
 
   switch (state.type) {
     case StepType.upload:
@@ -137,6 +147,7 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
             } else {
               setState({ type: StepType.selectSheet, workbook });
             }
+            setPreviousState(state);
             nextStep();
           }}
         />
@@ -163,10 +174,12 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
                 type: StepType.selectHeader,
                 data: mappedWorkbook,
               });
+              setPreviousState(state);
             } catch (e) {
               errorToast((e as Error).message);
             }
           }}
+          onBack={onBack}
         />
       );
     case StepType.selectHeader:
@@ -183,11 +196,13 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
                 data,
                 headerValues,
               });
+              setPreviousState(state);
               nextStep();
             } catch (e) {
               errorToast((e as Error).message);
             }
           }}
+          onBack={onBack}
         />
       );
     case StepType.matchColumns:
@@ -202,11 +217,13 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
                 type: StepType.validateData,
                 data,
               });
+              setPreviousState(state);
               nextStep();
             } catch (e) {
               errorToast((e as Error).message);
             }
           }}
+          onBack={onBack}
         />
       );
     case StepType.validateData:
@@ -222,6 +239,10 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
               type: StepType.loading,
             })
           }
+          onBack={() => {
+            onBack();
+            setPreviousState(initialStepState || { type: StepType.upload });
+          }}
         />
       );
     case StepType.loading:

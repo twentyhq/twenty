@@ -1,20 +1,22 @@
 import { ViewFilter } from '@/views/types/ViewFilter';
 
 export const combinedViewFilters = (
-  viewFilter: ViewFilter[],
+  viewFilters: ViewFilter[],
   toUpsertViewFilters: ViewFilter[],
   toDeleteViewFilterIds: string[],
 ): ViewFilter[] => {
   const toCreateViewFilters = toUpsertViewFilters.filter(
     (toUpsertViewFilter) =>
-      !viewFilter.some((viewFilter) => viewFilter.id === toUpsertViewFilter.id),
+      !viewFilters.some(
+        (viewFilter) => viewFilter.id === toUpsertViewFilter.id,
+      ),
   );
 
   const toUpdateViewFilters = toUpsertViewFilters.filter((toUpsertViewFilter) =>
-    viewFilter.some((viewFilter) => viewFilter.id === toUpsertViewFilter.id),
+    viewFilters.some((viewFilter) => viewFilter.id === toUpsertViewFilter.id),
   );
 
-  const combinedViewFilters = viewFilter
+  const combinedViewFilters = viewFilters
     .filter((viewFilter) => !toDeleteViewFilterIds.includes(viewFilter.id))
     .map((viewFilter) => {
       const toUpdateViewFilter = toUpdateViewFilters.find(
@@ -26,9 +28,6 @@ export const combinedViewFilters = (
     .concat(toCreateViewFilters);
 
   return Object.values(
-    combinedViewFilters.reduce(
-      (acc, obj) => ({ ...acc, [obj.fieldMetadataId]: obj }),
-      {},
-    ),
+    combinedViewFilters.reduce((acc, obj) => ({ ...acc, [obj.id]: obj }), {}),
   );
 };

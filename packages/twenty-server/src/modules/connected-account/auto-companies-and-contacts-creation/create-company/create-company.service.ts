@@ -7,13 +7,13 @@ import axios, { AxiosInstance } from 'axios';
 import { CompanyRepository } from 'src/modules/company/repositories/company.repository';
 import { getCompanyNameFromDomainName } from 'src/modules/calendar-messaging-participant/utils/get-company-name-from-domain-name.util';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 @Injectable()
 export class CreateCompanyService {
   private readonly httpService: AxiosInstance;
 
   constructor(
-    @InjectObjectMetadataRepository(CompanyObjectMetadata)
+    @InjectObjectMetadataRepository(CompanyWorkspaceEntity)
     private readonly companyRepository: CompanyRepository,
   ) {
     this.httpService = axios.create({
@@ -85,7 +85,7 @@ export class CreateCompanyService {
 
     const { name, city } = await this.getCompanyInfoFromDomainName(domainName);
 
-    this.companyRepository.createCompany(
+    await this.companyRepository.createCompany(
       workspaceId,
       {
         id: companyId,

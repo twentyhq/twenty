@@ -1,5 +1,23 @@
-import UserGuideContent from '@/app/_components/user-guide/UserGuideContent';
-import { getPost } from '@/app/_server-utils/get-posts';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+
+import DocsContent from '@/app/_components/docs/DocsContent';
+import { fetchArticleFromSlug } from '@/shared-utils/fetchArticleFromSlug';
+import { formatSlug } from '@/shared-utils/formatSlug';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const formattedSlug = formatSlug(params.slug);
+  const basePath = '/src/content/user-guide';
+  const mainPost = await fetchArticleFromSlug(params.slug, basePath);
+  return {
+    title: 'Twenty - ' + formattedSlug,
+    description: mainPost?.itemInfo?.info,
+  };
+}
 
 export default async function UserGuideSlug({
   params,
@@ -7,10 +25,9 @@ export default async function UserGuideSlug({
   params: { slug: string };
 }) {
   const basePath = '/src/content/user-guide';
-
-  const mainPost = await getPost(
-    params.slug && params.slug.length ? params.slug : 'home',
-    basePath,
-  );
-  return mainPost && <UserGuideContent item={mainPost} />;
+  const mainPost = await fetchArticleFromSlug(params.slug, basePath);
+  if (!mainPost) {
+    notFound();
+  }
+  return <DocsContent item={mainPost} />;
 }

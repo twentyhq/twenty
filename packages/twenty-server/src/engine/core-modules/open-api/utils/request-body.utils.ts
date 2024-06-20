@@ -1,16 +1,27 @@
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { capitalize } from 'src/utils/capitalize';
-
-export const getRequestBody = (
-  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
-) => {
+export const getRequestBody = (name: string) => {
   return {
     description: 'body',
     required: true,
     content: {
       'application/json': {
         schema: {
-          $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+          $ref: `#/components/schemas/${name}`,
+        },
+      },
+    },
+  };
+};
+
+export const getArrayRequestBody = (name: string) => {
+  return {
+    required: true,
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: {
+            $ref: `#/components/schemas/${name}`,
+          },
         },
       },
     },

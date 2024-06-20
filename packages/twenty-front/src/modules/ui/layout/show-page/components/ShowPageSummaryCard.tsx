@@ -1,7 +1,8 @@
 import { ChangeEvent, ReactNode, useRef } from 'react';
-import { Tooltip } from 'react-tooltip';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Avatar, AvatarType } from 'twenty-ui';
+import { AppTooltip, Avatar, AvatarType } from 'twenty-ui';
 import { v4 as uuidV4 } from 'uuid';
 
 import {
@@ -18,9 +19,10 @@ type ShowPageSummaryCardProps = {
   logoOrAvatar?: string;
   onUploadPicture?: (file: File) => void;
   title: ReactNode;
+  loading: boolean;
 };
 
-const StyledShowPageSummaryCard = styled.div`
+export const StyledShowPageSummaryCard = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -28,6 +30,7 @@ const StyledShowPageSummaryCard = styled.div`
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(4)};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  height: 127px;
 `;
 
 const StyledInfoContainer = styled.div`
@@ -51,17 +54,6 @@ const StyledTitle = styled.div`
   justify-content: center;
 `;
 
-const StyledTooltip = styled(Tooltip)`
-  background-color: ${({ theme }) => theme.background.primary};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-
-  color: ${({ theme }) => theme.font.color.primary};
-
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledAvatarWrapper = styled.div`
   cursor: pointer;
 `;
@@ -69,6 +61,30 @@ const StyledAvatarWrapper = styled.div`
 const StyledFileInput = styled.input`
   display: none;
 `;
+
+const StyledSubSkeleton = styled.div`
+  align-items: center;
+  display: flex;
+  height: 37px;
+  justify-content: center;
+  width: 108px;
+`;
+
+const StyledShowPageSummaryCardSkeletonLoader = () => {
+  const theme = useTheme();
+  return (
+    <SkeletonTheme
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={4}
+    >
+      <Skeleton width={40} height={40} />
+      <StyledSubSkeleton>
+        <Skeleton width={96} height={16} />
+      </StyledSubSkeleton>
+    </SkeletonTheme>
+  );
+};
 
 export const ShowPageSummaryCard = ({
   avatarPlaceholder,
@@ -78,6 +94,7 @@ export const ShowPageSummaryCard = ({
   logoOrAvatar,
   onUploadPicture,
   title,
+  loading,
 }: ShowPageSummaryCardProps) => {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
@@ -92,6 +109,13 @@ export const ShowPageSummaryCard = ({
   const handleAvatarClick = () => {
     inputFileRef?.current?.click?.();
   };
+
+  if (loading)
+    return (
+      <StyledShowPageSummaryCard>
+        <StyledShowPageSummaryCardSkeletonLoader />
+      </StyledShowPageSummaryCard>
+    );
 
   return (
     <StyledShowPageSummaryCard>
@@ -112,8 +136,12 @@ export const ShowPageSummaryCard = ({
       </StyledAvatarWrapper>
       <StyledInfoContainer>
         <StyledTitle>{title}</StyledTitle>
-        <StyledDate id={dateElementId}>Added {beautifiedCreatedAt}</StyledDate>
-        <StyledTooltip
+        {beautifiedCreatedAt && (
+          <StyledDate id={dateElementId}>
+            Added {beautifiedCreatedAt}
+          </StyledDate>
+        )}
+        <AppTooltip
           anchorSelect={`#${dateElementId}`}
           content={exactCreatedAt}
           clickable

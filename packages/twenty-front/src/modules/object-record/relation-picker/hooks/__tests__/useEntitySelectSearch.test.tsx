@@ -1,7 +1,8 @@
 import { ChangeEvent } from 'react';
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useRecoilValue } from 'recoil';
 
+import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
 import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
 import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
 
@@ -14,16 +15,32 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 
 describe('useEntitySelectSearch', () => {
   it('should update searchFilter after change event', async () => {
-    const { result } = renderHook(() => useEntitySelectSearch(), {
-      wrapper: Wrapper,
-    });
+    const { result } = renderHook(
+      () => {
+        const entitySelectSearchHook = useEntitySelectSearch({
+          relationPickerScopeId: 'relation-picker',
+        });
+        const relationPickerScopedStatesHook = useRelationPickerScopedStates({
+          relationPickerScopedId: 'relation-picker',
+        });
+        const internallyStoredFilter = useRecoilValue(
+          relationPickerScopedStatesHook.relationPickerSearchFilterState,
+        );
+        return { entitySelectSearchHook, internallyStoredFilter };
+      },
+      {
+        wrapper: Wrapper,
+      },
+    );
+
     const filter = 'value';
 
     act(() => {
-      result.current.handleSearchFilterChange({
+      result.current.entitySelectSearchHook.handleSearchFilterChange({
         currentTarget: { value: filter },
       } as ChangeEvent<HTMLInputElement>);
     });
-    expect(result.current.searchFilter).toBe(filter);
+
+    expect(result.current.internallyStoredFilter).toBe(filter);
   });
 });

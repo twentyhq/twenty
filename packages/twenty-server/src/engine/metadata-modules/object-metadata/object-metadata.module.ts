@@ -18,12 +18,15 @@ import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-met
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
+import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
 
 import { ObjectMetadataService } from './object-metadata.service';
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
 import { CreateObjectInput } from './dtos/create-object.input';
-import { UpdateObjectInput } from './dtos/update-object.input';
+import { UpdateObjectPayload } from './dtos/update-object.input';
 import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
 
 @Module({
@@ -39,7 +42,9 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
         DataSourceModule,
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
+        WorkspaceCacheVersionModule,
         FeatureFlagModule,
+        RemoteTableRelationsModule,
       ],
       services: [ObjectMetadataService],
       resolvers: [
@@ -47,7 +52,7 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
           EntityClass: ObjectMetadataEntity,
           DTOClass: ObjectMetadataDTO,
           CreateDTOClass: CreateObjectInput,
-          UpdateDTOClass: UpdateObjectInput,
+          UpdateDTOClass: UpdateObjectPayload,
           ServiceClass: ObjectMetadataService,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {
@@ -56,16 +61,18 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
           create: {
             many: { disabled: true },
           },
-          update: {
-            many: { disabled: true },
-          },
+          update: { disabled: true },
           delete: { disabled: true },
           guards: [JwtAuthGuard],
         },
       ],
     }),
   ],
-  providers: [ObjectMetadataService, ObjectMetadataResolver],
+  providers: [
+    ObjectMetadataService,
+    ObjectMetadataResolver,
+    BeforeUpdateOneObject,
+  ],
   exports: [ObjectMetadataService],
 })
 export class ObjectMetadataModule {}

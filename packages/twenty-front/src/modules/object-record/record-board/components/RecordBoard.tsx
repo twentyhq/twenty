@@ -9,6 +9,7 @@ import { useRecordBoardStates } from '@/object-record/record-board/hooks/interna
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
+import { getDraggedRecordPosition } from '@/object-record/record-board/utils/get-dragged-record-position.util';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -16,6 +17,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
 export type RecordBoardProps = {
   recordBoardId: string;
@@ -41,6 +43,11 @@ const StyledBoardHeader = styled.div`
   position: relative;
   z-index: 1;
 `;
+
+const RecordBoardScrollRestoreEffect = () => {
+  useScrollRestoration();
+  return null;
+};
 
 export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
   const { updateOneRecord, selectFieldMetadataItem } =
@@ -101,7 +108,6 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
               .getLoadable(recordStoreFamilyState(recordBeforeId))
               .getValue()
           : null;
-        const recordBeforePosition: number | undefined = recordBefore?.position;
 
         const recordAfterId =
           otherRecordsInDestinationColumn[destinationIndexInColumn];
@@ -110,12 +116,11 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
               .getLoadable(recordStoreFamilyState(recordAfterId))
               .getValue()
           : null;
-        const recordAfterPosition: number | undefined = recordAfter?.position;
 
-        const beforeBoundary = recordBeforePosition ?? 0;
-        const afterBoundary = recordAfterPosition ?? beforeBoundary + 1;
-
-        const draggedRecordPosition = (beforeBoundary + afterBoundary) / 2;
+        const draggedRecordPosition = getDraggedRecordPosition(
+          recordBefore?.position,
+          recordAfter?.position,
+        );
 
         updateOneRecord({
           idToUpdate: draggedRecordId,
@@ -152,6 +157,7 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
               ))}
             </DragDropContext>
           </StyledContainer>
+          <RecordBoardScrollRestoreEffect />
         </ScrollWrapper>
         <DragSelect
           dragSelectable={boardRef}
