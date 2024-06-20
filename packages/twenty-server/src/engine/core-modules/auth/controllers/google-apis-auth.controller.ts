@@ -58,7 +58,7 @@ export class GoogleAPIsAuthController {
       messageVisibility,
     } = user;
 
-    const { workspaceMemberId, workspaceId } =
+    const { workspaceMemberId, userId, workspaceId } =
       await this.tokenService.verifyTransientToken(transientToken);
 
     const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
@@ -88,19 +88,6 @@ export class GoogleAPIsAuthController {
       calendarVisibility,
       messageVisibility,
     });
-
-    const workspaceMemberRepositoryInstance =
-      await this.loadServiceWithWorkspaceContext.load(
-        this.workspaceMemberRepository,
-        workspaceId,
-      );
-
-    const userId = (
-      await workspaceMemberRepositoryInstance.find(
-        workspaceMemberId,
-        workspaceId,
-      )
-    )?.userId;
 
     if (userId) {
       const onboardingServiceInstance =
