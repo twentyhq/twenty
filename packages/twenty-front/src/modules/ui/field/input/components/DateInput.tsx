@@ -33,6 +33,7 @@ export type DateInputProps = {
   onChange?: (newDate: Nullable<Date>) => void;
   isDateTimeInput?: boolean;
   onClear?: () => void;
+  onSubmit?: (newDate: Nullable<Date>) => void;
 };
 
 export const DateInput = ({
@@ -44,6 +45,7 @@ export const DateInput = ({
   onChange,
   isDateTimeInput,
   onClear,
+  onSubmit,
 }: DateInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
@@ -87,7 +89,8 @@ export const DateInput = ({
           date={internalValue ?? new Date()}
           onChange={handleChange}
           onMouseSelect={(newDate: Date | null) => {
-            onEnter(newDate);
+            setInternalValue(newDate);
+            onSubmit?.(newDate);
           }}
           clearable={clearable ? clearable : false}
           isDateTimeInput={isDateTimeInput}
