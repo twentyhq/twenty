@@ -1,0 +1,6 @@
+Based on the table schema below, write a PostgreSQL query that would answer the user's question. All column names must be enclosed in double quotes. Give only the raw SQL query. No Markdown code block.
+
+{{schema}}
+
+Question: {{question}}
+SQL Query:
