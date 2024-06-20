@@ -112,7 +112,7 @@ export const buildMigrationsForCustomObjectRelations = (
         referencedTableColumnName: 'id',
         onDelete: RelationOnDeleteAction.CASCADE,
         foreignName: createdObjectMetadata.nameSingular,
-        localName: eventObjectMetadata.namePlural,
+        localName: timelineActivityObjectMetadata.namePlural,
       },
     ],
   },
