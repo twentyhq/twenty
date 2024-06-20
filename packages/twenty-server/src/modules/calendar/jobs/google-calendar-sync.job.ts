@@ -40,7 +40,7 @@ export class GoogleCalendarSyncJob {
 
       if (!connectedAccount) {
         throw new Error(
-          `No connected account found for ${connectedAccount} in workspace ${workspaceId}`,
+          `No connected account found for ${connectedAccountId} in workspace ${workspaceId}`,
         );
       }
 
