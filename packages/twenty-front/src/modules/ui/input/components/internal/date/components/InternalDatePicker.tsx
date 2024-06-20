@@ -483,11 +483,7 @@ export const InternalDatePicker = ({
               ? date
               : dateParsedWithoutTime;
 
-            if (event?.type === 'click') {
-              handleMouseSelect?.(dateForUpdate);
-            } else {
-              onChange?.(dateForUpdate);
-            }
+            handleMouseSelect?.(dateForUpdate);
           }}
         />
       </div>

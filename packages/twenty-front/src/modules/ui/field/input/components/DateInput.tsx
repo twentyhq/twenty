@@ -61,6 +61,11 @@ export const DateInput = ({
     onClear?.();
   };
 
+  const handleMouseSelect = (newDate: Date | null) => {
+    setInternalValue(newDate);
+    onSubmit?.(newDate);
+  };
+
   const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
   const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
     MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
@@ -88,10 +93,7 @@ export const DateInput = ({
         <InternalDatePicker
           date={internalValue ?? new Date()}
           onChange={handleChange}
-          onMouseSelect={(newDate: Date | null) => {
-            setInternalValue(newDate);
-            onSubmit?.(newDate);
-          }}
+          onMouseSelect={handleMouseSelect}
           clearable={clearable ? clearable : false}
           isDateTimeInput={isDateTimeInput}
           onEnter={onEnter}
