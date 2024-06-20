@@ -35,6 +35,7 @@ export class UpdateOneQueryFactory {
 
     const argsData = {
       ...computedArgs.data,
+      id: undefined, // do nott allow updating the main id
       updatedAt: new Date().toISOString(),
     };
 

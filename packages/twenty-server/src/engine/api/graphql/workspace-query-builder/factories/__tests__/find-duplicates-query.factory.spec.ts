@@ -7,6 +7,7 @@ import { ArgsAliasFactory } from 'src/engine/api/graphql/workspace-query-builder
 import { FieldsStringFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/fields-string.factory';
 import { FindDuplicatesQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/find-duplicates-query.factory';
 import { workspaceQueryBuilderOptionsMock } from 'src/engine/api/graphql/workspace-query-builder/__mocks__/workspace-query-builder-options.mock';
+import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
 
 describe('FindDuplicatesQueryFactory', () => {
   let service: FindDuplicatesQueryFactory;
@@ -30,6 +31,15 @@ describe('FindDuplicatesQueryFactory', () => {
           useValue: {
             create: argAliasCreate,
             // Mock implementation of ArgsAliasFactory methods if needed
+          },
+        },
+        {
+          provide: DuplicateService,
+          useValue: {
+            buildDuplicateCondition: jest.fn().mockReturnValue({
+              field: 'field',
+              value: 'value',
+            }),
           },
         },
       ],

@@ -53,7 +53,7 @@ export const useCreateManyRecords = <
   ) => {
     const sanitizedCreateManyRecordsInput = recordsToCreate.map(
       (recordToCreate) => {
-        const idForCreation = recordToCreate?.id ?? v4();
+        const idForCreation = recordToCreate?.id ?? (upsert ? null : v4());
 
         return {
           ...sanitizeRecordInput({
@@ -68,8 +68,12 @@ export const useCreateManyRecords = <
     const recordsCreatedInCache = [];
 
     for (const recordToCreate of sanitizedCreateManyRecordsInput) {
+      if (recordToCreate.id === null) {
+        continue;
+      }
+
       const recordCreatedInCache = createOneRecordInCache({
-        ...recordToCreate,
+        ...(recordToCreate as { id: string }),
         __typename: getObjectTypename(objectMetadataItem.nameSingular),
       });
 
