@@ -30,7 +30,6 @@ describe('download', () => {
 describe('generateCsv', () => {
   it('generates a csv with formatted headers', async () => {
     const columns = [
-      { label: `id`, metadata: { fieldName: 'id' } },
       { label: 'Foo', metadata: { fieldName: 'foo' } },
       { label: 'Empty', metadata: { fieldName: 'empty' } },
       { label: 'Nested', metadata: { fieldName: 'nested' } },
@@ -41,7 +40,6 @@ describe('generateCsv', () => {
     ] as ColumnDefinition<FieldMetadata>[];
     const rows = [
       {
-        id: '1',
         bar: 'another field',
         empty: null,
         foo: 'some field',
@@ -50,8 +48,8 @@ describe('generateCsv', () => {
       },
     ];
     const csv = generateCsv({ columns, rows });
-    expect(csv).toEqual(`testId,Foo,Empty,Nested Foo,Nested Nested,Relation
-1,some field,,foo,nested,a relation`);
+    expect(csv).toEqual(`Foo,Empty,Nested Foo,Nested Nested,Relation
+some field,,foo,nested,a relation`);
   });
 });
 
@@ -64,7 +62,6 @@ describe('csvDownloader', () => {
         { id: 2, name: 'Alice' },
       ],
       columns: [],
-      objectNameSingular: '',
     };
 
     const link = document.createElement('a');
