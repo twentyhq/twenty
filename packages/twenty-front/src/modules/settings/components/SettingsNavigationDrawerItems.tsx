@@ -102,6 +102,11 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.Integrations}
           Icon={IconApps}
         />
+        <SettingsNavigationDrawerItem
+          label="CRM Migration"
+          path={SettingsPath.CRMMigration}
+          Icon={IconCode}
+        />
       </NavigationDrawerSection>
 
       <NavigationDrawerSection>

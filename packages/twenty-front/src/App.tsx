@@ -57,6 +57,7 @@ import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/Set
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
 import { SettingsAccountsEmailsInboxSettings } from '~/pages/settings/accounts/SettingsAccountsEmailsInboxSettings';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
+import { SettingsCRMMigration } from '~/pages/settings/crm-migration/SettingsCRMMigration';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
@@ -231,6 +232,10 @@ const createRouter = (isBillingEnabled?: boolean) =>
                 <Route
                   path={SettingsPath.Developers}
                   element={<SettingsDevelopers />}
+                />
+                <Route
+                  path={SettingsPath.CRMMigration}
+                  element={<SettingsCRMMigration />}
                 />
                 <Route
                   path={AppPath.DevelopersCatchAll}
