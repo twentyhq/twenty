@@ -50,7 +50,7 @@ export const generateCsv: GenerateExport = ({
     fieldMetadataId: '',
     type: FieldMetadataType.Uuid,
     iconName: '',
-    label: `id`,
+    label: `Id`,
     metadata: {
       fieldName: 'id',
     },
