@@ -161,7 +161,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
           return fieldMapping;
         });
         try {
-          await createManyRecords(createInputs);
+          await createManyRecords(createInputs, true);
         } catch (error: any) {
           enqueueSnackBar(error?.message || 'Something went wrong', {
             variant: SnackBarVariant.Error,

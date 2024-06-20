@@ -327,7 +327,6 @@ export class WorkspaceQueryRunnerService {
         );
 
         if (existingDuplicate) {
-          console.log('updating');
           const result = await this.updateOne(
             { id: existingDuplicate.id, data: payload },
             options,

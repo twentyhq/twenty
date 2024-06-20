@@ -49,6 +49,7 @@ export const useCreateManyRecords = <
 
   const createManyRecords = async (
     recordsToCreate: Partial<CreatedObjectRecord>[],
+    upsert?: boolean,
   ) => {
     const sanitizedCreateManyRecordsInput = recordsToCreate.map(
       (recordToCreate) => {
@@ -94,6 +95,7 @@ export const useCreateManyRecords = <
       mutation: createManyRecordsMutation,
       variables: {
         data: sanitizedCreateManyRecordsInput,
+        upsert: upsert,
       },
       update: (cache, { data }) => {
         const records = data?.[mutationResponseField];
