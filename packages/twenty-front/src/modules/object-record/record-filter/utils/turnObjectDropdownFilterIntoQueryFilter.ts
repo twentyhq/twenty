@@ -88,7 +88,7 @@ const applyEmptyFilters = (
       );
 
       emptyRecordFilter = {
-        or: linksFilters,
+        and: linksFilters,
       };
       break;
     }
@@ -137,6 +137,48 @@ const applyEmptyFilters = (
               },
             ],
           },
+          {
+            or: [
+              {
+                [correspondingField.name]: {
+                  addressState: { ilike: '' },
+                } as AddressFilter,
+              },
+              {
+                [correspondingField.name]: {
+                  addressState: { is: 'NULL' },
+                } as AddressFilter,
+              },
+            ],
+          },
+          {
+            or: [
+              {
+                [correspondingField.name]: {
+                  addressCountry: { ilike: '' },
+                } as AddressFilter,
+              },
+              {
+                [correspondingField.name]: {
+                  addressCountry: { is: 'NULL' },
+                } as AddressFilter,
+              },
+            ],
+          },
+          {
+            or: [
+              {
+                [correspondingField.name]: {
+                  addressPostcode: { ilike: '' },
+                } as AddressFilter,
+              },
+              {
+                [correspondingField.name]: {
+                  addressPostcode: { is: 'NULL' },
+                } as AddressFilter,
+              },
+            ],
+          },
         ],
       };
       break;
@@ -148,6 +190,11 @@ const applyEmptyFilters = (
     case 'DATE_TIME':
       emptyRecordFilter = {
         [correspondingField.name]: { is: 'NULL' } as DateFilter,
+      };
+      break;
+    case 'SELECT':
+      emptyRecordFilter = {
+        [correspondingField.name]: { is: 'NULL' } as UUIDFilter,
       };
       break;
     case 'RELATION':
@@ -459,7 +506,6 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       }
-
       case 'FULL_NAME': {
         const fullNameFilters = generateILikeFiltersForCompositeFields(
           rawUIFilter.value,
@@ -523,6 +569,27 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                     },
                   } as AddressFilter,
                 },
+                {
+                  [correspondingField.name]: {
+                    addressState: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  } as AddressFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    addressCountry: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  } as AddressFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    addressPostcode: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  } as AddressFilter,
+                },
               ],
             });
             break;
@@ -575,6 +642,15 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'SELECT': {
+        if (isEmptyOperand) {
+          applyEmptyFilters(
+            rawUIFilter.operand,
+            correspondingField,
+            objectRecordFilters,
+            rawUIFilter.definition.type,
+          );
+          break;
+        }
         const stringifiedSelectValues = rawUIFilter.value;
         let parsedOptionValues: string[] = [];
 

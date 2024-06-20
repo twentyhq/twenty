@@ -32,9 +32,9 @@ describe('getOperandsForFilterType', () => {
     ['NUMBER', [...numberOperands, ...emptyOperands]],
     ['DATE_TIME', [...numberOperands, ...emptyOperands]],
     ['RELATION', [...relationOperand, ...emptyOperands]],
-    [undefined, [...emptyOperands]],
-    [null, [...emptyOperands]],
-    ['UNKNOWN_TYPE', [...emptyOperands]],
+    [undefined, []],
+    [null, []],
+    ['UNKNOWN_TYPE', []],
   ];
 
   testCases.forEach(([filterType, expectedOperands]) => {

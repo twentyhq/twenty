@@ -37,8 +37,8 @@ export const getOperandsForFilterType = (
     case 'RELATION':
       return [...relationOperands, ...emptyOperands];
     case 'SELECT':
-      return [...relationOperands];
+      return [...relationOperands, ...emptyOperands];
     default:
-      return emptyOperands;
+      return [];
   }
 };
