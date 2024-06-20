@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   QueryRunner,
+  Repository,
   Table,
   TableColumn,
   TableForeignKey,
@@ -21,10 +23,13 @@ import {
   WorkspaceMigrationTableActionType,
   WorkspaceMigrationForeignTable,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 import { capitalize } from 'src/utils/capitalize';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
@@ -34,9 +39,10 @@ export class WorkspaceMigrationRunnerService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly workspaceMigrationEnumService: WorkspaceMigrationEnumService,
     private readonly workspaceMigrationTypeService: WorkspaceMigrationTypeService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   /**
@@ -80,7 +86,12 @@ export class WorkspaceMigrationRunnerService {
     try {
       // Loop over each migration and create or update the table
       for (const migration of flattenedPendingMigrations) {
-        await this.handleTableChanges(queryRunner, schemaName, migration);
+        await this.handleTableChanges(
+          queryRunner,
+          schemaName,
+          migration,
+          workspaceId,
+        );
       }
 
       await queryRunner.commitTransaction();
@@ -115,6 +126,7 @@ export class WorkspaceMigrationRunnerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableMigration: WorkspaceMigrationTableAction,
+    workspaceId?: string,
   ) {
     switch (tableMigration.action) {
       case WorkspaceMigrationTableActionType.CREATE:
@@ -136,6 +148,7 @@ export class WorkspaceMigrationRunnerService {
             schemaName,
             tableMigration.newName ?? tableMigration.name,
             tableMigration.columns,
+            workspaceId,
           );
         }
         break;
@@ -231,6 +244,7 @@ export class WorkspaceMigrationRunnerService {
     schemaName: string,
     tableName: string,
     columnMigrations?: WorkspaceMigrationColumnAction[],
+    workspaceId?: string,
   ) {
     if (!columnMigrations || columnMigrations.length === 0) {
       return;
@@ -260,6 +274,7 @@ export class WorkspaceMigrationRunnerService {
             schemaName,
             tableName,
             columnMigration,
+            workspaceId,
           );
           break;
         case WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY:
@@ -399,6 +414,7 @@ export class WorkspaceMigrationRunnerService {
     schemaName: string,
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnCreateRelation,
+    workspaceId?: string,
   ) {
     const foreignKeyName = `FK_${migrationColumn.foreignName}_${migrationColumn.localName}`;
 
@@ -414,13 +430,22 @@ export class WorkspaceMigrationRunnerService {
       }),
     );
 
-    await this.commentConstraint(
-      queryRunner,
-      schemaName,
-      tableName,
-      foreignKeyName,
-      migrationColumn,
-    );
+    const isForeignKeyCommentConstraintEnabled =
+      await this.featureFlagRepository.findOneBy({
+        workspaceId,
+        key: FeatureFlagKeys.IsForeignKeyCommentConstraintEnabled,
+        value: true,
+      });
+
+    if (isForeignKeyCommentConstraintEnabled) {
+      await this.commentConstraint(
+        queryRunner,
+        schemaName,
+        tableName,
+        foreignKeyName,
+        migrationColumn,
+      );
+    }
 
     // Create unique constraint if for one to one relation
     if (migrationColumn.isUnique) {

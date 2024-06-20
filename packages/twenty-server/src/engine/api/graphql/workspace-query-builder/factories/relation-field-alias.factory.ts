@@ -1,6 +1,8 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { GraphQLResolveInfo } from 'graphql';
+import { Repository } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -12,10 +14,13 @@ import {
   RelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
 import { getFieldArgumentsByKey } from 'src/engine/api/graphql/workspace-query-builder/utils/get-field-arguments-by-key.util';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { capitalize } from 'src/utils/capitalize';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 import { FieldsStringFactory } from './fields-string.factory';
 import { ArgsStringFactory } from './args-string.factory';
@@ -28,7 +33,8 @@ export class RelationFieldAliasFactory {
     @Inject(forwardRef(() => FieldsStringFactory))
     private readonly fieldsStringFactory: CircularDep<FieldsStringFactory>,
     private readonly argsStringFactory: ArgsStringFactory,
-    private readonly objectMetadataService: ObjectMetadataService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   create(
@@ -111,10 +117,19 @@ export class RelationFieldAliasFactory {
           objectMetadataCollection,
         );
 
+      const isForeignKeyCommentConstraintEnabled =
+        await this.featureFlagRepository.findOneBy({
+          workspaceId: fieldMetadata.workspaceId,
+          key: FeatureFlagKeys.IsForeignKeyCommentConstraintEnabled,
+          value: true,
+        });
+
+      const collectionName = isForeignKeyCommentConstraintEnabled
+        ? capitalize(fieldMetadata.name)
+        : `${computeObjectTargetTable(referencedObjectMetadata)}Collection`;
+
       return `
-        ${fieldKey}: ${capitalize(fieldMetadata.name)}${
-          argsString ? `(${argsString})` : ''
-        } {
+        ${fieldKey}: ${collectionName}${argsString ? `(${argsString})` : ''} {
           ${fieldsString}
         }
       `;
