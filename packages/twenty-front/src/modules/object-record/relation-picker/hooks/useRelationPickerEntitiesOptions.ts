@@ -41,11 +41,5 @@ export const useRelationPickerEntitiesOptions = ({
     objectNameSingular: relationObjectNameSingular,
   });
 
-  console.log(
-    entities.entitiesToSelect.length,
-    entities,
-    entities.entitiesToSelect,
-  );
-
   return { entities, relationPickerSearchFilter };
 };

@@ -37,7 +37,7 @@ export const MultipleObjectRecordSelectItem = ({
     objectRecordMultiSelectFamilyState(objectRecordId),
   ) as ObjectRecordAndSelected;
 
-  const handleSelectChange = (_isNewlySelectedValue: boolean) => {
+  const handleSelectChange = () => {
     onChange?.(objectRecordId);
   };
 
@@ -50,9 +50,7 @@ export const MultipleObjectRecordSelectItem = ({
   return (
     <StyledSelectableItem itemId={objectRecordId} key={objectRecordId + v4()}>
       <MenuItemMultiSelectAvatar
-        onSelectChange={(_isNewlySelectedValue) =>
-          handleSelectChange(_isNewlySelectedValue)
-        }
+        onSelectChange={(_isNewlySelectedValue) => handleSelectChange()}
         isKeySelected={isSelectedByKeyboard}
         selected={selected}
         avatar={
