@@ -16,6 +16,7 @@ type MenuItemLeftContentProps = {
   className?: string;
   LeftIcon: IconComponent | null | undefined;
   showGrip?: boolean;
+  isDisabled?: boolean;
   text: ReactNode;
 };
 
@@ -24,6 +25,7 @@ export const MenuItemLeftContent = ({
   LeftIcon,
   text,
   showGrip = false,
+  isDisabled = false,
 }: MenuItemLeftContentProps) => {
   const theme = useTheme();
 
@@ -33,7 +35,9 @@ export const MenuItemLeftContent = ({
         <IconGripVertical
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
-          color={theme.font.color.extraLight}
+          color={
+            isDisabled ? theme.font.color.extraLight : theme.font.color.light
+          }
         />
       )}
       {LeftIcon && (
