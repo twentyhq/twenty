@@ -29,6 +29,7 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-ob
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -66,6 +67,7 @@ const jwtModule = JwtModule.registerAsync({
     UserWorkspaceModule,
     OnboardingModule,
     TwentyORMModule.forFeature([CalendarChannelWorkspaceEntity]),
+    WorkspaceDataSourceModule,
   ],
   controllers: [
     GoogleAuthController,

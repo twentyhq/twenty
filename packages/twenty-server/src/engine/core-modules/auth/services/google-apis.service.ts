@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { DataSource, EntityManager } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
@@ -32,15 +32,16 @@ import {
   MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 
 @Injectable()
 export class GoogleAPIsService {
   constructor(
     @InjectWorkspaceDatasource()
-    private readonly workspaceDataSource: DataSource,
+    private readonly workspaceDataSource: WorkspaceDataSource,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
@@ -85,7 +86,7 @@ export class GoogleAPIsService {
     const existingAccountId = connectedAccounts?.[0]?.id;
     const newOrExistingConnectedAccountId = existingAccountId ?? v4();
 
-    await this.workspaceDataSource?.transaction(
+    await this.workspaceDataSource.transaction(
       async (manager: EntityManager) => {
         if (!existingAccountId) {
           await this.connectedAccountRepository.create(
