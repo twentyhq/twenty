@@ -11,17 +11,24 @@ type DateTimeSettingsTimeZoneSelectProps = {
 export const DateTimeSettingsTimeZoneSelect = ({
   value = detectTimeZone(),
   onChange,
-}: DateTimeSettingsTimeZoneSelectProps) => (
-  <Select
-    dropdownId="settings-accounts-calendar-time-zone"
-    dropdownWidth={416}
-    label="Time zone"
-    fullWidth
-    value={findAvailableTimeZoneOption(value)?.value}
-    options={AVAILABLE_TIMEZONE_OPTIONS.sort((_, b) =>
-      b.label.includes('(System preferred)') ? 0 : -1,
-    )}
-    onChange={onChange}
-    withSearchInput
-  />
-);
+}: DateTimeSettingsTimeZoneSelectProps) => {
+  return (
+    <Select
+      dropdownId="settings-accounts-calendar-time-zone"
+      dropdownWidth={416}
+      label="Time zone"
+      fullWidth
+      value={
+        value === 'system'
+          ? 'System settings'
+          : findAvailableTimeZoneOption(value)?.value
+      }
+      options={[
+        { label: 'System settings', value: 'system' },
+        ...AVAILABLE_TIMEZONE_OPTIONS,
+      ]}
+      onChange={onChange}
+      withSearchInput
+    />
+  );
+};

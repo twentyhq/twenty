@@ -10,8 +10,15 @@ import { DateTimeSettingsTimeZoneSelect } from '@/settings/profile/components/Da
 import { DateFormat } from '@/workspace-member/constants/DateFormat';
 import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { dateTimeFormatState } from '@/workspace-member/states/dateTimeFormatState';
+import { detectDateFormat } from '@/workspace-member/utils/detectDateFormat';
+import { detectTimeFormat } from '@/workspace-member/utils/detectTimeFormat';
+import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import { getWorkspaceEnumFromDateFormat } from '@/workspace-member/utils/formatDateLabel';
 import { getWorkspaceEnumFromTimeFormat } from '@/workspace-member/utils/formatTimeLabel';
+import {
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
 
@@ -58,7 +65,7 @@ export const DateTimeSettings = () => {
 
     setDateTimeFormat({
       ...dateTimeFormat,
-      timeZone,
+      timeZone: timeZone === 'system' ? detectTimeZone() : timeZone,
     });
 
     updateWorkspaceMember(workspaceMember);
@@ -74,7 +81,8 @@ export const DateTimeSettings = () => {
 
     setDateTimeFormat({
       ...dateTimeFormat,
-      dateFormat,
+      dateFormat:
+        dateFormat === DateFormat.SYSTEM ? detectDateFormat() : dateFormat,
     });
 
     updateWorkspaceMember(workspaceMember);
@@ -90,27 +98,43 @@ export const DateTimeSettings = () => {
 
     setDateTimeFormat({
       ...dateTimeFormat,
-      timeFormat,
+      timeFormat:
+        timeFormat === TimeFormat.SYSTEM ? detectTimeFormat() : timeFormat,
     });
 
     updateWorkspaceMember(workspaceMember);
   };
 
+  const timeZone =
+    currentWorkspaceMember.timeZone === 'system'
+      ? 'system'
+      : dateTimeFormat.timeZone;
+
+  const dateFormat =
+    currentWorkspaceMember.dateFormat === WorkspaceMemberDateFormatEnum.System
+      ? DateFormat.SYSTEM
+      : dateTimeFormat.dateFormat;
+
+  const timeFormat =
+    currentWorkspaceMember.timeFormat === WorkspaceMemberTimeFormatEnum.System
+      ? TimeFormat.SYSTEM
+      : dateTimeFormat.timeFormat;
+
   return (
     <StyledContainer>
       <DateTimeSettingsTimeZoneSelect
-        value={dateTimeFormat.timeZone}
+        value={timeZone}
         onChange={handleTimeZoneChange}
       />
       <DateTimeSettingsDateFormatSelect
-        value={dateTimeFormat.dateFormat}
+        value={dateFormat}
         onChange={handleDateFormatChange}
-        timeZone={dateTimeFormat.timeZone}
+        timeZone={timeZone}
       />
       <DateTimeSettingsTimeFormatSelect
-        value={dateTimeFormat.timeFormat}
+        value={timeFormat}
         onChange={handleTimeFormatChange}
-        timeZone={dateTimeFormat.timeZone}
+        timeZone={timeZone}
       />
     </StyledContainer>
   );
