@@ -17,6 +17,7 @@ import {
 
 import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.interface';
 import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
+import { LLMPromptTemplateDriver } from 'src/engine/integrations/llm-prompt-template/interfaces/llm-prompt-template.interface';
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/engine/integrations/environment/decorators/cast-to-string-array.decorator';
@@ -358,6 +359,17 @@ export class EnvironmentVariables {
   EMAIL_SMTP_PASSWORD: string;
 
   OPENROUTER_API_KEY: string;
+
+  OPENAI_API_KEY: string;
+
+  LLM_PROMPT_TEMPLATE_DRIVER: LLMPromptTemplateDriver =
+    LLMPromptTemplateDriver.File;
+
+  PROMPT_TEMPLATE_NAME_ASK_AI = 'ask-ai';
+
+  LANGFUSE_SECRET_KEY: string;
+
+  LANGFUSE_PUBLIC_KEY: string;
 
   @CastToPositiveNumber()
   API_RATE_LIMITING_TTL = 100;

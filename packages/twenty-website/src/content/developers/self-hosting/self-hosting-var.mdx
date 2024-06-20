@@ -169,9 +169,10 @@ yarn command:prod cron:messaging:message-list-fetch
 <ArticleTable options={[
     ['OPENROUTER_API_KEY', '', "The API key for openrouter.ai, an abstraction layer over models from Mistral, OpenAI and more"],
     ['OPENAI_API_KEY', 'sk-proj-abcdabcd...', "OpenAI API key"],
+    ['LLM_PROMPT_TEMPLATE_DRIVER', 'langfuse', "Sets where LLM prompt templates are loaded from. Can be 'langfuse', defaults to 'file'."],
     ['LANGFUSE_SECRET_KEY', 'sk-lf-abcdabcd-abcd...', "Langfuse secret key"],
     ['LANGFUSE_PUBLIC_KEY', 'pk-lf-abcdabcd-abcd...', "Langfuse public key"],
-    ['LANGFUSE_ASK_AI_PROMPT_NAME', 'ask-ai-development', "The name of the Langfuse prompt for the Ask AI feature"]
+    ['PROMPT_TEMPLATE_NAME_ASK_AI', 'ask-ai-development', "The name of the Langfuse prompt for the Ask AI feature"]
 ]}></ArticleTable>
 
 

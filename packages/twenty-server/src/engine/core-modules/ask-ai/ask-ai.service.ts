@@ -1,20 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
 import { SqlDatabase } from 'langchain/sql_db';
-import { PromptTemplate } from '@langchain/core/prompts';
 import { RunnableSequence, RunnableFunc } from '@langchain/core/runnables';
 import { StringOutputParser } from '@langchain/core/output_parsers';
-import { CallbackHandler, Langfuse } from 'langfuse-langchain';
+import { CallbackHandler } from 'langfuse-langchain';
+
+import { LLMPromptTemplateEnvVar } from 'src/engine/integrations/llm-prompt-template/interfaces/llm-prompt-template-name.interface';
 
 import { AskAIQueryResult } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 import { ChatModelService } from 'src/modules/ai/services/chat-model/chat-model.service';
-
-interface AskAIPromptTemplateInput {
-  schema: string;
-  question: string;
-}
+import { LLMPromptTemplateService } from 'src/engine/integrations/llm-prompt-template/llm-prompt-template.service';
 
 @Injectable()
 export class AskAIService {
@@ -22,6 +19,7 @@ export class AskAIService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
     private readonly chatModelService: ChatModelService,
+    private readonly llmPromptTemplateService: LLMPromptTemplateService,
   ) {}
 
   async query(
@@ -46,15 +44,9 @@ export class AskAIService {
       sampleRowsInTableInfo: 0,
     });
 
-    const langfuse = new Langfuse();
-
-    if (!process.env.LANGFUSE_ASK_AI_PROMPT_NAME) throw new Error();
-
     const promptTemplate =
-      PromptTemplate.fromTemplate<AskAIPromptTemplateInput>(
-        (
-          await langfuse.getPrompt(process.env.LANGFUSE_ASK_AI_PROMPT_NAME)
-        ).getLangchainPrompt(),
+      await this.llmPromptTemplateService.getPromptTemplate(
+        LLMPromptTemplateEnvVar.AskAI,
       );
 
     const removeSQLMarkdown: RunnableFunc<string, string> = (input) =>
