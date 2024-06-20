@@ -147,10 +147,7 @@ const applyEmptyFilters = (
       break;
     case 'DATE_TIME':
       emptyRecordFilter = {
-        or: [
-          { [correspondingField.name]: { eq: '' } as DateFilter },
-          { [correspondingField.name]: { is: 'NULL' } as DateFilter },
-        ],
+        [correspondingField.name]: { is: 'NULL' } as DateFilter,
       };
       break;
     case 'RELATION':

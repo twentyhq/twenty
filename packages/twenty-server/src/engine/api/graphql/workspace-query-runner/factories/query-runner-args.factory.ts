@@ -199,14 +199,20 @@ export class QueryRunnerArgsFactory {
     if (!fieldMetadata) {
       return value;
     }
+
     switch (fieldMetadata.type) {
-      case 'NUMBER':
-        return Object.fromEntries(
-          Object.entries(value).map(([filterKey, filterValue]) => [
-            filterKey,
-            Number(filterValue),
-          ]),
-        );
+      case 'NUMBER': {
+        if (value?.is === 'NULL') {
+          return value;
+        } else {
+          return Object.fromEntries(
+            Object.entries(value).map(([filterKey, filterValue]) => [
+              filterKey,
+              Number(filterValue),
+            ]),
+          );
+        }
+      }
       default:
         return value;
     }
