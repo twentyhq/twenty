@@ -466,7 +466,7 @@ export const InternalDatePicker = ({
               </StyledCustomDatePickerHeader>
             </>
           )}
-          onSelect={(date: Date, event) => {
+          onSelect={(date: Date) => {
             const dateParsedWithoutTime = DateTime.fromObject(
               {
                 day: date.getDate(),
