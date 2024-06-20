@@ -9,7 +9,6 @@ import {
 
 import { Response } from 'express';
 
-import { GoogleAPIsProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/google-apis-provider-enabled.guard';
 import { GoogleAPIsOauthGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth.guard';
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/strategies/google-apis.auth.strategy';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
@@ -32,14 +31,14 @@ export class GoogleAPIsAuthController {
   ) {}
 
   @Get()
-  @UseGuards(GoogleAPIsProviderEnabledGuard, GoogleAPIsOauthGuard)
+  @UseGuards(GoogleAPIsOauthGuard)
   async googleAuth() {
     // As this method is protected by Google Auth guard, it will trigger Google SSO flow
     return;
   }
 
   @Get('get-access-token')
-  @UseGuards(GoogleAPIsOauthGuard)
+  @UseGuards()
   async googleAuthGetAccessToken(
     @Req() req: GoogleAPIsRequest,
     @Res() res: Response,
