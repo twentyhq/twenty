@@ -32,7 +32,7 @@ describe('getResolverArgs', () => {
       upsert: {
         isArray: false,
         isNullable: true,
-        type: Boolean,
+        type: 'Boolean',
       },
     },
     createOne: {
@@ -40,7 +40,7 @@ describe('getResolverArgs', () => {
       upsert: {
         isArray: false,
         isNullable: true,
-        type: Boolean,
+        type: 'Boolean',
       },
     },
     updateOne: {
