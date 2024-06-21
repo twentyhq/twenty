@@ -24,14 +24,14 @@ type RecordTableRowProps = {
 };
 
 export const StyledTd = styled.td<{ isSelected?: boolean }>`
-  background: var(--twentycrm-background-primary);
+  background: ${({ theme }) => theme.background.primary};
   position: relative;
   user-select: none;
 
-  ${({ isSelected }) =>
+  ${({ isSelected, theme }) =>
     isSelected &&
     `
-    background: var(--twentycrm-accent-quaternary);
+    background: ${theme.accent.quaternary};
 
   `}
 `;
