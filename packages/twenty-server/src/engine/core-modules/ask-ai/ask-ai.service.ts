@@ -10,15 +10,15 @@ import { LLMPromptTemplateEnvVar } from 'src/engine/integrations/llm-prompt-temp
 import { AskAIQueryResult } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
-import { ChatModelService } from 'src/modules/ai/services/chat-model/chat-model.service';
 import { LLMPromptTemplateService } from 'src/engine/integrations/llm-prompt-template/llm-prompt-template.service';
+import { LLMChatModelService } from 'src/engine/integrations/llm-chat-model/llm-chat-model.service';
 
 @Injectable()
 export class AskAIService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
-    private readonly chatModelService: ChatModelService,
+    private readonly llmChatModelService: LLMChatModelService,
     private readonly llmPromptTemplateService: LLMPromptTemplateService,
   ) {}
 
@@ -57,7 +57,7 @@ export class AskAIService {
 
     const sqlQueryGeneratorChain = RunnableSequence.from([
       promptTemplate,
-      this.chatModelService.getChatModel(),
+      this.llmChatModelService.getChatModel(),
       new StringOutputParser(),
       removeSQLMarkdown,
     ]);

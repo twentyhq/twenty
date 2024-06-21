@@ -18,6 +18,7 @@ import {
 import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.interface';
 import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
 import { LLMPromptTemplateDriver } from 'src/engine/integrations/llm-prompt-template/interfaces/llm-prompt-template.interface';
+import { LLMChatModelDriver } from 'src/engine/integrations/llm-chat-model/interfaces/llm-chat-model.interface';
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/engine/integrations/environment/decorators/cast-to-string-array.decorator';
@@ -359,6 +360,8 @@ export class EnvironmentVariables {
   EMAIL_SMTP_PASSWORD: string;
 
   OPENROUTER_API_KEY: string;
+
+  LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver = LLMChatModelDriver.OpenAI;
 
   OPENAI_API_KEY: string;
 

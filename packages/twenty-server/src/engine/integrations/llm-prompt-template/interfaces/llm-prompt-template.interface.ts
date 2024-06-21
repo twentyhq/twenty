@@ -1,11 +1,3 @@
-/**
- *  The value is the name of an environment variable.
- * The environment variable will have the name of the prompt template used by a driver.
- * Examples:
- * For feature AskAI the variable name could be "ask-ai-prompt-template.json".
- * For Langfuse, it could be "ask-ai-prompt-template"
- */
-
 import { ModuleMetadata, FactoryProvider } from '@nestjs/common';
 
 import { LLMPromptTemplateEnvVar } from 'src/engine/integrations/llm-prompt-template/interfaces/llm-prompt-template-name.interface';

@@ -14,6 +14,8 @@ import { CaptchaModule } from 'src/engine/integrations/captcha/captcha.module';
 import { captchaModuleFactory } from 'src/engine/integrations/captcha/captcha.module-factory';
 import { LLMPromptTemplateModule } from 'src/engine/integrations/llm-prompt-template/llm-prompt-template.module';
 import { llmPromptTemplateModuleFactory } from 'src/engine/integrations/llm-prompt-template/llm-prompt-template.module-factory';
+import { LLMChatModelModule } from 'src/engine/integrations/llm-chat-model/llm-chat-model.module';
+import { llmChatModelModuleFactory } from 'src/engine/integrations/llm-chat-model/llm-chat-model.module-factory';
 
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
@@ -54,6 +56,10 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
     CacheStorageModule,
     LLMPromptTemplateModule.forRoot({
       useFactory: llmPromptTemplateModuleFactory,
+      inject: [EnvironmentService],
+    }),
+    LLMChatModelModule.forRoot({
+      useFactory: llmChatModelModuleFactory,
       inject: [EnvironmentService],
     }),
   ],

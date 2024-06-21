@@ -17,13 +17,15 @@ export const llmPromptTemplateModuleFactory = (
 
       if (!(secretKey && publicKey)) {
         throw new Error(
-          `${driver} email driver requires LANGFUSE_SECRET_KEY and LANGFUSE_PUBLIC_KEY to be defined, check your .env file`,
+          `${driver} LLM prompt template driver requires LANGFUSE_SECRET_KEY and LANGFUSE_PUBLIC_KEY to be defined, check your .env file`,
         );
       }
 
       return { type: LLMPromptTemplateDriver.Langfuse };
     }
     default:
-      throw new Error(`Invalid email driver (${driver}), check your .env file`);
+      throw new Error(
+        `Invalid LLM prompt template driver (${driver}), check your .env file`,
+      );
   }
 };
