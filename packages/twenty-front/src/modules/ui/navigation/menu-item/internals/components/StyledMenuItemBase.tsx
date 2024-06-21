@@ -31,6 +31,12 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
 
   padding: var(--vertical-padding) var(--horizontal-padding);
 
+  ${({ theme, isKeySelected }) => {
+    return isKeySelected
+      ? `background: ${theme.background.transparent.light};`
+      : '';
+  }}
+
   ${HOVER_BACKGROUND};
 
   ${({ theme, accent }) => {
