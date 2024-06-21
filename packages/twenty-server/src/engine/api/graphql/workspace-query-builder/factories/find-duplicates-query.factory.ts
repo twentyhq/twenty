@@ -40,11 +40,12 @@ export class FindDuplicatesQueryFactory {
       currentRecord,
     );
 
-    const duplicateCondition = this.duplicateService.buildDuplicateCondition(
-      options.objectMetadataItem,
-      argsData,
-      args.id,
-    );
+    const duplicateCondition =
+      this.duplicateService.buildDuplicateConditionForGraphql(
+        options.objectMetadataItem,
+        argsData,
+        args.id,
+      );
 
     const filters = stringifyWithoutKeyQuote(duplicateCondition);
 

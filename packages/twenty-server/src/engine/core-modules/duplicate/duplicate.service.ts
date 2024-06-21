@@ -47,19 +47,9 @@ export class DuplicateService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const conditions = this.buildDuplicateCondition(
-      objectMetadata,
-      data,
-      workspaceId,
-    )
-      ?.or.map((condition) => {
-        return Object.entries(condition)
-          .map(([field, value]) => `"${field}" = '${value.eq}'`)
-          .join(' OR ');
-      })
-      .join(' OR ');
+    const { duplicateWhereClause, duplicateWhereParameters } =
+      this.buildDuplicateConditionForSQL(objectMetadata, data);
 
-    // TODO: SQL injection?
     const results = await this.workspaceDataSourceService.executeRawQuery(
       `
           SELECT 
@@ -69,16 +59,16 @@ export class DuplicateService {
                 objectMetadata,
               )}" p
           WHERE
-              ${conditions}
+              ${duplicateWhereClause}
           `,
-      [],
+      duplicateWhereParameters,
       workspaceId,
     );
 
     return results.length > 0 ? results[0] : null;
   }
 
-  buildDuplicateCondition(
+  buildDuplicateConditionForGraphQL(
     objectMetadata: ObjectMetadataInterface,
     argsData?: Record<string, any>,
     filteringByExistingRecordId?: string,
@@ -117,6 +107,42 @@ export class DuplicateService {
       // keep condition as "or" to get results by more duplicate criteria
       or: filterCriteria,
     };
+  }
+
+  private buildDuplicateConditionForSQL(
+    objectMetadata: ObjectMetadataInterface,
+    data: Record<string, any>,
+  ) {
+    const criteriaCollection =
+      this.getApplicableDuplicateCriteriaCollection(objectMetadata);
+
+    const whereClauses: string[] = [];
+    const whereParameters: any[] = [];
+    let parameterIndex = 1;
+
+    criteriaCollection.forEach((c) => {
+      const clauseParts: string[] = [];
+
+      c.columnNames.forEach((column) => {
+        const dataKey = Object.keys(data).find(
+          (key) => key.toLowerCase() === column.toLowerCase(),
+        );
+
+        if (dataKey) {
+          clauseParts.push(`p."${column}" = $${parameterIndex}`);
+          whereParameters.push(data[dataKey]);
+          parameterIndex++;
+        }
+      });
+      if (clauseParts.length > 0) {
+        whereClauses.push(`(${clauseParts.join(' AND ')})`);
+      }
+    });
+
+    const duplicateWhereClause = whereClauses.join(' OR ');
+    const duplicateWhereParameters = whereParameters;
+
+    return { duplicateWhereClause, duplicateWhereParameters };
   }
 
   private getApplicableDuplicateCriteriaCollection(

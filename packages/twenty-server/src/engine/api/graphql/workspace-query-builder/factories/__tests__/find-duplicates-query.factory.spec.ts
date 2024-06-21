@@ -36,7 +36,7 @@ describe('FindDuplicatesQueryFactory', () => {
         {
           provide: DuplicateService,
           useValue: {
-            buildDuplicateCondition: jest.fn().mockReturnValue({
+            buildDuplicateConditionForGraphQL: jest.fn().mockReturnValue({
               field: 'field',
               value: 'value',
             }),

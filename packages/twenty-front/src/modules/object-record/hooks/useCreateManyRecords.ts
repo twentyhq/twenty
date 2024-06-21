@@ -53,7 +53,7 @@ export const useCreateManyRecords = <
   ) => {
     const sanitizedCreateManyRecordsInput = recordsToCreate.map(
       (recordToCreate) => {
-        const idForCreation = recordToCreate?.id ?? (upsert ? null : v4());
+        const idForCreation = recordToCreate?.id ?? (upsert ? undefined : v4());
 
         return {
           ...sanitizeRecordInput({

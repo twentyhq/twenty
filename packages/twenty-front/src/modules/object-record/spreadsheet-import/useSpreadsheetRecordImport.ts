@@ -26,7 +26,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
     .filter(
       (x) =>
         x.isActive &&
-        !x.isSystem &&
+        (!x.isSystem || x.name === 'id') &&
         x.name !== 'createdAt' &&
         (x.type !== FieldMetadataType.Relation || x.toRelationMetadata),
     )
