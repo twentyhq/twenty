@@ -23,10 +23,14 @@ export const useUpdateRelationManyFieldInput = () => {
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
+  if (!fieldDefinition.metadata.objectMetadataNameSingular) {
+    throw new Error('ObjectMetadataNameSingular is required');
+  }
+
   const { updateOneRecordAndDetachRelations } =
     useDetachRelatedRecordFromRecord({
-      recordObjectNameSingular: fieldDefinition.metadata
-        .objectMetadataNameSingular as string,
+      recordObjectNameSingular:
+        fieldDefinition.metadata.objectMetadataNameSingular,
       fieldNameOnRecordObject: fieldDefinition.metadata.fieldName,
     });
 

@@ -1,6 +1,7 @@
 import { Reference, useApolloClient } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
@@ -64,7 +65,11 @@ export const useDetachRelatedRecordFromRecord = ({
           return {
             ...fieldNameOnRecordObjectConnection,
             edges: edges.filter(
-              (edge) => !edge.node.__ref.includes(relatedRecordId), // TODO clean
+              (edge) =>
+                !(
+                  edge.node.__ref ===
+                  getRefName(relatedRecordObjectNameSingular, relatedRecordId)
+                ),
             ),
           };
         },
