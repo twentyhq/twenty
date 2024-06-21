@@ -48,7 +48,7 @@ export class DuplicateService {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     const { duplicateWhereClause, duplicateWhereParameters } =
-      this.buildDuplicateConditionForSQL(objectMetadata, data);
+      this.buildDuplicateConditionForUpsert(objectMetadata, data);
 
     const results = await this.workspaceDataSourceService.executeRawQuery(
       `
@@ -109,12 +109,15 @@ export class DuplicateService {
     };
   }
 
-  private buildDuplicateConditionForSQL(
+  private buildDuplicateConditionForUpsert(
     objectMetadata: ObjectMetadataInterface,
     data: Record<string, any>,
   ) {
-    const criteriaCollection =
-      this.getApplicableDuplicateCriteriaCollection(objectMetadata);
+    const criteriaCollection = this.getApplicableDuplicateCriteriaCollection(
+      objectMetadata,
+    ).filter(
+      (duplicateCriteria) => duplicateCriteria.useAsUniqueKeyForUpsert === true,
+    );
 
     const whereClauses: string[] = [];
     const whereParameters: any[] = [];

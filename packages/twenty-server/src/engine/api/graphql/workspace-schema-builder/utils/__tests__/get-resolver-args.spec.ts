@@ -1,4 +1,4 @@
-import { GraphQLID, GraphQLInt, GraphQLString } from 'graphql';
+import { GraphQLBoolean, GraphQLID, GraphQLInt, GraphQLString } from 'graphql';
 
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -32,7 +32,7 @@ describe('getResolverArgs', () => {
       upsert: {
         isArray: false,
         isNullable: true,
-        type: 'Boolean',
+        type: GraphQLBoolean,
       },
     },
     createOne: {
@@ -40,7 +40,7 @@ describe('getResolverArgs', () => {
       upsert: {
         isArray: false,
         isNullable: true,
-        type: 'Boolean',
+        type: GraphQLBoolean,
       },
     },
     updateOne: {
