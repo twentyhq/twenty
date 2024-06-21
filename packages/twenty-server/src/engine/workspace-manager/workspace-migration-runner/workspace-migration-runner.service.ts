@@ -141,15 +141,6 @@ export class WorkspaceMigrationRunnerService {
           );
         }
 
-        if (tableMigration.indexes && tableMigration.indexes.length > 0) {
-          await this.handleIndexesChanges(
-            queryRunner,
-            schemaName,
-            tableMigration.newName ?? tableMigration.name,
-            tableMigration.indexes,
-          );
-        }
-
         break;
       }
       case WorkspaceMigrationTableActionType.DROP:
@@ -175,6 +166,17 @@ export class WorkspaceMigrationRunnerService {
           tableMigration.name,
           tableMigration.columns,
         );
+        break;
+
+      case WorkspaceMigrationTableActionType.ALTER_INDEXES:
+        if (tableMigration.indexes && tableMigration.indexes.length > 0) {
+          await this.handleIndexesChanges(
+            queryRunner,
+            schemaName,
+            tableMigration.newName ?? tableMigration.name,
+            tableMigration.indexes,
+          );
+        }
         break;
       default:
         throw new Error(

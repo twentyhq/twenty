@@ -104,6 +104,16 @@ export class WorkspaceSyncIndexMetadataService {
         WorkspaceMigrationBuilderAction.CREATE,
       );
 
-    return [...createIndexWorkspaceMigrations];
+    const deleteIndexWorkspaceMigrations =
+      await this.workspaceMigrationIndexFactory.create(
+        originalObjectMetadataCollection,
+        storage.indexMetadataDeleteCollection,
+        WorkspaceMigrationBuilderAction.DELETE,
+      );
+
+    return [
+      ...createIndexWorkspaceMigrations,
+      ...deleteIndexWorkspaceMigrations,
+    ];
   }
 }

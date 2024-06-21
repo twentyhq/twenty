@@ -33,7 +33,7 @@ import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index
   description: 'A person',
   icon: 'IconUser',
 })
-@WorkspaceIndex(['name', 'email'])
+@WorkspaceIndex(['companyId', 'email'])
 export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.name,

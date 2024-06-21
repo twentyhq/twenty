@@ -6,7 +6,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import {
   WorkspaceMigrationEntity,
   WorkspaceMigrationIndexActionType,
-  WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -22,53 +21,107 @@ export class WorkspaceMigrationIndexFactory {
     indexMetadataCollection: IndexMetadataEntity[],
     action: WorkspaceMigrationBuilderAction,
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
-    const originalObjectMetadataMap = originalObjectMetadataCollection.reduce(
-      (result, currentObject) => {
-        result[currentObject.id] = currentObject;
-
-        return result;
-      },
-      {} as Record<string, ObjectMetadataEntity>,
+    const originalObjectMetadataMap = Object.fromEntries(
+      originalObjectMetadataCollection.map((obj) => [obj.id, obj]),
     );
+
+    const indexMetadataByObjectMetadataMap = new Map<
+      ObjectMetadataEntity,
+      IndexMetadataEntity[]
+    >();
+
+    indexMetadataCollection.forEach((currentIndexMetadata) => {
+      const objectMetadata =
+        originalObjectMetadataMap[currentIndexMetadata.objectMetadataId];
+
+      if (!objectMetadata) {
+        throw new Error(
+          `Object metadata with id ${currentIndexMetadata.objectMetadataId} not found`,
+        );
+      }
+
+      if (!indexMetadataByObjectMetadataMap.has(objectMetadata)) {
+        indexMetadataByObjectMetadataMap.set(objectMetadata, []);
+      }
+
+      indexMetadataByObjectMetadataMap
+        ?.get(objectMetadata)
+        ?.push(currentIndexMetadata);
+    });
 
     switch (action) {
       case WorkspaceMigrationBuilderAction.CREATE:
-        return this.createIndexMigration(
-          originalObjectMetadataMap,
-          indexMetadataCollection,
-        );
+        return this.createIndexMigration(indexMetadataByObjectMetadataMap);
+      case WorkspaceMigrationBuilderAction.DELETE:
+        return this.deleteIndexMigration(indexMetadataByObjectMetadataMap);
       default:
         return [];
     }
   }
 
   private async createIndexMigration(
-    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    indexMetadataCollection: IndexMetadataEntity[],
+    indexMetadataByObjectMetadataMap: Map<
+      ObjectMetadataEntity,
+      IndexMetadataEntity[]
+    >,
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
-    const indexMetadataByObjectMetadataMap = indexMetadataCollection.reduce(
-      (result, currentIndexMetadata) => {
-        const objectMetadata =
-          originalObjectMetadataMap[currentIndexMetadata.objectMetadataId];
+    for (const [
+      objectMetadata,
+      indexMetadataCollection,
+    ] of indexMetadataByObjectMetadataMap) {
+      const targetTable = computeObjectTargetTable(objectMetadata);
 
-        if (!objectMetadata) {
-          throw new Error(
-            `Object metadata with id ${currentIndexMetadata.objectMetadataId} not found`,
-          );
-        }
+      const fieldsById = Object.fromEntries(
+        objectMetadata.fields.map((field) => [field.id, field]),
+      );
 
-        if (!result.has(objectMetadata)) {
-          result.set(objectMetadata, []);
-        }
+      const indexes = indexMetadataCollection.map((indexMetadata) => ({
+        name: indexMetadata.name,
+        action: WorkspaceMigrationIndexActionType.CREATE,
+        columns: indexMetadata.indexFieldMetadatas
+          .sort((a, b) => a.order - b.order)
+          .map((indexFieldMetadata) => {
+            const fieldMetadata =
+              fieldsById[indexFieldMetadata.fieldMetadataId];
 
-        result.get(objectMetadata)?.push(currentIndexMetadata);
+            if (!fieldMetadata) {
+              throw new Error(
+                `Field metadata with id ${indexFieldMetadata.fieldMetadataId} not found in object metadata with id ${objectMetadata.id}`,
+              );
+            }
 
-        return result;
-      },
-      new Map<ObjectMetadataEntity, IndexMetadataEntity[]>(),
-    );
+            return fieldMetadata.name;
+          }),
+      }));
+
+      workspaceMigrations.push({
+        workspaceId: objectMetadata.workspaceId,
+        name: generateMigrationName(
+          `create-${objectMetadata.nameSingular}-indexes`,
+        ),
+        isCustom: false,
+        migrations: [
+          {
+            name: targetTable,
+            action: WorkspaceMigrationTableActionType.ALTER_INDEXES,
+            indexes,
+          },
+        ],
+      });
+    }
+
+    return workspaceMigrations;
+  }
+
+  private async deleteIndexMigration(
+    indexMetadataByObjectMetadataMap: Map<
+      ObjectMetadataEntity,
+      IndexMetadataEntity[]
+    >,
+  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
+    const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
     for (const [
       objectMetadata,
@@ -78,27 +131,23 @@ export class WorkspaceMigrationIndexFactory {
 
       const indexes = indexMetadataCollection.map((indexMetadata) => ({
         name: indexMetadata.name,
-        action: WorkspaceMigrationIndexActionType.CREATE,
-        columns: indexMetadata.indexFieldMetadatas.map(
-          (indexFieldMetadata) => indexFieldMetadata.fieldMetadata.name,
-        ),
+        action: WorkspaceMigrationIndexActionType.DROP,
+        columns: [],
       }));
-
-      const migrations: WorkspaceMigrationTableAction[] = [
-        {
-          name: targetTable,
-          action: WorkspaceMigrationTableActionType.ALTER_INDEXES,
-          indexes,
-        },
-      ];
 
       workspaceMigrations.push({
         workspaceId: objectMetadata.workspaceId,
         name: generateMigrationName(
-          `alter-${objectMetadata.nameSingular}-indexes`,
+          `delete-${objectMetadata.nameSingular}-indexes`,
         ),
         isCustom: false,
-        migrations,
+        migrations: [
+          {
+            name: targetTable,
+            action: WorkspaceMigrationTableActionType.ALTER_INDEXES,
+            indexes,
+          },
+        ],
       });
     }
 

@@ -15,6 +15,10 @@ export function WorkspaceIndex(
       throw new Error('Class level WorkspaceIndex should be used with columns');
     }
 
+    // TODO: handle composite field metadata types
+    // TODO: handle relation field metadata types
+    // TODO: generate deterministic index name
+
     if (Array.isArray(columns) && columns.length > 0) {
       metadataArgsStorage.addIndexes({
         name: `idx_${columns.join('_')}`,
