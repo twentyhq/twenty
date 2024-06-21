@@ -10,9 +10,6 @@ import { CreateCompanyAndContactService } from 'src/modules/connected-account/au
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 
 export type CalendarCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
@@ -33,8 +30,6 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
     private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
     @InjectWorkspaceRepository(CalendarEventParticipantWorkspaceEntity)
     private readonly calendarEventParticipantRepository: WorkspaceRepository<CalendarEventParticipantWorkspaceEntity>,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
   @Process(CalendarCreateCompanyAndContactAfterSyncJob.name)

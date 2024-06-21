@@ -582,7 +582,7 @@ export class GoogleCalendarSyncService {
 
       this.eventEmitter.emit(`calendarEventParticipant.matched`, {
         workspaceId,
-        userId: connectedAccount.accountOwnerId,
+        workspaceMemberId: connectedAccount.accountOwnerId,
         calendarEventParticipants: savedCalendarEventParticipantsToEmit,
       });
 
