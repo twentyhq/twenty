@@ -107,9 +107,10 @@ export const ViewFieldsVisibilityDropdownSection = ({
             isTooltipOpen={openToolTipIndex === fieldIndex}
             text={field.label}
             className={`${title}-fixed-item-tooltip-anchor-${fieldIndex}`}
-            accent="placeholder"
-            isDragDisabled
+            accent={'placeholder'}
+            isHoverDisabled={field.isVisible}
             showGrip
+            isDragDisabled
           />
         ))}
         {!!draggableItems.length && (

@@ -8,6 +8,7 @@ import {
 } from 'twenty-ui';
 
 import {
+  StyledDraggableItem,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from './StyledMenuItemBase';
@@ -31,15 +32,28 @@ export const MenuItemLeftContent = ({
 
   return (
     <StyledMenuItemLeftContent className={className}>
-      {showGrip && (
-        <IconGripVertical
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-          color={
-            isDisabled ? theme.font.color.extraLight : theme.font.color.light
-          }
-        />
-      )}
+      {showGrip &&
+        (isDisabled ? (
+          <IconGripVertical
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+            color={
+              isDisabled ? theme.font.color.extraLight : theme.font.color.light
+            }
+          />
+        ) : (
+          <StyledDraggableItem>
+            <IconGripVertical
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+              color={
+                isDisabled
+                  ? theme.font.color.extraLight
+                  : theme.font.color.light
+              }
+            />
+          </StyledDraggableItem>
+        ))}
       {LeftIcon && (
         <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       )}
