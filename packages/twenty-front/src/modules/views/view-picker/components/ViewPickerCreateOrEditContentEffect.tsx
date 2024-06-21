@@ -62,12 +62,18 @@ export const ViewPickerCreateOrEditContentEffect = () => {
 
   useEffect(() => {
     if (
+      isDefined(referenceView) &&
       availableFieldsForKanban.length > 0 &&
       viewPickerKanbanFieldMetadataId === ''
     ) {
-      setViewPickerKanbanFieldMetadataId(availableFieldsForKanban[0].id);
+      setViewPickerKanbanFieldMetadataId(
+        referenceView.kanbanFieldMetadataId !== ''
+          ? referenceView.kanbanFieldMetadataId
+          : availableFieldsForKanban[0].id,
+      );
     }
   }, [
+    referenceView,
     availableFieldsForKanban,
     viewPickerKanbanFieldMetadataId,
     setViewPickerKanbanFieldMetadataId,
