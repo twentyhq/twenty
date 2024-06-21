@@ -19,6 +19,7 @@ import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.inte
 import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
 import { LLMPromptTemplateDriver } from 'src/engine/integrations/llm-prompt-template/interfaces/llm-prompt-template.interface';
 import { LLMChatModelDriver } from 'src/engine/integrations/llm-chat-model/interfaces/llm-chat-model.interface';
+import { LLMTracingDriver } from 'src/engine/integrations/llm-tracing/interfaces/llm-tracing.interface';
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/engine/integrations/environment/decorators/cast-to-string-array.decorator';
@@ -373,6 +374,8 @@ export class EnvironmentVariables {
   LANGFUSE_SECRET_KEY: string;
 
   LANGFUSE_PUBLIC_KEY: string;
+
+  LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.Console;
 
   @CastToPositiveNumber()
   API_RATE_LIMITING_TTL = 100;

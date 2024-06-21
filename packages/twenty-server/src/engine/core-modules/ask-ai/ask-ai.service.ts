@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { SqlDatabase } from 'langchain/sql_db';
 import { RunnableSequence, RunnableFunc } from '@langchain/core/runnables';
 import { StringOutputParser } from '@langchain/core/output_parsers';
-import { CallbackHandler } from 'langfuse-langchain';
 
 import { LLMPromptTemplateEnvVar } from 'src/engine/integrations/llm-prompt-template/interfaces/llm-prompt-template-name.interface';
 
@@ -12,16 +11,16 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 import { LLMPromptTemplateService } from 'src/engine/integrations/llm-prompt-template/llm-prompt-template.service';
 import { LLMChatModelService } from 'src/engine/integrations/llm-chat-model/llm-chat-model.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { LLMTracingService } from 'src/engine/integrations/llm-tracing/llm-tracing.service';
 
 @Injectable()
 export class AskAIService {
   constructor(
-    private readonly environmentService: EnvironmentService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
     private readonly llmChatModelService: LLMChatModelService,
     private readonly llmPromptTemplateService: LLMPromptTemplateService,
+    private readonly llmTracingService: LLMTracingService,
   ) {}
 
   async query(
@@ -63,12 +62,13 @@ export class AskAIService {
       removeSQLMarkdown,
     ]);
 
-    const langfuseHandler = new CallbackHandler({
-      secretKey: this.environmentService.get('LANGFUSE_SECRET_KEY'),
-      publicKey: this.environmentService.get('LANGFUSE_PUBLIC_KEY'),
-      baseUrl: 'https://cloud.langfuse.com',
-      metadata: { workspaceId, userId, userEmail },
-    });
+    const metadata = {
+      workspaceId,
+      userId,
+      userEmail,
+    };
+    const tracingCallbackHandler =
+      this.llmTracingService.getCallbackHandler(metadata);
 
     const sqlQuery = await sqlQueryGeneratorChain.invoke(
       {
@@ -76,7 +76,7 @@ export class AskAIService {
         question: text,
       },
       {
-        callbacks: [langfuseHandler],
+        callbacks: [tracingCallbackHandler],
       },
     );
 

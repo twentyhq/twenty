@@ -16,6 +16,8 @@ import { LLMPromptTemplateModule } from 'src/engine/integrations/llm-prompt-temp
 import { llmPromptTemplateModuleFactory } from 'src/engine/integrations/llm-prompt-template/llm-prompt-template.module-factory';
 import { LLMChatModelModule } from 'src/engine/integrations/llm-chat-model/llm-chat-model.module';
 import { llmChatModelModuleFactory } from 'src/engine/integrations/llm-chat-model/llm-chat-model.module-factory';
+import { LLMTracingModule } from 'src/engine/integrations/llm-tracing/llm-tracing.module';
+import { llmTracingModuleFactory } from 'src/engine/integrations/llm-tracing/llm-tracing.module-factory';
 
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
@@ -60,6 +62,10 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
     }),
     LLMChatModelModule.forRoot({
       useFactory: llmChatModelModuleFactory,
+      inject: [EnvironmentService],
+    }),
+    LLMTracingModule.forRoot({
+      useFactory: llmTracingModuleFactory,
       inject: [EnvironmentService],
     }),
   ],

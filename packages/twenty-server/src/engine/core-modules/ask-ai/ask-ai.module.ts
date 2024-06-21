@@ -10,6 +10,7 @@ import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-que
 import { LLMPromptTemplateModule } from 'src/engine/integrations/llm-prompt-template/llm-prompt-template.module';
 import { LLMChatModelModule } from 'src/engine/integrations/llm-chat-model/llm-chat-model.module';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
+import { LLMTracingModule } from 'src/engine/integrations/llm-tracing/llm-tracing.module';
 @Module({
   imports: [
     WorkspaceDataSourceModule,
@@ -18,6 +19,7 @@ import { EnvironmentModule } from 'src/engine/integrations/environment/environme
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     LLMChatModelModule,
     LLMPromptTemplateModule,
+    LLMTracingModule,
     EnvironmentModule,
   ],
   exports: [],
