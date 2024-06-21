@@ -1,7 +1,7 @@
+import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 
 export interface WorkspaceIndexOptions {
-  name: string;
   columns?: string[];
 }
 
@@ -17,21 +17,12 @@ export function WorkspaceIndex(
 
     // TODO: handle composite field metadata types
     // TODO: handle relation field metadata types
-    // TODO: generate deterministic index name
 
-    if (Array.isArray(columns) && columns.length > 0) {
-      metadataArgsStorage.addIndexes({
-        name: `idx_${columns.join('_')}`,
-        columns,
-        target: target,
-      });
-
-      return;
-    }
+    const computedColumns = columns ?? [propertyKey.toString()];
 
     metadataArgsStorage.addIndexes({
-      name: `idx_${propertyKey.toString()}`,
-      columns: [propertyKey.toString()],
+      name: `IDX_${generateDeterministicIndexName(computedColumns)}`,
+      columns: computedColumns,
       target: target.constructor,
     });
   };

@@ -23,6 +23,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
@@ -32,6 +33,7 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
   description: 'A person',
   icon: 'IconUser',
 })
+@WorkspaceIndex(['companyId', 'email'])
 export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.name,
@@ -50,6 +52,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s Email',
     icon: 'IconMail',
   })
+  @WorkspaceIndex()
   email: string;
 
   @WorkspaceField({
@@ -88,6 +91,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s phone number',
     icon: 'IconPhone',
   })
+  @WorkspaceIndex()
   phone: string;
 
   @WorkspaceField({
