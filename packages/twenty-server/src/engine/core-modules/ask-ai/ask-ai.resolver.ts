@@ -37,8 +37,6 @@ export class AskAIResolver {
     @AuthUser() user: User,
     @Args() { text }: GetAskAIArgs,
   ) {
-    console.log(`getAskAI "${text}"`, new Date());
-
     const isAskAIEnabledFeatureFlag =
       await this.featureFlagRepository.findOneBy({
         workspaceId,
