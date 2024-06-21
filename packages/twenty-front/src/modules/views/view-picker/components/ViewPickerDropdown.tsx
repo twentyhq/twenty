@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   IconChevronDown,
   IconList,
@@ -19,6 +19,7 @@ import { ViewPickerListContent } from '@/views/view-picker/components/ViewPicker
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
+import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
 import { isDefined } from '~/utils/isDefined';
 
 import { useViewStates } from '../../hooks/internal/useViewStates';
@@ -52,6 +53,8 @@ export const ViewPickerDropdown = () => {
 
   const { entityCountInCurrentViewState } = useViewStates();
 
+  const { viewPickerIsDirtyState } = useViewPickerStates();
+
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const { handleUpdate } = useViewPickerPersistView();
@@ -59,6 +62,8 @@ export const ViewPickerDropdown = () => {
   const entityCountInCurrentView = useRecoilValue(
     entityCountInCurrentViewState,
   );
+
+  const setViewPickerIsDirty = useSetRecoilState(viewPickerIsDirtyState);
 
   const { isDropdownOpen: isViewsListDropdownOpen } = useDropdown(
     VIEW_PICKER_DROPDOWN_ID,
@@ -70,6 +75,7 @@ export const ViewPickerDropdown = () => {
   const CurrentViewIcon = getIcon(currentViewWithCombinedFiltersAndSorts?.icon);
 
   const handleClickOutside = async () => {
+    setViewPickerIsDirty(false);
     if (isViewsListDropdownOpen && viewPickerMode === 'edit') {
       await handleUpdate();
     }
