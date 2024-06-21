@@ -38,7 +38,7 @@ export const SQLQueryResultTable = (props: SQLQueryResultTableProps) => {
       </StyledTR>
       {sqlQueryResult.map((row) => (
         <StyledTR>
-          {Object.entries(row).map(([colName, value]) => (
+          {Object.values(row).map((value) => (
             <StyledTD>{value}</StyledTD>
           ))}
         </StyledTR>
