@@ -110,11 +110,15 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
 
             switch (field.type) {
               case FieldMetadataType.Boolean:
-                fieldMapping[field.name] = value === 'true' || value === true;
+                if (value !== undefined) {
+                  fieldMapping[field.name] = value === 'true' || value === true;
+                }
                 break;
               case FieldMetadataType.Number:
               case FieldMetadataType.Numeric:
-                fieldMapping[field.name] = Number(value);
+                if (value !== undefined) {
+                  fieldMapping[field.name] = Number(value);
+                }
                 break;
               case FieldMetadataType.Currency:
                 if (value !== undefined) {
@@ -154,7 +158,9 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                 }
                 break;
               default:
-                fieldMapping[field.name] = value;
+                if (value !== undefined) {
+                  fieldMapping[field.name] = value;
+                }
                 break;
             }
           }
