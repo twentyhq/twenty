@@ -15,11 +15,17 @@ export const useGetSyncStatusOptions = () => {
     (field) => field.name === 'syncStatus',
   );
 
-  const syncStatusOptions = syncStatusMetadata?.options;
-
   if (isUndefinedOrNull(syncStatusMetadata)) {
     throw new Error('syncStatusMetaData not found for MessageChannel');
   }
+
+  
+  const syncStatusOptions = syncStatusMetadata?.options.map(option => {
+    if (option.value === 'Complete') {
+      return { ...option, label: 'Active' }; 
+    }
+    return option;
+  });
 
   return syncStatusOptions;
 };
