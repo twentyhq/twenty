@@ -12,7 +12,6 @@ type RoundedLinkProps = {
 const fontSizeMd = FONT_COMMON.size.md;
 const spacing1 = THEME_COMMON.spacing(1);
 const spacing2 = THEME_COMMON.spacing(2);
-const spacing3 = THEME_COMMON.spacing(3);
 
 const spacingMultiplicator = THEME_COMMON.spacingMultiplicator;
 
@@ -36,7 +35,7 @@ const StyledLink = styled.a<{
 
   gap: ${spacing1};
 
-  height: ${spacing3};
+  height: 10px;
   justify-content: center;
 
   max-width: calc(100% - ${spacingMultiplicator} * 2px);
