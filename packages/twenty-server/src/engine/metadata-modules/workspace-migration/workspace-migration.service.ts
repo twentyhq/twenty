@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 import {
   WorkspaceMigrationEntity,
@@ -16,9 +16,28 @@ export class WorkspaceMigrationService {
   ) {}
 
   /**
+   * Get all applied migrations for a given workspaceId
+   *
+   * @params
+   * workspaceId: string
+   * @returns Promise<WorkspaceMigration[]>
+   */
+  public async getAppliedMigrations(
+    workspaceId: string,
+  ): Promise<WorkspaceMigrationEntity[]> {
+    return await this.workspaceMigrationRepository.find({
+      order: { createdAt: 'ASC', name: 'ASC' },
+      where: {
+        appliedAt: Not(IsNull()),
+        workspaceId,
+      },
+    });
+  }
+
+  /**
    * Get all pending migrations for a given workspaceId
    *
-   * @param workspaceId: string
+   * @params workspaceId: string
    * @returns Promise<WorkspaceMigration[]>
    */
   public async getPendingMigrations(
@@ -37,8 +56,9 @@ export class WorkspaceMigrationService {
    * Set appliedAt as current date for a given migration.
    * Should be called once the migration has been applied
    *
-   * @param workspaceId: string
-   * @param migration: WorkspaceMigration
+   * @params
+   * workspaceId: string
+   * migration: WorkspaceMigration
    */
   public async setAppliedAtForMigration(
     workspaceId: string,
@@ -53,8 +73,10 @@ export class WorkspaceMigrationService {
   /**
    * Create a new pending migration for a given workspaceId and expected changes
    *
-   * @param workspaceId
-   * @param migrations
+   * @params
+   * name: string
+   * workspaceId: string
+   * migrations: WorkspaceMigrationTableAction[]
    */
   public async createCustomMigration(
     name: string,

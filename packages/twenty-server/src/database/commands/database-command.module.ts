@@ -21,13 +21,16 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { UpdateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/0-20-update-message-channel-sync-status-enum.command';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { AddGraphqlConstraintsCommentsCommand } from 'src/database/commands/0.0.21-add-graphql-constraints-comments.command';
+import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Module({
   imports: [
     WorkspaceManagerModule,
     DataSourceModule,
     TypeORMModule,
-    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
     TypeOrmModule.forFeature(
       [FieldMetadataEntity, ObjectMetadataEntity],
       'metadata',
@@ -38,6 +41,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
     ObjectMetadataModule,
     DataSeedDemoWorkspaceModule,
     WorkspaceCacheVersionModule,
+    WorkspaceMigrationModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
@@ -48,6 +52,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
     StopDataSeedDemoWorkspaceCronCommand,
     UpdateMessageChannelVisibilityEnumCommand,
     UpdateMessageChannelSyncStatusEnumCommand,
+    AddGraphqlConstraintsCommentsCommand,
   ],
 })
 export class DatabaseCommandModule {}
