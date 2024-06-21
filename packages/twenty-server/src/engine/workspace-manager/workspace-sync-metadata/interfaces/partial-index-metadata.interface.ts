@@ -2,7 +2,7 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 
 export type PartialIndexMetadata = Omit<
   IndexMetadataEntity,
-  'id' | 'expression' | 'isCustom' | 'objectMetadata' | 'indexFieldMetadatas'
+  'id' | 'expression' | 'objectMetadata' | 'indexFieldMetadatas'
 > & {
   columns: string[];
 };
