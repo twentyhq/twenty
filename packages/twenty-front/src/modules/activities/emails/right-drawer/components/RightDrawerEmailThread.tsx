@@ -71,6 +71,7 @@ export const RightDrawerEmailThread = () => {
     ? visibleMessages.slice(2, visibleMessagesCount - 1)
     : [];
   const lastMessage = visibleMessages[visibleMessagesCount - 1];
+  const subject = visibleMessages[0]?.subject;
 
   return (
     <StyledContainer>
@@ -79,7 +80,7 @@ export const RightDrawerEmailThread = () => {
       ) : (
         <>
           <EmailThreadHeader
-            subject={thread.subject}
+            subject={subject}
             lastMessageSentAt={lastMessage.receivedAt}
           />
           {firstMessages.map((message) => (

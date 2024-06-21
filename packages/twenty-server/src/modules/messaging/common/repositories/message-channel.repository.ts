@@ -57,7 +57,11 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStatus" = NULL, "syncCursor" = '', "syncStageStartedAt" = NULL
+      `UPDATE ${dataSourceSchema}."messageChannel"
+      SET "syncStatus" = NULL,
+      "syncStage" = '${MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING}',
+      "syncCursor" = '',
+      "syncStageStartedAt" = NULL
       WHERE "connectedAccountId" = $1`,
       [connectedAccountId],
       workspaceId,

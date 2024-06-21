@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
 import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
@@ -16,10 +17,8 @@ export type CalendarCreateCompanyAndContactAfterSyncJobData = {
   calendarChannelId: string;
 };
 
-@Injectable()
-export class CalendarCreateCompanyAndContactAfterSyncJob
-  implements MessageQueueJob<CalendarCreateCompanyAndContactAfterSyncJobData>
-{
+@Processor(MessageQueue.calendarQueue)
+export class CalendarCreateCompanyAndContactAfterSyncJob {
   private readonly logger = new Logger(
     CalendarCreateCompanyAndContactAfterSyncJob.name,
   );
@@ -33,6 +32,7 @@ export class CalendarCreateCompanyAndContactAfterSyncJob
     private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
+  @Process(CalendarCreateCompanyAndContactAfterSyncJob.name)
   async handle(
     data: CalendarCreateCompanyAndContactAfterSyncJobData,
   ): Promise<void> {

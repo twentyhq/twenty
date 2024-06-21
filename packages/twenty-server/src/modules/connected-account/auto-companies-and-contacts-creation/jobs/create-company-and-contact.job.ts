@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -15,14 +14,13 @@ export type CreateCompanyAndContactJobData = {
   }[];
 };
 
-@Injectable()
-export class CreateCompanyAndContactJob
-  implements MessageQueueJob<CreateCompanyAndContactJobData>
-{
+@Processor(MessageQueue.contactCreationQueue)
+export class CreateCompanyAndContactJob {
   constructor(
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
   ) {}
 
+  @Process(CreateCompanyAndContactJob.name)
   async handle(data: CreateCompanyAndContactJobData): Promise<void> {
     const { workspaceId, connectedAccount, contactsToCreate } = data;
 

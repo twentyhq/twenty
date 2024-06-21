@@ -1,6 +1,5 @@
-import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
-import { Avatar } from 'twenty-ui';
+import { AppTooltip, Avatar } from 'twenty-ui';
 
 import { Comment } from '@/activities/types/Comment';
 import {
@@ -42,21 +41,6 @@ const StyledDate = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledTooltip = styled(Tooltip)`
-  background-color: ${({ theme }) => theme.background.primary};
-
-  box-shadow: 0px 2px 4px 3px
-    ${({ theme }) => theme.background.transparent.light};
-
-  box-shadow: 2px 4px 16px 6px
-    ${({ theme }) => theme.background.transparent.light};
-
-  color: ${({ theme }) => theme.font.color.primary};
-
-  opacity: 1;
-  padding: 8px;
-`;
-
 type CommentHeaderProps = {
   comment: Pick<Comment, 'id' | 'author' | 'createdAt'>;
   actionBar?: React.ReactNode;
@@ -87,7 +71,7 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
             <StyledDate id={`id-${commentId}`}>
               {beautifiedCreatedAt}
             </StyledDate>
-            <StyledTooltip
+            <AppTooltip
               anchorSelect={`#id-${commentId}`}
               content={exactCreatedAt}
               clickable

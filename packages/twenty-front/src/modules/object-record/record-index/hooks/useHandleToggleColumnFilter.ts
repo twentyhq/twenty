@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { v4 } from 'uuid';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -46,6 +47,7 @@ export const useHandleToggleColumnFilter = ({
       const defaultOperand = availableOperandsForFilter[0];
 
       const newFilter: Filter = {
+        id: v4(),
         fieldMetadataId,
         operand: defaultOperand,
         displayValue: '',
@@ -60,8 +62,8 @@ export const useHandleToggleColumnFilter = ({
 
       upsertCombinedViewFilter(newFilter);
 
-      openDropdown(fieldMetadataId, {
-        scope: fieldMetadataId,
+      openDropdown(newFilter.id, {
+        scope: newFilter.id,
       });
     },
     [columnDefinitions, upsertCombinedViewFilter, openDropdown],

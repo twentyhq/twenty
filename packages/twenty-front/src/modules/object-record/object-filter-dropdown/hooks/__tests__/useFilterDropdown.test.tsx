@@ -23,6 +23,7 @@ const filterDefinitions: FilterDefinition[] = [
 ];
 
 const mockFilter: Filter = {
+  id: 'id',
   definition: filterDefinitions[0],
   displayValue: '',
   fieldMetadataId: '',

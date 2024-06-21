@@ -62,6 +62,7 @@ export {
   IconCurrencyKroneSwedish,
   IconCurrencyPound,
   IconCurrencyRiyal,
+  IconCurrencyWon,
   IconCurrencyYen,
   IconCurrencyYuan,
   IconDatabase,
