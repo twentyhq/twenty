@@ -104,3 +104,11 @@ export const Catalog: Story = {
   },
   decorators: [CatalogDecorator],
 };
+
+export const Grip: Story = {
+  args: { ...Default.args, showGrip: true, isDragDisabled: false },
+};
+
+export const HoverDisabled: Story = {
+  args: { ...Default.args, isHoverDisabled: true },
+};

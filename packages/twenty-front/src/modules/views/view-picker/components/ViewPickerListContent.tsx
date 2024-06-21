@@ -117,7 +117,7 @@ export const ViewPickerListContent = () => {
           )}
         />
         {indexView && (
-          <MenuItem
+          <MenuItemDraggable
             key={indexView.id}
             iconButtons={[
               {
@@ -128,6 +128,8 @@ export const ViewPickerListContent = () => {
             onClick={() => handleViewSelect(indexView.id)}
             LeftIcon={getIcon(indexView.icon)}
             text={indexView.name}
+            accent="placeholder"
+            isDragDisabled
           />
         )}
       </DropdownMenuItemsContainer>
