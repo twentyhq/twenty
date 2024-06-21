@@ -20,9 +20,6 @@ export class IndexMetadataEntity {
   name: string;
 
   @Column({ nullable: true })
-  expression: string;
-
-  @Column({ nullable: true })
   workspaceId: string;
 
   @Column({ nullable: false, type: 'uuid' })

@@ -5,7 +5,13 @@ export interface WorkspaceIndexMetadataArgs {
   // eslint-disable-next-line @typescript-eslint/ban-types
   readonly target: Function;
 
+  /*
+   * Index name.
+   */
   name: string;
+
+  /*
+   * Index columns.
+   */
   columns: string[];
-  expression?: string;
 }
