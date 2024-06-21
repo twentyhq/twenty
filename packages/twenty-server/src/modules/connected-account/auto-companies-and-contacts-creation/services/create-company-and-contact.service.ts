@@ -168,13 +168,13 @@ export class CreateCompanyAndContactService {
 
     this.eventEmitter.emit(`messageParticipant.matched`, {
       workspaceId,
-      workspaceMemberId: connectedAccount.accountOwner.id, // should be connectedAccount.accountOwnerId,
+      workspaceMemberId: connectedAccount.accountOwnerId,
       messageParticipants: updatedMessageParticipants,
     });
 
     this.eventEmitter.emit(`calendarEventParticipant.matched`, {
       workspaceId,
-      workspaceMemberId: connectedAccount.accountOwner.id, // should be connectedAccount.accountOwnerId,
+      workspaceMemberId: connectedAccount.accountOwnerId,
       calendarEventParticipants: updatedCalendarEventParticipants,
     });
   }

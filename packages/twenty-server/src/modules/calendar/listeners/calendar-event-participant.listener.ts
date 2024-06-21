@@ -58,7 +58,7 @@ export class CalendarEventParticipantListener {
         name: 'calendarEvent.linked',
         properties: null,
         objectName: 'calendarEvent',
-        recordId: participant.person?.id ?? null,
+        recordId: participant.personId,
         workspaceMemberId: payload.workspaceMemberId,
         workspaceId: payload.workspaceId,
         linkedObjectMetadataId: calendarEventObjectMetadata.id,

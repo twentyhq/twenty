@@ -100,6 +100,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   })
   accountOwner: Relation<WorkspaceMemberWorkspaceEntity>;
 
+  accountOwnerId: string;
+
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.messageChannels,
     type: RelationMetadataType.ONE_TO_MANY,
