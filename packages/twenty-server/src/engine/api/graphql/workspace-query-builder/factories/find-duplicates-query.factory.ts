@@ -41,7 +41,7 @@ export class FindDuplicatesQueryFactory {
     );
 
     const duplicateCondition =
-      this.duplicateService.buildDuplicateConditionForGraphql(
+      this.duplicateService.buildDuplicateConditionForGraphQL(
         options.objectMetadataItem,
         argsData,
         args.id,

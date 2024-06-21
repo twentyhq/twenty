@@ -29,9 +29,19 @@ describe('getResolverArgs', () => {
         isNullable: false,
         isArray: true,
       },
+      upsert: {
+        isArray: false,
+        isNullable: true,
+        type: Boolean,
+      },
     },
     createOne: {
       data: { kind: InputTypeDefinitionKind.Create, isNullable: false },
+      upsert: {
+        isArray: false,
+        isNullable: true,
+        type: Boolean,
+      },
     },
     updateOne: {
       id: { type: GraphQLID, isNullable: false },

@@ -49,7 +49,7 @@ describe('generateCsv', () => {
       },
     ];
     const csv = generateCsv({ columns, rows });
-    expect(csv).toEqual(`id,Foo,Empty,Nested Foo,Nested Nested,Relation
+    expect(csv).toEqual(`Id,Foo,Empty,Nested Foo,Nested Nested,Relation
 1,some field,,foo,nested,a relation`);
   });
 });
