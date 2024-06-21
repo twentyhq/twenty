@@ -25,9 +25,6 @@ export class IndexMetadataEntity {
   @Column({ nullable: true })
   workspaceId: string;
 
-  @Column({ default: false })
-  isCustom: boolean; // TO REMOVE
-
   @Column({ nullable: false, type: 'uuid' })
   objectMetadataId: string;
 
