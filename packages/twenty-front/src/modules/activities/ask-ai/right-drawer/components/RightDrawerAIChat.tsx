@@ -1,11 +1,9 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
-import { IconRotate } from 'twenty-ui';
 
 import { SQLQueryBuilder } from '@/activities/ask-ai/right-drawer/components/SQLQueryBuilder';
+import { SQLQueryResultTable } from '@/activities/ask-ai/right-drawer/components/SQLQueryResultTable';
 import { askAIQueryState } from '@/activities/ask-ai/right-drawer/states/askAIQueryState';
-import { Button } from '@/ui/input/button/components/Button';
 import {
   AutosizeTextInput,
   AutosizeTextInputVariant,
@@ -36,6 +34,7 @@ const StyledAskAIQuery = styled.div`
 `;
 
 const StyledSQLQueryResult = styled.div`
+  overflow-x: scroll;
   padding-bottom: 24px;
 `;
 
@@ -46,63 +45,47 @@ const StyledNewMessageArea = styled.div`
 `;
 
 export const RightDrawerAIChat = () => {
-  // TODO: Create chat entity
-
   const [askAIQuery, setAskAIQuery] = useRecoilState(askAIQueryState);
-  const [messageInputVisible, setMessageInputVisible] = useState(!askAIQuery);
 
   const { data, loading } = useGetAskAiQuery({
     variables: {
       text: askAIQuery,
     },
-    skip: messageInputVisible,
+    skip: !askAIQuery,
   });
 
   return (
     <StyledContainer>
       <StyledChatArea>
-        {!messageInputVisible && (
-          <>
-            <StyledAskAIQuery>{askAIQuery}</StyledAskAIQuery>
-            <SQLQueryBuilder
-              loading={loading}
-              sqlQuery={data?.getAskAI.sqlQuery}
-            />
-            {!loading && (
-              <StyledSQLQueryResult>
-                {typeof data?.getAskAI.sqlQueryResult === 'string'
-                  ? data?.getAskAI.sqlQueryResult
-                  : 'Invalid SQL query.'}
-              </StyledSQLQueryResult>
-            )}
-            <div>
-              <Button
-                onClick={() => {
-                  setAskAIQuery('');
-                  setMessageInputVisible(true);
-                }}
-                title="Ask again"
-                Icon={IconRotate}
-                accent="blue"
-              />
-            </div>
-          </>
-        )}
-      </StyledChatArea>
-      {messageInputVisible && (
-        <StyledNewMessageArea>
-          <AutosizeTextInput
-            autoFocus
-            placeholder="Ask about anything in Twenty"
-            value={askAIQuery}
-            variant={AutosizeTextInputVariant.Icon}
-            onValidate={(text) => {
-              setAskAIQuery(text);
-              setMessageInputVisible(false);
-            }}
+        <div>
+          <StyledAskAIQuery>{askAIQuery}</StyledAskAIQuery>
+          <SQLQueryBuilder
+            loading={loading}
+            sqlQuery={data?.getAskAI.sqlQuery}
           />
-        </StyledNewMessageArea>
-      )}
+          {!loading && (
+            <StyledSQLQueryResult>
+              {typeof data?.getAskAI.sqlQueryResult === 'string' ? (
+                <SQLQueryResultTable
+                  sqlQueryResult={data.getAskAI.sqlQueryResult}
+                />
+              ) : (
+                'Invalid SQL query.'
+              )}
+            </StyledSQLQueryResult>
+          )}
+        </div>
+      </StyledChatArea>
+      <StyledNewMessageArea>
+        <AutosizeTextInput
+          autoFocus
+          placeholder="Ask about anything in Twenty"
+          variant={AutosizeTextInputVariant.Icon}
+          onValidate={(text) => {
+            setAskAIQuery(text);
+          }}
+        />
+      </StyledNewMessageArea>
     </StyledContainer>
   );
 };

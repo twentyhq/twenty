@@ -21,6 +21,7 @@ export const THEME_COMMON = {
     horizontalCellMargin: '8px',
     checkboxColumnWidth: '32px',
     horizontalCellPadding: '8px',
+    verticalCellPadding: '8px',
   },
   rightDrawerWidth: '500px',
   clickableElementBackgroundTransition: 'background 0.1s ease',
