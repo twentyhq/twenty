@@ -18,11 +18,19 @@ export function WorkspaceIndex(
     // TODO: handle composite field metadata types
     // TODO: handle relation field metadata types
 
-    const computedColumns = columns ?? [propertyKey.toString()];
+    if (Array.isArray(columns) && columns.length > 0) {
+      metadataArgsStorage.addIndexes({
+        name: `IDX_${generateDeterministicIndexName(columns)}`,
+        columns,
+        target: target,
+      });
+
+      return;
+    }
 
     metadataArgsStorage.addIndexes({
-      name: `IDX_${generateDeterministicIndexName(computedColumns)}`,
-      columns: computedColumns,
+      name: `IDX_${generateDeterministicIndexName([propertyKey.toString()])}`,
+      columns: [propertyKey.toString()],
       target: target.constructor,
     });
   };
