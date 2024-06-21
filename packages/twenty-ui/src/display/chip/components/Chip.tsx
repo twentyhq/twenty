@@ -1,9 +1,8 @@
 import { MouseEvent, ReactNode } from 'react';
-import { clsx } from 'clsx';
+import { Theme, withTheme } from '@emotion/react';
+import { styled } from '@linaria/react';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
-
-import styles from './Chip.module.css';
 
 export enum ChipSize {
   Large = 'large',
@@ -34,8 +33,85 @@ type ChipProps = {
   rightComponent?: ReactNode;
   className?: string;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
-  to?: string;
 };
+
+const StyledContainer = withTheme(styled.div<
+  Pick<
+    ChipProps,
+    'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant'
+  > & { theme: Theme }
+>`
+  --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
+  --chip-vertical-padding: ${({ theme }) => theme.spacing(1)};
+
+  text-decoration: none;
+  align-items: center;
+
+  color: ${({ theme, accent, disabled }) =>
+    disabled
+      ? theme.font.color.light
+      : accent === ChipAccent.TextPrimary
+        ? theme.font.color.primary
+        : theme.font.color.secondary};
+
+  cursor: ${({ clickable, disabled, variant }) =>
+    variant === ChipVariant.Transparent
+      ? 'inherit'
+      : clickable
+        ? 'pointer'
+        : disabled
+          ? 'not-allowed'
+          : 'inherit'};
+
+  display: inline-flex;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing(1)};
+  height: ${({ theme }) => theme.spacing(3)};
+  max-width: ${({ maxWidth }) =>
+    maxWidth
+      ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
+      : '200px'};
+
+  overflow: hidden;
+  padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
+  user-select: none;
+
+  font-weight: ${({ theme, accent }) =>
+    accent === ChipAccent.TextSecondary ? theme.font.weight.medium : 'inherit'};
+
+  &:hover {
+    background-color: ${({ theme, variant, disabled }) =>
+      variant === ChipVariant.Regular && !disabled
+        ? theme.background.transparent.light
+        : variant === ChipVariant.Highlighted
+          ? theme.background.transparent.medium
+          : 'inherit'};
+  }
+
+  &:active {
+    background-color: ${({ theme, disabled, variant }) =>
+      variant === ChipVariant.Regular && !disabled
+        ? theme.background.transparent.medium
+        : variant === ChipVariant.Highlighted
+          ? theme.background.transparent.strong
+          : 'inherit'};
+  }
+
+  background-color: ${({ theme, variant }) =>
+    variant === ChipVariant.Highlighted
+      ? theme.background.transparent.light
+      : variant === ChipVariant.Rounded
+        ? theme.background.transparent.lighter
+        : 'inherit'};
+
+  border: ${({ theme, variant }) =>
+    variant === ChipVariant.Rounded
+      ? `1px solid ${theme.border.color.medium}`
+      : 'none'};
+
+  border-radius: ${({ theme, variant }) =>
+    variant === ChipVariant.Rounded ? '50px' : theme.border.radius.sm};
+`);
 
 export const Chip = ({
   size = ChipSize.Small,
@@ -49,30 +125,21 @@ export const Chip = ({
   onClick,
 }: ChipProps) => {
   return (
-    <div
+    <StyledContainer
       data-testid="chip"
-      className={clsx({
-        [styles.chip]: true,
-        [styles.clickable]: clickable,
-        [styles.disabled]: disabled,
-        [styles.accentTextPrimary]: accent === ChipAccent.TextPrimary,
-        [styles.accentTextSecondary]: accent === ChipAccent.TextSecondary,
-        [styles.sizeLarge]: size === ChipSize.Large,
-        [styles.variantRegular]: variant === ChipVariant.Regular,
-        [styles.variantHighlighted]: variant === ChipVariant.Highlighted,
-        [styles.variantRounded]: variant === ChipVariant.Rounded,
-        [styles.variantTransparent]: variant === ChipVariant.Transparent,
-      })}
+      accent={accent}
+      clickable={clickable}
+      disabled={disabled}
+      size={size}
+      variant={variant}
       onClick={onClick}
     >
       {leftComponent}
-      <div className={styles.label}>
-        <OverflowingTextWithTooltip
-          size={size === ChipSize.Large ? 'large' : 'small'}
-          text={label}
-        />
-      </div>
+      <OverflowingTextWithTooltip
+        size={size === ChipSize.Large ? 'large' : 'small'}
+        text={label}
+      />
       {rightComponent}
-    </div>
+    </StyledContainer>
   );
 };

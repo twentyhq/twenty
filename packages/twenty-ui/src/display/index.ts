@@ -1,5 +1,6 @@
 export * from './avatar/components/Avatar';
 export * from './avatar/components/AvatarGroup';
+export * from './avatar/components/states/isInvalidAvatarUrlState';
 export * from './checkmark/components/AnimatedCheckmark';
 export * from './checkmark/components/Checkmark';
 export * from './chip/components/Chip';

@@ -5,11 +5,12 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { capitalize } from 'src/utils/capitalize';
 import {
   computeDepthParameters,
+  computeEndingBeforeParameters,
   computeFilterParameters,
   computeIdPathParameter,
-  computeLastCursorParameters,
   computeLimitParameters,
   computeOrderByParameters,
+  computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
@@ -217,17 +218,17 @@ export const computeSchemaComponents = (
   );
 };
 
-export const computeParameterComponents = (): Record<
-  string,
-  OpenAPIV3_1.ParameterObject
-> => {
+export const computeParameterComponents = (
+  fromMetadata = false,
+): Record<string, OpenAPIV3_1.ParameterObject> => {
   return {
     idPath: computeIdPathParameter(),
-    lastCursor: computeLastCursorParameters(),
+    startingAfter: computeStartingAfterParameters(),
+    endingBefore: computeEndingBeforeParameters(),
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
     orderBy: computeOrderByParameters(),
-    limit: computeLimitParameters(),
+    limit: computeLimitParameters(fromMetadata),
   };
 };
 

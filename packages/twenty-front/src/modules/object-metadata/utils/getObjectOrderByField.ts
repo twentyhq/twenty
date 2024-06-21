@@ -15,20 +15,26 @@ export const getOrderByFieldForObjectMetadataItem = (
   if (isDefined(labelIdentifierFieldMetadata)) {
     switch (labelIdentifierFieldMetadata.type) {
       case FieldMetadataType.FullName:
-        return {
-          [labelIdentifierFieldMetadata.name]: {
-            firstName: orderBy ?? 'AscNullsLast',
-            lastName: orderBy ?? 'AscNullsLast',
+        return [
+          {
+            [labelIdentifierFieldMetadata.name]: {
+              firstName: orderBy ?? 'AscNullsLast',
+              lastName: orderBy ?? 'AscNullsLast',
+            },
           },
-        };
+        ];
       default:
-        return {
-          [labelIdentifierFieldMetadata.name]: orderBy ?? 'AscNullsLast',
-        };
+        return [
+          {
+            [labelIdentifierFieldMetadata.name]: orderBy ?? 'AscNullsLast',
+          },
+        ];
     }
   } else {
-    return {
-      createdAt: orderBy ?? 'DescNullsLast',
-    };
+    return [
+      {
+        createdAt: orderBy ?? 'DescNullsLast',
+      },
+    ];
   }
 };

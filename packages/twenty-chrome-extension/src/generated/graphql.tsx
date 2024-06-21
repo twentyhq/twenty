@@ -994,8 +994,6 @@ export type CalendarChannel = {
   syncCursor?: Maybe<Scalars['String']>;
   /** Throttle Failure Count */
   throttleFailureCount?: Maybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: Maybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: Maybe<Scalars['DateTime']>;
   /** Visibility */
@@ -1040,8 +1038,6 @@ export type CalendarChannelCreateInput = {
   syncCursor?: InputMaybe<Scalars['String']>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   /** Visibility */
@@ -1176,8 +1172,6 @@ export type CalendarChannelFilterInput = {
   syncCursor?: InputMaybe<StringFilter>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<FloatFilter>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<DateFilter>;
   /** Update date */
   updatedAt?: InputMaybe<DateFilter>;
   /** Visibility */
@@ -1202,8 +1196,6 @@ export type CalendarChannelOrderByInput = {
   syncCursor?: InputMaybe<OrderByDirection>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<OrderByDirection>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<OrderByDirection>;
   /** Update date */
   updatedAt?: InputMaybe<OrderByDirection>;
   /** Visibility */
@@ -1228,8 +1220,6 @@ export type CalendarChannelUpdateInput = {
   syncCursor?: InputMaybe<Scalars['String']>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   /** Visibility */
@@ -2640,20 +2630,18 @@ export type MessageChannel = {
   isSyncEnabled?: Maybe<Scalars['Boolean']>;
   /** Messages from the channel. */
   messageChannelMessageAssociations?: Maybe<MessageChannelMessageAssociationConnection>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: Maybe<Scalars['DateTime']>;
   /** Last sync cursor */
   syncCursor?: Maybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: Maybe<MessageChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: Maybe<Scalars['DateTime']>;
   /** Sync status */
   syncStatus?: Maybe<MessageChannelSyncStatusEnum>;
-  /** Sync sub status */
-  syncSubStatus?: Maybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: Maybe<Scalars['DateTime']>;
   /** Throttle Failure Count */
   throttleFailureCount?: Maybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: Maybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: Maybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -2696,20 +2684,18 @@ export type MessageChannelCreateInput = {
   isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: InputMaybe<MessageChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Sync status */
   syncStatus?: InputMaybe<MessageChannelSyncStatusEnum>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: InputMaybe<Scalars['DateTime']>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -2740,21 +2726,19 @@ export type MessageChannelFilterInput = {
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<BooleanFilter>;
   not?: InputMaybe<MessageChannelFilterInput>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<DateFilter>;
   or?: InputMaybe<Array<InputMaybe<MessageChannelFilterInput>>>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<StringFilter>;
+  /** Sync stage */
+  syncStage?: InputMaybe<MessageChannelSyncStageEnumFilter>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<DateFilter>;
   /** Sync status */
   syncStatus?: InputMaybe<MessageChannelSyncStatusEnumFilter>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnumFilter>;
   /** Last sync date */
   syncedAt?: InputMaybe<DateFilter>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<FloatFilter>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<DateFilter>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnumFilter>;
   /** Update date */
@@ -2900,26 +2884,47 @@ export type MessageChannelOrderByInput = {
   isContactAutoCreationEnabled?: InputMaybe<OrderByDirection>;
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<OrderByDirection>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<OrderByDirection>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<OrderByDirection>;
+  /** Sync stage */
+  syncStage?: InputMaybe<OrderByDirection>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<OrderByDirection>;
   /** Sync status */
   syncStatus?: InputMaybe<OrderByDirection>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<OrderByDirection>;
   /** Last sync date */
   syncedAt?: InputMaybe<OrderByDirection>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<OrderByDirection>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<OrderByDirection>;
   /** Channel Type */
   type?: InputMaybe<OrderByDirection>;
   /** Update date */
   updatedAt?: InputMaybe<OrderByDirection>;
   /** Visibility */
   visibility?: InputMaybe<OrderByDirection>;
+};
+
+/** Sync stage */
+export enum MessageChannelSyncStageEnum {
+  /** Failed */
+  Failed = 'FAILED',
+  /** Full messages list fetch pending */
+  FullMessageListFetchPending = 'FULL_MESSAGE_LIST_FETCH_PENDING',
+  /** Messages import ongoing */
+  MessagesImportOngoing = 'MESSAGES_IMPORT_ONGOING',
+  /** Messages import pending */
+  MessagesImportPending = 'MESSAGES_IMPORT_PENDING',
+  /** Messages list fetch ongoing */
+  MessageListFetchOngoing = 'MESSAGE_LIST_FETCH_ONGOING',
+  /** Partial messages list fetch pending */
+  PartialMessageListFetchPending = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING'
+}
+
+export type MessageChannelSyncStageEnumFilter = {
+  eq?: InputMaybe<MessageChannelSyncStageEnum>;
+  in?: InputMaybe<Array<InputMaybe<MessageChannelSyncStageEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<MessageChannelSyncStageEnum>;
 };
 
 /** Sync status */
@@ -2947,29 +2952,6 @@ export type MessageChannelSyncStatusEnumFilter = {
   in?: InputMaybe<Array<InputMaybe<MessageChannelSyncStatusEnum>>>;
   is?: InputMaybe<FilterIs>;
   neq?: InputMaybe<MessageChannelSyncStatusEnum>;
-};
-
-/** Sync sub status */
-export enum MessageChannelSyncSubStatusEnum {
-  /** Failed */
-  Failed = 'FAILED',
-  /** Full messages list fetch pending */
-  FullMessageListFetchPending = 'FULL_MESSAGE_LIST_FETCH_PENDING',
-  /** Messages import ongoing */
-  MessagesImportOngoing = 'MESSAGES_IMPORT_ONGOING',
-  /** Messages import pending */
-  MessagesImportPending = 'MESSAGES_IMPORT_PENDING',
-  /** Messages list fetch ongoing */
-  MessageListFetchOngoing = 'MESSAGE_LIST_FETCH_ONGOING',
-  /** Partial messages list fetch pending */
-  PartialMessageListFetchPending = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING'
-}
-
-export type MessageChannelSyncSubStatusEnumFilter = {
-  eq?: InputMaybe<MessageChannelSyncSubStatusEnum>;
-  in?: InputMaybe<Array<InputMaybe<MessageChannelSyncSubStatusEnum>>>;
-  is?: InputMaybe<FilterIs>;
-  neq?: InputMaybe<MessageChannelSyncSubStatusEnum>;
 };
 
 /** Channel Type */
@@ -3001,20 +2983,18 @@ export type MessageChannelUpdateInput = {
   isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: InputMaybe<MessageChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Sync status */
   syncStatus?: InputMaybe<MessageChannelSyncStatusEnum>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: InputMaybe<Scalars['DateTime']>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -3572,8 +3552,9 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
+  sendInviteLink: SendInviteLink;
   signUp: LoginToken;
-  skipSyncEmailOnboardingStep: SkipSyncEmailOnboardingStep;
+  skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
   updateActivities?: Maybe<Array<Activity>>;
   updateActivity?: Maybe<Activity>;
@@ -4411,6 +4392,11 @@ export type MutationRenewTokenArgs = {
 };
 
 
+export type MutationSendInviteLinkArgs = {
+  emails: Array<Scalars['String']>;
+};
+
+
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -4815,6 +4801,17 @@ export type ObjectFieldsConnection = {
   edges: Array<FieldEdge>;
   /** Paging information */
   pageInfo: PageInfo;
+};
+
+/** Onboarding step */
+export enum OnboardingStep {
+  InviteTeam = 'INVITE_TEAM',
+  SyncEmail = 'SYNC_EMAIL'
+}
+
+export type OnboardingStepSuccess = {
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
 };
 
 /** An opportunity */
@@ -6186,6 +6183,11 @@ export enum RemoteTableStatus {
   Synced = 'SYNCED'
 }
 
+export type SendInviteLink = {
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 export type Sentry = {
   dsn?: Maybe<Scalars['String']>;
   environment?: Maybe<Scalars['String']>;
@@ -6194,11 +6196,6 @@ export type Sentry = {
 
 export type SessionEntity = {
   url?: Maybe<Scalars['String']>;
-};
-
-export type SkipSyncEmailOnboardingStep = {
-  /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean'];
 };
 
 /** Sort Directions */
@@ -6537,12 +6534,12 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['UUID'];
   lastName: Scalars['String'];
+  onboardingStep?: Maybe<OnboardingStep>;
   passwordHash?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetToken?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']>;
-  state: UserState;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
@@ -6562,10 +6559,6 @@ export type UserExists = {
 
 export type UserMappingOptionsUser = {
   user?: Maybe<Scalars['String']>;
-};
-
-export type UserState = {
-  skipSyncEmailOnboardingStep?: Maybe<Scalars['Boolean']>;
 };
 
 export type UserWorkspace = {

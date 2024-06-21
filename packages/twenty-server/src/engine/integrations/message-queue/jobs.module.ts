@@ -23,8 +23,9 @@ import { CalendarMessagingParticipantJobModule } from 'src/modules/calendar-mess
 import { CalendarCronJobModule } from 'src/modules/calendar/crons/jobs/calendar-cron-job.module';
 import { CalendarJobModule } from 'src/modules/calendar/jobs/calendar-job.module';
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/auto-companies-and-contacts-creation-job.module';
-import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
+import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
+import { CalendarModule } from 'src/modules/calendar/calendar.module';
 
 @Module({
   imports: [
@@ -38,10 +39,10 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     UserWorkspaceModule,
     WorkspaceModule,
     MessagingModule,
+    CalendarModule,
     CalendarEventParticipantModule,
     TimelineActivityModule,
     StripeModule,
-    // JobsModules
     WorkspaceQueryRunnerJobModule,
     CalendarMessagingParticipantJobModule,
     CalendarCronJobModule,
@@ -50,20 +51,11 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     TimelineJobModule,
   ],
   providers: [
-    {
-      provide: CleanInactiveWorkspaceJob.name,
-      useClass: CleanInactiveWorkspaceJob,
-    },
-    { provide: EmailSenderJob.name, useClass: EmailSenderJob },
-    {
-      provide: DataSeedDemoWorkspaceJob.name,
-      useClass: DataSeedDemoWorkspaceJob,
-    },
-    { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
-    {
-      provide: HandleWorkspaceMemberDeletedJob.name,
-      useClass: HandleWorkspaceMemberDeletedJob,
-    },
+    CleanInactiveWorkspaceJob,
+    EmailSenderJob,
+    DataSeedDemoWorkspaceJob,
+    UpdateSubscriptionJob,
+    HandleWorkspaceMemberDeletedJob,
   ],
 })
 export class JobsModule {

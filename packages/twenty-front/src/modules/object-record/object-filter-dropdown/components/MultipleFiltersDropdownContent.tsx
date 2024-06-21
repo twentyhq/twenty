@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
 import { ObjectFilterDropdownDateInput } from './ObjectFilterDropdownDateInput';
@@ -36,6 +37,11 @@ export const MultipleFiltersDropdownContent = ({
   const selectedOperandInDropdown = useRecoilValue(
     selectedOperandInDropdownState,
   );
+  const isEmptyOperand =
+    selectedOperandInDropdown &&
+    [ViewFilterOperand.IsEmpty, ViewFilterOperand.IsNotEmpty].includes(
+      selectedOperandInDropdown,
+    );
 
   return (
     <>
@@ -43,6 +49,8 @@ export const MultipleFiltersDropdownContent = ({
         <ObjectFilterDropdownFilterSelect />
       ) : isObjectFilterDropdownOperandSelectUnfolded ? (
         <ObjectFilterDropdownOperandSelect />
+      ) : isEmptyOperand ? (
+        <ObjectFilterDropdownOperandButton />
       ) : (
         selectedOperandInDropdown && (
           <>

@@ -101,9 +101,8 @@ export class MessagingGmailMessagesImportService {
       const allMessages =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
           messageQueries,
-          connectedAccount.accessToken,
-          workspaceId,
           connectedAccount.id,
+          workspaceId,
         );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
@@ -112,6 +111,7 @@ export class MessagingGmailMessagesImportService {
       );
 
       const messagesToSave = filterEmails(
+        messageChannel.handle,
         allMessages,
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
@@ -152,6 +152,12 @@ export class MessagingGmailMessagesImportService {
         workspaceId,
       );
     } catch (error) {
+      this.logger.log(
+        `Messaging import for workspace ${workspaceId} and connected account ${
+          connectedAccount.id
+        } failed with error: ${JSON.stringify(error)}`,
+      );
+
       await this.cacheStorage.setAdd(
         `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
         messageIdsToFetch,

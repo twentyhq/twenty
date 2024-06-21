@@ -74,6 +74,7 @@ export const useFieldContext = ({
                 showLabel: true,
                 position: fieldPosition,
                 objectMetadataItem,
+                labelWidth: 90,
               }),
               useUpdateRecord:
                 customUseUpdateOneObjectHook ?? useUpdateOneObjectMutation,

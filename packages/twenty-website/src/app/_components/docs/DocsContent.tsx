@@ -149,6 +149,7 @@ export default function DocsContent({ item }: { item: FileContent }) {
                 style={{ objectFit: 'cover' }}
                 onLoad={() => setImageLoaded(true)}
                 loaded={imageLoaded.toString()}
+                unoptimized
               />
             )}
           </StyledImageContainer>

@@ -1,40 +1,23 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-// @ts-expect-error Migration loader as text not passing warnings
-import { API } from '@stoplight/elements';
+
+import { useEffect, useState } from 'react';
 
 import Playground from '@/app/_components/playground/playground';
+import { RestApiWrapper } from '@/app/_components/playground/rest-api-wrapper';
 
-// @ts-expect-error Migration loader as text not passing warnings
-import spotlightTheme from '!css-loader!@stoplight/elements/styles.min.css';
+const RestApi = () => {
+  const [openApiJson, setOpenApiJson] = useState({});
+  const [isClient, setIsClient] = useState(false);
 
-const RestApiComponent = ({ openApiJson }: { openApiJson: any }) => {
-  // We load spotlightTheme style using useEffect as it breaks remaining docs style
   useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.innerHTML = spotlightTheme.toString();
-    document.head.append(styleElement);
-
-    return () => styleElement.remove();
+    setIsClient(true);
   }, []);
 
-  return (
-    <div
-      style={{
-        height: 'calc(100vh - var(--ifm-navbar-height) - 45px)',
-        width: '100%',
-        overflow: 'auto',
-      }}
-    >
-      <API apiDescriptionDocument={JSON.stringify(openApiJson)} router="hash" />
-    </div>
-  );
-};
+  if (!isClient) {
+    return null;
+  }
 
-const restApi = () => {
-  const [openApiJson, setOpenApiJson] = useState({});
-
-  const children = <RestApiComponent openApiJson={openApiJson} />;
+  const children = <RestApiWrapper openApiJson={openApiJson} />;
 
   return (
     <div style={{ width: '100vw' }}>
@@ -47,4 +30,4 @@ const restApi = () => {
   );
 };
 
-export default restApi;
+export default RestApi;

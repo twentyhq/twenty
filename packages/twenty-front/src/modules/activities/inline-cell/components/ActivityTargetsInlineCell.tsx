@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconArrowUpRight, IconPencil } from 'twenty-ui';
 
@@ -8,6 +9,7 @@ import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
@@ -30,6 +32,8 @@ export const ActivityTargetsInlineCell = ({
   const { activityTargetObjectRecords } =
     useActivityTargetObjectRecords(activity);
   const { closeInlineCell } = useInlineCell();
+
+  const { fieldDefinition } = useContext(FieldContext);
 
   useScopedHotkeys(
     Key.Escape,
@@ -61,6 +65,7 @@ export const ActivityTargetsInlineCell = ({
               IconLabel={showLabel ? IconArrowUpRight : undefined}
               showLabel={showLabel}
               readonly={readonly}
+              labelWidth={fieldDefinition?.labelWidth}
               editModeContent={
                 <ActivityTargetInlineCellEditMode
                   activity={activity}

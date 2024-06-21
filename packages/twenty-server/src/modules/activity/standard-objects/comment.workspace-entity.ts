@@ -7,7 +7,6 @@ import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/a
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -22,7 +21,6 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
   icon: 'IconMessageCircle',
 })
 @WorkspaceIsSystem()
-@WorkspaceIsNotAuditLogged()
 export class CommentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMMENT_STANDARD_FIELD_IDS.body,

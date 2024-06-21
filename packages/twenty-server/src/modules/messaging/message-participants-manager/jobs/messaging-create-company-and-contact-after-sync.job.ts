@@ -1,9 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import {
   FeatureFlagEntity,
@@ -15,16 +13,19 @@ import { MessageChannelRepository } from 'src/modules/messaging/common/repositor
 import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type MessagingCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
   messageChannelId: string;
 };
 
-@Injectable()
-export class MessagingCreateCompanyAndContactAfterSyncJob
-  implements MessageQueueJob<MessagingCreateCompanyAndContactAfterSyncJobData>
-{
+@Processor(MessageQueue.messagingQueue)
+export class MessagingCreateCompanyAndContactAfterSyncJob {
   private readonly logger = new Logger(
     MessagingCreateCompanyAndContactAfterSyncJob.name,
   );
@@ -36,8 +37,11 @@ export class MessagingCreateCompanyAndContactAfterSyncJob
     private readonly messageParticipantRepository: MessageParticipantRepository,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
+  @Process(MessagingCreateCompanyAndContactAfterSyncJob.name)
   async handle(
     data: MessagingCreateCompanyAndContactAfterSyncJobData,
   ): Promise<void> {
@@ -51,10 +55,22 @@ export class MessagingCreateCompanyAndContactAfterSyncJob
       workspaceId,
     );
 
-    const { handle, isContactAutoCreationEnabled } = messageChannel[0];
+    const { isContactAutoCreationEnabled, connectedAccountId } =
+      messageChannel[0];
 
     if (!isContactAutoCreationEnabled) {
       return;
+    }
+
+    const connectedAccount = await this.connectedAccountRepository.getById(
+      connectedAccountId,
+      workspaceId,
+    );
+
+    if (!connectedAccount) {
+      throw new Error(
+        `Connected account with id ${connectedAccountId} not found in workspace ${workspaceId}`,
+      );
     }
 
     const isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag =
@@ -78,7 +94,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob
         );
 
     await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
-      handle,
+      connectedAccount,
       contactsToCreate,
       workspaceId,
     );

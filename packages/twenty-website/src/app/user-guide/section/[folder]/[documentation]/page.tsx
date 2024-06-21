@@ -5,8 +5,6 @@ import DocsContent from '@/app/_components/docs/DocsContent';
 import { fetchArticleFromSlug } from '@/shared-utils/fetchArticleFromSlug';
 import { formatSlug } from '@/shared-utils/formatSlug';
 
-export const dynamic = 'force-dynamic';
-
 export async function generateMetadata({
   params,
 }: {

@@ -30,9 +30,9 @@ import { RelationPickerScope } from '@/object-record/relation-picker/scopes/Rela
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 
 const StyledSelectContainer = styled.div`
-  left: 0px;
   position: absolute;
-  top: -8px;
+  left: 0;
+  top: 0;
 `;
 
 type ActivityTargetInlineCellEditModeProps = {

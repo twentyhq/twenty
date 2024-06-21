@@ -9,6 +9,11 @@ export type UUIDFilter = {
   is?: IsFilter;
 };
 
+export type RelationFilter = {
+  is?: IsFilter;
+  in?: UUIDFilterValue[];
+};
+
 export type BooleanFilter = {
   eq?: boolean;
   is?: IsFilter;

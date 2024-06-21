@@ -68,10 +68,7 @@ describe('ArgsStringFactory', () => {
 
     it('when orderBy is present, should return an array of objects', () => {
       const args = {
-        orderBy: {
-          id: 'AscNullsFirst',
-          name: 'AscNullsFirst',
-        },
+        orderBy: [{ id: 'AscNullsFirst' }, { name: 'AscNullsFirst' }],
       };
 
       argsAliasCreate.mockReturnValue(args);
@@ -85,11 +82,11 @@ describe('ArgsStringFactory', () => {
 
     it('when orderBy is present with position criteria, should return position at the end of the list', () => {
       const args = {
-        orderBy: {
-          position: 'AscNullsFirst',
-          id: 'AscNullsFirst',
-          name: 'AscNullsFirst',
-        },
+        orderBy: [
+          { position: 'AscNullsFirst' },
+          { id: 'AscNullsFirst' },
+          { name: 'AscNullsFirst' },
+        ],
       };
 
       argsAliasCreate.mockReturnValue(args);
@@ -103,11 +100,11 @@ describe('ArgsStringFactory', () => {
 
     it('when orderBy is present with position in the middle, should return position at the end of the list', () => {
       const args = {
-        orderBy: {
-          id: 'AscNullsFirst',
-          position: 'AscNullsFirst',
-          name: 'AscNullsFirst',
-        },
+        orderBy: [
+          { id: 'AscNullsFirst' },
+          { position: 'AscNullsFirst' },
+          { name: 'AscNullsFirst' },
+        ],
       };
 
       argsAliasCreate.mockReturnValue(args);

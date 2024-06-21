@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
-import { mockedPeopleData } from '~/testing/mock-data/people';
+import { getPeopleMock } from '~/testing/mock-data/people';
+
+const peopleMock = getPeopleMock();
 
 export const query = gql`
   query FindDuplicatePerson($id: ID!) {
@@ -49,11 +51,11 @@ export const responseData = {
   personDuplicates: {
     edges: [
       {
-        node: {  ...mockedPeopleData[0], updatedAt: '' },
+        node: {  ...peopleMock[0], updatedAt: '' },
         cursor: 'cursor1',
       },
       {
-        node: { ...mockedPeopleData[1], updatedAt: '' },
+        node: { ...peopleMock[1], updatedAt: '' },
         cursor: 'cursor2',
       },
     ],

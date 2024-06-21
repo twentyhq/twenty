@@ -66,14 +66,6 @@ export const RecordTableCellContainer = ({
     }
   };
 
-  const handleContainerMouseEnter = () => {
-    if (!hasSoftFocus) {
-      onCellMouseEnter({
-        cellPosition,
-      });
-    }
-  };
-
   const handleContainerMouseLeave = () => {
     setHasSoftFocus(false);
     setIsFocused(false);
@@ -142,7 +134,6 @@ export const RecordTableCellContainer = ({
         value={editHotkeyScope ?? DEFAULT_CELL_SCOPE}
       >
         <div
-          onMouseEnter={handleContainerMouseEnter}
           onMouseLeave={handleContainerMouseLeave}
           onMouseMove={handleContainerMouseMove}
           onClick={handleContainerClick}
@@ -154,12 +145,10 @@ export const RecordTableCellContainer = ({
           {isInEditMode ? (
             <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
           ) : hasSoftFocus ? (
-            <>
-              <RecordTableCellSoftFocusMode
-                editModeContent={editModeContent}
-                nonEditModeContent={nonEditModeContent}
-              />
-            </>
+            <RecordTableCellSoftFocusMode
+              editModeContent={editModeContent}
+              nonEditModeContent={nonEditModeContent}
+            />
           ) : (
             <RecordTableCellDisplayMode>
               {nonEditModeContent}

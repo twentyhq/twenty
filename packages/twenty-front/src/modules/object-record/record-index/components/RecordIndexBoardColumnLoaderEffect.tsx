@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
-import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
+import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsByColumnFamilyState';
+import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { useLoadRecordIndexBoardColumn } from '@/object-record/record-index/hooks/useLoadRecordIndexBoardColumn';
+import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 export const RecordIndexBoardColumnLoaderEffect = ({
   objectNameSingular,
@@ -17,23 +20,62 @@ export const RecordIndexBoardColumnLoaderEffect = ({
   boardFieldMetadataId: string | null;
   columnId: string;
 }) => {
-  const { shouldFetchMoreSelector } = useRecordBoard(recordBoardId);
+  const [shouldFetchMore, setShouldFetchMore] = useRecoilState(
+    recordBoardShouldFetchMoreInColumnComponentFamilyState({
+      scopeId: getScopeIdFromComponentId(recordBoardId),
+      familyKey: columnId,
+    }),
+  );
 
-  const shouldFetchMore = useRecoilValue(shouldFetchMoreSelector());
+  const [loadingRecordsForThisColumn, setLoadingRecordsForThisColumn] =
+    useRecoilState(
+      isRecordBoardFetchingRecordsByColumnFamilyState({
+        scopeId: getScopeIdFromComponentId(recordBoardId),
+        familyKey: { columnId },
+      }),
+    );
 
-  const { fetchMoreRecords, loading } = useLoadRecordIndexBoardColumn({
-    objectNameSingular,
-    recordBoardId,
-    boardFieldMetadataId,
-    columnFieldSelectValue: boardFieldSelectValue,
-    columnId,
-  });
+  const { fetchMoreRecords, loading, records, hasNextPage } =
+    useLoadRecordIndexBoardColumn({
+      objectNameSingular,
+      recordBoardId,
+      boardFieldMetadataId,
+      columnFieldSelectValue: boardFieldSelectValue,
+      columnId,
+    });
+
+  const setIsRecordIndexLoading = useSetRecoilState(
+    isRecordIndexBoardColumnLoadingFamilyState(columnId),
+  );
 
   useEffect(() => {
-    if (!loading && shouldFetchMore) {
-      fetchMoreRecords?.();
-    }
-  }, [fetchMoreRecords, loading, shouldFetchMore, boardFieldSelectValue]);
+    setIsRecordIndexLoading(loading && records.length === 0);
+  }, [records, loading, setIsRecordIndexLoading]);
+
+  useEffect(() => {
+    const run = async () => {
+      if (!loading && shouldFetchMore && hasNextPage) {
+        setLoadingRecordsForThisColumn(true);
+        setShouldFetchMore(false);
+
+        await fetchMoreRecords?.();
+
+        setLoadingRecordsForThisColumn(false);
+      }
+    };
+
+    run();
+  }, [
+    setShouldFetchMore,
+    fetchMoreRecords,
+    loading,
+    shouldFetchMore,
+    boardFieldSelectValue,
+    setLoadingRecordsForThisColumn,
+    loadingRecordsForThisColumn,
+
+    hasNextPage,
+  ]);
 
   return <></>;
 };
