@@ -171,6 +171,7 @@ export class WorkspaceRepository<
       formattedEntityOrEntities as any,
       options,
     );
+
     const formattedResult = this.formatResult(result);
 
     return formattedResult;
