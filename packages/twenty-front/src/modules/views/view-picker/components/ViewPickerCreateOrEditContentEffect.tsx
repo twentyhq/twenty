@@ -11,6 +11,7 @@ export const ViewPickerCreateOrEditContentEffect = () => {
     viewPickerSelectedIconState,
     viewPickerInputNameState,
     viewPickerReferenceViewIdState,
+    viewPickerIsPersistingState,
     viewPickerKanbanFieldMetadataIdState,
     viewPickerTypeState,
     viewPickerIsDirtyState,
@@ -31,12 +32,8 @@ export const ViewPickerCreateOrEditContentEffect = () => {
   );
 
   const viewPickerIsDirty = useRecoilValue(viewPickerIsDirtyState);
-  const viewPickerSelectedIcon = useRecoilValue(viewPickerSelectedIconState);
-  const viewPickerInputName = useRecoilValue(viewPickerInputNameState);
-  const viewPickerKanbanFieldMetadataId = useRecoilValue(
-    viewPickerKanbanFieldMetadataIdState,
-  );
-  const viewPickerType = useRecoilValue(viewPickerTypeState);
+
+  const viewPickerIsPersisting = useRecoilValue(viewPickerIsPersistingState);
 
   const { viewsOnCurrentObject } = useGetCurrentView();
   const referenceView = viewsOnCurrentObject.find(
@@ -46,24 +43,24 @@ export const ViewPickerCreateOrEditContentEffect = () => {
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
 
   useEffect(() => {
-    if (isDefined(referenceView)) {
-      if (!viewPickerSelectedIcon)
-        setViewPickerSelectedIcon(referenceView.icon);
-      if (!viewPickerInputName) setViewPickerInputName(referenceView.name);
-      if (!viewPickerKanbanFieldMetadataId)
-        setViewPickerKanbanFieldMetadataId(referenceView.kanbanFieldMetadataId);
-      if (!viewPickerType) setViewPickerType(referenceView.type);
+    if (
+      isDefined(referenceView) &&
+      !viewPickerIsPersisting &&
+      !viewPickerIsDirty
+    ) {
+      setViewPickerSelectedIcon(referenceView.icon);
+      setViewPickerInputName(referenceView.name);
+      setViewPickerKanbanFieldMetadataId(referenceView.kanbanFieldMetadataId);
+      setViewPickerType(referenceView.type);
     }
   }, [
     referenceView,
-    viewPickerSelectedIcon,
-    viewPickerInputName,
-    viewPickerKanbanFieldMetadataId,
-    viewPickerType,
-    setViewPickerSelectedIcon,
     setViewPickerInputName,
     setViewPickerKanbanFieldMetadataId,
+    setViewPickerSelectedIcon,
     setViewPickerType,
+    viewPickerIsPersisting,
+    viewPickerIsDirty,
   ]);
 
   useEffect(() => {
