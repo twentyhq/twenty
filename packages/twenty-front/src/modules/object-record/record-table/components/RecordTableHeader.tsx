@@ -76,6 +76,7 @@ export const RecordTableHeader = ({
             width: 30,
             minWidth: 30,
             maxWidth: 30,
+            borderRight: 'transparent',
           }}
         >
           <SelectAllCheckbox />

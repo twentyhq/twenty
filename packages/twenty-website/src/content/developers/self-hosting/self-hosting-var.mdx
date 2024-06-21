@@ -153,7 +153,7 @@ yarn command:prod cron:messaging:message-list-fetch
 ### Logging
 
 <ArticleTable options={[
-    ['LOGGER_DRIVER', 'console', "The logging driver can be: 'console' or 'sentry'"],
+    ['LOGGER_DRIVER', 'console', "Currently, only supports 'console'"],
     ['LOGGER_IS_BUFFER_ENABLED', 'true', 'Buffer the logs before sending them to the logging driver'],
     ['LOG_LEVELS', 'error,warn', "The loglevels which are logged to the logging driver. Can include: 'log', 'warn', 'error'"],
     ['EXCEPTION_HANDLER_DRIVER', 'sentry', "The exception handler driver can be: 'console' or 'sentry'"],
