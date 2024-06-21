@@ -131,7 +131,7 @@ export const ActivityTargetInlineCellEditMode = ({
         if (isNewlySelected) {
           const record = snapshot
             .getLoadable(objectRecordMultiSelectFamilyState(recordId))
-            .getValue() as ObjectRecordAndSelected;
+            .getValue();
 
           if (!record) {
             throw new Error(
@@ -139,7 +139,6 @@ export const ActivityTargetInlineCellEditMode = ({
             );
           }
 
-          console.log('ading id to state', recordId);
           set(objectRecordMultiSelectCheckedRecordsIdsState, (prev) => [
             ...prev,
             recordId,
@@ -174,7 +173,6 @@ export const ActivityTargetInlineCellEditMode = ({
               },
             });
           } else {
-            console.log('creating activity target');
             await createManyActivityTargets([newActivityTarget]);
           }
 
@@ -190,7 +188,6 @@ export const ActivityTargetInlineCellEditMode = ({
             throw new Error('Could not delete this activity target.');
           }
 
-          console.log('removing id from state', recordId);
           set(
             objectRecordMultiSelectCheckedRecordsIdsState,
             previouslyCheckedRecordsIds.filter((id) => id !== recordId),

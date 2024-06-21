@@ -3,10 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui';
 import { v4 } from 'uuid';
 
-import {
-  ObjectRecordAndSelected,
-  objectRecordMultiSelectFamilyState,
-} from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
+import { objectRecordMultiSelectFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -33,15 +30,19 @@ export const MultipleObjectRecordSelectItem = ({
     isSelectedItemIdSelector(objectRecordId),
   );
 
-  const { selected, ...record } = useRecoilValue(
+  const record = useRecoilValue(
     objectRecordMultiSelectFamilyState(objectRecordId),
-  ) as ObjectRecordAndSelected;
+  );
+
+  if (!record) {
+    return null;
+  }
 
   const handleSelectChange = () => {
     onChange?.(objectRecordId);
   };
 
-  const { recordIdentifier } = record;
+  const { selected, recordIdentifier } = record;
 
   if (!recordIdentifier) {
     return null;

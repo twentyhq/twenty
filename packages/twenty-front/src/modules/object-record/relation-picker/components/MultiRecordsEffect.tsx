@@ -8,10 +8,7 @@ import {
 
 import { objectRecordsIdsMultiSelectState } from '@/activities/states/objectRecordsIdsMultiSelectState';
 import { objectRecordMultiSelectCheckedRecordsIdsState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsState';
-import {
-  ObjectRecordAndSelected,
-  objectRecordMultiSelectFamilyState,
-} from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
+import { objectRecordMultiSelectFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
 import { recordMultiSelectIsLoadingState } from '@/object-record/record-field/states/recordMultiSelectIsLoadingState';
 import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
 import {
@@ -66,7 +63,7 @@ export const MultiRecordsEffect = ({
             .getLoadable(
               objectRecordMultiSelectFamilyState(newRecord.record.id),
             )
-            .getValue() as ObjectRecordAndSelected;
+            .getValue();
 
           const newRecordWithSelected = {
             ...newRecord,
@@ -78,7 +75,7 @@ export const MultiRecordsEffect = ({
           if (
             !isDeeplyEqual(
               newRecordWithSelected.selected,
-              currentRecord.selected,
+              currentRecord?.selected,
             )
           ) {
             set(

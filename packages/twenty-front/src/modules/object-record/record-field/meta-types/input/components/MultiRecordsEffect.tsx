@@ -5,10 +5,7 @@ import { objectRecordsIdsMultiSelectState } from '@/activities/states/objectReco
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
 import { objectRecordMultiSelectCheckedRecordsIdsState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsState';
-import {
-  ObjectRecordAndSelected,
-  objectRecordMultiSelectFamilyState,
-} from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
+import { objectRecordMultiSelectFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
 import { recordMultiSelectIsLoadingState } from '@/object-record/record-field/states/recordMultiSelectIsLoadingState';
 import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
@@ -61,7 +58,7 @@ export const MultiRecordsEffect = () => {
             .getLoadable(
               objectRecordMultiSelectFamilyState(newRecord.record.id),
             )
-            .getValue() as ObjectRecordAndSelected;
+            .getValue();
 
           const newRecordWithSelected = {
             ...newRecord,
@@ -73,7 +70,7 @@ export const MultiRecordsEffect = () => {
           if (
             !isDeeplyEqual(
               newRecordWithSelected.selected,
-              currentRecord.selected,
+              currentRecord?.selected,
             )
           ) {
             set(

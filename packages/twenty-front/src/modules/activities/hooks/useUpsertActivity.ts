@@ -48,6 +48,7 @@ export const useUpsertActivity = () => {
         ...activity,
         ...input,
       };
+
       if (isDefined(objectShowPageTargetableObject)) {
         refreshShowPageFindManyActivitiesQueries();
       }

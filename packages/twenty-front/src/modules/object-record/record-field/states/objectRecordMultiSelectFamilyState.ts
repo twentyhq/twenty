@@ -6,9 +6,9 @@ export type ObjectRecordAndSelected = ObjectRecordForSelect & {
 };
 
 export const objectRecordMultiSelectFamilyState = createFamilyState<
-  ObjectRecordAndSelected | object,
+  ObjectRecordAndSelected | undefined,
   string
 >({
   key: 'objectRecordMultiSelectFamilyState',
-  defaultValue: {},
+  defaultValue: undefined,
 });
