@@ -118,7 +118,7 @@ export const useTableData = ({
 
     if (
       pageCount >= MAXIMUM_REQUESTS ||
-      records.length === previousRecordCount
+      (isDefined(totalCount) && records.length === totalCount)
     ) {
       setPageCount(0);
 

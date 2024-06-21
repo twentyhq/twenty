@@ -5,6 +5,13 @@ import { FilterType } from '../types/FilterType';
 export const getOperandsForFilterType = (
   filterType: FilterType | null | undefined,
 ): ViewFilterOperand[] => {
+  const emptyOperands = [
+    ViewFilterOperand.IsEmpty,
+    ViewFilterOperand.IsNotEmpty,
+  ];
+
+  const relationOperands = [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
+
   switch (filterType) {
     case 'TEXT':
     case 'EMAIL':
@@ -12,17 +19,25 @@ export const getOperandsForFilterType = (
     case 'ADDRESS':
     case 'PHONE':
     case 'LINK':
-      return [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain];
     case 'LINKS':
-      return [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain];
+      return [
+        ViewFilterOperand.Contains,
+        ViewFilterOperand.DoesNotContain,
+        ...emptyOperands,
+      ];
     case 'CURRENCY':
     case 'NUMBER':
     case 'DATE_TIME':
     case 'DATE':
-      return [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan];
+      return [
+        ViewFilterOperand.GreaterThan,
+        ViewFilterOperand.LessThan,
+        ...emptyOperands,
+      ];
     case 'RELATION':
+      return [...relationOperands, ...emptyOperands];
     case 'SELECT':
-      return [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
+      return [...relationOperands];
     default:
       return [];
   }

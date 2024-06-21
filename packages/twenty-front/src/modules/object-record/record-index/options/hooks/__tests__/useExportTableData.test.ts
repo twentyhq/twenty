@@ -7,6 +7,7 @@ import {
   download,
   generateCsv,
 } from '../useExportTableData';
+import { sleep } from '../useTableData';
 
 jest.useFakeTimers();
 
@@ -40,6 +41,7 @@ describe('generateCsv', () => {
     ] as ColumnDefinition<FieldMetadata>[];
     const rows = [
       {
+        id: '1',
         bar: 'another field',
         empty: null,
         foo: 'some field',
@@ -48,8 +50,8 @@ describe('generateCsv', () => {
       },
     ];
     const csv = generateCsv({ columns, rows });
-    expect(csv).toEqual(`Foo,Empty,Nested Foo,Nested Nested,Relation
-some field,,foo,nested,a relation`);
+    expect(csv).toEqual(`Id,Foo,Empty,Nested Foo,Nested Nested,Relation
+1,some field,,foo,nested,a relation`);
   });
 });
 
@@ -62,6 +64,7 @@ describe('csvDownloader', () => {
         { id: 2, name: 'Alice' },
       ],
       columns: [],
+      objectNameSingular: '',
     };
 
     const link = document.createElement('a');

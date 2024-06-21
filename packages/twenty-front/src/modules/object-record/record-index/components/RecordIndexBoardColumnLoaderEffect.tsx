@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsByColumnFamilyState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { useLoadRecordIndexBoardColumn } from '@/object-record/record-index/hooks/useLoadRecordIndexBoardColumn';
+import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 export const RecordIndexBoardColumnLoaderEffect = ({
@@ -34,7 +35,7 @@ export const RecordIndexBoardColumnLoaderEffect = ({
       }),
     );
 
-  const { fetchMoreRecords, loading, hasNextPage } =
+  const { fetchMoreRecords, loading, records, hasNextPage } =
     useLoadRecordIndexBoardColumn({
       objectNameSingular,
       recordBoardId,
@@ -42,6 +43,14 @@ export const RecordIndexBoardColumnLoaderEffect = ({
       columnFieldSelectValue: boardFieldSelectValue,
       columnId,
     });
+
+  const setIsRecordIndexLoading = useSetRecoilState(
+    isRecordIndexBoardColumnLoadingFamilyState(columnId),
+  );
+
+  useEffect(() => {
+    setIsRecordIndexLoading(loading && records.length === 0);
+  }, [records, loading, setIsRecordIndexLoading]);
 
   useEffect(() => {
     const run = async () => {
