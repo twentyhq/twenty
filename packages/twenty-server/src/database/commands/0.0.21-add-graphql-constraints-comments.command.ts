@@ -16,12 +16,8 @@ import {
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import {
-  WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationTableAction,
-  WorkspaceMigrationTableActionType,
-} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { capitalize } from 'src/utils/capitalize';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 interface AddGraphqlConstraintsCommentsCommandOptions {
   workspaceId?: string;
@@ -36,6 +32,8 @@ export class AddGraphqlConstraintsCommentsCommand extends CommandRunner {
     AddGraphqlConstraintsCommentsCommand.name,
   );
   constructor(
+    @InjectRepository(RelationMetadataEntity, 'metadata')
+    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(FeatureFlagEntity, 'core')
@@ -120,30 +118,21 @@ export class AddGraphqlConstraintsCommentsCommand extends CommandRunner {
             const schemaName =
               this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-            const appliedMigrations =
-              await this.workspaceMigrationService.getAppliedMigrations(
-                workspaceId,
-              );
+            const relationMetadataCollection =
+              await this.relationMetadataRepository.find({
+                where: {
+                  workspaceId: workspaceId,
+                },
+                relations: [
+                  'fromFieldMetadata',
+                  'fromObjectMetadata',
+                  'toFieldMetadata',
+                  'toObjectMetadata',
+                ],
+              });
 
-            const flattenedAppliedMigrations: WorkspaceMigrationTableAction[] =
-              appliedMigrations.reduce((acc, pendingMigration) => {
-                return [...acc, ...pendingMigration.migrations];
-              }, []);
-
-            for (const migration of flattenedAppliedMigrations) {
-              if (
-                migration.action === WorkspaceMigrationTableActionType.ALTER &&
-                migration.columns &&
-                migration.columns.length > 0
-              ) {
-                for (const migrationColumn of migration.columns) {
-                  if (
-                    migrationColumn.action ===
-                    WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY
-                  ) {
-                    const tableName = migration.newName ?? migration.name;
-
-                    const existingForeignKeys = await queryRunner.query(`
+            for (const relationMetadata of relationMetadataCollection) {
+              const existingForeignKeys = await queryRunner.query(`
                     SELECT
                         conname AS constraint_name,
                         conrelid::regclass AS table_from,
@@ -158,31 +147,34 @@ export class AddGraphqlConstraintsCommentsCommand extends CommandRunner {
                             JOIN pg_attribute AS a2 ON a2.attnum = ANY(con.confkey) AND a2.attrelid = tbl_to.oid
                     WHERE
                         con.contype = 'f'
-                      AND tbl_from.relname = '${tableName}'
-                      AND a1.attname = '${migrationColumn.columnName}'
-                      AND tbl_to.relname = '${migrationColumn.referencedTableName}'
-                      AND a2.attname = '${migrationColumn.referencedTableColumnName}'
+                      AND tbl_from.relname = '${relationMetadata.toObjectMetadata.nameSingular}'
+                      AND a1.attname = '${relationMetadata.toFieldMetadata.name}Id'
+                      AND tbl_to.relname = '${relationMetadata.fromObjectMetadata.nameSingular}'
+                      AND a2.attname = 'id'
                     `);
 
-                    if (existingForeignKeys.length) {
-                      const foreignKeyName =
-                        existingForeignKeys?.[0].constraint_name;
+              if (existingForeignKeys.length) {
+                const foreignKeyName = existingForeignKeys?.[0].constraint_name;
 
-                      console.log('--------------');
-                      console.log(existingForeignKeys);
-                      console.log(migration);
-
-                      if (foreignKeyName) {
-                        await queryRunner.query(`
-                          COMMENT ON CONSTRAINT "${foreignKeyName}" ON "${schemaName}"."${tableName}" IS e'@graphql({"foreign_name": "${
-                            migrationColumn.referencedTableName
-                          }", "local_name": "${capitalize(
-                            migrationColumn.referencedTableName,
-                          )}"})';
-                        `);
-                      }
-                    }
-                  }
+                if (foreignKeyName) {
+                  console.log(`
+                    COMMENT ON CONSTRAINT "${foreignKeyName}" ON "${schemaName}"."${
+                      relationMetadata.toObjectMetadata.nameSingular
+                    }" IS e'@graphql({"foreign_name": "${
+                      relationMetadata.fromObjectMetadata.nameSingular
+                    }", "local_name": "${capitalize(
+                      relationMetadata.fromFieldMetadata.name,
+                    )}"})';
+                  `);
+                  await queryRunner.query(`
+                    COMMENT ON CONSTRAINT "${foreignKeyName}" ON "${schemaName}"."${
+                      relationMetadata.toObjectMetadata.nameSingular
+                    }" IS e'@graphql({"foreign_name": "${
+                      relationMetadata.fromObjectMetadata.nameSingular
+                    }", "local_name": "${capitalize(
+                      relationMetadata.fromFieldMetadata.name,
+                    )}"})';
+                  `);
                 }
               }
             }

@@ -24,6 +24,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { AddGraphqlConstraintsCommentsCommand } from 'src/database/commands/0.0.21-add-graphql-constraints-comments.command';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
     TypeORMModule,
     TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
     TypeOrmModule.forFeature(
-      [FieldMetadataEntity, ObjectMetadataEntity],
+      [FieldMetadataEntity, ObjectMetadataEntity, RelationMetadataEntity],
       'metadata',
     ),
     WorkspaceModule,
