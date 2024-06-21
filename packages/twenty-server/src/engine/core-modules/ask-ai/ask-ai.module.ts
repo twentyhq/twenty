@@ -9,6 +9,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { LLMPromptTemplateModule } from 'src/engine/integrations/llm-prompt-template/llm-prompt-template.module';
 import { LLMChatModelModule } from 'src/engine/integrations/llm-chat-model/llm-chat-model.module';
+import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
 @Module({
   imports: [
     WorkspaceDataSourceModule,
@@ -17,6 +18,7 @@ import { LLMChatModelModule } from 'src/engine/integrations/llm-chat-model/llm-c
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     LLMChatModelModule,
     LLMPromptTemplateModule,
+    EnvironmentModule,
   ],
   exports: [],
   providers: [AskAIResolver, AskAIService],
