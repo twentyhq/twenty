@@ -36,6 +36,8 @@ import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldPhoneValue } from '../types/guards/isFieldPhoneValue';
+import { isFieldRating } from '../types/guards/isFieldRating';
+import { isFieldRatingValue } from '../types/guards/isFieldRatingValue';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
 import { isFieldText } from '../types/guards/isFieldText';
@@ -85,6 +87,9 @@ export const usePersistField = () => {
           isFieldBoolean(fieldDefinition) &&
           isFieldBooleanValue(valueToPersist);
 
+        const fieldIsRating =
+          isFieldRating(fieldDefinition) && isFieldRatingValue(valueToPersist);
+
         const fieldIsNumber =
           isFieldNumber(fieldDefinition) && isFieldNumberValue(valueToPersist);
 
@@ -119,6 +124,7 @@ export const usePersistField = () => {
           fieldIsText ||
           fieldIsBoolean ||
           fieldIsEmail ||
+          fieldIsRating ||
           fieldIsNumber ||
           fieldIsDateTime ||
           fieldIsDate ||
