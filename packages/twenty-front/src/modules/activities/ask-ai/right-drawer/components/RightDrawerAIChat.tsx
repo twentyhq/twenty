@@ -69,6 +69,7 @@ export const RightDrawerAIChat = () => {
                 {typeof data?.getAskAI.sqlQueryResult === 'string' ? (
                   <SQLQueryResultTable
                     sqlQueryResult={data.getAskAI.sqlQueryResult}
+                    recordMetadataById={data.getAskAI.recordMetadataById}
                   />
                 ) : (
                   'Invalid SQL query.'

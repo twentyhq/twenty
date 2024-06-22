@@ -3,15 +3,23 @@ import { Injectable } from '@nestjs/common';
 import { SqlDatabase } from 'langchain/sql_db';
 import { RunnableSequence, RunnableFunc } from '@langchain/core/runnables';
 import { StringOutputParser } from '@langchain/core/output_parsers';
+import { isUUID } from 'class-validator';
+import { DataSource } from 'typeorm';
+import omit from 'lodash.omit';
 
 import { LLMPromptTemplateEnvVar } from 'src/engine/integrations/llm-prompt-template/interfaces/llm-prompt-template-name.interface';
 
-import { AskAIQueryResult } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
+import {
+  AskAIQueryResult,
+  RecordMetadataById,
+} from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 import { LLMPromptTemplateService } from 'src/engine/integrations/llm-prompt-template/llm-prompt-template.service';
 import { LLMChatModelService } from 'src/engine/integrations/llm-chat-model/llm-chat-model.service';
 import { LLMTracingService } from 'src/engine/integrations/llm-tracing/llm-tracing.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class AskAIService {
@@ -21,7 +29,72 @@ export class AskAIService {
     private readonly llmChatModelService: LLMChatModelService,
     private readonly llmPromptTemplateService: LLMPromptTemplateService,
     private readonly llmTracingService: LLMTracingService,
+    private readonly objectMetadataService: ObjectMetadataService,
   ) {}
+
+  private async getRecordMetadataById(
+    workspaceId: string,
+    workspaceDataSource: DataSource,
+    sqlQueryResult: Record<string, any>[],
+  ) {
+    const uuids = sqlQueryResult
+      .flatMap((row) => Object.values(row))
+      .filter((value) => isUUID(value, 4));
+
+    const objectMetadataEntities =
+      await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
+        where: { isSystem: false, isActive: true },
+      });
+
+    const columnNamesByStandardObjectName = {
+      opportunity: ['id', 'name'],
+      company: ['id', 'name', 'domainName'],
+      person: ['id', 'nameFirstName', 'nameLastName'],
+    };
+
+    const customObjectColumnNames = ['id', 'name'];
+
+    let recordMetadataById: RecordMetadataById = {};
+
+    for (const { nameSingular, isCustom } of objectMetadataEntities) {
+      const tableName = computeTableName(nameSingular, isCustom);
+
+      const columnNames = isCustom
+        ? customObjectColumnNames
+        : columnNamesByStandardObjectName[nameSingular];
+
+      const columnNamesString =
+        columnNames.map((col) => `"${col}"`).join(', ') || '';
+
+      // Security? GraphQL?
+      const recordMetadataSqlQuery = `SELECT ${columnNamesString} FROM "${tableName}" WHERE "id" = ANY($1);`;
+
+      const result: {
+        id: string;
+        name: string;
+        domainName?: string;
+        nameFirstName?: string;
+        nameLastName?: string;
+      }[] = await this.workspaceQueryRunnerService.executeSQL(
+        workspaceDataSource,
+        workspaceId,
+        recordMetadataSqlQuery,
+        [uuids],
+      );
+
+      recordMetadataById = result.reduce((recordMetadataById, row) => {
+        return {
+          ...recordMetadataById,
+          [row.id]: {
+            objectNameSingular: nameSingular,
+            ...omit(row, 'id'),
+          },
+        };
+      }, recordMetadataById);
+    }
+
+    return recordMetadataById;
+  }
 
   async query(
     userId: string,
@@ -52,6 +125,7 @@ export class AskAIService {
     const removeSQLMarkdown: RunnableFunc<string, string> = (input) =>
       input
         .replace(/^```sql/, '')
+        .replace(/^```/, '')
         .replace(/```$/, '')
         .trim();
 
@@ -81,15 +155,22 @@ export class AskAIService {
     );
 
     try {
-      const sqlQueryResult = await this.workspaceQueryRunnerService.executeSQL(
+      const sqlQueryResult = (await this.workspaceQueryRunnerService.executeSQL(
         workspaceDataSource,
         workspaceId,
         sqlQuery,
+      )) as Record<string, any>[]; // TODO: Add return type to executeSQL function?
+
+      const recordMetadataById = await this.getRecordMetadataById(
+        workspaceId,
+        workspaceDataSource,
+        sqlQueryResult,
       );
 
       return {
         sqlQuery,
         sqlQueryResult: JSON.stringify(sqlQueryResult),
+        recordMetadataById,
       };
     } catch (e) {
       return {
