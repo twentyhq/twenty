@@ -47,7 +47,11 @@ export class PgBossDriver
           }
         : {},
       async (job) => {
-        await handler({ data: job.data, id: job.id, name: job.name });
+        await handler({
+          data: job.data,
+          id: job.id,
+          name: job.name.split('.')[1],
+        });
       },
     );
   }
