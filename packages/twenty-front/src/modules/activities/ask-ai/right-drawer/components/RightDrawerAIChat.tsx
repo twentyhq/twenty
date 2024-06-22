@@ -57,24 +57,26 @@ export const RightDrawerAIChat = () => {
   return (
     <StyledContainer>
       <StyledChatArea>
-        <div>
-          <StyledAskAIQuery>{askAIQuery}</StyledAskAIQuery>
-          <SQLQueryBuilder
-            loading={loading}
-            sqlQuery={data?.getAskAI.sqlQuery}
-          />
-          {!loading && (
-            <StyledSQLQueryResult>
-              {typeof data?.getAskAI.sqlQueryResult === 'string' ? (
-                <SQLQueryResultTable
-                  sqlQueryResult={data.getAskAI.sqlQueryResult}
-                />
-              ) : (
-                'Invalid SQL query.'
-              )}
-            </StyledSQLQueryResult>
-          )}
-        </div>
+        {askAIQuery && (
+          <div>
+            <StyledAskAIQuery>{askAIQuery}</StyledAskAIQuery>
+            <SQLQueryBuilder
+              loading={loading}
+              sqlQuery={data?.getAskAI.sqlQuery}
+            />
+            {!loading && (
+              <StyledSQLQueryResult>
+                {typeof data?.getAskAI.sqlQueryResult === 'string' ? (
+                  <SQLQueryResultTable
+                    sqlQueryResult={data.getAskAI.sqlQueryResult}
+                  />
+                ) : (
+                  'Invalid SQL query.'
+                )}
+              </StyledSQLQueryResult>
+            )}
+          </div>
+        )}
       </StyledChatArea>
       <StyledNewMessageArea>
         <AutosizeTextInput
