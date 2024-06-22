@@ -56,6 +56,12 @@ export class BlocklistItemDeleteMessagesJob {
       `Deleting messages from ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
     );
 
+    if (!workspaceMemberId) {
+      throw new Error(
+        `Workspace member ID is not defined for blocklist item ${blocklistItemId} in workspace ${workspaceId}`,
+      );
+    }
+
     const messageChannels =
       await this.messageChannelRepository.getIdsByWorkspaceMemberId(
         workspaceMemberId,

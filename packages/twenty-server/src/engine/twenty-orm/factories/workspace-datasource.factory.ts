@@ -32,10 +32,9 @@ export class WorkspaceDatasourceFactory {
         dataSourceMetadata.url ??
         this.environmentService.get('PG_DATABASE_URL'),
       type: 'postgres',
-      // logging: this.environmentService.get('DEBUG_MODE')
-      //   ? ['query', 'error']
-      //   : ['error'],
-      logging: 'all',
+      logging: this.environmentService.get('DEBUG_MODE')
+        ? ['query', 'error']
+        : ['error'],
       schema: dataSourceMetadata.schema,
       entities,
       ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')

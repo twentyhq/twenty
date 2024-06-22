@@ -80,6 +80,12 @@ export class GoogleAPIRefreshAccessTokenService {
         workspaceId,
       );
 
+      if (!messageChannel.connectedAccountId) {
+        throw new Error(
+          `No connected account ID found for message channel ${messageChannel.id} in workspace ${workspaceId}`,
+        );
+      }
+
       await this.connectedAccountRepository.updateAuthFailedAt(
         messageChannel.connectedAccountId,
         workspaceId,
