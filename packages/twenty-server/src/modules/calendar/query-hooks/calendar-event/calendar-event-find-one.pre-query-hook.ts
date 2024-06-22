@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { WorkspacePreQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-pre-query-hook.interface';
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -29,23 +25,24 @@ export class CalendarEventFindOnePreQueryHook implements WorkspacePreQueryHook {
       throw new BadRequestException('id filter is required');
     }
 
-    const calendarChannelCalendarEventAssociations =
-      await this.calendarChannelEventAssociationRepository.find({
-        where: {
-          calendarEvent: {
-            id: payload?.filter?.id?.eq,
-          },
-        },
-      });
+    // TODO: Re-implement this using twenty ORM
+    // const calendarChannelCalendarEventAssociations =
+    //   await this.calendarChannelEventAssociationRepository.find({
+    //     where: {
+    //       calendarEvent: {
+    //         id: payload?.filter?.id?.eq,
+    //       },
+    //     },
+    //   });
 
-    if (calendarChannelCalendarEventAssociations.length === 0) {
-      throw new NotFoundException();
-    }
+    // if (calendarChannelCalendarEventAssociations.length === 0) {
+    //   throw new NotFoundException();
+    // }
 
-    await this.canAccessCalendarEventService.canAccessCalendarEvent(
-      userId,
-      workspaceId,
-      calendarChannelCalendarEventAssociations,
-    );
+    // await this.canAccessCalendarEventService.canAccessCalendarEvent(
+    //   userId,
+    //   workspaceId,
+    //   calendarChannelCalendarEventAssociations,
+    // );
   }
 }
