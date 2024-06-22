@@ -107,7 +107,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
     this.eventEmitter.emit(`messageParticipant.matched`, {
       workspaceId,
-      userId: connectedAccount.accountOwnerId,
+      workspaceMemberId: connectedAccount.accountOwnerId,
       messageParticipants: savedMessageParticipants,
     });
 

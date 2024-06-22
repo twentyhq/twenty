@@ -72,5 +72,5 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
     joinColumn: 'viewId',
   })
   @WorkspaceIsNullable()
-  view?: ViewWorkspaceEntity;
+  view?: ViewWorkspaceEntity | null;
 }

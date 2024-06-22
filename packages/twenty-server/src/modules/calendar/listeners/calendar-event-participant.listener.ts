@@ -25,7 +25,7 @@ export class CalendarEventParticipantListener {
   @OnEvent('calendarEventParticipant.matched')
   public async handleCalendarEventParticipantMatchedEvent(payload: {
     workspaceId: string;
-    userId: string;
+    workspaceMemberId: string;
     calendarEventParticipants: ObjectRecord<CalendarEventParticipantWorkspaceEntity>[];
   }): Promise<void> {
     const calendarEventParticipants = payload.calendarEventParticipants ?? [];
@@ -59,7 +59,7 @@ export class CalendarEventParticipantListener {
         properties: null,
         objectName: 'calendarEvent',
         recordId: participant.personId,
-        workspaceMemberId: payload.userId,
+        workspaceMemberId: payload.workspaceMemberId,
         workspaceId: payload.workspaceId,
         linkedObjectMetadataId: calendarEventObjectMetadata.id,
         linkedRecordId: participant.calendarEventId,
