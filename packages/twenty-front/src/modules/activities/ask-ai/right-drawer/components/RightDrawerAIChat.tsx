@@ -25,23 +25,25 @@ const StyledChatArea = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
-  padding: 24px 24px 0px;
+  padding: ${({ theme }) => theme.spacing(6)};
+  padding-bottom: 0px;
 `;
 
 const StyledAskAIQuery = styled.div`
   font-weight: bold;
-  padding-bottom: 12px;
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
 const StyledSQLQueryResult = styled.div`
   overflow-x: scroll;
-  padding-bottom: 24px;
+  padding-bottom: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledNewMessageArea = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0px 24px 24px;
+  padding: ${({ theme }) => theme.spacing(6)};
+  padding-top: 0px;
 `;
 
 export const RightDrawerAIChat = () => {

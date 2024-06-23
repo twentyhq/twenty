@@ -11,13 +11,13 @@ import { TabList } from '@/ui/layout/tab/components/TabList';
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 24px;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledTabListContainer = styled.div`
   display: flex;
-  margin-left: -8px;
+  margin-left: ${({ theme }) => theme.spacing(-2)};
 `;
 
 interface SQLQueryBuilderProps {

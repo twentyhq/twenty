@@ -26,16 +26,16 @@ const StyledTR = styled.tr``;
 
 const StyledTH = styled.th`
   border: 1px solid ${({ theme }) => theme.color.gray20};
-  height: 16px;
-  padding: 8px ${({ theme }) => theme.table.horizontalCellPadding};
+  height: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(2)};
   text-align: start;
 `;
 
 const StyledTD = styled.td`
   border: 1px solid ${({ theme }) => theme.color.gray20};
-  height: 16px;
+  height: ${({ theme }) => theme.spacing(4)};
   text-align: start;
-  padding: 8px ${({ theme }) => theme.table.horizontalCellPadding};
+  padding: ${({ theme }) => theme.spacing(2)};
   max-width: 480px;
   word-wrap: break-word;
   overflow: hidden;
