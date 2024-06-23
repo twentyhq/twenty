@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { RelationFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFieldDisplay';
+import { RelationToOneFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationToOneFieldDisplay';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -15,7 +15,7 @@ const meta: Meta = {
     getFieldDecorator('person', 'company'),
     ComponentDecorator,
   ],
-  component: RelationFieldDisplay,
+  component: RelationToOneFieldDisplay,
   args: {},
   parameters: {
     chromatic: { disableSnapshot: true },
@@ -24,7 +24,7 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof RelationFieldDisplay>;
+type Story = StoryObj<typeof RelationToOneFieldDisplay>;
 
 export const Default: Story = {};
 
