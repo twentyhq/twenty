@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { SqlDatabase } from 'langchain/sql_db';
-import { RunnableSequence, RunnableFunc } from '@langchain/core/runnables';
-import { StringOutputParser } from '@langchain/core/output_parsers';
+import { RunnableSequence } from '@langchain/core/runnables';
+import { StructuredOutputParser } from '@langchain/core/output_parsers';
 import { isUUID } from 'class-validator';
 import { DataSource } from 'typeorm';
 import omit from 'lodash.omit';
+import { z } from 'zod';
 
 import { LLMPromptTemplateEnvVar } from 'src/engine/integrations/llm-prompt-template/interfaces/llm-prompt-template-name.interface';
 
@@ -122,18 +123,16 @@ export class AskAIService {
         LLMPromptTemplateEnvVar.AskAI,
       );
 
-    const removeSQLMarkdown: RunnableFunc<string, string> = (input) =>
-      input
-        .replace(/^```sql/, '')
-        .replace(/^```/, '')
-        .replace(/```$/, '')
-        .trim();
+    const structuredOutputParser = StructuredOutputParser.fromZodSchema(
+      z.object({
+        sqlQuery: z.string(),
+      }),
+    );
 
     const sqlQueryGeneratorChain = RunnableSequence.from([
       promptTemplate,
-      this.llmChatModelService.getChatModel(),
-      new StringOutputParser(),
-      removeSQLMarkdown,
+      this.llmChatModelService.getJSONChatModel(),
+      structuredOutputParser,
     ]);
 
     const metadata = {
@@ -144,7 +143,7 @@ export class AskAIService {
     const tracingCallbackHandler =
       this.llmTracingService.getCallbackHandler(metadata);
 
-    const sqlQuery = await sqlQueryGeneratorChain.invoke(
+    const { sqlQuery } = await sqlQueryGeneratorChain.invoke(
       {
         schema: await db.getTableInfo(),
         question: text,

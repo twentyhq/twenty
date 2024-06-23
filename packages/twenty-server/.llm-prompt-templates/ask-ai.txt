@@ -1,4 +1,6 @@
-Based on the table schema below, write a PostgreSQL query that would answer the user's question. All column names must be enclosed in double quotes. Give only the raw SQL query. No Markdown code block.
+Always respond following this JSON Schema: {"type":"object","properties":{"sqlQuery":{"type":"string"}},"required":["sql"],"additionalProperties":false}
+
+Based on the table schema below, write a PostgreSQL query that would answer the user's question. All column names must be enclosed in double quotes.
 
 {{schema}}
 

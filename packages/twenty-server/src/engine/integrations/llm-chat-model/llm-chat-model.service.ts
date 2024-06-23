@@ -10,7 +10,7 @@ export class LLMChatModelService {
     @Inject(LLM_CHAT_MODEL_DRIVER) private driver: LLMChatModelDriver,
   ) {}
 
-  getChatModel() {
-    return this.driver.getChatModel();
+  getJSONChatModel() {
+    return this.driver.getJSONChatModel();
   }
 }

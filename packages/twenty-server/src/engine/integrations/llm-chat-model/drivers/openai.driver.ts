@@ -9,10 +9,14 @@ export class OpenAIDriver implements LLMChatModelDriver {
   constructor() {
     this.chatModel = new ChatOpenAI({
       model: 'gpt-4o',
-    });
+    }).bind({
+      response_format: {
+        type: 'json_object',
+      },
+    }) as BaseChatModel;
   }
 
-  getChatModel() {
+  getJSONChatModel() {
     return this.chatModel;
   }
 }
