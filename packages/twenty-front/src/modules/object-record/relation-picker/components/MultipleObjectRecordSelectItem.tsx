@@ -3,11 +3,13 @@ import { useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui';
 import { v4 } from 'uuid';
 
-import { objectRecordMultiSelectFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
+import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
+import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const StyledSelectableItem = styled(SelectableItem)`
@@ -29,6 +31,12 @@ export const MultipleObjectRecordSelectItem = ({
   const isSelectedByKeyboard = useRecoilValue(
     isSelectedItemIdSelector(objectRecordId),
   );
+  const scopeId = useAvailableScopeIdOrThrow(
+    RelationPickerScopeInternalContext,
+  );
+
+  const { objectRecordMultiSelectFamilyState } =
+    useObjectRecordMultiSelectScopedStates(scopeId);
 
   const record = useRecoilValue(
     objectRecordMultiSelectFamilyState(objectRecordId),

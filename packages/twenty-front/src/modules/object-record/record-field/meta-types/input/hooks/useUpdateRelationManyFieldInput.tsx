@@ -4,12 +4,16 @@ import { useRecoilCallback } from 'recoil';
 import { useDetachRelatedRecordFromRecord } from '@/object-record/hooks/useDetachRelatedRecordFromRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { objectRecordMultiSelectCheckedRecordsIdsState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsState';
+import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsComponentState';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-export const useUpdateRelationManyFieldInput = () => {
+export const useUpdateRelationManyFieldInput = ({
+  scopeId,
+}: {
+  scopeId: string;
+}) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
   assertFieldMetadata(
@@ -40,19 +44,28 @@ export const useUpdateRelationManyFieldInput = () => {
     ({ snapshot, set }) =>
       async (objectRecordId: string) => {
         const previouslyCheckedRecordsIds = snapshot
-          .getLoadable(objectRecordMultiSelectCheckedRecordsIdsState)
+          .getLoadable(
+            objectRecordMultiSelectCheckedRecordsIdsComponentState({
+              scopeId,
+            }),
+          )
           .getValue();
 
         const isNewlySelected =
           !previouslyCheckedRecordsIds.includes(objectRecordId);
         if (isNewlySelected) {
-          set(objectRecordMultiSelectCheckedRecordsIdsState, (prev) => [
-            ...prev,
-            objectRecordId,
-          ]);
+          set(
+            objectRecordMultiSelectCheckedRecordsIdsComponentState({
+              scopeId,
+            }),
+            (prev) => [...prev, objectRecordId],
+          );
         } else {
-          set(objectRecordMultiSelectCheckedRecordsIdsState, (prev) =>
-            prev.filter((id) => id !== objectRecordId),
+          set(
+            objectRecordMultiSelectCheckedRecordsIdsComponentState({
+              scopeId,
+            }),
+            (prev) => prev.filter((id) => id !== objectRecordId),
           );
         }
 
@@ -70,7 +83,13 @@ export const useUpdateRelationManyFieldInput = () => {
           });
         }
       },
-    [entityId, fieldName, updateOneRecord, updateOneRecordAndDetachRelations],
+    [
+      entityId,
+      fieldName,
+      scopeId,
+      updateOneRecord,
+      updateOneRecordAndDetachRelations,
+    ],
   );
 
   return { handleChange };

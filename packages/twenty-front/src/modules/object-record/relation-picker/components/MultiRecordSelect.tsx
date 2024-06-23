@@ -3,8 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { objectRecordsIdsMultiSelectState } from '@/activities/states/objectRecordsIdsMultiSelectState';
-import { recordMultiSelectIsLoadingState } from '@/object-record/record-field/states/recordMultiSelectIsLoadingState';
+import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/relation-picker/components/MultipleObjectRecordOnClickOutsideEffect';
 import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/components/MultipleObjectRecordSelectItem';
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
@@ -32,16 +31,19 @@ export const MultiRecordSelect = ({
   onSubmit?: () => void;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const recordMultiSelectIsLoading = useRecoilValue(
-    recordMultiSelectIsLoadingState,
-  );
-
-  const objectRecordsIdsMultiSelect = useRecoilValue(
-    objectRecordsIdsMultiSelectState,
-  );
 
   const relationPickerScopedId = useAvailableScopeIdOrThrow(
     RelationPickerScopeInternalContext,
+  );
+
+  const { objectRecordsIdsMultiSelectState, recordMultiSelectIsLoadingState } =
+    useObjectRecordMultiSelectScopedStates(relationPickerScopedId);
+
+  const recordMultiSelectIsLoading = useRecoilValue(
+    recordMultiSelectIsLoadingState,
+  );
+  const objectRecordsIdsMultiSelect = useRecoilValue(
+    objectRecordsIdsMultiSelectState,
   );
 
   const { relationPickerSearchFilterState } = useRelationPickerScopedStates({

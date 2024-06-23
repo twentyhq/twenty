@@ -17,11 +17,11 @@ import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCrea
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { activityTargetObjectRecordFamilyState } from '@/object-record/record-field/states/activityTargetObjectRecordFamilyState';
-import { objectRecordMultiSelectCheckedRecordsIdsState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsState';
+import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsComponentState';
 import {
   ObjectRecordAndSelected,
-  objectRecordMultiSelectFamilyState,
-} from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
+  objectRecordMultiSelectComponentFamilyState,
+} from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { MultiRecordsEffect } from '@/object-record/relation-picker/components/MultiRecordsEffect';
@@ -45,6 +45,7 @@ export const ActivityTargetInlineCellEditMode = ({
   activityTargetWithTargetRecords,
 }: ActivityTargetInlineCellEditModeProps) => {
   const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
+  const relationPickerScopeId = `relation-picker-${activity.id}`;
 
   const selectedTargetObjectIds = activityTargetWithTargetRecords.map(
     (activityTarget) => ({
@@ -89,9 +90,10 @@ export const ActivityTargetInlineCellEditMode = ({
           activityTargetWithTargetRecords.filter((activityTarget) => {
             const record = snapshot
               .getLoadable(
-                objectRecordMultiSelectFamilyState(
-                  activityTarget.targetObject.id,
-                ),
+                objectRecordMultiSelectComponentFamilyState({
+                  scopeId: relationPickerScopeId,
+                  familyKey: activityTarget.targetObject.id,
+                }),
               )
               .getValue() as ObjectRecordAndSelected;
 
@@ -109,7 +111,12 @@ export const ActivityTargetInlineCellEditMode = ({
         });
         closeEditableField();
       },
-    [activityTargetWithTargetRecords, closeEditableField, setActivityFromStore],
+    [
+      activityTargetWithTargetRecords,
+      closeEditableField,
+      relationPickerScopeId,
+      setActivityFromStore,
+    ],
   );
 
   const handleChange = useRecoilCallback(
@@ -123,14 +130,23 @@ export const ActivityTargetInlineCellEditMode = ({
         let activityTargetsAfterUpdate = Array.from(existingActivityTargets);
 
         const previouslyCheckedRecordsIds = snapshot
-          .getLoadable(objectRecordMultiSelectCheckedRecordsIdsState)
+          .getLoadable(
+            objectRecordMultiSelectCheckedRecordsIdsComponentState({
+              scopeId: relationPickerScopeId,
+            }),
+          )
           .getValue();
 
         const isNewlySelected = !previouslyCheckedRecordsIds.includes(recordId);
 
         if (isNewlySelected) {
           const record = snapshot
-            .getLoadable(objectRecordMultiSelectFamilyState(recordId))
+            .getLoadable(
+              objectRecordMultiSelectComponentFamilyState({
+                scopeId: relationPickerScopeId,
+                familyKey: recordId,
+              }),
+            )
             .getValue();
 
           if (!record) {
@@ -139,10 +155,12 @@ export const ActivityTargetInlineCellEditMode = ({
             );
           }
 
-          set(objectRecordMultiSelectCheckedRecordsIdsState, (prev) => [
-            ...prev,
-            recordId,
-          ]);
+          set(
+            objectRecordMultiSelectCheckedRecordsIdsComponentState({
+              scopeId: relationPickerScopeId,
+            }),
+            (prev) => [...prev, recordId],
+          );
 
           const newActivityTargetId = v4();
           const newActivityTarget = prefillRecord<ActivityTarget>({
@@ -189,7 +207,9 @@ export const ActivityTargetInlineCellEditMode = ({
           }
 
           set(
-            objectRecordMultiSelectCheckedRecordsIdsState,
+            objectRecordMultiSelectCheckedRecordsIdsComponentState({
+              scopeId: relationPickerScopeId,
+            }),
             previouslyCheckedRecordsIds.filter((id) => id !== recordId),
           );
           activityTargetsAfterUpdate = activityTargetsAfterUpdate.filter(
@@ -220,15 +240,14 @@ export const ActivityTargetInlineCellEditMode = ({
       deleteManyActivityTargets,
       isActivityInCreateMode,
       objectMetadataItemActivityTarget,
+      relationPickerScopeId,
       upsertActivity,
     ],
   );
 
   return (
     <StyledSelectContainer>
-      <RelationPickerScope
-        relationPickerScopeId={`relation-picker-to-do`} // TO DO - replace with actual scope id
-      >
+      <RelationPickerScope relationPickerScopeId={relationPickerScopeId}>
         <ActivityTargetObjectRecordEffect
           activityTargetWithTargetRecords={activityTargetWithTargetRecords}
         />

@@ -16,7 +16,10 @@ export const RelationManyFieldInput = ({
   onSubmit,
 }: RelationManyFieldInputProps) => {
   const { fieldDefinition } = useContext(FieldContext);
-  const { handleChange } = useUpdateRelationManyFieldInput();
+  const relationPickerScopeId = `relation-picker-${fieldDefinition.fieldMetadataId}`;
+  const { handleChange } = useUpdateRelationManyFieldInput({
+    scopeId: relationPickerScopeId,
+  });
 
   const handleSubmit = () => {
     onSubmit?.(() => {}); // we persist at change not at submit
@@ -24,9 +27,7 @@ export const RelationManyFieldInput = ({
 
   return (
     <>
-      <RelationPickerScope
-        relationPickerScopeId={`relation-picker-${fieldDefinition.fieldMetadataId}`}
-      >
+      <RelationPickerScope relationPickerScopeId={relationPickerScopeId}>
         <ObjectMetadataItemsRelationPickerEffect />
         <MultiRecordsEffect />
         <MultiRecordSelect onSubmit={handleSubmit} onChange={handleChange} />

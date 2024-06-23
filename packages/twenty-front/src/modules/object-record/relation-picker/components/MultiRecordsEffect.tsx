@@ -6,10 +6,8 @@ import {
   useSetRecoilState,
 } from 'recoil';
 
-import { objectRecordsIdsMultiSelectState } from '@/activities/states/objectRecordsIdsMultiSelectState';
-import { objectRecordMultiSelectCheckedRecordsIdsState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsState';
-import { objectRecordMultiSelectFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
-import { recordMultiSelectIsLoadingState } from '@/object-record/record-field/states/recordMultiSelectIsLoadingState';
+import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
+import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
 import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
 import {
   ObjectRecordForSelect,
@@ -25,6 +23,14 @@ export const MultiRecordsEffect = ({
 }: {
   selectedObjectRecordIds: SelectedObjectRecordId[];
 }) => {
+  const scopeId = useAvailableScopeIdOrThrow(
+    RelationPickerScopeInternalContext,
+  );
+  const {
+    objectRecordsIdsMultiSelectState,
+    objectRecordMultiSelectCheckedRecordsIdsState,
+    recordMultiSelectIsLoadingState,
+  } = useObjectRecordMultiSelectScopedStates(scopeId);
   const [objectRecordsIdsMultiSelect, setObjectRecordsIdsMultiSelect] =
     useRecoilState(objectRecordsIdsMultiSelectState);
 
@@ -61,7 +67,10 @@ export const MultiRecordsEffect = ({
         for (const newRecord of newRecords) {
           const currentRecord = snapshot
             .getLoadable(
-              objectRecordMultiSelectFamilyState(newRecord.record.id),
+              objectRecordMultiSelectComponentFamilyState({
+                scopeId: scopeId,
+                familyKey: newRecord.record.id,
+              }),
             )
             .getValue();
 
@@ -79,15 +88,16 @@ export const MultiRecordsEffect = ({
             )
           ) {
             set(
-              objectRecordMultiSelectFamilyState(
-                newRecordWithSelected.record.id,
-              ),
+              objectRecordMultiSelectComponentFamilyState({
+                scopeId: scopeId,
+                familyKey: newRecordWithSelected.record.id,
+              }),
               newRecordWithSelected,
             );
           }
         }
       },
-    [objectRecordMultiSelectCheckedRecordsIds],
+    [objectRecordMultiSelectCheckedRecordsIds, scopeId],
   );
 
   useEffect(() => {

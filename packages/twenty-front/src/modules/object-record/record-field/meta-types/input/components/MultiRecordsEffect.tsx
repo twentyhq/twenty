@@ -1,19 +1,27 @@
 import { useEffect, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
-import { objectRecordsIdsMultiSelectState } from '@/activities/states/objectRecordsIdsMultiSelectState';
+import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
-import { objectRecordMultiSelectCheckedRecordsIdsState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsState';
-import { objectRecordMultiSelectFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectFamilyState';
-import { recordMultiSelectIsLoadingState } from '@/object-record/record-field/states/recordMultiSelectIsLoadingState';
+import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
 import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
+import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const MultiRecordsEffect = () => {
   const { fieldValue, fieldDefinition } = useRelationField<EntityForSelect[]>();
+  const scopeId = useAvailableScopeIdOrThrow(
+    RelationPickerScopeInternalContext,
+  );
+  const {
+    objectRecordsIdsMultiSelectState,
+    objectRecordMultiSelectCheckedRecordsIdsState,
+    recordMultiSelectIsLoadingState,
+  } = useObjectRecordMultiSelectScopedStates(scopeId);
   const [objectRecordsIdsMultiSelect, setObjectRecordsIdsMultiSelect] =
     useRecoilState(objectRecordsIdsMultiSelectState);
 
@@ -56,7 +64,10 @@ export const MultiRecordsEffect = () => {
         for (const newRecord of newRecords) {
           const currentRecord = snapshot
             .getLoadable(
-              objectRecordMultiSelectFamilyState(newRecord.record.id),
+              objectRecordMultiSelectComponentFamilyState({
+                scopeId: scopeId,
+                familyKey: newRecord.record.id,
+              }),
             )
             .getValue();
 
@@ -74,15 +85,16 @@ export const MultiRecordsEffect = () => {
             )
           ) {
             set(
-              objectRecordMultiSelectFamilyState(
-                newRecordWithSelected.record.id,
-              ),
+              objectRecordMultiSelectComponentFamilyState({
+                scopeId: scopeId,
+                familyKey: newRecordWithSelected.record.id,
+              }),
               newRecordWithSelected,
             );
           }
         }
       },
-    [objectRecordMultiSelectCheckedRecordsIds],
+    [objectRecordMultiSelectCheckedRecordsIds, scopeId],
   );
 
   useEffect(() => {
