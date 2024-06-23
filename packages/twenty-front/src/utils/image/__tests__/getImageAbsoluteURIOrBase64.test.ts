@@ -7,13 +7,13 @@ describe('getImageAbsoluteURIOrBase64', () => {
     expect(result).toBeNull();
   });
 
-  it('shoud return base64 encoded string if prefixed with data', () => {
+  it('should return base64 encoded string if prefixed with data', () => {
     const imageUrl = 'data:XXX';
     const result = getImageAbsoluteURIOrBase64(imageUrl);
     expect(result).toBe(imageUrl);
   });
 
-  it('shoud return absolute url if the imageUrl is an absolute url', () => {
+  it('should return absolute url if the imageUrl is an absolute url', () => {
     const imageUrl = 'https://XXX';
     const result = getImageAbsoluteURIOrBase64(imageUrl);
     expect(result).toBe(imageUrl);
