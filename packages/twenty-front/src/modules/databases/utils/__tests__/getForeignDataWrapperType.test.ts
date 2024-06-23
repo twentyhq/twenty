@@ -5,7 +5,7 @@ describe('getForeignDataWrapperType', () => {
     expect(getForeignDataWrapperType('postgresql')).toBe('postgres_fdw');
   });
 
-  it('should handle postgres', () => {
+  it('should handle stripe', () => {
     expect(getForeignDataWrapperType('stripe')).toBe('stripe_fdw');
   });
 
