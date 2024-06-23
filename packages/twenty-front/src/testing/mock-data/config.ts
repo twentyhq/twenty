@@ -34,7 +34,7 @@ export const mockedClientConfig: ClientConfig = {
     __typename: 'Billing',
   },
   captcha: {
-    provider: CaptchaDriverType.GoogleRecatpcha,
+    provider: CaptchaDriverType.GoogleRecaptcha,
     siteKey: 'MOCKED_SITE_KEY',
     __typename: 'Captcha',
   },

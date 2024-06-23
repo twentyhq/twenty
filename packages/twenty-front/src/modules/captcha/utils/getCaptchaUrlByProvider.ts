@@ -7,7 +7,7 @@ export const getCaptchaUrlByProvider = (
   siteKey: string,
 ) => {
   switch (name) {
-    case CaptchaDriverType.GoogleRecatpcha:
+    case CaptchaDriverType.GoogleRecaptcha:
       if (!isNonEmptyString(siteKey)) {
         throw new Error(
           'SiteKey must be provided while generating url for GoogleRecaptcha provider',

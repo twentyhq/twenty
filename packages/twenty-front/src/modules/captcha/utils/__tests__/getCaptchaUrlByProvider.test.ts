@@ -5,9 +5,9 @@ import { CaptchaDriverType } from '~/generated/graphql';
 import { getCaptchaUrlByProvider } from '../getCaptchaUrlByProvider';
 
 describe('getCaptchaUrlByProvider', () => {
-  it('handles GoogleRecatpcha', async () => {
+  it('handles GoogleRecaptcha', async () => {
     const captchaUrl = getCaptchaUrlByProvider(
-      CaptchaDriverType.GoogleRecatpcha,
+      CaptchaDriverType.GoogleRecaptcha,
       'siteKey',
     );
 
@@ -16,7 +16,7 @@ describe('getCaptchaUrlByProvider', () => {
     );
 
     expect(() =>
-      getCaptchaUrlByProvider(CaptchaDriverType.GoogleRecatpcha, ''),
+      getCaptchaUrlByProvider(CaptchaDriverType.GoogleRecaptcha, ''),
     ).toThrow(
       'SiteKey must be provided while generating url for GoogleRecaptcha provider',
     );
