@@ -54,7 +54,7 @@ export class MessagingOngoingStaleJob {
 
         switch (messageChannel.syncStage) {
           case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
-            await this.messagingChannelSyncStatusService.scheduleMessagesImport(
+            await this.messagingChannelSyncStatusService.schedulePartialMessageListFetch(
               messageChannel.id,
               workspaceId,
             );
