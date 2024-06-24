@@ -50,7 +50,7 @@ export class MessagingSingleMessageImportCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-n, --message-channel-id [message_channel_id]',
+    flags: '-M, --message-channel-id [message_channel_id]',
     description: 'Message channel ID',
     required: true,
   })
