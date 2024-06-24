@@ -41,7 +41,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
   })
   @WorkspaceIsNullable()
-  name: FullNameMetadata;
+  name: FullNameMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.email,
@@ -60,7 +60,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBrandLinkedin',
   })
   @WorkspaceIsNullable()
-  linkedinLink: LinkMetadata;
+  linkedinLink: LinkMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.xLink,
@@ -70,7 +70,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBrandX',
   })
   @WorkspaceIsNullable()
-  xLink: LinkMetadata;
+  xLink: LinkMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.jobTitle,
@@ -118,7 +118,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  position: number;
+  position: number | null;
 
   // Relations
   @WorkspaceRelation({
@@ -132,7 +132,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'people',
   })
   @WorkspaceIsNullable()
-  company: Relation<CompanyWorkspaceEntity>;
+  company: Relation<CompanyWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,

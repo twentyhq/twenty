@@ -9,6 +9,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Relation,
+  OneToMany,
 } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -18,6 +19,7 @@ import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadat
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-field-metadata/index-field-metadata.entity';
 
 export enum FieldMetadataType {
   UUID = 'UUID',
@@ -118,6 +120,16 @@ export class FieldMetadataEntity<
     (relation: RelationMetadataEntity) => relation.toFieldMetadata,
   )
   toRelationMetadata: Relation<RelationMetadataEntity>;
+
+  @OneToMany(
+    () => IndexFieldMetadataEntity,
+    (indexFieldMetadata: IndexFieldMetadataEntity) =>
+      indexFieldMetadata.fieldMetadata,
+    {
+      cascade: true,
+    },
+  )
+  indexFieldMetadatas: Relation<IndexFieldMetadataEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

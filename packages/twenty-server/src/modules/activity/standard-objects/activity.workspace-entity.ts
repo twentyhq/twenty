@@ -64,7 +64,7 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalendarEvent',
   })
   @WorkspaceIsNullable()
-  reminderAt: Date;
+  reminderAt: Date | null;
 
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.dueAt,
@@ -74,7 +74,7 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalendarEvent',
   })
   @WorkspaceIsNullable()
-  dueAt: Date;
+  dueAt: Date | null;
 
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.completedAt,
@@ -84,7 +84,7 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCheck',
   })
   @WorkspaceIsNullable()
-  completedAt: Date;
+  completedAt: Date | null;
 
   @WorkspaceRelation({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.activityTargets,
@@ -134,7 +134,7 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     joinColumn: 'authorId',
   })
   @WorkspaceIsNullable()
-  author: Relation<WorkspaceMemberWorkspaceEntity>;
+  author: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.assignee,
@@ -148,5 +148,5 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     joinColumn: 'assigneeId',
   })
   @WorkspaceIsNullable()
-  assignee: Relation<WorkspaceMemberWorkspaceEntity>;
+  assignee: Relation<WorkspaceMemberWorkspaceEntity> | null;
 }

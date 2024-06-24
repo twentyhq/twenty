@@ -8,12 +8,15 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-ob
 import { CalendarEventFindManyPreQueryHook } from 'src/modules/calendar/query-hooks/calendar-event/calendar-event-find-many.pre-query.hook';
 import { CalendarEventFindOnePreQueryHook } from 'src/modules/calendar/query-hooks/calendar-event/calendar-event-find-one.pre-query-hook';
 import { CanAccessCalendarEventService } from 'src/modules/calendar/query-hooks/calendar-event/services/can-access-calendar-event.service';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 
 @Module({
   imports: [
-    ObjectMetadataRepositoryModule.forFeature([
+    TwentyORMModule.forFeature([
       CalendarChannelEventAssociationWorkspaceEntity,
       CalendarChannelWorkspaceEntity,
+    ]),
+    ObjectMetadataRepositoryModule.forFeature([
       ConnectedAccountWorkspaceEntity,
       WorkspaceMemberWorkspaceEntity,
     ]),

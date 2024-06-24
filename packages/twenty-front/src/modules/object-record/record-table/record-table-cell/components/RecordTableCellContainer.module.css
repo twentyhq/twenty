@@ -27,6 +27,6 @@
 .cell-base-container-soft-focus {
   background: var(--twentycrm-background-transparent-secondary);
   border-radius: var(--twentycrm-border-radius-sm);
-  outline: 1px solid var(--twentycrm-font-color-extra-light);
+  border: 1px solid var(--twentycrm-font-color-extra-light);
 }
 

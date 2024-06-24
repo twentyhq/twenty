@@ -1,9 +1,8 @@
 import { ChangeEvent, ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Avatar, AvatarType } from 'twenty-ui';
+import { AppTooltip, Avatar, AvatarType } from 'twenty-ui';
 import { v4 as uuidV4 } from 'uuid';
 
 import {
@@ -53,17 +52,6 @@ const StyledTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   justify-content: center;
-`;
-
-const StyledTooltip = styled(Tooltip)`
-  background-color: ${({ theme }) => theme.background.primary};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-
-  color: ${({ theme }) => theme.font.color.primary};
-
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledAvatarWrapper = styled.div`
@@ -153,7 +141,7 @@ export const ShowPageSummaryCard = ({
             Added {beautifiedCreatedAt}
           </StyledDate>
         )}
-        <StyledTooltip
+        <AppTooltip
           anchorSelect={`#${dateElementId}`}
           content={exactCreatedAt}
           clickable

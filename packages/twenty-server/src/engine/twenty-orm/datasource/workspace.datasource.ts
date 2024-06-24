@@ -6,8 +6,8 @@ import {
   QueryRunner,
 } from 'typeorm';
 
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 export class WorkspaceDataSource extends DataSource {
   readonly manager: WorkspaceEntityManager;

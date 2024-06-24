@@ -88,7 +88,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconX',
   })
   @WorkspaceIsNullable()
-  authFailedAt: Date;
+  authFailedAt: Date | null;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.emailAliases,
@@ -113,6 +113,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'connectedAccounts',
   })
   accountOwner: Relation<WorkspaceMemberWorkspaceEntity>;
+
+  accountOwnerId: string;
 
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.messageChannels,

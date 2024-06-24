@@ -1,3 +1,5 @@
+import { Scope } from '@nestjs/common';
+
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
@@ -11,7 +13,10 @@ export type MatchParticipantJobData = {
   workspaceMemberId?: string;
 };
 
-@Processor(MessageQueue.messagingQueue)
+@Processor({
+  queueName: MessageQueue.messagingQueue,
+  scope: Scope.REQUEST,
+})
 export class MatchParticipantJob {
   constructor(
     private readonly messageParticipantService: MessagingMessageParticipantService,

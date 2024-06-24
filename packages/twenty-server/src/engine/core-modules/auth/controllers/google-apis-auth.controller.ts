@@ -15,9 +15,7 @@ import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 
 @Controller('auth/google-apis')
 export class GoogleAPIsAuthController {
@@ -26,8 +24,7 @@ export class GoogleAPIsAuthController {
     private readonly tokenService: TokenService,
     private readonly environmentService: EnvironmentService,
     private readonly onboardingService: OnboardingService,
-    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
-    private readonly workspaceMemberService: WorkspaceMemberRepository,
+    private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
   ) {}
 
   @Get()
@@ -55,7 +52,7 @@ export class GoogleAPIsAuthController {
       messageVisibility,
     } = user;
 
-    const { workspaceMemberId, workspaceId } =
+    const { workspaceMemberId, userId, workspaceId } =
       await this.tokenService.verifyTransientToken(transientToken);
 
     const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
@@ -72,7 +69,13 @@ export class GoogleAPIsAuthController {
 
     const handle = emails[0].value;
 
-    await this.googleAPIsService.refreshGoogleRefreshToken({
+    const googleAPIsServiceInstance =
+      await this.loadServiceWithWorkspaceContext.load(
+        this.googleAPIsService,
+        workspaceId,
+      );
+
+    await googleAPIsServiceInstance.refreshGoogleRefreshToken({
       handle,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
@@ -82,12 +85,14 @@ export class GoogleAPIsAuthController {
       messageVisibility,
     });
 
-    const userId = (
-      await this.workspaceMemberService.find(workspaceMemberId, workspaceId)
-    )?.userId;
-
     if (userId) {
-      await this.onboardingService.skipSyncEmailOnboardingStep(
+      const onboardingServiceInstance =
+        await this.loadServiceWithWorkspaceContext.load(
+          this.onboardingService,
+          workspaceId,
+        );
+
+      await onboardingServiceInstance.skipSyncEmailOnboardingStep(
         userId,
         workspaceId,
       );

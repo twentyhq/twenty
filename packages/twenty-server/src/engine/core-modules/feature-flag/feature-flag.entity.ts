@@ -23,6 +23,7 @@ export enum FeatureFlagKeys {
   IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
   IsContactCreationForSentAndReceivedEmailsEnabled = 'IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED',
   IsProfileEmailsReadEnabled = 'IS_PROFILE_EMAILS_READ_ENABLED',
+  IsGoogleCalendarSyncV2Enabled = 'IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED',
 }
 
 @Entity({ name: 'featureFlag', schema: 'core' })

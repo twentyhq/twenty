@@ -50,6 +50,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKeys.IsGoogleCalendarSyncV2Enabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

@@ -53,7 +53,7 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
 const StyledItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: ${({ theme }) => theme.spacing(3)};
   margin-bottom: auto;
   overflow-y: auto;
 `;
