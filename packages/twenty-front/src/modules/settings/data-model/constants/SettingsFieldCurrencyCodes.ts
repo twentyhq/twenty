@@ -88,5 +88,5 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   BRL: {
     label: 'Brazilian real',
     Icon: IconCurrencyReal,
-  }
+  },
 };

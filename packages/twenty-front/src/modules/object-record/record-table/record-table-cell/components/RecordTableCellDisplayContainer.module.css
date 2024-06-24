@@ -7,10 +7,8 @@
   width: 100%;
 }
 
-.cell-display-outer-container-soft-focus {
-  background: var(--twentycrm-background-transparent-secondary);
-  border-radius: var(--twentycrm-border-radius-sm);
-  outline: 1px solid var(--twentycrm-font-color-extra-light);
+.cell-display-with-soft-focus {
+  margin: -1px;
 }
 
 .cell-display-inner-container {
