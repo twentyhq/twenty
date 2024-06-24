@@ -64,12 +64,12 @@ export class WorkspaceQueryBuilderFactory {
     return this.findOneQueryFactory.create<Filter>(args, options);
   }
 
-  findDuplicates<Filter extends RecordFilter = RecordFilter>(
-    args: FindDuplicatesResolverArgs<Filter>,
+  findDuplicates(
+    args: FindDuplicatesResolverArgs,
     options: WorkspaceQueryBuilderOptions,
-    existingRecord?: Record<string, unknown>,
+    existingRecord?: IRecord,
   ): Promise<string> {
-    return this.findDuplicatesQueryFactory.create<Filter>(
+    return this.findDuplicatesQueryFactory.create(
       args,
       options,
       existingRecord,

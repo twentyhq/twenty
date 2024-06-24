@@ -13,8 +13,8 @@ export class DuplicateService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  async findExistingRecord(
-    recordId: string | number,
+  async findExistingRecords(
+    recordIds: (string | number)[],
     objectMetadata: ObjectMetadataInterface,
     workspaceId: string,
   ) {
@@ -30,13 +30,15 @@ export class DuplicateService {
                 objectMetadata,
               )}" p
           WHERE
-              p."id" = $1
+              p."id" IN (${recordIds
+                .map((_, index) => `$${index + 1}`)
+                .join(', ')})
           `,
-      [recordId],
+      recordIds,
       workspaceId,
     );
 
-    return results.length > 0 ? results[0] : null;
+    return results as Record<string, any>[] | null;
   }
 
   async findDuplicate(

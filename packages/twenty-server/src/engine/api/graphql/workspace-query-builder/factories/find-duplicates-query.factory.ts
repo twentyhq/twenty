@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import isEmpty from 'lodash.isempty';
 
 import { WorkspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
-import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { Record } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { FindDuplicatesResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -23,10 +23,10 @@ export class FindDuplicatesQueryFactory {
     private readonly duplicateService: DuplicateService,
   ) {}
 
-  async create<Filter extends RecordFilter = RecordFilter>(
-    args: FindDuplicatesResolverArgs<Filter>,
+  async create(
+    args: FindDuplicatesResolverArgs,
     options: WorkspaceQueryBuilderOptions,
-    currentRecord?: Record<string, unknown>,
+    currentRecord?: Record,
   ) {
     const fieldsString = await this.fieldsStringFactory.create(
       options.info,
@@ -34,46 +34,60 @@ export class FindDuplicatesQueryFactory {
       options.objectMetadataCollection,
     );
 
-    const argsData = this.getFindDuplicateBy<Filter>(
-      args,
-      options,
-      currentRecord,
-    );
+    if (currentRecord) {
+      return `query {
+        ${this.buildQuery(fieldsString, options, undefined, currentRecord)}
+      }`;
+    }
 
+    const query = args.data?.reduce((acc, dataItem, index) => {
+      const argsData = this.argsAliasFactory.create(
+        dataItem ?? {},
+        options.fieldMetadataCollection,
+      );
+
+      return (
+        acc +
+        this.buildQuery(
+          fieldsString,
+          options,
+          argsData as Record,
+          undefined,
+          index,
+        )
+      );
+    }, '');
+
+    return `query {
+      ${query}
+    }`;
+  }
+
+  buildQuery(
+    fieldsString: string,
+    options: WorkspaceQueryBuilderOptions,
+    data?: Record,
+    currentRecord?: Record,
+    index?: number,
+  ) {
     const duplicateCondition =
       this.duplicateService.buildDuplicateConditionForGraphQL(
         options.objectMetadataItem,
-        argsData,
-        args.id,
+        data ?? currentRecord,
+        currentRecord?.id,
       );
 
     const filters = stringifyWithoutKeyQuote(duplicateCondition);
 
-    return `
-      query {
-        ${computeObjectTargetTable(options.objectMetadataItem)}Collection${
-          isEmpty(duplicateCondition?.or)
-            ? '(first: 0)'
-            : `(filter: ${filters})`
-        } {
-          ${fieldsString}
-        }
-      }
-    `;
-  }
-
-  getFindDuplicateBy<Filter extends RecordFilter = RecordFilter>(
-    args: FindDuplicatesResolverArgs<Filter>,
-    options: WorkspaceQueryBuilderOptions,
-    currentRecord?: Record<string, unknown>,
-  ) {
-    if (currentRecord) {
-      return currentRecord;
+    return `${computeObjectTargetTable(
+      options.objectMetadataItem,
+    )}Collection${index}: ${computeObjectTargetTable(
+      options.objectMetadataItem,
+    )}Collection${
+      isEmpty(duplicateCondition?.or) ? '(first: 0)' : `(filter: ${filters})`
+    } {
+        ${fieldsString}
     }
-
-    return this.argsAliasFactory.create(
-      args.data ?? {},
-      options.fieldMetadataCollection,
-    );
+  `;
   }
 }

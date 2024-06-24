@@ -47,12 +47,12 @@ export class QueryRunnerArgsFactory {
         return {
           ...args,
           data: await Promise.all(
-            (args as CreateManyResolverArgs).data.map((arg, index) =>
+            (args as CreateManyResolverArgs).data?.map((arg, index) =>
               this.overrideDataByFieldMetadata(arg, options, fieldMetadataMap, {
                 argIndex: index,
                 shouldBackfillPosition,
               }),
-            ),
+            ) ?? [],
           ),
         } satisfies CreateManyResolverArgs;
       case ResolverArgsType.FindOne:
@@ -80,11 +80,13 @@ export class QueryRunnerArgsFactory {
             (args as FindDuplicatesResolverArgs).id,
             fieldMetadataMap,
           ),
-          data: await this.overrideDataByFieldMetadata(
-            (args as FindDuplicatesResolverArgs).data,
-            options,
-            fieldMetadataMap,
-            { shouldBackfillPosition: false },
+          data: await Promise.all(
+            (args as FindDuplicatesResolverArgs).data?.map((arg, index) =>
+              this.overrideDataByFieldMetadata(arg, options, fieldMetadataMap, {
+                argIndex: index,
+                shouldBackfillPosition,
+              }),
+            ) ?? [],
           ),
         };
       default:

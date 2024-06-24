@@ -192,16 +192,16 @@ export class WorkspaceQueryRunnerService {
       ResolverArgsType.FindDuplicates,
     )) as FindDuplicatesResolverArgs<TRecord>;
 
-    let existingRecord: Record<string, unknown> | undefined;
+    let existingRecord: Record<string, any> | null = null;
 
     if (computedArgs.id) {
-      existingRecord = await this.duplicateService.findExistingRecord(
-        computedArgs.id,
+      existingRecord = await this.duplicateService.findExistingRecords(
+        [computedArgs.id],
         objectMetadataItem,
         workspaceId,
       );
 
-      if (!existingRecord) {
+      if (existingRecord && existingRecord.length != 1) {
         throw new NotFoundError(`Object with id ${args.id} not found`);
       }
     }
@@ -209,7 +209,7 @@ export class WorkspaceQueryRunnerService {
     const query = await this.workspaceQueryBuilderFactory.findDuplicates(
       computedArgs,
       options,
-      existingRecord,
+      existingRecord ? existingRecord[0] : null,
     );
 
     await this.workspacePreQueryHookService.executePreHooks(
@@ -226,6 +226,7 @@ export class WorkspaceQueryRunnerService {
       result,
       objectMetadataItem,
       '',
+      true,
     );
   }
 
@@ -652,11 +653,28 @@ export class WorkspaceQueryRunnerService {
     graphqlResult: PGGraphQLResult | undefined,
     objectMetadataItem: ObjectMetadataInterface,
     command: string,
+    isMultiQuery = false,
   ): Promise<Result> {
     const entityKey = `${command}${computeObjectTargetTable(
       objectMetadataItem,
     )}Collection`;
-    const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
+    const result = !isMultiQuery
+      ? graphqlResult?.[0]?.resolve?.data?.[entityKey]
+      : {
+          edges: Object.keys(graphqlResult?.[0]?.resolve?.data).reduce(
+            (acc: IRecord[], dataItem, index) => {
+              acc.push(
+                graphqlResult?.[0]?.resolve?.data[`${entityKey}${index}`].edges,
+              );
+
+              return acc;
+            },
+            [],
+          )[0],
+        };
+
+    console.log('result', result);
+
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
     if (
@@ -686,6 +704,8 @@ export class WorkspaceQueryRunnerService {
       result,
       objectMetadataItem,
     );
+
+    console.log(resultWithGetters);
 
     return parseResult(resultWithGetters);
   }

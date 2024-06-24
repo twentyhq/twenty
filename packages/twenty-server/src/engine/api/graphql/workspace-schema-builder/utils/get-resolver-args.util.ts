@@ -94,6 +94,7 @@ export const getResolverArgs = (
         data: {
           kind: InputTypeDefinitionKind.Create,
           isNullable: true,
+          isArray: true,
         },
       };
     case 'deleteOne':
