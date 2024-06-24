@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
 type RecordTableBodyEffectProps = {
@@ -18,10 +19,12 @@ export const RecordTableBodyEffect = ({
     totalCount,
     setRecordTableData,
     loading,
+    queryStateIdentifier,
   } = useLoadRecordIndexTable(objectNameSingular);
 
-  const [isFetchingMoreObjects, setIsFetchingMoreObjects] =
-    useState<boolean>(false);
+  const isFetchingMoreObjects = useRecoilValue(
+    isFetchingMoreRecordsFamilyState(queryStateIdentifier),
+  );
 
   const { tableLastRowVisibleState } = useRecordTableStates();
 
@@ -39,12 +42,10 @@ export const RecordTableBodyEffect = ({
   }, [records, totalCount, setRecordTableData, loading]);
 
   useEffect(() => {
-    // We are adding a setTimeout here to give the user some room to scroll if they want to
+    // We are adding a setTimeout here to give the user some room to scroll if they want to within this throttle window
     setTimeout(async () => {
       if (!isFetchingMoreObjects && tableLastRowVisible) {
-        setIsFetchingMoreObjects(true);
         await fetchMoreObjects();
-        setIsFetchingMoreObjects(false);
       }
     }, 100);
   }, [fetchMoreObjects, isFetchingMoreObjects, tableLastRowVisible]);
