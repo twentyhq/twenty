@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
-export type RecordMetadataById = Record<
+export type RecordDisplayDataById = Record<
   string,
   {
     objectNameSingular: string;
@@ -25,5 +25,5 @@ export class AskAIQueryResult {
 
   @Field(() => GraphQLJSON, { nullable: true })
   @IsOptional()
-  recordMetadataById?: RecordMetadataById;
+  recordDisplayDataById?: RecordDisplayDataById;
 }

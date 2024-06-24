@@ -13,7 +13,7 @@ export class OpenAIDriver implements LLMChatModelDriver {
       response_format: {
         type: 'json_object',
       },
-    }) as BaseChatModel;
+    }) as unknown as BaseChatModel;
   }
 
   getJSONChatModel() {

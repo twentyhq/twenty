@@ -11,11 +11,11 @@ interface RecordMetadata {
   domainName?: string;
 }
 
-type RecordMetadataById = Record<string, RecordMetadata>;
+type RecordDisplayDataById = Record<string, RecordMetadata>;
 
 interface SQLQueryResultTableProps {
   sqlQueryResult: string;
-  recordMetadataById: RecordMetadataById;
+  recordDisplayDataById: RecordDisplayDataById;
 }
 
 const StyledTable = styled.table`
@@ -87,7 +87,7 @@ export const SQLQueryResultTable = (props: SQLQueryResultTableProps) => {
           {Object.values(row).map((value) => (
             <Cell
               value={value}
-              recordMetadata={props.recordMetadataById[value]}
+              recordMetadata={props.recordDisplayDataById[value]}
             />
           ))}
         </StyledTR>

@@ -11,7 +11,7 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 
 import {
   AskAIQueryResult,
-  RecordMetadataById,
+  RecordDisplayDataById,
 } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
@@ -31,7 +31,7 @@ export class AskAIService {
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
-  private async getRecordMetadataById(
+  private async getRecordDisplayDataById(
     workspaceId: string,
     workspaceDataSource: DataSource,
     sqlQueryResult: Record<string, any>[],
@@ -53,7 +53,7 @@ export class AskAIService {
 
     const customObjectColumnNames = ['id', 'name'];
 
-    let recordMetadataById: RecordMetadataById = {};
+    let recordDisplayDataById: RecordDisplayDataById = {};
 
     for (const { nameSingular, isCustom } of objectMetadataEntities) {
       const tableName = computeTableName(nameSingular, isCustom);
@@ -81,18 +81,18 @@ export class AskAIService {
         [uuids],
       );
 
-      recordMetadataById = result.reduce((recordMetadataById, row) => {
+      recordDisplayDataById = result.reduce((recordDisplayDataById, row) => {
         return {
-          ...recordMetadataById,
+          ...recordDisplayDataById,
           [row.id]: {
             objectNameSingular: nameSingular,
             ...omit(row, 'id'),
           },
         };
-      }, recordMetadataById);
+      }, recordDisplayDataById);
     }
 
-    return recordMetadataById;
+    return recordDisplayDataById;
   }
 
   async query(
@@ -159,7 +159,7 @@ export class AskAIService {
         sqlQuery,
       )) as Record<string, any>[]; // TODO: Add return type to executeSQL function?
 
-      const recordMetadataById = await this.getRecordMetadataById(
+      const recordDisplayDataById = await this.getRecordDisplayDataById(
         workspaceId,
         workspaceDataSource,
         sqlQueryResult,
@@ -168,7 +168,7 @@ export class AskAIService {
       return {
         sqlQuery,
         sqlQueryResult: JSON.stringify(sqlQueryResult),
-        recordMetadataById,
+        recordDisplayDataById,
       };
     } catch (e) {
       return {
