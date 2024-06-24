@@ -120,7 +120,7 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     inverseSideFieldKey: 'calendarEventParticipants',
   })
   @WorkspaceIsNullable()
-  person: Relation<PersonWorkspaceEntity>;
+  person: Relation<PersonWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
@@ -133,5 +133,5 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     inverseSideFieldKey: 'calendarEventParticipants',
   })
   @WorkspaceIsNullable()
-  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
 }

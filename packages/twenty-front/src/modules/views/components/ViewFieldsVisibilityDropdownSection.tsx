@@ -19,7 +19,6 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
@@ -101,13 +100,17 @@ export const ViewFieldsVisibilityDropdownSection = ({
       )}
       <DropdownMenuItemsContainer>
         {nonDraggableItems.map((field, fieldIndex) => (
-          <MenuItem
+          <MenuItemDraggable
             key={field.fieldMetadataId}
             LeftIcon={getIcon(field.iconName)}
             iconButtons={getIconButtons(fieldIndex, field)}
             isTooltipOpen={openToolTipIndex === fieldIndex}
             text={field.label}
             className={`${title}-fixed-item-tooltip-anchor-${fieldIndex}`}
+            accent={'placeholder'}
+            isHoverDisabled={field.isVisible}
+            showGrip
+            isDragDisabled
           />
         ))}
         {!!draggableItems.length && (
@@ -131,6 +134,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
                           isTooltipOpen={openToolTipIndex === fieldIndex}
                           text={field.label}
                           className={`${title}-draggable-item-tooltip-anchor-${fieldIndex}`}
+                          showGrip
                         />
                       }
                     />

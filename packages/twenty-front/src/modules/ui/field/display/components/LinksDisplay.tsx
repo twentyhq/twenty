@@ -59,7 +59,7 @@ export const LinksDisplay = ({ value, isFocused }: LinksDisplayProps) => {
   );
 
   return isFocused ? (
-    <ExpandableList isChipCountDisplayed={isFocused}>
+    <ExpandableList isChipCountDisplayed>
       {links.map(({ url, label, type }, index) =>
         type === LinkType.LinkedIn || type === LinkType.Twitter ? (
           <SocialLink key={index} href={url} type={type} label={label} />
