@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository, In } from 'typeorm';
@@ -18,10 +17,6 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessagesImportOngoingStaleCronJob {
-  private readonly logger = new Logger(
-    MessagingMessagesImportOngoingStaleCronJob.name,
-  );
-
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,

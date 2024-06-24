@@ -1,4 +1,4 @@
-import { Scope } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { In } from 'typeorm';
 
@@ -22,13 +22,18 @@ export type MessagingMessagesImportOngoingStaleJobData = {
   scope: Scope.REQUEST,
 })
 export class MessagingMessagesImportOngoingStaleJob {
+  private readonly logger = new Logger(
+    MessagingMessagesImportOngoingStaleJob.name,
+  );
   constructor(
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: WorkspaceRepository<MessageChannelWorkspaceEntity>,
   ) {}
 
   @Process(MessagingMessagesImportOngoingStaleJob.name)
-  async handle(): Promise<void> {
+  async handle(
+    data: MessagingMessagesImportOngoingStaleJobData,
+  ): Promise<void> {
     const messageChannels = await this.messageChannelRepository.find({
       where: {
         syncStage: In([MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING]),
@@ -40,6 +45,10 @@ export class MessagingMessagesImportOngoingStaleJob {
         messageChannel.syncStageStartedAt &&
         isSyncStale(messageChannel.syncStageStartedAt)
       ) {
+        this.logger.log(
+          `Sync for message channel ${messageChannel.id} and workspace ${data.workspaceId} is stale. Setting sync stage to MESSAGES_IMPORT_PENDING`,
+        );
+
         await this.messageChannelRepository.update(messageChannel.id, {
           syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
         });
