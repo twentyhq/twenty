@@ -5,13 +5,13 @@ import { In } from 'typeorm';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { isSyncStale } from 'src/modules/messaging/message-import-manager/utils/is-sync-stale.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 
 export type MessagingOngoingStaleJobData = {
   workspaceId: string;
@@ -24,7 +24,7 @@ export type MessagingOngoingStaleJobData = {
 export class MessagingOngoingStaleJob {
   private readonly logger = new Logger(MessagingOngoingStaleJob.name);
   constructor(
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
+    @InjectWorkspaceRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: WorkspaceRepository<MessageChannelWorkspaceEntity>,
   ) {}
 

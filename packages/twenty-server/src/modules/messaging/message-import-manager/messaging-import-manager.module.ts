@@ -3,7 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
@@ -21,6 +23,7 @@ import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-m
     MessagingCommonModule,
     TypeOrmModule.forFeature([Workspace], 'core'),
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
+    TwentyORMModule.forFeature([MessageChannelWorkspaceEntity]),
   ],
   providers: [
     MessagingMessageListFetchCronCommand,
