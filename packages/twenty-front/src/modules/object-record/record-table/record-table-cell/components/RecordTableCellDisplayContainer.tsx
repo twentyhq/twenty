@@ -23,7 +23,7 @@ export const RecordTableCellDisplayContainer = ({
     onClick={onClick}
     className={clsx({
       [styles.cellDisplayOuterContainer]: true,
-      [styles.cellDisplayOuterContainerSoftFocus]: softFocus,
+      [styles.cellDisplayWithSoftFocus]: softFocus,
     })}
     ref={scrollRef}
   >

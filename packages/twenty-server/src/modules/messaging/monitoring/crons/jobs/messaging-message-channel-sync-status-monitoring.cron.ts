@@ -67,6 +67,9 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
         await this.messageChannelRepository.getAll(workspaceId);
 
       for (const messageChannel of messageChannels) {
+        if (!messageChannel.syncStatus) {
+          continue;
+        }
         await this.messagingTelemetryService.track({
           eventName: `message_channel.monitoring.sync_status.${snakeCase(
             messageChannel.syncStatus,

@@ -1,10 +1,11 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import groupBy from 'lodash.groupby';
+import { Any } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
 import {
   CalendarChannelWorkspaceEntity,
@@ -18,8 +19,8 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @Injectable()
 export class CanAccessCalendarEventService {
   constructor(
-    @InjectObjectMetadataRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelRepository: CalendarChannelRepository,
+    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
+    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
@@ -29,14 +30,17 @@ export class CanAccessCalendarEventService {
   public async canAccessCalendarEvent(
     userId: string,
     workspaceId: string,
-    calendarChannelCalendarEventAssociations: ObjectRecord<CalendarChannelEventAssociationWorkspaceEntity>[],
+    calendarChannelCalendarEventAssociations: CalendarChannelEventAssociationWorkspaceEntity[],
   ) {
-    const calendarChannels = await this.calendarChannelRepository.getByIds(
-      calendarChannelCalendarEventAssociations.map(
-        (association) => association.calendarChannelId,
-      ),
-      workspaceId,
-    );
+    const calendarChannels = await this.calendarChannelRepository.find({
+      where: {
+        id: Any(
+          calendarChannelCalendarEventAssociations.map(
+            (association) => association.calendarChannel.id,
+          ),
+        ),
+      },
+    });
 
     const calendarChannelsGroupByVisibility = groupBy(
       calendarChannels,
@@ -56,7 +60,7 @@ export class CanAccessCalendarEventService {
 
     const calendarChannelsConnectedAccounts =
       await this.connectedAccountRepository.getByIds(
-        calendarChannels.map((channel) => channel.connectedAccountId),
+        calendarChannels.map((channel) => channel.connectedAccount.id),
         workspaceId,
       );
 

@@ -83,7 +83,7 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'messageParticipants',
   })
   @WorkspaceIsNullable()
-  person: Relation<PersonWorkspaceEntity>;
+  person: Relation<PersonWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
@@ -96,5 +96,5 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'messageParticipants',
   })
   @WorkspaceIsNullable()
-  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
 }

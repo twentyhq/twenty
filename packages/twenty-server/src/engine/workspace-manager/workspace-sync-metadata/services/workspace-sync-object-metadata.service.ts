@@ -112,6 +112,10 @@ export class WorkspaceSyncObjectMetadataService {
 
       /**
        * COMPARE FIELD METADATA
+       * NOTE: This should be moved to WorkspaceSyncFieldMetadataService for more clarity since
+       * this code only adds field metadata to the storage but it's actually used in the other service.
+       * NOTE2: WorkspaceSyncFieldMetadataService has been added for custom fields sync, it should be refactored to handle
+       * both custom and non-custom fields.
        */
       const fieldComparatorResults = this.workspaceFieldComparator.compare(
         originalObjectMetadata,
