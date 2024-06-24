@@ -7,8 +7,7 @@ import { isUUID } from 'class-validator';
 import { DataSource } from 'typeorm';
 import omit from 'lodash.omit';
 import { z } from 'zod';
-
-import { LLMPromptTemplateEnvVar } from 'src/engine/integrations/llm-prompt-template/interfaces/llm-prompt-template-name.interface';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 
 import {
   AskAIQueryResult,
@@ -16,11 +15,11 @@ import {
 } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
-import { LLMPromptTemplateService } from 'src/engine/integrations/llm-prompt-template/llm-prompt-template.service';
 import { LLMChatModelService } from 'src/engine/integrations/llm-chat-model/llm-chat-model.service';
 import { LLMTracingService } from 'src/engine/integrations/llm-tracing/llm-tracing.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { sqlGenerationPromptTemplate } from 'src/engine/core-modules/ask-ai/ask-ai.prompt-templates';
 
 @Injectable()
 export class AskAIService {
@@ -28,7 +27,6 @@ export class AskAIService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
     private readonly llmChatModelService: LLMChatModelService,
-    private readonly llmPromptTemplateService: LLMPromptTemplateService,
     private readonly llmTracingService: LLMTracingService,
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
@@ -101,7 +99,7 @@ export class AskAIService {
     userId: string,
     userEmail: string,
     workspaceId: string,
-    text: string,
+    userQuestion: string,
   ): Promise<AskAIQueryResult> {
     const workspaceSchemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
@@ -118,19 +116,19 @@ export class AskAIService {
       sampleRowsInTableInfo: 0,
     });
 
-    const promptTemplate =
-      await this.llmPromptTemplateService.getPromptTemplate(
-        LLMPromptTemplateEnvVar.AskAI,
-      );
+    const llmOutputSchema = z.object({
+      sqlQuery: z.string(),
+    });
 
-    const structuredOutputParser = StructuredOutputParser.fromZodSchema(
-      z.object({
-        sqlQuery: z.string(),
-      }),
+    const llmOutputJsonSchema = JSON.stringify(
+      zodToJsonSchema(llmOutputSchema),
     );
 
+    const structuredOutputParser =
+      StructuredOutputParser.fromZodSchema(llmOutputSchema);
+
     const sqlQueryGeneratorChain = RunnableSequence.from([
-      promptTemplate,
+      sqlGenerationPromptTemplate,
       this.llmChatModelService.getJSONChatModel(),
       structuredOutputParser,
     ]);
@@ -145,8 +143,9 @@ export class AskAIService {
 
     const { sqlQuery } = await sqlQueryGeneratorChain.invoke(
       {
-        schema: await db.getTableInfo(),
-        question: text,
+        llmOutputJsonSchema,
+        sqlCreateTableStatements: await db.getTableInfo(),
+        userQuestion,
       },
       {
         callbacks: [tracingCallbackHandler],

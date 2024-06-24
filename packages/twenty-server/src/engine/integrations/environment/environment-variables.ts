@@ -17,7 +17,6 @@ import {
 
 import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.interface';
 import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
-import { LLMPromptTemplateDriver } from 'src/engine/integrations/llm-prompt-template/interfaces/llm-prompt-template.interface';
 import { LLMChatModelDriver } from 'src/engine/integrations/llm-chat-model/interfaces/llm-chat-model.interface';
 import { LLMTracingDriver } from 'src/engine/integrations/llm-tracing/interfaces/llm-tracing.interface';
 
@@ -365,11 +364,6 @@ export class EnvironmentVariables {
   LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver = LLMChatModelDriver.OpenAI;
 
   OPENAI_API_KEY: string;
-
-  LLM_PROMPT_TEMPLATE_DRIVER: LLMPromptTemplateDriver =
-    LLMPromptTemplateDriver.File;
-
-  PROMPT_TEMPLATE_NAME_ASK_AI = 'ask-ai';
 
   LANGFUSE_SECRET_KEY: string;
 

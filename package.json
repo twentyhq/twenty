@@ -112,7 +112,6 @@
     "js-levenshtein": "^1.1.6",
     "json-2-csv": "^5.4.0",
     "jsonwebtoken": "^9.0.0",
-    "langchain": "^0.2.5",
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
     "lodash.compact": "^3.0.1",
