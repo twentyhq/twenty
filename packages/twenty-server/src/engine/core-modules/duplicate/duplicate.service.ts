@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 import { settings } from 'src/engine/constants/settings';
 import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/core-modules/duplicate/constants/duplicate-criteria.constants';
@@ -38,7 +39,7 @@ export class DuplicateService {
       workspaceId,
     );
 
-    return results as Record<string, any>[] | null;
+    return results as IRecord[];
   }
 
   async findDuplicate(

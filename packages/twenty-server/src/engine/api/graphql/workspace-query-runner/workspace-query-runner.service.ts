@@ -172,13 +172,13 @@ export class WorkspaceQueryRunnerService {
     args: FindDuplicatesResolverArgs<TRecord>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<TRecord> | undefined> {
-    if (!args.data && !args.id) {
+    if (!args.data && !args.ids) {
       throw new BadRequestException(
         'You have to provide either "data" or "id" argument',
       );
     }
 
-    if (!args.id && isEmpty(args.data)) {
+    if (!args.ids && isEmpty(args.data)) {
       throw new BadRequestException(
         'The "data" condition can not be empty when ID input not provided',
       );
@@ -192,24 +192,24 @@ export class WorkspaceQueryRunnerService {
       ResolverArgsType.FindDuplicates,
     )) as FindDuplicatesResolverArgs<TRecord>;
 
-    let existingRecord: Record<string, any> | null = null;
+    let existingRecords: IRecord[] | undefined = undefined;
 
-    if (computedArgs.id) {
-      existingRecord = await this.duplicateService.findExistingRecords(
-        [computedArgs.id],
+    if (computedArgs.ids && computedArgs.ids.length > 0) {
+      existingRecords = await this.duplicateService.findExistingRecords(
+        computedArgs.ids,
         objectMetadataItem,
         workspaceId,
       );
 
-      if (existingRecord && existingRecord.length != 1) {
-        throw new NotFoundError(`Object with id ${args.id} not found`);
+      if (!existingRecords || existingRecords.length === 0) {
+        throw new NotFoundError(`Object with id ${args.ids} not found`);
       }
     }
 
     const query = await this.workspaceQueryBuilderFactory.findDuplicates(
       computedArgs,
       options,
-      existingRecord ? existingRecord[0] : null,
+      existingRecords,
     );
 
     await this.workspacePreQueryHookService.executePreHooks(
@@ -672,9 +672,6 @@ export class WorkspaceQueryRunnerService {
             [],
           )[0],
         };
-
-    console.log('result', result);
-
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
     if (
@@ -704,8 +701,6 @@ export class WorkspaceQueryRunnerService {
       result,
       objectMetadataItem,
     );
-
-    console.log(resultWithGetters);
 
     return parseResult(resultWithGetters);
   }

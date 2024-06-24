@@ -40,7 +40,7 @@ export interface FindOneResolverArgs<Filter = any> {
 }
 
 export interface FindDuplicatesResolverArgs<Data extends Record = Record> {
-  id?: string;
+  ids?: string[];
   data?: Data[];
 }
 

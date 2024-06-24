@@ -42,7 +42,7 @@ describe('useFindDuplicateRecords', () => {
     const { result } = renderHook(
       () =>
         useFindDuplicateRecords({
-          objectRecordId,
+          objectRecordIds: [objectRecordId],
           objectNameSingular,
         }),
       {

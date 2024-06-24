@@ -67,12 +67,12 @@ export class WorkspaceQueryBuilderFactory {
   findDuplicates(
     args: FindDuplicatesResolverArgs,
     options: WorkspaceQueryBuilderOptions,
-    existingRecord?: IRecord,
+    existingRecords?: IRecord[],
   ): Promise<string> {
     return this.findDuplicatesQueryFactory.create(
       args,
       options,
-      existingRecord,
+      existingRecords,
     );
   }
 

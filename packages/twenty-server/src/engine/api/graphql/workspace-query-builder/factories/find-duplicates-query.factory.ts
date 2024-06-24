@@ -26,7 +26,7 @@ export class FindDuplicatesQueryFactory {
   async create(
     args: FindDuplicatesResolverArgs,
     options: WorkspaceQueryBuilderOptions,
-    currentRecord?: Record,
+    existingRecords?: Record[],
   ) {
     const fieldsString = await this.fieldsStringFactory.create(
       options.info,
@@ -34,9 +34,15 @@ export class FindDuplicatesQueryFactory {
       options.objectMetadataCollection,
     );
 
-    if (currentRecord) {
+    if (existingRecords) {
+      const query = existingRecords.reduce((acc, record, index) => {
+        return (
+          acc + this.buildQuery(fieldsString, options, undefined, record, index)
+        );
+      }, '');
+
       return `query {
-        ${this.buildQuery(fieldsString, options, undefined, currentRecord)}
+        ${query}
       }`;
     }
 
@@ -67,14 +73,14 @@ export class FindDuplicatesQueryFactory {
     fieldsString: string,
     options: WorkspaceQueryBuilderOptions,
     data?: Record,
-    currentRecord?: Record,
+    existingRecord?: Record,
     index?: number,
   ) {
     const duplicateCondition =
       this.duplicateService.buildDuplicateConditionForGraphQL(
         options.objectMetadataItem,
-        data ?? currentRecord,
-        currentRecord?.id,
+        data ?? existingRecord,
+        existingRecord?.id,
       );
 
     const filters = stringifyWithoutKeyQuote(duplicateCondition);

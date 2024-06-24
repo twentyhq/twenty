@@ -14,11 +14,11 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 
 export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
-  objectRecordId = '',
+  objectRecordIds = [],
   objectNameSingular,
   onCompleted,
 }: ObjectMetadataItemIdentifier & {
-  objectRecordId: string | undefined;
+  objectRecordIds: string[] | undefined;
   onCompleted?: (data: RecordGqlConnection) => void;
   skip?: boolean;
 }) => {
@@ -42,7 +42,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
     findDuplicateRecordsQuery,
     {
       variables: {
-        id: objectRecordId,
+        ids: objectRecordIds,
       },
       onCompleted: (data) => {
         onCompleted?.(data[queryResponseField]);

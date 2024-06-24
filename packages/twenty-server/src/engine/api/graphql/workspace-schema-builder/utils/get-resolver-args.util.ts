@@ -87,9 +87,10 @@ export const getResolverArgs = (
       };
     case 'findDuplicates':
       return {
-        id: {
+        ids: {
           type: GraphQLID,
           isNullable: true,
+          isArray: true,
         },
         data: {
           kind: InputTypeDefinitionKind.Create,

@@ -13,7 +13,7 @@ export const RecordDetailDuplicatesSection = ({
   objectNameSingular: string;
 }) => {
   const { records: duplicateRecords } = useFindDuplicateRecords({
-    objectRecordId,
+    objectRecordIds: [objectRecordId],
     objectNameSingular,
   });
 
