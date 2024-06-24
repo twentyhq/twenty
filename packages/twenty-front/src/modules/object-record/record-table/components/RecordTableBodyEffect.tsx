@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
@@ -41,14 +42,20 @@ export const RecordTableBodyEffect = ({
     }
   }, [records, totalCount, setRecordTableData, loading]);
 
+  const fetchMoreDebouncedIfRequested = useDebouncedCallback(async () => {
+    // We are debouncing here to give the user some room to scroll if they want to within this throttle window
+    await fetchMoreObjects();
+  }, 100);
+
   useEffect(() => {
-    // We are adding a setTimeout here to give the user some room to scroll if they want to within this throttle window
-    setTimeout(async () => {
-      if (!isFetchingMoreObjects && tableLastRowVisible) {
-        await fetchMoreObjects();
-      }
-    }, 100);
-  }, [fetchMoreObjects, isFetchingMoreObjects, tableLastRowVisible]);
+    if (!isFetchingMoreObjects && tableLastRowVisible) {
+      fetchMoreDebouncedIfRequested();
+    }
+  }, [
+    fetchMoreDebouncedIfRequested,
+    isFetchingMoreObjects,
+    tableLastRowVisible,
+  ]);
 
   return <></>;
 };
