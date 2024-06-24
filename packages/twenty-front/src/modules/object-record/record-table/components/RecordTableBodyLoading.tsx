@@ -20,6 +20,7 @@ export const RecordTableBodyLoading = () => {
           isDragging={false}
           data-testid={`row-id-${rowIndex}`}
           data-selectable-id={`row-id-${rowIndex}`}
+          key={rowIndex}
         >
           <StyledTd data-select-disable>
             <GripCell isDragging={false} />

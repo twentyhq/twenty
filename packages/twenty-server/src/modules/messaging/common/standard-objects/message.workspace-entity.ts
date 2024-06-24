@@ -78,7 +78,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalendar',
   })
   @WorkspaceIsNullable()
-  receivedAt: string;
+  receivedAt: string | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageThread,
@@ -92,7 +92,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  messageThread: Relation<MessageThreadWorkspaceEntity>;
+  messageThread: Relation<MessageThreadWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageParticipants,

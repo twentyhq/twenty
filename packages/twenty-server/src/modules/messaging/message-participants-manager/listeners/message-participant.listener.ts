@@ -25,7 +25,7 @@ export class MessageParticipantListener {
   @OnEvent('messageParticipant.matched')
   public async handleMessageParticipantMatched(payload: {
     workspaceId: string;
-    userId: string;
+    workspaceMemberId: string;
     messageParticipants: ObjectRecord<MessageParticipantWorkspaceEntity>[];
   }): Promise<void> {
     const messageParticipants = payload.messageParticipants ?? [];
@@ -60,7 +60,7 @@ export class MessageParticipantListener {
         properties: null,
         objectName: 'message',
         recordId: participant.personId,
-        workspaceMemberId: payload.userId,
+        workspaceMemberId: payload.workspaceMemberId,
         workspaceId: payload.workspaceId,
         linkedObjectMetadataId: messageObjectMetadata.id,
         linkedRecordId: participant.messageId,

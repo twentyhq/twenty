@@ -211,6 +211,12 @@ export class MessagingErrorHandlingService {
       workspaceId,
     );
 
+    if (!messageChannel.connectedAccountId) {
+      throw new Error(
+        `Connected account ID is not defined for message channel ${messageChannel.id} in workspace ${workspaceId}`,
+      );
+    }
+
     await this.connectedAccountRepository.updateAuthFailedAt(
       messageChannel.connectedAccountId,
       workspaceId,

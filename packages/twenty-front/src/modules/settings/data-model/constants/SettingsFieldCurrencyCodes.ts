@@ -8,6 +8,7 @@ import {
   IconCurrencyKroneCzech,
   IconCurrencyKroneSwedish,
   IconCurrencyPound,
+  IconCurrencyReal,
   IconCurrencyRiyal,
   IconCurrencyWon,
   IconCurrencyYen,
@@ -83,5 +84,13 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   KRW: {
     label: 'South Korean won',
     Icon: IconCurrencyWon,
+  },
+  BRL: {
+    label: 'Brazilian real',
+    Icon: IconCurrencyReal,
+  },
+  AUD: {
+    label: 'Australian dollar',
+    Icon: IconCurrencyDollar,
   },
 };
