@@ -36,7 +36,10 @@ export class MessagingMessagesImportOngoingStaleJob {
   ): Promise<void> {
     const messageChannels = await this.messageChannelRepository.find({
       where: {
-        syncStage: In([MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING]),
+        syncStage: In([
+          MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
+          MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
+        ]),
       },
     });
 
@@ -49,9 +52,21 @@ export class MessagingMessagesImportOngoingStaleJob {
           `Sync for message channel ${messageChannel.id} and workspace ${data.workspaceId} is stale. Setting sync stage to MESSAGES_IMPORT_PENDING`,
         );
 
-        await this.messageChannelRepository.update(messageChannel.id, {
-          syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
-        });
+        switch (messageChannel.syncStage) {
+          case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
+            await this.messageChannelRepository.update(messageChannel.id, {
+              syncStage:
+                MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
+            });
+            break;
+          case MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING:
+            await this.messageChannelRepository.update(messageChannel.id, {
+              syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+            });
+            break;
+          default:
+            break;
+        }
       }
     }
   }
