@@ -1,11 +1,12 @@
 import { EntityChip } from 'twenty-ui';
 
 import { useRelationFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationFieldDisplay';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const RelationToOneFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
-    useRelationFieldDisplay();
+    useRelationFieldDisplay<ObjectRecord>();
 
   if (
     !fieldValue ||

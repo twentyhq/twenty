@@ -13,8 +13,8 @@ import {
   FieldNumberValue,
   FieldPhoneValue,
   FieldRatingValue,
-  FieldRelationManyValue,
-  FieldRelationOneValue,
+  FieldRelationFromManyValue,
+  FieldRelationToOneValue,
   FieldSelectValue,
   FieldTextValue,
   FieldUUidValue,
@@ -80,9 +80,9 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                           ? FieldSelectDraftValue
                           : FieldValue extends FieldMultiSelectValue
                             ? FieldMultiSelectDraftValue
-                            : FieldValue extends FieldRelationOneValue
+                            : FieldValue extends FieldRelationToOneValue
                               ? FieldRelationDraftValue
-                              : FieldValue extends FieldRelationManyValue
+                              : FieldValue extends FieldRelationFromManyValue
                                 ? FieldRelationManyDraftValue
                                 : FieldValue extends FieldAddressValue
                                   ? FieldAddressDraftValue

@@ -189,12 +189,12 @@ export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
-export type FieldRelationOneValue = EntityForSelect | null;
+export type FieldRelationToOneValue = EntityForSelect | null;
 
-export type FieldRelationManyValue = EntityForSelect[] | [];
+export type FieldRelationFromManyValue = EntityForSelect[] | [];
 
 export type FieldRelationValue<
-  T extends FieldRelationOneValue | FieldRelationManyValue,
+  T extends FieldRelationToOneValue | FieldRelationFromManyValue,
 > = T;
 // See https://zod.dev/?id=json-type
 type Literal = string | number | boolean | null;

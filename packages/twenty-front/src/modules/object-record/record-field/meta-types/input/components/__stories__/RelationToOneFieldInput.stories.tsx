@@ -123,7 +123,7 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof RelationFieldInputWithContext>;
+type Story = StoryObj<typeof RelationToOneFieldInputWithContext>;
 
 export const Default: Story = {
   decorators: [ComponentWithRecoilScopeDecorator],
