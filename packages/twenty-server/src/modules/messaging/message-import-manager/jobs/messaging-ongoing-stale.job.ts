@@ -13,7 +13,7 @@ import {
 import { isSyncStale } from 'src/modules/messaging/message-import-manager/utils/is-sync-stale.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
-export type MessagingMessagesImportOngoingStaleJobData = {
+export type MessagingOngoingStaleJobData = {
   workspaceId: string;
 };
 
@@ -21,19 +21,15 @@ export type MessagingMessagesImportOngoingStaleJobData = {
   queueName: MessageQueue.messagingQueue,
   scope: Scope.REQUEST,
 })
-export class MessagingMessagesImportOngoingStaleJob {
-  private readonly logger = new Logger(
-    MessagingMessagesImportOngoingStaleJob.name,
-  );
+export class MessagingOngoingStaleJob {
+  private readonly logger = new Logger(MessagingOngoingStaleJob.name);
   constructor(
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: WorkspaceRepository<MessageChannelWorkspaceEntity>,
   ) {}
 
-  @Process(MessagingMessagesImportOngoingStaleJob.name)
-  async handle(
-    data: MessagingMessagesImportOngoingStaleJobData,
-  ): Promise<void> {
+  @Process(MessagingOngoingStaleJob.name)
+  async handle(data: MessagingOngoingStaleJobData): Promise<void> {
     const messageChannels = await this.messageChannelRepository.find({
       where: {
         syncStage: In([

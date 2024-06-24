@@ -8,15 +8,15 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import {
-  MessagingMessagesImportOngoingStaleJob,
-  MessagingMessagesImportOngoingStaleJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import-ongoing-stale.job';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import {
+  MessagingOngoingStaleJobData,
+  MessagingOngoingStaleJob,
+} from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 
 @Processor(MessageQueue.cronQueue)
-export class MessagingMessagesImportOngoingStaleCronJob {
+export class MessagingOngoingStaleCronJob {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -27,7 +27,7 @@ export class MessagingMessagesImportOngoingStaleCronJob {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @Process(MessagingMessagesImportOngoingStaleCronJob.name)
+  @Process(MessagingOngoingStaleCronJob.name)
   async handle(): Promise<void> {
     const workspaceIds = (
       await this.workspaceRepository.find({
@@ -51,8 +51,8 @@ export class MessagingMessagesImportOngoingStaleCronJob {
     );
 
     for (const workspaceId of workspaceIdsWithDataSources) {
-      await this.messageQueueService.add<MessagingMessagesImportOngoingStaleJobData>(
-        MessagingMessagesImportOngoingStaleJob.name,
+      await this.messageQueueService.add<MessagingOngoingStaleJobData>(
+        MessagingOngoingStaleJob.name,
         {
           workspaceId,
         },
