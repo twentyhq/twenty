@@ -1,5 +1,8 @@
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
@@ -9,6 +12,15 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
   fields: Array<ObjectMetadataItem['fields'][0]>;
 }): FilterDefinition[] =>
   fields.reduce((acc, field) => {
+    if (
+      field.type === FieldMetadataType.Relation &&
+      field.relationDefinition?.direction !==
+        RelationDefinitionType.ManyToOne &&
+      field.relationDefinition?.direction !== RelationDefinitionType.OneToOne
+    ) {
+      return acc;
+    }
+
     if (
       ![
         FieldMetadataType.DateTime,
