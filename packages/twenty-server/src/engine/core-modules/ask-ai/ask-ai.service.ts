@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { SqlDatabase } from 'langchain/sql_db';
 import { RunnableSequence } from '@langchain/core/runnables';
 import { StructuredOutputParser } from '@langchain/core/output_parsers';
 import { isUUID } from 'class-validator';
@@ -8,6 +7,8 @@ import { DataSource } from 'typeorm';
 import omit from 'lodash.omit';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import groupBy from 'lodash.groupby';
 
 import {
   AskAIQueryResult,
@@ -95,6 +96,59 @@ export class AskAIService {
     return recordDisplayDataById;
   }
 
+  async getColInfosByTableName(dataSource: DataSource) {
+    const { schema } = dataSource.options as PostgresConnectionOptions;
+
+    // From LangChain sql_utils.ts - TODO: Move elsewhere or replace with a query to fieldMetadata?
+    const sqlQuery = `SELECT 
+              t.table_name, 
+              c.* 
+            FROM 
+              information_schema.tables t 
+                JOIN information_schema.columns c 
+                  ON t.table_name = c.table_name 
+            WHERE 
+              t.table_schema = '${schema}' 
+                AND c.table_schema = '${schema}' 
+            ORDER BY 
+              t.table_name,
+              c.ordinal_position;`;
+    const colInfos = await dataSource.query<
+      {
+        table_name: string;
+        column_name: string;
+        data_type: string | undefined;
+        is_nullable: 'YES' | 'NO';
+      }[]
+    >(sqlQuery);
+
+    return groupBy(colInfos, (colInfo) => colInfo.table_name);
+  }
+
+  async getSQLCreateTableStatements(dataSource: DataSource): Promise<string> {
+    const colInfoByTableName = await this.getColInfosByTableName(dataSource);
+
+    const { schema } = dataSource.options as PostgresConnectionOptions; // TODO: Stop passing schema in dataSource
+
+    return Object.entries(colInfoByTableName)
+      .map(
+        ([tableName, colInfos]) =>
+          `${
+            schema
+              ? `CREATE TABLE "${schema}"."${tableName}" (\n`
+              : `CREATE TABLE ${tableName} (\n`
+          } ${colInfos
+            .map(
+              (colInfo) =>
+                `${colInfo.column_name} ${colInfo.data_type} ${
+                  colInfo.is_nullable === 'YES' ? '' : 'NOT NULL'
+                }`,
+            )
+            .join(', ')});`,
+      )
+      .join('\n');
+  }
+
   async query(
     userId: string,
     userEmail: string,
@@ -111,10 +165,8 @@ export class AskAIService {
 
     workspaceDataSource.setOptions({ schema: workspaceSchemaName });
 
-    const db = await SqlDatabase.fromDataSourceParams({
-      appDataSource: workspaceDataSource,
-      sampleRowsInTableInfo: 0,
-    });
+    const sqlCreateTableStatements =
+      await this.getSQLCreateTableStatements(workspaceDataSource);
 
     const llmOutputSchema = z.object({
       sqlQuery: z.string(),
@@ -144,7 +196,7 @@ export class AskAIService {
     const { sqlQuery } = await sqlQueryGeneratorChain.invoke(
       {
         llmOutputJsonSchema,
-        sqlCreateTableStatements: await db.getTableInfo(),
+        sqlCreateTableStatements,
         userQuestion,
       },
       {
