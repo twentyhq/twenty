@@ -92,5 +92,5 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   AUD: {
     label: 'Australian dollar',
     Icon: IconCurrencyDollar,
-  }
+  },
 };
