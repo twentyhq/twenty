@@ -142,10 +142,9 @@ export const RecordTableCellContainer = ({
             [styles.cellBaseContainerSoftFocus]: hasSoftFocus,
           })}
         >
-          {isInEditMode && (
+          {isInEditMode ? (
             <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
-          )}
-          {hasSoftFocus ? (
+          ) : hasSoftFocus ? (
             <RecordTableCellSoftFocusMode
               editModeContent={editModeContent}
               nonEditModeContent={nonEditModeContent}

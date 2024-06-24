@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { BlocklistItemDeleteCalendarEventsJob } from 'src/modules/calendar/jobs/blocklist-item-delete-calendar-events.job';
 import { BlocklistReimportCalendarEventsJob } from 'src/modules/calendar/jobs/blocklist-reimport-calendar-events.job';
 import { CalendarCreateCompanyAndContactAfterSyncJob } from 'src/modules/calendar/jobs/calendar-create-company-and-contact-after-sync.job';
@@ -18,10 +19,12 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 
 @Module({
   imports: [
-    ObjectMetadataRepositoryModule.forFeature([
+    TwentyORMModule.forFeature([
       CalendarChannelWorkspaceEntity,
       CalendarChannelEventAssociationWorkspaceEntity,
       CalendarEventParticipantWorkspaceEntity,
+    ]),
+    ObjectMetadataRepositoryModule.forFeature([
       ConnectedAccountWorkspaceEntity,
       BlocklistWorkspaceEntity,
     ]),

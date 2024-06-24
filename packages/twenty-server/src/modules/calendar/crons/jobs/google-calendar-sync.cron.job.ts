@@ -1,4 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { Scope } from '@nestjs/common';
 
 import { Repository, In } from 'typeorm';
 
@@ -10,7 +11,10 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
-@Processor(MessageQueue.cronQueue)
+@Processor({
+  queueName: MessageQueue.cronQueue,
+  scope: Scope.REQUEST,
+})
 export class GoogleCalendarSyncCronJob {
   constructor(
     @InjectRepository(Workspace, 'core')

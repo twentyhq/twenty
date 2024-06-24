@@ -138,6 +138,7 @@ export class AuthResolver {
     }
     const transientToken = await this.tokenService.generateTransientToken(
       workspaceMember.id,
+      user.id,
       user.defaultWorkspace.id,
     );
 

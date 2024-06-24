@@ -11,6 +11,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 
 import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
+import { PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
@@ -22,6 +23,7 @@ import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-me
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { FieldMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { ObjectMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-object.factory';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 
 @Injectable()
 export class WorkspaceMetadataUpdaterService {
@@ -227,6 +229,69 @@ export class WorkspaceMetadataUpdaterService {
     return {
       createdRelationMetadataCollection,
       updatedRelationMetadataCollection,
+    };
+  }
+
+  async updateIndexMetadata(
+    manager: EntityManager,
+    storage: WorkspaceSyncStorage,
+    originalObjectMetadataCollection: ObjectMetadataEntity[],
+  ): Promise<{
+    createdIndexMetadataCollection: IndexMetadataEntity[];
+  }> {
+    const indexMetadataRepository = manager.getRepository(IndexMetadataEntity);
+
+    const convertIndexMetadataForSaving = (
+      indexMetadata: PartialIndexMetadata,
+    ) => {
+      const convertIndexFieldMetadataForSaving = (
+        column: string,
+        order: number,
+      ) => {
+        const fieldMetadata = originalObjectMetadataCollection
+          .find((object) => object.id === indexMetadata.objectMetadataId)
+          ?.fields.find((field) => column === field.name);
+
+        if (!fieldMetadata) {
+          throw new Error(`
+            Field metadata not found for column ${column} in object ${indexMetadata.objectMetadataId}
+          `);
+        }
+
+        return {
+          fieldMetadataId: fieldMetadata.id,
+          order,
+        };
+      };
+
+      return {
+        ...indexMetadata,
+        indexFieldMetadatas: indexMetadata.columns.map((column, index) =>
+          convertIndexFieldMetadataForSaving(column, index),
+        ),
+      };
+    };
+
+    /**
+     * Create index metadata
+     */
+    const createdIndexMetadataCollection = await indexMetadataRepository.save(
+      storage.indexMetadataCreateCollection.map(convertIndexMetadataForSaving),
+    );
+
+    /**
+     * Delete index metadata
+     */
+    if (storage.indexMetadataDeleteCollection.length > 0) {
+      await indexMetadataRepository.delete(
+        storage.indexMetadataDeleteCollection.map(
+          (indexMetadata) => indexMetadata.id,
+        ),
+      );
+    }
+
+    return {
+      createdIndexMetadataCollection,
     };
   }
 

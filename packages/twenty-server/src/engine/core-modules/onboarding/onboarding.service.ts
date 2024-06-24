@@ -56,7 +56,7 @@ export class OnboardingService {
     const isInviteTeamSkipped =
       inviteTeamValue === OnboardingStepValues.SKIPPED;
     const workspaceMemberCount =
-      await this.userWorkspaceService.getWorkspaceMemberCount(workspace.id);
+      await this.userWorkspaceService.getWorkspaceMemberCount();
 
     return (
       !isInviteTeamSkipped &&

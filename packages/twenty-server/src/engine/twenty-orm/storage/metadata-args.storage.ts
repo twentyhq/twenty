@@ -5,6 +5,7 @@ import { WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/wor
 import { WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-entity-metadata-args.interface';
 import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 import { WorkspaceExtendedEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-extended-entity-metadata-args.interface';
+import { WorkspaceIndexMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-index-metadata-args.interface';
 
 export class MetadataArgsStorage {
   private readonly entities: WorkspaceEntityMetadataArgs[] = [];
@@ -13,6 +14,7 @@ export class MetadataArgsStorage {
   private readonly relations: WorkspaceRelationMetadataArgs[] = [];
   private readonly dynamicRelations: WorkspaceDynamicRelationMetadataArgs[] =
     [];
+  private readonly indexes: WorkspaceIndexMetadataArgs[] = [];
 
   addEntities(...entities: WorkspaceEntityMetadataArgs[]): void {
     this.entities.push(...entities);
@@ -30,6 +32,10 @@ export class MetadataArgsStorage {
 
   addRelations(...relations: WorkspaceRelationMetadataArgs[]): void {
     this.relations.push(...relations);
+  }
+
+  addIndexes(...indexes: WorkspaceIndexMetadataArgs[]): void {
+    this.indexes.push(...indexes);
   }
 
   addDynamicRelations(
@@ -91,6 +97,16 @@ export class MetadataArgsStorage {
     target: (Function | string) | (Function | string)[],
   ): WorkspaceRelationMetadataArgs[] {
     return this.filterByTarget(this.relations, target);
+  }
+
+  filterIndexes(target: Function | string): WorkspaceIndexMetadataArgs[];
+
+  filterIndexes(target: (Function | string)[]): WorkspaceIndexMetadataArgs[];
+
+  filterIndexes(
+    target: (Function | string) | (Function | string)[],
+  ): WorkspaceIndexMetadataArgs[] {
+    return this.filterByTarget(this.indexes, target);
   }
 
   filterDynamicRelations(
