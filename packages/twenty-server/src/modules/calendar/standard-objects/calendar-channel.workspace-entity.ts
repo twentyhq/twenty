@@ -207,6 +207,16 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncCursor: string;
 
   @WorkspaceField({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Sync stage started at',
+    description: 'Sync stage started at',
+    icon: 'IconHistory',
+  })
+  @WorkspaceIsNullable()
+  syncStageStartedAt: string | null;
+
+  @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
     type: FieldMetadataType.NUMBER,
     label: 'Throttle Failure Count',

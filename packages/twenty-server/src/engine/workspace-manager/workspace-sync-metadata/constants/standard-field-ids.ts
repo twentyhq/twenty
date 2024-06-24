@@ -73,6 +73,7 @@ export const CALENDAR_CHANNEL_STANDARD_FIELD_IDS = {
   throttleFailureCount: '20202020-525c-4b76-b9bd-0dd57fd11d61',
   syncStatus: '20202020-7116-41da-8b4b-035975c4eb6a',
   syncStage: '20202020-6246-42e6-b5cd-003bd921782c',
+  syncStageStartedAt: '20202020-a934-46f1-a8e7-9568b1e3a53e',
 };
 
 export const CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS = {
