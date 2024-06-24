@@ -89,4 +89,8 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
     label: 'Brazilian real',
     Icon: IconCurrencyReal,
   },
+  AUD: {
+    label: 'Australian dollar',
+    Icon: IconCurrencyDollar,
+  },
 };
