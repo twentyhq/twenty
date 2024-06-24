@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { useAttachRelatedRecordFromRecord } from '@/object-record/hooks/useAttachRelatedRecordFromRecord';
 import { useDetachRelatedRecordFromRecord } from '@/object-record/hooks/useDetachRelatedRecordFromRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsComponentState';
 import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
@@ -22,11 +22,6 @@ export const useUpdateRelationManyFieldInput = ({
     fieldDefinition,
   );
 
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular:
-      fieldDefinition.metadata.relationObjectMetadataNameSingular,
-  });
-
   if (!fieldDefinition.metadata.objectMetadataNameSingular) {
     throw new Error('ObjectMetadataNameSingular is required');
   }
@@ -38,7 +33,12 @@ export const useUpdateRelationManyFieldInput = ({
       fieldNameOnRecordObject: fieldDefinition.metadata.fieldName,
     });
 
-  const fieldName = fieldDefinition.metadata.targetFieldMetadataName;
+  const { updateOneRecordAndAttachRelations } =
+    useAttachRelatedRecordFromRecord({
+      recordObjectNameSingular:
+        fieldDefinition.metadata.objectMetadataNameSingular,
+      fieldNameOnRecordObject: fieldDefinition.metadata.fieldName,
+    });
 
   const handleChange = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -70,11 +70,9 @@ export const useUpdateRelationManyFieldInput = ({
         }
 
         if (isNewlySelected) {
-          await updateOneRecord({
-            idToUpdate: objectRecordId,
-            updateOneRecordInput: {
-              [`${fieldName}Id`]: entityId,
-            },
+          await updateOneRecordAndAttachRelations({
+            recordId: entityId,
+            relatedRecordId: objectRecordId,
           });
         } else {
           await updateOneRecordAndDetachRelations({
@@ -85,9 +83,8 @@ export const useUpdateRelationManyFieldInput = ({
       },
     [
       entityId,
-      fieldName,
       scopeId,
-      updateOneRecord,
+      updateOneRecordAndAttachRelations,
       updateOneRecordAndDetachRelations,
     ],
   );
