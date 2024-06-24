@@ -59,6 +59,7 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_POSTGRESQL_INTEGRATION_ENABLED: true,
             IS_STRIPE_INTEGRATION_ENABLED: false,
             IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED: true,
+            IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED: true,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
@@ -74,6 +75,7 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_POSTGRESQL_INTEGRATION_ENABLED: true,
           IS_STRIPE_INTEGRATION_ENABLED: false,
           IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED: true,
+          IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED: true,
         },
       );
 
