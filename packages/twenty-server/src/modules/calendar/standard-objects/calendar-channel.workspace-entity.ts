@@ -15,10 +15,20 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
+}
+
+export enum CalendarChannelSyncStatus {
+  NOT_SYNCED = 'NOT_SYNCED',
+  ONGOING = 'ONGOING',
+  COMPLETED = 'COMPLETED',
+  FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
+  FAILED_UNKNOWN = 'FAILED_UNKNOWN',
 }
 
 export enum CalendarChannelSyncStage {
@@ -49,6 +59,48 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconAt',
   })
   handle: string;
+
+  @WorkspaceField({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
+    type: FieldMetadataType.SELECT,
+    label: 'Sync status',
+    description: 'Sync status',
+    icon: 'IconStatusChange',
+    options: [
+      {
+        value: CalendarChannelSyncStatus.ONGOING,
+        label: 'Ongoing',
+        position: 1,
+        color: 'yellow',
+      },
+      {
+        value: CalendarChannelSyncStatus.NOT_SYNCED,
+        label: 'Not Synced',
+        position: 2,
+        color: 'blue',
+      },
+      {
+        value: CalendarChannelSyncStatus.COMPLETED,
+        label: 'Completed',
+        position: 3,
+        color: 'green',
+      },
+      {
+        value: CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+        label: 'Failed Insufficient Permissions',
+        position: 4,
+        color: 'red',
+      },
+      {
+        value: CalendarChannelSyncStatus.FAILED_UNKNOWN,
+        label: 'Failed Unknown',
+        position: 5,
+        color: 'red',
+      },
+    ],
+  })
+  @WorkspaceIsNullable()
+  syncStatus: MessageChannelSyncStatus | null;
 
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStage,
