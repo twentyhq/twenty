@@ -128,16 +128,10 @@ export class AskAIService {
   async getSQLCreateTableStatements(dataSource: DataSource): Promise<string> {
     const colInfoByTableName = await this.getColInfosByTableName(dataSource);
 
-    const { schema } = dataSource.options as PostgresConnectionOptions; // TODO: Stop passing schema in dataSource
-
     return Object.entries(colInfoByTableName)
       .map(
         ([tableName, colInfos]) =>
-          `${
-            schema
-              ? `CREATE TABLE "${schema}"."${tableName}" (\n`
-              : `CREATE TABLE ${tableName} (\n`
-          } ${colInfos
+          `${`CREATE TABLE ${tableName} (\n`} ${colInfos
             .map(
               (colInfo) =>
                 `${colInfo.column_name} ${colInfo.data_type} ${
@@ -205,11 +199,12 @@ export class AskAIService {
     );
 
     try {
-      const sqlQueryResult = (await this.workspaceQueryRunnerService.executeSQL(
-        workspaceDataSource,
-        workspaceId,
-        sqlQuery,
-      )) as Record<string, any>[]; // TODO: Add return type to executeSQL function?
+      const sqlQueryResult: Record<string, any>[] =
+        await this.workspaceQueryRunnerService.executeSQL(
+          workspaceDataSource,
+          workspaceId,
+          sqlQuery,
+        ); // TODO: Add return type to executeSQL function?
 
       const recordDisplayDataById = await this.getRecordDisplayDataById(
         workspaceId,
