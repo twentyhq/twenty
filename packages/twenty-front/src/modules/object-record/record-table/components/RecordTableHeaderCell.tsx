@@ -63,7 +63,6 @@ const StyledResizeHandler = styled.div`
   right: -9px;
   top: 0;
   width: 3px;
-  z-index: 1;
 `;
 
 const StyledColumnHeadContainer = styled.div`
@@ -71,7 +70,6 @@ const StyledColumnHeadContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   position: relative;
-  z-index: 1;
 `;
 
 const StyledHeaderIcon = styled.div`

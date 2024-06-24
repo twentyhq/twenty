@@ -6,7 +6,6 @@ const StyledContainer = styled.div`
   cursor: grab;
   width: 16px;
   height: 32px;
-  z-index: 200;
   display: flex;
   &:hover .icon {
     opacity: 1;

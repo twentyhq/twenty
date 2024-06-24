@@ -33,7 +33,6 @@ const StyledPlusIconHeaderCell = styled.th<{ isTableWiderThanScreen: boolean }>`
     border-right: none !important;
     background-color: ${theme.background.primary};
     `};
-  z-index: 1;
 `;
 
 const StyledPlusIconContainer = styled.div`

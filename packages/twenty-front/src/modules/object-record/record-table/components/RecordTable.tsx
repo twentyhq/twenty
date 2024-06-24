@@ -22,9 +22,13 @@ import { useUpsertRecordV2 } from '@/object-record/record-table/record-table-cel
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
+import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 
 const StyledTable = styled.table<{
   freezeFirstColumns?: boolean;
+  isScrolledLeft?: boolean;
+  isScrolledTop?: boolean;
 }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border-spacing: 0;
@@ -74,13 +78,14 @@ const StyledTable = styled.table<{
   thead th {
     position: sticky;
     top: 0;
-    z-index: 9;
+    z-index: ${({ isScrolledTop }) => (isScrolledTop ? 3 : 1)};
   }
 
   thead th:nth-of-type(1),
   thead th:nth-of-type(2),
   thead th:nth-of-type(3) {
-    z-index: 12;
+    z-index: ${({ isScrolledTop, isScrolledLeft }) =>
+      isScrolledTop ? 4 : isScrolledLeft ? 3 : 2};
     background-color: ${({ theme }) => theme.background.primary};
   }
 
@@ -103,22 +108,19 @@ const StyledTable = styled.table<{
   tbody td:nth-of-type(2),
   tbody td:nth-of-type(3) {
     position: sticky;
-    z-index: 1;
+    z-index: ${({ isScrolledLeft }) => (isScrolledLeft ? 3 : 2)};
   }
 
   tbody td:nth-of-type(1) {
     left: 0;
-    z-index: 7;
   }
 
   tbody td:nth-of-type(2) {
     left: 9px;
-    z-index: 5;
   }
 
   tbody td:nth-of-type(3) {
     left: 39px;
-    z-index: 6;
   }
 
   thead th:nth-of-type(3),
@@ -226,6 +228,12 @@ export const RecordTable = ({
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
+  const scrollLeft = useRecoilValue(scrollLeftState);
+  const scrollTop = useRecoilValue(scrollTopState);
+
+  const isScrolledTop = scrollTop > 0;
+  const isScrolledLeft = scrollLeft > 0;
+
   return (
     <RecordTableScope
       recordTableScopeId={scopeId}
@@ -245,7 +253,11 @@ export const RecordTable = ({
             visibleTableColumns,
           }}
         >
-          <StyledTable className="entity-table-cell">
+          <StyledTable
+            className="entity-table-cell"
+            isScrolledLeft={isScrolledLeft}
+            isScrolledTop={isScrolledTop}
+          >
             <RecordTableHeader createRecord={createRecord} />
             <RecordTableBodyEffect objectNameSingular={objectNameSingular} />
             <RecordTableBody

@@ -123,8 +123,6 @@ export const RecordTableCellContainer = ({
   return (
     <td
       className={clsx({
-        [styles.tdInEditMode]: isInEditMode,
-        [styles.tdNotInEditMode]: !isInEditMode,
         [styles.tdIsSelected]: isSelected,
         [styles.tdIsNotSelected]: !isSelected,
       })}

@@ -9,7 +9,6 @@ const StyledEditableCellEditModeContainer = styled.div<RecordTableCellEditModePr
   display: flex;
   min-width: 200px;
   width: calc(100% + 2px);
-  z-index: 1;
   height: 100%;
 `;
 
@@ -19,8 +18,6 @@ const StyledTableCellInput = styled.div`
 
   min-height: 32px;
   min-width: 200px;
-
-  z-index: 10;
 `;
 
 export type RecordTableCellEditModeProps = {

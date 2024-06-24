@@ -1,11 +1,3 @@
-.td-in-edit-mode {
-  z-index: 4 !important;
-}
-
-.td-not-in-edit-mode {
-  z-index: 3;
-}
-
 .td-is-selected {
   background: var(--twentycrm-accent-quaternary);
 }
@@ -27,6 +19,6 @@
 .cell-base-container-soft-focus {
   background: var(--twentycrm-background-transparent-secondary);
   border-radius: var(--twentycrm-border-radius-sm);
-  border: 1px solid var(--twentycrm-font-color-extra-light);
+  outline: 1px solid var(--twentycrm-font-color-extra-light);
+  z-index: 2;
 }
-
