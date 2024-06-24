@@ -49,7 +49,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCurrencyDollar',
   })
   @WorkspaceIsNullable()
-  amount: CurrencyMetadata;
+  amount: CurrencyMetadata | null;
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
@@ -59,7 +59,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalendarEvent',
   })
   @WorkspaceIsNullable()
-  closeDate: Date;
+  closeDate: Date | null;
 
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probability,
@@ -102,7 +102,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  position: number;
+  position: number | null;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
@@ -116,7 +116,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  pointOfContact: Relation<PersonWorkspaceEntity>;
+  pointOfContact: Relation<PersonWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.company,
@@ -130,7 +130,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  company: Relation<CompanyWorkspaceEntity>;
+  company: Relation<CompanyWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.favorites,

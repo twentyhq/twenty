@@ -9,6 +9,7 @@ import { MessageChannelRepository } from 'src/modules/messaging/common/repositor
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { isDefined } from 'src/utils/is-defined';
 
 export class CanAccessMessageThreadService {
   constructor(
@@ -46,7 +47,9 @@ export class CanAccessMessageThreadService {
 
     const messageChannelsConnectedAccounts =
       await this.connectedAccountRepository.getByIds(
-        messageChannels.map((channel) => channel.connectedAccountId),
+        messageChannels
+          .map((channel) => channel.connectedAccountId)
+          .filter(isDefined),
         workspaceId,
       );
 

@@ -53,6 +53,8 @@ const StyledTable = styled.table<{
     color: ${({ theme }) => theme.font.color.primary};
     border-right: 1px solid ${({ theme }) => theme.border.color.light};
 
+    padding: 0;
+
     text-align: left;
 
     :last-child {

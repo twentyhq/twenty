@@ -1,13 +1,12 @@
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type CreateCompanyAndContactJobData = {
   workspaceId: string;
-  connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>;
+  connectedAccount: ConnectedAccountWorkspaceEntity;
   contactsToCreate: {
     displayName: string;
     handle: string;

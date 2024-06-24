@@ -39,7 +39,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
-  properties: JSON;
+  properties: JSON | null;
 
   @WorkspaceField({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.context,
@@ -50,7 +50,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
-  context: JSON;
+  context: JSON | null;
 
   @WorkspaceField({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectName,
@@ -78,7 +78,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
-  recordId: string;
+  recordId: string | null;
 
   @WorkspaceRelation({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.workspaceMember,
@@ -91,5 +91,5 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'auditLogs',
   })
   @WorkspaceIsNullable()
-  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
 }

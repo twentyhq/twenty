@@ -5,7 +5,6 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.service';
 
@@ -28,7 +27,6 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     private readonly workspaceHealthService: WorkspaceHealthService,
     private readonly dataSourceService: DataSourceService,
     private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
-    private readonly workspaceService: WorkspaceService,
   ) {
     super();
   }
@@ -37,9 +35,8 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     _passedParam: string[],
     options: RunWorkspaceMigrationsOptions,
   ): Promise<void> {
-    const workspaceIds = options.workspaceId
-      ? [options.workspaceId]
-      : await this.workspaceService.getWorkspaceIds();
+    // TODO: re-implement load index from workspaceService, this is breaking the logger
+    const workspaceIds = options.workspaceId ? [options.workspaceId] : [];
 
     for (const workspaceId of workspaceIds) {
       try {
@@ -105,7 +102,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
     description: 'workspace id',
-    required: false,
+    required: true,
   })
   parseWorkspaceId(value: string): string {
     return value;

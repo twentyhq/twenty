@@ -56,7 +56,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
-  properties: JSON;
+  properties: JSON | null;
 
   // Special objects that don't have their own timeline and are 'link' to the main object
   @WorkspaceField({
@@ -76,7 +76,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
-  linkedRecordId: string;
+  linkedRecordId: string | null;
 
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
@@ -86,7 +86,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
-  linkedObjectMetadataId: string;
+  linkedObjectMetadataId: string | null;
 
   // Who made the action
   @WorkspaceRelation({
@@ -100,7 +100,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.person,
@@ -113,7 +113,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  person: Relation<PersonWorkspaceEntity>;
+  person: Relation<PersonWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.company,
@@ -126,7 +126,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  company: Relation<CompanyWorkspaceEntity>;
+  company: Relation<CompanyWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.opportunity,
@@ -139,7 +139,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  opportunity: Relation<OpportunityWorkspaceEntity>;
+  opportunity: Relation<OpportunityWorkspaceEntity> | null;
 
   @WorkspaceDynamicRelation({
     type: RelationMetadataType.MANY_TO_ONE,

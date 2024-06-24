@@ -60,6 +60,7 @@ export {
   IconCurrencyKroneCzech,
   IconCurrencyKroneSwedish,
   IconCurrencyPound,
+  IconCurrencyReal,
   IconCurrencyRiyal,
   IconCurrencyWon,
   IconCurrencyYen,
