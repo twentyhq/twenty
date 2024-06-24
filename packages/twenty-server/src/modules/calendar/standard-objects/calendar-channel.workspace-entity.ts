@@ -21,6 +21,15 @@ export enum CalendarChannelVisibility {
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
 }
 
+export enum CalendarChannelSyncStage {
+  FULL_CALENDAR_EVENT_LIST_FETCH_PENDING = 'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING',
+  PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING',
+  CALENDAR_EVENT_LIST_FETCH_ONGOING = 'CALENDAR_EVENT_LIST_FETCH_ONGOING',
+  CALENDAR_EVENTS_IMPORT_PENDING = 'CALENDAR_EVENTS_IMPORT_PENDING',
+  CALENDAR_EVENTS_IMPORT_ONGOING = 'CALENDAR_EVENTS_IMPORT_ONGOING',
+  FAILED = 'FAILED',
+}
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannel,
   namePlural: 'calendarChannels',
@@ -40,6 +49,55 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconAt',
   })
   handle: string;
+
+  @WorkspaceField({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStage,
+    type: FieldMetadataType.SELECT,
+    label: 'Sync stage',
+    description: 'Sync stage',
+    icon: 'IconStatusChange',
+    options: [
+      {
+        value: CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+        label: 'Full calendar event list fetch pending',
+        position: 0,
+        color: 'blue',
+      },
+      {
+        value:
+          CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+        label: 'Partial calendar event list fetch pending',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
+        label: 'Calendar event list fetch ongoing',
+        position: 2,
+        color: 'orange',
+      },
+      {
+        value: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+        label: 'Calendar events import pending',
+        position: 3,
+        color: 'blue',
+      },
+      {
+        value: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
+        label: 'Calendar events import ongoing',
+        position: 4,
+        color: 'orange',
+      },
+      {
+        value: CalendarChannelSyncStage.FAILED,
+        label: 'Failed',
+        position: 5,
+        color: 'red',
+      },
+    ],
+    defaultValue: `'${CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING}'`,
+  })
+  syncStage: CalendarChannelSyncStage;
 
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.visibility,

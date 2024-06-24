@@ -71,6 +71,7 @@ export const CALENDAR_CHANNEL_STANDARD_FIELD_IDS = {
   syncCursor: '20202020-bac2-4852-a5cb-7a7898992b70',
   calendarChannelEventAssociations: '20202020-afb0-4a9f-979f-2d5087d71d09',
   throttleFailureCount: '20202020-525c-4b76-b9bd-0dd57fd11d61',
+  syncStage: '20202020-6246-42e6-b5cd-003bd921782c',
 };
 
 export const CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS = {
