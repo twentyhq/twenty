@@ -25,7 +25,7 @@ export enum CalendarChannelVisibility {
 export enum CalendarChannelSyncStatus {
   NOT_SYNCED = 'NOT_SYNCED',
   ONGOING = 'ONGOING',
-  COMPLETED = 'COMPLETED',
+  ACTIVE = 'ACTIVE',
   FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
   FAILED_UNKNOWN = 'FAILED_UNKNOWN',
 }
@@ -79,8 +79,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'blue',
       },
       {
-        value: CalendarChannelSyncStatus.COMPLETED,
-        label: 'Completed',
+        value: CalendarChannelSyncStatus.ACTIVE,
+        label: 'Active',
         position: 3,
         color: 'green',
       },
