@@ -16,7 +16,6 @@ import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/work
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
@@ -100,7 +99,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     ],
   })
   @WorkspaceIsNullable()
-  syncStatus: MessageChannelSyncStatus | null;
+  syncStatus: CalendarChannelSyncStatus | null;
 
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStage,
