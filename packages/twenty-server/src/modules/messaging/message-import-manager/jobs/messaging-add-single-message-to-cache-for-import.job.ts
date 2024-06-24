@@ -4,10 +4,9 @@ import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/typ
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 
 export type MessagingAddSingleMessageToCacheForImportJobData = {
-  messageId: string;
+  messageExternalId: string;
   messageChannelId: string;
   workspaceId: string;
 };
@@ -17,23 +16,17 @@ export class MessagingAddSingleMessageToCacheForImportJob {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
   ) {}
 
   @Process(MessagingAddSingleMessageToCacheForImportJob.name)
   async handle(
     data: MessagingAddSingleMessageToCacheForImportJobData,
   ): Promise<void> {
-    const { messageId, messageChannelId, workspaceId } = data;
+    const { messageExternalId, messageChannelId, workspaceId } = data;
 
     await this.cacheStorage.setAdd(
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
-      [messageId],
-    );
-
-    await this.messagingChannelSyncStatusService.scheduleMessagesImport(
-      messageChannelId,
-      workspaceId,
+      [messageExternalId],
     );
   }
 }

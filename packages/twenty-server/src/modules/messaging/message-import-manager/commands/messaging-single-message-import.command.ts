@@ -9,7 +9,7 @@ import {
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-add-single-message-to-cache-for-import.job';
 
 type MessagingSingleMessageImportCommandOptions = {
-  messageId: string;
+  messageExternalId: string;
   messageChannelId: string;
   workspaceId: string;
 };
@@ -33,7 +33,7 @@ export class MessagingSingleMessageImportCommand extends CommandRunner {
     await this.messageQueueService.add<MessagingAddSingleMessageToCacheForImportJobData>(
       MessagingAddSingleMessageToCacheForImportJob.name,
       {
-        messageId: options.messageId,
+        messageExternalId: options.messageExternalId,
         messageChannelId: options.messageChannelId,
         workspaceId: options.workspaceId,
       },
@@ -41,8 +41,8 @@ export class MessagingSingleMessageImportCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-m, --message-id [message_id]',
-    description: 'Message ID',
+    flags: '-m, --message-external-id [message_external_id]',
+    description: 'Message external ID',
     required: true,
   })
   parseMessageId(value: string): string {
