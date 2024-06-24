@@ -1,0 +1,40 @@
+import { Scope, SetMetadata } from '@nestjs/common';
+import { SCOPE_OPTIONS_METADATA } from '@nestjs/common/constants';
+
+import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-query-hook.type';
+import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+
+import { HOOK_METADATA } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/workspace-query-hook.constants';
+
+export type WorkspaceQueryHookKey =
+  `${string}.${WorkspaceResolverBuilderMethodNames}`;
+
+export interface WorkspaceQueryHookOptions {
+  key: WorkspaceQueryHookKey;
+  type?: WorkspaceQueryHookType;
+  scope?: Scope;
+}
+
+export function WorkspaceQueryHook(key: WorkspaceQueryHookKey): ClassDecorator;
+export function WorkspaceQueryHook(
+  options: WorkspaceQueryHookOptions,
+): ClassDecorator;
+export function WorkspaceQueryHook(
+  keyOrOptions?: WorkspaceQueryHookKey | WorkspaceQueryHookOptions,
+): ClassDecorator {
+  const options: WorkspaceQueryHookOptions =
+    keyOrOptions && typeof keyOrOptions === 'object'
+      ? keyOrOptions
+      : { key: keyOrOptions! };
+
+  // Default to PreHook
+  if (!options.type) {
+    options.type = WorkspaceQueryHookType.PreHook;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  return (target: Function) => {
+    SetMetadata(SCOPE_OPTIONS_METADATA, options)(target);
+    SetMetadata(HOOK_METADATA, options)(target);
+  };
+}

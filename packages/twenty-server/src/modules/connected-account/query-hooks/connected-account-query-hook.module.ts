@@ -8,18 +8,9 @@ import { BlocklistValidationModule } from 'src/modules/connected-account/service
 @Module({
   imports: [BlocklistValidationModule],
   providers: [
-    {
-      provide: BlocklistCreateManyPreQueryHook.name,
-      useClass: BlocklistCreateManyPreQueryHook,
-    },
-    {
-      provide: BlocklistUpdateManyPreQueryHook.name,
-      useClass: BlocklistUpdateManyPreQueryHook,
-    },
-    {
-      provide: BlocklistUpdateOnePreQueryHook.name,
-      useClass: BlocklistUpdateOnePreQueryHook,
-    },
+    BlocklistCreateManyPreQueryHook,
+    BlocklistUpdateManyPreQueryHook,
+    BlocklistUpdateOnePreQueryHook,
   ],
 })
 export class ConnectedAccountQueryHookModule {}
