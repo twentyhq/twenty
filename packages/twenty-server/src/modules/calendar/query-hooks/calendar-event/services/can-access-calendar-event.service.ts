@@ -40,7 +40,6 @@ export class CanAccessCalendarEventService {
           ),
         ),
       },
-      relations: ['connectedAccount'],
     });
 
     const calendarChannelsGroupByVisibility = groupBy(
@@ -61,7 +60,7 @@ export class CanAccessCalendarEventService {
 
     const calendarChannelsConnectedAccounts =
       await this.connectedAccountRepository.getByIds(
-        calendarChannels.map((channel) => channel.connectedAccount.id),
+        calendarChannels.map((channel: any) => channel.connectedAccountId),
         workspaceId,
       );
 
