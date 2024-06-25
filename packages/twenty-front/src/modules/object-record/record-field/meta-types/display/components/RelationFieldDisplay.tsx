@@ -8,7 +8,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const RelationFieldDisplay = () => {
-  const { fieldValue, fieldDefinition, generateRecordChipData } =
+  const { fieldValue, fieldDefinition, generateRecordChipData, maxWidth } =
     useRelationFieldDisplay();
 
   if (
@@ -33,6 +33,7 @@ export const RelationFieldDisplay = () => {
       avatarType={recordChipData.avatarType}
       avatarUrl={getImageAbsoluteURIOrBase64(recordChipData.avatarUrl) || ''}
       linkToEntity={recordChipData.linkToShowPage}
+      maxWidth={maxWidth}
     />
   );
 };
