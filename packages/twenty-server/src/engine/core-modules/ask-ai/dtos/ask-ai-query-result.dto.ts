@@ -26,4 +26,8 @@ export class AskAIQueryResult {
   @Field(() => GraphQLJSON, { nullable: true })
   @IsOptional()
   recordDisplayDataById?: RecordDisplayDataById;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  queryFailedErrorMessage?: string;
 }

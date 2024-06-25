@@ -6,6 +6,7 @@ export const getAskAI = gql`
       sqlQuery
       sqlQueryResult
       recordDisplayDataById
+      queryFailedErrorMessage
     }
   }
 `;

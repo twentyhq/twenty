@@ -74,7 +74,7 @@ export const RightDrawerAIChat = () => {
                     recordDisplayDataById={data.getAskAI.recordDisplayDataById}
                   />
                 ) : (
-                  'Invalid SQL query.'
+                  data?.getAskAI.queryFailedErrorMessage
                 )}
               </StyledSQLQueryResult>
             )}

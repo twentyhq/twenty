@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { RunnableSequence } from '@langchain/core/runnables';
 import { StructuredOutputParser } from '@langchain/core/output_parsers';
 import { isUUID } from 'class-validator';
-import { DataSource } from 'typeorm';
+import { DataSource, QueryFailedError } from 'typeorm';
 import omit from 'lodash.omit';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
@@ -217,7 +217,15 @@ export class AskAIService {
         sqlQueryResult: JSON.stringify(sqlQueryResult),
         recordDisplayDataById,
       };
-    } catch (e) {
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        return {
+          sqlQuery,
+          queryFailedErrorMessage: error.message,
+        };
+      }
+
+      // TODO: logger.log error
       return {
         sqlQuery,
       };
