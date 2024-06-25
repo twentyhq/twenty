@@ -237,6 +237,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   })
   connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
 
+  connectedAccountId: string;
+
   @WorkspaceRelation({
     standardId:
       CALENDAR_CHANNEL_STANDARD_FIELD_IDS.calendarChannelEventAssociations,

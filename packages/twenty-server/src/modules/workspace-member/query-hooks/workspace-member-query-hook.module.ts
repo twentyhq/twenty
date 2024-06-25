@@ -14,14 +14,8 @@ import { WorkspaceMemberDeleteOnePreQueryHook } from 'src/modules/workspace-memb
     ]),
   ],
   providers: [
-    {
-      provide: WorkspaceMemberDeleteOnePreQueryHook.name,
-      useClass: WorkspaceMemberDeleteOnePreQueryHook,
-    },
-    {
-      provide: WorkspaceMemberDeleteManyPreQueryHook.name,
-      useClass: WorkspaceMemberDeleteManyPreQueryHook,
-    },
+    WorkspaceMemberDeleteOnePreQueryHook,
+    WorkspaceMemberDeleteManyPreQueryHook,
   ],
 })
 export class WorkspaceMemberQueryHookModule {}
