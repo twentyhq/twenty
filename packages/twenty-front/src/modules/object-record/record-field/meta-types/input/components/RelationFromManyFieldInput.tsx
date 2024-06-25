@@ -3,21 +3,21 @@ import { useContext } from 'react';
 import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { MultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/MultiRecordsEffect';
-import { useUpdateRelationManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationManyFieldInput';
+import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 
-export type RelationManyFieldInputProps = {
+export type RelationFromManyFieldInputProps = {
   onSubmit?: FieldInputEvent;
 };
 
-export const RelationManyFieldInput = ({
+export const RelationFromManyFieldInput = ({
   onSubmit,
-}: RelationManyFieldInputProps) => {
+}: RelationFromManyFieldInputProps) => {
   const { fieldDefinition } = useContext(FieldContext);
   const relationPickerScopeId = `relation-picker-${fieldDefinition.fieldMetadataId}`;
-  const { handleChange } = useUpdateRelationManyFieldInput({
+  const { handleChange } = useUpdateRelationFromManyFieldInput({
     scopeId: relationPickerScopeId,
   });
 

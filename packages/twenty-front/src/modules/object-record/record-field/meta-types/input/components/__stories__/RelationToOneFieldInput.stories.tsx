@@ -13,7 +13,7 @@ import { useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
+import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
@@ -80,12 +80,12 @@ const RelationToOneFieldInputWithContext = ({
         }}
         entityId={entityId}
       >
-        <RecordFieldInputScope
-          recordFieldInputScopeId={'relation-to-one-field-input'}
+        <RelationPickerScope
+          relationPickerScopeId={'relation-to-one-field-input'}
         >
           <RelationWorkspaceSetterEffect />
           <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-        </RecordFieldInputScope>
+        </RelationPickerScope>
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div" />
     </div>

@@ -9,7 +9,7 @@ import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinit
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import {
   RecordFieldValueSelectorContextProvider,
-  useSetRecordValue,
+  useSetRecordFieldValue,
 } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
@@ -18,6 +18,7 @@ import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 import {
   fieldValue,
+  otherPersonMock,
   relationFromManyFieldDisplayMock,
 } from './relationFromManyFieldDisplayMock';
 
@@ -30,21 +31,26 @@ const RelationFieldValueSetterEffect = () => {
     recordStoreFamilyState(relationFromManyFieldDisplayMock.relationEntityId),
   );
 
-  const setRecordValue = useSetRecordValue();
+  const setRecordFieldValue = useSetRecordFieldValue();
 
   useEffect(() => {
     setEntity(relationFromManyFieldDisplayMock.entityValue);
     setRelationEntity(relationFromManyFieldDisplayMock.relationFieldValue);
 
-    setRecordValue(
+    setRecordFieldValue(
       relationFromManyFieldDisplayMock.entityValue.id,
-      relationFromManyFieldDisplayMock.entityValue,
+      'company',
+      [relationFromManyFieldDisplayMock.entityValue],
     );
-    setRecordValue(
+    setRecordFieldValue(otherPersonMock.entityValue.id, 'company', [
+      relationFromManyFieldDisplayMock.entityValue,
+    ]);
+    setRecordFieldValue(
       relationFromManyFieldDisplayMock.relationFieldValue.id,
+      'company',
       relationFromManyFieldDisplayMock.relationFieldValue,
     );
-  }, [setEntity, setRelationEntity, setRecordValue]);
+  }, [setEntity, setRelationEntity, setRecordFieldValue]);
 
   return null;
 };

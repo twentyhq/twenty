@@ -6,7 +6,7 @@ import { FullNameFieldInput } from '@/object-record/record-field/meta-types/inpu
 import { LinksFieldInput } from '@/object-record/record-field/meta-types/input/components/LinksFieldInput';
 import { MultiSelectFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiSelectFieldInput';
 import { RawJsonFieldInput } from '@/object-record/record-field/meta-types/input/components/RawJsonFieldInput';
-import { RelationManyFieldInput } from '@/object-record/record-field/meta-types/input/components/RelationManyFieldInput';
+import { RelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
@@ -75,7 +75,7 @@ export const FieldInput = ({
       {isFieldRelationToOneObject(fieldDefinition) ? (
         <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
       ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
-        <RelationManyFieldInput onSubmit={onSubmit} />
+        <RelationFromManyFieldInput onSubmit={onSubmit} />
       ) : isFieldPhone(fieldDefinition) ||
         isFieldDisplayedAsPhone(fieldDefinition) ? (
         <PhoneFieldInput

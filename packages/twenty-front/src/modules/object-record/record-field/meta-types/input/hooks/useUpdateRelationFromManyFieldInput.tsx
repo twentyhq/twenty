@@ -9,7 +9,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/types/guards/a
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-export const useUpdateRelationManyFieldInput = ({
+export const useUpdateRelationFromManyFieldInput = ({
   scopeId,
 }: {
   scopeId: string;
