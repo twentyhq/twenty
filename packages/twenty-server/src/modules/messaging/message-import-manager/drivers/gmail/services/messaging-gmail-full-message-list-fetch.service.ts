@@ -25,6 +25,7 @@ import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/mess
 import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 
 @Injectable()
 export class MessagingGmailFullMessageListFetchService {
@@ -47,6 +48,7 @@ export class MessagingGmailFullMessageListFetchService {
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
+    private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
   public async processMessageListFetch(
@@ -59,10 +61,30 @@ export class MessagingGmailFullMessageListFetchService {
       workspaceId,
     );
 
-    await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
-      workspaceId,
-      connectedAccount.id,
-    );
+    try {
+      await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+        workspaceId,
+        connectedAccount.id,
+      );
+    } catch (error) {
+      await this.messagingTelemetryService.track({
+        eventName: `refresh_token.error.insufficient_permissions`,
+        workspaceId,
+        connectedAccountId: messageChannel.connectedAccountId,
+        messageChannelId: messageChannel.id,
+        message: `${error.code}: ${error.reason}`,
+      });
+
+      await this.messagingChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
+        messageChannel.id,
+        workspaceId,
+      );
+
+      await this.connectedAccountRepository.updateAuthFailedAt(
+        messageChannel.connectedAccountId,
+        workspaceId,
+      );
+    }
 
     const refreshedConnectedAccount =
       await this.connectedAccountRepository.getById(
