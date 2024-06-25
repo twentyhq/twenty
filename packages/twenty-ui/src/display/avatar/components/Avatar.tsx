@@ -16,17 +16,20 @@ const StyledAvatar = styled.div<{
   backgroundColor: string;
 }>`
   align-items: center;
-  border-radius: ${({ rounded }) => (rounded ? '50%' : 'none')};
+  flex-shrink: 0;
+  overflow: hidden;
+  user-select: none;
+
+  border-radius: ${({ rounded }) => (rounded ? '50%' : '2px')};
   display: flex;
   font-size: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].fontSize};
-  font-weight: 600;
   height: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].width};
   justify-content: center;
 
   width: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].width};
 
   color: ${({ color }) => color};
-  backgroundcolor: ${({ backgroundColor }) => backgroundColor};
+  background: ${({ backgroundColor }) => backgroundColor};
 
   &:hover {
     box-shadow: ${({ clickable }) =>
