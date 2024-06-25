@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
 import { GoogleCalendarSyncService } from 'src/modules/calendar/services/google-calendar-sync/google-calendar-sync.service';
@@ -11,7 +11,10 @@ export type GoogleCalendarSyncJobData = {
   connectedAccountId: string;
 };
 
-@Processor(MessageQueue.calendarQueue)
+@Processor({
+  queueName: MessageQueue.calendarQueue,
+  scope: Scope.REQUEST,
+})
 export class GoogleCalendarSyncJob {
   private readonly logger = new Logger(GoogleCalendarSyncJob.name);
 

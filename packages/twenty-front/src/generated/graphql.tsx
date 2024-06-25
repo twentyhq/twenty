@@ -130,7 +130,7 @@ export type Captcha = {
 };
 
 export enum CaptchaDriverType {
-  GoogleRecatpcha = 'GoogleRecatpcha',
+  GoogleRecaptcha = 'GoogleRecaptcha',
   Turnstile = 'Turnstile'
 }
 

@@ -151,9 +151,9 @@ export class TimelineActivityRepository {
       name: string;
       properties: Record<string, any> | null;
       workspaceMemberId: string | undefined;
-      recordId: string;
+      recordId: string | null;
       linkedRecordCachedName: string;
-      linkedRecordId: string | undefined;
+      linkedRecordId: string | null | undefined;
       linkedObjectMetadataId: string | undefined;
     }[],
     workspaceId: string,

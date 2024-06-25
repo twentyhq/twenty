@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceGoogleCalendarSyncService } from 'src/modules/calendar/services/workspace-google-calendar-sync/workspace-google-calendar-sync.service';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 
 @Module({
-  imports: [
-    ObjectMetadataRepositoryModule.forFeature([CalendarChannelWorkspaceEntity]),
-  ],
+  imports: [TwentyORMModule.forFeature([CalendarChannelWorkspaceEntity])],
   providers: [WorkspaceGoogleCalendarSyncService],
   exports: [WorkspaceGoogleCalendarSyncService],
 })

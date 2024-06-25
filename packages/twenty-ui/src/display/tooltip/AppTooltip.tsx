@@ -10,6 +10,12 @@ export enum TooltipPosition {
   Bottom = 'bottom',
 }
 
+export enum TooltipDelay {
+  noDelay = '0ms',
+  shortDelay = '300ms',
+  mediumDelay = '500ms',
+}
+
 const StyledAppTooltip = styled(Tooltip)`
   backdrop-filter: ${({ theme }) => theme.blur.strong};
   background-color: ${({ theme }) => RGBA(theme.color.gray80, 0.8)};
@@ -36,38 +42,51 @@ export type AppTooltipProps = {
   anchorSelect?: string;
   content?: string;
   children?: React.ReactNode;
-  delayHide?: number;
   offset?: number;
   noArrow?: boolean;
   isOpen?: boolean;
   place?: PlacesType;
+  delay?: TooltipDelay;
   positionStrategy?: PositionStrategy;
+  clickable?: boolean;
 };
 
 export const AppTooltip = ({
   anchorSelect,
   className,
   content,
-  delayHide,
   isOpen,
   noArrow,
   offset,
+  delay = TooltipDelay.mediumDelay,
   place,
   positionStrategy,
   children,
-}: AppTooltipProps) => (
-  <StyledAppTooltip
-    {...{
-      anchorSelect,
-      className,
-      content,
-      delayHide,
-      isOpen,
-      noArrow,
-      offset,
-      place,
-      positionStrategy,
-      children,
-    }}
-  />
-);
+  clickable,
+}: AppTooltipProps) => {
+  const delayInMs =
+    delay === TooltipDelay.noDelay
+      ? 0
+      : delay === TooltipDelay.shortDelay
+        ? 300
+        : 500;
+
+  return (
+    <StyledAppTooltip
+      {...{
+        anchorSelect,
+        className,
+        content,
+        delayShow: delayInMs,
+        delayHide: delayInMs,
+        isOpen,
+        noArrow,
+        offset,
+        place,
+        positionStrategy,
+        children,
+        clickable,
+      }}
+    />
+  );
+};

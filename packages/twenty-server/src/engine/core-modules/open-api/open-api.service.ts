@@ -133,12 +133,13 @@ export class OpenApiService {
         get: {
           tags: [item.namePlural],
           summary: `Find Many ${item.namePlural}`,
-          parameters:
-            item.namePlural !== 'relations'
-              ? [{ $ref: '#/components/parameters/filter' }]
-              : undefined,
+          parameters: [
+            { $ref: '#/components/parameters/limit' },
+            { $ref: '#/components/parameters/startingAfter' },
+            { $ref: '#/components/parameters/endingBefore' },
+          ],
           responses: {
-            '200': getFindManyResponse200(item),
+            '200': getFindManyResponse200(item, true),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -161,7 +162,7 @@ export class OpenApiService {
           summary: `Find One ${item.nameSingular}`,
           parameters: [{ $ref: '#/components/parameters/idPath' }],
           responses: {
-            '200': getFindOneResponse200(item),
+            '200': getFindOneResponse200(item, true),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -177,18 +178,20 @@ export class OpenApiService {
             '401': { $ref: '#/components/responses/401' },
           },
         },
-        patch: {
-          tags: [item.namePlural],
-          summary: `Update One ${item.namePlural}`,
-          operationId: `updateOne${capitalize(item.nameSingular)}`,
-          parameters: [{ $ref: '#/components/parameters/idPath' }],
-          requestBody: getRequestBody(capitalize(item.nameSingular)),
-          responses: {
-            '200': getUpdateOneResponse200(item, true),
-            '400': { $ref: '#/components/responses/400' },
-            '401': { $ref: '#/components/responses/401' },
+        ...(item.nameSingular !== 'relation' && {
+          patch: {
+            tags: [item.namePlural],
+            summary: `Update One ${item.nameSingular}`,
+            operationId: `updateOne${capitalize(item.nameSingular)}`,
+            parameters: [{ $ref: '#/components/parameters/idPath' }],
+            requestBody: getRequestBody(capitalize(item.nameSingular)),
+            responses: {
+              '200': getUpdateOneResponse200(item, true),
+              '400': { $ref: '#/components/responses/400' },
+              '401': { $ref: '#/components/responses/401' },
+            },
           },
-        },
+        }),
       } as OpenAPIV3_1.PathItemObject;
 
       return path;
@@ -197,7 +200,7 @@ export class OpenApiService {
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeMetadataSchemaComponents(metadata),
-      parameters: computeParameterComponents(),
+      parameters: computeParameterComponents(true),
       responses: {
         '400': get400ErrorResponses(),
         '401': get401ErrorResponses(),

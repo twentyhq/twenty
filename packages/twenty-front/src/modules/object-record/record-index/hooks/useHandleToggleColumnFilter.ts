@@ -62,8 +62,8 @@ export const useHandleToggleColumnFilter = ({
 
       upsertCombinedViewFilter(newFilter);
 
-      openDropdown(fieldMetadataId, {
-        scope: fieldMetadataId,
+      openDropdown(newFilter.id, {
+        scope: newFilter.id,
       });
     },
     [columnDefinitions, upsertCombinedViewFilter, openDropdown],

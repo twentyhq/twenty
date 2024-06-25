@@ -29,6 +29,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -48,6 +49,7 @@ export class UserResolver {
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
+    private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
   ) {}
 
   @Query(() => User)
@@ -118,6 +120,11 @@ export class UserResolver {
 
   @ResolveField(() => OnboardingStatus)
   async onboardingStatus(@Parent() user: User): Promise<OnboardingStatus> {
-    return this.onboardingService.getOnboardingStatus(user);
+    const contextInstance = await this.loadServiceWithWorkspaceContext.load(
+      this.onboardingService,
+      user.defaultWorkspaceId,
+    );
+
+    return contextInstance.getOnboardingStatus(user);
   }
 }

@@ -12,9 +12,7 @@ import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(1)};
+  height: ${({ theme }) => theme.spacing(7)};
   user-select: none;
 `;
 

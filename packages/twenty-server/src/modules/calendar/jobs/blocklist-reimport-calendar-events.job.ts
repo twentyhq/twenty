@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
@@ -14,7 +14,10 @@ export type BlocklistReimportCalendarEventsJobData = {
   handle: string;
 };
 
-@Processor(MessageQueue.calendarQueue)
+@Processor({
+  queueName: MessageQueue.calendarQueue,
+  scope: Scope.REQUEST,
+})
 export class BlocklistReimportCalendarEventsJob {
   private readonly logger = new Logger(BlocklistReimportCalendarEventsJob.name);
 
