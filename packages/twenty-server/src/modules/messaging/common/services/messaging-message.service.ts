@@ -152,6 +152,12 @@ export class MessagingMessageService {
                 manager,
               );
 
+            if (!savedOrExistingMessageThreadId) {
+              throw new Error(
+                `No message thread found for message ${message.headerMessageId} in workspace ${workspaceId} in saveMessages`,
+              );
+            }
+
             const savedOrExistingMessageId =
               await this.saveMessageOrReturnExistingMessage(
                 message,
