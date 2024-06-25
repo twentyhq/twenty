@@ -75,11 +75,11 @@ export class QueryRunnerArgsFactory {
       case ResolverArgsType.FindDuplicates:
         return {
           ...args,
-          ids: await Promise.all(
+          ids: (await Promise.all(
             (args as FindDuplicatesResolverArgs).ids?.map((id) =>
               this.overrideValueByFieldMetadata('id', id, fieldMetadataMap),
             ) ?? [],
-          ),
+          )) as string[],
           data: await Promise.all(
             (args as FindDuplicatesResolverArgs).data?.map((arg, index) =>
               this.overrideDataByFieldMetadata(arg, options, fieldMetadataMap, {
@@ -88,7 +88,7 @@ export class QueryRunnerArgsFactory {
               }),
             ) ?? [],
           ),
-        };
+        } satisfies FindDuplicatesResolverArgs;
       default:
         return args;
     }
