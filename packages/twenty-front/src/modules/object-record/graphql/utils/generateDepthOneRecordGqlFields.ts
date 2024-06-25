@@ -22,7 +22,7 @@ export const generateDepthOneRecordGqlFields = ({
     return Object.keys(gqlFieldsFromObjectMetadataItem).reduce((acc, key) => {
       return {
         ...acc,
-        [key]: Object.keys(record).includes(key) ? true : false,
+        [key]: Object.keys(record).includes(key),
       };
     }, gqlFieldsFromObjectMetadataItem);
   }

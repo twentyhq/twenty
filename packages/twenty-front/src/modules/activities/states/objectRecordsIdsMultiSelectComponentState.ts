@@ -1,6 +1,6 @@
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const objectRecordsIdsMultiSelecComponenttState = createComponentState<
+export const objectRecordsIdsMultiSelecComponentState = createComponentState<
   string[]
 >({
   key: 'objectRecordsIdsMultiSelectComponentState',

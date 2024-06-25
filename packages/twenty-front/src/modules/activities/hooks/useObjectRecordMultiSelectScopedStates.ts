@@ -1,4 +1,4 @@
-import { objectRecordsIdsMultiSelecComponenttState } from '@/activities/states/objectRecordsIdsMultiSelectComponentState';
+import { objectRecordsIdsMultiSelecComponentState } from '@/activities/states/objectRecordsIdsMultiSelectComponentState';
 import { objectRecordMultiSelectCheckedRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectCheckedRecordsIdsComponentState';
 import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
 import { recordMultiSelectIsLoadingComponentState } from '@/object-record/record-field/states/recordMultiSelectIsLoadingComponentState';
@@ -7,7 +7,7 @@ import { extractComponentState } from '@/ui/utilities/state/component-state/util
 
 export const useObjectRecordMultiSelectScopedStates = (scopeId: string) => {
   const objectRecordsIdsMultiSelectState = extractComponentState(
-    objectRecordsIdsMultiSelecComponenttState,
+    objectRecordsIdsMultiSelecComponentState,
     scopeId,
   );
 

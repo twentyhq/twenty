@@ -36,7 +36,7 @@ export const ActivityTargetObjectRecordEffect = ({
 
   useEffect(() => {
     updateActivityTargets(activityTargetWithTargetRecords);
-  });
+  }, [activityTargetWithTargetRecords, updateActivityTargets]);
 
   return <></>;
 };
