@@ -60,7 +60,7 @@ export class CanAccessCalendarEventService {
 
     const calendarChannelsConnectedAccounts =
       await this.connectedAccountRepository.getByIds(
-        calendarChannels.map((channel: any) => channel.connectedAccountId),
+        calendarChannels.map((channel) => channel.connectedAccountId),
         workspaceId,
       );
 
