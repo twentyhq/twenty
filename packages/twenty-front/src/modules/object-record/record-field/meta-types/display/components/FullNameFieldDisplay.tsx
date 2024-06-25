@@ -4,11 +4,11 @@ import { useFullNameFieldDisplay } from '@/object-record/record-field/meta-types
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
 
 export const FullNameFieldDisplay = () => {
-  const { fieldValue } = useFullNameFieldDisplay();
+  const { fieldValue, maxWidth } = useFullNameFieldDisplay();
 
   const content = [fieldValue?.firstName, fieldValue?.lastName]
     .filter(isNonEmptyString)
     .join(' ');
 
-  return <TextDisplay text={content} />;
+  return <TextDisplay text={content} maxWidth={maxWidth} />;
 };

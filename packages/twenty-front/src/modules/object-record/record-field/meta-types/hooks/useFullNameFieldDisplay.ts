@@ -6,7 +6,7 @@ import { useRecordFieldValue } from '@/object-record/record-store/contexts/Recor
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useFullNameFieldDisplay = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { entityId, fieldDefinition, maxWidth } = useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -18,5 +18,6 @@ export const useFullNameFieldDisplay = () => {
   return {
     fieldDefinition,
     fieldValue,
+    maxWidth,
   };
 };
