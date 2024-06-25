@@ -40,6 +40,7 @@ export class CanAccessCalendarEventService {
           ),
         ),
       },
+      relations: ['connectedAccount'],
     });
 
     const calendarChannelsGroupByVisibility = groupBy(
