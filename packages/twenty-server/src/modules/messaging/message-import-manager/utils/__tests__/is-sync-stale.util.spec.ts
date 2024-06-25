@@ -27,8 +27,8 @@ describe('isSyncStale', () => {
   it('should return false if syncStageStartedAt is invalid', () => {
     const syncStageStartedAt = 'invalid-date';
 
-    const result = isSyncStale(syncStageStartedAt);
-
-    expect(result).toBe(false);
+    expect(() => {
+      isSyncStale(syncStageStartedAt);
+    }).toThrow('Invalid date format');
   });
 });
