@@ -3,6 +3,7 @@ import { ThemeColor } from 'twenty-ui';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { WithNarrowedStringLiteralProperty } from '~/types/WithNarrowedStringLiteralProperty';
 
 import { CurrencyCode } from './CurrencyCode';
 
@@ -106,18 +107,22 @@ export type FieldRelationMetadata = {
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
-  relationType: FieldDefinitionRelationType;
+  relationType?: FieldDefinitionRelationType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
 };
 
-export type FieldRelationOneMetadata = FieldRelationMetadata & {
-  relationType: 'TO_ONE_OBJECT';
-};
+export type FieldRelationOneMetadata = WithNarrowedStringLiteralProperty<
+  FieldRelationMetadata,
+  'relationType',
+  'TO_ONE_OBJECT'
+>;
 
-export type FieldRelationManyMetadata = FieldRelationMetadata & {
-  relationType: 'FROM_MANY_OBJECTS';
-};
+export type FieldRelationManyMetadata = WithNarrowedStringLiteralProperty<
+  FieldRelationMetadata,
+  'relationType',
+  'FROM_MANY_OBJECTS'
+>;
 
 export type FieldSelectMetadata = {
   objectMetadataNameSingular?: string;
