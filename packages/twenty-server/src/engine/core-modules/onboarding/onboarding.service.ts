@@ -9,10 +9,11 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
@@ -38,8 +39,8 @@ export class OnboardingService {
     private readonly keyValuePairService: KeyValuePairService<OnboardingKeyValueType>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
-    private readonly workspaceMemberRepository: WorkspaceMemberRepository,
+    @InjectWorkspaceRepository(WorkspaceMemberWorkspaceEntity)
+    private readonly workspaceMemberRepository: WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
   ) {}
 
   private async isSubscriptionIncompleteOnboardingStatus(user: User) {
@@ -56,10 +57,9 @@ export class OnboardingService {
   }
 
   private async isProfileCreationOnboardingStatus(user: User) {
-    const workspaceMember = await this.workspaceMemberRepository.getById(
-      user.id,
-      user.defaultWorkspaceId,
-    );
+    const workspaceMember = await this.workspaceMemberRepository.findOneBy({
+      userId: user.id,
+    });
 
     return (
       workspaceMember &&
