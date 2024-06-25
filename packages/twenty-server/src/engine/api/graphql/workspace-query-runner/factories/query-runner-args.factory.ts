@@ -10,7 +10,10 @@ import {
   ResolverArgs,
   ResolverArgsType,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import {
+  Record,
+  RecordFilter,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { hasPositionField } from 'src/engine/metadata-modules/object-metadata/utils/has-position-field.util';
@@ -95,7 +98,7 @@ export class QueryRunnerArgsFactory {
   }
 
   private async overrideDataByFieldMetadata(
-    data: Record<string, any> | undefined,
+    data: Partial<Record> | undefined,
     options: WorkspaceQueryRunnerOptions,
     fieldMetadataMap: Map<string, FieldMetadataInterface>,
     argPositionBackfillInput: ArgPositionBackfillInput,

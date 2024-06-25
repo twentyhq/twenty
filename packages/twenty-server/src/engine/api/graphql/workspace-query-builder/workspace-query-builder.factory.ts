@@ -77,14 +77,14 @@ export class WorkspaceQueryBuilderFactory {
   }
 
   createMany<Record extends IRecord = IRecord>(
-    args: CreateManyResolverArgs<Record>,
+    args: CreateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryBuilderOptions,
   ): Promise<string> {
     return this.createManyQueryFactory.create<Record>(args, options);
   }
 
   updateOne<Record extends IRecord = IRecord>(
-    initialArgs: UpdateOneResolverArgs<Record>,
+    initialArgs: UpdateOneResolverArgs<Partial<Record>>,
     options: WorkspaceQueryBuilderOptions,
   ): Promise<string> {
     return this.updateOneQueryFactory.create<Record>(initialArgs, options);
@@ -101,7 +101,7 @@ export class WorkspaceQueryBuilderFactory {
     Record extends IRecord = IRecord,
     Filter extends RecordFilter = RecordFilter,
   >(
-    args: UpdateManyResolverArgs<Record, Filter>,
+    args: UpdateManyResolverArgs<Partial<Record>, Filter>,
     options: UpdateManyQueryFactoryOptions,
   ): Promise<string> {
     return this.updateManyQueryFactory.create(args, options);

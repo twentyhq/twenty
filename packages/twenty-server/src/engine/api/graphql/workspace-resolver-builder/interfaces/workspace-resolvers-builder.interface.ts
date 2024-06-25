@@ -1,6 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 
 import {
+  Record,
   RecordFilter,
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
@@ -39,35 +40,35 @@ export interface FindOneResolverArgs<Filter = any> {
 }
 
 export interface FindDuplicatesResolverArgs<
-  Data extends Record<string, any> = Record<string, any>,
+  Data extends Partial<Record> = Partial<Record>,
 > {
   ids?: string[];
   data?: Data[];
 }
 
 export interface CreateOneResolverArgs<
-  Data extends Record<string, any> = Record<string, any>,
+  Data extends Partial<Record> = Partial<Record>,
 > {
   data: Data;
   upsert?: boolean;
 }
 
 export interface CreateManyResolverArgs<
-  Data extends Record<string, any> = Record<string, any>,
+  Data extends Partial<Record> = Partial<Record>,
 > {
   data: Data[];
   upsert?: boolean;
 }
 
 export interface UpdateOneResolverArgs<
-  Data extends Record<string, any> = Record<string, any>,
+  Data extends Partial<Record> = Partial<Record>,
 > {
   id: string;
   data: Data;
 }
 
 export interface UpdateManyResolverArgs<
-  Data extends Record<string, any> = Record<string, any>,
+  Data extends Partial<Record> = Partial<Record>,
   Filter = any,
 > {
   filter: Filter;

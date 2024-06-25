@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import {
+  Record as IRecord,
+  Record,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 import { settings } from 'src/engine/constants/settings';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -44,7 +47,7 @@ export class DuplicateService {
 
   buildDuplicateConditionForGraphQL(
     objectMetadata: ObjectMetadataInterface,
-    argsData?: Record<string, any>,
+    argsData?: Partial<Record>,
     filteringByExistingRecordId?: string,
   ) {
     if (!argsData) {
@@ -99,7 +102,7 @@ export class DuplicateService {
    * at the SQL layer instead of doing it at the GraphQL layer
    * 
   async findDuplicate(
-    data: Record<string, any>,
+    data: Partial<Record>,
     objectMetadata: ObjectMetadataInterface,
     workspaceId: string,
   ) {
@@ -129,7 +132,7 @@ export class DuplicateService {
 
   private buildDuplicateConditionForUpsert(
     objectMetadata: ObjectMetadataInterface,
-    data: Record<string, any>,
+    data: Partial<Record>,
   ) {
     const criteriaCollection = this.getApplicableDuplicateCriteriaCollection(
       objectMetadata,

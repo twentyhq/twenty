@@ -169,7 +169,7 @@ export class WorkspaceQueryRunnerService {
   }
 
   async findDuplicates<TRecord extends IRecord = IRecord>(
-    args: FindDuplicatesResolverArgs<TRecord>,
+    args: FindDuplicatesResolverArgs<Partial<TRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<TRecord> | undefined> {
     if (!args.data && !args.ids) {
@@ -231,7 +231,7 @@ export class WorkspaceQueryRunnerService {
   }
 
   async createMany<Record extends IRecord = IRecord>(
-    args: CreateManyResolverArgs<Record>,
+    args: CreateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
@@ -300,7 +300,7 @@ export class WorkspaceQueryRunnerService {
   }
 
   async upsertMany<Record extends IRecord = IRecord>(
-    args: CreateManyResolverArgs<Record>,
+    args: CreateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const ids = args.data
@@ -310,7 +310,7 @@ export class WorkspaceQueryRunnerService {
     const existingRecords =
       ids.length > 0
         ? await this.duplicateService.findExistingRecords(
-            ids,
+            ids as string[],
             options.objectMetadataItem,
             options.workspaceId,
           )
@@ -321,7 +321,7 @@ export class WorkspaceQueryRunnerService {
     );
 
     const results: Record[] = [];
-    const recordsToCreate: Record[] = [];
+    const recordsToCreate: Partial<Record>[] = [];
 
     for (const payload of args.data) {
       if (payload.id && existingRecordsMap.has(payload.id)) {
@@ -340,7 +340,7 @@ export class WorkspaceQueryRunnerService {
 
     if (recordsToCreate.length > 0) {
       const createResults = await this.createMany(
-        { data: recordsToCreate },
+        { data: recordsToCreate } as CreateManyResolverArgs<Partial<Record>>,
         options,
       );
 
@@ -353,7 +353,7 @@ export class WorkspaceQueryRunnerService {
   }
 
   async createOne<Record extends IRecord = IRecord>(
-    args: CreateOneResolverArgs<Record>,
+    args: CreateOneResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const results = await this.createMany(
@@ -365,7 +365,7 @@ export class WorkspaceQueryRunnerService {
   }
 
   async updateOne<Record extends IRecord = IRecord>(
-    args: UpdateOneResolverArgs<Record>,
+    args: UpdateOneResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
@@ -423,7 +423,7 @@ export class WorkspaceQueryRunnerService {
   }
 
   async updateMany<Record extends IRecord = IRecord>(
-    args: UpdateManyResolverArgs<Record>,
+    args: UpdateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { userId, workspaceId, objectMetadataItem } = options;

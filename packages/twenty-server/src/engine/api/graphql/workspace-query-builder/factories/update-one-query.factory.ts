@@ -20,7 +20,7 @@ export class UpdateOneQueryFactory {
   ) {}
 
   async create<Record extends IRecord = IRecord>(
-    args: UpdateOneResolverArgs<Record>,
+    args: UpdateOneResolverArgs<Partial<Record>>,
     options: WorkspaceQueryBuilderOptions,
   ) {
     const fieldsString = await this.fieldsStringFactory.create(
