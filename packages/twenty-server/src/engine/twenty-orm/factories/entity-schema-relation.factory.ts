@@ -4,6 +4,7 @@ import { EntitySchemaRelationOptions } from 'typeorm';
 import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 
 import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
+import { WorkspaceJoinColumnsMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-join-columns-metadata-args.interface';
 
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -18,6 +19,7 @@ export class EntitySchemaRelationFactory {
     // eslint-disable-next-line @typescript-eslint/ban-types
     target: Function,
     relationMetadataArgsCollection: WorkspaceRelationMetadataArgs[],
+    joinColumnsMetadataArgsCollection: WorkspaceJoinColumnsMetadataArgs[],
   ): EntitySchemaRelationMap {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
@@ -27,16 +29,26 @@ export class EntitySchemaRelationFactory {
       const oppositeObjectName = convertClassNameToObjectMetadataName(
         oppositeTarget.name,
       );
+      const joinColumnsMetadataArgs = joinColumnsMetadataArgsCollection.find(
+        (joinColumnsMetadataArgs) =>
+          joinColumnsMetadataArgs.relationName === relationMetadataArgs.name,
+      );
 
       const relationType = this.getRelationType(relationMetadataArgs);
+
+      if (!joinColumnsMetadataArgs) {
+        throw new Error(
+          `Join columns metadata args are missing for relation ${relationMetadataArgs.name}`,
+        );
+      }
 
       entitySchemaRelationMap[relationMetadataArgs.name] = {
         type: relationType,
         target: oppositeObjectName,
         inverseSide: relationMetadataArgs.inverseSideFieldKey ?? objectName,
-        joinColumn: relationMetadataArgs.joinColumn
+        joinColumn: joinColumnsMetadataArgs.joinColumn
           ? {
-              name: relationMetadataArgs.joinColumn,
+              name: joinColumnsMetadataArgs.joinColumn,
             }
           : undefined,
       };

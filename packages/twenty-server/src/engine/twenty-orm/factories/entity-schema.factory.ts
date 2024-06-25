@@ -37,6 +37,7 @@ export class EntitySchemaFactory {
     const relations = this.entitySchemaRelationFactory.create(
       target,
       relationMetadataArgsCollection,
+      joinColumnsMetadataArgsCollection,
     );
 
     const entitySchema = new EntitySchema({
