@@ -10,26 +10,10 @@ import {
   UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-export type ExecutePreHookMethod =
-  | 'createMany'
-  | 'createOne'
-  | 'deleteMany'
-  | 'deleteOne'
-  | 'findMany'
-  | 'findOne'
-  | 'findDuplicates'
-  | 'updateMany'
-  | 'updateOne';
-
-export type ObjectName = string;
-
-export type HookName = string;
-
-export type WorkspaceQueryHook = {
-  [key in ObjectName]: {
-    [key in ExecutePreHookMethod]?: HookName[];
-  };
-};
+export enum WorkspaceQueryHookType {
+  PreHook = 'PreHook',
+  PostHook = 'PostHook',
+}
 
 export type WorkspacePreQueryHookPayload<T> = T extends 'createMany'
   ? CreateManyResolverArgs

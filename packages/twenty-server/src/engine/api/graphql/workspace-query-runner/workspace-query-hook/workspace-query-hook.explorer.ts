@@ -3,12 +3,12 @@ import { DiscoveryService, ModuleRef, createContextId } from '@nestjs/core';
 import { Module } from '@nestjs/core/injector/module';
 import { Injector } from '@nestjs/core/injector/injector';
 
-import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-query-hook.type';
-import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-query-hook.interface';
+import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
-import { WorkspaceQueryHookMetadataAccessor } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/workspace-query-hook-metadata.accessor';
-import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/storage/workspace-query-hook.storage';
-import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/decorators/workspace-query-hook.decorator';
+import { WorkspaceQueryHookMetadataAccessor } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook-metadata.accessor';
+import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage';
+import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 
 @Injectable()
 export class WorkspaceQueryHookExplorer implements OnModuleInit {
@@ -27,7 +27,6 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
   }
 
   async explore() {
-    console.log('EXPLORE !');
     const hooks = this.discoveryService
       .getProviders()
       .filter((wrapper) =>
@@ -37,8 +36,6 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
             : wrapper.metatype,
         ),
       );
-
-    console.log('HOOKS: ', hooks.length);
 
     for (const hook of hooks) {
       const { instance, metatype } = hook;
