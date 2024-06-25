@@ -1,6 +1,7 @@
 import { ThemeColor } from 'twenty-ui';
 
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
+import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 
 import { CurrencyCode } from './CurrencyCode';
@@ -99,30 +100,23 @@ export type FieldDefinitionRelationType =
   | 'TO_MANY_OBJECTS'
   | 'TO_ONE_OBJECT';
 
-export type FieldRelationMetadata =
-  | FieldRelationManyMetadata
-  | FieldRelationOneMetadata;
-
-export type FieldRelationOneMetadata = {
+export type FieldRelationMetadata = {
   fieldName: string;
   objectMetadataNameSingular?: string;
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
   relationObjectMetadataNameSingular: string;
-  relationType?: 'TO_ONE_OBJECT';
+  relationType: FieldDefinitionRelationType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
 };
 
-export type FieldRelationManyMetadata = {
-  fieldName: string;
-  objectMetadataNameSingular?: string;
-  relationFieldMetadataId: string;
-  relationObjectMetadataNamePlural: string;
-  relationObjectMetadataNameSingular: string;
-  relationType?: 'FROM_MANY_OBJECTS';
-  targetFieldMetadataName?: string;
-  useEditButton?: boolean;
+export type FieldRelationOneMetadata = FieldRelationMetadata & {
+  relationType: 'TO_ONE_OBJECT';
+};
+
+export type FieldRelationManyMetadata = FieldRelationMetadata & {
+  relationType: 'FROM_MANY_OBJECTS';
 };
 
 export type FieldSelectMetadata = {
@@ -196,7 +190,6 @@ export type FieldRelationFromManyValue = EntityForSelect[] | [];
 export type FieldRelationValue<
   T extends FieldRelationToOneValue | FieldRelationFromManyValue,
 > = T;
-// See https://zod.dev/?id=json-type
-type Literal = string | number | boolean | null;
-export type Json = Literal | { [key: string]: Json } | Json[];
+
+export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
