@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
@@ -7,7 +6,6 @@ import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isI
 import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
 import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
-import { ThemeContext } from '@ui/theme';
 import { Nullable, stringToHslColor } from '@ui/utilities';
 
 const StyledAvatar = styled.div<{
@@ -55,6 +53,7 @@ export type AvatarProps = {
   onClick?: () => void;
 };
 
+// TODO: Remove recoil because we don't want it into twenty-ui and find a solution for invalid avatar urls
 export const Avatar = ({
   avatarUrl,
   size = 'md',
@@ -65,8 +64,6 @@ export const Avatar = ({
   color,
   backgroundColor,
 }: AvatarProps) => {
-  const { theme } = useContext(ThemeContext);
-
   const [invalidAvatarUrls, setInvalidAvatarUrls] = useRecoilState(
     invalidAvatarUrlsState,
   );
