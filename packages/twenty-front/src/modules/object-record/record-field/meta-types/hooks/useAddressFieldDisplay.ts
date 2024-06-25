@@ -6,7 +6,7 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { FieldAddressValue } from '../../types/FieldMetadata';
 
 export const useAddressFieldDisplay = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { entityId, fieldDefinition, maxWidth } = useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -18,5 +18,6 @@ export const useAddressFieldDisplay = () => {
   return {
     fieldDefinition,
     fieldValue,
+    maxWidth,
   };
 };

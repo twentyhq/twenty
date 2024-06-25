@@ -4,7 +4,7 @@ import { useAddressFieldDisplay } from '@/object-record/record-field/meta-types/
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
 
 export const AddressFieldDisplay = () => {
-  const { fieldValue } = useAddressFieldDisplay();
+  const { fieldValue, maxWidth } = useAddressFieldDisplay();
 
   const content = [
     fieldValue?.addressStreet1,
@@ -15,5 +15,5 @@ export const AddressFieldDisplay = () => {
     .filter(isNonEmptyString)
     .join(', ');
 
-  return <TextDisplay text={content} />;
+  return <TextDisplay text={content} maxWidth={maxWidth} />;
 };
