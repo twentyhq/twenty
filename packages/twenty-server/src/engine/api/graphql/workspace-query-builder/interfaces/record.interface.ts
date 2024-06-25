@@ -23,5 +23,4 @@ export type RecordOrderBy = Array<{
 export interface RecordDuplicateCriteria {
   objectName: string;
   columnNames: string[];
-  useAsUniqueKeyForUpsert: boolean;
 }
