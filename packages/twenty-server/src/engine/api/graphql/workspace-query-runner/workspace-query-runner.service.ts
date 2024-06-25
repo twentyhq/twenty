@@ -660,18 +660,14 @@ export class WorkspaceQueryRunnerService {
     )}Collection`;
     const result = !isMultiQuery
       ? graphqlResult?.[0]?.resolve?.data?.[entityKey]
-      : {
-          edges: Object.keys(graphqlResult?.[0]?.resolve?.data).reduce(
-            (acc: IRecord[], dataItem, index) => {
-              acc.push(
-                graphqlResult?.[0]?.resolve?.data[`${entityKey}${index}`].edges,
-              );
+      : Object.keys(graphqlResult?.[0]?.resolve?.data).reduce(
+          (acc: IRecord[], dataItem, index) => {
+            acc.push(graphqlResult?.[0]?.resolve?.data[`${entityKey}${index}`]);
 
-              return acc;
-            },
-            [],
-          )[0],
-        };
+            return acc;
+          },
+          [],
+        );
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
     if (

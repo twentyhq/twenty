@@ -5,7 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
-import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
+import { RecordGqlOperationFindDuplicatesResult } from '@/object-record/graphql/types/RecordGqlOperationFindDuplicatesResults';
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
@@ -19,7 +19,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
   onCompleted,
 }: ObjectMetadataItemIdentifier & {
   objectRecordIds: string[] | undefined;
-  onCompleted?: (data: RecordGqlConnection) => void;
+  onCompleted?: (data: RecordGqlConnection[]) => void;
   skip?: boolean;
 }) => {
   const findDuplicateQueryStateIdentifier = objectNameSingular;
@@ -38,46 +38,48 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
     objectMetadataItem.nameSingular,
   );
 
-  const { data, loading, error } = useQuery<RecordGqlOperationFindManyResult>(
-    findDuplicateRecordsQuery,
-    {
-      variables: {
-        ids: objectRecordIds,
+  const { data, loading, error } =
+    useQuery<RecordGqlOperationFindDuplicatesResult>(
+      findDuplicateRecordsQuery,
+      {
+        variables: {
+          ids: objectRecordIds,
+        },
+        onCompleted: (data) => {
+          onCompleted?.(data[queryResponseField]);
+        },
+        onError: (error) => {
+          logError(
+            `useFindDuplicateRecords for "${objectMetadataItem.nameSingular}" error : ` +
+              error,
+          );
+          enqueueSnackBar(
+            `Error during useFindDuplicateRecords for "${objectMetadataItem.nameSingular}", ${error.message}`,
+            {
+              variant: SnackBarVariant.Error,
+            },
+          );
+        },
       },
-      onCompleted: (data) => {
-        onCompleted?.(data[queryResponseField]);
-      },
-      onError: (error) => {
-        logError(
-          `useFindDuplicateRecords for "${objectMetadataItem.nameSingular}" error : ` +
-            error,
-        );
-        enqueueSnackBar(
-          `Error during useFindDuplicateRecords for "${objectMetadataItem.nameSingular}", ${error.message}`,
-          {
-            variant: SnackBarVariant.Error,
-          },
-        );
-      },
-    },
-  );
+    );
 
-  const objectRecordConnection = data?.[queryResponseField];
+  const objectResults = data?.[queryResponseField];
 
-  const records = useMemo(
+  const results = useMemo(
     () =>
-      objectRecordConnection
-        ? (getRecordsFromRecordConnection({
-            recordConnection: objectRecordConnection,
-          }) as T[])
-        : [],
-    [objectRecordConnection],
+      objectResults?.map((result: RecordGqlConnection) => {
+        return result
+          ? (getRecordsFromRecordConnection({
+              recordConnection: result,
+            }) as T[])
+          : [];
+      }),
+    [objectResults],
   );
 
   return {
     objectMetadataItem,
-    records,
-    totalCount: objectRecordConnection?.totalCount,
+    results,
     loading,
     error,
     queryStateIdentifier: findDuplicateQueryStateIdentifier,
