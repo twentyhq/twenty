@@ -102,9 +102,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   }
 
   public async getWorkspaceMemberCount(): Promise<number | undefined> {
-    const workspaceMemberCount = await this.workspaceMemberRepository.count();
+    if (!this.workspaceMemberRepository) {
+      return undefined;
+    }
 
-    return workspaceMemberCount;
+    return await this.workspaceMemberRepository.count();
   }
 
   async checkUserWorkspaceExists(
