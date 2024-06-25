@@ -1,14 +1,20 @@
-import React, { ReactElement, useContext, useEffect, useState } from 'react';
+import React, { ReactElement, useContext } from 'react';
 import { clsx } from 'clsx';
+import { useRecoilValue } from 'recoil';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellSoftFocusMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSoftFocusMode';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
+import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
+import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
+import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
@@ -40,19 +46,35 @@ export const RecordTableCellContainer = ({
   const { setIsFocused } = useFieldFocus();
   const { openTableCell } = useOpenRecordTableCellFromCell();
 
-  const { isSelected, recordId, isPendingRow } = useContext(
-    RecordTableRowContext,
+  const { isSelected, recordId } = useContext(RecordTableRowContext);
+
+  const { onMoveSoftFocusToCell, onContextMenu, onCellMouseEnter } =
+    useContext(RecordTableContext);
+
+  const tableScopeId = useAvailableScopeIdOrThrow(
+    RecordTableScopeInternalContext,
+    getScopeIdOrUndefinedFromComponentId(),
   );
-  const { isLabelIdentifier } = useContext(FieldContext);
-  const { onContextMenu, onCellMouseEnter } = useContext(RecordTableContext);
 
-  const shouldBeInitiallyInEditMode =
-    isPendingRow === true && isLabelIdentifier;
+  const isTableCellInEditModeFamilyState = extractComponentFamilyState(
+    isTableCellInEditModeComponentFamilyState,
+    tableScopeId,
+  );
 
-  const [hasSoftFocus, setHasSoftFocus] = useState(false);
-  const [isInEditMode, setIsInEditMode] = useState(shouldBeInitiallyInEditMode);
+  const isSoftFocusOnTableCellFamilyState = extractComponentFamilyState(
+    isSoftFocusOnTableCellComponentFamilyState,
+    tableScopeId,
+  );
 
   const cellPosition = useCurrentTableCellPosition();
+
+  const isInEditMode = useRecoilValue(
+    isTableCellInEditModeFamilyState(cellPosition),
+  );
+
+  const hasSoftFocus = useRecoilValue(
+    isSoftFocusOnTableCellFamilyState(cellPosition),
+  );
 
   const handleContextMenu = (event: React.MouseEvent) => {
     onContextMenu(event, recordId);
@@ -67,58 +89,15 @@ export const RecordTableCellContainer = ({
   };
 
   const handleContainerMouseLeave = () => {
-    setHasSoftFocus(false);
     setIsFocused(false);
   };
 
   const handleContainerClick = () => {
     if (!hasSoftFocus) {
+      onMoveSoftFocusToCell(cellPosition);
       openTableCell();
     }
   };
-
-  useEffect(() => {
-    const customEventListener = (event: any) => {
-      event.stopPropagation();
-
-      const newHasSoftFocus = event.detail;
-
-      setHasSoftFocus(newHasSoftFocus);
-      setIsFocused(newHasSoftFocus);
-    };
-
-    document.addEventListener(
-      `soft-focus-move-${cellPosition.row}:${cellPosition.column}`,
-      customEventListener,
-    );
-
-    return () => {
-      document.removeEventListener(
-        `soft-focus-move-${cellPosition.row}:${cellPosition.column}`,
-        customEventListener,
-      );
-    };
-  }, [cellPosition, setIsFocused]);
-
-  useEffect(() => {
-    const customEventListener = (event: any) => {
-      const newIsInEditMode = event.detail;
-
-      setIsInEditMode(newIsInEditMode);
-    };
-
-    document.addEventListener(
-      `edit-mode-change-${cellPosition.row}:${cellPosition.column}`,
-      customEventListener,
-    );
-
-    return () => {
-      document.removeEventListener(
-        `edit-mode-change-${cellPosition.row}:${cellPosition.column}`,
-        customEventListener,
-      );
-    };
-  }, [cellPosition]);
 
   return (
     <td
