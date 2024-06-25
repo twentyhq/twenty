@@ -9,6 +9,7 @@ import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.ser
 import {
   BillingSubscription,
   SubscriptionInterval,
+  SubscriptionStatus,
 } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -87,7 +88,7 @@ export class BillingService {
   }) {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
-        where: { ...criteria, status: Not('canceled') },
+        where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
         relations: ['billingSubscriptionItems'],
       });
 

@@ -26,6 +26,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import {
   OnboardingStatus,
+  SubscriptionInterval,
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
@@ -40,21 +41,21 @@ const StyledInvisibleChat = styled.div`
 `;
 
 type SwitchInfo = {
-  newInterval: string;
+  newInterval: SubscriptionInterval;
   to: string;
   from: string;
   impact: string;
 };
 
 const MONTHLY_SWITCH_INFO: SwitchInfo = {
-  newInterval: 'year',
+  newInterval: SubscriptionInterval.Year,
   to: 'to yearly',
   from: 'from monthly to yearly',
   impact: 'You will be charged immediately for the full year.',
 };
 
 const YEARLY_SWITCH_INFO: SwitchInfo = {
-  newInterval: 'month',
+  newInterval: SubscriptionInterval.Month,
   to: 'to monthly',
   from: 'from yearly to monthly',
   impact: 'Your credit balance will be used to pay the monthly bills.',
@@ -71,7 +72,8 @@ export const SettingsBilling = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const switchingInfo =
-    currentWorkspace?.currentBillingSubscription?.interval === 'year'
+    currentWorkspace?.currentBillingSubscription?.interval ===
+    SubscriptionInterval.Year
       ? SWITCH_INFOS.year
       : SWITCH_INFOS.month;
   const [isSwitchingIntervalModalOpen, setIsSwitchingIntervalModalOpen] =

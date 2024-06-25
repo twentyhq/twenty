@@ -19,6 +19,7 @@ import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { CAL_LINK } from '@/ui/navigation/link/constants/Cal';
 import {
   ProductPriceEntity,
+  SubscriptionInterval,
   useCheckoutSessionMutation,
   useGetProductPricesQuery,
 } from '~/generated/graphql';
@@ -75,7 +76,7 @@ const benefits = [
 export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
 
-  const [planSelected, setPlanSelected] = useState('month');
+  const [planSelected, setPlanSelected] = useState(SubscriptionInterval.Month);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -87,7 +88,7 @@ export const ChooseYourPlan = () => {
 
   const [checkoutSession] = useCheckoutSessionMutation();
 
-  const handlePlanChange = (type?: string) => {
+  const handlePlanChange = (type?: SubscriptionInterval) => {
     return () => {
       if (isNonEmptyString(type) && planSelected !== type) {
         setPlanSelected(type);
@@ -101,11 +102,11 @@ export const ChooseYourPlan = () => {
     price: ProductPriceEntity,
     prices: ProductPriceEntity[],
   ): string => {
-    if (price.recurringInterval !== 'year') {
+    if (price.recurringInterval !== SubscriptionInterval.Year) {
       return 'Cancel anytime';
     }
     const monthPrice = prices.filter(
-      (price) => price.recurringInterval === 'month',
+      (price) => price.recurringInterval === SubscriptionInterval.Month,
     )?.[0];
     if (
       isDefined(monthPrice) &&
