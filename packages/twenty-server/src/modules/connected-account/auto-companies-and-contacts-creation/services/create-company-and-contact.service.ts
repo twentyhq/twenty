@@ -17,7 +17,6 @@ import { getUniqueContactsAndHandles } from 'src/modules/connected-account/auto-
 import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
 import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
@@ -46,7 +45,7 @@ export class CreateCompanyAndContactService {
     contactsToCreate: Contacts,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<PersonWorkspaceEntity>[]> {
+  ): Promise<PersonWorkspaceEntity[]> {
     if (!contactsToCreate || contactsToCreate.length === 0) {
       return [];
     }
@@ -136,9 +135,8 @@ export class CreateCompanyAndContactService {
     contactsToCreate: Contacts,
     workspaceId: string,
   ) {
-    let updatedMessageParticipants: ObjectRecord<MessageParticipantWorkspaceEntity>[] =
-      [];
-    let updatedCalendarEventParticipants: ObjectRecord<CalendarEventParticipantWorkspaceEntity>[] =
+    let updatedMessageParticipants: MessageParticipantWorkspaceEntity[] = [];
+    let updatedCalendarEventParticipants: CalendarEventParticipantWorkspaceEntity[] =
       [];
 
     await this.workspaceDataSource?.transaction(
