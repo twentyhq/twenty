@@ -32,10 +32,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     return;
   }
 
-  if (
-    onboardingStatus === OnboardingStatus.UserCreation &&
-    !isMatchingOngoingUserCreationRoute
-  ) {
+  if (!onboardingStatus && !isMatchingOngoingUserCreationRoute) {
     return AppPath.SignInUp;
   }
 

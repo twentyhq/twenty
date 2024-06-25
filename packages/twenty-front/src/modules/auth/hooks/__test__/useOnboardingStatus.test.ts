@@ -37,29 +37,25 @@ const renderHooks = () => {
 };
 
 describe('useOnboardingStatus', () => {
-  it(`should return "${OnboardingStatus.UserCreation}" when user is not logged in`, async () => {
+  it(`should return "undefined" when user is not logged in`, async () => {
     const { result } = renderHooks();
-    expect(result.current.onboardingStatus).toBe(OnboardingStatus.UserCreation);
+    expect(result.current.onboardingStatus).toBe(undefined);
   });
 
-  Object.values(OnboardingStatus)
-    .filter(
-      (onboardingStatus) => onboardingStatus !== OnboardingStatus.UserCreation,
-    )
-    .forEach((onboardingStatus) => {
-      it(`should return "${onboardingStatus}"`, async () => {
-        const { result } = renderHooks();
-        const { setTokenPair, setCurrentUser } = result.current;
+  Object.values(OnboardingStatus).forEach((onboardingStatus) => {
+    it(`should return "${onboardingStatus}"`, async () => {
+      const { result } = renderHooks();
+      const { setTokenPair, setCurrentUser } = result.current;
 
-        act(() => {
-          setTokenPair(tokenPair);
-          setCurrentUser({
-            ...currentUser,
-            onboardingStatus,
-          });
+      act(() => {
+        setTokenPair(tokenPair);
+        setCurrentUser({
+          ...currentUser,
+          onboardingStatus,
         });
-
-        expect(result.current.onboardingStatus).toBe(onboardingStatus);
       });
+
+      expect(result.current.onboardingStatus).toBe(onboardingStatus);
     });
+  });
 });

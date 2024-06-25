@@ -8,7 +8,7 @@ export const useOnboardingStatus = (): OnboardingStatus | null | undefined => {
   const currentUser = useRecoilValue(currentUserState);
   const isLoggedIn = useIsLogged();
   if (!isLoggedIn) {
-    return OnboardingStatus.UserCreation;
+    return undefined;
   }
   return currentUser?.onboardingStatus;
 };

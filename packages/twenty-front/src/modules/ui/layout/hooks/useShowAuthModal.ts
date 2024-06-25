@@ -24,8 +24,8 @@ export const useShowAuthModal = () => {
       return isDefaultLayoutAuthModalVisible;
     }
     if (
+      !onboardingStatus ||
       onboardingStatus === OnboardingStatus.SubscriptionIncomplete ||
-      onboardingStatus === OnboardingStatus.UserCreation ||
       onboardingStatus === OnboardingStatus.ProfileCreation ||
       onboardingStatus === OnboardingStatus.WorkspaceActivation ||
       onboardingStatus === OnboardingStatus.SyncEmail ||

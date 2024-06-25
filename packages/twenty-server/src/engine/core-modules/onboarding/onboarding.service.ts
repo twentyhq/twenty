@@ -132,11 +132,7 @@ export class OnboardingService {
     );
   }
 
-  async getOnboardingStatus(user?: User) {
-    if (!user) {
-      return OnboardingStatus.USER_CREATION;
-    }
-
+  async getOnboardingStatus(user: User) {
     if (await this.isSubscriptionIncompleteOnboardingStatus(user)) {
       return OnboardingStatus.SUBSCRIPTION_INCOMPLETE;
     }
