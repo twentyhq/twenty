@@ -472,7 +472,6 @@ export enum OnboardingStatus {
   SubscriptionPastDue = 'SUBSCRIPTION_PAST_DUE',
   SubscriptionUnpaid = 'SUBSCRIPTION_UNPAID',
   SyncEmail = 'SYNC_EMAIL',
-  UserCreation = 'USER_CREATION',
   WorkspaceActivation = 'WORKSPACE_ACTIVATION'
 }
 

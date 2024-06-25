@@ -992,6 +992,12 @@ export type CalendarChannel = {
   isSyncEnabled?: Maybe<Scalars['Boolean']>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: Maybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: Maybe<CalendarChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: Maybe<Scalars['DateTime']>;
+  /** Sync status */
+  syncStatus?: Maybe<CalendarChannelSyncStatusEnum>;
   /** Throttle Failure Count */
   throttleFailureCount?: Maybe<Scalars['Float']>;
   /** Update date */
@@ -1036,6 +1042,12 @@ export type CalendarChannelCreateInput = {
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: InputMaybe<CalendarChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<Scalars['DateTime']>;
+  /** Sync status */
+  syncStatus?: InputMaybe<CalendarChannelSyncStatusEnum>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
   /** Update date */
@@ -1170,6 +1182,12 @@ export type CalendarChannelFilterInput = {
   or?: InputMaybe<Array<InputMaybe<CalendarChannelFilterInput>>>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<StringFilter>;
+  /** Sync stage */
+  syncStage?: InputMaybe<CalendarChannelSyncStageEnumFilter>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<DateFilter>;
+  /** Sync status */
+  syncStatus?: InputMaybe<CalendarChannelSyncStatusEnumFilter>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<FloatFilter>;
   /** Update date */
@@ -1194,12 +1212,62 @@ export type CalendarChannelOrderByInput = {
   isSyncEnabled?: InputMaybe<OrderByDirection>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<OrderByDirection>;
+  /** Sync stage */
+  syncStage?: InputMaybe<OrderByDirection>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<OrderByDirection>;
+  /** Sync status */
+  syncStatus?: InputMaybe<OrderByDirection>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<OrderByDirection>;
   /** Update date */
   updatedAt?: InputMaybe<OrderByDirection>;
   /** Visibility */
   visibility?: InputMaybe<OrderByDirection>;
+};
+
+/** Sync stage */
+export enum CalendarChannelSyncStageEnum {
+  /** Calendar events import ongoing */
+  CalendarEventsImportOngoing = 'CALENDAR_EVENTS_IMPORT_ONGOING',
+  /** Calendar events import pending */
+  CalendarEventsImportPending = 'CALENDAR_EVENTS_IMPORT_PENDING',
+  /** Calendar event list fetch ongoing */
+  CalendarEventListFetchOngoing = 'CALENDAR_EVENT_LIST_FETCH_ONGOING',
+  /** Failed */
+  Failed = 'FAILED',
+  /** Full calendar event list fetch pending */
+  FullCalendarEventListFetchPending = 'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING',
+  /** Partial calendar event list fetch pending */
+  PartialCalendarEventListFetchPending = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING'
+}
+
+export type CalendarChannelSyncStageEnumFilter = {
+  eq?: InputMaybe<CalendarChannelSyncStageEnum>;
+  in?: InputMaybe<Array<InputMaybe<CalendarChannelSyncStageEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<CalendarChannelSyncStageEnum>;
+};
+
+/** Sync status */
+export enum CalendarChannelSyncStatusEnum {
+  /** Active */
+  Active = 'ACTIVE',
+  /** Failed Insufficient Permissions */
+  FailedInsufficientPermissions = 'FAILED_INSUFFICIENT_PERMISSIONS',
+  /** Failed Unknown */
+  FailedUnknown = 'FAILED_UNKNOWN',
+  /** Not Synced */
+  NotSynced = 'NOT_SYNCED',
+  /** Ongoing */
+  Ongoing = 'ONGOING'
+}
+
+export type CalendarChannelSyncStatusEnumFilter = {
+  eq?: InputMaybe<CalendarChannelSyncStatusEnum>;
+  in?: InputMaybe<Array<InputMaybe<CalendarChannelSyncStatusEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<CalendarChannelSyncStatusEnum>;
 };
 
 /** Calendar Channels */
@@ -1218,6 +1286,12 @@ export type CalendarChannelUpdateInput = {
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: InputMaybe<CalendarChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<Scalars['DateTime']>;
+  /** Sync status */
+  syncStatus?: InputMaybe<CalendarChannelSyncStatusEnum>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
   /** Update date */
@@ -1786,7 +1860,6 @@ export type Company = {
   idealCustomerProfile?: Maybe<Scalars['Boolean']>;
   /** The company Linkedin account */
   linkedinLink?: Maybe<Link>;
-  multiSelect?: Maybe<Array<Maybe<CompanyMultiSelectEnum>>>;
   /** The company name */
   name?: Maybe<Scalars['String']>;
   /** Opportunities linked to the company. */
@@ -1903,7 +1976,6 @@ export type CompanyCreateInput = {
   idealCustomerProfile?: InputMaybe<Scalars['Boolean']>;
   /** The company Linkedin account */
   linkedinLink?: InputMaybe<LinkCreateInput>;
-  multiSelect?: InputMaybe<Array<InputMaybe<CompanyMultiSelectEnum>>>;
   /** The company name */
   name?: InputMaybe<Scalars['String']>;
   /** Company record position */
@@ -1941,7 +2013,6 @@ export type CompanyFilterInput = {
   idealCustomerProfile?: InputMaybe<BooleanFilter>;
   /** The company Linkedin account */
   linkedinLink?: InputMaybe<LinkFilterInput>;
-  multiSelect?: InputMaybe<Array<InputMaybe<CompanyMultiSelectEnumFilter>>>;
   /** The company name */
   name?: InputMaybe<StringFilter>;
   not?: InputMaybe<CompanyFilterInput>;
@@ -1952,24 +2023,6 @@ export type CompanyFilterInput = {
   updatedAt?: InputMaybe<DateFilter>;
   /** The company Twitter/X account */
   xLink?: InputMaybe<LinkFilterInput>;
-};
-
-export enum CompanyMultiSelectEnum {
-  /** Option 1 */
-  Option_1 = 'OPTION_1',
-  /** Option 2 */
-  Option_2 = 'OPTION_2',
-  /** Option 3 */
-  Option_3 = 'OPTION_3',
-  /** Option 4 */
-  Option_4 = 'OPTION_4'
-}
-
-export type CompanyMultiSelectEnumFilter = {
-  eq?: InputMaybe<CompanyMultiSelectEnum>;
-  in?: InputMaybe<Array<InputMaybe<CompanyMultiSelectEnum>>>;
-  is?: InputMaybe<FilterIs>;
-  neq?: InputMaybe<CompanyMultiSelectEnum>;
 };
 
 /** A company */
@@ -1992,7 +2045,6 @@ export type CompanyOrderByInput = {
   idealCustomerProfile?: InputMaybe<OrderByDirection>;
   /** The company Linkedin account */
   linkedinLink?: InputMaybe<LinkOrderByInput>;
-  multiSelect?: InputMaybe<Array<InputMaybe<OrderByDirection>>>;
   /** The company name */
   name?: InputMaybe<OrderByDirection>;
   /** Company record position */
@@ -2023,7 +2075,6 @@ export type CompanyUpdateInput = {
   idealCustomerProfile?: InputMaybe<Scalars['Boolean']>;
   /** The company Linkedin account */
   linkedinLink?: InputMaybe<LinkUpdateInput>;
-  multiSelect?: InputMaybe<Array<InputMaybe<CompanyMultiSelectEnum>>>;
   /** The company name */
   name?: InputMaybe<Scalars['String']>;
   /** Company record position */
@@ -4839,7 +4890,6 @@ export enum OnboardingStatus {
   SubscriptionPastDue = 'SUBSCRIPTION_PAST_DUE',
   SubscriptionUnpaid = 'SUBSCRIPTION_UNPAID',
   SyncEmail = 'SYNC_EMAIL',
-  UserCreation = 'USER_CREATION',
   WorkspaceActivation = 'WORKSPACE_ACTIVATION'
 }
 
