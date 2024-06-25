@@ -16,6 +16,7 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @Injectable()
 export class StandardFieldFactory {
@@ -139,6 +140,15 @@ export class StandardFieldFactory {
     const foreignKeyStandardId = createDeterministicUuid(
       workspaceRelationMetadataArgs.standardId,
     );
+    const joinColumnMetadataArgsCollection =
+      metadataArgsStorage.filterJoinColumns(
+        workspaceRelationMetadataArgs.target,
+      );
+    const joinColumnMetadataArgs = joinColumnMetadataArgsCollection.find(
+      (joinColumnMetadataArgs) =>
+        joinColumnMetadataArgs.relationName ===
+        workspaceRelationMetadataArgs.name,
+    );
 
     if (
       isGatedAndNotEnabled(
@@ -149,11 +159,22 @@ export class StandardFieldFactory {
       return [];
     }
 
-    if (workspaceRelationMetadataArgs.joinColumn) {
+    if (
+      !joinColumnMetadataArgs &&
+      (workspaceRelationMetadataArgs.type ===
+        RelationMetadataType.MANY_TO_ONE ||
+        workspaceRelationMetadataArgs.type === RelationMetadataType.ONE_TO_ONE)
+    ) {
+      throw new Error(
+        `Join column not found for relation ${workspaceRelationMetadataArgs.name}`,
+      );
+    }
+
+    if (joinColumnMetadataArgs) {
       fieldMetadataCollection.push({
         type: FieldMetadataType.UUID,
         standardId: foreignKeyStandardId,
-        name: workspaceRelationMetadataArgs.joinColumn,
+        name: joinColumnMetadataArgs.joinColumn,
         label: `${workspaceRelationMetadataArgs.label} id (foreign key)`,
         description: `${workspaceRelationMetadataArgs.description} id foreign key`,
         icon: workspaceRelationMetadataArgs.icon,

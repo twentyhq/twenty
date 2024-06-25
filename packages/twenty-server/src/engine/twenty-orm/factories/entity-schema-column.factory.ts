@@ -4,6 +4,7 @@ import { ColumnType, EntitySchemaColumnOptions } from 'typeorm';
 
 import { WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
 import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
+import { WorkspaceJoinColumnsMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-join-columns-metadata-args.interface';
 
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
@@ -12,6 +13,7 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 type EntitySchemaColumnMap = {
   [key: string]: EntitySchemaColumnOptions;
@@ -22,6 +24,7 @@ export class EntitySchemaColumnFactory {
   create(
     fieldMetadataArgsCollection: WorkspaceFieldMetadataArgs[],
     relationMetadataArgsCollection: WorkspaceRelationMetadataArgs[],
+    joinColumnsMetadataArgsCollection: WorkspaceJoinColumnsMetadataArgs[],
   ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
@@ -56,9 +59,24 @@ export class EntitySchemaColumnFactory {
       };
 
       for (const relationMetadataArgs of relationMetadataArgsCollection) {
-        if (relationMetadataArgs.joinColumn) {
-          entitySchemaColumnMap[relationMetadataArgs.joinColumn] = {
-            name: relationMetadataArgs.joinColumn,
+        const joinColumnMetadataArgs = joinColumnsMetadataArgsCollection.find(
+          (joinColumnMetadataArgs) =>
+            joinColumnMetadataArgs.relationName === relationMetadataArgs.name,
+        );
+
+        if (
+          !joinColumnMetadataArgs &&
+          (relationMetadataArgs.type === RelationMetadataType.ONE_TO_ONE ||
+            relationMetadataArgs.type === RelationMetadataType.MANY_TO_ONE)
+        ) {
+          throw new Error(
+            `Join column not found for relation ${relationMetadataArgs.name}`,
+          );
+        }
+
+        if (joinColumnMetadataArgs) {
+          entitySchemaColumnMap[joinColumnMetadataArgs.joinColumn] = {
+            name: joinColumnMetadataArgs.joinColumn,
             type: 'uuid',
             nullable: relationMetadataArgs.isNullable,
           };

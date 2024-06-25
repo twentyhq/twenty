@@ -17,6 +17,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.message,
@@ -86,13 +87,15 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Message Thread Id',
     description: 'Message Thread Id',
     icon: 'IconHash',
-    joinColumn: 'messageThreadId',
     inverseSideTarget: () => MessageThreadWorkspaceEntity,
     inverseSideFieldKey: 'messages',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   messageThread: Relation<MessageThreadWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('messageThread')
+  messageThreadId: string | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageParticipants,

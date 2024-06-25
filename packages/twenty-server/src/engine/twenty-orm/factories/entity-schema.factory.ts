@@ -23,12 +23,15 @@ export class EntitySchemaFactory {
 
     const fieldMetadataArgsCollection =
       metadataArgsStorage.filterFields(target);
+    const joinColumnsMetadataArgsCollection =
+      metadataArgsStorage.filterJoinColumns(target);
     const relationMetadataArgsCollection =
       metadataArgsStorage.filterRelations(target);
 
     const columns = this.entitySchemaColumnFactory.create(
       fieldMetadataArgsCollection,
       relationMetadataArgsCollection,
+      joinColumnsMetadataArgsCollection,
     );
 
     const relations = this.entitySchemaRelationFactory.create(
