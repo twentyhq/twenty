@@ -23,6 +23,7 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { OnboardingStatus } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -101,17 +102,19 @@ export const CreateProfile = () => {
           },
         });
 
-        setCurrentWorkspaceMember(
-          (current) =>
-            ({
+        setCurrentWorkspaceMember((current) => {
+          if (isDefined(current)) {
+            return {
               ...current,
               name: {
                 firstName: data.firstName,
                 lastName: data.lastName,
               },
               colorScheme: 'System',
-            }) as any,
-        );
+            };
+          }
+          return current;
+        });
         setNextOnboardingStatus();
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
