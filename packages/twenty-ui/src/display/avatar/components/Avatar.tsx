@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
@@ -6,6 +7,7 @@ import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isI
 import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
 import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
+import { ThemeContext } from '@ui/theme';
 import { Nullable, stringToHslColor } from '@ui/utilities';
 
 const StyledAvatar = styled.div<{
@@ -14,6 +16,7 @@ const StyledAvatar = styled.div<{
   clickable?: boolean;
   color: string;
   backgroundColor: string;
+  backgroundTransparentLight: string;
 }>`
   align-items: center;
   flex-shrink: 0;
@@ -32,10 +35,8 @@ const StyledAvatar = styled.div<{
   background: ${({ backgroundColor }) => backgroundColor};
 
   &:hover {
-    box-shadow: ${({ clickable }) =>
-      clickable
-        ? `0 0 0 4px var(--twentycrm-background-transparent-light)`
-        : 'none'};
+    box-shadow: ${({ clickable, backgroundTransparentLight }) =>
+      clickable ? `0 0 0 4px ${backgroundTransparentLight}` : 'none'};
   }
 `;
 const StyledImage = styled.img`
@@ -67,6 +68,7 @@ export const Avatar = ({
   color,
   backgroundColor,
 }: AvatarProps) => {
+  const { theme } = useContext(ThemeContext);
   const [invalidAvatarUrls, setInvalidAvatarUrls] = useRecoilState(
     invalidAvatarUrlsState,
   );
@@ -97,6 +99,7 @@ export const Avatar = ({
       clickable={!isUndefined(onClick)}
       rounded={type === 'rounded'}
       onClick={onClick}
+      backgroundTransparentLight={theme.background.transparent.light}
     >
       {showPlaceholder ? (
         placeholderChar
