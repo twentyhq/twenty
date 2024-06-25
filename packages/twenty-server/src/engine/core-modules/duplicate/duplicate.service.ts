@@ -4,9 +4,9 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 import { settings } from 'src/engine/constants/settings';
-import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/core-modules/duplicate/constants/duplicate-criteria.constants';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/core-modules/duplicate/constants/duplicate-criteria.constants';
 
 @Injectable()
 export class DuplicateService {
@@ -40,35 +40,6 @@ export class DuplicateService {
     );
 
     return results as IRecord[];
-  }
-
-  async findDuplicate(
-    data: Record<string, any>,
-    objectMetadata: ObjectMetadataInterface,
-    workspaceId: string,
-  ) {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const { duplicateWhereClause, duplicateWhereParameters } =
-      this.buildDuplicateConditionForUpsert(objectMetadata, data);
-
-    const results = await this.workspaceDataSourceService.executeRawQuery(
-      `
-          SELECT 
-             *
-          FROM
-              ${dataSourceSchema}."${computeObjectTargetTable(
-                objectMetadata,
-              )}" p
-          WHERE
-              ${duplicateWhereClause}
-          `,
-      duplicateWhereParameters,
-      workspaceId,
-    );
-
-    return results.length > 0 ? results[0] : null;
   }
 
   buildDuplicateConditionForGraphQL(
@@ -112,6 +83,50 @@ export class DuplicateService {
     };
   }
 
+  private getApplicableDuplicateCriteriaCollection(
+    objectMetadataItem: ObjectMetadataInterface,
+  ) {
+    return DUPLICATE_CRITERIA_COLLECTION.filter(
+      (duplicateCriteria) =>
+        duplicateCriteria.objectName === objectMetadataItem.nameSingular,
+    );
+  }
+
+  /**
+   * TODO: Remove this code by September 1st, 2024 if it isn't used
+   * It was build to be used by the upsertMany function, but it was not used.
+   * It's a re-implementation of the methods to findDuplicates, but done
+   * at the SQL layer instead of doing it at the GraphQL layer
+   * 
+  async findDuplicate(
+    data: Record<string, any>,
+    objectMetadata: ObjectMetadataInterface,
+    workspaceId: string,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const { duplicateWhereClause, duplicateWhereParameters } =
+      this.buildDuplicateConditionForUpsert(objectMetadata, data);
+
+    const results = await this.workspaceDataSourceService.executeRawQuery(
+      `
+          SELECT 
+             *
+          FROM
+              ${dataSourceSchema}."${computeObjectTargetTable(
+                objectMetadata,
+              )}" p
+          WHERE
+              ${duplicateWhereClause}
+          `,
+      duplicateWhereParameters,
+      workspaceId,
+    );
+
+    return results.length > 0 ? results[0] : null;
+  }
+
   private buildDuplicateConditionForUpsert(
     objectMetadata: ObjectMetadataInterface,
     data: Record<string, any>,
@@ -150,13 +165,6 @@ export class DuplicateService {
 
     return { duplicateWhereClause, duplicateWhereParameters };
   }
-
-  private getApplicableDuplicateCriteriaCollection(
-    objectMetadataItem: ObjectMetadataInterface,
-  ) {
-    return DUPLICATE_CRITERIA_COLLECTION.filter(
-      (duplicateCriteria) =>
-        duplicateCriteria.objectName === objectMetadataItem.nameSingular,
-    );
-  }
+  *
+  */
 }

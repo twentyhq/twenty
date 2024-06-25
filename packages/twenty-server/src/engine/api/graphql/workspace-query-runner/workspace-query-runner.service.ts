@@ -303,47 +303,53 @@ export class WorkspaceQueryRunnerService {
     args: CreateManyResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const results = await Promise.all(
-      args.data.map(async (payload) => {
-        const existingRecord = payload.id
-          ? await this.findOne(
-              { filter: { id: { eq: payload.id } } } as FindOneResolverArgs,
-              options,
-            )
-          : null;
+    const ids = args.data
+      .map((item) => item.id)
+      .filter((id) => id !== undefined);
 
-        if (existingRecord) {
-          const result = await this.updateOne(
-            { id: payload.id, data: payload },
-            options,
-          );
+    const existingRecords =
+      ids.length > 0
+        ? await this.duplicateService.findExistingRecords(
+            ids,
+            options.objectMetadataItem,
+            options.workspaceId,
+          )
+        : [];
 
-          return result;
-        }
-
-        const existingDuplicate = await this.duplicateService.findDuplicate(
-          payload,
-          options.objectMetadataItem,
-          options.workspaceId,
-        );
-
-        if (existingDuplicate) {
-          const result = await this.updateOne(
-            { id: existingDuplicate.id, data: payload },
-            options,
-          );
-
-          return result;
-        }
-
-        const result =
-          (await this.createMany({ data: [payload] }, options)) ?? [];
-
-        return result[0];
-      }),
+    const existingRecordsMap = new Map(
+      existingRecords.map((record) => [record.id, record]),
     );
 
-    return results.filter((result) => result !== undefined) as Record[];
+    const results: Record[] = [];
+    const recordsToCreate: Record[] = [];
+
+    for (const payload of args.data) {
+      if (payload.id && existingRecordsMap.has(payload.id)) {
+        const result = await this.updateOne(
+          { id: payload.id, data: payload },
+          options,
+        );
+
+        if (result) {
+          results.push(result);
+        }
+      } else {
+        recordsToCreate.push(payload);
+      }
+    }
+
+    if (recordsToCreate.length > 0) {
+      const createResults = await this.createMany(
+        { data: recordsToCreate },
+        options,
+      );
+
+      if (createResults) {
+        results.push(...createResults);
+      }
+    }
+
+    return results;
   }
 
   async createOne<Record extends IRecord = IRecord>(
