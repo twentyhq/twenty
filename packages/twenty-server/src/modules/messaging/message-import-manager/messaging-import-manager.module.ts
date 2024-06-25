@@ -15,9 +15,11 @@ import { MessagingMessagesImportCronJob } from 'src/modules/messaging/message-im
 import { MessagingOngoingStaleCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-ongoing-stale.cron.job';
 import { MessagingGmailDriverModule } from 'src/modules/messaging/message-import-manager/drivers/gmail/messaging-gmail-driver.module';
 import { MessagingAddSingleMessageToCacheForImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-add-single-message-to-cache-for-import.job';
+import { MessagingCleanCacheJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-clean-cache';
 import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
+import { MessagingMessageImportManagerMessageChannelListener } from 'src/modules/messaging/message-import-manager/listeners/messaging-import-manager-message-channel.listener';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-m
     MessagingMessagesImportCronJob,
     MessagingOngoingStaleCronJob,
     MessagingAddSingleMessageToCacheForImportJob,
+    MessagingMessageImportManagerMessageChannelListener,
+    MessagingCleanCacheJob,
   ],
   exports: [],
 })
