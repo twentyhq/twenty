@@ -33,6 +33,7 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
 `;
 
 const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
+  display: flex;
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   font-size: 'inherit';

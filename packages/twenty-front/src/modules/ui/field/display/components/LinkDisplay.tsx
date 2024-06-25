@@ -9,9 +9,10 @@ import {
 
 type LinkDisplayProps = {
   value?: FieldLinkValue;
+  maxWidth?: number;
 };
 
-export const LinkDisplay = ({ value }: LinkDisplayProps) => {
+export const LinkDisplay = ({ value, maxWidth }: LinkDisplayProps) => {
   const url = value?.url;
 
   if (!isNonEmptyString(url)) {
@@ -32,5 +33,5 @@ export const LinkDisplay = ({ value }: LinkDisplayProps) => {
     return <SocialLink href={url} type={type} label={displayedValue} />;
   }
 
-  return <RoundedLink href={url} label={displayedValue} />;
+  return <RoundedLink href={url} label={displayedValue} maxWidth={maxWidth} />;
 };

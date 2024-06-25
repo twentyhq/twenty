@@ -6,10 +6,12 @@ import { FONT_COMMON, THEME_COMMON, ThemeContext } from 'twenty-ui';
 type RoundedLinkProps = {
   href: string;
   label?: string;
+  maxWidth?: number;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
 const fontSizeMd = FONT_COMMON.size.md;
+const spacingHalf = THEME_COMMON.spacing(0.5);
 const spacing1 = THEME_COMMON.spacing(1);
 const spacing2 = THEME_COMMON.spacing(2);
 
@@ -21,6 +23,7 @@ const StyledLink = styled.a<{
   backgroundHover: string;
   backgroundActive: string;
   border: string;
+  maxWidth: number | undefined;
 }>`
   align-items: center;
   background-color: ${({ background }) => background};
@@ -30,20 +33,17 @@ const StyledLink = styled.a<{
   color: ${({ color }) => color};
 
   cursor: pointer;
-  display: inline-flex;
+  display: inline-block;
   font-weight: ${fontSizeMd};
 
   gap: ${spacing1};
 
-  height: 10px;
-  justify-content: center;
+  justify-content: left;
 
-  max-width: calc(100% - ${spacingMultiplicator} * 2px);
-
-  min-width: fit-content;
+  max-width: calc(${({ maxWidth }) => (maxWidth ? maxWidth + "px": "100%" )} - 2*${spacing2});
 
   overflow: hidden;
-  padding: ${spacing1} ${spacing2};
+  padding: ${spacingHalf} ${spacing2};
 
   text-decoration: none;
   text-overflow: ellipsis;
@@ -59,7 +59,7 @@ const StyledLink = styled.a<{
   }
 `;
 
-export const RoundedLink = ({ label, href, onClick }: RoundedLinkProps) => {
+export const RoundedLink = ({ label, href, maxWidth, onClick }: RoundedLinkProps) => {
   const { theme } = useContext(ThemeContext);
 
   const background = theme.background.transparent.lighter;
@@ -89,6 +89,7 @@ export const RoundedLink = ({ label, href, onClick }: RoundedLinkProps) => {
       backgroundHover={backgroundHover}
       backgroundActive={backgroundActive}
       border={border}
+      maxWidth={maxWidth}
     >
       {label}
     </StyledLink>
