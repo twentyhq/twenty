@@ -21,6 +21,7 @@ import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessagesImportCronJob {
@@ -44,7 +45,11 @@ export class MessagingMessagesImportCronJob {
       await this.workspaceRepository.find({
         where: this.environmentService.get('IS_BILLING_ENABLED')
           ? {
-              subscriptionStatus: In(['active', 'trialing', 'past_due']),
+              subscriptionStatus: In([
+                SubscriptionStatus.Active,
+                SubscriptionStatus.Trialing,
+                SubscriptionStatus.PastDue,
+              ]),
             }
           : {},
         select: ['id'],

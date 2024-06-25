@@ -14,6 +14,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
 enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
@@ -46,7 +47,7 @@ export class OnboardingService {
   private async isSubscriptionIncompleteOnboardingStatus(user: User) {
     return (
       this.environmentService.get('IS_BILLING_ENABLED') &&
-      user.defaultWorkspace.subscriptionStatus === 'incomplete'
+      user.defaultWorkspace.subscriptionStatus === SubscriptionStatus.Incomplete
     );
   }
 
@@ -102,21 +103,21 @@ export class OnboardingService {
   private async isSubscriptionCanceledOnboardingStatus(user: User) {
     return (
       this.environmentService.get('IS_BILLING_ENABLED') &&
-      user.defaultWorkspace.subscriptionStatus === 'canceled'
+      user.defaultWorkspace.subscriptionStatus === SubscriptionStatus.Canceled
     );
   }
 
   private async isSubscriptionPastDueOnboardingStatus(user: User) {
     return (
       this.environmentService.get('IS_BILLING_ENABLED') &&
-      user.defaultWorkspace.subscriptionStatus === 'past_due'
+      user.defaultWorkspace.subscriptionStatus === SubscriptionStatus.PastDue
     );
   }
 
   private async isSubscriptionUnpaidOnboardingStatus(user: User) {
     return (
       this.environmentService.get('IS_BILLING_ENABLED') &&
-      user.defaultWorkspace.subscriptionStatus === 'unpaid'
+      user.defaultWorkspace.subscriptionStatus === SubscriptionStatus.Unpaid
     );
   }
 

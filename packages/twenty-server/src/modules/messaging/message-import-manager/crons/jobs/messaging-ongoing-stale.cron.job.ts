@@ -14,6 +14,7 @@ import {
   MessagingOngoingStaleJobData,
   MessagingOngoingStaleJob,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingOngoingStaleCronJob {
@@ -33,7 +34,11 @@ export class MessagingOngoingStaleCronJob {
       await this.workspaceRepository.find({
         where: this.environmentService.get('IS_BILLING_ENABLED')
           ? {
-              subscriptionStatus: In(['active', 'trialing', 'past_due']),
+              subscriptionStatus: In([
+                SubscriptionStatus.Active,
+                SubscriptionStatus.Trialing,
+                SubscriptionStatus.PastDue,
+              ]),
             }
           : {},
         select: ['id'],

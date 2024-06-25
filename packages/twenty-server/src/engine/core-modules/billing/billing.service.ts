@@ -6,7 +6,10 @@ import { Not, Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import {
+  BillingSubscription,
+  SubscriptionInterval,
+} from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
@@ -171,7 +174,9 @@ export class BillingService {
       workspaceId: user.defaultWorkspaceId,
     });
     const newInterval =
-      billingSubscription?.interval === 'year' ? 'month' : 'year';
+      billingSubscription?.interval === SubscriptionInterval.Year
+        ? SubscriptionInterval.Month
+        : SubscriptionInterval.Year;
     const billingSubscriptionItem = await this.getBillingSubscriptionItem(
       user.defaultWorkspaceId,
     );

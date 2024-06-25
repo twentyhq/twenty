@@ -21,6 +21,7 @@ import {
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageListFetchCronJob {
@@ -44,7 +45,11 @@ export class MessagingMessageListFetchCronJob {
       await this.workspaceRepository.find({
         where: this.environmentService.get('IS_BILLING_ENABLED')
           ? {
-              subscriptionStatus: In(['active', 'trialing', 'past_due']),
+              subscriptionStatus: In([
+                SubscriptionStatus.Active,
+                SubscriptionStatus.Trialing,
+                SubscriptionStatus.PastDue,
+              ]),
             }
           : {},
         select: ['id'],

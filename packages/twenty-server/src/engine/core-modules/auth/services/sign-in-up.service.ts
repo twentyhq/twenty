@@ -12,6 +12,7 @@ import FileType from 'file-type';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { assert } from 'src/utils/assert';
 import {
   PASSWORD_REGEX,
@@ -144,7 +145,7 @@ export class SignInUpService {
 
     assert(
       !this.environmentService.get('IS_BILLING_ENABLED') ||
-        workspace.subscriptionStatus !== 'incomplete',
+        workspace.subscriptionStatus !== SubscriptionStatus.Incomplete,
       'Workspace subscription status is incomplete',
       ForbiddenException,
     );
@@ -199,7 +200,7 @@ export class SignInUpService {
       displayName: '',
       domainName: '',
       inviteHash: v4(),
-      subscriptionStatus: 'incomplete',
+      subscriptionStatus: SubscriptionStatus.Incomplete,
     });
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
