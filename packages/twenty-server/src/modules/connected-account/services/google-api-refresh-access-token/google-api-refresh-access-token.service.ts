@@ -18,7 +18,7 @@ export class GoogleAPIRefreshAccessTokenService {
   async refreshAndSaveAccessToken(
     workspaceId: string,
     connectedAccountId: string,
-  ): Promise<void> {
+  ): Promise<string> {
     const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
       workspaceId,
@@ -45,6 +45,8 @@ export class GoogleAPIRefreshAccessTokenService {
       connectedAccountId,
       workspaceId,
     );
+
+    return accessToken;
   }
 
   async refreshAccessToken(refreshToken: string): Promise<string> {

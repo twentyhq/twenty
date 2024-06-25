@@ -73,11 +73,15 @@ export class MessagingGmailMessagesImportService {
       messageChannel.id,
       workspaceId,
     );
+
+    let accessToken: string;
+
     try {
-      await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
-        workspaceId,
-        connectedAccount.id,
-      );
+      accessToken =
+        await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+          workspaceId,
+          connectedAccount.id,
+        );
     } catch (error) {
       await this.messagingTelemetryService.track({
         eventName: `refresh_token.error.insufficient_permissions`,
@@ -96,6 +100,8 @@ export class MessagingGmailMessagesImportService {
         messageChannel.connectedAccountId,
         workspaceId,
       );
+
+      return;
     }
 
     const messageIdsToFetch =
@@ -120,6 +126,7 @@ export class MessagingGmailMessagesImportService {
       const allMessages =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
           messageIdsToFetch,
+          accessToken,
           connectedAccount.id,
           workspaceId,
         );
