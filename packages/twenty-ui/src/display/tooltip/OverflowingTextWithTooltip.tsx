@@ -18,7 +18,7 @@ const StyledOverflowingText = styled.div<{
   font-size: inherit;
 
   font-weight: inherit;
-  max-width: ${({ maxWidth }) => (maxWidth ? maxWidth + "px": "100%" )};;
+  max-width: ${({ maxWidth }) => (maxWidth ? maxWidth + "px": "100%" )};
   overflow: hidden;
   text-decoration: inherit;
 
