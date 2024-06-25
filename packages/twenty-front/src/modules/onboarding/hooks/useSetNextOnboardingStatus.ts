@@ -9,6 +9,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { OnboardingStatus } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 const getNextOnboardingStatus = (
   currentUser: CurrentUser | null,
@@ -44,14 +45,15 @@ export const useSetNextOnboardingStatus = () => {
           workspaceMembers,
           currentWorkspace,
         );
-        set(
-          currentUserState,
-          (current) =>
-            ({
+        set(currentUserState, (current) => {
+          if (isDefined(current)) {
+            return {
               ...current,
-              onboardingStatus: nextOnboardingStatus,
-            }) as any,
-        );
+              onboardingStatus: nextOnboardingStatus as OnboardingStatus,
+            };
+          }
+          return current;
+        });
       },
     [workspaceMembers, currentWorkspace],
   );
