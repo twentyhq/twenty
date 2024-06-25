@@ -9,6 +9,6 @@ type TextDisplayProps = {
 
 export const TextDisplay = ({ text, maxWidth }: TextDisplayProps) => (
   <EllipsisDisplay maxWidth={maxWidth}>
-    <OverflowingTextWithTooltip text={text} />
+    <OverflowingTextWithTooltip text={text} maxWidth={maxWidth} />
   </EllipsisDisplay>
 );

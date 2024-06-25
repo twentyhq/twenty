@@ -11,13 +11,14 @@ const spacing4 = THEME_COMMON.spacing(4);
 const StyledOverflowingText = styled.div<{
   cursorPointer: boolean;
   size: 'large' | 'small';
+  maxWidth: number | undefined;
 }>`
   cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
   font-family: inherit;
   font-size: inherit;
 
   font-weight: inherit;
-  max-width: 100%;
+  max-width: ${({ maxWidth }) => (maxWidth ? maxWidth + "px": "100%" )};;
   overflow: hidden;
   text-decoration: inherit;
 
@@ -38,10 +39,12 @@ export const OverflowingTextWithTooltip = ({
   size = 'small',
   text,
   mutliline,
+  maxWidth
 }: {
   size?: 'large' | 'small';
   text: string | null | undefined;
   mutliline?: boolean;
+  maxWidth?: number
 }) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -78,6 +81,7 @@ export const OverflowingTextWithTooltip = ({
         id={textElementId}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        maxWidth={maxWidth}
       >
         {text}
       </StyledOverflowingText>
