@@ -1,10 +1,12 @@
-import { Injectable, MethodNotAllowedException } from '@nestjs/common';
+import { MethodNotAllowedException } from '@nestjs/common';
 
-import { WorkspacePreQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-pre-query-hook.interface';
+import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
-@Injectable()
+import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+
+@WorkspaceQueryHook(`workspaceMember.deleteMany`)
 export class WorkspaceMemberDeleteManyPreQueryHook
-  implements WorkspacePreQueryHook
+  implements WorkspaceQueryHookInstance
 {
   constructor() {}
 

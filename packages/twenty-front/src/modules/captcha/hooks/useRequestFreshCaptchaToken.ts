@@ -35,7 +35,7 @@ export const useRequestFreshCaptchaToken = () => {
         let captchaWidget: any;
 
         switch (captchaProvider.provider) {
-          case CaptchaDriverType.GoogleRecatpcha:
+          case CaptchaDriverType.GoogleRecaptcha:
             window.grecaptcha
               .execute(captchaProvider.siteKey, {
                 action: 'submit',

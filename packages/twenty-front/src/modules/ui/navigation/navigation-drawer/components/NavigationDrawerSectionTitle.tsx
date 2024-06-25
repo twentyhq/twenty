@@ -16,7 +16,7 @@ const StyledTitle = styled.div<{ onClick?: () => void }>`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  height: ${({ theme }) => theme.spacing(4)};
+  height: ${({ theme }) => theme.spacing(5)};
   padding: ${({ theme }) => theme.spacing(1)};
 
   ${({ onClick, theme }) =>

@@ -162,7 +162,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
-  syncedAt: string;
+  syncedAt: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
@@ -224,7 +224,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     ],
   })
   @WorkspaceIsNullable()
-  syncStatus: MessageChannelSyncStatus;
+  syncStatus: MessageChannelSyncStatus | null;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStage,
@@ -282,7 +282,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
-  syncStageStartedAt: string;
+  syncStageStartedAt: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,

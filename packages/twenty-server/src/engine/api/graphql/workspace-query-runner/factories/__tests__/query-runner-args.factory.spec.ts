@@ -164,7 +164,7 @@ describe('QueryRunnerArgsFactory', () => {
 
       expect(result).toEqual({
         ids: [123],
-        data: [{ testNumber: 1, otherField: 'test' }],
+        data: [{ testNumber: 1, position: 2, otherField: 'test' }],
       });
     });
   });

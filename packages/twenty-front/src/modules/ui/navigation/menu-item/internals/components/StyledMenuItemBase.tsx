@@ -7,6 +7,7 @@ import { MenuItemAccent } from '../../types/MenuItemAccent';
 export type MenuItemBaseProps = {
   accent?: MenuItemAccent;
   isKeySelected?: boolean;
+  isHoverBackgroundDisabled?: boolean;
 };
 
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
@@ -31,7 +32,8 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
 
   padding: var(--vertical-padding) var(--horizontal-padding);
 
-  ${HOVER_BACKGROUND};
+  ${({ isHoverBackgroundDisabled }) =>
+    isHoverBackgroundDisabled ?? HOVER_BACKGROUND};
 
   ${({ theme, accent }) => {
     switch (accent) {
@@ -97,6 +99,10 @@ export const StyledMenuItemRightContent = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
+`;
+
+export const StyledDraggableItem = styled.div`
+  cursor: grab;
 `;
 
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{

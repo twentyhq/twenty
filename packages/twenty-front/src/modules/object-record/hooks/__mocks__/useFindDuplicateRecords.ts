@@ -4,8 +4,8 @@ import { getPeopleMock } from '~/testing/mock-data/people';
 const peopleMock = getPeopleMock();
 
 export const query = gql`
-  query FindDuplicatePerson($id: ID!) {
-    personDuplicates(id: $id) {
+  query FindDuplicatePerson($id: [ID!]!) {
+    personDuplicates(ids: [$id]) {
       edges {
         node {
           __typename

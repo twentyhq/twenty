@@ -32,7 +32,7 @@ export const CaptchaProviderScriptLoaderEffect = () => {
       scriptElement = document.createElement('script');
       scriptElement.src = scriptUrl;
       scriptElement.onload = () => {
-        if (captchaProvider.provider === CaptchaDriverType.GoogleRecatpcha) {
+        if (captchaProvider.provider === CaptchaDriverType.GoogleRecaptcha) {
           window.grecaptcha?.ready(() => {
             setIsCaptchaScriptLoaded(true);
           });

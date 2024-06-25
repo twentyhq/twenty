@@ -42,7 +42,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
-import { WorkspacePreQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.service';
+import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
@@ -76,7 +76,7 @@ export class WorkspaceQueryRunnerService {
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
-    private readonly workspacePreQueryHookService: WorkspacePreQueryHookService,
+    private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly environmentService: EnvironmentService,
     private readonly duplicateService: DuplicateService,
   ) {}
@@ -103,7 +103,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -150,7 +150,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -212,7 +212,7 @@ export class WorkspaceQueryRunnerService {
       existingRecords,
     );
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -254,7 +254,7 @@ export class WorkspaceQueryRunnerService {
       ResolverArgsType.CreateMany,
     )) as CreateManyResolverArgs<Record>;
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -383,7 +383,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -439,7 +439,7 @@ export class WorkspaceQueryRunnerService {
       atMost: maximumRecordAffected,
     });
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -491,7 +491,7 @@ export class WorkspaceQueryRunnerService {
       atMost: maximumRecordAffected,
     });
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -559,7 +559,7 @@ export class WorkspaceQueryRunnerService {
     );
     // TODO END
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,

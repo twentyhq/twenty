@@ -4,7 +4,7 @@ import { Person } from '@/people/types/Person';
 
 export const query = gql`
   mutation CreatePeople($data: [PersonCreateInput!]!, $upsert: Boolean) {
-    createPeople(data: $data) {
+    createPeople(data: $data, upsert: $upsert) {
       __typename
       xLink {
         label

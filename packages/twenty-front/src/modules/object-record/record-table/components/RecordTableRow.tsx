@@ -23,9 +23,17 @@ type RecordTableRowProps = {
   isPendingRow?: boolean;
 };
 
-export const StyledTd = styled.td`
+export const StyledTd = styled.td<{ isSelected?: boolean }>`
+  background: ${({ theme }) => theme.background.primary};
   position: relative;
   user-select: none;
+
+  ${({ isSelected, theme }) =>
+    isSelected &&
+    `
+    background: ${theme.accent.quaternary};
+
+  `}
 `;
 
 export const StyledTr = styled.tr<{ isDragging: boolean }>`
@@ -33,7 +41,6 @@ export const StyledTr = styled.tr<{ isDragging: boolean }>`
   transition: border-left-color 0.2s ease-in-out;
 
   td:nth-of-type(-n + 2) {
-    background-color: ${({ theme }) => theme.background.primary};
     border-right-color: ${({ theme }) => theme.background.primary};
   }
 
@@ -57,6 +64,20 @@ export const StyledTr = styled.tr<{ isDragging: boolean }>`
 
   `}
 `;
+
+const SelectableStyledTd = ({
+  isSelected,
+  children,
+  style,
+}: {
+  isSelected: boolean;
+  children?: React.ReactNode;
+  style?: React.CSSProperties;
+}) => (
+  <StyledTd isSelected={isSelected} style={style}>
+    {children}
+  </StyledTd>
+);
 
 export const RecordTableRow = ({
   recordId,
@@ -127,9 +148,12 @@ export const RecordTableRow = ({
             >
               <GripCell isDragging={draggableSnapshot.isDragging} />
             </StyledTd>
-            <StyledTd>
+            <SelectableStyledTd
+              isSelected={currentRowSelected}
+              style={{ borderRight: 'transparent' }}
+            >
               {!draggableSnapshot.isDragging && <CheckboxCell />}
-            </StyledTd>
+            </SelectableStyledTd>
             {inView || draggableSnapshot.isDragging
               ? visibleTableColumns.map((column, columnIndex) => (
                   <RecordTableCellContext.Provider
@@ -145,9 +169,12 @@ export const RecordTableRow = ({
                   </RecordTableCellContext.Provider>
                 ))
               : visibleTableColumns.map((column) => (
-                  <StyledTd key={column.fieldMetadataId}></StyledTd>
+                  <StyledTd
+                    isSelected={currentRowSelected}
+                    key={column.fieldMetadataId}
+                  ></StyledTd>
                 ))}
-            <StyledTd />
+            <SelectableStyledTd isSelected={currentRowSelected} />
           </StyledTr>
         )}
       </Draggable>
