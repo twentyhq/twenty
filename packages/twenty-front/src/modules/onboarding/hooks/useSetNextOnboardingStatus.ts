@@ -1,6 +1,6 @@
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
 import {
   CurrentWorkspace,
   currentWorkspaceState,
@@ -11,17 +11,18 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { OnboardingStatus } from '~/generated/graphql';
 
 const getNextOnboardingStatus = (
-  currentOnboardingStatus: OnboardingStatus,
+  currentUser: CurrentUser | null,
   workspaceMembers: WorkspaceMember[],
   currentWorkspace: CurrentWorkspace | null,
 ) => {
-  if (currentOnboardingStatus === OnboardingStatus.ProfileCreation) {
+  if (currentUser?.onboardingStatus === OnboardingStatus.ProfileCreation) {
     return OnboardingStatus.SyncEmail;
   }
-  if (currentOnboardingStatus === OnboardingStatus.SyncEmail) {
-    return workspaceMembers && workspaceMembers.length > 1
-      ? null
-      : OnboardingStatus.InviteTeam;
+  if (
+    currentUser?.onboardingStatus === OnboardingStatus.SyncEmail &&
+    workspaceMembers?.length === 0
+  ) {
+    return OnboardingStatus.InviteTeam;
   }
   return currentWorkspace?.currentBillingSubscription
     ? OnboardingStatus.Completed
@@ -29,26 +30,29 @@ const getNextOnboardingStatus = (
 };
 
 export const useSetNextOnboardingStatus = () => {
-  const setCurrentUser = useSetRecoilState(currentUserState);
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   return useRecoilCallback(
-    () => (currentOnboardingStatus: OnboardingStatus) => {
-      setCurrentUser(
-        (current) =>
-          ({
-            ...current,
-            onboardingStatus: getNextOnboardingStatus(
-              currentOnboardingStatus,
-              workspaceMembers,
-              currentWorkspace,
-            ),
-          }) as any,
-      );
-    },
-    [setCurrentUser, workspaceMembers, currentWorkspace],
+    ({ snapshot, set }) =>
+      () => {
+        const currentUser = snapshot.getLoadable(currentUserState).getValue();
+        const nextOnboardingStatus = getNextOnboardingStatus(
+          currentUser,
+          workspaceMembers,
+          currentWorkspace,
+        );
+        set(
+          currentUserState,
+          (current) =>
+            ({
+              ...current,
+              onboardingStatus: nextOnboardingStatus,
+            }) as any,
+        );
+      },
+    [workspaceMembers, currentWorkspace],
   );
 };

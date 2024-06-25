@@ -112,7 +112,7 @@ export const CreateProfile = () => {
               colorScheme: 'System',
             }) as any,
         );
-        setNextOnboardingStatus(OnboardingStatus.ProfileCreation);
+        setNextOnboardingStatus();
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: SnackBarVariant.Error,

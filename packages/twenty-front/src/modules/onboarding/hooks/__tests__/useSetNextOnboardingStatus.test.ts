@@ -18,6 +18,7 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
 const renderHooks = (
   onboardingStatus: OnboardingStatus,
   withCurrentBillingSubscription: boolean,
+  withManyWorkspaceMembers: boolean,
 ) => {
   const { result } = renderHook(
     () => {
@@ -25,7 +26,7 @@ const renderHooks = (
         '@/object-record/hooks/useFindManyRecords',
       );
       useFindManyRecordsMock.useFindManyRecords.mockReturnValue({
-        records: [],
+        records: withManyWorkspaceMembers ? [{}] : [],
       });
       const setCurrentUser = useSetRecoilState(currentUserState);
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -36,8 +37,7 @@ const renderHooks = (
           ? { id: v4(), status: 'status' }
           : undefined,
       });
-      const setNextOnboardingStatus = useSetNextOnboardingStatus();
-      setNextOnboardingStatus(onboardingStatus);
+      useSetNextOnboardingStatus()();
       return useRecoilValue(currentUserState)?.onboardingStatus;
     },
     {
@@ -49,22 +49,27 @@ const renderHooks = (
 
 describe('useSetNextOnboardingStatus', () => {
   it('should set next onboarding status for ProfileCreation', () => {
-    const result = renderHooks(OnboardingStatus.ProfileCreation, false);
+    const result = renderHooks(OnboardingStatus.ProfileCreation, false, false);
     expect(result.current).toEqual(OnboardingStatus.SyncEmail);
   });
 
   it('should set next onboarding status for SyncEmail', () => {
-    const result = renderHooks(OnboardingStatus.SyncEmail, false);
+    const result = renderHooks(OnboardingStatus.SyncEmail, false, false);
     expect(result.current).toEqual(OnboardingStatus.InviteTeam);
   });
 
+  it('should skip invite when workspaceMembers exist', () => {
+    const result = renderHooks(OnboardingStatus.SyncEmail, true, true);
+    expect(result.current).toEqual(OnboardingStatus.Completed);
+  });
+
   it('should set next onboarding status for Completed', () => {
-    const result = renderHooks(OnboardingStatus.InviteTeam, true);
+    const result = renderHooks(OnboardingStatus.InviteTeam, true, false);
     expect(result.current).toEqual(OnboardingStatus.Completed);
   });
 
   it('should set next onboarding status for Completed without subscription', () => {
-    const result = renderHooks(OnboardingStatus.InviteTeam, false);
+    const result = renderHooks(OnboardingStatus.InviteTeam, false, false);
     expect(result.current).toEqual(
       OnboardingStatus.CompletedWithoutSubscription,
     );

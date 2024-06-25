@@ -63,7 +63,7 @@ export const SyncEmails = () => {
 
   const continueWithoutSync = async () => {
     await skipSyncEmailOnboardingStatusMutation();
-    setNextOnboardingStatus(OnboardingStatus.SyncEmail);
+    setNextOnboardingStatus();
   };
 
   useScopedHotkeys(

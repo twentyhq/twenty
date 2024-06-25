@@ -136,7 +136,7 @@ export const InviteTeam = () => {
       );
       const result = await sendInviteLink({ variables: { emails } });
 
-      setNextOnboardingStatus(OnboardingStatus.InviteTeam);
+      setNextOnboardingStatus();
 
       if (isDefined(result.errors)) {
         throw result.errors;
