@@ -22,8 +22,6 @@ import { useUpsertRecordV2 } from '@/object-record/record-table/record-table-cel
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
-import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 
 const StyledTable = styled.table<{
   freezeFirstColumns?: boolean;
@@ -166,8 +164,12 @@ export const RecordTable = ({
   onColumnsChange,
   createRecord,
 }: RecordTableProps) => {
-  const { scopeId, visibleTableColumnsSelector } =
-    useRecordTableStates(recordTableId);
+  const {
+    scopeId,
+    visibleTableColumnsSelector,
+    isScrolledLeftSelector,
+    isScrolledTopSelector,
+  } = useRecordTableStates(recordTableId);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -228,11 +230,8 @@ export const RecordTable = ({
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
-  const scrollLeft = useRecoilValue(scrollLeftState);
-  const scrollTop = useRecoilValue(scrollTopState);
-
-  const isScrolledTop = scrollTop > 0;
-  const isScrolledLeft = scrollLeft > 0;
+  const isScrolledLeft = useRecoilValue(isScrolledLeftSelector());
+  const isScrolledTop = useRecoilValue(isScrolledTopSelector());
 
   return (
     <RecordTableScope

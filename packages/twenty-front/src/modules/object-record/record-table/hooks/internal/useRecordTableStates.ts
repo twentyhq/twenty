@@ -27,6 +27,8 @@ import { tableRowIdsComponentState } from '@/object-record/record-table/states/t
 import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
+import { isScrolledLeftSelector } from '@/ui/utilities/scroll/states/selectors/isScrolledLeftSelector';
+import { isScrolledTopSelector } from '@/ui/utilities/scroll/states/selectors/isScrolledTopSelector';
 import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
 import { extractComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/extractComponentReadOnlySelector';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -135,6 +137,14 @@ export const useRecordTableStates = (recordTableId?: string) => {
     ),
     pendingRecordIdState: extractComponentState(
       recordTablePendingRecordIdComponentState,
+      scopeId,
+    ),
+    isScrolledLeftSelector: extractComponentReadOnlySelector(
+      isScrolledLeftSelector,
+      scopeId,
+    ),
+    isScrolledTopSelector: extractComponentReadOnlySelector(
+      isScrolledTopSelector,
       scopeId,
     ),
   };
