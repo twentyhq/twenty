@@ -133,19 +133,18 @@ export const ValidationStep = <T extends string>({
     },
     [data, updateData],
   );
-  console.log(JSON.stringify(importedColumns));
+  console.log(generateColumns(fields));
 
   const columns = useMemo(
     () =>
       generateColumns(fields)
         .map((column) => {
-          if (column.name === 'ARR') return null;
-          // function to determine if column.name is present in importedColumns.values
           const hasBeenImported =
             importedColumns.filter(
               (importColumn) =>
-                importColumn.type === ColumnType.matched &&
-                importColumn.value === column.key,
+                (importColumn.type === ColumnType.matched &&
+                  importColumn.value === column.key) ||
+                column.key === 'select-row',
             ).length > 0;
 
           if (!hasBeenImported && !showUnmatchedColumns) return null;
