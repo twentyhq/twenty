@@ -21,7 +21,7 @@ const getNextOnboardingStatus = (
   }
   if (
     currentUser?.onboardingStatus === OnboardingStatus.SyncEmail &&
-    workspaceMembers?.length === 0
+    workspaceMembers?.length <= 1
   ) {
     return OnboardingStatus.InviteTeam;
   }

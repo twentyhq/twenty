@@ -26,7 +26,7 @@ const renderHooks = (
         '@/object-record/hooks/useFindManyRecords',
       );
       useFindManyRecordsMock.useFindManyRecords.mockReturnValue({
-        records: withManyWorkspaceMembers ? [{}] : [],
+        records: withManyWorkspaceMembers ? [{}, {}] : [{}],
       });
       const setCurrentUser = useSetRecoilState(currentUserState);
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
