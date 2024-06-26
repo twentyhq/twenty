@@ -8,6 +8,7 @@ import { WorkspaceJoinColumnsMetadataArgs } from 'src/engine/twenty-orm/interfac
 
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { getJoinColumn } from 'src/engine/twenty-orm/utils/get-join-column.util';
 
 type EntitySchemaRelationMap = {
   [key: string]: EntitySchemaRelationOptions;
@@ -29,26 +30,19 @@ export class EntitySchemaRelationFactory {
       const oppositeObjectName = convertClassNameToObjectMetadataName(
         oppositeTarget.name,
       );
-      const joinColumnsMetadataArgs = joinColumnsMetadataArgsCollection.find(
-        (joinColumnsMetadataArgs) =>
-          joinColumnsMetadataArgs.relationName === relationMetadataArgs.name,
-      );
-
       const relationType = this.getRelationType(relationMetadataArgs);
-
-      if (!joinColumnsMetadataArgs) {
-        throw new Error(
-          `Join columns metadata args are missing for relation ${relationMetadataArgs.name}`,
-        );
-      }
+      const joinColumn = getJoinColumn(
+        joinColumnsMetadataArgsCollection,
+        relationMetadataArgs,
+      );
 
       entitySchemaRelationMap[relationMetadataArgs.name] = {
         type: relationType,
         target: oppositeObjectName,
         inverseSide: relationMetadataArgs.inverseSideFieldKey ?? objectName,
-        joinColumn: joinColumnsMetadataArgs.joinColumn
+        joinColumn: joinColumn
           ? {
-              name: joinColumnsMetadataArgs.joinColumn,
+              name: joinColumn,
             }
           : undefined,
       };

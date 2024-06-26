@@ -13,7 +13,7 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { getJoinColumn } from 'src/engine/twenty-orm/utils/get-join-column.util';
 
 type EntitySchemaColumnMap = {
   [key: string]: EntitySchemaColumnOptions;
@@ -59,24 +59,14 @@ export class EntitySchemaColumnFactory {
       };
 
       for (const relationMetadataArgs of relationMetadataArgsCollection) {
-        const joinColumnMetadataArgs = joinColumnsMetadataArgsCollection.find(
-          (joinColumnMetadataArgs) =>
-            joinColumnMetadataArgs.relationName === relationMetadataArgs.name,
+        const joinColumn = getJoinColumn(
+          joinColumnsMetadataArgsCollection,
+          relationMetadataArgs,
         );
 
-        if (
-          !joinColumnMetadataArgs &&
-          (relationMetadataArgs.type === RelationMetadataType.ONE_TO_ONE ||
-            relationMetadataArgs.type === RelationMetadataType.MANY_TO_ONE)
-        ) {
-          throw new Error(
-            `Join column not found for relation ${relationMetadataArgs.name}`,
-          );
-        }
-
-        if (joinColumnMetadataArgs) {
-          entitySchemaColumnMap[joinColumnMetadataArgs.joinColumn] = {
-            name: joinColumnMetadataArgs.joinColumn,
+        if (joinColumn) {
+          entitySchemaColumnMap[joinColumn] = {
+            name: joinColumn,
             type: 'uuid',
             nullable: relationMetadataArgs.isNullable,
           };
