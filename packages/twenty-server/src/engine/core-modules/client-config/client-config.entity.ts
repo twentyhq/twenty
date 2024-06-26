@@ -66,6 +66,12 @@ class Captcha {
 }
 
 @ObjectType()
+class ApiConfig {
+  @Field(() => Number, { nullable: false })
+  mutationMaximumRecordAffected: number;
+}
+
+@ObjectType()
 export class ClientConfig {
   @Field(() => AuthProviders, { nullable: false })
   authProviders: AuthProviders;
@@ -96,4 +102,7 @@ export class ClientConfig {
 
   @Field(() => String, { nullable: true })
   chromeExtensionId: string | undefined;
+
+  @Field(() => ApiConfig)
+  api: ApiConfig;
 }

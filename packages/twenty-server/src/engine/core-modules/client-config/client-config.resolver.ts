@@ -46,6 +46,11 @@ export class ClientConfigResolver {
         siteKey: this.environmentService.get('CAPTCHA_SITE_KEY'),
       },
       chromeExtensionId: this.environmentService.get('CHROME_EXTENSION_ID'),
+      api: {
+        mutationMaximumRecordAffected: this.environmentService.get(
+          'MUTATION_MAXIMUM_RECORD_AFFECTED',
+        ),
+      },
     };
 
     return Promise.resolve(clientConfig);
