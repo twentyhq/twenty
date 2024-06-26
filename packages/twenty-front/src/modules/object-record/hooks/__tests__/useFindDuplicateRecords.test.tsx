@@ -55,8 +55,6 @@ describe('useFindDuplicateRecords', () => {
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
       expect(result.current.results).toBeDefined();
-      console.log(result.current.results);
-      console.log(result.current.error);
     });
 
     expect(mocks[0].result).toHaveBeenCalled();
