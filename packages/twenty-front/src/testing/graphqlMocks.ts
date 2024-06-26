@@ -157,43 +157,44 @@ export const graphqlMocks = {
     graphql.query('FindDuplicateCompany', () => {
       return HttpResponse.json({
         data: {
-          companyDuplicates: {
-            edges: [
-              {
-                node: {
-                  ...duplicateCompanyMock,
-                  favorites: {
-                    edges: [],
-                    __typename: 'FavoriteConnection',
+          companyDuplicates: [
+            {
+              edges: [
+                {
+                  node: {
+                    ...duplicateCompanyMock,
+                    favorites: {
+                      edges: [],
+                      __typename: 'FavoriteConnection',
+                    },
+                    attachments: {
+                      edges: [],
+                      __typename: 'AttachmentConnection',
+                    },
+                    people: {
+                      edges: [],
+                      __typename: 'PersonConnection',
+                    },
+                    opportunities: {
+                      edges: [],
+                      __typename: 'OpportunityConnection',
+                    },
+                    activityTargets: {
+                      edges: [],
+                      __typename: 'ActivityTargetConnection',
+                    },
                   },
-                  attachments: {
-                    edges: [],
-                    __typename: 'AttachmentConnection',
-                  },
-                  people: {
-                    edges: [],
-                    __typename: 'PersonConnection',
-                  },
-                  opportunities: {
-                    edges: [],
-                    __typename: 'OpportunityConnection',
-                  },
-                  activityTargets: {
-                    edges: [],
-                    __typename: 'ActivityTargetConnection',
-                  },
+                  cursor: null,
                 },
-                cursor: null,
+              ],
+              pageInfo: {
+                hasNextPage: false,
+                hasPreviousPage: false,
+                startCursor: null,
+                endCursor: null,
               },
-            ],
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
             },
-            totalCount: 1,
-          },
+          ],
         },
       });
     }),

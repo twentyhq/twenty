@@ -8,6 +8,10 @@ import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { Table } from '@/spreadsheet-import/components/Table';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import {
+  Columns,
+  ColumnType,
+} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Data } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
@@ -62,6 +66,7 @@ const StyledNoRowsContainer = styled.div`
 
 type ValidationStepProps<T extends string> = {
   initialData: Data<T>[];
+  importedColumns: Columns<string>;
   file: File;
   onSubmitStart?: () => void;
   onBack: () => void;
@@ -69,6 +74,7 @@ type ValidationStepProps<T extends string> = {
 
 export const ValidationStep = <T extends string>({
   initialData,
+  importedColumns,
   file,
   onSubmitStart,
   onBack,
@@ -88,6 +94,7 @@ export const ValidationStep = <T extends string>({
     ReadonlySet<number | string>
   >(new Set());
   const [filterByErrors, setFilterByErrors] = useState(false);
+  const [showUnmatchedColumns, setShowUnmatchedColumns] = useState(false);
 
   const updateData = useCallback(
     (rows: typeof data) => {
@@ -127,7 +134,24 @@ export const ValidationStep = <T extends string>({
     [data, updateData],
   );
 
-  const columns = useMemo(() => generateColumns(fields), [fields]);
+  const columns = useMemo(
+    () =>
+      generateColumns(fields)
+        .map((column) => {
+          const hasBeenImported =
+            importedColumns.filter(
+              (importColumn) =>
+                (importColumn.type === ColumnType.matched &&
+                  importColumn.value === column.key) ||
+                column.key === 'select-row',
+            ).length > 0;
+
+          if (!hasBeenImported && !showUnmatchedColumns) return null;
+          return column;
+        })
+        .filter(Boolean),
+    [fields, importedColumns, showUnmatchedColumns],
+  );
 
   const tableData = useMemo(() => {
     if (filterByErrors) {
@@ -210,6 +234,15 @@ export const ValidationStep = <T extends string>({
             />
             <StyledErrorToggleDescription>
               Show only rows with errors
+            </StyledErrorToggleDescription>
+          </StyledErrorToggle>
+          <StyledErrorToggle>
+            <Toggle
+              value={showUnmatchedColumns}
+              onChange={() => setShowUnmatchedColumns(!showUnmatchedColumns)}
+            />
+            <StyledErrorToggleDescription>
+              Show unmatched columns
             </StyledErrorToggleDescription>
           </StyledErrorToggle>
           <Button
