@@ -18,8 +18,14 @@ type DraggableTableBodyProps = {
   recordTableId: string;
 };
 
-const StyledTbody = styled.tbody`
+const StyledTbody = styled.tbody<{ isScrolledLeft?: boolean }>`
   overflow: hidden;
+  td:nth-of-type(1),
+  td:nth-of-type(2),
+  td:nth-of-type(3) {
+    position: sticky;
+    z-index: ${({ isScrolledLeft }) => (isScrolledLeft ? 3 : 2)};
+  }
 `;
 
 export const DraggableTableBody = ({
@@ -29,7 +35,7 @@ export const DraggableTableBody = ({
 }: DraggableTableBodyProps) => {
   const [v4Persistable] = useState(v4());
 
-  const { tableRowIdsState } = useRecordTableStates();
+  const { tableRowIdsState, isScrolledLeftSelector } = useRecordTableStates();
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
@@ -67,12 +73,15 @@ export const DraggableTableBody = ({
     });
   };
 
+  const isScrolledLeft = useRecoilValue(isScrolledLeftSelector());
+
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId={v4Persistable}>
         {(provided) => (
           <StyledTbody
             ref={provided.innerRef}
+            isScrolledLeft={isScrolledLeft}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...provided.droppableProps}
           >

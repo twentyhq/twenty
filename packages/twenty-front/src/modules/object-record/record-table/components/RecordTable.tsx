@@ -87,13 +87,6 @@ const StyledTable = styled.table<{
     left: 39px;
   }
 
-  tbody td:nth-of-type(1),
-  tbody td:nth-of-type(2),
-  tbody td:nth-of-type(3) {
-    position: sticky;
-    z-index: ${({ isScrolledLeft }) => (isScrolledLeft ? 3 : 2)};
-  }
-
   tbody td:nth-of-type(1) {
     left: 0;
   }
@@ -149,7 +142,7 @@ export const RecordTable = ({
   onColumnsChange,
   createRecord,
 }: RecordTableProps) => {
-  const { scopeId, visibleTableColumnsSelector, isScrolledLeftSelector } =
+  const { scopeId, visibleTableColumnsSelector } =
     useRecordTableStates(recordTableId);
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -211,8 +204,6 @@ export const RecordTable = ({
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
-  const isScrolledLeft = useRecoilValue(isScrolledLeftSelector());
-
   return (
     <RecordTableScope
       recordTableScopeId={scopeId}
@@ -232,10 +223,7 @@ export const RecordTable = ({
             visibleTableColumns,
           }}
         >
-          <StyledTable
-            className="entity-table-cell"
-            isScrolledLeft={isScrolledLeft}
-          >
+          <StyledTable className="entity-table-cell">
             <RecordTableHeader createRecord={createRecord} />
             <RecordTableBodyEffect objectNameSingular={objectNameSingular} />
             <RecordTableBody
