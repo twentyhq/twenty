@@ -51,6 +51,21 @@ export class MessagingErrorHandlingService {
             workspaceId,
           );
         }
+        if (reason === 'failedPrecondition') {
+          await this.handleFailedPrecondition(
+            error,
+            syncStep,
+            messageChannel,
+            workspaceId,
+          );
+        } else {
+          await this.handleUnknownError(
+            error,
+            syncStep,
+            messageChannel,
+            workspaceId,
+          );
+        }
         break;
       case 404:
         await this.handleNotFound(error, syncStep, messageChannel, workspaceId);
@@ -152,44 +167,24 @@ export class MessagingErrorHandlingService {
       message: `${error.code}: ${error.reason}`,
     });
 
-    if (
-      messageChannel.throttleFailureCount >= MESSAGING_THROTTLE_MAX_ATTEMPTS
-    ) {
-      await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
-        messageChannel.id,
-        workspaceId,
-      );
+    await this.handleThrottle(syncStep, messageChannel, workspaceId);
+  }
 
-      return;
-    }
+  private async handleFailedPrecondition(
+    error: GmailError,
+    syncStep: SyncStep,
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.messagingTelemetryService.track({
+      eventName: `${snakeCase(syncStep)}.error.failed_precondition`,
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+      message: `${error.code}: ${error.reason}`,
+    });
 
-    await this.throttle(messageChannel, workspaceId);
-
-    switch (syncStep) {
-      case 'full-message-list-fetch':
-        await this.messagingChannelSyncStatusService.scheduleFullMessageListFetch(
-          messageChannel.id,
-          workspaceId,
-        );
-        break;
-
-      case 'partial-message-list-fetch':
-        await this.messagingChannelSyncStatusService.schedulePartialMessageListFetch(
-          messageChannel.id,
-          workspaceId,
-        );
-        break;
-
-      case 'messages-import':
-        await this.messagingChannelSyncStatusService.scheduleMessagesImport(
-          messageChannel.id,
-          workspaceId,
-        );
-        break;
-
-      default:
-        break;
-    }
+    await this.handleThrottle(syncStep, messageChannel, workspaceId);
   }
 
   private async handleInsufficientPermissions(
@@ -247,6 +242,51 @@ export class MessagingErrorHandlingService {
     );
   }
 
+  private async handleThrottle(
+    syncStep: SyncStep,
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    workspaceId: string,
+  ): Promise<void> {
+    if (
+      messageChannel.throttleFailureCount >= MESSAGING_THROTTLE_MAX_ATTEMPTS
+    ) {
+      await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+        messageChannel.id,
+        workspaceId,
+      );
+
+      return;
+    }
+
+    await this.throttle(messageChannel, workspaceId);
+
+    switch (syncStep) {
+      case 'full-message-list-fetch':
+        await this.messagingChannelSyncStatusService.scheduleFullMessageListFetch(
+          messageChannel.id,
+          workspaceId,
+        );
+        break;
+
+      case 'partial-message-list-fetch':
+        await this.messagingChannelSyncStatusService.schedulePartialMessageListFetch(
+          messageChannel.id,
+          workspaceId,
+        );
+        break;
+
+      case 'messages-import':
+        await this.messagingChannelSyncStatusService.scheduleMessagesImport(
+          messageChannel.id,
+          workspaceId,
+        );
+        break;
+
+      default:
+        break;
+    }
+  }
+
   private async throttle(
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
@@ -263,5 +303,29 @@ export class MessagingErrorHandlingService {
       messageChannelId: messageChannel.id,
       message: `Increment throttle failure count to ${messageChannel.throttleFailureCount}`,
     });
+  }
+
+  private async handleUnknownError(
+    error: GmailError,
+    syncStep: SyncStep,
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.messagingTelemetryService.track({
+      eventName: `${snakeCase(syncStep)}.error.unknown`,
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+      message: `${error.code}: ${error.reason}`,
+    });
+
+    await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+      messageChannel.id,
+      workspaceId,
+    );
+
+    throw new Error(
+      `Unhandled Gmail error code ${error.code} with reason ${error.reason}`,
+    );
   }
 }
