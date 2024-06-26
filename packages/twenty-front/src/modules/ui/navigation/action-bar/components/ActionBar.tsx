@@ -68,7 +68,7 @@ export const ActionBar = ({ selectedIds = [] }: ActionBarProps) => {
           <StyledLabel>{selectedIds.length} selected:</StyledLabel>
         )}
         {actionBarEntries.map((item, index) => (
-          <ActionBarItem key={index} item={item} />
+          <ActionBarItem key={index} item={item} selectedIds={selectedIds} />
         ))}
       </StyledContainerActionBar>
       <SharedNavigationModal

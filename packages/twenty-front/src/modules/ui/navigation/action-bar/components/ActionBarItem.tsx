@@ -11,6 +11,7 @@ import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
 type ActionBarItemProps = {
   item: ActionBarEntry;
+  selectedIds: string[];
 };
 
 const StyledButton = styled.div<{ accent: MenuItemAccent }>`
@@ -40,10 +41,15 @@ const StyledButtonLabel = styled.div`
   margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const ActionBarItem = ({ item }: ActionBarItemProps) => {
+export const ActionBarItem = ({ item, selectedIds }: ActionBarItemProps) => {
   const theme = useTheme();
   const dropdownId = `action-bar-item-${item.label}`;
   const { toggleDropdown, closeDropdown } = useDropdown(dropdownId);
+
+  if (selectedIds.length > 100 && item.label === 'Delete') {
+    return null;
+  }
+
   return (
     <>
       {Array.isArray(item.subActions) ? (
