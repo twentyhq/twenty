@@ -18,9 +18,15 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 import { LLMChatModelService } from 'src/engine/integrations/llm-chat-model/llm-chat-model.service';
 import { LLMTracingService } from 'src/engine/integrations/llm-tracing/llm-tracing.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { sqlGenerationPromptTemplate } from 'src/engine/core-modules/ask-ai/ask-ai.prompt-templates';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import {
+  DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
+  IMAGE_IDENTIFIER_FIELD_NAMES_BY_STANDARD_OBJECT_NAME,
+  SPECIAL_LABEL_IDENTIFIER_FIELD_NAMES_BY_STANDARD_OBJECT_NAME,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
 
 @Injectable()
 export class AskAIService {
@@ -32,6 +38,66 @@ export class AskAIService {
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
+  /**
+   * Get labelIdentifier field names and imageIdentifier field names by objectNameSingular
+   */
+  async getIdentifierFieldNamesByObjectName(
+    objectMetadataEntities: ObjectMetadataEntity[],
+  ): Promise<Record<string, string[]>> {
+    const labelIdentifierFieldMetadataEntities = objectMetadataEntities.flatMap(
+      (objectMetadataEntity) =>
+        objectMetadataEntity.fields.filter(
+          (fieldMetadataEntity) =>
+            fieldMetadataEntity.id ===
+            objectMetadataEntity.labelIdentifierFieldMetadataId,
+        ),
+    );
+
+    const defaultLabelIdentifierFieldNamesByObjectName: Record<
+      string,
+      string[]
+    > = objectMetadataEntities.reduce(
+      (defaultLabelIdentifierFieldNamesByObjectName, objectMetadataEntity) => {
+        const imageIdentifierFieldNames =
+          IMAGE_IDENTIFIER_FIELD_NAMES_BY_STANDARD_OBJECT_NAME[
+            objectMetadataEntity.nameSingular
+          ] ?? [];
+        const defaultLabelIdentifierFieldNames = [
+          DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
+          ...imageIdentifierFieldNames,
+        ];
+
+        return {
+          ...defaultLabelIdentifierFieldNamesByObjectName,
+          [objectMetadataEntity.nameSingular]: defaultLabelIdentifierFieldNames,
+        };
+      },
+      {},
+    );
+
+    const labelIdentifierFieldNamesByObjectName: Record<string, string[]> =
+      labelIdentifierFieldMetadataEntities.reduce(
+        (
+          labelIdentifierFieldNamesByObjectName,
+          labelIdentifierFieldMetadataEntity,
+        ) => {
+          return {
+            ...labelIdentifierFieldNamesByObjectName,
+            [labelIdentifierFieldMetadataEntity.object.nameSingular]: [
+              labelIdentifierFieldMetadataEntity.name,
+            ],
+          };
+        },
+        {},
+      );
+
+    return {
+      ...defaultLabelIdentifierFieldNamesByObjectName,
+      ...labelIdentifierFieldNamesByObjectName,
+      ...SPECIAL_LABEL_IDENTIFIER_FIELD_NAMES_BY_STANDARD_OBJECT_NAME,
+    };
+  }
+
   private async getRecordDisplayDataById(
     workspaceId: string,
     workspaceDataSource: DataSource,
@@ -41,33 +107,37 @@ export class AskAIService {
       .flatMap((row) => Object.values(row))
       .filter((value) => isUUID(value, 4));
 
+    let recordDisplayDataById: RecordDisplayDataById = {};
+
     const objectMetadataEntities =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
         where: { isSystem: false, isActive: true },
       });
 
-    const columnNamesByStandardObjectName = {
-      opportunity: ['id', 'name'],
-      company: ['id', 'name', 'domainName'],
-      person: ['id', 'nameFirstName', 'nameLastName'],
-    };
+    const isCustomByObjectName = await objectMetadataEntities.reduce(
+      (isCustomByObjectName, objectMetadataEntity) => ({
+        ...isCustomByObjectName,
+        [objectMetadataEntity.nameSingular]: objectMetadataEntity.isCustom,
+      }),
+      {} as Record<string, boolean>,
+    );
 
-    const customObjectColumnNames = ['id', 'name'];
+    const identifierFieldNamesByObjectName =
+      await this.getIdentifierFieldNamesByObjectName(objectMetadataEntities);
 
-    let recordDisplayDataById: RecordDisplayDataById = {};
+    for (const [objectName, identifierFieldNames] of Object.entries(
+      identifierFieldNamesByObjectName,
+    )) {
+      const isCustom = isCustomByObjectName[objectName];
+      const tableName = computeTableName(objectName, isCustom);
 
-    for (const { nameSingular, isCustom } of objectMetadataEntities) {
-      const tableName = computeTableName(nameSingular, isCustom);
-
-      const columnNames = isCustom
-        ? customObjectColumnNames
-        : columnNamesByStandardObjectName[nameSingular];
-
-      const columnNamesString =
-        columnNames.map((col) => `"${col}"`).join(', ') || '';
+      const identifierFieldNamesString =
+        identifierFieldNames
+          .map((identifierFieldName) => `"${identifierFieldName}"`)
+          .join(', ') || '';
 
       // Security? GraphQL?
-      const recordMetadataSqlQuery = `SELECT ${columnNamesString} FROM "${tableName}" WHERE "id" = ANY($1);`;
+      const recordMetadataSqlQuery = `SELECT id, ${identifierFieldNamesString} FROM "${tableName}" WHERE "id" = ANY($1);`;
 
       const result: {
         id: string;
@@ -86,7 +156,7 @@ export class AskAIService {
         return {
           ...recordDisplayDataById,
           [row.id]: {
-            objectNameSingular: nameSingular,
+            objectNameSingular: objectName,
             ...omit(row, 'id'),
           },
         };
