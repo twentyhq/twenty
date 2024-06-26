@@ -29,9 +29,11 @@ export const useRecordShowPagePagination = (
   const viewIdQueryParam = searchParams.get('view');
   const [hasPreviousRecord, setHasPreviousRecord] = useState(false);
   const [hasNextRecord, setHasNextRecord] = useState(false);
-  const [currentRecordPosition, setCurrentRecordPosition] = useState(0);
+  const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
   const [viewName, setViewName] = useState('');
   const [objectRecords, setObjectRecords] = useState<ObjectRecord[]>([]);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [isLoadedRecords, setIsLoadedRecords] = useState(false);
 
   const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
@@ -88,28 +90,31 @@ export const useRecordShowPagePagination = (
     mapViewSortsToSorts(view?.viewSorts ?? [], sortDefinitions),
   );
 
-  const { records, loading } = useFindManyRecords({
-    filter,
-    orderBy,
-    skip: objectRecords.length > 0,
-    objectNameSingular,
-    recordGqlFields: generateDepthOneRecordGqlFields({
-      objectMetadataItem,
-    }),
-  });
+  const { records, loading, totalCount, hasNextPage, fetchMoreRecords } =
+    useFindManyRecords({
+      filter,
+      orderBy,
+      skip: isLoadedRecords,
+      objectNameSingular,
+      recordGqlFields: generateDepthOneRecordGqlFields({
+        objectMetadataItem,
+      }),
+    });
 
   useEffect(() => {
-    if (!loading && records.length > 0) {
-      const recordIndex = records.findIndex(
-        (rec) => rec.id === objectRecordId,
-      );
-      if (recordIndex < 0) {
+    if (!loading && records.length > 0 && isDefined(totalCount)) {
+      const recordIndex = records.findIndex((rec) => rec.id === objectRecordId);
+      if (recordIndex < 0 && hasNextPage) {
+        fetchMoreRecords();
+      } else if (recordIndex < 0 && !hasNextPage) {
         throw new Error('Object name or Record id not found');
       }
       setHasPreviousRecord(recordIndex !== 0);
-      setHasNextRecord(recordIndex !== records.length);
-      setCurrentRecordPosition(recordIndex);
+      setHasNextRecord(recordIndex !== records.length || hasNextPage);
+      setCurrentRecordIndex(recordIndex);
       setObjectRecords(records);
+      setTotalRecords(totalCount);
+      setIsLoadedRecords(true);
     }
 
     if (isDefined(view)) {
@@ -120,53 +125,71 @@ export const useRecordShowPagePagination = (
     objectMetadataItem,
     loading,
     records,
+    totalCount,
+    hasNextPage,
     view,
+    fetchMoreRecords,
     setObjectRecords,
     setHasPreviousRecord,
     setHasNextRecord,
-    setCurrentRecordPosition,
+    setCurrentRecordIndex,
     setViewName,
+    setTotalRecords,
+    setIsLoadedRecords,
   ]);
 
   useEffect(() => {
-    setHasPreviousRecord(currentRecordPosition - 1 >= 0);
-    setHasNextRecord(currentRecordPosition + 1 < objectRecords.length);
+    const previousIndex = currentRecordIndex - 1;
+    const nextIndex = currentRecordIndex + 1;
+    setHasPreviousRecord(previousIndex >= 0);
+    const nextRecordIsLast = nextIndex === objectRecords.length;
+
+    if (nextRecordIsLast && hasNextPage) {
+      setIsLoadedRecords(false);
+      fetchMoreRecords();
+    }
+    setHasNextRecord(nextIndex < objectRecords.length);
   }, [
-    currentRecordPosition,
+    hasNextPage,
+    currentRecordIndex,
     objectRecords,
     setHasPreviousRecord,
     setHasNextRecord,
+    fetchMoreRecords,
+    setObjectRecords,
+    setIsLoadedRecords,
   ]);
 
   const navigateToPreviousRecord = () => {
-    const prevRecord = objectRecords[currentRecordPosition - 1];
+    const previousIndex = currentRecordIndex - 1;
+    const prevRecord = objectRecords[previousIndex];
     navigate(
       `/object/${objectNameSingular}/${prevRecord.id}${
         viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
       }`,
     );
-    setCurrentRecordPosition(currentRecordPosition - 1);
+    setCurrentRecordIndex(previousIndex);
   };
 
   const navigateToNextRecord = () => {
-    const nextRecord = objectRecords[currentRecordPosition + 1];
+    const nextIndex = currentRecordIndex + 1;
+    const nextRecord = objectRecords[nextIndex];
     navigate(
       `/object/${objectNameSingular}/${nextRecord.id}${
         viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
       }`,
     );
-    setCurrentRecordPosition(currentRecordPosition + 1);
+    setCurrentRecordIndex(nextIndex);
   };
 
-  const totalRecords = objectRecords.length;
-
   const currentViewName = `${
-    currentRecordPosition + 1
+    currentRecordIndex + 1
   } of ${totalRecords} in ${viewName}`;
 
   return {
     viewName: currentViewName,
     hasPreviousRecord,
+    loadingPagination: loading,
     hasNextRecord,
     navigateToPreviousRecord,
     navigateToNextRecord,
