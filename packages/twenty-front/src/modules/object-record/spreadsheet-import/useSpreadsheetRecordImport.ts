@@ -1,11 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconComponent, useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { getSpreadSheetValidation } from '@/object-record/spreadsheet-import/util/getSpreadSheetValidation';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
-import { SpreadsheetOptions, Validation } from '@/spreadsheet-import/types';
+import { Field, SpreadsheetOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -32,15 +32,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
     )
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  const templateFields: {
-    icon: IconComponent;
-    label: string;
-    key: string;
-    fieldType: {
-      type: 'input' | 'checkbox';
-    };
-    validations?: Validation[];
-  }[] = [];
+  const templateFields: Field<string>[] = [];
   for (const field of fields) {
     if (field.type === FieldMetadataType.FullName) {
       templateFields.push({
@@ -74,6 +66,24 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
         key: field.name,
         fieldType: {
           type: 'input',
+        },
+        validations: getSpreadSheetValidation(
+          field.type,
+          field.label + ' (ID)',
+        ),
+      });
+    } else if (field.type === FieldMetadataType.Select) {
+      templateFields.push({
+        icon: getIcon(field.icon),
+        label: field.label,
+        key: field.name,
+        fieldType: {
+          type: 'select',
+          options:
+            field.options?.map((option) => ({
+              label: option.label,
+              value: option.value,
+            })) || [],
         },
         validations: getSpreadSheetValidation(
           field.type,
