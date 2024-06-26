@@ -65,6 +65,7 @@ export const Info = ({
           onClick={onClick}
           size={'small'}
           variant={'secondary'}
+          accent={accent}
         />
       )}
     </StyledInfo>

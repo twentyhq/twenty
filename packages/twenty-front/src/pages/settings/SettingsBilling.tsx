@@ -23,7 +23,6 @@ import { Button } from '@/ui/input/button/components/Button';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useWorkspaceHasSubscription } from '@/workspace/hooks/useWorkspaceHasSubscription';
 import {
@@ -117,6 +116,10 @@ export const SettingsBilling = () => {
     }
   };
 
+  const openPlanRequired = () => {
+    window.location.replace(AppPath.PlanRequired);
+  };
+
   const openSwitchingIntervalModal = () => {
     setIsSwitchingIntervalModalOpen(true);
   };
@@ -161,22 +164,20 @@ export const SettingsBilling = () => {
           />
         )}
         {displaySubscriptionCanceledInfo && (
-          <UndecoratedLink to={AppPath.PlanRequired}>
-            <Info
-              text={'Subscription canceled. Please start a new one'}
-              buttonTitle={'Subscribe'}
-              accent={'danger'}
-            />
-          </UndecoratedLink>
+          <Info
+            text={'Subscription canceled. Please start a new one'}
+            buttonTitle={'Subscribe'}
+            accent={'danger'}
+            onClick={openPlanRequired}
+          />
         )}
         {displaySubscribeInfo ? (
-          <UndecoratedLink to={AppPath.PlanRequired}>
-            <Info
-              text={'Your workspace does not have an active subscription'}
-              buttonTitle={'Subscribe'}
-              accent={'danger'}
-            />
-          </UndecoratedLink>
+          <Info
+            text={'Your workspace does not have an active subscription'}
+            buttonTitle={'Subscribe'}
+            accent={'danger'}
+            onClick={openPlanRequired}
+          />
         ) : (
           <>
             <Section>
