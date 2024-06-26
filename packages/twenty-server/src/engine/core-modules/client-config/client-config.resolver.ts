@@ -47,8 +47,8 @@ export class ClientConfigResolver {
       },
       chromeExtensionId: this.environmentService.get('CHROME_EXTENSION_ID'),
       api: {
-        mutationMaximumRecordAffected: this.environmentService.get(
-          'MUTATION_MAXIMUM_RECORD_AFFECTED',
+        mutationMaximumAffectedRecords: this.environmentService.get(
+          'MUTATION_MAXIMUM_AFFECTED_RECORDS',
         ),
       },
     };
