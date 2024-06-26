@@ -13,9 +13,7 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
 
-export const useRelationFieldDisplay = <
-  T extends ObjectRecord | ObjectRecord[],
->() => {
+export const useRelationFromManyFieldDisplay = () => {
   const { entityId, fieldDefinition, maxWidth } = useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
@@ -36,7 +34,10 @@ export const useRelationFieldDisplay = <
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<T | undefined>(entityId, fieldName);
+  const fieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
+    entityId,
+    fieldName,
+  );
 
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)

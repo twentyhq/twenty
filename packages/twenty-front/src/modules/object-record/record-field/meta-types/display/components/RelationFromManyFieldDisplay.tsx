@@ -1,14 +1,13 @@
 import { EntityChip } from 'twenty-ui';
 
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
-import { useRelationFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationFieldDisplay';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const RelationFromManyFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
-    useRelationFieldDisplay<ObjectRecord[]>();
+    useRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
 
   if (
