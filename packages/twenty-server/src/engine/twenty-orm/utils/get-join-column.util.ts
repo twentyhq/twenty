@@ -7,6 +7,7 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 export const getJoinColumn = (
   joinColumnsMetadataArgsCollection: WorkspaceJoinColumnsMetadataArgs[],
   relationMetadataArgs: WorkspaceRelationMetadataArgs,
+  opposite = false,
 ): string | null => {
   if (
     relationMetadataArgs.type === RelationMetadataType.ONE_TO_MANY ||
@@ -24,7 +25,8 @@ export const getJoinColumn = (
   // If we're in a ONE_TO_ONE relation and there are no join columns, we need to find the join column on the inverse side
   if (
     relationMetadataArgs.type === RelationMetadataType.ONE_TO_ONE &&
-    filteredJoinColumnsMetadataArgsCollection.length === 0
+    filteredJoinColumnsMetadataArgsCollection.length === 0 &&
+    !opposite
   ) {
     const inverseSideTarget = relationMetadataArgs.inverseSideTarget();
     const inverseSideJoinColumnsMetadataArgsCollection =
@@ -47,6 +49,8 @@ export const getJoinColumn = (
     return getJoinColumn(
       inverseSideJoinColumnsMetadataArgsCollection,
       inverseSideRelationMetadataArgs,
+      // Avoid infinite recursion
+      true,
     );
   }
 
