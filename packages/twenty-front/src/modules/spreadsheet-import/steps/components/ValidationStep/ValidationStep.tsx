@@ -147,6 +147,8 @@ export const ValidationStep = <T extends string>({
                   importColumn.value === column.key) ||
                 (importColumn.type === ColumnType.matchedSelectOptions &&
                   importColumn.value === column.key) ||
+                (importColumn.type === ColumnType.matchedCheckbox &&
+                  importColumn.value === column.key) ||
                 column.key === 'select-row',
             ).length > 0;
 
