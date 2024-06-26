@@ -56,11 +56,9 @@ export const formatFieldMetadataItemAsFilterDefinition = ({
   label: field.label,
   iconName: field.icon ?? 'Icon123',
   relationObjectMetadataNamePlural:
-    field.toRelationMetadata?.fromObjectMetadata.namePlural ??
-    field.fromRelationMetadata?.toObjectMetadata.namePlural,
+    field.relationDefinition?.targetObjectMetadata.namePlural,
   relationObjectMetadataNameSingular:
-    field.toRelationMetadata?.fromObjectMetadata.nameSingular ??
-    field.toRelationMetadata?.fromObjectMetadata.nameSingular,
+    field.relationDefinition?.targetObjectMetadata.nameSingular,
   type: getFilterTypeFromFieldType(field.type),
 });
 
