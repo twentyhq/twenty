@@ -16,11 +16,28 @@ export const getJoinColumn = (
     return null;
   }
 
+  const inverseSideTarget = relationMetadataArgs.inverseSideTarget();
+  const inverseSideJoinColumnsMetadataArgsCollection =
+    metadataArgsStorage.filterJoinColumns(inverseSideTarget);
   const filteredJoinColumnsMetadataArgsCollection =
     joinColumnsMetadataArgsCollection.filter(
       (joinColumnsMetadataArgs) =>
         joinColumnsMetadataArgs.relationName === relationMetadataArgs.name,
     );
+  const oppositeFilteredJoinColumnsMetadataArgsCollection =
+    inverseSideJoinColumnsMetadataArgsCollection.filter(
+      (joinColumnsMetadataArgs) =>
+        joinColumnsMetadataArgs.relationName === relationMetadataArgs.name,
+    );
+
+  if (
+    filteredJoinColumnsMetadataArgsCollection.length > 0 &&
+    oppositeFilteredJoinColumnsMetadataArgsCollection.length > 0
+  ) {
+    throw new Error(
+      `Join column for ${relationMetadataArgs.name} relation is present on both sides`,
+    );
+  }
 
   // If we're in a ONE_TO_ONE relation and there are no join columns, we need to find the join column on the inverse side
   if (
@@ -28,9 +45,6 @@ export const getJoinColumn = (
     filteredJoinColumnsMetadataArgsCollection.length === 0 &&
     !opposite
   ) {
-    const inverseSideTarget = relationMetadataArgs.inverseSideTarget();
-    const inverseSideJoinColumnsMetadataArgsCollection =
-      metadataArgsStorage.filterJoinColumns(inverseSideTarget);
     const inverseSideRelationMetadataArgsCollection =
       metadataArgsStorage.filterRelations(inverseSideTarget);
     const inverseSideRelationMetadataArgs =
@@ -42,7 +56,7 @@ export const getJoinColumn = (
 
     if (!inverseSideRelationMetadataArgs) {
       throw new Error(
-        `Inverse side relation metadata args are missing for relation ${relationMetadataArgs.name}`,
+        `Inverse side join column of relation ${relationMetadataArgs.name} is missing`,
       );
     }
 
@@ -57,7 +71,7 @@ export const getJoinColumn = (
   // Check if there are multiple join columns for the relation
   if (filteredJoinColumnsMetadataArgsCollection.length > 1) {
     throw new Error(
-      `Multiple join columns metadata args found for relation ${relationMetadataArgs.name}`,
+      `Multiple join columns found for relation ${relationMetadataArgs.name}`,
     );
   }
 
@@ -65,7 +79,7 @@ export const getJoinColumn = (
 
   if (!joinColumnsMetadataArgs) {
     throw new Error(
-      `Join columns metadata args are missing for relation ${relationMetadataArgs.name}`,
+      `Join column is missing for relation ${relationMetadataArgs.name}`,
     );
   }
 
