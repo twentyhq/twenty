@@ -225,6 +225,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
         position: 3,
       },
     ],
+    defaultValue:
+      CalendarChannelContactAutoCreation.AS_PARTICIPANT_AND_ORGANIZER,
   })
   contactAutoCreation: CalendarChannelContactAutoCreation;
 

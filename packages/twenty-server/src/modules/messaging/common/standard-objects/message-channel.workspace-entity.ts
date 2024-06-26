@@ -169,6 +169,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'red',
       },
     ],
+    defaultValue: MessageChannelContactAutoCreation.SENT,
   })
   contactAutoCreation: MessageChannelContactAutoCreation;
 
@@ -327,7 +328,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'red',
       },
     ],
-    defaultValue: `'${MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING}'`,
+    defaultValue: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
   })
   syncStage: MessageChannelSyncStage;
 
