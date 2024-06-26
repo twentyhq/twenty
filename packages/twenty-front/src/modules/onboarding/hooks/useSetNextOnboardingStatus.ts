@@ -1,4 +1,4 @@
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -27,11 +27,11 @@ export const useSetNextOnboardingStatus = () => {
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
+  const currentUser = useRecoilValue(currentUserState);
 
   return useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set }) =>
       () => {
-        const currentUser = snapshot.getLoadable(currentUserState).getValue();
         const nextOnboardingStatus = getNextOnboardingStatus(
           currentUser,
           workspaceMembers,
@@ -40,12 +40,12 @@ export const useSetNextOnboardingStatus = () => {
           if (isDefined(current)) {
             return {
               ...current,
-              onboardingStatus: nextOnboardingStatus as OnboardingStatus,
+              onboardingStatus: nextOnboardingStatus,
             };
           }
           return current;
         });
       },
-    [workspaceMembers],
+    [workspaceMembers, currentUser],
   );
 };

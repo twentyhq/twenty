@@ -1,5 +1,5 @@
-import { renderHook } from '@testing-library/react';
-import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
+import { act, renderHook } from '@testing-library/react';
+import { RecoilRoot, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -14,57 +14,74 @@ import {
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: jest.fn(),
 }));
+const setupMockWorkspaceMembers = (withManyWorkspaceMembers = false) => {
+  jest
+    .requireMock('@/object-record/hooks/useFindManyRecords')
+    .useFindManyRecords.mockReturnValue({
+      records: withManyWorkspaceMembers ? [{}, {}] : [{}],
+    });
+};
 
 const renderHooks = (
   onboardingStatus: OnboardingStatus,
   withCurrentBillingSubscription: boolean,
-  withManyWorkspaceMembers: boolean,
 ) => {
   const { result } = renderHook(
     () => {
-      const useFindManyRecordsMock = jest.requireMock(
-        '@/object-record/hooks/useFindManyRecords',
-      );
-      useFindManyRecordsMock.useFindManyRecords.mockReturnValue({
-        records: withManyWorkspaceMembers ? [{}, {}] : [{}],
-      });
-      const setCurrentUser = useSetRecoilState(currentUserState);
+      const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-      setCurrentUser({ ...mockedUserData, onboardingStatus });
-      setCurrentWorkspace({
-        ...mockDefaultWorkspace,
-        currentBillingSubscription: withCurrentBillingSubscription
-          ? { id: v4(), status: SubscriptionStatus.Active }
-          : undefined,
-      });
-      useSetNextOnboardingStatus()();
-      return useRecoilValue(currentUserState)?.onboardingStatus;
+      const setNextOnboardingStatus = useSetNextOnboardingStatus();
+      return {
+        currentUser,
+        setCurrentUser,
+        setCurrentWorkspace,
+        setNextOnboardingStatus,
+      };
     },
     {
       wrapper: RecoilRoot,
     },
   );
-  return result;
+  act(() => {
+    result.current.setCurrentUser({ ...mockedUserData, onboardingStatus });
+    result.current.setCurrentWorkspace({
+      ...mockDefaultWorkspace,
+      currentBillingSubscription: withCurrentBillingSubscription
+        ? { id: v4(), status: SubscriptionStatus.Active }
+        : undefined,
+    });
+  });
+  act(() => {
+    result.current.setNextOnboardingStatus();
+  });
+  return result.current.currentUser?.onboardingStatus;
 };
 
 describe('useSetNextOnboardingStatus', () => {
   it('should set next onboarding status for ProfileCreation', () => {
-    const result = renderHooks(OnboardingStatus.ProfileCreation, false, false);
-    expect(result.current).toEqual(OnboardingStatus.SyncEmail);
+    setupMockWorkspaceMembers();
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.ProfileCreation,
+      false,
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.SyncEmail);
   });
 
   it('should set next onboarding status for SyncEmail', () => {
-    const result = renderHooks(OnboardingStatus.SyncEmail, false, false);
-    expect(result.current).toEqual(OnboardingStatus.InviteTeam);
+    setupMockWorkspaceMembers();
+    const nextOnboardingStatus = renderHooks(OnboardingStatus.SyncEmail, false);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.InviteTeam);
   });
 
   it('should skip invite when workspaceMembers exist', () => {
-    const result = renderHooks(OnboardingStatus.SyncEmail, true, true);
-    expect(result.current).toEqual(OnboardingStatus.Completed);
+    setupMockWorkspaceMembers(true);
+    const nextOnboardingStatus = renderHooks(OnboardingStatus.SyncEmail, true);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.Completed);
   });
 
   it('should set next onboarding status for Completed', () => {
-    const result = renderHooks(OnboardingStatus.InviteTeam, true, false);
-    expect(result.current).toEqual(OnboardingStatus.Completed);
+    setupMockWorkspaceMembers();
+    const nextOnboardingStatus = renderHooks(OnboardingStatus.InviteTeam, true);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.Completed);
   });
 });
