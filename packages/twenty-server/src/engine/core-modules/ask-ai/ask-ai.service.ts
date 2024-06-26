@@ -41,7 +41,7 @@ export class AskAIService {
   /**
    * Get labelIdentifier field names and imageIdentifier field names by objectNameSingular
    */
-  async getIdentifierFieldNamesByObjectName(
+  private async getIdentifierFieldNamesByObjectName(
     objectMetadataEntities: ObjectMetadataEntity[],
   ): Promise<Record<string, string[]>> {
     const labelIdentifierFieldMetadataEntities = objectMetadataEntities.flatMap(
@@ -101,6 +101,7 @@ export class AskAIService {
   private async getRecordDisplayDataById(
     workspaceId: string,
     workspaceDataSource: DataSource,
+    objectMetadataEntities: ObjectMetadataEntity[],
     sqlQueryResult: Record<string, any>[],
   ) {
     const uuids = sqlQueryResult
@@ -108,11 +109,6 @@ export class AskAIService {
       .filter((value) => isUUID(value, 4));
 
     let recordDisplayDataById: RecordDisplayDataById = {};
-
-    const objectMetadataEntities =
-      await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
-        where: { isSystem: false, isActive: true },
-      });
 
     const isCustomByObjectName = await objectMetadataEntities.reduce(
       (isCustomByObjectName, objectMetadataEntity) => ({
@@ -166,7 +162,7 @@ export class AskAIService {
     return recordDisplayDataById;
   }
 
-  async getColInfosByTableName(dataSource: DataSource) {
+  private async getColInfosByTableName(dataSource: DataSource) {
     const { schema } = dataSource.options as PostgresConnectionOptions;
 
     // From LangChain sql_utils.ts - TODO: Move elsewhere or replace with a query to fieldMetadata?
@@ -195,22 +191,44 @@ export class AskAIService {
     return groupBy(colInfos, (colInfo) => colInfo.table_name);
   }
 
-  async getSQLCreateTableStatements(dataSource: DataSource): Promise<string> {
+  private getCreateTableStatement(tableName: string, colInfos: any[]) {
+    return `${`CREATE TABLE ${tableName} (\n`} ${colInfos
+      .map(
+        (colInfo) =>
+          `${colInfo.column_name} ${colInfo.data_type} ${
+            colInfo.is_nullable === 'YES' ? '' : 'NOT NULL'
+          }`,
+      )
+      .join(', ')});`;
+  }
+
+  private getRelationDescriptions() {
+    // TODO:
+    // 1. Get all fieldMetadata related to object as an argument (to avoid per-table queries)
+    // 2. Get all relationMetadata related to fields as an argument (call findManyRelationMetadataByFieldMetadataIds outside this function?)
+    // 3. Construct sentences like the following:
+    // investorId: a foreign key referencing the person table, indicating the investor who owns this portfolio company.
+    return '';
+  }
+
+  private getTableDescription(tableName: string, colInfos: any[]) {
+    return [
+      this.getCreateTableStatement(tableName, colInfos),
+      // this.getRelationDescriptions(),
+    ].join('\n');
+  }
+
+  private async getWorkspaceSchemaDescription(
+    dataSource: DataSource,
+    objectMetadataEntities: ObjectMetadataEntity[],
+  ): Promise<string> {
     const colInfoByTableName = await this.getColInfosByTableName(dataSource);
 
     return Object.entries(colInfoByTableName)
-      .map(
-        ([tableName, colInfos]) =>
-          `${`CREATE TABLE ${tableName} (\n`} ${colInfos
-            .map(
-              (colInfo) =>
-                `${colInfo.column_name} ${colInfo.data_type} ${
-                  colInfo.is_nullable === 'YES' ? '' : 'NOT NULL'
-                }`,
-            )
-            .join(', ')});`,
+      .map(([tableName, colInfos]) =>
+        this.getTableDescription(tableName, colInfos),
       )
-      .join('\n');
+      .join('\n\n');
   }
 
   async query(
@@ -229,8 +247,15 @@ export class AskAIService {
 
     workspaceDataSource.setOptions({ schema: workspaceSchemaName });
 
-    const sqlCreateTableStatements =
-      await this.getSQLCreateTableStatements(workspaceDataSource);
+    const objectMetadataEntities =
+      await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
+        where: { isSystem: false, isActive: true },
+      });
+
+    const workspaceSchemaDescription = await this.getWorkspaceSchemaDescription(
+      workspaceDataSource,
+      objectMetadataEntities,
+    );
 
     const llmOutputSchema = z.object({
       sqlQuery: z.string(),
@@ -260,7 +285,7 @@ export class AskAIService {
     const { sqlQuery } = await sqlQueryGeneratorChain.invoke(
       {
         llmOutputJsonSchema,
-        sqlCreateTableStatements,
+        sqlCreateTableStatements: workspaceSchemaDescription,
         userQuestion,
       },
       {
@@ -279,6 +304,7 @@ export class AskAIService {
       const recordDisplayDataById = await this.getRecordDisplayDataById(
         workspaceId,
         workspaceDataSource,
+        objectMetadataEntities,
         sqlQueryResult,
       );
 
