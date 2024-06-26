@@ -26,7 +26,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
     .filter(
       (x) =>
         x.isActive &&
-        !x.isSystem &&
+        (!x.isSystem || x.name === 'id') &&
         x.name !== 'createdAt' &&
         (x.type !== FieldMetadataType.Relation || x.toRelationMetadata),
     )
@@ -110,11 +110,15 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
 
             switch (field.type) {
               case FieldMetadataType.Boolean:
-                fieldMapping[field.name] = value === 'true' || value === true;
+                if (value !== undefined) {
+                  fieldMapping[field.name] = value === 'true' || value === true;
+                }
                 break;
               case FieldMetadataType.Number:
               case FieldMetadataType.Numeric:
-                fieldMapping[field.name] = Number(value);
+                if (value !== undefined) {
+                  fieldMapping[field.name] = Number(value);
+                }
                 break;
               case FieldMetadataType.Currency:
                 if (value !== undefined) {
@@ -154,14 +158,16 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                 }
                 break;
               default:
-                fieldMapping[field.name] = value;
+                if (value !== undefined) {
+                  fieldMapping[field.name] = value;
+                }
                 break;
             }
           }
           return fieldMapping;
         });
         try {
-          await createManyRecords(createInputs);
+          await createManyRecords(createInputs, true);
         } catch (error: any) {
           enqueueSnackBar(error?.message || 'Something went wrong', {
             variant: SnackBarVariant.Error,

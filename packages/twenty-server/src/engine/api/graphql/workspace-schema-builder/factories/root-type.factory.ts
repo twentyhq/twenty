@@ -102,9 +102,12 @@ export class RootTypeFactory {
         }
 
         const outputType = this.typeMapperService.mapToGqlType(objectType, {
-          isArray: ['updateMany', 'deleteMany', 'createMany'].includes(
-            methodName,
-          ),
+          isArray: [
+            'updateMany',
+            'deleteMany',
+            'createMany',
+            'findDuplicates',
+          ].includes(methodName),
         });
 
         fieldConfigMap[name] = {

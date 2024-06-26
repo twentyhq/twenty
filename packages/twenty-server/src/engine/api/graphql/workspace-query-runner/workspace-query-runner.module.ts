@@ -10,6 +10,7 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { TelemetryListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/telemetry.listener';
 import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
 import { RecordPositionBackfillCommand } from 'src/engine/api/graphql/workspace-query-runner/commands/0-20-record-position-backfill.command';
+import { DuplicateModule } from 'src/engine/core-modules/duplicate/duplicate.module';
 
 import { WorkspaceQueryRunnerService } from './workspace-query-runner.service';
 
@@ -23,6 +24,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     WorkspaceQueryHookModule,
     ObjectMetadataRepositoryModule.forFeature([WorkspaceMemberWorkspaceEntity]),
     AnalyticsModule,
+    DuplicateModule,
   ],
   providers: [
     WorkspaceQueryRunnerService,
