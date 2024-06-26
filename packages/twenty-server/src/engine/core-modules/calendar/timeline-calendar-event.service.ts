@@ -81,19 +81,19 @@ export class TimelineCalendarEventService {
       const participants = event.calendarEventParticipants.map(
         (participant) => ({
           calendarEventId: event.id,
-          personId: participant.person?.id,
-          workspaceMemberId: participant.workspaceMember?.id,
+          personId: participant.person?.id ?? null,
+          workspaceMemberId: participant.workspaceMember?.id ?? null,
           firstName:
-            participant.person?.name.firstName ||
+            participant.person?.name?.firstName ||
             participant.workspaceMember?.name.firstName ||
             '',
           lastName:
-            participant.person?.name.lastName ||
+            participant.person?.name?.lastName ||
             participant.workspaceMember?.name.lastName ||
             '',
           displayName:
-            participant.person?.name.firstName ||
-            participant.person?.name.lastName ||
+            participant.person?.name?.firstName ||
+            participant.person?.name?.lastName ||
             participant.workspaceMember?.name.firstName ||
             participant.workspaceMember?.name.lastName ||
             '',

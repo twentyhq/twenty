@@ -14,7 +14,7 @@ const StyledCollapseButton = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   cursor: pointer;
   display: flex;
-  height: ${({ theme }) => theme.spacing(6)};
+  height: ${({ theme }) => theme.spacing(5)};
   justify-content: center;
   user-select: none;
   width: ${({ theme }) => theme.spacing(6)};

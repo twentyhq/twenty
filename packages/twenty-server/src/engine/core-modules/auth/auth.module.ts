@@ -28,6 +28,8 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -60,11 +62,12 @@ const jwtModule = JwtModule.registerAsync({
     ObjectMetadataRepositoryModule.forFeature([
       ConnectedAccountWorkspaceEntity,
       MessageChannelWorkspaceEntity,
-      CalendarChannelWorkspaceEntity,
     ]),
     HttpModule,
     UserWorkspaceModule,
     OnboardingModule,
+    TwentyORMModule.forFeature([CalendarChannelWorkspaceEntity]),
+    WorkspaceDataSourceModule,
   ],
   controllers: [
     GoogleAuthController,

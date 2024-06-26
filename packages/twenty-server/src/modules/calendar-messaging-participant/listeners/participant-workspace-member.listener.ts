@@ -47,7 +47,7 @@ export class ParticipantWorkspaceMemberListener {
     payload: ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>,
   ) {
     if (
-      objectRecordUpdateEventChangedProperties(
+      objectRecordUpdateEventChangedProperties<WorkspaceMemberWorkspaceEntity>(
         payload.properties.before,
         payload.properties.after,
       ).includes('userEmail')

@@ -156,7 +156,7 @@ export class MessageQueueExplorer implements OnModuleInit {
       }),
     );
 
-    if (isRequestScoped) {
+    if (isRequestScoped && job.data) {
       const contextId = createContextId();
 
       if (this.moduleRef.registerRequestByContextId) {

@@ -35,7 +35,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     icon: 'IconHash',
   })
   @WorkspaceIsNullable()
-  messageExternalId: string;
+  messageExternalId: string | null;
 
   @WorkspaceField({
     standardId:
@@ -46,7 +46,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     icon: 'IconHash',
   })
   @WorkspaceIsNullable()
-  messageThreadExternalId: string;
+  messageThreadExternalId: string | null;
 
   @WorkspaceRelation({
     standardId:
@@ -60,7 +60,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     inverseSideFieldKey: 'messageChannelMessageAssociations',
   })
   @WorkspaceIsNullable()
-  messageChannel: Relation<MessageChannelWorkspaceEntity>;
+  messageChannel: Relation<MessageChannelWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS.message,
@@ -73,7 +73,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     inverseSideFieldKey: 'messageChannelMessageAssociations',
   })
   @WorkspaceIsNullable()
-  message: Relation<MessageWorkspaceEntity>;
+  message: Relation<MessageWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId:
@@ -87,5 +87,5 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
     inverseSideFieldKey: 'messageChannelMessageAssociations',
   })
   @WorkspaceIsNullable()
-  messageThread: Relation<MessageThreadWorkspaceEntity>;
+  messageThread: Relation<MessageThreadWorkspaceEntity> | null;
 }

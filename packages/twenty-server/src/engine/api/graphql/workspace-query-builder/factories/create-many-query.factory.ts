@@ -22,7 +22,7 @@ export class CreateManyQueryFactory {
   ) {}
 
   async create<Record extends IRecord = IRecord>(
-    args: CreateManyResolverArgs<Record>,
+    args: CreateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryBuilderOptions,
   ) {
     const fieldsString = await this.fieldsStringFactory.create(

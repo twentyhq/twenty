@@ -15,10 +15,28 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
+}
+
+export enum CalendarChannelSyncStatus {
+  NOT_SYNCED = 'NOT_SYNCED',
+  ONGOING = 'ONGOING',
+  ACTIVE = 'ACTIVE',
+  FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
+  FAILED_UNKNOWN = 'FAILED_UNKNOWN',
+}
+
+export enum CalendarChannelSyncStage {
+  FULL_CALENDAR_EVENT_LIST_FETCH_PENDING = 'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING',
+  PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING',
+  CALENDAR_EVENT_LIST_FETCH_ONGOING = 'CALENDAR_EVENT_LIST_FETCH_ONGOING',
+  CALENDAR_EVENTS_IMPORT_PENDING = 'CALENDAR_EVENTS_IMPORT_PENDING',
+  CALENDAR_EVENTS_IMPORT_ONGOING = 'CALENDAR_EVENTS_IMPORT_ONGOING',
+  FAILED = 'FAILED',
 }
 
 @WorkspaceEntity({
@@ -40,6 +58,97 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconAt',
   })
   handle: string;
+
+  @WorkspaceField({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
+    type: FieldMetadataType.SELECT,
+    label: 'Sync status',
+    description: 'Sync status',
+    icon: 'IconStatusChange',
+    options: [
+      {
+        value: CalendarChannelSyncStatus.ONGOING,
+        label: 'Ongoing',
+        position: 1,
+        color: 'yellow',
+      },
+      {
+        value: CalendarChannelSyncStatus.NOT_SYNCED,
+        label: 'Not Synced',
+        position: 2,
+        color: 'blue',
+      },
+      {
+        value: CalendarChannelSyncStatus.ACTIVE,
+        label: 'Active',
+        position: 3,
+        color: 'green',
+      },
+      {
+        value: CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+        label: 'Failed Insufficient Permissions',
+        position: 4,
+        color: 'red',
+      },
+      {
+        value: CalendarChannelSyncStatus.FAILED_UNKNOWN,
+        label: 'Failed Unknown',
+        position: 5,
+        color: 'red',
+      },
+    ],
+  })
+  @WorkspaceIsNullable()
+  syncStatus: CalendarChannelSyncStatus | null;
+
+  @WorkspaceField({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStage,
+    type: FieldMetadataType.SELECT,
+    label: 'Sync stage',
+    description: 'Sync stage',
+    icon: 'IconStatusChange',
+    options: [
+      {
+        value: CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+        label: 'Full calendar event list fetch pending',
+        position: 0,
+        color: 'blue',
+      },
+      {
+        value:
+          CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+        label: 'Partial calendar event list fetch pending',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_ONGOING,
+        label: 'Calendar event list fetch ongoing',
+        position: 2,
+        color: 'orange',
+      },
+      {
+        value: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+        label: 'Calendar events import pending',
+        position: 3,
+        color: 'blue',
+      },
+      {
+        value: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_ONGOING,
+        label: 'Calendar events import ongoing',
+        position: 4,
+        color: 'orange',
+      },
+      {
+        value: CalendarChannelSyncStage.FAILED,
+        label: 'Failed',
+        position: 5,
+        color: 'red',
+      },
+    ],
+    defaultValue: `'${CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING}'`,
+  })
+  syncStage: CalendarChannelSyncStage;
 
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.visibility,
@@ -97,6 +206,16 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncCursor: string;
 
   @WorkspaceField({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Sync stage started at',
+    description: 'Sync stage started at',
+    icon: 'IconHistory',
+  })
+  @WorkspaceIsNullable()
+  syncStageStartedAt: string | null;
+
+  @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
     type: FieldMetadataType.NUMBER,
     label: 'Throttle Failure Count',
@@ -117,6 +236,8 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'calendarChannels',
   })
   connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
+
+  connectedAccountId: string;
 
   @WorkspaceRelation({
     standardId:

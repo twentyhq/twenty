@@ -5,25 +5,31 @@ import { AxiosResponse } from 'axios';
 
 import { GmailMessageParsedResponse } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message-parsed-response';
 import { BatchQueries } from 'src/modules/messaging/message-import-manager/types/batch-queries';
+import { createQueriesFromMessageIds } from 'src/modules/messaging/message-import-manager/utils/create-queries-from-message-ids.util';
 
 @Injectable()
 export class MessagingFetchByBatchesService {
   constructor(private readonly httpService: HttpService) {}
 
   async fetchAllByBatches(
-    queries: BatchQueries,
+    messageIds: string[],
     accessToken: string,
     boundary: string,
-  ): Promise<AxiosResponse<any, any>[]> {
+  ): Promise<{
+    messageIdsByBatch: string[][];
+    batchResponses: AxiosResponse<any, any>[];
+  }> {
     const batchLimit = 50;
 
     let batchOffset = 0;
 
     let batchResponses: AxiosResponse<any, any>[] = [];
 
-    while (batchOffset < queries.length) {
+    const messageIdsByBatch: string[][] = [];
+
+    while (batchOffset < messageIds.length) {
       const batchResponse = await this.fetchBatch(
-        queries,
+        messageIds,
         accessToken,
         batchOffset,
         batchLimit,
@@ -32,19 +38,25 @@ export class MessagingFetchByBatchesService {
 
       batchResponses = batchResponses.concat(batchResponse);
 
+      messageIdsByBatch.push(
+        messageIds.slice(batchOffset, batchOffset + batchLimit),
+      );
+
       batchOffset += batchLimit;
     }
 
-    return batchResponses;
+    return { messageIdsByBatch, batchResponses };
   }
 
   async fetchBatch(
-    queries: BatchQueries,
+    messageIds: string[],
     accessToken: string,
     batchOffset: number,
     batchLimit: number,
     boundary: string,
   ): Promise<AxiosResponse<any, any>> {
+    const queries = createQueriesFromMessageIds(messageIds);
+
     const limitedQueries = queries.slice(batchOffset, batchOffset + batchLimit);
 
     const response = await this.httpService.axiosRef.post(

@@ -57,11 +57,25 @@ export const DateTimeInput = ({
     (date: any) => {
       const dateParsed = DateTime.fromJSDate(date);
 
-      const formattedDate = dateParsed.toFormat(parsingFormat);
+      const dateWithoutTime = DateTime.fromJSDate(date)
+        .toLocal()
+        .set({
+          day: date.getUTCDate(),
+          month: date.getUTCMonth() + 1,
+          year: date.getUTCFullYear(),
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0,
+        });
+
+      const formattedDate = isDateTimeInput
+        ? dateParsed.toFormat(parsingFormat)
+        : dateWithoutTime.toFormat(parsingFormat);
 
       return formattedDate;
     },
-    [parsingFormat],
+    [parsingFormat, isDateTimeInput],
   );
 
   const parseStringToDate = (str: string) => {

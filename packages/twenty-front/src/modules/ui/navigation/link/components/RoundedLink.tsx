@@ -1,7 +1,7 @@
-import { MouseEvent } from 'react';
+import { MouseEvent, useContext } from 'react';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { FONT_COMMON, THEME_COMMON } from 'twenty-ui';
+import { FONT_COMMON, THEME_COMMON, ThemeContext } from 'twenty-ui';
 
 type RoundedLinkProps = {
   href: string;
@@ -11,17 +11,23 @@ type RoundedLinkProps = {
 
 const fontSizeMd = FONT_COMMON.size.md;
 const spacing1 = THEME_COMMON.spacing(1);
-const spacing3 = THEME_COMMON.spacing(3);
+const spacing2 = THEME_COMMON.spacing(2);
 
 const spacingMultiplicator = THEME_COMMON.spacingMultiplicator;
 
-const StyledLink = styled.a`
+const StyledLink = styled.a<{
+  color: string;
+  background: string;
+  backgroundHover: string;
+  backgroundActive: string;
+  border: string;
+}>`
   align-items: center;
-  background-color: var(--twentycrm-background-transparent-light);
-  border: 1px solid var(--twentycrm-border-color-medium);
+  background-color: ${({ background }) => background};
+  border: 1px solid ${({ border }) => border};
 
   border-radius: 50px;
-  color: var(--twentycrm-font-color-primary);
+  color: ${({ color }) => color};
 
   cursor: pointer;
   display: inline-flex;
@@ -29,25 +35,39 @@ const StyledLink = styled.a`
 
   gap: ${spacing1};
 
-  height: ${spacing3};
+  height: 10px;
   justify-content: center;
 
   max-width: calc(100% - ${spacingMultiplicator} * 2px);
 
-  max-width: 100%;
-
   min-width: fit-content;
 
   overflow: hidden;
-  padding: ${spacing1} ${spacing1};
+  padding: ${spacing1} ${spacing2};
 
   text-decoration: none;
   text-overflow: ellipsis;
   user-select: none;
   white-space: nowrap;
+
+  &:hover {
+    background-color: ${({ backgroundHover }) => backgroundHover};
+  }
+
+  &:active {
+    background-color: ${({ backgroundActive }) => backgroundActive};
+  }
 `;
 
 export const RoundedLink = ({ label, href, onClick }: RoundedLinkProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  const background = theme.background.transparent.lighter;
+  const backgroundHover = theme.background.transparent.light;
+  const backgroundActive = theme.background.transparent.medium;
+  const border = theme.border.color.strong;
+  const color = theme.font.color.primary;
+
   if (!isNonEmptyString(label)) {
     return <></>;
   }
@@ -64,6 +84,11 @@ export const RoundedLink = ({ label, href, onClick }: RoundedLinkProps) => {
       target="_blank"
       rel="noreferrer"
       onClick={handleClick}
+      color={color}
+      background={background}
+      backgroundHover={backgroundHover}
+      backgroundActive={backgroundActive}
+      border={border}
     >
       {label}
     </StyledLink>

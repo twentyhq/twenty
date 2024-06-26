@@ -12,6 +12,7 @@ export type DateTimeFieldInputProps = {
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onClear?: FieldInputEvent;
+  onSubmit?: FieldInputEvent;
 };
 
 export const DateTimeFieldInput = ({
@@ -19,6 +20,7 @@ export const DateTimeFieldInput = ({
   onEscape,
   onClickOutside,
   onClear,
+  onSubmit,
 }: DateTimeFieldInputProps) => {
   const { fieldValue, setDraftValue } = useDateTimeField();
 
@@ -57,6 +59,10 @@ export const DateTimeFieldInput = ({
     onClear?.(() => persistDate(null));
   };
 
+  const handleSubmit = (newDate: Nullable<Date>) => {
+    onSubmit?.(() => persistDate(newDate));
+  };
+
   const dateValue = fieldValue ? new Date(fieldValue) : null;
 
   return (
@@ -69,6 +75,7 @@ export const DateTimeFieldInput = ({
       onChange={handleChange}
       isDateTimeInput
       onClear={handleClear}
+      onSubmit={handleSubmit}
     />
   );
 };

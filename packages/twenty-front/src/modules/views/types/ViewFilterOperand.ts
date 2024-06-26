@@ -6,4 +6,6 @@ export enum ViewFilterOperand {
   GreaterThan = 'greaterThan',
   Contains = 'contains',
   DoesNotContain = 'doesNotContain',
+  IsEmpty = 'isEmpty',
+  IsNotEmpty = 'isNotEmpty',
 }

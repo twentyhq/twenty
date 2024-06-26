@@ -121,6 +121,7 @@ export const FieldInput = ({
           onEscape={onEscape}
           onClickOutside={onClickOutside}
           onClear={onSubmit}
+          onSubmit={onSubmit}
         />
       ) : isFieldDate(fieldDefinition) ? (
         <DateFieldInput
@@ -128,6 +129,7 @@ export const FieldInput = ({
           onEscape={onEscape}
           onClickOutside={onClickOutside}
           onClear={onSubmit}
+          onSubmit={onSubmit}
         />
       ) : isFieldNumber(fieldDefinition) ? (
         <NumberFieldInput

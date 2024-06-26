@@ -14,7 +14,6 @@ import {
   MessageChannelWorkspaceEntity,
   MessageChannelSyncStage,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { createQueriesFromMessageIds } from 'src/modules/messaging/message-import-manager/utils/create-queries-from-message-ids.util';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
@@ -95,12 +94,10 @@ export class MessagingGmailMessagesImportService {
       );
     }
 
-    const messageQueries = createQueriesFromMessageIds(messageIdsToFetch);
-
     try {
       const allMessages =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
-          messageQueries,
+          messageIdsToFetch,
           connectedAccount.id,
           workspaceId,
         );
@@ -153,7 +150,9 @@ export class MessagingGmailMessagesImportService {
       );
     } catch (error) {
       this.logger.log(
-        `Messaging import for workspace ${workspaceId} and connected account ${
+        `Messaging import for messageId ${
+          error.messageId
+        }, workspace ${workspaceId} and connected account ${
           connectedAccount.id
         } failed with error: ${JSON.stringify(error)}`,
       );

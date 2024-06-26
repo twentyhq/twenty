@@ -203,9 +203,7 @@ export class BillingService {
       : frontBaseUrl;
 
     const quantity =
-      (await this.userWorkspaceService.getWorkspaceMemberCount(
-        user.defaultWorkspaceId,
-      )) || 1;
+      (await this.userWorkspaceService.getWorkspaceMemberCount()) || 1;
 
     const stripeCustomerId = (
       await this.billingSubscriptionRepository.findOneBy({
