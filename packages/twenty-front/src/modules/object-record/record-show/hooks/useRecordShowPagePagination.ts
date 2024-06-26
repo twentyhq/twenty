@@ -15,6 +15,7 @@ import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { isDefined } from '~/utils/isDefined';
+import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
@@ -34,6 +35,8 @@ export const useRecordShowPagePagination = (
   const [objectRecords, setObjectRecords] = useState<ObjectRecord[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [isLoadedRecords, setIsLoadedRecords] = useState(false);
+  const [isLoadingPagination, setIsLoadingPagination] = useState(true);
+  const [hasNextPage, setHasNextPage] = useState<boolean | undefined>();
 
   const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
@@ -43,6 +46,8 @@ export const useRecordShowPagePagination = (
   }
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+
+  const { objectNamePlural } = useObjectNamePluralFromSingular({ objectNameSingular });
 
   const { records: views } = usePrefetchedData(PrefetchKey.AllViews);
 
@@ -90,7 +95,7 @@ export const useRecordShowPagePagination = (
     mapViewSortsToSorts(view?.viewSorts ?? [], sortDefinitions),
   );
 
-  const { records, loading, totalCount, hasNextPage, fetchMoreRecords } =
+  const { fetchMoreRecords } =
     useFindManyRecords({
       filter,
       orderBy,
@@ -99,22 +104,26 @@ export const useRecordShowPagePagination = (
       recordGqlFields: generateDepthOneRecordGqlFields({
         objectMetadataItem,
       }),
+      onCompleted: (records, options) => {
+        setObjectRecords(records);
+        setTotalRecords(options?.totalCount ?? 0);
+        setHasNextPage(options?.pageInfo?.hasNextPage);
+        setIsLoadingPagination(false);
+      }
     });
 
   useEffect(() => {
-    if (!loading && records.length > 0 && isDefined(totalCount)) {
-      const recordIndex = records.findIndex((rec) => rec.id === objectRecordId);
+    if (!isLoadingPagination && objectRecords.length > 0 && isDefined(hasNextPage)) {
+      const recordIndex = objectRecords.findIndex((rec) => rec.id === objectRecordId);
       if (recordIndex < 0 && hasNextPage) {
         fetchMoreRecords();
       } else if (recordIndex < 0 && !hasNextPage) {
         throw new Error('Object name or Record id not found');
       }
       setHasPreviousRecord(recordIndex !== 0);
-      setHasNextRecord(recordIndex !== records.length || hasNextPage);
+      setHasNextRecord(recordIndex !== objectRecords.length || hasNextPage);
       setCurrentRecordIndex(recordIndex);
-      setObjectRecords(records);
-      setTotalRecords(totalCount);
-      setIsLoadedRecords(true);
+      if (recordIndex >= 0) setIsLoadedRecords(true);
     }
 
     if (isDefined(view)) {
@@ -123,9 +132,8 @@ export const useRecordShowPagePagination = (
   }, [
     objectRecordId,
     objectMetadataItem,
-    loading,
-    records,
-    totalCount,
+    isLoadingPagination,
+    objectRecords,
     hasNextPage,
     view,
     fetchMoreRecords,
@@ -182,6 +190,13 @@ export const useRecordShowPagePagination = (
     setCurrentRecordIndex(nextIndex);
   };
 
+  const navigateToIndexView = () => {
+    const indexPath = `/objects/${objectNamePlural}${
+      viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
+    }`;
+    navigate(indexPath);
+  };
+
   const currentViewName = `${
     currentRecordIndex + 1
   } of ${totalRecords} in ${viewName}`;
@@ -189,9 +204,10 @@ export const useRecordShowPagePagination = (
   return {
     viewName: currentViewName,
     hasPreviousRecord,
-    loadingPagination: loading,
+    isLoadingPagination,
     hasNextRecord,
     navigateToPreviousRecord,
     navigateToNextRecord,
+    navigateToIndexView,
   };
 };
