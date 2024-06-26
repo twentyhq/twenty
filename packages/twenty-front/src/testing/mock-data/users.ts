@@ -1,5 +1,11 @@
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { OnboardingStatus, User, Workspace } from '~/generated/graphql';
+import {
+  OnboardingStatus,
+  SubscriptionInterval,
+  SubscriptionStatus,
+  User,
+  Workspace,
+} from '~/generated/graphql';
 
 type MockedUser = Pick<
   User,
@@ -30,7 +36,7 @@ export const mockDefaultWorkspace: Workspace = {
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
   allowImpersonation: true,
-  subscriptionStatus: 'active',
+  subscriptionStatus: SubscriptionStatus.Active,
   activationStatus: 'active',
   featureFlags: [
     {
@@ -58,8 +64,8 @@ export const mockDefaultWorkspace: Workspace = {
   currentBillingSubscription: {
     __typename: 'BillingSubscription',
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
-    interval: 'month',
-    status: 'active',
+    interval: SubscriptionInterval.Month,
+    status: SubscriptionStatus.Active,
   },
 };
 
