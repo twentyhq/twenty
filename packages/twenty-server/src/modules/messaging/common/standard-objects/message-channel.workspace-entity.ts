@@ -173,6 +173,26 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   contactAutoCreationFor: MessageChannelContactAutoCreationFor;
 
   @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeNonProfessionalEmails,
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Exclude non professional emails',
+    description: 'Exclude non professional emails',
+    icon: 'IconBriefcase',
+    defaultValue: true,
+  })
+  excludeNonProfessionalEmails: boolean;
+
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeGroupEmails,
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Exclude group emails',
+    description: 'Exclude group emails',
+    icon: 'IconUsersGroup',
+    defaultValue: true,
+  })
+  excludeGroupEmails: boolean;
+
+  @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Sync Enabled',
