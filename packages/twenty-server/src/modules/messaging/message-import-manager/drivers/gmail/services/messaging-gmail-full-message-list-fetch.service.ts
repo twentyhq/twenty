@@ -23,9 +23,6 @@ import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/
 import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
 import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
 import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 
 @Injectable()
 export class MessagingGmailFullMessageListFetchService {
@@ -43,12 +40,8 @@ export class MessagingGmailFullMessageListFetchService {
       MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
-    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
   public async processMessageListFetch(
@@ -61,46 +54,9 @@ export class MessagingGmailFullMessageListFetchService {
       workspaceId,
     );
 
-    try {
-      await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
-        workspaceId,
-        connectedAccount.id,
-      );
-    } catch (error) {
-      await this.messagingTelemetryService.track({
-        eventName: `refresh_token.error.insufficient_permissions`,
-        workspaceId,
-        connectedAccountId: messageChannel.connectedAccountId,
-        messageChannelId: messageChannel.id,
-        message: `${error.code}: ${error.reason}`,
-      });
-
-      await this.messagingChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
-        messageChannel.id,
-        workspaceId,
-      );
-
-      await this.connectedAccountRepository.updateAuthFailedAt(
-        messageChannel.connectedAccountId,
-        workspaceId,
-      );
-    }
-
-    const refreshedConnectedAccount =
-      await this.connectedAccountRepository.getById(
-        connectedAccount.id,
-        workspaceId,
-      );
-
-    if (!refreshedConnectedAccount) {
-      throw new Error(
-        `Connected account ${connectedAccount.id} not found in workspace ${workspaceId}`,
-      );
-    }
-
     const gmailClient: gmail_v1.Gmail =
       await this.gmailClientProvider.getGmailClient(
-        refreshedConnectedAccount.refreshToken,
+        connectedAccount.refreshToken,
       );
 
     const { error: gmailError } =
