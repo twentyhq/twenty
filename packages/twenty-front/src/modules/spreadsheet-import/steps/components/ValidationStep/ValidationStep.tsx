@@ -143,6 +143,10 @@ export const ValidationStep = <T extends string>({
               (importColumn) =>
                 (importColumn.type === ColumnType.matched &&
                   importColumn.value === column.key) ||
+                (importColumn.type === ColumnType.matchedSelect &&
+                  importColumn.value === column.key) ||
+                (importColumn.type === ColumnType.matchedSelectOptions &&
+                  importColumn.value === column.key) ||
                 column.key === 'select-row',
             ).length > 0;
 

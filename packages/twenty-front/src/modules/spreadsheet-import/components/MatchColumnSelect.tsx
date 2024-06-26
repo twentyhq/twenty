@@ -125,7 +125,7 @@ export const MatchColumnSelect = ({
             <DropdownMenu
               data-select-disable
               ref={dropdownContainerRef}
-              width={refs.domReference.current?.clientWidth}
+              // width={refs.domReference.current?.clientWidth}
             >
               <DropdownMenuSearchInput
                 value={searchFilter}
