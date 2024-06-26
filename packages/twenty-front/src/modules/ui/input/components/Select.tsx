@@ -167,7 +167,11 @@ export const Select = <Value extends string | number | null>({
                       LeftIcon={option.Icon}
                       text={option.label}
                       onClick={() => {
-                        onChange?.(option.value);
+                        if (option.value === value) {
+                          onChange?.(null as Value); 
+                        } else {
+                          onChange?.(option.value);
+                        }
                         onBlur?.();
                         closeDropdown();
                       }}
