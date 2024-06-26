@@ -305,7 +305,6 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'messageChannels',
   })
   connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
-  connectedAccountId: string;
 
   @WorkspaceJoinColumn('connectedAccount')
   connectedAccountId: string;
