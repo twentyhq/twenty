@@ -133,7 +133,6 @@ export const ValidationStep = <T extends string>({
     },
     [data, updateData],
   );
-  console.log(generateColumns(fields));
 
   const columns = useMemo(
     () =>
