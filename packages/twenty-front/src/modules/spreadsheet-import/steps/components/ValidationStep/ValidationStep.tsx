@@ -133,6 +133,7 @@ export const ValidationStep = <T extends string>({
     },
     [data, updateData],
   );
+  console.log(JSON.stringify(importedColumns));
 
   const columns = useMemo(
     () =>
