@@ -13,7 +13,6 @@ import {
 } from 'twenty-ui';
 
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -93,7 +92,8 @@ const StyledSkeletonLoader = () => {
 
 type PageHeaderProps = ComponentProps<'div'> & {
   title: string;
-  hasBackButton?: boolean;
+  hasClosePageButton?: boolean;
+  onClosePage?: () => void;
   hasPaginationButtons?: boolean;
   hasPreviousRecord?: boolean;
   hasNextRecord?: boolean;
@@ -106,7 +106,8 @@ type PageHeaderProps = ComponentProps<'div'> & {
 
 export const PageHeader = ({
   title,
-  hasBackButton,
+  hasClosePageButton,
+  onClosePage,
   hasPaginationButtons,
   hasPreviousRecord,
   hasNextRecord,
@@ -128,10 +129,13 @@ export const PageHeader = ({
             <NavigationDrawerCollapseButton direction="right" />
           </StyledTopBarButtonContainer>
         )}
-        {hasBackButton && (
-          <UndecoratedLink to={-1}>
-            <IconButton Icon={IconX} size="small" variant="tertiary" />
-          </UndecoratedLink>
+        {hasClosePageButton && (
+          <IconButton
+            Icon={IconX}
+            size="small"
+            variant="tertiary"
+            onClick={() => onClosePage?.()}
+          />
         )}
         {loading ? (
           <StyledSkeletonLoader />

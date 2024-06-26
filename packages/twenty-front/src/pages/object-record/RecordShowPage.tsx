@@ -42,7 +42,8 @@ export const RecordShowPage = () => {
     hasNextRecord,
     navigateToPreviousRecord,
     navigateToNextRecord,
-    loadingPagination,
+    navigateToIndexView,
+    isLoadingPagination,
   } = useRecordShowPagePagination(
     parameters.objectNameSingular ?? '',
     parameters.objectRecordId ?? '',
@@ -55,14 +56,15 @@ export const RecordShowPage = () => {
         <PageTitle title={pageTitle} />
         <PageHeader
           title={viewName}
-          hasBackButton
           hasPaginationButtons
+          hasClosePageButton
+          onClosePage={navigateToIndexView}
           hasPreviousRecord={hasPreviousRecord}
-          hasNextRecord={hasNextRecord}
           navigateToPreviousRecord={navigateToPreviousRecord}
+          hasNextRecord={hasNextRecord}
           navigateToNextRecord={navigateToNextRecord}
           Icon={headerIcon}
-          loading={loadingPagination}
+          loading={isLoadingPagination}
         >
           <>
             <PageFavoriteButton
