@@ -13,6 +13,7 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 import { QuickActionsService } from 'src/engine/core-modules/quick-actions/quick-actions.service';
+import { workspaceResolverErrorHandler } from 'src/engine/api/graphql/workspace-resolver-builder/utils/workspace-resolver-error-handler.util';
 
 @Injectable()
 export class ExecuteQuickActionOnOneResolverFactory
@@ -38,7 +39,7 @@ export class ExecuteQuickActionOnOneResolverFactory
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
         objectMetadataCollection: internalContext.objectMetadataCollection,
-      });
+      }).catch(workspaceResolverErrorHandler);
     };
   }
 

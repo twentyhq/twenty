@@ -5,6 +5,7 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { CompositeTypeNotFoundException } from 'src/engine/api/graphql/workspace-query-builder/exceptions/composite-type-not-found.exception';
 
 @Injectable()
 export class ArgsAliasFactory {
@@ -55,12 +56,7 @@ export class ArgsAliasFactory {
         const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
 
         if (!compositeType) {
-          this.logger.error(
-            `Composite type definition not found for type: ${fieldMetadata.type}`,
-          );
-          throw new Error(
-            `Composite type definition not found for type: ${fieldMetadata.type}`,
-          );
+          throw new CompositeTypeNotFoundException(fieldMetadata.type);
         }
 
         // Loop through sub values and map them to composite property

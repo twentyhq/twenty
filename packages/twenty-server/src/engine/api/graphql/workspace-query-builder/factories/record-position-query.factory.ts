@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { RecordPositionQueryTypeInvalidException } from 'src/engine/api/graphql/workspace-query-builder/exceptions/record-position-query-type-invalid.exception';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 export enum RecordPositionQueryType {
@@ -68,7 +69,7 @@ export class RecordPositionQueryFactory {
           dataSourceSchema,
         );
       default:
-        throw new Error('Invalid RecordPositionQueryType');
+        throw new RecordPositionQueryTypeInvalidException();
     }
   }
 

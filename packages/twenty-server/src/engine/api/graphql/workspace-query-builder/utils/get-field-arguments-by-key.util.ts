@@ -8,6 +8,8 @@ import {
   ValueNode,
 } from 'graphql';
 
+import { FieldNotFound } from 'src/engine/api/graphql/workspace-query-builder/exceptions/field-not-found.exception';
+
 const isFieldNode = (node: SelectionNode): node is FieldNode =>
   node.kind === Kind.FIELD;
 
@@ -80,7 +82,7 @@ export const getFieldArgumentsByKey = (
 
   // If the field is not found, throw an error
   if (!targetField) {
-    throw new Error(`Field "${fieldKey}" not found.`);
+    throw new FieldNotFound(fieldKey);
   }
 
   // Extract the arguments from the field we've found

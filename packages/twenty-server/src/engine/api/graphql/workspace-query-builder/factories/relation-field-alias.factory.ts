@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 import { GraphQLResolveInfo } from 'graphql';
 
@@ -12,22 +12,21 @@ import {
   RelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
 import { getFieldArgumentsByKey } from 'src/engine/api/graphql/workspace-query-builder/utils/get-field-arguments-by-key.util';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { FieldIsNotRelationException } from 'src/engine/api/graphql/workspace-query-builder/exceptions/field-is-not-relation.exception';
+import { FieldHasNoWorkspaceIdException } from 'src/engine/api/graphql/workspace-query-builder/exceptions/field-has-no-workspace-id.exception';
+import { RelationHasNoObjectException } from 'src/engine/api/graphql/workspace-query-builder/exceptions/relation-has-no-object.exception';
 
 import { FieldsStringFactory } from './fields-string.factory';
 import { ArgsStringFactory } from './args-string.factory';
 
 @Injectable()
 export class RelationFieldAliasFactory {
-  private logger = new Logger(RelationFieldAliasFactory.name);
-
   constructor(
     @Inject(forwardRef(() => FieldsStringFactory))
     private readonly fieldsStringFactory: CircularDep<FieldsStringFactory>,
     private readonly argsStringFactory: ArgsStringFactory,
-    private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
   create(
@@ -38,7 +37,7 @@ export class RelationFieldAliasFactory {
     info: GraphQLResolveInfo,
   ): Promise<string> {
     if (!isRelationFieldMetadataType(fieldMetadata.type)) {
-      throw new Error(`Field ${fieldMetadata.name} is not a relation field`);
+      throw new FieldIsNotRelationException(fieldMetadata.name);
     }
 
     return this.createRelationAlias(
@@ -61,15 +60,11 @@ export class RelationFieldAliasFactory {
       fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
 
     if (!relationMetadata) {
-      throw new Error(
-        `Relation metadata not found for field ${fieldMetadata.name}`,
-      );
+      throw new FieldIsNotRelationException(fieldMetadata.name);
     }
 
     if (!fieldMetadata.workspaceId) {
-      throw new Error(
-        `Workspace id not found for field ${fieldMetadata.name} in object metadata ${fieldMetadata.objectMetadataId}`,
-      );
+      throw new FieldHasNoWorkspaceIdException(fieldMetadata.id);
     }
 
     const relationDirection = deduceRelationDirection(
@@ -87,9 +82,7 @@ export class RelationFieldAliasFactory {
     );
 
     if (!referencedObjectMetadata) {
-      throw new Error(
-        `Referenced object metadata not found for relation ${relationMetadata.id}`,
-      );
+      throw new RelationHasNoObjectException(relationMetadata.id);
     }
 
     // If it's a relation destination is of kind MANY, we need to add the collection suffix and extract the args

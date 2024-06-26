@@ -8,6 +8,7 @@ import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-
 import { WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
+import { workspaceResolverErrorHandler } from 'src/engine/api/graphql/workspace-resolver-builder/utils/workspace-resolver-error-handler.util';
 
 @Injectable()
 export class FindDuplicatesResolverFactory
@@ -25,14 +26,16 @@ export class FindDuplicatesResolverFactory
     const internalContext = context;
 
     return (_source, args, context, info) => {
-      return this.workspaceQueryRunnerService.findDuplicates(args, {
-        objectMetadataItem: internalContext.objectMetadataItem,
-        workspaceId: internalContext.workspaceId,
-        userId: internalContext.userId,
-        info,
-        fieldMetadataCollection: internalContext.fieldMetadataCollection,
-        objectMetadataCollection: internalContext.objectMetadataCollection,
-      });
+      return this.workspaceQueryRunnerService
+        .findDuplicates(args, {
+          objectMetadataItem: internalContext.objectMetadataItem,
+          workspaceId: internalContext.workspaceId,
+          userId: internalContext.userId,
+          info,
+          fieldMetadataCollection: internalContext.fieldMetadataCollection,
+          objectMetadataCollection: internalContext.objectMetadataCollection,
+        })
+        .catch(workspaceResolverErrorHandler);
     };
   }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { InvalidUuidException } from 'src/engine/api/graphql/workspace-query-runner/exceptions/invalid-uuid.exception';
 
 export const assertIsValidUuid = (value: string) => {
   const isValid =
@@ -7,6 +7,6 @@ export const assertIsValidUuid = (value: string) => {
     );
 
   if (!isValid) {
-    throw new BadRequestException(`Value "${value}" is not a valid UUID`);
+    throw new InvalidUuidException(value);
   }
 };

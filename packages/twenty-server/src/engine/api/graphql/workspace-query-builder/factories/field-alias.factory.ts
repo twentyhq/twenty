@@ -9,6 +9,7 @@ import {
   computeColumnName,
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { CompositeTypeNotFoundException } from 'src/engine/api/graphql/workspace-query-builder/exceptions/composite-type-not-found.exception';
 
 @Injectable()
 export class FieldAliasFactory {
@@ -26,12 +27,7 @@ export class FieldAliasFactory {
     const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
 
     if (!compositeType) {
-      this.logger.error(
-        `Composite type not found for field metadata type: ${fieldMetadata.type}`,
-      );
-      throw new Error(
-        `Composite type not found for field metadata type: ${fieldMetadata.type}`,
-      );
+      throw new CompositeTypeNotFoundException(fieldMetadata.type);
     }
 
     return compositeType.properties

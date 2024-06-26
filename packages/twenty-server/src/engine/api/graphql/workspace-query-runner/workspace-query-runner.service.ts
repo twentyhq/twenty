@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  RequestTimeoutException,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import isEmpty from 'lodash.isempty';
@@ -44,7 +39,6 @@ import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/t
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
@@ -53,6 +47,9 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
+import { QueryTimeoutException } from 'src/engine/api/graphql/workspace-query-runner/exceptions/query-timeout.exception';
+import { RecordsNotFoundException } from 'src/engine/api/graphql/workspace-query-runner/exceptions/records-not-found.exception';
+import { InvalidQueryInputException } from 'src/engine/api/graphql/workspace-query-runner/exceptions/invalid-query-input.exception';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -98,10 +95,12 @@ export class WorkspaceQueryRunnerService {
       ResolverArgsType.FindMany,
     )) as FindManyResolverArgs<Filter, OrderBy>;
 
-    const query = await this.workspaceQueryBuilderFactory.findMany(
-      computedArgs,
-      options,
-    );
+    const query = await this.workspaceQueryBuilderFactory
+      .findMany(computedArgs, options)
+      .catch((error) => {
+        this.logger.error(error);
+        throw error;
+      });
 
     await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
@@ -135,7 +134,7 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     if (!args.filter || Object.keys(args.filter).length === 0) {
-      throw new BadRequestException('Missing filter argument');
+      throw new InvalidQueryInputException('Missing filter argument');
     }
     const { workspaceId, userId, objectMetadataItem } = options;
 
@@ -173,13 +172,13 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<TRecord> | undefined> {
     if (!args.data && !args.ids) {
-      throw new BadRequestException(
+      throw new InvalidQueryInputException(
         'You have to provide either "data" or "id" argument',
       );
     }
 
     if (!args.ids && isEmpty(args.data)) {
-      throw new BadRequestException(
+      throw new InvalidQueryInputException(
         'The "data" condition can not be empty when ID input not provided',
       );
     }
@@ -202,7 +201,7 @@ export class WorkspaceQueryRunnerService {
       );
 
       if (!existingRecords || existingRecords.length === 0) {
-        throw new NotFoundError(`Object with id ${args.ids} not found`);
+        throw new RecordsNotFoundException(args.ids);
       }
     }
 
@@ -648,7 +647,7 @@ export class WorkspaceQueryRunnerService {
       );
     } catch (error) {
       if (isQueryTimeoutError(error)) {
-        throw new RequestTimeoutException(error.message);
+        throw new QueryTimeoutException(error.message);
       }
 
       throw error;
@@ -681,7 +680,7 @@ export class WorkspaceQueryRunnerService {
       ['update', 'deleteFrom'].includes(command) &&
       !result.affectedCount
     ) {
-      throw new BadRequestException('No rows were affected.');
+      throw new InvalidQueryInputException('No rows were affected.');
     }
 
     if (errors && errors.length > 0) {
