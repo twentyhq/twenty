@@ -5,6 +5,7 @@ declare module 'express-serve-static-core' {
   interface Request {
     user?: User;
     workspace?: Workspace;
+    workspaceId?: string;
     cacheVersion?: string | null;
   }
 }

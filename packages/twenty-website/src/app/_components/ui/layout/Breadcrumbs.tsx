@@ -65,6 +65,7 @@ interface BreadcrumbsProps {
   }[];
   activePage: string;
   separator: string;
+  style?: boolean;
 }
 
 export const Breadcrumbs = ({

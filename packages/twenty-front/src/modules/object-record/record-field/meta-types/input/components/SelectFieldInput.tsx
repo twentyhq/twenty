@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
@@ -8,6 +9,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItemSelectTag } from '@/ui/navigation/menu-item/components/MenuItemSelectTag';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
@@ -26,7 +28,8 @@ export const SelectFieldInput = ({
   onSubmit,
   onCancel,
 }: SelectFieldInputProps) => {
-  const { persistField, fieldDefinition, fieldValue } = useSelectField();
+  const { persistField, fieldDefinition, fieldValue, hotkeyScope } =
+    useSelectField();
   const [searchFilter, setSearchFilter] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -58,6 +61,20 @@ export const SelectFieldInput = ({
       }
     },
   });
+
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      const selectedOption = optionsInDropDown.find((option) =>
+        option.label.toLowerCase().includes(searchFilter.toLowerCase()),
+      );
+
+      if (isDefined(selectedOption)) {
+        onSubmit?.(() => persistField(selectedOption.value));
+      }
+    },
+    hotkeyScope,
+  );
 
   return (
     <StyledRelationPickerContainer ref={containerRef}>

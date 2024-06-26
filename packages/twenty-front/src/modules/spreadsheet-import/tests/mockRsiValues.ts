@@ -1,5 +1,7 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
+import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Fields, SpreadsheetOptions } from '@/spreadsheet-import/types';
+import { sleep } from '~/utils/sleep';
 
 const fields = [
   {
@@ -87,6 +89,33 @@ const fields = [
   },
 ] as Fields<string>;
 
+export const importedColums: Columns<string> = [
+  {
+    header: 'Name',
+    index: 0,
+    type: 2,
+    value: 'name',
+  },
+  {
+    header: 'Surname',
+    index: 1,
+    type: 2,
+    value: 'surname',
+  },
+  {
+    header: 'Age',
+    index: 2,
+    type: 2,
+    value: 'age',
+  },
+  {
+    header: 'Team',
+    index: 3,
+    type: 2,
+    value: 'team',
+  },
+];
+
 const mockComponentBehaviourForTypes = <T extends string>(
   props: SpreadsheetOptions<T>,
 ) => props;
@@ -102,22 +131,16 @@ export const mockRsiValues = mockComponentBehaviourForTypes({
     return;
   },
   uploadStepHook: async (data) => {
-    await new Promise((resolve) => {
-      setTimeout(() => resolve(data), 4000);
-    });
+    await sleep(4000, (resolve) => resolve(data));
     return data;
   },
   selectHeaderStepHook: async (hData, data) => {
-    await new Promise((resolve) => {
-      setTimeout(
-        () =>
-          resolve({
-            headerValues: hData,
-            data,
-          }),
-        4000,
-      );
-    });
+    await sleep(4000, (resolve) =>
+      resolve({
+        headerValues: hData,
+        data,
+      }),
+    );
     return {
       headerValues: hData,
       data,
@@ -125,9 +148,7 @@ export const mockRsiValues = mockComponentBehaviourForTypes({
   },
   // Runs after column matching and on entry change, more performant
   matchColumnsStepHook: async (data) => {
-    await new Promise((resolve) => {
-      setTimeout(() => resolve(data), 4000);
-    });
+    await sleep(4000, (resolve) => resolve(data));
     return data;
   },
 });

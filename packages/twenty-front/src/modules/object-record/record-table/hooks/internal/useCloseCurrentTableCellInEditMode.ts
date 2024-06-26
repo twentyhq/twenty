@@ -21,13 +21,6 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
           isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
           false,
         );
-
-        document.dispatchEvent(
-          new CustomEvent(
-            `edit-mode-change-${currentTableCellInEditModePosition.row}:${currentTableCellInEditModePosition.column}`,
-            { detail: false },
-          ),
-        );
       };
     },
     [currentTableCellInEditModePositionState, isTableCellInEditModeFamilyState],

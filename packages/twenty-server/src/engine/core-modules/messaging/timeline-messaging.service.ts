@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { TimelineThreadsWithTotal } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 type TimelineThreadParticipant = {
   personId: string;
@@ -352,7 +353,7 @@ export class TimelineMessagingService {
     const threadVisibility:
       | {
           id: string;
-          visibility: 'metadata' | 'subject' | 'share_everything';
+          visibility: MessageChannelVisibility;
         }[]
       | undefined = await this.workspaceDataSourceService.executeRawQuery(
       `
@@ -372,11 +373,11 @@ export class TimelineMessagingService {
       workspaceId,
     );
 
-    const visibilityValues = ['metadata', 'subject', 'share_everything'];
+    const visibilityValues = Object.values(MessageChannelVisibility);
 
     const threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotInParticipants:
       | {
-          [key: string]: 'metadata' | 'subject' | 'share_everything';
+          [key: string]: MessageChannelVisibility;
         }
       | undefined = threadVisibility?.reduce(
       (threadVisibilityAcc, threadVisibility) => {
@@ -385,7 +386,8 @@ export class TimelineMessagingService {
             Math.max(
               visibilityValues.indexOf(threadVisibility.visibility),
               visibilityValues.indexOf(
-                threadVisibilityAcc[threadVisibility.id] ?? 'metadata',
+                threadVisibilityAcc[threadVisibility.id] ??
+                  MessageChannelVisibility.METADATA,
               ),
             )
           ];
@@ -396,7 +398,7 @@ export class TimelineMessagingService {
     );
 
     const threadVisibilityByThreadId: {
-      [key: string]: 'metadata' | 'subject' | 'share_everything';
+      [key: string]: MessageChannelVisibility;
     } = messageThreadIds.reduce((threadVisibilityAcc, messageThreadId) => {
       // If the workspace member is not in the participants of the thread, use the visibility value from the query
       threadVisibilityAcc[messageThreadId] =
@@ -405,8 +407,8 @@ export class TimelineMessagingService {
         )
           ? threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotInParticipants?.[
               messageThreadId
-            ] ?? 'metadata'
-          : 'share_everything';
+            ] ?? MessageChannelVisibility.METADATA
+          : MessageChannelVisibility.SHARE_EVERYTHING;
 
       return threadVisibilityAcc;
     }, {});
@@ -461,7 +463,9 @@ export class TimelineMessagingService {
         lastTwoParticipants,
         lastMessageReceivedAt: thread.lastMessageReceivedAt,
         lastMessageBody: thread.lastMessageBody,
-        visibility: threadVisibilityByThreadId?.[messageThreadId] ?? 'metadata',
+        visibility:
+          threadVisibilityByThreadId?.[messageThreadId] ??
+          MessageChannelVisibility.METADATA,
         subject: threadSubject,
         numberOfMessagesInThread: numberOfMessages,
         participantCount: threadActiveParticipants.length,

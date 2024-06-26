@@ -10,9 +10,11 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
           eq: messageThreadId || '',
         },
       },
-      orderBy: {
-        receivedAt: 'AscNullsLast',
-      },
+      orderBy: [
+        {
+          receivedAt: 'AscNullsLast',
+        },
+      ],
       limit: 10,
     },
     fields: {

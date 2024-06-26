@@ -1,4 +1,4 @@
-import { GraphQLString, GraphQLInt, GraphQLID } from 'graphql';
+import { GraphQLString, GraphQLInt, GraphQLID, GraphQLBoolean } from 'graphql';
 
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { ArgMetadata } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/param-metadata.interface';
@@ -38,6 +38,7 @@ export const getResolverArgs = (
         orderBy: {
           kind: InputTypeDefinitionKind.OrderBy,
           isNullable: true,
+          isArray: true,
         },
       };
     case 'findOne':
@@ -55,12 +56,22 @@ export const getResolverArgs = (
           isNullable: false,
           isArray: true,
         },
+        upsert: {
+          type: GraphQLBoolean,
+          isNullable: true,
+          isArray: false,
+        },
       };
     case 'createOne':
       return {
         data: {
           kind: InputTypeDefinitionKind.Create,
           isNullable: false,
+        },
+        upsert: {
+          type: GraphQLBoolean,
+          isNullable: true,
+          isArray: false,
         },
       };
     case 'updateOne':
@@ -76,13 +87,15 @@ export const getResolverArgs = (
       };
     case 'findDuplicates':
       return {
-        id: {
+        ids: {
           type: GraphQLID,
           isNullable: true,
+          isArray: true,
         },
         data: {
           kind: InputTypeDefinitionKind.Create,
           isNullable: true,
+          isArray: true,
         },
       };
     case 'deleteOne':

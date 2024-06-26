@@ -3,6 +3,7 @@ import { isFirstRecordBoardColumnComponentFamilyState } from '@/object-record/re
 import { isLastRecordBoardColumnComponentFamilyState } from '@/object-record/record-board/states/isLastRecordBoardColumnComponentFamilyState';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
+import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsByColumnFamilyState';
 import { isRecordBoardFetchingRecordsComponentState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsComponentState';
 import { recordBoardColumnIdsComponentState } from '@/object-record/record-board/states/recordBoardColumnIdsComponentState';
 import { recordBoardFieldDefinitionsComponentState } from '@/object-record/record-board/states/recordBoardFieldDefinitionsComponentState';
@@ -40,6 +41,10 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
     ),
     isFetchingRecordState: extractComponentState(
       isRecordBoardFetchingRecordsComponentState,
+      scopeId,
+    ),
+    isFetchingRecordsByColumnState: extractComponentFamilyState(
+      isRecordBoardFetchingRecordsByColumnFamilyState,
       scopeId,
     ),
     columnIdsState: extractComponentState(

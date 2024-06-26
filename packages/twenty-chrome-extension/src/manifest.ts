@@ -32,7 +32,10 @@ export default defineManifest({
   content_scripts: [
     {
       matches: ['https://www.linkedin.com/*'],
-      js: ['src/contentScript/index.ts'],
+      js: [
+        'src/contentScript/index.ts',
+        'src/contentScript/insertSettingsButton.ts',
+      ],
       run_at: 'document_end',
     },
   ],

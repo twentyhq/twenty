@@ -6,13 +6,12 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { sleep } from '~/utils/sleep';
 
 import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
-
-export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
 
 export const download = (blob: Blob, filename: string) => {
   const url = URL.createObjectURL(blob);
@@ -47,14 +46,27 @@ export const generateCsv: GenerateExport = ({
       col.metadata.relationType === 'TO_ONE_OBJECT',
   );
 
-  const keys = columnsToExport.flatMap((col) => {
+  const objectIdColumn: ColumnDefinition<FieldMetadata> = {
+    fieldMetadataId: '',
+    type: FieldMetadataType.Uuid,
+    iconName: '',
+    label: `Id`,
+    metadata: {
+      fieldName: 'id',
+    },
+    position: 0,
+    size: 0,
+  };
+
+  const columnsToExportWithIdColumn = [objectIdColumn, ...columnsToExport];
+
+  const keys = columnsToExportWithIdColumn.flatMap((col) => {
     const column = {
       field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
       title: [col.label, col.type === 'RELATION' ? 'Id' : null]
         .filter(isDefined)
         .join(' '),
     };
-
     const fieldsWithSubFields = rows.find((row) => {
       const fieldValue = (row as any)[column.field];
       const hasSubFields =

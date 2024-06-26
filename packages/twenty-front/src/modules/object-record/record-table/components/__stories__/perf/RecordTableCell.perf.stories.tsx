@@ -17,6 +17,7 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
+import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
@@ -57,6 +58,7 @@ const meta: Meta = {
   title: 'RecordIndex/Table/RecordTableCell',
   decorators: [
     MemoryRouterDecorator,
+    ChipGeneratorsDecorator,
     (Story) => {
       return (
         <RecordFieldValueSelectorContextProvider>
@@ -79,6 +81,8 @@ const meta: Meta = {
             >
               <RecordTableRowContext.Provider
                 value={{
+                  objectNameSingular:
+                    mockPerformance.entityValue.__typename.toLocaleLowerCase(),
                   recordId: mockPerformance.entityId,
                   rowIndex: 0,
                   pathToShowPage:
@@ -141,7 +145,7 @@ export const Default: Story = {};
 
 export const Performance = getProfilingStory({
   componentName: 'RecordTableCell',
-  averageThresholdInMs: 0.6,
+  averageThresholdInMs: 0.3,
   numberOfRuns: 50,
   numberOfTestsPerRun: 200,
   warmUpRounds: 20,

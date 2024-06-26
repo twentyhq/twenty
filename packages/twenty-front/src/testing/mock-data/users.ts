@@ -10,6 +10,7 @@ type MockedUser = Pick<
   | 'canImpersonate'
   | '__typename'
   | 'supportUserHash'
+  | 'onboardingStep'
 > & {
   workspaceMember: WorkspaceMember | null;
   locale: string;
@@ -92,6 +93,7 @@ export const mockedUsersData: Array<MockedUser> = [
     defaultWorkspace: mockDefaultWorkspace,
     locale: 'en',
     workspaces: [{ workspace: mockDefaultWorkspace }],
+    onboardingStep: null,
   },
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
@@ -114,6 +116,7 @@ export const mockedUsersData: Array<MockedUser> = [
     defaultWorkspace: mockDefaultWorkspace,
     locale: 'en',
     workspaces: [{ workspace: mockDefaultWorkspace }],
+    onboardingStep: null,
   },
 ];
 
@@ -140,6 +143,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     defaultWorkspace: mockDefaultWorkspace,
     locale: 'en',
     workspaces: [{ workspace: mockDefaultWorkspace }],
+    onboardingStep: null,
   },
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
@@ -155,5 +159,6 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     },
     locale: 'en',
     workspaces: [{ workspace: mockDefaultWorkspace }],
+    onboardingStep: null,
   },
 ];

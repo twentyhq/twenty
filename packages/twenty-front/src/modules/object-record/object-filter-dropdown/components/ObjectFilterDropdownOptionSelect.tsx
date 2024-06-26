@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { v4 } from 'uuid';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -22,6 +23,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
     objectFilterDropdownSearchInputState,
     selectedOperandInDropdownState,
     objectFilterDropdownSelectedOptionValuesState,
+    selectedFilterState,
     selectFilter,
   } = useFilterDropdown();
 
@@ -37,6 +39,8 @@ export const ObjectFilterDropdownOptionSelect = () => {
   const objectFilterDropdownSelectedOptionValues = useRecoilValue(
     objectFilterDropdownSelectedOptionValuesState,
   );
+
+  const selectedFilter = useRecoilValue(selectedFilterState);
 
   const fieldMetaDataId = filterDefinitionUsedInDropdown?.fieldMetadataId ?? '';
 
@@ -96,6 +100,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
           : EMPTY_FILTER_VALUE;
 
       selectFilter({
+        id: selectedFilter?.id ? selectedFilter.id : v4(),
         definition: filterDefinitionUsedInDropdown,
         operand: selectedOperandInDropdown,
         displayValue: filterDisplayValue,

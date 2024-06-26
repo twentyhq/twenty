@@ -11,10 +11,11 @@
       }
     },
     "start": {
-      "executor": "@nx/vite:dev-server",
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
       "options": {
-        "buildTarget": "twenty-chrome-extension:build",
-        "hmr": true
+        "cwd": "packages/twenty-chrome-extension",
+        "command": "VITE_MODE=development vite"
       }
     },
     "preview": {

@@ -1,8 +1,11 @@
+import { useContext } from 'react';
 import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
-const StyledInlineCellEditModeContainer = styled.div<RecordInlineCellEditModeProps>`
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+
+const StyledInlineCellEditModeContainer = styled.div`
   align-items: center;
 
   display: flex;
@@ -29,12 +32,22 @@ type RecordInlineCellEditModeProps = {
 export const RecordInlineCellEditMode = ({
   children,
 }: RecordInlineCellEditModeProps) => {
+  const { isCentered } = useContext(FieldContext);
+
   const { refs, floatingStyles } = useFloating({
+    placement: isCentered ? undefined : 'right-start',
     middleware: [
       flip(),
-      offset({
-        mainAxis: -30,
-      }),
+      offset(
+        isCentered
+          ? {
+              mainAxis: -30,
+            }
+          : {
+              crossAxis: -4,
+              mainAxis: -4,
+            },
+      ),
     ],
     whileElementsMounted: autoUpdate,
   });

@@ -86,11 +86,6 @@ export class EnvironmentVariables {
   @IsBoolean()
   TELEMETRY_ENABLED = true;
 
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  TELEMETRY_ANONYMIZATION_ENABLED = true;
-
   @CastToPositiveNumber()
   @IsNumber()
   @IsOptional()
@@ -329,7 +324,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
-  MUTATION_MAXIMUM_RECORD_AFFECTED = 100;
+  MUTATION_MAXIMUM_AFFECTED_RECORDS = 100;
 
   REDIS_HOST = '127.0.0.1';
 
@@ -380,7 +375,7 @@ export class EnvironmentVariables {
 
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
-  CHROME_EXTENSION_REDIRECT_URL: string;
+  CHROME_EXTENSION_ID: string;
 }
 
 export const validate = (

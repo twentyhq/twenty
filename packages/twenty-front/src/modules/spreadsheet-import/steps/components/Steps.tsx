@@ -35,7 +35,7 @@ export const Steps = () => {
     initialStepState?.type,
   );
 
-  const { nextStep, activeStep } = useStepBar({
+  const { nextStep, prevStep, activeStep } = useStepBar({
     initialStep,
   });
 
@@ -48,7 +48,7 @@ export const Steps = () => {
           ))}
         </StepBar>
       </StyledHeader>
-      <UploadFlow nextStep={nextStep} />
+      <UploadFlow nextStep={nextStep} prevStep={prevStep} />
     </>
   );
 };

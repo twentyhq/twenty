@@ -1,17 +1,21 @@
-import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Scope } from '@nestjs/common';
 
 import { Repository, In } from 'typeorm';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { WorkspaceGoogleCalendarSyncService } from 'src/modules/calendar/services/workspace-google-calendar-sync/workspace-google-calendar-sync.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
-@Injectable()
-export class GoogleCalendarSyncCronJob implements MessageQueueJob<undefined> {
+@Processor({
+  queueName: MessageQueue.cronQueue,
+  scope: Scope.REQUEST,
+})
+export class GoogleCalendarSyncCronJob {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -21,6 +25,7 @@ export class GoogleCalendarSyncCronJob implements MessageQueueJob<undefined> {
     private readonly environmentService: EnvironmentService,
   ) {}
 
+  @Process(GoogleCalendarSyncCronJob.name)
   async handle(): Promise<void> {
     const workspaceIds = (
       await this.workspaceRepository.find({

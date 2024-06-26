@@ -18,7 +18,6 @@ export const GET_CLIENT_CONFIG = gql`
       debugMode
       telemetry {
         enabled
-        anonymizationEnabled
       }
       support {
         supportDriver
@@ -33,6 +32,10 @@ export const GET_CLIENT_CONFIG = gql`
         provider
         siteKey
       }
+      api {
+        mutationMaximumAffectedRecords
+      }
+      chromeExtensionId
     }
   }
 `;

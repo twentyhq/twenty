@@ -1,50 +1,96 @@
-import * as React from 'react';
-import { Link as ReactLink } from 'react-router-dom';
-import styled from '@emotion/styled';
-import { Chip, ChipSize, ChipVariant } from 'twenty-ui';
+import { MouseEvent, useContext } from 'react';
+import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { FONT_COMMON, THEME_COMMON, ThemeContext } from 'twenty-ui';
 
 type RoundedLinkProps = {
   href: string;
-  children?: React.ReactNode;
-  className?: string;
+  label?: string;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
-const StyledLink = styled(ReactLink)`
-  font-size: ${({ theme }) => theme.font.size.md};
-  max-width: 100%;
-  height: ${({ theme }) => theme.spacing(5)};
+const fontSizeMd = FONT_COMMON.size.md;
+const spacing1 = THEME_COMMON.spacing(1);
+const spacing2 = THEME_COMMON.spacing(2);
+
+const spacingMultiplicator = THEME_COMMON.spacingMultiplicator;
+
+const StyledLink = styled.a<{
+  color: string;
+  background: string;
+  backgroundHover: string;
+  backgroundActive: string;
+  border: string;
+}>`
+  align-items: center;
+  background-color: ${({ background }) => background};
+  border: 1px solid ${({ border }) => border};
+
+  border-radius: 50px;
+  color: ${({ color }) => color};
+
+  cursor: pointer;
+  display: inline-flex;
+  font-weight: ${fontSizeMd};
+
+  gap: ${spacing1};
+
+  height: 10px;
+  justify-content: center;
+
+  max-width: calc(100% - ${spacingMultiplicator} * 2px);
+
+  min-width: fit-content;
+
+  overflow: hidden;
+  padding: ${spacing1} ${spacing2};
+
+  text-decoration: none;
+  text-overflow: ellipsis;
+  user-select: none;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: ${({ backgroundHover }) => backgroundHover};
+  }
+
+  &:active {
+    background-color: ${({ backgroundActive }) => backgroundActive};
+  }
 `;
 
-const StyledChip = styled(Chip)`
-  border-color: ${({ theme }) => theme.border.color.strong};
-  box-sizing: border-box;
-  padding: ${({ theme }) => theme.spacing(0, 2)};
-  max-width: 100%;
-  height: ${({ theme }) => theme.spacing(5)};
-  min-width: 40px;
-`;
+export const RoundedLink = ({ label, href, onClick }: RoundedLinkProps) => {
+  const { theme } = useContext(ThemeContext);
 
-export const RoundedLink = ({
-  children,
-  className,
-  href,
-  onClick,
-}: RoundedLinkProps) => {
-  if (!children) return null;
+  const background = theme.background.transparent.lighter;
+  const backgroundHover = theme.background.transparent.light;
+  const backgroundActive = theme.background.transparent.medium;
+  const border = theme.border.color.strong;
+  const color = theme.font.color.primary;
+
+  if (!isNonEmptyString(label)) {
+    return <></>;
+  }
+
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+
+    onClick?.(event);
+  };
 
   return (
     <StyledLink
-      className={className}
+      href={href}
       target="_blank"
-      to={href}
-      onClick={onClick}
+      rel="noreferrer"
+      onClick={handleClick}
+      color={color}
+      background={background}
+      backgroundHover={backgroundHover}
+      backgroundActive={backgroundActive}
+      border={border}
     >
-      <StyledChip
-        label={`${children}`}
-        variant={ChipVariant.Rounded}
-        size={ChipSize.Large}
-      />
+      {label}
     </StyledLink>
   );
 };

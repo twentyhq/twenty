@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
@@ -13,9 +15,11 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/isFieldRawJsonValue';
+import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
@@ -54,6 +58,11 @@ export const usePersistField = () => {
         const fieldIsRelation =
           isFieldRelation(fieldDefinition) &&
           isFieldRelationValue(valueToPersist);
+
+        const fieldIsRelationFromManyObjects =
+          isFieldRelationFromManyObjects(
+            fieldDefinition as FieldDefinition<FieldRelationMetadata>,
+          ) && isFieldRelationValue(valueToPersist);
 
         const fieldIsText =
           isFieldText(fieldDefinition) && isFieldTextValue(valueToPersist);
@@ -111,7 +120,7 @@ export const usePersistField = () => {
           isFieldRawJsonValue(valueToPersist);
 
         const isValuePersistable =
-          fieldIsRelation ||
+          (fieldIsRelation && !fieldIsRelationFromManyObjects) ||
           fieldIsText ||
           fieldIsBoolean ||
           fieldIsEmail ||
@@ -136,13 +145,14 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          if (fieldIsRelation) {
+          if (fieldIsRelation && !fieldIsRelationFromManyObjects) {
+            const value = valueToPersist as EntityForSelect;
             updateRecord?.({
               variables: {
                 where: { id: entityId },
                 updateOneRecordInput: {
-                  [fieldName]: valueToPersist,
-                  [`${fieldName}Id`]: valueToPersist?.id ?? null,
+                  [fieldName]: value,
+                  [`${fieldName}Id`]: value?.id ?? null,
                 },
               },
             });

@@ -2,6 +2,9 @@
 import { isDate, isNumber, isString } from '@sniptt/guards';
 import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';
+import moize from 'moize';
+
+import { isDefined } from '~/utils/isDefined';
 
 import { logError } from './logError';
 
@@ -132,4 +135,81 @@ export const beautifyDateDiff = (
   if (dateDiff.days) result = result + `${Math.floor(dateDiff.days)} day`;
   if (![0, 1].includes(dateDiff.days)) result = result + 's';
   return result;
+};
+
+const getMonthLabels = () => {
+  const formatter = new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    timeZone: 'UTC',
+  });
+
+  return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    .map((month) => {
+      const monthZeroFilled = month < 10 ? `0${month}` : month;
+      return new Date(`2017-${monthZeroFilled}-01T00:00:00+00:00`);
+    })
+    .map((date) => formatter.format(date));
+};
+
+const getMonthLabelsMemoized = moize(getMonthLabels);
+
+export const formatISOStringToHumanReadableDateTime = (date: string) => {
+  const monthLabels = getMonthLabelsMemoized();
+
+  if (!isDefined(monthLabels)) {
+    return formatToHumanReadableDateTime(date);
+  }
+
+  const year = date.slice(0, 4);
+  const month = date.slice(5, 7);
+
+  const monthLabel = monthLabels[parseInt(month, 10) - 1];
+
+  const jsDate = new Date(date);
+
+  const day = jsDate.getDate();
+
+  const hours = `0${jsDate.getHours()}`.slice(-2);
+
+  const minutes = `0${jsDate.getMinutes()}`.slice(-2);
+
+  return `${day} ${monthLabel} ${year} - ${hours}:${minutes}`;
+};
+
+export const formatISOStringToHumanReadableDate = (date: string) => {
+  const monthLabels = getMonthLabelsMemoized();
+
+  if (!isDefined(monthLabels)) {
+    return formatToHumanReadableDate(date);
+  }
+
+  const year = date.slice(0, 4);
+  const month = date.slice(5, 7);
+  const day = date.slice(8, 10);
+
+  const monthLabel = monthLabels[parseInt(month, 10) - 1];
+
+  return `${day} ${monthLabel} ${year}`;
+};
+
+export const formatToHumanReadableDate = (date: Date | string) => {
+  const parsedJSDate = parseDate(date).toJSDate();
+
+  return new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(parsedJSDate);
+};
+
+export const formatToHumanReadableDateTime = (date: Date | string) => {
+  const parsedJSDate = parseDate(date).toJSDate();
+
+  return new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  }).format(parsedJSDate);
 };

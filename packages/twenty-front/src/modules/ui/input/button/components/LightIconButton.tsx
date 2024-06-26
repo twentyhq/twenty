@@ -60,7 +60,6 @@ const StyledButton = styled.button<
   transition: background 0.1s ease;
 
   white-space: nowrap;
-
   width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   min-width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
 
@@ -106,7 +105,7 @@ export const LightIconButton = ({
       active={active}
       title={title}
     >
-      {Icon && <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />}
+      {Icon && <Icon size={theme.icon.size.sm} />}
     </StyledButton>
   );
 };

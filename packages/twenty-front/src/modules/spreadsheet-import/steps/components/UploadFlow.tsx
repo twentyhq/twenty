@@ -12,7 +12,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
-import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
+import { Columns, MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
@@ -52,6 +52,7 @@ export type StepState =
   | {
       type: StepType.validateData;
       data: any[];
+      importedColumns: Columns<string>;
     }
   | {
       type: StepType.loading;
@@ -59,12 +60,16 @@ export type StepState =
 
 interface UploadFlowProps {
   nextStep: () => void;
+  prevStep: () => void;
 }
 
-export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
+export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
   const theme = useTheme();
   const { initialStepState } = useSpreadsheetImportInternal();
   const [state, setState] = useState<StepState>(
+    initialStepState || { type: StepType.upload },
+  );
+  const [previousState, setPreviousState] = useState<StepState>(
     initialStepState || { type: StepType.upload },
   );
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -86,6 +91,11 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
     },
     [enqueueSnackBar],
   );
+
+  const onBack = useCallback(() => {
+    setState(previousState);
+    prevStep();
+  }, [prevStep, previousState]);
 
   switch (state.type) {
     case StepType.upload:
@@ -138,6 +148,7 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
             } else {
               setState({ type: StepType.selectSheet, workbook });
             }
+            setPreviousState(state);
             nextStep();
           }}
         />
@@ -164,10 +175,12 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
                 type: StepType.selectHeader,
                 data: mappedWorkbook,
               });
+              setPreviousState(state);
             } catch (e) {
               errorToast((e as Error).message);
             }
           }}
+          onBack={onBack}
         />
       );
     case StepType.selectHeader:
@@ -184,11 +197,13 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
                 data,
                 headerValues,
               });
+              setPreviousState(state);
               nextStep();
             } catch (e) {
               errorToast((e as Error).message);
             }
           }}
+          onBack={onBack}
         />
       );
     case StepType.matchColumns:
@@ -202,12 +217,15 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
               setState({
                 type: StepType.validateData,
                 data,
+                importedColumns: columns,
               });
+              setPreviousState(state);
               nextStep();
             } catch (e) {
               errorToast((e as Error).message);
             }
           }}
+          onBack={onBack}
         />
       );
     case StepType.validateData:
@@ -217,12 +235,17 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
       return (
         <ValidationStep
           initialData={state.data}
+          importedColumns={state.importedColumns}
           file={uploadedFile}
           onSubmitStart={() =>
             setState({
               type: StepType.loading,
             })
           }
+          onBack={() => {
+            onBack();
+            setPreviousState(initialStepState || { type: StepType.upload });
+          }}
         />
       );
     case StepType.loading:

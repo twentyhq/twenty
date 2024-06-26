@@ -35,6 +35,11 @@ export class TwentyORMManager {
       entities,
       workspaceId,
     );
+
+    if (!workspaceDataSource) {
+      throw new Error('Workspace data source not found');
+    }
+
     const entitySchema = this.entitySchemaFactory.create(entityClass);
 
     return workspaceDataSource.getRepository<T>(entitySchema);

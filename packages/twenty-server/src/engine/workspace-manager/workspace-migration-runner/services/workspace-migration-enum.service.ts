@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { QueryRunner, TableColumn } from 'typeorm';
 import { v4 } from 'uuid';
+import { isDefined } from 'class-validator';
 
 import {
   WorkspaceMigrationColumnAlter,
@@ -47,10 +48,6 @@ export class WorkspaceMigrationEnumService {
       (enumValue): enumValue is WorkspaceMigrationRenamedEnum =>
         typeof enumValue !== 'string',
     );
-
-    if (!columnDefinition.isNullable && !columnDefinition.defaultValue) {
-      columnDefinition.defaultValue = serializeDefaultValue(enumValues[0]);
-    }
 
     const oldColumnName = `${columnDefinition.columnName}_old_${v4()}`;
 
@@ -117,10 +114,17 @@ export class WorkspaceMigrationEnumService {
   private migrateEnumValue(
     value: string,
     renamedEnumValues?: WorkspaceMigrationRenamedEnum[],
+    allEnumValues?: string[],
   ) {
-    return (
-      renamedEnumValues?.find((enumVal) => enumVal?.from === value)?.to || value
-    );
+    if (renamedEnumValues?.find((enumVal) => enumVal?.from === value)?.to) {
+      return renamedEnumValues?.find((enumVal) => enumVal?.from === value)?.to;
+    }
+
+    if (allEnumValues?.includes(value)) {
+      return value;
+    }
+
+    return null;
   }
 
   private async migrateEnumValues(
@@ -138,7 +142,7 @@ export class WorkspaceMigrationEnumService {
       `SELECT id, "${oldColumnName}" FROM "${schemaName}"."${tableName}"`,
     );
 
-    values.map(async (value) => {
+    for (const value of values) {
       let val = value[oldColumnName];
 
       if (/^\{.*\}$/.test(val)) {
@@ -147,11 +151,19 @@ export class WorkspaceMigrationEnumService {
             .slice(1, -1)
             .split(',')
             .map((v: string) => v.trim())
-            .map((v: string) => this.migrateEnumValue(v, renamedEnumValues))
-            .filter((v: string) => enumValues.includes(v)),
+            .map((v: string) =>
+              this.migrateEnumValue(v, renamedEnumValues, enumValues),
+            )
+            .filter((v: string | null) => isDefined(v)),
         );
       } else if (typeof val === 'string') {
-        val = `'${this.migrateEnumValue(val, renamedEnumValues)}'`;
+        const migratedValue = this.migrateEnumValue(
+          val,
+          renamedEnumValues,
+          enumValues,
+        );
+
+        val = isDefined(migratedValue) ? `'${migratedValue}'` : null;
       }
 
       await queryRunner.query(`
@@ -159,7 +171,7 @@ export class WorkspaceMigrationEnumService {
         SET "${columnDefinition.columnName}" = ${val}
         WHERE id='${value.id}'
       `);
-    });
+    }
   }
 
   private async dropOldEnumType(

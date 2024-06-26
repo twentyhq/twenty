@@ -1,3 +1,11 @@
+/* 
+
+!! DEPRECATED !!
+
+Please do not use those variables anymore. They are deprecated and will be removed soon.
+
+*/
+
 :root {
   --twentycrm-spacing-multiplicator: 4;
   --twentycrm-border-radius-sm: 4px;
@@ -34,8 +42,8 @@
   --twentycrm-gray-0-14: #ffffff23;
 
   /* Blues */
-  --twentycrm-blue-accent-90: #141a25,
-  --twentycrm-blue-accent-10: #f5f9fd,
+  --twentycrm-blue-accent-90: #141a25;
+  --twentycrm-blue-accent-10: #f5f9fd;
 }
 
 :root.dark {

@@ -1,10 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconSettings, useIcons } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -14,6 +15,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 export const RecordTableHeaderPlusButtonContent = () => {
+  const { objectMetadataItem } = useContext(RecordTableContext);
   const { closeDropdown } = useDropdown();
 
   const { hiddenTableColumnsSelector } = useRecordTableStates();
@@ -54,7 +56,9 @@ export const RecordTableHeaderPlusButtonContent = () => {
         </>
       )}
       <DropdownMenuItemsContainer>
-        <StyledMenuItemLink to="/settings/objects">
+        <StyledMenuItemLink
+          to={`/settings/objects/${objectMetadataItem.namePlural}`}
+        >
           <MenuItem LeftIcon={IconSettings} text="Customize fields" />
         </StyledMenuItemLink>
       </DropdownMenuItemsContainer>

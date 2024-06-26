@@ -5,6 +5,7 @@ import { Providers } from '@/spreadsheet-import/components/Providers';
 import { ValidationStep } from '@/spreadsheet-import/steps/components/ValidationStep/ValidationStep';
 import {
   editableTableInitialData,
+  importedColums,
   mockRsiValues,
 } from '@/spreadsheet-import/tests/mockRsiValues';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
@@ -25,7 +26,12 @@ export const Default = () => (
   <DialogManagerScope dialogManagerScopeId="dialog-manager">
     <Providers values={mockRsiValues}>
       <ModalWrapper isOpen={true} onClose={() => null}>
-        <ValidationStep initialData={editableTableInitialData} file={file} />
+        <ValidationStep
+          initialData={editableTableInitialData}
+          file={file}
+          importedColumns={importedColums}
+          onBack={() => Promise.resolve()}
+        />
       </ModalWrapper>
     </Providers>
   </DialogManagerScope>

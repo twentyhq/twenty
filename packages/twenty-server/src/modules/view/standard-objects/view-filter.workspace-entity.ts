@@ -68,5 +68,5 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'viewFilters',
   })
   @WorkspaceIsNullable()
-  view: Relation<ViewWorkspaceEntity>;
+  view: Relation<ViewWorkspaceEntity> | null;
 }

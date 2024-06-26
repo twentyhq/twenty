@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Reference, useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
@@ -11,11 +11,9 @@ import { z } from 'zod';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
-import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -51,13 +49,12 @@ export const SettingsObjectNewFieldStep2 = () => {
   const { objectSlug = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { findActiveObjectMetadataItemBySlug, findObjectMetadataItemById } =
+  const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
-  const cache = useApolloClient().cache;
 
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
@@ -70,12 +67,8 @@ export const SettingsObjectNewFieldStep2 = () => {
     }
   }, [activeObjectMetadataItem, navigate]);
 
-  const [objectViews, setObjectViews] = useState<View[]>([]);
-  const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
-
-  const { objectMetadataItem: viewObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.View,
-  });
+  const [, setObjectViews] = useState<View[]>([]);
+  const [, setRelationObjectViews] = useState<View[]>([]);
 
   useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
@@ -111,6 +104,8 @@ export const SettingsObjectNewFieldStep2 = () => {
   const { createOneRelationMetadataItem: createOneRelationMetadata } =
     useCreateOneRelationMetadataItem();
 
+  const apolloClient = useApolloClient();
+
   if (!activeObjectMetadataItem) return null;
 
   const canSave =
@@ -126,7 +121,7 @@ export const SettingsObjectNewFieldStep2 = () => {
       ) {
         const { relation: relationFormValues, ...fieldFormValues } = formValues;
 
-        const createdRelation = await createOneRelationMetadata({
+        await createOneRelationMetadata({
           relationType: relationFormValues.type,
           field: pick(fieldFormValues, ['icon', 'label', 'description']),
           objectMetadataId: activeObjectMetadataItem.id,
@@ -139,111 +134,21 @@ export const SettingsObjectNewFieldStep2 = () => {
           },
         });
 
-        const relationObjectMetadataItem = findObjectMetadataItemById(
-          relationFormValues.objectMetadataId,
-        );
-
-        objectViews.map(async (view) => {
-          const viewFieldToCreate = {
-            viewId: view.id,
-            fieldMetadataId:
-              relationFormValues.type === 'MANY_TO_ONE'
-                ? createdRelation.data?.createOneRelation.toFieldMetadataId
-                : createdRelation.data?.createOneRelation.fromFieldMetadataId,
-            position: activeObjectMetadataItem.fields.length,
-            isVisible: true,
-            size: 100,
-          };
-
-          modifyRecordFromCache({
-            objectMetadataItem: viewObjectMetadataItem,
-            cache: cache,
-            fieldModifiers: {
-              viewFields: (viewFieldsRef, { readField }) => {
-                const edges = readField<{ node: Reference }[]>(
-                  'edges',
-                  viewFieldsRef,
-                );
-
-                if (!edges) return viewFieldsRef;
-
-                return {
-                  ...viewFieldsRef,
-                  edges: [...edges, { node: viewFieldToCreate }],
-                };
-              },
-            },
-            recordId: view.id,
-          });
-
-          relationObjectViews.map(async (view) => {
-            const viewFieldToCreate = {
-              viewId: view.id,
-              fieldMetadataId:
-                relationFormValues.type === 'MANY_TO_ONE'
-                  ? createdRelation.data?.createOneRelation.fromFieldMetadataId
-                  : createdRelation.data?.createOneRelation.toFieldMetadataId,
-              position: relationObjectMetadataItem?.fields.length,
-              isVisible: true,
-              size: 100,
-            };
-            modifyRecordFromCache({
-              objectMetadataItem: viewObjectMetadataItem,
-              cache: cache,
-              fieldModifiers: {
-                viewFields: (viewFieldsRef, { readField }) => {
-                  const edges = readField<{ node: Reference }[]>(
-                    'edges',
-                    viewFieldsRef,
-                  );
-
-                  if (!edges) return viewFieldsRef;
-
-                  return {
-                    ...viewFieldsRef,
-                    edges: [...edges, { node: viewFieldToCreate }],
-                  };
-                },
-              },
-              recordId: view.id,
-            });
-          });
+        // TODO: fix optimistic update logic
+        // Forcing a refetch for now but it's not ideal
+        await apolloClient.refetchQueries({
+          include: ['FindManyViews', 'CombinedFindManyRecords'],
         });
       } else {
-        const createdMetadataField = await createMetadataField({
+        await createMetadataField({
           ...formValues,
           objectMetadataId: activeObjectMetadataItem.id,
         });
 
-        objectViews.map(async (view) => {
-          const viewFieldToCreate = {
-            viewId: view.id,
-            fieldMetadataId: createdMetadataField.data?.createOneField.id,
-            position: activeObjectMetadataItem.fields.length,
-            isVisible: true,
-            size: 100,
-          };
-
-          modifyRecordFromCache({
-            objectMetadataItem: viewObjectMetadataItem,
-            cache: cache,
-            fieldModifiers: {
-              viewFields: (cachedViewFieldsConnection, { readField }) => {
-                const edges = readField<RecordGqlRefEdge[]>(
-                  'edges',
-                  cachedViewFieldsConnection,
-                );
-
-                if (!edges) return cachedViewFieldsConnection;
-
-                return {
-                  ...cachedViewFieldsConnection,
-                  edges: [...edges, { node: viewFieldToCreate }],
-                };
-              },
-            },
-            recordId: view.id,
-          });
+        // TODO: fix optimistic update logic
+        // Forcing a refetch for now but it's not ideal
+        await apolloClient.refetchQueries({
+          include: ['FindManyViews', 'CombinedFindManyRecords'],
         });
       }
 
@@ -257,66 +162,68 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const excludedFieldTypes: SettingsSupportedFieldType[] = (
     [
-      FieldMetadataType.Email,
-      FieldMetadataType.FullName,
-      FieldMetadataType.Link,
+      // FieldMetadataType.Email,
+      // FieldMetadataType.FullName,
+      // FieldMetadataType.Link,
       FieldMetadataType.Numeric,
       FieldMetadataType.Probability,
-      FieldMetadataType.Uuid,
-      FieldMetadataType.Phone,
+      // FieldMetadataType.Uuid,
+      // FieldMetadataType.Phone,
     ] as const
   ).filter(isDefined);
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        <SettingsPageContainer>
-          <SettingsHeaderContainer>
-            <Breadcrumb
-              links={[
-                { children: 'Objects', href: '/settings/objects' },
-                {
-                  children: activeObjectMetadataItem.labelPlural,
-                  href: `/settings/objects/${objectSlug}`,
-                },
-                { children: 'New Field' },
-              ]}
-            />
-            {!activeObjectMetadataItem.isRemote && (
-              <SaveAndCancelButtons
-                isSaveDisabled={!canSave}
-                onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                onSave={formConfig.handleSubmit(handleSave)}
+    <RecordFieldValueSelectorContextProvider>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <FormProvider {...formConfig}>
+        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+          <SettingsPageContainer>
+            <SettingsHeaderContainer>
+              <Breadcrumb
+                links={[
+                  { children: 'Objects', href: '/settings/objects' },
+                  {
+                    children: activeObjectMetadataItem.labelPlural,
+                    href: `/settings/objects/${objectSlug}`,
+                  },
+                  { children: 'New Field' },
+                ]}
               />
-            )}
-          </SettingsHeaderContainer>
-          <Section>
-            <H2Title
-              title="Name and description"
-              description="The name and description of this field"
-            />
-            <SettingsDataModelFieldAboutForm />
-          </Section>
-          <Section>
-            <H2Title
-              title="Type and values"
-              description="The field's type and values."
-            />
-            <StyledSettingsObjectFieldTypeSelect
-              excludedFieldTypes={excludedFieldTypes}
-            />
-            <SettingsDataModelFieldSettingsFormCard
-              fieldMetadataItem={{
-                icon: formConfig.watch('icon'),
-                label: formConfig.watch('label') || 'Employees',
-                type: formConfig.watch('type'),
-              }}
-              objectMetadataItem={activeObjectMetadataItem}
-            />
-          </Section>
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </FormProvider>
+              {!activeObjectMetadataItem.isRemote && (
+                <SaveAndCancelButtons
+                  isSaveDisabled={!canSave}
+                  onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+                  onSave={formConfig.handleSubmit(handleSave)}
+                />
+              )}
+            </SettingsHeaderContainer>
+            <Section>
+              <H2Title
+                title="Name and description"
+                description="The name and description of this field"
+              />
+              <SettingsDataModelFieldAboutForm />
+            </Section>
+            <Section>
+              <H2Title
+                title="Type and values"
+                description="The field's type and values."
+              />
+              <StyledSettingsObjectFieldTypeSelect
+                excludedFieldTypes={excludedFieldTypes}
+              />
+              <SettingsDataModelFieldSettingsFormCard
+                fieldMetadataItem={{
+                  icon: formConfig.watch('icon'),
+                  label: formConfig.watch('label') || 'Employees',
+                  type: formConfig.watch('type'),
+                }}
+                objectMetadataItem={activeObjectMetadataItem}
+              />
+            </Section>
+          </SettingsPageContainer>
+        </SubMenuTopBarContainer>
+      </FormProvider>
+    </RecordFieldValueSelectorContextProvider>
   );
 };

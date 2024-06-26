@@ -22,9 +22,9 @@ import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/use
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 
 const StyledSelectContainer = styled.div`
-  left: 0px;
   position: absolute;
-  top: -8px;
+  left: 0;
+  top: 0;
 `;
 
 type ActivityTargetInlineCellEditModeProps = {
@@ -171,15 +171,10 @@ export const ActivityTargetInlineCellEditMode = ({
     });
   };
 
-  const handleCancel = () => {
-    closeEditableField();
-  };
-
   return (
     <StyledSelectContainer>
       <MultipleObjectRecordSelect
         selectedObjectRecordIds={selectedTargetObjectIds}
-        onCancel={handleCancel}
         onSubmit={handleSubmit}
       />
     </StyledSelectContainer>

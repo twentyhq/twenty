@@ -1,19 +1,15 @@
-import { useJsonField } from '@/object-record/record-field/meta-types/hooks/useJsonField';
-import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/isFieldRawJsonValue';
+import { useJsonFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useJsonFieldDisplay';
 import { JsonDisplay } from '@/ui/field/display/components/JsonDisplay';
 import { isDefined } from '~/utils/isDefined';
 
 export const JsonFieldDisplay = () => {
-  const { fieldValue, maxWidth } = useJsonField();
+  const { fieldValue, maxWidth } = useJsonFieldDisplay();
 
-  return (
-    <JsonDisplay
-      text={
-        isFieldRawJsonValue(fieldValue) && isDefined(fieldValue)
-          ? JSON.stringify(fieldValue)
-          : ''
-      }
-      maxWidth={maxWidth}
-    />
-  );
+  if (!isDefined(fieldValue)) {
+    return <></>;
+  }
+
+  const value = JSON.stringify(fieldValue);
+
+  return <JsonDisplay text={value} maxWidth={maxWidth} />;
 };

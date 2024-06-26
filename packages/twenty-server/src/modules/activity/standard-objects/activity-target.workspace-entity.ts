@@ -9,7 +9,6 @@ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-obj
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -25,7 +24,6 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
   icon: 'IconCheckbox',
 })
 @WorkspaceIsSystem()
-@WorkspaceIsNotAuditLogged()
 export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.activity,
@@ -38,7 +36,7 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'activityTargets',
   })
   @WorkspaceIsNullable()
-  activity: Relation<ActivityWorkspaceEntity>;
+  activity: Relation<ActivityWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.person,
@@ -51,7 +49,7 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'activityTargets',
   })
   @WorkspaceIsNullable()
-  person: Relation<PersonWorkspaceEntity>;
+  person: Relation<PersonWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.company,
@@ -64,7 +62,7 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'activityTargets',
   })
   @WorkspaceIsNullable()
-  company: Relation<CompanyWorkspaceEntity>;
+  company: Relation<CompanyWorkspaceEntity> | null;
 
   @WorkspaceRelation({
     standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.opportunity,
@@ -77,7 +75,7 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'activityTargets',
   })
   @WorkspaceIsNullable()
-  opportunity: Relation<OpportunityWorkspaceEntity>;
+  opportunity: Relation<OpportunityWorkspaceEntity> | null;
 
   @WorkspaceDynamicRelation({
     type: RelationMetadataType.MANY_TO_ONE,

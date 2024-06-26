@@ -1,6 +1,6 @@
 {
   "name": "twenty-zapier",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Effortlessly sync Twenty with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
   "main": "src/index.ts",
   "scripts": {
@@ -10,6 +10,7 @@
     "build": "yarn clean && tsc",
     "deploy": "yarn build && zapier push",
     "validate": "yarn build && zapier validate",
+    "versions": "yarn build && zapier versions",
     "clean": "rimraf ./lib ./build",
     "watch": "yarn clean && tsc --watch",
     "_zapier-build": "yarn build"

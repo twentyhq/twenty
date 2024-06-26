@@ -1,0 +1,212 @@
+---
+title: Text
+icon: TbTextSize
+image: /images/user-guide/notes/notes_header.png
+---
+
+## Text Input
+
+Allows users to enter and edit text. 
+
+<ArticleTabs label1="Usage" label2="Props">
+
+<ArticleTab>
+
+<SandpackEditor content={`import { RecoilRoot } from "recoil";
+import { TextInput } from "@/ui/input/components/TextInput";
+
+export const MyComponent = () => {
+  const handleChange = (text) => {
+    console.log("Input changed:", text);
+  };
+
+  const handleKeyDown = (event) => {
+    console.log("Key pressed:", event.key);
+  };
+
+  return (
+    <RecoilRoot>
+      <TextInput
+        className
+        label="Username"
+        onChange={handleChange}
+        fullWidth={false}
+        disableHotkeys={false}
+        error="Invalid username"
+        onKeyDown={handleKeyDown}
+        RightIcon={null}
+      />
+    </RecoilRoot>
+  );
+};
+`} />
+
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['className', 'string', 'Optional name for additional styling', ''],
+  ['label', 'string', 'Represents the label for the input', ''],
+  ['onChange', 'function', 'The function called when the input value changes', ''],
+  ['fullWidth', 'boolean', 'Indicates whether the input should take up 100% of the width', ''],
+  ['disableHotkeys', 'boolean', 'Indicates whether hotkeys are enabled for the input', '`false`'],
+  ['error', 'string', 'Represents the error message to be displayed. When provided, it also adds an icon error on the right side of the input', ''],
+  ['onKeyDown', 'function', 'Called when a key is pressed down while the input field is focused. Receives a `React.KeyboardEvent` as an argument', ''],
+  ['RightIcon', 'IconComponent', 'An optional icon component displayed on the right side of the input', '']
+]} />
+
+
+The component also accepts other HTML input element props.
+ 
+</ArticleTab>
+
+</ArticleTabs>
+
+
+## Autosize Text Input 
+
+Text input component that automatically adjusts its height based on the content.
+
+<ArticleTabs label1="Usage" label2="Props">
+
+<ArticleTab>
+
+<SandpackEditor content={`import { RecoilRoot } from "recoil";
+import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+
+export const MyComponent = () => {
+  return (
+    <RecoilRoot>
+      <AutosizeTextInput
+        onValidate={() => console.log("onValidate function fired")}
+        minRows={1}
+        placeholder="Write a comment"
+        onFocus={() => console.log("onFocus function fired")}
+        variant="icon"
+        buttonTitle
+        value="Task: "
+      />
+    </RecoilRoot>
+  );
+};`} />
+
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['onValidate', 'function', 'The callback function you want to trigger when the user validates the input', ''],
+  ['minRows', 'number', 'The minimum number of rows for the text area', '1'],
+  ['placeholder', 'string', 'The placeholder text you want to display when the text area is empty', ''],
+  ['onFocus', 'function', 'The callback function you want to trigger when the text area gains focus', ''],
+  ['variant', 'string', 'The variant of the input. Options include: `default`, `icon`, and `button`', 'default'],
+  ['buttonTitle', 'string', 'The title for the button (only applicable for the button variant)', ''],
+  ['value', 'string', 'The initial value for the text area', 'Empty string']
+]} />
+
+
+</ArticleTab>
+
+</ArticleTabs>
+
+
+## Entity Title Double Text Input 
+
+Displays a pair of text inputs side by side, allowing the user to edit two related values simultaneously.
+
+<ArticleTabs label1="Usage" label2="Props">
+
+<ArticleTab>
+
+<SandpackEditor content={`import { RecoilRoot } from "recoil";
+import React, { useState } from "react";
+import { EntityTitleDoubleTextInput } from "@/ui/input/components/EntityTitleDoubleTextInput";
+
+export const MyComponent = () => {
+
+    const [firstValue, setFirstValue] = useState(
+      "First Value"
+    );
+    const [secondValue, setSecondValue] = useState(
+      "Second Value"
+    );
+
+    const handleInputChange = (newFirstValue, newSecondValue) => {
+      setFirstValue(newFirstValue);
+      setSecondValue(newSecondValue);
+    };
+
+
+  return (
+    <RecoilRoot>
+      <EntityTitleDoubleTextInput
+        firstValue={firstValue}
+        secondValue={secondValue}
+        firstValuePlaceholder="Enter First Value"
+        secondValuePlaceholder="Enter Second Value"
+        onChange={handleInputChange}
+      />
+    </RecoilRoot>
+  );
+};`} />
+
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['firstValue', 'string', 'The value for the first text input'],
+  ['secondValue', 'string', 'The value for the second text input'],
+  ['firstValuePlaceholder', 'string', 'Placeholder text for the first text input, displayed when the input is empty'],
+  ['secondValuePlaceholder', 'string', 'Placeholder text for the second text input, displayed when the input is empty'],
+  ['onChange', 'function', 'The callback function you want to trigger when the text input changes']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+
+## Text Area
+
+Allows you to create multi-line text inputs. 
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { TextArea } from "@/ui/input/components/TextArea";
+
+export const MyComponent = () => {
+  return (
+    <TextArea
+    disabled={false}
+    minRows={4}
+    onChange={()=>console.log('On change function fired')}
+    placeholder="Enter text here"
+    value=""
+    />
+  );
+};`} />
+
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['disabled', 'boolean', 'Indicates whether the text area is disabled', ''],
+  ['minRows', 'number', 'Minimum number of visible rows for the text area.', '1'],
+  ['onChange', 'function', 'Callback function triggered when the text area content changes', ''],
+  ['placeholder', 'string', 'Placeholder text displayed when the text area is empty', ''],
+  ['value', 'string', 'The current value of the text area', 'Empty string']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>

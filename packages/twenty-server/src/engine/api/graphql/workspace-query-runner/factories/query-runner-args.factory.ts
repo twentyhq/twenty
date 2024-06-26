@@ -10,11 +10,20 @@ import {
   ResolverArgs,
   ResolverArgsType,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import {
+  Record,
+  RecordFilter,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { hasPositionField } from 'src/engine/metadata-modules/object-metadata/utils/has-position-field.util';
 
 import { RecordPositionFactory } from './record-position.factory';
+
+type ArgPositionBackfillInput = {
+  argIndex?: number;
+  shouldBackfillPosition: boolean;
+};
 
 @Injectable()
 export class QueryRunnerArgsFactory {
@@ -34,14 +43,19 @@ export class QueryRunnerArgsFactory {
       ]),
     );
 
+    const shouldBackfillPosition = hasPositionField(options.objectMetadataItem);
+
     switch (resolverArgsType) {
       case ResolverArgsType.CreateMany:
         return {
           ...args,
           data: await Promise.all(
-            (args as CreateManyResolverArgs).data.map((arg) =>
-              this.overrideDataByFieldMetadata(arg, options, fieldMetadataMap),
-            ),
+            (args as CreateManyResolverArgs).data?.map((arg, index) =>
+              this.overrideDataByFieldMetadata(arg, options, fieldMetadataMap, {
+                argIndex: index,
+                shouldBackfillPosition,
+              }),
+            ) ?? [],
           ),
         } satisfies CreateManyResolverArgs;
       case ResolverArgsType.FindOne:
@@ -64,30 +78,36 @@ export class QueryRunnerArgsFactory {
       case ResolverArgsType.FindDuplicates:
         return {
           ...args,
-          id: await this.overrideValueByFieldMetadata(
-            'id',
-            (args as FindDuplicatesResolverArgs).id,
-            fieldMetadataMap,
+          ids: (await Promise.all(
+            (args as FindDuplicatesResolverArgs).ids?.map((id) =>
+              this.overrideValueByFieldMetadata('id', id, fieldMetadataMap),
+            ) ?? [],
+          )) as string[],
+          data: await Promise.all(
+            (args as FindDuplicatesResolverArgs).data?.map((arg, index) =>
+              this.overrideDataByFieldMetadata(arg, options, fieldMetadataMap, {
+                argIndex: index,
+                shouldBackfillPosition,
+              }),
+            ) ?? [],
           ),
-          data: await this.overrideDataByFieldMetadata(
-            (args as FindDuplicatesResolverArgs).data,
-            options,
-            fieldMetadataMap,
-          ),
-        };
+        } satisfies FindDuplicatesResolverArgs;
       default:
         return args;
     }
   }
 
   private async overrideDataByFieldMetadata(
-    data: Record<string, any> | undefined,
+    data: Partial<Record> | undefined,
     options: WorkspaceQueryRunnerOptions,
     fieldMetadataMap: Map<string, FieldMetadataInterface>,
+    argPositionBackfillInput: ArgPositionBackfillInput,
   ) {
     if (!data) {
       return;
     }
+
+    let isFieldPositionPresent = false;
 
     const createArgPromiseByArgKey = Object.entries(data).map(
       async ([key, value]) => {
@@ -99,6 +119,8 @@ export class QueryRunnerArgsFactory {
 
         switch (fieldMetadata.type) {
           case FieldMetadataType.POSITION:
+            isFieldPositionPresent = true;
+
             return [
               key,
               await this.recordPositionFactory.create(
@@ -108,6 +130,7 @@ export class QueryRunnerArgsFactory {
                   nameSingular: options.objectMetadataItem.nameSingular,
                 },
                 options.workspaceId,
+                argPositionBackfillInput.argIndex,
               ),
             ];
           case FieldMetadataType.NUMBER:
@@ -119,6 +142,27 @@ export class QueryRunnerArgsFactory {
     );
 
     const newArgEntries = await Promise.all(createArgPromiseByArgKey);
+
+    if (
+      !isFieldPositionPresent &&
+      argPositionBackfillInput.shouldBackfillPosition
+    ) {
+      return Object.fromEntries([
+        ...newArgEntries,
+        [
+          'position',
+          await this.recordPositionFactory.create(
+            'first',
+            {
+              isCustom: options.objectMetadataItem.isCustom,
+              nameSingular: options.objectMetadataItem.nameSingular,
+            },
+            options.workspaceId,
+            argPositionBackfillInput.argIndex,
+          ),
+        ],
+      ]);
+    }
 
     return Object.fromEntries(newArgEntries);
   }
@@ -160,14 +204,20 @@ export class QueryRunnerArgsFactory {
     if (!fieldMetadata) {
       return value;
     }
+
     switch (fieldMetadata.type) {
-      case 'NUMBER':
-        return Object.fromEntries(
-          Object.entries(value).map(([filterKey, filterValue]) => [
-            filterKey,
-            Number(filterValue),
-          ]),
-        );
+      case 'NUMBER': {
+        if (value?.is === 'NULL') {
+          return value;
+        } else {
+          return Object.fromEntries(
+            Object.entries(value).map(([filterKey, filterValue]) => [
+              filterKey,
+              Number(filterValue),
+            ]),
+          );
+        }
+      }
       default:
         return value;
     }

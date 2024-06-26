@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  RequestTimeoutException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntityManager, Repository } from 'typeorm';
@@ -12,6 +16,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
 import { STRIPE_DISTANT_TABLES } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/utils/stripe-distant-tables.util';
 import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
+import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 
 @Injectable()
 export class DistantTableService {
@@ -70,44 +75,54 @@ export class DistantTableService {
         workspaceId,
       );
 
-    const distantTables = await workspaceDataSource.transaction(
-      async (entityManager: EntityManager) => {
-        await entityManager.query(`CREATE SCHEMA "${tmpSchemaName}"`);
+    try {
+      const distantTables = await workspaceDataSource.transaction(
+        async (entityManager: EntityManager) => {
+          await entityManager.query(`CREATE SCHEMA "${tmpSchemaName}"`);
 
-        const tableLimitationsOptions = tableName
-          ? ` LIMIT TO ("${tableName}")`
-          : '';
+          const tableLimitationsOptions = tableName
+            ? ` LIMIT TO ("${tableName}")`
+            : '';
 
-        await entityManager.query(
-          `IMPORT FOREIGN SCHEMA "${remoteServer.schema}"${tableLimitationsOptions} FROM SERVER "${remoteServer.foreignDataWrapperId}" INTO "${tmpSchemaName}"`,
+          await entityManager.query(
+            `IMPORT FOREIGN SCHEMA "${remoteServer.schema}"${tableLimitationsOptions} FROM SERVER "${remoteServer.foreignDataWrapperId}" INTO "${tmpSchemaName}"`,
+          );
+
+          const createdForeignTableNames = await entityManager.query(
+            `SELECT table_name, column_name, data_type, udt_name FROM information_schema.columns WHERE table_schema = '${tmpSchemaName}'`,
+          );
+
+          await entityManager.query(`DROP SCHEMA "${tmpSchemaName}" CASCADE`);
+
+          return createdForeignTableNames.reduce(
+            (acc, { table_name, column_name, data_type, udt_name }) => {
+              if (!acc[table_name]) {
+                acc[table_name] = [];
+              }
+
+              acc[table_name].push({
+                columnName: column_name,
+                dataType: data_type,
+                udtName: udt_name,
+              });
+
+              return acc;
+            },
+            {},
+          );
+        },
+      );
+
+      return distantTables;
+    } catch (error) {
+      if (isQueryTimeoutError(error)) {
+        throw new RequestTimeoutException(
+          `Could not find distant tables: ${error.message}`,
         );
+      }
 
-        const createdForeignTableNames = await entityManager.query(
-          `SELECT table_name, column_name, data_type, udt_name FROM information_schema.columns WHERE table_schema = '${tmpSchemaName}'`,
-        );
-
-        await entityManager.query(`DROP SCHEMA "${tmpSchemaName}" CASCADE`);
-
-        return createdForeignTableNames.reduce(
-          (acc, { table_name, column_name, data_type, udt_name }) => {
-            if (!acc[table_name]) {
-              acc[table_name] = [];
-            }
-
-            acc[table_name].push({
-              columnName: column_name,
-              dataType: data_type,
-              udtName: udt_name,
-            });
-
-            return acc;
-          },
-          {},
-        );
-      },
-    );
-
-    return distantTables;
+      throw error;
+    }
   }
 
   private getDistantTablesFromStaticSchema(
