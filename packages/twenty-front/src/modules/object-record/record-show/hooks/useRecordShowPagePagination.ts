@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { formatFieldMetadataItemsAsFilterDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
@@ -15,7 +16,6 @@ import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { isDefined } from '~/utils/isDefined';
-import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
@@ -47,7 +47,9 @@ export const useRecordShowPagePagination = (
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
-  const { objectNamePlural } = useObjectNamePluralFromSingular({ objectNameSingular });
+  const { objectNamePlural } = useObjectNamePluralFromSingular({
+    objectNameSingular,
+  });
 
   const { records: views } = usePrefetchedData(PrefetchKey.AllViews);
 
@@ -95,26 +97,31 @@ export const useRecordShowPagePagination = (
     mapViewSortsToSorts(view?.viewSorts ?? [], sortDefinitions),
   );
 
-  const { fetchMoreRecords } =
-    useFindManyRecords({
-      filter,
-      orderBy,
-      skip: isLoadedRecords,
-      objectNameSingular,
-      recordGqlFields: generateDepthOneRecordGqlFields({
-        objectMetadataItem,
-      }),
-      onCompleted: (records, options) => {
-        setObjectRecords(records);
-        setTotalRecords(options?.totalCount ?? 0);
-        setHasNextPage(options?.pageInfo?.hasNextPage);
-        setIsLoadingPagination(false);
-      }
-    });
+  const { fetchMoreRecords } = useFindManyRecords({
+    filter,
+    orderBy,
+    skip: isLoadedRecords,
+    objectNameSingular,
+    recordGqlFields: generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+    }),
+    onCompleted: (records, options) => {
+      setObjectRecords(records);
+      setTotalRecords(options?.totalCount ?? 0);
+      setHasNextPage(options?.pageInfo?.hasNextPage);
+      setIsLoadingPagination(false);
+    },
+  });
 
   useEffect(() => {
-    if (!isLoadingPagination && objectRecords.length > 0 && isDefined(hasNextPage)) {
-      const recordIndex = objectRecords.findIndex((rec) => rec.id === objectRecordId);
+    if (
+      !isLoadingPagination &&
+      objectRecords.length > 0 &&
+      isDefined(hasNextPage)
+    ) {
+      const recordIndex = objectRecords.findIndex(
+        (rec) => rec.id === objectRecordId,
+      );
       if (recordIndex < 0 && hasNextPage) {
         fetchMoreRecords();
       } else if (recordIndex < 0 && !hasNextPage) {
@@ -152,7 +159,7 @@ export const useRecordShowPagePagination = (
     setHasPreviousRecord(previousIndex >= 0);
     const nextRecordIsLast = nextIndex === objectRecords.length;
 
-    if (nextRecordIsLast && hasNextPage) {
+    if (nextRecordIsLast === true && hasNextPage === true) {
       setIsLoadedRecords(false);
       fetchMoreRecords();
     }
