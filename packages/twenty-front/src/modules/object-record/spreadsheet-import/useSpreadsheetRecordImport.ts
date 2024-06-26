@@ -90,6 +90,16 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
           field.label + ' (ID)',
         ),
       });
+    } else if (field.type === FieldMetadataType.Boolean) {
+      templateFields.push({
+        icon: getIcon(field.icon),
+        label: field.label,
+        key: field.name,
+        fieldType: {
+          type: 'checkbox',
+        },
+        validations: getSpreadSheetValidation(field.type, field.label),
+      });
     } else {
       templateFields.push({
         icon: getIcon(field.icon),
