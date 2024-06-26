@@ -138,7 +138,9 @@ export const useRecordActionBar = ({
   );
 
   const deletionActions: ContextMenuEntry[] = useMemo(
-    () => [
+    () => 
+      selectedRecordIds.length <= 100
+      ? [
       {
         label: 'Delete',
         Icon: IconTrash,
@@ -161,7 +163,7 @@ export const useRecordActionBar = ({
           />
         ),
       },
-    ],
+    ] : [],
     [
       handleDeleteClick,
       selectedRecordIds,
