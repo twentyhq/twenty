@@ -195,7 +195,7 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreation,
     type: FieldMetadataType.SELECT,
-    label: 'Auto create contact',
+    label: 'Contact auto creation',
     description:
       'Automatically create records for people you participated with in an event.',
     icon: 'IconUserCircle',

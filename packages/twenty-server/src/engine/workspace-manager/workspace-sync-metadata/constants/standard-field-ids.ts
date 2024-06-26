@@ -206,7 +206,7 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   connectedAccount: '20202020-49a2-44a4-b470-282c0440d15d',
   type: '20202020-ae95-42d9-a3f1-797a2ea22122',
   isContactAutoCreationEnabled: '20202020-fabd-4f14-b7c6-3310f6d132c6',
-  contactAutoCreationFor: '20202020-fc0e-4ba6-b259-a66ca89cfa38',
+  contactAutoCreation: '20202020-fc0e-4ba6-b259-a66ca89cfa38',
   excludeNonProfessionalEmails: '20202020-1df5-445d-b4f3-2413ad178431',
   excludeGroupEmails: '20202020-45a0-4be4-9164-5820a6a109fb',
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
