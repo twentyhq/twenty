@@ -9,6 +9,7 @@ import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocus
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 
 export type RecordTableContextProps = {
+  viewBarId: string;
   objectMetadataItem: ObjectMetadataItem;
   onUpsertRecord: ({
     persistField,

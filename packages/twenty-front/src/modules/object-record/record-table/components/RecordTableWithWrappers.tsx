@@ -83,6 +83,7 @@ export const RecordTableWithWrappers = ({
             <StyledTableContainer>
               <div ref={tableBodyRef}>
                 <RecordTable
+                  viewBarId={viewBarId}
                   recordTableId={recordTableId}
                   objectNameSingular={objectNameSingular}
                   onColumnsChange={useRecoilCallback(
