@@ -3,7 +3,7 @@ import { useContext, useEffect } from 'react';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { isDefined } from '~/utils/isDefined';
 
 type RecordDetailRelationRecordsListItemEffectProps = {
@@ -23,13 +23,13 @@ export const RecordDetailRelationRecordsListItemEffect = ({
     objectRecordId: relationRecordId,
   });
 
-  const { setRecords } = useSetRecordInStore();
+  const { upsertRecords } = useUpsertRecordsInStore();
 
   useEffect(() => {
     if (isDefined(record)) {
-      setRecords([record]);
+      upsertRecords([record]);
     }
-  }, [record, setRecords]);
+  }, [record, upsertRecords]);
 
   return null;
 };

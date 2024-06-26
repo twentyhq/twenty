@@ -1,12 +1,7 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-
-const tableColumnsDenyList = [
-  'attachments',
-  'activities',
-  'timelineActivities',
-];
+import { TABLE_COLUMNS_DENY_LIST } from '@/object-record/relation-picker/constants/TableColumnsDenyList';
 
 export const filterAvailableTableColumns = (
   columnDefinition: ColumnDefinition<FieldMetadata>,
@@ -19,7 +14,7 @@ export const filterAvailableTableColumns = (
     return false;
   }
 
-  if (tableColumnsDenyList.includes(columnDefinition.metadata.fieldName)) {
+  if (TABLE_COLUMNS_DENY_LIST.includes(columnDefinition.metadata.fieldName)) {
     return false;
   }
 

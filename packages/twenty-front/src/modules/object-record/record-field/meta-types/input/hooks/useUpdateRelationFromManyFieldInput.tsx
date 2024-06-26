@@ -40,7 +40,7 @@ export const useUpdateRelationFromManyFieldInput = ({
       fieldNameOnRecordObject: fieldDefinition.metadata.fieldName,
     });
 
-  const handleChange = useRecoilCallback(
+  const updateRelation = useRecoilCallback(
     ({ snapshot, set }) =>
       async (objectRecordId: string) => {
         const previouslyCheckedRecordsIds = snapshot
@@ -89,5 +89,5 @@ export const useUpdateRelationFromManyFieldInput = ({
     ],
   );
 
-  return { handleChange };
+  return { updateRelation };
 };

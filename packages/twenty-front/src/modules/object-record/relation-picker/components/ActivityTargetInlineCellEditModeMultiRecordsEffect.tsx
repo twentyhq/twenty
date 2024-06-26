@@ -18,7 +18,7 @@ import { RelationPickerScopeInternalContext } from '@/object-record/relation-pic
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const MultiRecordsEffect = ({
+export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
   selectedObjectRecordIds,
 }: {
   selectedObjectRecordIds: SelectedObjectRecordId[];

@@ -3,8 +3,8 @@ import { useRecoilCallback } from 'recoil';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export const useSetRecordInStore = () => {
-  const setRecords = useRecoilCallback(
+export const useUpsertRecordsInStore = () => {
+  const upsertRecords = useRecoilCallback(
     ({ set, snapshot }) =>
       (records: ObjectRecord[]) => {
         for (const record of records) {
@@ -21,6 +21,6 @@ export const useSetRecordInStore = () => {
   );
 
   return {
-    setRecords,
+    upsertRecords,
   };
 };

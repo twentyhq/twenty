@@ -11,6 +11,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { isDefined } from '~/utils/isDefined';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -52,7 +53,7 @@ export const MultipleObjectRecordSelectItem = ({
 
   const { selected, recordIdentifier } = record;
 
-  if (!recordIdentifier) {
+  if (!isDefined(recordIdentifier)) {
     return null;
   }
 

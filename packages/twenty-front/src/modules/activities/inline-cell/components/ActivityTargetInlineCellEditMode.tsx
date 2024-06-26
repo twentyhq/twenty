@@ -24,7 +24,7 @@ import {
 } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { MultiRecordsEffect } from '@/object-record/relation-picker/components/MultiRecordsEffect';
+import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-record/relation-picker/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
@@ -163,6 +163,12 @@ export const ActivityTargetInlineCellEditMode = ({
           );
 
           const newActivityTargetId = v4();
+          const fieldName = getActivityTargetObjectFieldName({
+            nameSingular: record.objectMetadataItem.nameSingular,
+          });
+          const fieldNameWithIdSuffix = getActivityTargetObjectFieldIdName({
+            nameSingular: record.objectMetadataItem.nameSingular,
+          });
           const newActivityTarget = prefillRecord<ActivityTarget>({
             objectMetadataItem: objectMetadataItemActivityTarget,
             input: {
@@ -171,12 +177,8 @@ export const ActivityTargetInlineCellEditMode = ({
               activity,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
-              [getActivityTargetObjectFieldName({
-                nameSingular: record.objectMetadataItem.nameSingular,
-              })]: record.record,
-              [getActivityTargetObjectFieldIdName({
-                nameSingular: record.objectMetadataItem.nameSingular,
-              })]: recordId,
+              [fieldName]: record.record,
+              [fieldNameWithIdSuffix]: recordId,
             },
           });
 
@@ -251,7 +253,9 @@ export const ActivityTargetInlineCellEditMode = ({
         <ActivityTargetObjectRecordEffect
           activityTargetWithTargetRecords={activityTargetWithTargetRecords}
         />
-        <MultiRecordsEffect selectedObjectRecordIds={selectedTargetObjectIds} />
+        <ActivityTargetInlineCellEditModeMultiRecordsEffect
+          selectedObjectRecordIds={selectedTargetObjectIds}
+        />
         <MultiRecordSelect onSubmit={handleSubmit} onChange={handleChange} />
       </RelationPickerScope>
     </StyledSelectContainer>

@@ -12,7 +12,7 @@ import { EntityForSelect } from '@/object-record/relation-picker/types/EntityFor
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const MultiRecordsEffect = () => {
+export const RelationFromManyFieldInputMultiRecordsEffect = () => {
   const { fieldValue, fieldDefinition } = useRelationField<EntityForSelect[]>();
   const scopeId = useAvailableScopeIdOrThrow(
     RelationPickerScopeInternalContext,
@@ -112,7 +112,7 @@ export const MultiRecordsEffect = () => {
 
   useEffect(() => {
     setObjectRecordMultiSelectCheckedRecordsIds(
-      fieldValue.map((fieldValueItem: any) => fieldValueItem.id),
+      fieldValue.map((fieldValueItem: EntityForSelect) => fieldValueItem.id),
     );
   }, [fieldValue, setObjectRecordMultiSelectCheckedRecordsIds]);
 
