@@ -98,8 +98,8 @@ export type Billing = {
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   id: Scalars['UUID']['output'];
-  interval?: Maybe<Scalars['String']['output']>;
-  status: Scalars['String']['output'];
+  interval?: Maybe<SubscriptionInterval>;
+  status: SubscriptionStatus;
 };
 
 export type BillingSubscriptionFilter = {
@@ -453,7 +453,7 @@ export type MutationChallengeArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
-  recurringInterval: Scalars['String']['input'];
+  recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -641,13 +641,9 @@ export type ObjectFieldsConnection = {
 /** Onboarding status */
 export enum OnboardingStatus {
   Completed = 'COMPLETED',
-  CompletedWithoutSubscription = 'COMPLETED_WITHOUT_SUBSCRIPTION',
   InviteTeam = 'INVITE_TEAM',
+  PlanRequired = 'PLAN_REQUIRED',
   ProfileCreation = 'PROFILE_CREATION',
-  SubscriptionCanceled = 'SUBSCRIPTION_CANCELED',
-  SubscriptionIncomplete = 'SUBSCRIPTION_INCOMPLETE',
-  SubscriptionPastDue = 'SUBSCRIPTION_PAST_DUE',
-  SubscriptionUnpaid = 'SUBSCRIPTION_UNPAID',
   SyncEmail = 'SYNC_EMAIL',
   WorkspaceActivation = 'WORKSPACE_ACTIVATION'
 }
@@ -681,7 +677,7 @@ export type PostgresCredentials = {
 export type ProductPriceEntity = {
   __typename?: 'ProductPriceEntity';
   created: Scalars['Float']['output'];
-  recurringInterval: Scalars['String']['output'];
+  recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String']['output'];
   unitAmount: Scalars['Float']['output'];
 };
@@ -929,6 +925,24 @@ export enum SortDirection {
 export enum SortNulls {
   NullsFirst = 'NULLS_FIRST',
   NullsLast = 'NULLS_LAST'
+}
+
+export enum SubscriptionInterval {
+  Day = 'Day',
+  Month = 'Month',
+  Week = 'Week',
+  Year = 'Year'
+}
+
+export enum SubscriptionStatus {
+  Active = 'Active',
+  Canceled = 'Canceled',
+  Incomplete = 'Incomplete',
+  IncompleteExpired = 'IncompleteExpired',
+  PastDue = 'PastDue',
+  Paused = 'Paused',
+  Trialing = 'Trialing',
+  Unpaid = 'Unpaid'
 }
 
 export type Support = {
@@ -1182,7 +1196,7 @@ export type Workspace = {
   id: Scalars['UUID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
-  subscriptionStatus: Scalars['String']['output'];
+  subscriptionStatus: SubscriptionStatus;
   updatedAt: Scalars['DateTime']['output'];
 };
 

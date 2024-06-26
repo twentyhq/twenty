@@ -100,39 +100,6 @@ export class OnboardingService {
     );
   }
 
-  private async isSubscriptionCanceledOnboardingStatus(user: User) {
-    return (
-      this.environmentService.get('IS_BILLING_ENABLED') &&
-      user.defaultWorkspace.subscriptionStatus === SubscriptionStatus.Canceled
-    );
-  }
-
-  private async isSubscriptionPastDueOnboardingStatus(user: User) {
-    return (
-      this.environmentService.get('IS_BILLING_ENABLED') &&
-      user.defaultWorkspace.subscriptionStatus === SubscriptionStatus.PastDue
-    );
-  }
-
-  private async isSubscriptionUnpaidOnboardingStatus(user: User) {
-    return (
-      this.environmentService.get('IS_BILLING_ENABLED') &&
-      user.defaultWorkspace.subscriptionStatus === SubscriptionStatus.Unpaid
-    );
-  }
-
-  private async isCompletedWithoutSubscriptionOnboardingStatus(user: User) {
-    const currentBillingSubscription =
-      await this.billingService.getCurrentBillingSubscription({
-        workspaceId: user.defaultWorkspaceId,
-      });
-
-    return (
-      this.environmentService.get('IS_BILLING_ENABLED') &&
-      !currentBillingSubscription
-    );
-  }
-
   async getOnboardingStatus(user: User) {
     if (await this.isSubscriptionIncompleteOnboardingStatus(user)) {
       return OnboardingStatus.PLAN_REQUIRED;
@@ -152,22 +119,6 @@ export class OnboardingService {
 
     if (await this.isInviteTeamOnboardingStatus(user.defaultWorkspace)) {
       return OnboardingStatus.INVITE_TEAM;
-    }
-
-    if (await this.isSubscriptionCanceledOnboardingStatus(user)) {
-      return OnboardingStatus.SUBSCRIPTION_CANCELED;
-    }
-
-    if (await this.isSubscriptionPastDueOnboardingStatus(user)) {
-      return OnboardingStatus.SUBSCRIPTION_PAST_DUE;
-    }
-
-    if (await this.isSubscriptionUnpaidOnboardingStatus(user)) {
-      return OnboardingStatus.SUBSCRIPTION_UNPAID;
-    }
-
-    if (await this.isCompletedWithoutSubscriptionOnboardingStatus(user)) {
-      return OnboardingStatus.COMPLETED_WITHOUT_SUBSCRIPTION;
     }
 
     return OnboardingStatus.COMPLETED;

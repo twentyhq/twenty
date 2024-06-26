@@ -853,8 +853,8 @@ export type Billing = {
 
 export type BillingSubscription = {
   id: Scalars['UUID'];
-  interval?: Maybe<Scalars['String']>;
-  status: Scalars['String'];
+  interval?: Maybe<SubscriptionInterval>;
+  status: SubscriptionStatus;
 };
 
 export type BillingSubscriptionFilter = {
@@ -3725,7 +3725,7 @@ export type MutationChallengeArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
-  recurringInterval: Scalars['String'];
+  recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']>;
 };
 
@@ -4882,13 +4882,9 @@ export type ObjectFieldsConnection = {
 /** Onboarding status */
 export enum OnboardingStatus {
   Completed = 'COMPLETED',
-  CompletedWithoutSubscription = 'COMPLETED_WITHOUT_SUBSCRIPTION',
   InviteTeam = 'INVITE_TEAM',
+  PlanRequired = 'PLAN_REQUIRED',
   ProfileCreation = 'PROFILE_CREATION',
-  SubscriptionCanceled = 'SUBSCRIPTION_CANCELED',
-  SubscriptionIncomplete = 'SUBSCRIPTION_INCOMPLETE',
-  SubscriptionPastDue = 'SUBSCRIPTION_PAST_DUE',
-  SubscriptionUnpaid = 'SUBSCRIPTION_UNPAID',
   SyncEmail = 'SYNC_EMAIL',
   WorkspaceActivation = 'WORKSPACE_ACTIVATION'
 }
@@ -5425,7 +5421,7 @@ export type PostgresCredentials = {
 
 export type ProductPriceEntity = {
   created: Scalars['Float'];
-  recurringInterval: Scalars['String'];
+  recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
   unitAmount: Scalars['Float'];
 };
@@ -6317,6 +6313,24 @@ export type StringFilter = {
   regex?: InputMaybe<Scalars['String']>;
   startsWith?: InputMaybe<Scalars['String']>;
 };
+
+export enum SubscriptionInterval {
+  Day = 'Day',
+  Month = 'Month',
+  Week = 'Week',
+  Year = 'Year'
+}
+
+export enum SubscriptionStatus {
+  Active = 'Active',
+  Canceled = 'Canceled',
+  Incomplete = 'Incomplete',
+  IncompleteExpired = 'IncompleteExpired',
+  PastDue = 'PastDue',
+  Paused = 'Paused',
+  Trialing = 'Trialing',
+  Unpaid = 'Unpaid'
+}
 
 export type Support = {
   supportDriver: Scalars['String'];
@@ -7313,7 +7327,7 @@ export type Workspace = {
   id: Scalars['UUID'];
   inviteHash?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
-  subscriptionStatus: Scalars['String'];
+  subscriptionStatus: SubscriptionStatus;
   updatedAt: Scalars['DateTime'];
 };
 

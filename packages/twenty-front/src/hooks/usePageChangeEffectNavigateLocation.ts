@@ -1,13 +1,17 @@
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { OnboardingStatus } from '~/generated/graphql';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { useWorkspaceHasSubscription } from '@/workspace/hooks/useWorkspaceHasSubscription';
+import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isMatchingLocation = useIsMatchingLocation();
   const onboardingStatus = useOnboardingStatus();
+  const subscriptionStatus = useSubscriptionStatus();
+  const workspaceHasSubscription = useWorkspaceHasSubscription();
   const { defaultHomePagePath } = useDefaultHomePagePath();
 
   const isMatchingOpenRoute =
@@ -44,7 +48,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStatus.SubscriptionUnpaid &&
+    subscriptionStatus === SubscriptionStatus.Unpaid &&
     !isMatchingLocation(AppPath.SettingsCatchAll)
   ) {
     return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
@@ -53,8 +57,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    (onboardingStatus === OnboardingStatus.SubscriptionUnpaid ||
-      onboardingStatus === OnboardingStatus.SubscriptionCanceled) &&
+    subscriptionStatus === SubscriptionStatus.Canceled &&
     !(
       isMatchingLocation(AppPath.SettingsCatchAll) ||
       isMatchingLocation(AppPath.PlanRequired)
@@ -95,15 +98,17 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    (onboardingStatus === OnboardingStatus.Completed ||
-      onboardingStatus === OnboardingStatus.SubscriptionPastDue) &&
+    onboardingStatus === OnboardingStatus.Completed &&
+    workspaceHasSubscription &&
+    subscriptionStatus !== SubscriptionStatus.Canceled &&
     isMatchingOnboardingRoute
   ) {
     return defaultHomePagePath;
   }
 
   if (
-    onboardingStatus === OnboardingStatus.CompletedWithoutSubscription &&
+    onboardingStatus === OnboardingStatus.Completed &&
+    !workspaceHasSubscription &&
     isMatchingOnboardingRoute &&
     !isMatchingLocation(AppPath.PlanRequired)
   ) {

@@ -67,11 +67,4 @@ describe('useSetNextOnboardingStatus', () => {
     const result = renderHooks(OnboardingStatus.InviteTeam, true, false);
     expect(result.current).toEqual(OnboardingStatus.Completed);
   });
-
-  it('should set next onboarding status for Completed without subscription', () => {
-    const result = renderHooks(OnboardingStatus.InviteTeam, false, false);
-    expect(result.current).toEqual(
-      OnboardingStatus.CompletedWithoutSubscription,
-    );
-  });
 });

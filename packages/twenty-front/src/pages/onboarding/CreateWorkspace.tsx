@@ -9,10 +9,10 @@ import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';

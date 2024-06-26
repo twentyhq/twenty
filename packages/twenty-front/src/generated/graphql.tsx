@@ -464,13 +464,9 @@ export type ObjectFieldsConnection = {
 /** Onboarding status */
 export enum OnboardingStatus {
   Completed = 'COMPLETED',
-  CompletedWithoutSubscription = 'COMPLETED_WITHOUT_SUBSCRIPTION',
   InviteTeam = 'INVITE_TEAM',
   PlanRequired = 'PLAN_REQUIRED',
   ProfileCreation = 'PROFILE_CREATION',
-  SubscriptionCanceled = 'SUBSCRIPTION_CANCELED',
-  SubscriptionPastDue = 'SUBSCRIPTION_PAST_DUE',
-  SubscriptionUnpaid = 'SUBSCRIPTION_UNPAID',
   SyncEmail = 'SYNC_EMAIL',
   WorkspaceActivation = 'WORKSPACE_ACTIVATION'
 }

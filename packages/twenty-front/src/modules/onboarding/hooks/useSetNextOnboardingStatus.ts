@@ -25,9 +25,7 @@ const getNextOnboardingStatus = (
   ) {
     return OnboardingStatus.InviteTeam;
   }
-  return currentWorkspace?.currentBillingSubscription
-    ? OnboardingStatus.Completed
-    : OnboardingStatus.CompletedWithoutSubscription;
+  return OnboardingStatus.Completed;
 };
 
 export const useSetNextOnboardingStatus = () => {

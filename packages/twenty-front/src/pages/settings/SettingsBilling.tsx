@@ -10,9 +10,9 @@ import {
   IconCurrencyDollar,
 } from 'twenty-ui';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat';
 import { AppPath } from '@/types/AppPath';
@@ -24,9 +24,12 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { useWorkspaceHasSubscription } from '@/workspace/hooks/useWorkspaceHasSubscription';
 import {
   OnboardingStatus,
   SubscriptionInterval,
+  SubscriptionStatus,
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
@@ -69,6 +72,8 @@ const SWITCH_INFOS = {
 export const SettingsBilling = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
+  const subscriptionStatus = useSubscriptionStatus();
+  const workspaceHasSubscription = useWorkspaceHasSubscription();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const switchingInfo =
@@ -96,14 +101,15 @@ export const SettingsBilling = () => {
     onboardingStatus !== OnboardingStatus.Completed;
 
   const displayPaymentFailInfo =
-    onboardingStatus === OnboardingStatus.SubscriptionPastDue ||
-    onboardingStatus === OnboardingStatus.SubscriptionUnpaid;
+    subscriptionStatus === SubscriptionStatus.PastDue ||
+    subscriptionStatus === SubscriptionStatus.Unpaid;
 
   const displaySubscriptionCanceledInfo =
-    onboardingStatus === OnboardingStatus.SubscriptionCanceled;
+    subscriptionStatus === SubscriptionStatus.Canceled;
 
   const displaySubscribeInfo =
-    onboardingStatus === OnboardingStatus.CompletedWithoutSubscription;
+    onboardingStatus === OnboardingStatus.Completed &&
+    !workspaceHasSubscription;
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {

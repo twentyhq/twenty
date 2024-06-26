@@ -2,9 +2,9 @@ import { act } from 'react-dom/test-utils';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '~/generated/graphql';
 
 const tokenPair = {

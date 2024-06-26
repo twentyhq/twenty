@@ -1,15 +1,19 @@
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
-import { OnboardingStatus } from '~/generated/graphql';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { useWorkspaceHasSubscription } from '@/workspace/hooks/useWorkspaceHasSubscription';
+import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 export const useShowAuthModal = () => {
   const isMatchingLocation = useIsMatchingLocation();
   const onboardingStatus = useOnboardingStatus();
+  const subscriptionStatus = useSubscriptionStatus();
+  const workspaceHasSubscription = useWorkspaceHasSubscription();
   const isDefaultLayoutAuthModalVisible = useRecoilValue(
     isDefaultLayoutAuthModalVisibleState,
   );
@@ -35,10 +39,17 @@ export const useShowAuthModal = () => {
     }
     if (isMatchingLocation(AppPath.PlanRequired)) {
       return (
-        onboardingStatus === OnboardingStatus.CompletedWithoutSubscription ||
-        onboardingStatus === OnboardingStatus.SubscriptionCanceled
+        (onboardingStatus === OnboardingStatus.Completed &&
+          !workspaceHasSubscription) ||
+        subscriptionStatus === SubscriptionStatus.Canceled
       );
     }
     return false;
-  }, [isDefaultLayoutAuthModalVisible, isMatchingLocation, onboardingStatus]);
+  }, [
+    isDefaultLayoutAuthModalVisible,
+    isMatchingLocation,
+    workspaceHasSubscription,
+    onboardingStatus,
+    subscriptionStatus,
+  ]);
 };
