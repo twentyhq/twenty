@@ -37,7 +37,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
-    onboardingStatus === OnboardingStatus.SubscriptionIncomplete &&
+    onboardingStatus === OnboardingStatus.PlanRequired &&
     !isMatchingLocation(AppPath.PlanRequired)
   ) {
     return AppPath.PlanRequired;

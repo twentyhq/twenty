@@ -25,7 +25,7 @@ export const useShowAuthModal = () => {
     }
     if (
       !onboardingStatus ||
-      onboardingStatus === OnboardingStatus.SubscriptionIncomplete ||
+      onboardingStatus === OnboardingStatus.PlanRequired ||
       onboardingStatus === OnboardingStatus.ProfileCreation ||
       onboardingStatus === OnboardingStatus.WorkspaceActivation ||
       onboardingStatus === OnboardingStatus.SyncEmail ||

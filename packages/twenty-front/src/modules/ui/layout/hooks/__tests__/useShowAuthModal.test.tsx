@@ -41,7 +41,7 @@ const getResult = (isDefaultLayoutAuthModalVisible = true) =>
 
 // prettier-ignore
 const testCases = [
-  { loc: AppPath.Verify, status: OnboardingStatus.SubscriptionIncomplete, res: false },
+  { loc: AppPath.Verify, status: OnboardingStatus.PlanRequired, res: false },
   { loc: AppPath.Verify, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.Verify, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.Verify, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -53,7 +53,7 @@ const testCases = [
   { loc: AppPath.Verify, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.Verify, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.SignInUp, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.SignInUp, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.SignInUp, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.SignInUp, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.SignInUp, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -65,7 +65,7 @@ const testCases = [
   { loc: AppPath.SignInUp, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.SignInUp, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.Invite, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.Invite, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.Invite, status: OnboardingStatus.SubscriptionCanceled, res: true },
   { loc: AppPath.Invite, status: OnboardingStatus.SubscriptionUnpaid, res: true },
   { loc: AppPath.Invite, status: OnboardingStatus.SubscriptionPastDue, res: true },
@@ -77,7 +77,7 @@ const testCases = [
   { loc: AppPath.Invite, status: OnboardingStatus.Completed, res: true },
   { loc: AppPath.Invite, status: OnboardingStatus.CompletedWithoutSubscription, res: true },
 
-  { loc: AppPath.ResetPassword, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.ResetPassword, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.SubscriptionCanceled, res: true },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.SubscriptionUnpaid, res: true },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.SubscriptionPastDue, res: true },
@@ -89,7 +89,7 @@ const testCases = [
   { loc: AppPath.ResetPassword, status: OnboardingStatus.Completed, res: true },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.CompletedWithoutSubscription, res: true },
 
-  { loc: AppPath.CreateWorkspace, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.CreateWorkspace, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -101,7 +101,7 @@ const testCases = [
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.CreateProfile, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.CreateProfile, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -113,7 +113,7 @@ const testCases = [
   { loc: AppPath.CreateProfile, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.SyncEmails, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.SyncEmails, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.SyncEmails, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.SyncEmails, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -125,7 +125,7 @@ const testCases = [
   { loc: AppPath.SyncEmails, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.SyncEmails, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.InviteTeam, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.InviteTeam, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.InviteTeam, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.InviteTeam, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -137,7 +137,7 @@ const testCases = [
   { loc: AppPath.InviteTeam, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.InviteTeam, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.PlanRequired, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.PlanRequired, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.SubscriptionCanceled, res: true },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -149,7 +149,7 @@ const testCases = [
   { loc: AppPath.PlanRequired, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.CompletedWithoutSubscription, res: true },
 
-  { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -161,7 +161,7 @@ const testCases = [
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.Index, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.Index, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.Index, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.Index, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.Index, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -173,7 +173,7 @@ const testCases = [
   { loc: AppPath.Index, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.Index, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.TasksPage, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.TasksPage, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.TasksPage, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.TasksPage, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.TasksPage, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -185,7 +185,7 @@ const testCases = [
   { loc: AppPath.TasksPage, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.TasksPage, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -197,7 +197,7 @@ const testCases = [
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.RecordIndexPage, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.RecordIndexPage, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -209,7 +209,7 @@ const testCases = [
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.RecordShowPage, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.RecordShowPage, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -221,7 +221,7 @@ const testCases = [
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -233,7 +233,7 @@ const testCases = [
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -245,7 +245,7 @@ const testCases = [
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.Impersonate, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.Impersonate, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.Impersonate, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.Impersonate, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.Impersonate, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -257,7 +257,7 @@ const testCases = [
   { loc: AppPath.Impersonate, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.Impersonate, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.Authorize, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.Authorize, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.Authorize, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.Authorize, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.Authorize, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -269,7 +269,7 @@ const testCases = [
   { loc: AppPath.Authorize, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.Authorize, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.SubscriptionPastDue, res: false },
@@ -281,7 +281,7 @@ const testCases = [
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
-  { loc: AppPath.NotFound, status: OnboardingStatus.SubscriptionIncomplete, res: true },
+  { loc: AppPath.NotFound, status: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.NotFound, status: OnboardingStatus.SubscriptionCanceled, res: false },
   { loc: AppPath.NotFound, status: OnboardingStatus.SubscriptionUnpaid, res: false },
   { loc: AppPath.NotFound, status: OnboardingStatus.SubscriptionPastDue, res: false },

@@ -135,7 +135,7 @@ export class OnboardingService {
 
   async getOnboardingStatus(user: User) {
     if (await this.isSubscriptionIncompleteOnboardingStatus(user)) {
-      return OnboardingStatus.SUBSCRIPTION_INCOMPLETE;
+      return OnboardingStatus.PLAN_REQUIRED;
     }
 
     if (await this.isWorkspaceActivationOnboardingStatus(user)) {
