@@ -1,13 +1,13 @@
 import { getDomainNameFromHandle } from 'src/modules/calendar-messaging-participant/utils/get-domain-name-from-handle.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
+import { Contact } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 
 export function filterOutContactsFromCompanyOrWorkspace(
-  contacts: Contacts,
+  contacts: Contact[],
   selfHandle: string,
   workspaceMembers: ObjectRecord<WorkspaceMemberWorkspaceEntity>[],
-): Contacts {
+): Contact[] {
   const selfDomainName = getDomainNameFromHandle(selfHandle);
 
   const workspaceMembersMap = workspaceMembers.reduce(
