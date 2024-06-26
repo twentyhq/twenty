@@ -166,7 +166,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         value: MessageChannelContactAutoCreationFor.NONE,
         label: 'None',
         position: 2,
-        color: 'orange',
+        color: 'red',
       },
     ],
   })

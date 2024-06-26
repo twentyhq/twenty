@@ -67,6 +67,7 @@ export const CALENDAR_CHANNEL_STANDARD_FIELD_IDS = {
   handle: '20202020-1d08-420a-9aa7-22e0f298232d',
   visibility: '20202020-1b07-4796-9f01-d626bab7ca4d',
   isContactAutoCreationEnabled: '20202020-50fb-404b-ba28-369911a3793a',
+  contactAutoCreation: '20202020-b55d-447d-b4df-226319058775',
   isSyncEnabled: '20202020-fe19-4818-8854-21f7b1b43395',
   syncCursor: '20202020-bac2-4852-a5cb-7a7898992b70',
   calendarChannelEventAssociations: '20202020-afb0-4a9f-979f-2d5087d71d09',
