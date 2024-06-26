@@ -30,6 +30,11 @@ export type Analytics = {
   success: Scalars['Boolean'];
 };
 
+export type ApiConfig = {
+  __typename?: 'ApiConfig';
+  mutationMaximumRecordAffected: Scalars['Float'];
+};
+
 export type ApiKeyToken = {
   __typename?: 'ApiKeyToken';
   token: Scalars['String'];
@@ -136,6 +141,7 @@ export enum CaptchaDriverType {
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
+  api: ApiConfig;
   authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
