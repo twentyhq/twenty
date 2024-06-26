@@ -295,7 +295,8 @@ describe('usePageChangeEffectNavigateLocation', () => {
   describe('tests should be exhaustive', () => {
     it('all location and onboarding status should be tested', () => {
       expect(testCases.length).toEqual(
-        Object.keys(AppPath).length * Object.keys(OnboardingStatus).length,
+        Object.keys(AppPath).length *
+          (Object.keys(OnboardingStatus).length + 1),
       );
     });
   });

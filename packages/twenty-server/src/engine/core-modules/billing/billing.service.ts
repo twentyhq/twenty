@@ -94,7 +94,7 @@ export class BillingService {
 
     assert(
       notCanceledSubscriptions.length <= 1,
-      `More than on not canceled subscription for workspace ${criteria.workspaceId}`,
+      `More than one not canceled subscription for workspace ${criteria.workspaceId}`,
     );
 
     return notCanceledSubscriptions?.[0];
