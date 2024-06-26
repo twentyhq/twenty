@@ -22,7 +22,7 @@ export const useFindDuplicateRecordsQuery = ({
   const findDuplicateRecordsQuery = gql`
     query FindDuplicate${capitalize(
       objectMetadataItem.nameSingular,
-    )}($ids: [ID]!) {
+    )}($ids: [ID!]!) {
       ${getFindDuplicateRecordsQueryResponseField(
         objectMetadataItem.nameSingular,
       )}(ids: $ids) {
@@ -38,7 +38,6 @@ export const useFindDuplicateRecordsQuery = ({
           startCursor
           endCursor
         }
-        ${isAggregationEnabled(objectMetadataItem) ? 'totalCount' : ''}
       }
     }
   `;

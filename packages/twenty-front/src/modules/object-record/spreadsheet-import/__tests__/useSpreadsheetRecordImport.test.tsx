@@ -20,7 +20,10 @@ const companyMocks = [
   {
     request: {
       query: gql`
-        mutation CreateCompanies($data: [CompanyCreateInput!]!, upsert: Boolean) {
+        mutation CreateCompanies(
+          $data: [CompanyCreateInput!]!
+          $upsert: Boolean
+        ) {
           createCompanies(data: $data, upsert: $upsert) {
             __typename
             xLink {
@@ -58,6 +61,7 @@ const companyMocks = [
             id: companyId,
           },
         ],
+        upsert: true,
       },
     },
     result: jest.fn(() => ({

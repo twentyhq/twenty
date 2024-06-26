@@ -39,7 +39,6 @@ const expectedQueryTemplate = `
         startCursor
         endCursor
       }
-      totalCount
      }
     }
 `.replace(/\s/g, '');
