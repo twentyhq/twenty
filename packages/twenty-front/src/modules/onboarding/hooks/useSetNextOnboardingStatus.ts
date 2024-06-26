@@ -1,10 +1,6 @@
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
-import {
-  CurrentWorkspace,
-  currentWorkspaceState,
-} from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -14,7 +10,6 @@ import { isDefined } from '~/utils/isDefined';
 const getNextOnboardingStatus = (
   currentUser: CurrentUser | null,
   workspaceMembers: WorkspaceMember[],
-  currentWorkspace: CurrentWorkspace | null,
 ) => {
   if (currentUser?.onboardingStatus === OnboardingStatus.ProfileCreation) {
     return OnboardingStatus.SyncEmail;
@@ -32,7 +27,6 @@ export const useSetNextOnboardingStatus = () => {
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   return useRecoilCallback(
     ({ snapshot, set }) =>
@@ -41,7 +35,6 @@ export const useSetNextOnboardingStatus = () => {
         const nextOnboardingStatus = getNextOnboardingStatus(
           currentUser,
           workspaceMembers,
-          currentWorkspace,
         );
         set(currentUserState, (current) => {
           if (isDefined(current)) {
@@ -53,6 +46,6 @@ export const useSetNextOnboardingStatus = () => {
           return current;
         });
       },
-    [workspaceMembers, currentWorkspace],
+    [workspaceMembers],
   );
 };
