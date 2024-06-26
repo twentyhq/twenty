@@ -66,7 +66,9 @@ export const MatchColumnSelect = ({
   const handleSearchFilterChange = useCallback(
     (text: string) => {
       setOptions(
-        initialOptions.filter((option) => option.label.includes(text)),
+        initialOptions.filter((option) =>
+          option.label.toLowerCase().includes(text.toLowerCase()),
+        ),
       );
     },
     [initialOptions],
