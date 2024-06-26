@@ -11,8 +11,24 @@ import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScroll
 import { RecordTableHeaderPlusButtonContent } from './RecordTableHeaderPlusButtonContent';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
-const StyledTableHead = styled.thead`
+const StyledTableHead = styled.thead<{
+  isScrolledLeft?: boolean;
+  isScrolledTop?: boolean;
+}>`
   cursor: pointer;
+
+  th {
+    position: sticky;
+    top: 0;
+    z-index: ${({ isScrolledTop }) => (isScrolledTop ? 3 : 1)};
+  }
+
+  th:nth-of-type(1),
+  th:nth-of-type(2),
+  th:nth-of-type(3) {
+    z-index: ${({ isScrolledTop, isScrolledLeft }) =>
+      isScrolledTop ? 4 : isScrolledLeft ? 3 : 2};
+  }
 `;
 
 const StyledPlusIconHeaderCell = styled.th<{ isTableWiderThanScreen: boolean }>`
@@ -54,7 +70,11 @@ export const RecordTableHeader = ({
 }: {
   createRecord: () => void;
 }) => {
-  const { visibleTableColumnsSelector } = useRecordTableStates();
+  const {
+    visibleTableColumnsSelector,
+    isScrolledLeftSelector,
+    isScrolledTopSelector,
+  } = useRecordTableStates();
 
   const scrollWrapper = useScrollWrapperScopedRef();
   const isTableWiderThanScreen =
@@ -66,8 +86,14 @@ export const RecordTableHeader = ({
 
   const theme = useTheme();
 
+  const isScrolledLeft = useRecoilValue(isScrolledLeftSelector());
+  const isScrolledTop = useRecoilValue(isScrolledTopSelector());
   return (
-    <StyledTableHead data-select-disable>
+    <StyledTableHead
+      data-select-disable
+      isScrolledLeft={isScrolledLeft}
+      isScrolledTop={isScrolledTop}
+    >
       <tr>
         <th></th>
         <th

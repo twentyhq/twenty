@@ -26,7 +26,6 @@ import { TableCellPosition } from '@/object-record/record-table/types/TableCellP
 const StyledTable = styled.table<{
   freezeFirstColumns?: boolean;
   isScrolledLeft?: boolean;
-  isScrolledTop?: boolean;
 }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border-spacing: 0;
@@ -71,20 +70,6 @@ const StyledTable = styled.table<{
   th {
     background-color: ${({ theme }) => theme.background.primary};
     border-right: 1px solid ${({ theme }) => theme.border.color.light};
-  }
-
-  thead th {
-    position: sticky;
-    top: 0;
-    z-index: ${({ isScrolledTop }) => (isScrolledTop ? 3 : 1)};
-  }
-
-  thead th:nth-of-type(1),
-  thead th:nth-of-type(2),
-  thead th:nth-of-type(3) {
-    z-index: ${({ isScrolledTop, isScrolledLeft }) =>
-      isScrolledTop ? 4 : isScrolledLeft ? 3 : 2};
-    background-color: ${({ theme }) => theme.background.primary};
   }
 
   thead th:nth-of-type(1) {
@@ -164,12 +149,8 @@ export const RecordTable = ({
   onColumnsChange,
   createRecord,
 }: RecordTableProps) => {
-  const {
-    scopeId,
-    visibleTableColumnsSelector,
-    isScrolledLeftSelector,
-    isScrolledTopSelector,
-  } = useRecordTableStates(recordTableId);
+  const { scopeId, visibleTableColumnsSelector, isScrolledLeftSelector } =
+    useRecordTableStates(recordTableId);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -231,7 +212,6 @@ export const RecordTable = ({
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
   const isScrolledLeft = useRecoilValue(isScrolledLeftSelector());
-  const isScrolledTop = useRecoilValue(isScrolledTopSelector());
 
   return (
     <RecordTableScope
@@ -255,7 +235,6 @@ export const RecordTable = ({
           <StyledTable
             className="entity-table-cell"
             isScrolledLeft={isScrolledLeft}
-            isScrolledTop={isScrolledTop}
           >
             <RecordTableHeader createRecord={createRecord} />
             <RecordTableBodyEffect objectNameSingular={objectNameSingular} />
