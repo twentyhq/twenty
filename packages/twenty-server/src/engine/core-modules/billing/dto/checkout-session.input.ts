@@ -3,7 +3,7 @@ import { ArgsType, Field } from '@nestjs/graphql';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import Stripe from 'stripe';
 
-import { SubscriptionInterval } from '../entities/billing-subscription.entity';
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
 @ArgsType()
 export class CheckoutSessionInput {
