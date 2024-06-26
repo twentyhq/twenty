@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { EntityManager } from 'typeorm';
 import compact from 'lodash.compact';
+import chunk from 'lodash.chunk';
 
 import { getDomainNameFromHandle } from 'src/modules/calendar-messaging-participant/utils/get-domain-name-from-handle.util';
 import { CreateCompanyService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company/create-company.service';
@@ -24,6 +25,7 @@ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/st
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/connected-account/auto-companies-and-contacts-creation/constants/contacts-creation-batch-size.constant';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -136,46 +138,53 @@ export class CreateCompanyAndContactService {
     contactsToCreate: Contacts,
     workspaceId: string,
   ) {
-    let updatedMessageParticipants: ObjectRecord<MessageParticipantWorkspaceEntity>[] =
-      [];
-    let updatedCalendarEventParticipants: ObjectRecord<CalendarEventParticipantWorkspaceEntity>[] =
-      [];
-
-    await this.workspaceDataSource?.transaction(
-      async (transactionManager: EntityManager) => {
-        const createdPeople = await this.createCompaniesAndPeople(
-          connectedAccount.handle,
-          contactsToCreate,
-          workspaceId,
-          transactionManager,
-        );
-
-        updatedMessageParticipants =
-          await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-            createdPeople,
-            workspaceId,
-            transactionManager,
-          );
-
-        updatedCalendarEventParticipants =
-          await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterPeopleCreation(
-            createdPeople,
-            workspaceId,
-            transactionManager,
-          );
-      },
+    const contactsBatches = chunk(
+      contactsToCreate,
+      CONTACTS_CREATION_BATCH_SIZE,
     );
 
-    this.eventEmitter.emit(`messageParticipant.matched`, {
-      workspaceId,
-      workspaceMemberId: connectedAccount.accountOwnerId,
-      messageParticipants: updatedMessageParticipants,
-    });
+    for (const contactsBatch of contactsBatches) {
+      let updatedMessageParticipants: ObjectRecord<MessageParticipantWorkspaceEntity>[] =
+        [];
+      let updatedCalendarEventParticipants: ObjectRecord<CalendarEventParticipantWorkspaceEntity>[] =
+        [];
 
-    this.eventEmitter.emit(`calendarEventParticipant.matched`, {
-      workspaceId,
-      workspaceMemberId: connectedAccount.accountOwnerId,
-      calendarEventParticipants: updatedCalendarEventParticipants,
-    });
+      await this.workspaceDataSource?.transaction(
+        async (transactionManager: EntityManager) => {
+          const createdPeople = await this.createCompaniesAndPeople(
+            connectedAccount.handle,
+            contactsBatch,
+            workspaceId,
+            transactionManager,
+          );
+
+          updatedMessageParticipants =
+            await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+              createdPeople,
+              workspaceId,
+              transactionManager,
+            );
+
+          updatedCalendarEventParticipants =
+            await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterPeopleCreation(
+              createdPeople,
+              workspaceId,
+              transactionManager,
+            );
+        },
+      );
+
+      this.eventEmitter.emit(`messageParticipant.matched`, {
+        workspaceId,
+        workspaceMemberId: connectedAccount.accountOwnerId,
+        messageParticipants: updatedMessageParticipants,
+      });
+
+      this.eventEmitter.emit(`calendarEventParticipant.matched`, {
+        workspaceId,
+        workspaceMemberId: connectedAccount.accountOwnerId,
+        calendarEventParticipants: updatedCalendarEventParticipants,
+      });
+    }
   }
 }
