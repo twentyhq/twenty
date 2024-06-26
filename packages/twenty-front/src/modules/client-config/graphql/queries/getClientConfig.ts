@@ -33,7 +33,7 @@ export const GET_CLIENT_CONFIG = gql`
         siteKey
       }
       api {
-        mutationMaximumRecordAffected
+        mutationMaximumAffectedRecords
       }
       chromeExtensionId
     }
