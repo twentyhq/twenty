@@ -138,18 +138,15 @@ export const useRecordShowPagePagination = (
     }
   }, [
     objectRecordId,
-    objectMetadataItem,
     isLoadingPagination,
     objectRecords,
     hasNextPage,
     view,
     fetchMoreRecords,
-    setObjectRecords,
     setHasPreviousRecord,
     setHasNextRecord,
     setCurrentRecordIndex,
     setViewName,
-    setTotalRecords,
     setIsLoadedRecords,
   ]);
 
