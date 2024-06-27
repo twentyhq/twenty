@@ -220,6 +220,16 @@ export class EnvironmentVariables {
   @IsOptional()
   STORAGE_S3_ENDPOINT: string;
 
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  @IsOptional()
+  STORAGE_S3_AccessKeyId: string;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  @IsOptional()
+  STORAGE_S3_SecretAccessKey: string;
+
   @IsString()
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
   STORAGE_LOCAL_PATH = '.local-storage';
