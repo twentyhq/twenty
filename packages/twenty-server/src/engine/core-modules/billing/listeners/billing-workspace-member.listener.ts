@@ -9,15 +9,15 @@ import {
   UpdateSubscriptionJob,
   UpdateSubscriptionJobData,
 } from 'src/engine/core-modules/billing/jobs/update-subscription.job';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 
 @Injectable()
 export class BillingWorkspaceMemberListener {
   constructor(
     @InjectMessageQueue(MessageQueue.billingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly environmentService: EnvironmentService,
+    private readonly billingService: BillingService,
   ) {}
 
   @OnEvent('workspaceMember.created')
@@ -25,7 +25,12 @@ export class BillingWorkspaceMemberListener {
   async handleCreateOrDeleteEvent(
     payload: ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>,
   ) {
-    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+    const isBillingEnabledForWorkspace =
+      await this.billingService.isBillingEnabledForWorkspace(
+        payload.workspaceId,
+      );
+
+    if (!isBillingEnabledForWorkspace) {
       return;
     }
 

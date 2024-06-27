@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { OnboardingResolver } from 'src/engine/core-modules/onboarding/onboarding.resolver';
@@ -9,7 +8,6 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Module({
   imports: [
@@ -19,7 +17,6 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
     KeyValuePairModule,
     EnvironmentModule,
     BillingModule,
-    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
   ],
   exports: [OnboardingService],
   providers: [OnboardingService, OnboardingResolver],

@@ -17,6 +17,10 @@ import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { assert } from 'src/utils/assert';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 export enum AvailableProduct {
   BasePlan = 'base-plan',
@@ -38,11 +42,25 @@ export class BillingService {
     private readonly environmentService: EnvironmentService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
+
+  async isBillingEnabledForWorkspace(workspaceId: string) {
+    const isFreeAccessEnabled = await this.featureFlagRepository.findOneBy({
+      workspaceId,
+      key: FeatureFlagKeys.IsFreeAccessEnabled,
+      value: true,
+    });
+
+    return (
+      !isFreeAccessEnabled && this.environmentService.get('IS_BILLING_ENABLED')
+    );
+  }
 
   getProductStripeId(product: AvailableProduct) {
     if (product === AvailableProduct.BasePlan) {

@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -18,10 +15,6 @@ import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inje
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { isDefined } from 'src/utils/is-defined';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 
 enum OnboardingStepValues {
@@ -50,21 +43,15 @@ export class OnboardingService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectWorkspaceRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberRepository: WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   private async isSubscriptionIncompleteOnboardingStatus(user: User) {
-    const isFreeAccessEnabled = await this.featureFlagRepository.findOneBy({
-      workspaceId: user.defaultWorkspaceId,
-      key: FeatureFlagKeys.IsFreeAccessEnabled,
-      value: true,
-    });
+    const isBillingEnabledForWorkspace =
+      await this.billingService.isBillingEnabledForWorkspace(
+        user.defaultWorkspaceId,
+      );
 
-    if (
-      isFreeAccessEnabled ||
-      !this.environmentService.get('IS_BILLING_ENABLED')
-    ) {
+    if (!isBillingEnabledForWorkspace) {
       return false;
     }
 
