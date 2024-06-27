@@ -12,7 +12,6 @@ import FileType from 'file-type';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { assert } from 'src/utils/assert';
 import {
   PASSWORD_REGEX,
@@ -25,6 +24,7 @@ import { FileUploadService } from 'src/engine/core-modules/file/file-upload/serv
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -45,6 +45,7 @@ export class SignInUpService {
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly workspaceService: WorkspaceService,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
   ) {}
@@ -143,11 +144,12 @@ export class SignInUpService {
       ForbiddenException,
     );
 
+    const isWorkspaceActivated =
+      await this.workspaceService.isWorkspaceActivated(workspace.id);
+
     assert(
-      !this.environmentService.get('IS_BILLING_ENABLED') ||
-        workspace.currentBillingSubscription?.status !==
-          SubscriptionStatus.Incomplete,
-      'Workspace subscription status is incomplete',
+      isWorkspaceActivated,
+      'Workspace is not ready to welcome new members',
       ForbiddenException,
     );
 
