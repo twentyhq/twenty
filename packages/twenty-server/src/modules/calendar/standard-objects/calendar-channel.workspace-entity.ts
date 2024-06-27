@@ -39,7 +39,7 @@ export enum CalendarChannelSyncStage {
   FAILED = 'FAILED',
 }
 
-export enum CalendarChannelContactAutoCreation {
+export enum CalendarChannelContactAutoCreationPolicy {
   AS_PARTICIPANT_AND_ORGANIZER = 'AS_PARTICIPANT_AND_ORGANIZER',
   AS_PARTICIPANT = 'AS_PARTICIPANT',
   AS_ORGANIZER = 'AS_ORGANIZER',
@@ -193,41 +193,42 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   isContactAutoCreationEnabled: boolean;
 
   @WorkspaceField({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreation,
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
     type: FieldMetadataType.SELECT,
-    label: 'Contact auto creation',
+    label: 'Contact auto creation policy',
     description:
       'Automatically create records for people you participated with in an event.',
     icon: 'IconUserCircle',
     options: [
       {
-        value: CalendarChannelContactAutoCreation.AS_PARTICIPANT_AND_ORGANIZER,
+        value:
+          CalendarChannelContactAutoCreationPolicy.AS_PARTICIPANT_AND_ORGANIZER,
         label: 'As Participant and Organizer',
         color: 'green',
         position: 0,
       },
       {
-        value: CalendarChannelContactAutoCreation.AS_PARTICIPANT,
+        value: CalendarChannelContactAutoCreationPolicy.AS_PARTICIPANT,
         label: 'As Participant',
         color: 'orange',
         position: 1,
       },
       {
-        value: CalendarChannelContactAutoCreation.AS_ORGANIZER,
+        value: CalendarChannelContactAutoCreationPolicy.AS_ORGANIZER,
         label: 'As Organizer',
         color: 'blue',
         position: 2,
       },
       {
-        value: CalendarChannelContactAutoCreation.NONE,
+        value: CalendarChannelContactAutoCreationPolicy.NONE,
         label: 'None',
         color: 'red',
         position: 3,
       },
     ],
-    defaultValue: `'${CalendarChannelContactAutoCreation.AS_PARTICIPANT_AND_ORGANIZER}'`,
+    defaultValue: `'${CalendarChannelContactAutoCreationPolicy.AS_PARTICIPANT_AND_ORGANIZER}'`,
   })
-  contactAutoCreation: CalendarChannelContactAutoCreation;
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
 
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,

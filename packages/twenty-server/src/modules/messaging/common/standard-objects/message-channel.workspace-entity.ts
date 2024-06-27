@@ -51,7 +51,7 @@ export enum MessageChannelType {
   SMS = 'sms',
 }
 
-export enum MessageChannelContactAutoCreation {
+export enum MessageChannelContactAutoCreationPolicy {
   SENT_AND_RECEIVED = 'SENT_AND_RECEIVED',
   SENT = 'SENT',
   NONE = 'NONE',
@@ -143,35 +143,35 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   isContactAutoCreationEnabled: boolean;
 
   @WorkspaceField({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreation,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
     type: FieldMetadataType.SELECT,
-    label: 'Contact auto creation',
+    label: 'Contact auto creation policy',
     description:
       'Automatically create People records when receiving or sending emails',
     icon: 'IconUserCircle',
     options: [
       {
-        value: MessageChannelContactAutoCreation.SENT_AND_RECEIVED,
+        value: MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED,
         label: 'Sent and Received',
         position: 0,
         color: 'green',
       },
       {
-        value: MessageChannelContactAutoCreation.SENT,
+        value: MessageChannelContactAutoCreationPolicy.SENT,
         label: 'Sent',
         position: 1,
         color: 'blue',
       },
       {
-        value: MessageChannelContactAutoCreation.NONE,
+        value: MessageChannelContactAutoCreationPolicy.NONE,
         label: 'None',
         position: 2,
         color: 'red',
       },
     ],
-    defaultValue: `'${MessageChannelContactAutoCreation.SENT}'`,
+    defaultValue: `'${MessageChannelContactAutoCreationPolicy.SENT}'`,
   })
-  contactAutoCreation: MessageChannelContactAutoCreation;
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeNonProfessionalEmails,
