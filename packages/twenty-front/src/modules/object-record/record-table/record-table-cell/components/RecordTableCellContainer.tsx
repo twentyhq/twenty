@@ -81,6 +81,7 @@ export const RecordTableCellContainer = ({
   };
 
   const handleContainerMouseMove = () => {
+    setIsFocused(true);
     if (!hasSoftFocus) {
       onCellMouseEnter({
         cellPosition,
