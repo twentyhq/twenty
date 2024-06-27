@@ -2,7 +2,7 @@ import { Scope } from '@nestjs/common';
 
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
+import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant-manager/calendar-event-participant.service';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 

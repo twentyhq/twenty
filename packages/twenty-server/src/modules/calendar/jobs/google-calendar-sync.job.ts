@@ -1,7 +1,7 @@
 import { Logger, Scope } from '@nestjs/common';
 
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { GoogleCalendarSyncService } from 'src/modules/calendar/services/google-calendar-sync/google-calendar-sync.service';
+import { GoogleCalendarSyncService } from 'src/modules/calendar/services/calendar-sync-manager/google-calendar-sync.service';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
