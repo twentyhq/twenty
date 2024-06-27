@@ -16,7 +16,6 @@ import { EmailModule } from 'src/engine/integrations/email/email.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { CleanInactiveWorkspaceJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-inactive-workspace.job';
-import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { CalendarMessagingParticipantJobModule } from 'src/modules/calendar-messaging-participant/jobs/calendar-messaging-participant-job.module';
@@ -26,6 +25,7 @@ import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/connected
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { CalendarModule } from 'src/modules/calendar/calendar.module';
+import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant-manager/calendar-event-participant.module';
 
 @Module({
   imports: [
