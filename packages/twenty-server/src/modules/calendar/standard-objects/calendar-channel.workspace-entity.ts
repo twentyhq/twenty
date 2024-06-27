@@ -40,6 +40,13 @@ export enum CalendarChannelSyncStage {
   FAILED = 'FAILED',
 }
 
+export enum CalendarChannelContactAutoCreationPolicy {
+  AS_PARTICIPANT_AND_ORGANIZER = 'AS_PARTICIPANT_AND_ORGANIZER',
+  AS_PARTICIPANT = 'AS_PARTICIPANT',
+  AS_ORGANIZER = 'AS_ORGANIZER',
+  NONE = 'NONE',
+}
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannel,
   namePlural: 'calendarChannels',
@@ -185,6 +192,44 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: true,
   })
   isContactAutoCreationEnabled: boolean;
+
+  @WorkspaceField({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
+    type: FieldMetadataType.SELECT,
+    label: 'Contact auto creation policy',
+    description:
+      'Automatically create records for people you participated with in an event.',
+    icon: 'IconUserCircle',
+    options: [
+      {
+        value:
+          CalendarChannelContactAutoCreationPolicy.AS_PARTICIPANT_AND_ORGANIZER,
+        label: 'As Participant and Organizer',
+        color: 'green',
+        position: 0,
+      },
+      {
+        value: CalendarChannelContactAutoCreationPolicy.AS_PARTICIPANT,
+        label: 'As Participant',
+        color: 'orange',
+        position: 1,
+      },
+      {
+        value: CalendarChannelContactAutoCreationPolicy.AS_ORGANIZER,
+        label: 'As Organizer',
+        color: 'blue',
+        position: 2,
+      },
+      {
+        value: CalendarChannelContactAutoCreationPolicy.NONE,
+        label: 'None',
+        color: 'red',
+        position: 3,
+      },
+    ],
+    defaultValue: `'${CalendarChannelContactAutoCreationPolicy.AS_PARTICIPANT_AND_ORGANIZER}'`,
+  })
+  contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy;
 
   @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
