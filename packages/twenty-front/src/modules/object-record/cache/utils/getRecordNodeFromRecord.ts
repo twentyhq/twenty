@@ -4,6 +4,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getNodeTypename } from '@/object-record/cache/utils/getNodeTypename';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
+import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
@@ -39,7 +40,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
 
   if (!isRootLevel && computeReferences) {
     return {
-      __ref: `${nodeTypeName}:${record.id}`,
+      __ref: getRefName(objectMetadataItem.nameSingular, record.id),
     } as unknown as RecordGqlNode; // Fix typing: we want a Reference in computeReferences mode
   }
 

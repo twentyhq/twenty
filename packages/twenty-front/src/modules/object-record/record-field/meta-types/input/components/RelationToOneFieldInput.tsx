@@ -14,15 +14,15 @@ const StyledRelationPickerContainer = styled.div`
   top: -1px;
 `;
 
-export type RelationFieldInputProps = {
+export type RelationToOneFieldInputProps = {
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
 };
 
-export const RelationFieldInput = ({
+export const RelationToOneFieldInput = ({
   onSubmit,
   onCancel,
-}: RelationFieldInputProps) => {
+}: RelationToOneFieldInputProps) => {
   const { fieldDefinition, initialSearchValue, fieldValue } =
     useRelationField<EntityForSelect>();
 

@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { useActivities } from '@/activities/hooks/useActivities';
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FindManyTimelineActivitiesOrderBy';
 import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
-import { timelineActivitiesFammilyState } from '@/activities/timeline/states/timelineActivitiesFamilyState';
+import { timelineActivitiesFamilyState } from '@/activities/timeline/states/timelineActivitiesFamilyState';
 import { timelineActivitiesForGroupState } from '@/activities/timeline/states/timelineActivitiesForGroupState';
 import { timelineActivityWithoutTargetsFamilyState } from '@/activities/timeline/states/timelineActivityWithoutTargetsFamilyState';
 import { Activity } from '@/activities/types/Activity';
@@ -68,11 +68,11 @@ export const TimelineQueryEffect = ({
       (newActivities: Activity[]) => {
         for (const newActivity of newActivities) {
           const currentActivity = snapshot
-            .getLoadable(timelineActivitiesFammilyState(newActivity.id))
+            .getLoadable(timelineActivitiesFamilyState(newActivity.id))
             .getValue();
 
           if (!isDeeplyEqual(newActivity, currentActivity)) {
-            set(timelineActivitiesFammilyState(newActivity.id), newActivity);
+            set(timelineActivitiesFamilyState(newActivity.id), newActivity);
           }
 
           const currentActivityWithoutTarget = snapshot
