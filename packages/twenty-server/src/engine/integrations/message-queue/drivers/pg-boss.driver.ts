@@ -47,10 +47,17 @@ export class PgBossDriver
           }
         : {},
       async (job) => {
+        // PGBoss work with wildcard job name
+        const jobName = job.name.split('.')?.[1];
+
+        if (!jobName) {
+          throw new Error('Job name could not be splited from the job.');
+        }
+
         await handler({
           data: job.data,
           id: job.id,
-          name: job.name.split('.')[1],
+          name: jobName,
         });
       },
     );

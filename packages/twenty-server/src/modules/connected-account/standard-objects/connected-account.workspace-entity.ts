@@ -19,6 +19,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 export enum ConnectedAccountProvider {
   GOOGLE = 'google',
@@ -108,12 +109,12 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Account Owner',
     description: 'Account Owner',
     icon: 'IconUserCircle',
-    joinColumn: 'accountOwnerId',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'connectedAccounts',
   })
   accountOwner: Relation<WorkspaceMemberWorkspaceEntity>;
 
+  @WorkspaceJoinColumn('accountOwner')
   accountOwnerId: string;
 
   @WorkspaceRelation({

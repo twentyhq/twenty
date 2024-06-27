@@ -11,6 +11,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { AutoCompaniesAndContactsCreationMessageChannelListener } from 'src/modules/connected-account/auto-companies-and-contacts-creation/listeners/auto-companies-and-contacts-creation-message-channel.listener';
 
 @Module({
   imports: [
@@ -25,7 +26,10 @@ import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-co
     CalendarEventParticipantModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
   ],
-  providers: [CreateCompanyAndContactService],
+  providers: [
+    CreateCompanyAndContactService,
+    AutoCompaniesAndContactsCreationMessageChannelListener,
+  ],
   exports: [CreateCompanyAndContactService],
 })
 export class AutoCompaniesAndContactsCreationModule {}

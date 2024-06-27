@@ -7,7 +7,6 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -41,8 +40,8 @@ export class MessagingGmailPartialMessageListFetchService {
   ) {}
 
   public async processMessageListFetch(
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     await this.messagingChannelSyncStatusService.markAsMessagesListFetchOngoing(

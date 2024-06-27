@@ -20,14 +20,8 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
   ],
   providers: [
     CanAccessMessageThreadService,
-    {
-      provide: MessageFindOnePreQueryHook.name,
-      useClass: MessageFindOnePreQueryHook,
-    },
-    {
-      provide: MessageFindManyPreQueryHook.name,
-      useClass: MessageFindManyPreQueryHook,
-    },
+    MessageFindOnePreQueryHook,
+    MessageFindManyPreQueryHook,
   ],
 })
 export class MessagingQueryHookModule {}

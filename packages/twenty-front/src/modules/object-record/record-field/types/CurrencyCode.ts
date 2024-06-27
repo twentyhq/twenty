@@ -16,4 +16,5 @@ export enum CurrencyCode {
   AED = 'AED',
   KRW = 'KRW',
   BRL = 'BRL',
+  AUD = 'AUD',
 }

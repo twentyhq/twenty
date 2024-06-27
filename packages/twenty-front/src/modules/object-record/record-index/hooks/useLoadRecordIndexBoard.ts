@@ -11,7 +11,7 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
-import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 
 type UseLoadRecordIndexBoardProps = {
@@ -33,7 +33,7 @@ export const useLoadRecordIndexBoard = ({
     setFieldDefinitions,
     isCompactModeActiveState,
   } = useRecordBoard(recordBoardId);
-  const { setRecords: setRecordsInStore } = useSetRecordInStore();
+  const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const recordIndexFieldDefinitions = useRecoilValue(
     recordIndexFieldDefinitionsState,
@@ -82,8 +82,8 @@ export const useLoadRecordIndexBoard = ({
   }, [records, setRecordIdsInBoard]);
 
   useEffect(() => {
-    setRecordsInStore(records);
-  }, [records, setRecordsInStore]);
+    upsertRecordsInStore(records);
+  }, [records, upsertRecordsInStore]);
 
   useEffect(() => {
     setRecordCountInCurrentView(totalCount);

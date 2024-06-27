@@ -9,9 +9,13 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ isMultiWorkspace: boolean }>`
   align-items: center;
   display: flex;
+  gap: ${({ theme, isMultiWorkspace }) =>
+    !isMultiWorkspace ? theme.spacing(2) : null};
+  padding: ${({ theme, isMultiWorkspace }) =>
+    !isMultiWorkspace ? theme.spacing(1) : null};
   height: ${({ theme }) => theme.spacing(7)};
   user-select: none;
 `;
@@ -53,10 +57,11 @@ export const NavigationDrawerHeader = ({
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
   const workspaces = useRecoilValue(workspacesState);
+  const isMultiWorkspace = workspaces !== null && workspaces.length > 1;
 
   return (
-    <StyledContainer>
-      {workspaces !== null && workspaces.length > 1 ? (
+    <StyledContainer isMultiWorkspace={isMultiWorkspace}>
+      {isMultiWorkspace ? (
         <MultiWorkspaceDropdownButton workspaces={workspaces} />
       ) : (
         <>

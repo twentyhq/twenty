@@ -9,7 +9,6 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
 import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { ParticipantWithMessageId } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
@@ -29,10 +28,10 @@ export class MessagingMessageParticipantService {
   ) {}
 
   public async updateMessageParticipantsAfterPeopleCreation(
-    createdPeople: ObjectRecord<PersonWorkspaceEntity>[],
+    createdPeople: PersonWorkspaceEntity[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageParticipantWorkspaceEntity>[]> {
+  ): Promise<MessageParticipantWorkspaceEntity[]> {
     const participants = await this.messageParticipantRepository.getByHandles(
       createdPeople.map((person) => person.email),
       workspaceId,
@@ -87,7 +86,7 @@ export class MessagingMessageParticipantService {
     participants: ParticipantWithMessageId[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageParticipantWorkspaceEntity>[]> {
+  ): Promise<MessageParticipantWorkspaceEntity[]> {
     if (!participants) return [];
 
     const dataSourceSchema =

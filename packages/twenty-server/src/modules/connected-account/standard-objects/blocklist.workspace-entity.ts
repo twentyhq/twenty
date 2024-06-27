@@ -11,6 +11,7 @@ import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/work
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.blocklist,
@@ -38,9 +39,11 @@ export class BlocklistWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'WorkspaceMember',
     description: 'WorkspaceMember',
     icon: 'IconCircleUser',
-    joinColumn: 'workspaceMemberId',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'blocklist',
   })
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('workspaceMember')
+  workspaceMemberId: string;
 }

@@ -132,6 +132,7 @@ export const RecordIndexOptionsDropdownContent = ({
             onClick={() => handleSelectMenu('fields')}
             LeftIcon={IconTag}
             text="Fields"
+            hasSubMenu
           />
           <MenuItem
             onClick={() => openRecordSpreadsheetImport()}
