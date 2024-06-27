@@ -6,9 +6,9 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
-  GoogleCalendarSyncJobData,
-  GoogleCalendarSyncJob,
-} from 'src/modules/calendar/jobs/google-calendar-sync.job';
+  CalendarEventsImportJobData,
+  CalendarEventsImportJob,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 
 @Injectable()
@@ -30,8 +30,8 @@ export class WorkspaceGoogleCalendarSyncService {
         continue;
       }
 
-      await this.messageQueueService.add<GoogleCalendarSyncJobData>(
-        GoogleCalendarSyncJob.name,
+      await this.messageQueueService.add<CalendarEventsImportJobData>(
+        CalendarEventsImportJob.name,
         {
           workspaceId,
           connectedAccountId: calendarChannel.connectedAccount.id,

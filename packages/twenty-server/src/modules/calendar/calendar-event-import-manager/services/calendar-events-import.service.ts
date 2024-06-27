@@ -42,8 +42,8 @@ import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 
 @Injectable()
-export class GoogleCalendarSyncService {
-  private readonly logger = new Logger(GoogleCalendarSyncService.name);
+export class CalendarEventsImportService {
+  private readonly logger = new Logger(CalendarEventsImportService.name);
 
   constructor(
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,

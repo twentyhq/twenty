@@ -8,10 +8,6 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import {
-  GoogleCalendarSyncJobData,
-  GoogleCalendarSyncJob,
-} from 'src/modules/calendar/jobs/google-calendar-sync.job';
-import {
   CalendarChannelWorkspaceEntity,
   CalendarChannelVisibility,
 } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
@@ -36,6 +32,10 @@ import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inje
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
+import {
+  CalendarEventsImportJob,
+  CalendarEventsImportJobData,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -170,8 +170,8 @@ export class GoogleAPIsService {
       this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
       isCalendarEnabled
     ) {
-      await this.calendarQueueService.add<GoogleCalendarSyncJobData>(
-        GoogleCalendarSyncJob.name,
+      await this.calendarQueueService.add<CalendarEventsImportJobData>(
+        CalendarEventsImportJob.name,
         {
           workspaceId,
           connectedAccountId: newOrExistingConnectedAccountId,

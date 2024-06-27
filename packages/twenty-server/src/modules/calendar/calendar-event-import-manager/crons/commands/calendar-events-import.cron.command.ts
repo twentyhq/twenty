@@ -3,15 +3,15 @@ import { Command, CommandRunner } from 'nest-commander';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/google-calendar-sync.cron.job';
+import { CalendarEventsImportCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-events-import.cron.job';
 
-const GOOGLE_CALENDAR_SYNC_CRON_PATTERN = '*/5 * * * *';
+const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/5 * * * *';
 
 @Command({
-  name: 'cron:calendar:google-calendar-sync',
-  description: 'Starts a cron job to sync google calendar for all workspaces.',
+  name: 'cron:calendar:calendar-events-import',
+  description: 'Starts a cron job to import calendar events',
 })
-export class GoogleCalendarSyncCronCommand extends CommandRunner {
+export class CalendarEventsImportCronCommand extends CommandRunner {
   constructor(
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -21,10 +21,10 @@ export class GoogleCalendarSyncCronCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron<undefined>(
-      GoogleCalendarSyncCronJob.name,
+      CalendarEventsImportCronJob.name,
       undefined,
       {
-        repeat: { pattern: GOOGLE_CALENDAR_SYNC_CRON_PATTERN },
+        repeat: { pattern: CALENDAR_EVENTS_IMPORT_CRON_PATTERN },
       },
     );
   }

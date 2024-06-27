@@ -2,7 +2,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { WorkspaceGoogleCalendarSyncService } from 'src/modules/calendar/services/workspace-google-calendar-sync/workspace-google-calendar-sync.service';
 
-interface GoogleCalendarSyncOptions {
+interface CalendarEventsImportOptions {
   workspaceId: string;
 }
 
@@ -11,7 +11,7 @@ interface GoogleCalendarSyncOptions {
   description:
     'Start google calendar sync for all workspaceMembers in a workspace.',
 })
-export class GoogleCalendarSyncCommand extends CommandRunner {
+export class CalendarEventsImportCommand extends CommandRunner {
   constructor(
     private readonly workspaceGoogleCalendarSyncService: WorkspaceGoogleCalendarSyncService,
   ) {
@@ -29,7 +29,7 @@ export class GoogleCalendarSyncCommand extends CommandRunner {
 
   async run(
     _passedParam: string[],
-    options: GoogleCalendarSyncOptions,
+    options: CalendarEventsImportOptions,
   ): Promise<void> {
     await this.workspaceGoogleCalendarSyncService.startWorkspaceGoogleCalendarSync(
       options.workspaceId,

@@ -6,7 +6,8 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
-import { GoogleCalendarSyncService } from 'src/modules/calendar/calendar-event-import-manager/services/google-calendar-sync.service';
+import { CalendarEventsImportCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-events-import.cron.job';
+import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant.module';
 import { CalendarProvidersModule } from 'src/modules/calendar/services/providers/calendar-providers.module';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -38,7 +39,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     WorkspaceDataSourceModule,
     CalendarEventCleanerModule,
   ],
-  providers: [GoogleCalendarSyncService],
-  exports: [GoogleCalendarSyncService],
+  providers: [CalendarEventsImportService, CalendarEventsImportCronJob],
+  exports: [CalendarEventsImportService],
 })
-export class GoogleCalendarSyncModule {}
+export class CalendarEventsImportModule {}

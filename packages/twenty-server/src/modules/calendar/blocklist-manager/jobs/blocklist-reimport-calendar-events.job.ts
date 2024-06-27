@@ -6,7 +6,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { GoogleCalendarSyncService } from 'src/modules/calendar/calendar-event-import-manager/services/google-calendar-sync.service';
+import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 
 export type BlocklistReimportCalendarEventsJobData = {
   workspaceId: string;
@@ -24,7 +24,7 @@ export class BlocklistReimportCalendarEventsJob {
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    private readonly googleCalendarSyncService: GoogleCalendarSyncService,
+    private readonly googleCalendarSyncService: CalendarEventsImportService,
   ) {}
 
   @Process(BlocklistReimportCalendarEventsJob.name)

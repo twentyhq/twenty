@@ -4,9 +4,9 @@ import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-accoun
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { GoogleCalendarSyncService } from 'src/modules/calendar/calendar-event-import-manager/services/google-calendar-sync.service';
+import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 
-export type GoogleCalendarSyncJobData = {
+export type CalendarEventsImportJobData = {
   workspaceId: string;
   connectedAccountId: string;
 };
@@ -15,16 +15,16 @@ export type GoogleCalendarSyncJobData = {
   queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
 })
-export class GoogleCalendarSyncJob {
-  private readonly logger = new Logger(GoogleCalendarSyncJob.name);
+export class CalendarEventsImportJob {
+  private readonly logger = new Logger(CalendarEventsImportJob.name);
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly googleCalendarSyncService: GoogleCalendarSyncService,
+    private readonly googleCalendarSyncService: CalendarEventsImportService,
   ) {}
 
-  @Process(GoogleCalendarSyncJob.name)
-  async handle(data: GoogleCalendarSyncJobData): Promise<void> {
+  @Process(CalendarEventsImportJob.name)
+  async handle(data: CalendarEventsImportJobData): Promise<void> {
     this.logger.log(
       `google calendar sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );

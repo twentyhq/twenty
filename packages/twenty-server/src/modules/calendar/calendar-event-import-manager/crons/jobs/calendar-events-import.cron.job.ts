@@ -15,7 +15,7 @@ import { Process } from 'src/engine/integrations/message-queue/decorators/proces
   queueName: MessageQueue.cronQueue,
   scope: Scope.REQUEST,
 })
-export class GoogleCalendarSyncCronJob {
+export class CalendarEventsImportCronJob {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -25,7 +25,7 @@ export class GoogleCalendarSyncCronJob {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  @Process(GoogleCalendarSyncCronJob.name)
+  @Process(CalendarEventsImportCronJob.name)
   async handle(): Promise<void> {
     const workspaceIds = (
       await this.workspaceRepository.find({
