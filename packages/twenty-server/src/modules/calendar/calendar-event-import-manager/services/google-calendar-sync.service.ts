@@ -21,8 +21,6 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-ob
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
-import { CalendarEventCleanerService } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
-import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant-manager/calendar-event-participant.service';
 import {
   CalendarEventParticipant,
   CalendarEventWithParticipants,
@@ -41,6 +39,8 @@ import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metada
 import { isDefined } from 'src/utils/is-defined';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
+import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
+import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 
 @Injectable()
 export class GoogleCalendarSyncService {

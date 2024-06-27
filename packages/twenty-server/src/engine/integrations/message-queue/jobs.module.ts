@@ -19,13 +19,13 @@ import { CleanInactiveWorkspaceJob } from 'src/engine/workspace-manager/workspac
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { CalendarMessagingParticipantJobModule } from 'src/modules/calendar-messaging-participant/jobs/calendar-messaging-participant-job.module';
-import { CalendarCronJobModule } from 'src/modules/calendar/crons/jobs/calendar-cron-job.module';
 import { CalendarJobModule } from 'src/modules/calendar/jobs/calendar-job.module';
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/auto-companies-and-contacts-creation-job.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { CalendarModule } from 'src/modules/calendar/calendar.module';
-import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant-manager/calendar-event-participant.module';
+import { CalendarCronJobModule } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-cron-job.module';
+import { CalendarEventParticipantModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant.module';
 
 @Module({
   imports: [

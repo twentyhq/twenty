@@ -3,7 +3,7 @@ import { Command, CommandRunner } from 'nest-commander';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/crons/jobs/google-calendar-sync.cron.job';
+import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/google-calendar-sync.cron.job';
 
 const GOOGLE_CALENDAR_SYNC_CRON_PATTERN = '*/5 * * * *';
 

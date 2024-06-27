@@ -10,7 +10,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
-import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant-manager/calendar-event-participant.module';
+import { CalendarEventParticipantModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant.module';
 
 @Module({
   imports: [
