@@ -172,7 +172,7 @@ export class MessagingErrorHandlingService {
   private async handleFailedPrecondition(
     error: GmailError,
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     await this.messagingTelemetryService.track({
@@ -243,7 +243,7 @@ export class MessagingErrorHandlingService {
 
   private async handleThrottle(
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     if (
@@ -307,7 +307,7 @@ export class MessagingErrorHandlingService {
   private async handleUnknownError(
     error: GmailError,
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     await this.messagingTelemetryService.track({
