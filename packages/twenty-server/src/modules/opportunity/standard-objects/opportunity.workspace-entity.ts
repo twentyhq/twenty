@@ -21,6 +21,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.opportunity,
@@ -110,7 +111,6 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Point of Contact',
     description: 'Opportunity point of contact',
     icon: 'IconUser',
-    joinColumn: 'pointOfContactId',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'pointOfContactForOpportunities',
     onDelete: RelationOnDeleteAction.SET_NULL,
@@ -118,19 +118,24 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   pointOfContact: Relation<PersonWorkspaceEntity> | null;
 
+  @WorkspaceJoinColumn('pointOfContact')
+  pointOfContactId: string | null;
+
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.company,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Company',
     description: 'Opportunity company',
     icon: 'IconBuildingSkyscraper',
-    joinColumn: 'companyId',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'opportunities',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('company')
+  companyId: string | null;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.favorites,

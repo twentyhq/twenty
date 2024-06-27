@@ -14,6 +14,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 export enum CalendarEventParticipantResponseStatus {
   NEEDS_ACTION = 'NEEDS_ACTION',
@@ -103,11 +104,13 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     label: 'Event ID',
     description: 'Event ID',
     icon: 'IconCalendar',
-    joinColumn: 'calendarEventId',
     inverseSideTarget: () => CalendarEventWorkspaceEntity,
     inverseSideFieldKey: 'calendarEventParticipants',
   })
   calendarEvent: Relation<CalendarEventWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('calendarEvent')
+  calendarEventId: string;
 
   @WorkspaceRelation({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.person,
@@ -115,12 +118,14 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     label: 'Person',
     description: 'Person',
     icon: 'IconUser',
-    joinColumn: 'personId',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'calendarEventParticipants',
   })
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('person')
+  personId: string | null;
 
   @WorkspaceRelation({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
@@ -128,10 +133,12 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     label: 'Workspace Member',
     description: 'Workspace Member',
     icon: 'IconUser',
-    joinColumn: 'workspaceMemberId',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'calendarEventParticipants',
   })
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('workspaceMember')
+  workspaceMemberId: string | null;
 }
