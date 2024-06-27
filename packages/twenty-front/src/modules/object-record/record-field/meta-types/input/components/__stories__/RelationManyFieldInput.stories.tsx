@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RelationManyFieldInput } from '@/object-record/record-field/meta-types/input/components/RelationManyFieldInput';
+import { RelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInput';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
@@ -60,7 +60,7 @@ const RelationManyFieldInputWithContext = () => {
         entityId={'entityId'}
       >
         <RelationWorkspaceSetterEffect />
-        <RelationManyFieldInput />
+        <RelationFromManyFieldInput />
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div" />
     </div>

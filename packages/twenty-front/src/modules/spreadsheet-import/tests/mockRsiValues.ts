@@ -1,4 +1,5 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
+import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { Fields, SpreadsheetOptions } from '@/spreadsheet-import/types';
 import { sleep } from '~/utils/sleep';
 
@@ -87,6 +88,33 @@ const fields = [
     example: 'true',
   },
 ] as Fields<string>;
+
+export const importedColums: Columns<string> = [
+  {
+    header: 'Name',
+    index: 0,
+    type: 2,
+    value: 'name',
+  },
+  {
+    header: 'Surname',
+    index: 1,
+    type: 2,
+    value: 'surname',
+  },
+  {
+    header: 'Age',
+    index: 2,
+    type: 2,
+    value: 'age',
+  },
+  {
+    header: 'Team',
+    index: 3,
+    type: 2,
+    value: 'team',
+  },
+];
 
 const mockComponentBehaviourForTypes = <T extends string>(
   props: SpreadsheetOptions<T>,

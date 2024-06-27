@@ -49,10 +49,11 @@ export const useCreateManyRecords = <
 
   const createManyRecords = async (
     recordsToCreate: Partial<CreatedObjectRecord>[],
+    upsert?: boolean,
   ) => {
     const sanitizedCreateManyRecordsInput = recordsToCreate.map(
       (recordToCreate) => {
-        const idForCreation = recordToCreate?.id ?? v4();
+        const idForCreation = recordToCreate?.id ?? (upsert ? undefined : v4());
 
         return {
           ...sanitizeRecordInput({
@@ -67,8 +68,12 @@ export const useCreateManyRecords = <
     const recordsCreatedInCache = [];
 
     for (const recordToCreate of sanitizedCreateManyRecordsInput) {
+      if (recordToCreate.id === null) {
+        continue;
+      }
+
       const recordCreatedInCache = createOneRecordInCache({
-        ...recordToCreate,
+        ...(recordToCreate as { id: string }),
         __typename: getObjectTypename(objectMetadataItem.nameSingular),
       });
 
@@ -94,6 +99,7 @@ export const useCreateManyRecords = <
       mutation: createManyRecordsMutation,
       variables: {
         data: sanitizedCreateManyRecordsInput,
+        upsert: upsert,
       },
       update: (cache, { data }) => {
         const records = data?.[mutationResponseField];

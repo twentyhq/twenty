@@ -4,7 +4,6 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class ConnectedAccountRepository {
@@ -15,7 +14,7 @@ export class ConnectedAccountRepository {
   public async getAll(
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>[]> {
+  ): Promise<ConnectedAccountWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -31,7 +30,7 @@ export class ConnectedAccountRepository {
     connectedAccountIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>[]> {
+  ): Promise<ConnectedAccountWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -47,7 +46,7 @@ export class ConnectedAccountRepository {
     workspaceMemberId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>[] | undefined> {
+  ): Promise<ConnectedAccountWorkspaceEntity[] | undefined> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -66,7 +65,7 @@ export class ConnectedAccountRepository {
     userId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>[] | undefined> {
+  ): Promise<ConnectedAccountWorkspaceEntity[] | undefined> {
     const schemaExists =
       await this.workspaceDataSourceService.checkSchemaExists(workspaceId);
 
@@ -102,7 +101,7 @@ export class ConnectedAccountRepository {
     workspaceMemberId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>[] | undefined> {
+  ): Promise<ConnectedAccountWorkspaceEntity[] | undefined> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -119,7 +118,7 @@ export class ConnectedAccountRepository {
 
   public async create(
     connectedAccount: Pick<
-      ObjectRecord<ConnectedAccountWorkspaceEntity>,
+      ConnectedAccountWorkspaceEntity,
       | 'id'
       | 'handle'
       | 'provider'
@@ -129,7 +128,7 @@ export class ConnectedAccountRepository {
     >,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>> {
+  ): Promise<ConnectedAccountWorkspaceEntity> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -170,7 +169,7 @@ export class ConnectedAccountRepository {
     connectedAccountId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity> | undefined> {
+  ): Promise<ConnectedAccountWorkspaceEntity | undefined> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -189,7 +188,7 @@ export class ConnectedAccountRepository {
     connectedAccountId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>> {
+  ): Promise<ConnectedAccountWorkspaceEntity> {
     const connectedAccount = await this.getById(
       connectedAccountId,
       workspaceId,
@@ -293,7 +292,7 @@ export class ConnectedAccountRepository {
   public async getConnectedAccountOrThrow(
     workspaceId: string,
     connectedAccountId: string,
-  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>> {
+  ): Promise<ConnectedAccountWorkspaceEntity> {
     const connectedAccount = await this.getById(
       connectedAccountId,
       workspaceId,

@@ -12,6 +12,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewFilter,
@@ -63,10 +64,12 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'View',
     description: 'View Filter related view',
     icon: 'IconLayoutCollage',
-    joinColumn: 'viewId',
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewFilters',
   })
   @WorkspaceIsNullable()
   view: Relation<ViewWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('view')
+  viewId: string | null;
 }
