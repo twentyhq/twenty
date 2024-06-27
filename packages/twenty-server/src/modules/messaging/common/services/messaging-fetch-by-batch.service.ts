@@ -19,7 +19,7 @@ export class MessagingFetchByBatchesService {
     messageIdsByBatch: string[][];
     batchResponses: AxiosResponse<any, any>[];
   }> {
-    const batchLimit = 50;
+    const batchLimit = 20;
 
     let batchOffset = 0;
 
