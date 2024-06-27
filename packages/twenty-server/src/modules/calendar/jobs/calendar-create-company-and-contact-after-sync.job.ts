@@ -72,9 +72,7 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
         where: {
           calendarEvent: {
             calendarChannelEventAssociations: {
-              calendarChannel: {
-                id: calendarChannelId,
-              },
+              calendarChannelId,
             },
             calendarEventParticipants: {
               person: IsNull(),

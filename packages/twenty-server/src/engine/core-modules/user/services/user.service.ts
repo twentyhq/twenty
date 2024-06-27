@@ -12,7 +12,6 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 export class UserService extends TypeOrmQueryService<User> {
@@ -113,8 +112,7 @@ export class UserService extends TypeOrmQueryService<User> {
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember"`,
     );
     const workspaceMember = workspaceMembers.filter(
-      (member: ObjectRecord<WorkspaceMemberWorkspaceEntity>) =>
-        member.userId === userId,
+      (member: WorkspaceMemberWorkspaceEntity) => member.userId === userId,
     )?.[0];
 
     assert(workspaceMember, 'WorkspaceMember not found');

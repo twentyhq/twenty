@@ -4,7 +4,6 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -44,8 +43,8 @@ export class MessagingGmailMessagesImportService {
   ) {}
 
   async processMessageBatchImport(
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
     if (
@@ -185,7 +184,7 @@ export class MessagingGmailMessagesImportService {
   }
 
   private async trackMessageImportCompleted(
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ) {
     await this.messagingTelemetryService.track({

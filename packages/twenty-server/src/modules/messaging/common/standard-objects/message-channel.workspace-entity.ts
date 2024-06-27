@@ -16,6 +16,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 export enum MessageChannelSyncStatus {
   // TO BE DEPRECATED
@@ -300,11 +301,12 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Connected Account',
     description: 'Connected Account',
     icon: 'IconUserCircle',
-    joinColumn: 'connectedAccountId',
     inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
     inverseSideFieldKey: 'messageChannels',
   })
   connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('connectedAccount')
   connectedAccountId: string;
 
   @WorkspaceRelation({

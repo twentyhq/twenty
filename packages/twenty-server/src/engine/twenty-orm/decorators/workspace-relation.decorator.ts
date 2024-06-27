@@ -8,35 +8,19 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-interface WorkspaceBaseRelationOptions<TType, TClass> {
+interface WorkspaceRelationOptions<TClass> {
   standardId: string;
   label: string | ((objectMetadata: ObjectMetadataEntity) => string);
   description?: string | ((objectMetadata: ObjectMetadataEntity) => string);
   icon?: string;
-  type: TType;
+  type: RelationMetadataType;
   inverseSideTarget: () => ObjectType<TClass>;
   inverseSideFieldKey?: keyof TClass;
   onDelete?: RelationOnDeleteAction;
 }
 
-export interface WorkspaceManyToOneRelationOptions<TClass>
-  extends WorkspaceBaseRelationOptions<
-    RelationMetadataType.MANY_TO_ONE | RelationMetadataType.ONE_TO_ONE,
-    TClass
-  > {
-  joinColumn?: string;
-}
-
-export interface WorkspaceOtherRelationOptions<TClass>
-  extends WorkspaceBaseRelationOptions<
-    RelationMetadataType.ONE_TO_MANY | RelationMetadataType.MANY_TO_MANY,
-    TClass
-  > {}
-
 export function WorkspaceRelation<TClass extends object>(
-  options:
-    | WorkspaceManyToOneRelationOptions<TClass>
-    | WorkspaceOtherRelationOptions<TClass>,
+  options: WorkspaceRelationOptions<TClass>,
 ): PropertyDecorator {
   return (object, propertyKey) => {
     const isPrimary =
@@ -63,14 +47,6 @@ export function WorkspaceRelation<TClass extends object>(
       propertyKey.toString(),
     );
 
-    let joinColumn: string | undefined;
-
-    if ('joinColumn' in options) {
-      joinColumn = options.joinColumn
-        ? options.joinColumn
-        : `${propertyKey.toString()}Id`;
-    }
-
     metadataArgsStorage.addRelations({
       target: object.constructor,
       standardId: options.standardId,
@@ -82,7 +58,6 @@ export function WorkspaceRelation<TClass extends object>(
       inverseSideTarget: options.inverseSideTarget,
       inverseSideFieldKey: options.inverseSideFieldKey as string | undefined,
       onDelete: options.onDelete,
-      joinColumn,
       isPrimary,
       isNullable,
       isSystem,

@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import snakeCase from 'lodash.snakecase';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
@@ -36,7 +35,7 @@ export class MessagingErrorHandlingService {
   public async handleGmailError(
     error: GmailError,
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     const { code, reason } = error;
@@ -156,7 +155,7 @@ export class MessagingErrorHandlingService {
   private async handleRateLimitExceeded(
     error: GmailError,
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     await this.messagingTelemetryService.track({
@@ -173,7 +172,7 @@ export class MessagingErrorHandlingService {
   private async handleFailedPrecondition(
     error: GmailError,
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     await this.messagingTelemetryService.track({
@@ -190,7 +189,7 @@ export class MessagingErrorHandlingService {
   private async handleInsufficientPermissions(
     error: GmailError,
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     await this.messagingTelemetryService.track({
@@ -221,7 +220,7 @@ export class MessagingErrorHandlingService {
   private async handleNotFound(
     error: GmailError,
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     if (syncStep === 'messages-import') {
@@ -244,7 +243,7 @@ export class MessagingErrorHandlingService {
 
   private async handleThrottle(
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     if (
@@ -288,7 +287,7 @@ export class MessagingErrorHandlingService {
   }
 
   private async throttle(
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     await this.messageChannelRepository.incrementThrottleFailureCount(
@@ -308,7 +307,7 @@ export class MessagingErrorHandlingService {
   private async handleUnknownError(
     error: GmailError,
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     await this.messagingTelemetryService.track({

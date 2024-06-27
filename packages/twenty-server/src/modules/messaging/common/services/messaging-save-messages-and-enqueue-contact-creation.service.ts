@@ -7,7 +7,6 @@ import { EntityManager, Repository } from 'typeorm';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   CreateCompanyAndContactJobData,
@@ -43,8 +42,8 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
   async saveMessagesAndEnqueueContactCreationJob(
     messagesToSave: GmailMessage[],
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
     const workspaceDataSource =
@@ -62,8 +61,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     const isContactCreationForSentAndReceivedEmailsEnabled =
       isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag?.value;
 
-    let savedMessageParticipants: ObjectRecord<MessageParticipantWorkspaceEntity>[] =
-      [];
+    let savedMessageParticipants: MessageParticipantWorkspaceEntity[] = [];
 
     const participantsWithMessageId = await workspaceDataSource?.transaction(
       async (transactionManager: EntityManager) => {

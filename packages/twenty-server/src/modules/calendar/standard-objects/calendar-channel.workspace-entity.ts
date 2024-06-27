@@ -16,6 +16,7 @@ import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/work
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
@@ -231,12 +232,12 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Connected Account',
     description: 'Connected Account',
     icon: 'IconUserCircle',
-    joinColumn: 'connectedAccountId',
     inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannels',
   })
   connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
 
+  @WorkspaceJoinColumn('connectedAccount')
   connectedAccountId: string;
 
   @WorkspaceRelation({

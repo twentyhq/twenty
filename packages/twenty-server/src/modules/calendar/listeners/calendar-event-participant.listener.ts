@@ -10,7 +10,6 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class CalendarEventParticipantListener {
@@ -26,7 +25,7 @@ export class CalendarEventParticipantListener {
   public async handleCalendarEventParticipantMatchedEvent(payload: {
     workspaceId: string;
     workspaceMemberId: string;
-    calendarEventParticipants: ObjectRecord<CalendarEventParticipantWorkspaceEntity>[];
+    calendarEventParticipants: CalendarEventParticipantWorkspaceEntity[];
   }): Promise<void> {
     const calendarEventParticipants = payload.calendarEventParticipants ?? [];
 

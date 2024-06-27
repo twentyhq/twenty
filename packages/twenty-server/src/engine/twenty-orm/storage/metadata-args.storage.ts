@@ -6,6 +6,7 @@ import { WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/wo
 import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 import { WorkspaceExtendedEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-extended-entity-metadata-args.interface';
 import { WorkspaceIndexMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-index-metadata-args.interface';
+import { WorkspaceJoinColumnsMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-join-columns-metadata-args.interface';
 
 export class MetadataArgsStorage {
   private readonly entities: WorkspaceEntityMetadataArgs[] = [];
@@ -15,6 +16,7 @@ export class MetadataArgsStorage {
   private readonly dynamicRelations: WorkspaceDynamicRelationMetadataArgs[] =
     [];
   private readonly indexes: WorkspaceIndexMetadataArgs[] = [];
+  private readonly joinColumns: WorkspaceJoinColumnsMetadataArgs[] = [];
 
   addEntities(...entities: WorkspaceEntityMetadataArgs[]): void {
     this.entities.push(...entities);
@@ -42,6 +44,10 @@ export class MetadataArgsStorage {
     ...dynamicRelations: WorkspaceDynamicRelationMetadataArgs[]
   ): void {
     this.dynamicRelations.push(...dynamicRelations);
+  }
+
+  addJoinColumns(...joinColumns: WorkspaceJoinColumnsMetadataArgs[]): void {
+    this.joinColumns.push(...joinColumns);
   }
 
   filterEntities(
@@ -121,6 +127,20 @@ export class MetadataArgsStorage {
     target: (Function | string) | (Function | string)[],
   ): WorkspaceDynamicRelationMetadataArgs[] {
     return this.filterByTarget(this.dynamicRelations, target);
+  }
+
+  filterJoinColumns(
+    target: Function | string,
+  ): WorkspaceJoinColumnsMetadataArgs[];
+
+  filterJoinColumns(
+    target: (Function | string)[],
+  ): WorkspaceJoinColumnsMetadataArgs[];
+
+  filterJoinColumns(
+    target: (Function | string) | (Function | string)[],
+  ): WorkspaceJoinColumnsMetadataArgs[] {
+    return this.filterByTarget(this.joinColumns, target);
   }
 
   protected filterByTarget<T extends { target: Function | string }>(

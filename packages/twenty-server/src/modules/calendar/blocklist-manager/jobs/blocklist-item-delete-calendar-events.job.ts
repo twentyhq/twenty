@@ -70,12 +70,9 @@ export class BlocklistItemDeleteCalendarEventsJob {
     const calendarChannels = await this.calendarChannelRepository.find({
       where: {
         connectedAccount: {
-          accountOwner: {
-            id: workspaceMemberId,
-          },
+          accountOwnerId: workspaceMemberId,
         },
       },
-      relations: ['connectedAccount.accountOwner'],
     });
 
     const calendarChannelIds = calendarChannels.map(({ id }) => id);
@@ -88,9 +85,7 @@ export class BlocklistItemDeleteCalendarEventsJob {
           handle: isHandleDomain ? ILike(`%${handle}`) : handle,
         },
         calendarChannelEventAssociations: {
-          calendarChannel: {
-            id: Any(calendarChannelIds),
-          },
+          calendarChannelId: Any(calendarChannelIds),
         },
       },
     });

@@ -7,7 +7,6 @@ import { PersonRepository } from 'src/modules/person/repositories/person.reposit
 import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/calendar-messaging-participant/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 type ContactToCreate = {
   handle: string;
@@ -55,7 +54,7 @@ export class CreateContactService {
     contactsToCreate: ContactToCreate[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<PersonWorkspaceEntity>[]> {
+  ): Promise<PersonWorkspaceEntity[]> {
     if (contactsToCreate.length === 0) return [];
 
     const formattedContacts = this.formatContacts(contactsToCreate);
