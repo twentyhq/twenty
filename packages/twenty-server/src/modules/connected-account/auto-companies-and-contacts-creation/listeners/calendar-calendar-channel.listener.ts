@@ -6,11 +6,11 @@ import { objectRecordChangedProperties } from 'src/engine/integrations/event-emi
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   CalendarCreateCompanyAndContactAfterSyncJobData,
   CalendarCreateCompanyAndContactAfterSyncJob,
-} from 'src/modules/calendar/jobs/calendar-create-company-and-contact-after-sync.job';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+} from 'src/modules/messaging/message-participants-manager/jobs/calendar-create-company-and-contact-after-sync.job';
 
 @Injectable()
 export class CalendarChannelListener {
