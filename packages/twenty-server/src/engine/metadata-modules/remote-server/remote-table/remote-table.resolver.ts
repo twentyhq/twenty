@@ -7,6 +7,7 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { FindManyRemoteTablesInput } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/find-many-remote-tables-input';
 import { RemoteTableInput } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table-input';
 import { RemoteTableDTO } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
+import { remoteTableExceptionHandler } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.exception';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 
 @UseGuards(JwtAuthGuard)
@@ -19,11 +20,13 @@ export class RemoteTableResolver {
     @Args('input') input: FindManyRemoteTablesInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.findDistantTablesWithStatus(
-      input.id,
-      workspaceId,
-      input.shouldFetchPendingSchemaUpdates,
-    );
+    return this.remoteTableService
+      .findDistantTablesWithStatus(
+        input.id,
+        workspaceId,
+        input.shouldFetchPendingSchemaUpdates,
+      )
+      .catch(remoteTableExceptionHandler);
   }
 
   @Mutation(() => RemoteTableDTO)
@@ -31,7 +34,9 @@ export class RemoteTableResolver {
     @Args('input') input: RemoteTableInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.syncRemoteTable(input, workspaceId);
+    return this.remoteTableService
+      .syncRemoteTable(input, workspaceId)
+      .catch(remoteTableExceptionHandler);
   }
 
   @Mutation(() => RemoteTableDTO)
@@ -39,7 +44,9 @@ export class RemoteTableResolver {
     @Args('input') input: RemoteTableInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.unsyncRemoteTable(input, workspaceId);
+    return this.remoteTableService
+      .unsyncRemoteTable(input, workspaceId)
+      .catch(remoteTableExceptionHandler);
   }
 
   @Mutation(() => RemoteTableDTO)
@@ -47,9 +54,8 @@ export class RemoteTableResolver {
     @Args('input') input: RemoteTableInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.syncRemoteTableSchemaChanges(
-      input,
-      workspaceId,
-    );
+    return this.remoteTableService
+      .syncRemoteTableSchemaChanges(input, workspaceId)
+      .catch(remoteTableExceptionHandler);
   }
 }

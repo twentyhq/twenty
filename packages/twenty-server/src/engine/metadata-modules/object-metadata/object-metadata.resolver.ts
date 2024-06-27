@@ -12,6 +12,7 @@ import {
   UpdateOneObjectInput,
 } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
+import { objectMetadataExceptionHandler } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => ObjectMetadataDTO)
@@ -26,7 +27,9 @@ export class ObjectMetadataResolver {
     @Args('input') input: DeleteOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.objectMetadataService.deleteOneObject(input, workspaceId);
+    return this.objectMetadataService
+      .deleteOneObject(input, workspaceId)
+      .catch(objectMetadataExceptionHandler);
   }
 
   @Mutation(() => ObjectMetadataDTO)
@@ -36,6 +39,8 @@ export class ObjectMetadataResolver {
   ) {
     await this.beforeUpdateOneObject.run(input, workspaceId);
 
-    return this.objectMetadataService.updateOneObject(input, workspaceId);
+    return this.objectMetadataService
+      .updateOneObject(input, workspaceId)
+      .catch(objectMetadataExceptionHandler);
   }
 }

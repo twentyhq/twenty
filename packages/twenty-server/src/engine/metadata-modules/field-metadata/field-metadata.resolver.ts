@@ -22,6 +22,7 @@ import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dto
 import { RelationDefinitionDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { fieldMetadataExceptionHandler } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 
 @UseGuards(JwtAuthGuard)
@@ -34,10 +35,12 @@ export class FieldMetadataResolver {
     @Args('input') input: CreateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.fieldMetadataService.createOne({
-      ...input.field,
-      workspaceId,
-    });
+    return this.fieldMetadataService
+      .createOne({
+        ...input.field,
+        workspaceId,
+      })
+      .catch(fieldMetadataExceptionHandler);
   }
 
   @Mutation(() => FieldMetadataDTO)
@@ -45,10 +48,12 @@ export class FieldMetadataResolver {
     @Args('input') input: UpdateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.fieldMetadataService.updateOne(input.id, {
-      ...input.update,
-      workspaceId,
-    });
+    return this.fieldMetadataService
+      .updateOne(input.id, {
+        ...input.update,
+        workspaceId,
+      })
+      .catch(fieldMetadataExceptionHandler);
   }
 
   @Mutation(() => FieldMetadataDTO)
@@ -85,7 +90,9 @@ export class FieldMetadataResolver {
       );
     }
 
-    return this.fieldMetadataService.deleteOneField(input, workspaceId);
+    return this.fieldMetadataService
+      .deleteOneField(input, workspaceId)
+      .catch(fieldMetadataExceptionHandler);
   }
 
   @ResolveField(() => RelationDefinitionDTO, { nullable: true })
@@ -100,12 +107,11 @@ export class FieldMetadataResolver {
     const relationMetadataItem =
       await context.loaders.relationMetadataLoader.load(fieldMetadata.id);
 
-    const relationDefinition =
-      await this.fieldMetadataService.getRelationDefinitionFromRelationMetadata(
+    return this.fieldMetadataService
+      .getRelationDefinitionFromRelationMetadata(
         fieldMetadata,
         relationMetadataItem,
-      );
-
-    return relationDefinition;
+      )
+      .catch(fieldMetadataExceptionHandler);
   }
 }
