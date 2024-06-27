@@ -68,7 +68,7 @@ class Captcha {
 @ObjectType()
 class ApiConfig {
   @Field(() => Number, { nullable: false })
-  mutationMaximumRecordAffected: number;
+  mutationMaximumAffectedRecords: number;
 }
 
 @ObjectType()

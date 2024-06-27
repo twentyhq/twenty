@@ -432,7 +432,7 @@ export class WorkspaceQueryRunnerService {
     args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
 
     const maximumRecordAffected = this.environmentService.get(
-      'MUTATION_MAXIMUM_RECORD_AFFECTED',
+      'MUTATION_MAXIMUM_AFFECTED_RECORDS',
     );
     const query = await this.workspaceQueryBuilderFactory.updateMany(args, {
       ...options,
@@ -484,7 +484,7 @@ export class WorkspaceQueryRunnerService {
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     const maximumRecordAffected = this.environmentService.get(
-      'MUTATION_MAXIMUM_RECORD_AFFECTED',
+      'MUTATION_MAXIMUM_AFFECTED_RECORDS',
     );
     const query = await this.workspaceQueryBuilderFactory.deleteMany(args, {
       ...options,
@@ -691,7 +691,7 @@ export class WorkspaceQueryRunnerService {
         errors,
         {
           atMost: this.environmentService.get(
-            'MUTATION_MAXIMUM_RECORD_AFFECTED',
+            'MUTATION_MAXIMUM_AFFECTED_RECORDS',
           ),
         } satisfies PgGraphQLConfig,
       );
