@@ -117,6 +117,7 @@ const StyledFieldContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: fit-content;
+  max-width: 100%;
 `;
 
 const StyledCompactIconContainer = styled.div`
