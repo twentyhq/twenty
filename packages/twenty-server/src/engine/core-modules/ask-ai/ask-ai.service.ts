@@ -4,16 +4,12 @@ import { RunnableSequence } from '@langchain/core/runnables';
 import { StructuredOutputParser } from '@langchain/core/output_parsers';
 import { isUUID } from 'class-validator';
 import { DataSource, QueryFailedError } from 'typeorm';
-import omit from 'lodash.omit';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import groupBy from 'lodash.groupby';
 
-import {
-  AskAIQueryResult,
-  RecordDisplayDataById,
-} from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
+import { AskAIQueryResult } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 import { LLMChatModelService } from 'src/engine/integrations/llm-chat-model/llm-chat-model.service';
@@ -21,12 +17,9 @@ import { LLMTracingService } from 'src/engine/integrations/llm-tracing/llm-traci
 import { sqlGenerationPromptTemplate } from 'src/engine/core-modules/ask-ai/ask-ai.prompt-templates';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import {
-  DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
-  IMAGE_IDENTIFIER_FIELD_NAMES_BY_STANDARD_OBJECT_NAME,
-  SPECIAL_LABEL_IDENTIFIER_FIELD_NAMES_BY_STANDARD_OBJECT_NAME,
-} from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
+import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
+import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 @Injectable()
 export class AskAIService {
@@ -38,128 +31,79 @@ export class AskAIService {
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
-  /**
-   * Get labelIdentifier field names and imageIdentifier field names by objectNameSingular
-   */
-  private async getIdentifierFieldNamesByObjectName(
-    objectMetadataEntities: ObjectMetadataEntity[],
-  ): Promise<Record<string, string[]>> {
-    const labelIdentifierFieldMetadataEntities = objectMetadataEntities.flatMap(
-      (objectMetadataEntity) =>
-        objectMetadataEntity.fields.filter(
-          (fieldMetadataEntity) =>
-            fieldMetadataEntity.id ===
-            objectMetadataEntity.labelIdentifierFieldMetadataId,
-        ),
+  private getLabelIdentifierSelectionSet(
+    objectMetadata: ObjectMetadataEntity,
+  ): string | undefined {
+    const labelIdentifierFieldMetadata = objectMetadata.fields.find(
+      (fieldMetadata) =>
+        fieldMetadata.id === objectMetadata.labelIdentifierFieldMetadataId,
     );
 
-    const defaultLabelIdentifierFieldNamesByObjectName: Record<
-      string,
-      string[]
-    > = objectMetadataEntities.reduce(
-      (defaultLabelIdentifierFieldNamesByObjectName, objectMetadataEntity) => {
-        const imageIdentifierFieldNames =
-          IMAGE_IDENTIFIER_FIELD_NAMES_BY_STANDARD_OBJECT_NAME[
-            objectMetadataEntity.nameSingular
-          ] ?? [];
-        const defaultLabelIdentifierFieldNames = [
-          DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
-          ...imageIdentifierFieldNames,
-        ];
+    // TOOD
 
-        return {
-          ...defaultLabelIdentifierFieldNamesByObjectName,
-          [objectMetadataEntity.nameSingular]: defaultLabelIdentifierFieldNames,
-        };
-      },
-      {},
-    );
+    /* const standardObjectMetadataCollection = this.standardObjectFactory.create(
+      standardObjectMetadataDefinitions,
+      context,
+      workspaceFeatureFlagsMap,
+    ); */
 
-    const labelIdentifierFieldNamesByObjectName: Record<string, string[]> =
-      labelIdentifierFieldMetadataEntities.reduce(
-        (
-          labelIdentifierFieldNamesByObjectName,
-          labelIdentifierFieldMetadataEntity,
-        ) => {
-          return {
-            ...labelIdentifierFieldNamesByObjectName,
-            [labelIdentifierFieldMetadataEntity.object.nameSingular]: [
-              labelIdentifierFieldMetadataEntity.name,
-            ],
-          };
-        },
-        {},
-      );
+    // const standardObjectMetadata = computeStandardObject()
 
-    return {
-      ...defaultLabelIdentifierFieldNamesByObjectName,
-      ...labelIdentifierFieldNamesByObjectName,
-      ...SPECIAL_LABEL_IDENTIFIER_FIELD_NAMES_BY_STANDARD_OBJECT_NAME,
-    };
+    /*     console.log(
+      'getLabelIdentifierSelectionSet',
+      objectMetadata.namePlural,
+      labelIdentifierFieldMetadata?.type,
+    ); */
+
+    if (!labelIdentifierFieldMetadata)
+      return DEFAULT_LABEL_IDENTIFIER_FIELD_NAME;
+
+    if (isCompositeFieldMetadataType(labelIdentifierFieldMetadata.type)) {
+      return `${labelIdentifierFieldMetadata.name} {
+        ${compositeTypeDefintions
+          .get(labelIdentifierFieldMetadata.type)
+          ?.properties.map((property) => property.name)
+          .join('\n')}
+      }`;
+    }
+
+    return labelIdentifierFieldMetadata.name;
   }
 
-  private async getRecordDisplayDataById(
+  private async getEntitiesById(
     workspaceId: string,
-    workspaceDataSource: DataSource,
     objectMetadataEntities: ObjectMetadataEntity[],
     sqlQueryResult: Record<string, any>[],
-  ) {
+  ): Promise<any> {
     const uuids = sqlQueryResult
       .flatMap((row) => Object.values(row))
       .filter((value) => isUUID(value, 4));
 
-    let recordDisplayDataById: RecordDisplayDataById = {};
+    const query = `query {
+      ${objectMetadataEntities
+        .map(
+          (objectMetadata) => `${
+            objectMetadata.namePlural
+          }(filter: {id: {in: [${uuids
+            .map((uuid) => `"${uuid}"`)
+            .join(', ')}]}}) {
+      edges {
+        node {
+          id
+          ${this.getLabelIdentifierSelectionSet(objectMetadata)}
+        }
+      }
+    }`,
+        )
+        .join('\n')}}`;
 
-    const isCustomByObjectName = await objectMetadataEntities.reduce(
-      (isCustomByObjectName, objectMetadataEntity) => ({
-        ...isCustomByObjectName,
-        [objectMetadataEntity.nameSingular]: objectMetadataEntity.isCustom,
-      }),
-      {} as Record<string, boolean>,
+    // this.workspaceQueryRunnerService.executeAndParse?
+    const records = await this.workspaceQueryRunnerService.execute(
+      query,
+      workspaceId,
     );
 
-    const identifierFieldNamesByObjectName =
-      await this.getIdentifierFieldNamesByObjectName(objectMetadataEntities);
-
-    for (const [objectName, identifierFieldNames] of Object.entries(
-      identifierFieldNamesByObjectName,
-    )) {
-      const isCustom = isCustomByObjectName[objectName];
-      const tableName = computeTableName(objectName, isCustom);
-
-      const identifierFieldNamesString =
-        identifierFieldNames
-          .map((identifierFieldName) => `"${identifierFieldName}"`)
-          .join(', ') || '';
-
-      // Security? GraphQL?
-      const recordMetadataSqlQuery = `SELECT id, ${identifierFieldNamesString} FROM "${tableName}" WHERE "id" = ANY($1);`;
-
-      const result: {
-        id: string;
-        name: string;
-        domainName?: string;
-        nameFirstName?: string;
-        nameLastName?: string;
-      }[] = await this.workspaceQueryRunnerService.executeSQL(
-        workspaceDataSource,
-        workspaceId,
-        recordMetadataSqlQuery,
-        [uuids],
-      );
-
-      recordDisplayDataById = result.reduce((recordDisplayDataById, row) => {
-        return {
-          ...recordDisplayDataById,
-          [row.id]: {
-            objectNameSingular: objectName,
-            ...omit(row, 'id'),
-          },
-        };
-      }, recordDisplayDataById);
-    }
-
-    return recordDisplayDataById;
+    return {} as any;
   }
 
   private async getColInfosByTableName(dataSource: DataSource) {
@@ -220,7 +164,6 @@ export class AskAIService {
 
   private async getWorkspaceSchemaDescription(
     dataSource: DataSource,
-    objectMetadataEntities: ObjectMetadataEntity[],
   ): Promise<string> {
     const colInfoByTableName = await this.getColInfosByTableName(dataSource);
 
@@ -252,10 +195,8 @@ export class AskAIService {
         where: { isSystem: false, isActive: true },
       });
 
-    const workspaceSchemaDescription = await this.getWorkspaceSchemaDescription(
-      workspaceDataSource,
-      objectMetadataEntities,
-    );
+    const workspaceSchemaDescription =
+      await this.getWorkspaceSchemaDescription(workspaceDataSource);
 
     const llmOutputSchema = z.object({
       sqlQuery: z.string(),
@@ -301,9 +242,8 @@ export class AskAIService {
           sqlQuery,
         ); // TODO: Add return type to executeSQL function?
 
-      const recordDisplayDataById = await this.getRecordDisplayDataById(
+      const recordDisplayDataById = await this.getEntitiesById(
         workspaceId,
-        workspaceDataSource,
         objectMetadataEntities,
         sqlQueryResult,
       );
