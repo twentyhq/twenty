@@ -13,9 +13,9 @@ import {
 } from 'src/modules/messaging/message-participants-manager/jobs/messaging-create-company-and-contact-after-sync.job';
 
 @Injectable()
-export class MessagingMessageChannelListener {
+export class AutoCompaniesAndContactsCreationMessageChannelListener {
   constructor(
-    @InjectMessageQueue(MessageQueue.messagingQueue)
+    @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
