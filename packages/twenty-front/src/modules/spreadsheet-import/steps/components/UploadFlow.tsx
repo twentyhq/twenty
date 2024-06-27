@@ -12,7 +12,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
-import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
+import { Columns, MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
@@ -52,6 +52,7 @@ export type StepState =
   | {
       type: StepType.validateData;
       data: any[];
+      importedColumns: Columns<string>;
     }
   | {
       type: StepType.loading;
@@ -216,6 +217,7 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
               setState({
                 type: StepType.validateData,
                 data,
+                importedColumns: columns,
               });
               setPreviousState(state);
               nextStep();
@@ -233,6 +235,7 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
       return (
         <ValidationStep
           initialData={state.data}
+          importedColumns={state.importedColumns}
           file={uploadedFile}
           onSubmitStart={() =>
             setState({

@@ -63,11 +63,6 @@ export interface WorkspaceRelationMetadataArgs {
   readonly onDelete?: RelationOnDeleteAction;
 
   /**
-   * Relation join column.
-   */
-  readonly joinColumn?: string;
-
-  /**
    * Is primary field.
    */
   readonly isPrimary: boolean;

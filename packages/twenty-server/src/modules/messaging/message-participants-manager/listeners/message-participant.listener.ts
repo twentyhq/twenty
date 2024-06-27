@@ -9,7 +9,6 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 @Injectable()
@@ -26,7 +25,7 @@ export class MessageParticipantListener {
   public async handleMessageParticipantMatched(payload: {
     workspaceId: string;
     workspaceMemberId: string;
-    messageParticipants: ObjectRecord<MessageParticipantWorkspaceEntity>[];
+    messageParticipants: MessageParticipantWorkspaceEntity[];
   }): Promise<void> {
     const messageParticipants = payload.messageParticipants ?? [];
 

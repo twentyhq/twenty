@@ -6,6 +6,7 @@ import isEmpty from 'lodash.isempty';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { Record } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
@@ -26,7 +27,7 @@ export class FieldsStringFactory {
     fieldMetadataCollection: FieldMetadataInterface[],
     objectMetadataCollection: ObjectMetadataInterface[],
   ): Promise<string> {
-    const selectedFields: Record<string, any> = graphqlFields(info);
+    const selectedFields: Partial<Record> = graphqlFields(info);
 
     return this.createFieldsStringRecursive(
       info,
@@ -38,7 +39,7 @@ export class FieldsStringFactory {
 
   async createFieldsStringRecursive(
     info: GraphQLResolveInfo,
-    selectedFields: Record<string, any>,
+    selectedFields: Partial<Record>,
     fieldMetadataCollection: FieldMetadataInterface[],
     objectMetadataCollection: ObjectMetadataInterface[],
     accumulator = '',

@@ -22,10 +22,10 @@ export const useFindDuplicateRecordsQuery = ({
   const findDuplicateRecordsQuery = gql`
     query FindDuplicate${capitalize(
       objectMetadataItem.nameSingular,
-    )}($id: ID!) {
+    )}($ids: [ID!]!) {
       ${getFindDuplicateRecordsQueryResponseField(
         objectMetadataItem.nameSingular,
-      )}(id: $id) {
+      )}(ids: $ids) {
         edges {
           node ${mapObjectMetadataToGraphQLQuery({
             objectMetadataItems,
@@ -38,7 +38,6 @@ export const useFindDuplicateRecordsQuery = ({
           startCursor
           endCursor
         }
-        ${isAggregationEnabled(objectMetadataItem) ? 'totalCount' : ''}
       }
     }
   `;

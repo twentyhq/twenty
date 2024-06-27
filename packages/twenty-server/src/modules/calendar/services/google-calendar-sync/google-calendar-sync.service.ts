@@ -37,7 +37,6 @@ import {
 } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { isDefined } from 'src/utils/is-defined';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
@@ -416,7 +415,7 @@ export class GoogleCalendarSyncService {
       eventExternalId: string;
       calendarChannelId: string;
     }[],
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     calendarChannel: CalendarChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
@@ -431,7 +430,7 @@ export class GoogleCalendarSyncService {
     let startTime: number;
     let endTime: number;
 
-    const savedCalendarEventParticipantsToEmit: ObjectRecord<CalendarEventParticipantWorkspaceEntity>[] =
+    const savedCalendarEventParticipantsToEmit: CalendarEventParticipantWorkspaceEntity[] =
       [];
 
     try {
@@ -496,13 +495,11 @@ export class GoogleCalendarSyncService {
           const existingCalendarEventParticipants =
             await this.calendarEventParticipantsRepository.find({
               where: {
-                calendarEvent: {
-                  id: Any(
-                    participantsToUpdate
-                      .map((participant) => participant.calendarEventId)
-                      .filter(isDefined),
-                  ),
-                },
+                calendarEventId: Any(
+                  participantsToUpdate
+                    .map((participant) => participant.calendarEventId)
+                    .filter(isDefined),
+                ),
               },
             });
 
