@@ -3,8 +3,8 @@ import { gql } from '@apollo/client';
 import { Person } from '@/people/types/Person';
 
 export const query = gql`
-  mutation CreatePeople($data: [PersonCreateInput!]!) {
-    createPeople(data: $data) {
+  mutation CreatePeople($data: [PersonCreateInput!]!, $upsert: Boolean) {
+    createPeople(data: $data, upsert: $upsert) {
       __typename
       xLink {
         label

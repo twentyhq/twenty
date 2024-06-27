@@ -14,6 +14,7 @@ import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/works
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.activityTarget,
@@ -31,12 +32,14 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Activity',
     description: 'ActivityTarget activity',
     icon: 'IconNotes',
-    joinColumn: 'activityId',
     inverseSideTarget: () => ActivityWorkspaceEntity,
     inverseSideFieldKey: 'activityTargets',
   })
   @WorkspaceIsNullable()
   activity: Relation<ActivityWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('activity')
+  activityId: string | null;
 
   @WorkspaceRelation({
     standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.person,
@@ -44,12 +47,14 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Person',
     description: 'ActivityTarget person',
     icon: 'IconUser',
-    joinColumn: 'personId',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'activityTargets',
   })
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('person')
+  personId: string | null;
 
   @WorkspaceRelation({
     standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.company,
@@ -57,12 +62,14 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Company',
     description: 'ActivityTarget company',
     icon: 'IconBuildingSkyscraper',
-    joinColumn: 'companyId',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'activityTargets',
   })
   @WorkspaceIsNullable()
   company: Relation<CompanyWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('company')
+  companyId: string | null;
 
   @WorkspaceRelation({
     standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.opportunity,
@@ -70,12 +77,14 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Opportunity',
     description: 'ActivityTarget opportunity',
     icon: 'IconTargetArrow',
-    joinColumn: 'opportunityId',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'activityTargets',
   })
   @WorkspaceIsNullable()
   opportunity: Relation<OpportunityWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('opportunity')
+  opportunityId: string | null;
 
   @WorkspaceDynamicRelation({
     type: RelationMetadataType.MANY_TO_ONE,

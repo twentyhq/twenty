@@ -14,7 +14,7 @@ export class ScopedWorkspaceDatasourceFactory {
 
   public async create(entities: EntitySchema[]) {
     const workspaceId: string | undefined =
-      this.request['req']?.['workspaceId'];
+      this.request?.['req']?.['workspaceId'];
 
     if (!workspaceId) {
       return null;

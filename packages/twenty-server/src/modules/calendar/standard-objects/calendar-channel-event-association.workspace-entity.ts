@@ -12,6 +12,7 @@ import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metad
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannelEventAssociation,
@@ -41,11 +42,13 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
     label: 'Channel ID',
     description: 'Channel ID',
     icon: 'IconCalendar',
-    joinColumn: 'calendarChannelId',
     inverseSideTarget: () => CalendarChannelWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',
   })
   calendarChannel: Relation<CalendarChannelWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('calendarChannel')
+  calendarChannelId: string;
 
   @WorkspaceRelation({
     standardId:
@@ -54,9 +57,11 @@ export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspac
     label: 'Event ID',
     description: 'Event ID',
     icon: 'IconCalendar',
-    joinColumn: 'calendarEventId',
     inverseSideTarget: () => CalendarEventWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',
   })
   calendarEvent: Relation<CalendarEventWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('calendarEvent')
+  calendarEventId: string;
 }

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
+import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
@@ -35,6 +36,8 @@ export const ClientConfigProviderEffect = () => {
 
   const setChromeExtensionId = useSetRecoilState(chromeExtensionIdState);
 
+  const setApiConfig = useSetRecoilState(apiConfigState);
+
   const { data, loading } = useGetClientConfigQuery({
     skip: isClientConfigLoaded,
   });
@@ -68,6 +71,7 @@ export const ClientConfigProviderEffect = () => {
       });
 
       setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
+      setApiConfig(data?.clientConfig?.api);
     }
   }, [
     data,
@@ -83,6 +87,7 @@ export const ClientConfigProviderEffect = () => {
     setIsClientConfigLoaded,
     setCaptchaProvider,
     setChromeExtensionId,
+    setApiConfig,
   ]);
 
   return <></>;

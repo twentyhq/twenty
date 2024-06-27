@@ -23,14 +23,8 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
   ],
   providers: [
     CanAccessCalendarEventService,
-    {
-      provide: CalendarEventFindOnePreQueryHook.name,
-      useClass: CalendarEventFindOnePreQueryHook,
-    },
-    {
-      provide: CalendarEventFindManyPreQueryHook.name,
-      useClass: CalendarEventFindManyPreQueryHook,
-    },
+    CalendarEventFindOnePreQueryHook,
+    CalendarEventFindManyPreQueryHook,
   ],
 })
 export class CalendarQueryHookModule {}

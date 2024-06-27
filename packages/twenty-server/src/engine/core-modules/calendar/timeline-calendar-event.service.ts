@@ -31,9 +31,7 @@ export class TimelineCalendarEventService {
     const calendarEventIds = await this.calendarEventRepository.find({
       where: {
         calendarEventParticipants: {
-          person: {
-            id: Any(personIds),
-          },
+          personId: Any(personIds),
         },
       },
       select: {
@@ -81,8 +79,8 @@ export class TimelineCalendarEventService {
       const participants = event.calendarEventParticipants.map(
         (participant) => ({
           calendarEventId: event.id,
-          personId: participant.person?.id ?? null,
-          workspaceMemberId: participant.workspaceMember?.id ?? null,
+          personId: participant.personId ?? null,
+          workspaceMemberId: participant.workspaceMemberId ?? null,
           firstName:
             participant.person?.name?.firstName ||
             participant.workspaceMember?.name.firstName ||
@@ -135,9 +133,7 @@ export class TimelineCalendarEventService {
   ): Promise<TimelineCalendarEventsWithTotal> {
     const personIds = await this.personRepository.find({
       where: {
-        company: {
-          id: companyId,
-        },
+        companyId,
       },
       select: {
         id: true,

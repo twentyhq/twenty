@@ -14,6 +14,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageParticipant,
@@ -66,11 +67,13 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Message',
     description: 'Message',
     icon: 'IconMessage',
-    joinColumn: 'messageId',
     inverseSideTarget: () => MessageWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
   })
   message: Relation<MessageWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('message')
+  messageId: string;
 
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.person,
@@ -78,12 +81,14 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Person',
     description: 'Person',
     icon: 'IconUser',
-    joinColumn: 'personId',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
   })
   @WorkspaceIsNullable()
   person: Relation<PersonWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('person')
+  personId: string | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
@@ -91,10 +96,12 @@ export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Workspace Member',
     description: 'Workspace member',
     icon: 'IconCircleUser',
-    joinColumn: 'workspaceMemberId',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
   })
   @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('workspaceMember')
+  workspaceMemberId: string | null;
 }

@@ -69,7 +69,6 @@ export type RecordInlineCellContainerProps = {
   editModeContentOnly?: boolean;
   displayModeContent: ReactElement;
   customEditHotkeyScope?: HotkeyScope;
-  isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
   loading?: boolean;
@@ -85,7 +84,6 @@ export const RecordInlineCellContainer = ({
   editModeContent,
   displayModeContent,
   customEditHotkeyScope,
-  isDisplayModeContentEmpty,
   editModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
@@ -149,7 +147,6 @@ export const RecordInlineCellContainer = ({
             disableHoverEffect,
             editModeContent,
             editModeContentOnly,
-            isDisplayModeContentEmpty,
             isDisplayModeFixHeight,
             buttonIcon,
             label,

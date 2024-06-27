@@ -7,6 +7,8 @@ import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTa
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
@@ -41,33 +43,45 @@ export const ActivityTargetsInlineCell = ({
     ActivityEditorHotkeyScope.ActivityTargets,
   );
 
+  const { FieldContextProvider: ActivityTargetsContextProvider } =
+    useFieldContext({
+      objectNameSingular: CoreObjectNameSingular.Activity,
+      objectRecordId: activity.id,
+      fieldMetadataName: 'activityTargets',
+      fieldPosition: 3,
+      overridenIsFieldEmpty: activityTargetObjectRecords.length === 0,
+    });
+
   return (
     <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
       <FieldFocusContextProvider>
-        <RecordInlineCellContainer
-          buttonIcon={IconPencil}
-          customEditHotkeyScope={{
-            scope: ActivityEditorHotkeyScope.ActivityTargets,
-          }}
-          IconLabel={showLabel ? IconArrowUpRight : undefined}
-          showLabel={showLabel}
-          readonly={readonly}
-          labelWidth={fieldDefinition?.labelWidth}
-          editModeContent={
-            <ActivityTargetInlineCellEditMode
-              activity={activity}
-              activityTargetWithTargetRecords={activityTargetObjectRecords}
+        {ActivityTargetsContextProvider && (
+          <ActivityTargetsContextProvider>
+            <RecordInlineCellContainer
+              buttonIcon={IconPencil}
+              customEditHotkeyScope={{
+                scope: ActivityEditorHotkeyScope.ActivityTargets,
+              }}
+              IconLabel={showLabel ? IconArrowUpRight : undefined}
+              showLabel={showLabel}
+              readonly={readonly}
+              labelWidth={fieldDefinition?.labelWidth}
+              editModeContent={
+                <ActivityTargetInlineCellEditMode
+                  activity={activity}
+                  activityTargetWithTargetRecords={activityTargetObjectRecords}
+                />
+              }
+              label="Relations"
+              displayModeContent={
+                <ActivityTargetChips
+                  activityTargetObjectRecords={activityTargetObjectRecords}
+                  maxWidth={maxWidth}
+                />
+              }
             />
-          }
-          label="Relations"
-          displayModeContent={
-            <ActivityTargetChips
-              activityTargetObjectRecords={activityTargetObjectRecords}
-              maxWidth={maxWidth}
-            />
-          }
-          isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
-        />
+          </ActivityTargetsContextProvider>
+        )}
       </FieldFocusContextProvider>
     </RecordFieldInputScope>
   );

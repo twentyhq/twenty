@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 
 @Injectable()
@@ -16,7 +15,7 @@ export class BlocklistRepository {
     id: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<BlocklistWorkspaceEntity> | null> {
+  ): Promise<BlocklistWorkspaceEntity | null> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -39,7 +38,7 @@ export class BlocklistRepository {
     workspaceMemberId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<BlocklistWorkspaceEntity>[]> {
+  ): Promise<BlocklistWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -56,7 +55,7 @@ export class BlocklistRepository {
     handle: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<BlocklistWorkspaceEntity>[]> {
+  ): Promise<BlocklistWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

@@ -4,7 +4,6 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -14,7 +13,6 @@ import {
   MessageChannelWorkspaceEntity,
   MessageChannelSyncStage,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { createQueriesFromMessageIds } from 'src/modules/messaging/message-import-manager/utils/create-queries-from-message-ids.util';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
@@ -45,8 +43,8 @@ export class MessagingGmailMessagesImportService {
   ) {}
 
   async processMessageBatchImport(
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
     if (
@@ -95,12 +93,10 @@ export class MessagingGmailMessagesImportService {
       );
     }
 
-    const messageQueries = createQueriesFromMessageIds(messageIdsToFetch);
-
     try {
       const allMessages =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
-          messageQueries,
+          messageIdsToFetch,
           connectedAccount.id,
           workspaceId,
         );
@@ -153,7 +149,9 @@ export class MessagingGmailMessagesImportService {
       );
     } catch (error) {
       this.logger.log(
-        `Messaging import for workspace ${workspaceId} and connected account ${
+        `Messaging import for messageId ${
+          error.messageId
+        }, workspace ${workspaceId} and connected account ${
           connectedAccount.id
         } failed with error: ${JSON.stringify(error)}`,
       );
@@ -186,7 +184,7 @@ export class MessagingGmailMessagesImportService {
   }
 
   private async trackMessageImportCompleted(
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ) {
     await this.messagingTelemetryService.track({
