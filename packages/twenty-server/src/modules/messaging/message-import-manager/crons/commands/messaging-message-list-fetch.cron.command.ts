@@ -5,7 +5,7 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { MessagingMessageListFetchCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-message-list-fetch.cron.job';
 
-const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '*/10 * * * *';
+const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '*/5 * * * *';
 
 @Command({
   name: 'cron:messaging:message-list-fetch',
