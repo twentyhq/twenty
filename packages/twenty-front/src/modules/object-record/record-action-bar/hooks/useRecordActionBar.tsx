@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState, useRecoilValue } from 'recoil';
 import {
   IconClick,
   IconFileExport,
@@ -26,6 +26,7 @@ import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/con
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from '~/utils/isDefined';
+import { apiConfigState } from '@/client-config/states/apiConfigState';
 
 type useRecordActionBarProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -52,6 +53,9 @@ export const useRecordActionBar = ({
   const { executeQuickActionOnOneRecord } = useExecuteQuickActionOnOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
+
+  const apiConfig = useRecoilValue(apiConfigState);
+  const maxRecords = apiConfig?.mutationMaximumAffectedRecords;
 
   const handleFavoriteButtonClick = useRecoilCallback(
     ({ snapshot }) =>
@@ -139,7 +143,7 @@ export const useRecordActionBar = ({
 
   const deletionActions: ContextMenuEntry[] = useMemo(
     () => 
-      selectedRecordIds.length <= 100
+       maxRecords !== undefined && selectedRecordIds.length <= maxRecords
       ? [
       {
         label: 'Delete',
@@ -169,6 +173,7 @@ export const useRecordActionBar = ({
       selectedRecordIds,
       isDeleteRecordsModalOpen,
       setIsDeleteRecordsModalOpen,
+      maxRecords,
     ],
   );
 
