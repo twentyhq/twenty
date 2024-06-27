@@ -7,9 +7,9 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarEventsImportCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-events-import.cron.job';
+import { GoogleCalendarDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/google-calendar-driver.module';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant.module';
-import { CalendarProvidersModule } from 'src/modules/calendar/services/providers/calendar-providers.module';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
@@ -21,7 +21,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 @Module({
   imports: [
-    CalendarProvidersModule,
     TwentyORMModule.forFeature([
       CalendarEventWorkspaceEntity,
       CalendarChannelWorkspaceEntity,
@@ -38,6 +37,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     WorkspaceDataSourceModule,
     CalendarEventCleanerModule,
+    GoogleCalendarDriverModule,
   ],
   providers: [CalendarEventsImportService, CalendarEventsImportCronJob],
   exports: [CalendarEventsImportService],
