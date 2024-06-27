@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilCallback, useSetRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   IconClick,
   IconFileExport,
@@ -11,6 +11,7 @@ import {
   IconTrash,
 } from 'twenty-ui';
 
+import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
@@ -26,7 +27,6 @@ import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/con
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from '~/utils/isDefined';
-import { apiConfigState } from '@/client-config/states/apiConfigState';
 
 type useRecordActionBarProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -142,32 +142,35 @@ export const useRecordActionBar = ({
   );
 
   const deletionActions: ContextMenuEntry[] = useMemo(
-    () => 
-       maxRecords !== undefined && selectedRecordIds.length <= maxRecords
-      ? [
-      {
-        label: 'Delete',
-        Icon: IconTrash,
-        accent: 'danger',
-        onClick: () => setIsDeleteRecordsModalOpen(true),
-        ConfirmationModal: (
-          <ConfirmationModal
-            isOpen={isDeleteRecordsModalOpen}
-            setIsOpen={setIsDeleteRecordsModalOpen}
-            title={`Delete ${selectedRecordIds.length} ${
-              selectedRecordIds.length === 1 ? `record` : 'records'
-            }`}
-            subtitle={`This action cannot be undone. This will permanently delete ${
-              selectedRecordIds.length === 1 ? 'this record' : 'these records'
-            }`}
-            onConfirmClick={() => handleDeleteClick()}
-            deleteButtonText={`Delete ${
-              selectedRecordIds.length > 1 ? 'Records' : 'Record'
-            }`}
-          />
-        ),
-      },
-    ] : [],
+    () =>
+      maxRecords !== undefined && selectedRecordIds.length <= maxRecords
+        ? [
+            {
+              label: 'Delete',
+              Icon: IconTrash,
+              accent: 'danger',
+              onClick: () => setIsDeleteRecordsModalOpen(true),
+              ConfirmationModal: (
+                <ConfirmationModal
+                  isOpen={isDeleteRecordsModalOpen}
+                  setIsOpen={setIsDeleteRecordsModalOpen}
+                  title={`Delete ${selectedRecordIds.length} ${
+                    selectedRecordIds.length === 1 ? `record` : 'records'
+                  }`}
+                  subtitle={`This action cannot be undone. This will permanently delete ${
+                    selectedRecordIds.length === 1
+                      ? 'this record'
+                      : 'these records'
+                  }`}
+                  onConfirmClick={() => handleDeleteClick()}
+                  deleteButtonText={`Delete ${
+                    selectedRecordIds.length > 1 ? 'Records' : 'Record'
+                  }`}
+                />
+              ),
+            },
+          ]
+        : [],
     [
       handleDeleteClick,
       selectedRecordIds,
