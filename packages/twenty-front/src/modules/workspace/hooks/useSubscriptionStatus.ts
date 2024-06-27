@@ -18,5 +18,8 @@ export const useSubscriptionStatus = ():
   if (!billing?.isBillingEnabled) {
     return SubscriptionStatus.Active;
   }
-  return currentWorkspace?.subscriptionStatus;
+  return (
+    currentWorkspace?.currentBillingSubscription?.status ||
+    SubscriptionStatus.Incomplete
+  );
 };

@@ -45,11 +45,13 @@ export class MessagingMessageListFetchCronJob {
       await this.workspaceRepository.find({
         where: this.environmentService.get('IS_BILLING_ENABLED')
           ? {
-              subscriptionStatus: In([
-                SubscriptionStatus.Active,
-                SubscriptionStatus.Trialing,
-                SubscriptionStatus.PastDue,
-              ]),
+              currentBillingSubscription: {
+                status: In([
+                  SubscriptionStatus.Active,
+                  SubscriptionStatus.Trialing,
+                  SubscriptionStatus.PastDue,
+                ]),
+              },
             }
           : {},
         select: ['id'],

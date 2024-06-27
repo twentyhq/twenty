@@ -10,7 +10,6 @@ export type CurrentWorkspace = Pick<
   | 'displayName'
   | 'allowImpersonation'
   | 'featureFlags'
-  | 'subscriptionStatus'
   | 'activationStatus'
   | 'currentBillingSubscription'
   | 'currentCacheVersion'

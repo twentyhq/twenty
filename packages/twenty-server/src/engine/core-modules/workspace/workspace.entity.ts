@@ -10,14 +10,10 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import Stripe from 'stripe';
 
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import {
-  BillingSubscription,
-  SubscriptionStatus,
-} from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -87,15 +83,6 @@ export class Workspace {
 
   @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
   featureFlags: Relation<FeatureFlagEntity[]>;
-
-  @Field(() => SubscriptionStatus)
-  @Column({
-    type: 'enum',
-    enum: Object.values(SubscriptionStatus),
-    default: SubscriptionStatus.Incomplete,
-    nullable: false,
-  })
-  subscriptionStatus: Stripe.Subscription.Status;
 
   @Field({ nullable: true })
   currentBillingSubscription: BillingSubscription;

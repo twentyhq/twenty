@@ -1,6 +1,7 @@
 import { act } from 'react-dom/test-utils';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
+import { v4 } from 'uuid';
 
 import {
   CurrentWorkspace,
@@ -17,7 +18,7 @@ const tokenPair = {
 };
 const currentWorkspace = {
   id: '1',
-  subscriptionStatus: SubscriptionStatus.Incomplete,
+  currentBillingSubscription: { status: SubscriptionStatus.Incomplete },
   activationStatus: 'active',
   allowImpersonation: true,
 } as CurrentWorkspace;
@@ -59,7 +60,10 @@ describe('useSubscriptionStatus', () => {
         setTokenPair(tokenPair);
         setCurrentWorkspace({
           ...currentWorkspace,
-          subscriptionStatus,
+          currentBillingSubscription: {
+            id: v4(),
+            status: subscriptionStatus,
+          },
         });
       });
       expect(result.current.subscriptionStatus).toBe(SubscriptionStatus.Active);
@@ -76,7 +80,10 @@ describe('useSubscriptionStatus', () => {
         setTokenPair(tokenPair);
         setCurrentWorkspace({
           ...currentWorkspace,
-          subscriptionStatus,
+          currentBillingSubscription: {
+            id: v4(),
+            status: subscriptionStatus,
+          },
         });
       });
 

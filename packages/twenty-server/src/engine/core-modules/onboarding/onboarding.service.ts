@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
@@ -11,10 +14,15 @@ import { ConnectedAccountRepository } from 'src/modules/connected-account/reposi
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { isDefined } from 'src/utils/is-defined';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 
 enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
@@ -42,12 +50,32 @@ export class OnboardingService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectWorkspaceRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberRepository: WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   private async isSubscriptionIncompleteOnboardingStatus(user: User) {
+    const isFreeAccessEnabled = await this.featureFlagRepository.findOneBy({
+      workspaceId: user.defaultWorkspaceId,
+      key: FeatureFlagKeys.IsFreeAccessEnabled,
+      value: true,
+    });
+
+    if (
+      isFreeAccessEnabled ||
+      !this.environmentService.get('IS_BILLING_ENABLED')
+    ) {
+      return false;
+    }
+
+    const currentBillingSubscription =
+      await this.billingService.getCurrentBillingSubscription({
+        workspaceId: user.defaultWorkspaceId,
+      });
+
     return (
-      this.environmentService.get('IS_BILLING_ENABLED') &&
-      user.defaultWorkspace.subscriptionStatus === SubscriptionStatus.Incomplete
+      !isDefined(currentBillingSubscription) ||
+      currentBillingSubscription?.status === SubscriptionStatus.Incomplete
     );
   }
 

@@ -271,10 +271,6 @@ export class BillingService {
       return;
     }
 
-    await this.workspaceRepository.update(workspaceId, {
-      subscriptionStatus: data.object.status,
-    });
-
     await this.billingSubscriptionRepository.upsert(
       {
         workspaceId: workspaceId,

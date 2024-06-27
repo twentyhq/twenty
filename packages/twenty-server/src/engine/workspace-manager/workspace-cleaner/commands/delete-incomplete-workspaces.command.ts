@@ -53,7 +53,7 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
     options: DeleteIncompleteWorkspacesCommandOptions,
   ): Promise<void> {
     const where: FindOptionsWhere<Workspace> = {
-      subscriptionStatus: SubscriptionStatus.Incomplete,
+      currentBillingSubscription: { status: SubscriptionStatus.Incomplete },
     };
 
     if (options.workspaceIds) {

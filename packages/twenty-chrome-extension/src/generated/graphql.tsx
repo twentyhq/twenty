@@ -397,6 +397,10 @@ export type Analytics = {
   success: Scalars['Boolean'];
 };
 
+export type ApiConfig = {
+  mutationMaximumAffectedRecords: Scalars['Float'];
+};
+
 /** An api key */
 export type ApiKey = {
   /** Creation date */
@@ -1719,6 +1723,7 @@ export enum CaptchaDriverType {
 }
 
 export type ClientConfig = {
+  api: ApiConfig;
   authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
@@ -3732,281 +3737,337 @@ export type MutationCheckoutSessionArgs = {
 
 export type MutationCreateActivitiesArgs = {
   data?: InputMaybe<Array<ActivityCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateActivityArgs = {
   data?: InputMaybe<ActivityCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateActivityTargetArgs = {
   data?: InputMaybe<ActivityTargetCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateActivityTargetsArgs = {
   data?: InputMaybe<Array<ActivityTargetCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateApiKeyArgs = {
   data?: InputMaybe<ApiKeyCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateApiKeysArgs = {
   data?: InputMaybe<Array<ApiKeyCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateAttachmentArgs = {
   data?: InputMaybe<AttachmentCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateAttachmentsArgs = {
   data?: InputMaybe<Array<AttachmentCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateAuditLogArgs = {
   data?: InputMaybe<AuditLogCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateAuditLogsArgs = {
   data?: InputMaybe<Array<AuditLogCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateBlocklistArgs = {
   data?: InputMaybe<BlocklistCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateBlocklistsArgs = {
   data?: InputMaybe<Array<BlocklistCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarChannelArgs = {
   data?: InputMaybe<CalendarChannelCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarChannelEventAssociationArgs = {
   data?: InputMaybe<CalendarChannelEventAssociationCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarChannelEventAssociationsArgs = {
   data?: InputMaybe<Array<CalendarChannelEventAssociationCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarChannelsArgs = {
   data?: InputMaybe<Array<CalendarChannelCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarEventArgs = {
   data?: InputMaybe<CalendarEventCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarEventParticipantArgs = {
   data?: InputMaybe<CalendarEventParticipantCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarEventParticipantsArgs = {
   data?: InputMaybe<Array<CalendarEventParticipantCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarEventsArgs = {
   data?: InputMaybe<Array<CalendarEventCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCommentArgs = {
   data?: InputMaybe<CommentCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCommentsArgs = {
   data?: InputMaybe<Array<CommentCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCompaniesArgs = {
   data?: InputMaybe<Array<CompanyCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCompanyArgs = {
   data?: InputMaybe<CompanyCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateConnectedAccountArgs = {
   data?: InputMaybe<ConnectedAccountCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateConnectedAccountsArgs = {
   data?: InputMaybe<Array<ConnectedAccountCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateFavoriteArgs = {
   data?: InputMaybe<FavoriteCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateFavoritesArgs = {
   data?: InputMaybe<Array<FavoriteCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageArgs = {
   data?: InputMaybe<MessageCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageChannelArgs = {
   data?: InputMaybe<MessageChannelCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageChannelMessageAssociationArgs = {
   data?: InputMaybe<MessageChannelMessageAssociationCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageChannelMessageAssociationsArgs = {
   data?: InputMaybe<Array<MessageChannelMessageAssociationCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageChannelsArgs = {
   data?: InputMaybe<Array<MessageChannelCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageParticipantArgs = {
   data?: InputMaybe<MessageParticipantCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageParticipantsArgs = {
   data?: InputMaybe<Array<MessageParticipantCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageThreadArgs = {
   data?: InputMaybe<MessageThreadCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageThreadsArgs = {
   data?: InputMaybe<Array<MessageThreadCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessagesArgs = {
   data?: InputMaybe<Array<MessageCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateOpportunitiesArgs = {
   data?: InputMaybe<Array<OpportunityCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateOpportunityArgs = {
   data?: InputMaybe<OpportunityCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreatePeopleArgs = {
   data?: InputMaybe<Array<PersonCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreatePersonArgs = {
   data?: InputMaybe<PersonCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateTimelineActivitiesArgs = {
   data?: InputMaybe<Array<TimelineActivityCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateTimelineActivityArgs = {
   data?: InputMaybe<TimelineActivityCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewArgs = {
   data?: InputMaybe<ViewCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewFieldArgs = {
   data?: InputMaybe<ViewFieldCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewFieldsArgs = {
   data?: InputMaybe<Array<ViewFieldCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewFilterArgs = {
   data?: InputMaybe<ViewFilterCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewFiltersArgs = {
   data?: InputMaybe<Array<ViewFilterCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewSortArgs = {
   data?: InputMaybe<ViewSortCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewSortsArgs = {
   data?: InputMaybe<Array<ViewSortCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewsArgs = {
   data?: InputMaybe<Array<ViewCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateWebhookArgs = {
   data?: InputMaybe<WebhookCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateWebhooksArgs = {
   data?: InputMaybe<Array<WebhookCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateWorkspaceMemberArgs = {
   data?: InputMaybe<WorkspaceMemberCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateWorkspaceMembersArgs = {
   data?: InputMaybe<Array<WorkspaceMemberCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -5434,51 +5495,51 @@ export type ProductPricesEntity = {
 export type Query = {
   activities?: Maybe<ActivityConnection>;
   activity?: Maybe<Activity>;
-  activityDuplicates?: Maybe<ActivityConnection>;
+  activityDuplicates?: Maybe<Array<ActivityConnection>>;
   activityTarget?: Maybe<ActivityTarget>;
-  activityTargetDuplicates?: Maybe<ActivityTargetConnection>;
+  activityTargetDuplicates?: Maybe<Array<ActivityTargetConnection>>;
   activityTargets?: Maybe<ActivityTargetConnection>;
   apiKey?: Maybe<ApiKey>;
-  apiKeyDuplicates?: Maybe<ApiKeyConnection>;
+  apiKeyDuplicates?: Maybe<Array<ApiKeyConnection>>;
   apiKeys?: Maybe<ApiKeyConnection>;
   attachment?: Maybe<Attachment>;
-  attachmentDuplicates?: Maybe<AttachmentConnection>;
+  attachmentDuplicates?: Maybe<Array<AttachmentConnection>>;
   attachments?: Maybe<AttachmentConnection>;
   auditLog?: Maybe<AuditLog>;
-  auditLogDuplicates?: Maybe<AuditLogConnection>;
+  auditLogDuplicates?: Maybe<Array<AuditLogConnection>>;
   auditLogs?: Maybe<AuditLogConnection>;
   billingPortalSession: SessionEntity;
   blocklist?: Maybe<Blocklist>;
-  blocklistDuplicates?: Maybe<BlocklistConnection>;
+  blocklistDuplicates?: Maybe<Array<BlocklistConnection>>;
   blocklists?: Maybe<BlocklistConnection>;
   calendarChannel?: Maybe<CalendarChannel>;
-  calendarChannelDuplicates?: Maybe<CalendarChannelConnection>;
+  calendarChannelDuplicates?: Maybe<Array<CalendarChannelConnection>>;
   calendarChannelEventAssociation?: Maybe<CalendarChannelEventAssociation>;
-  calendarChannelEventAssociationDuplicates?: Maybe<CalendarChannelEventAssociationConnection>;
+  calendarChannelEventAssociationDuplicates?: Maybe<Array<CalendarChannelEventAssociationConnection>>;
   calendarChannelEventAssociations?: Maybe<CalendarChannelEventAssociationConnection>;
   calendarChannels?: Maybe<CalendarChannelConnection>;
   calendarEvent?: Maybe<CalendarEvent>;
-  calendarEventDuplicates?: Maybe<CalendarEventConnection>;
+  calendarEventDuplicates?: Maybe<Array<CalendarEventConnection>>;
   calendarEventParticipant?: Maybe<CalendarEventParticipant>;
-  calendarEventParticipantDuplicates?: Maybe<CalendarEventParticipantConnection>;
+  calendarEventParticipantDuplicates?: Maybe<Array<CalendarEventParticipantConnection>>;
   calendarEventParticipants?: Maybe<CalendarEventParticipantConnection>;
   calendarEvents?: Maybe<CalendarEventConnection>;
   checkUserExists: UserExists;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
   comment?: Maybe<Comment>;
-  commentDuplicates?: Maybe<CommentConnection>;
+  commentDuplicates?: Maybe<Array<CommentConnection>>;
   comments?: Maybe<CommentConnection>;
   companies?: Maybe<CompanyConnection>;
   company?: Maybe<Company>;
-  companyDuplicates?: Maybe<CompanyConnection>;
+  companyDuplicates?: Maybe<Array<CompanyConnection>>;
   connectedAccount?: Maybe<ConnectedAccount>;
-  connectedAccountDuplicates?: Maybe<ConnectedAccountConnection>;
+  connectedAccountDuplicates?: Maybe<Array<ConnectedAccountConnection>>;
   connectedAccounts?: Maybe<ConnectedAccountConnection>;
   currentUser: User;
   currentWorkspace: Workspace;
   favorite?: Maybe<Favorite>;
-  favoriteDuplicates?: Maybe<FavoriteConnection>;
+  favoriteDuplicates?: Maybe<Array<FavoriteConnection>>;
   favorites?: Maybe<FavoriteConnection>;
   findWorkspaceFromInviteHash: Workspace;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
@@ -5489,48 +5550,48 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   message?: Maybe<Message>;
   messageChannel?: Maybe<MessageChannel>;
-  messageChannelDuplicates?: Maybe<MessageChannelConnection>;
+  messageChannelDuplicates?: Maybe<Array<MessageChannelConnection>>;
   messageChannelMessageAssociation?: Maybe<MessageChannelMessageAssociation>;
-  messageChannelMessageAssociationDuplicates?: Maybe<MessageChannelMessageAssociationConnection>;
+  messageChannelMessageAssociationDuplicates?: Maybe<Array<MessageChannelMessageAssociationConnection>>;
   messageChannelMessageAssociations?: Maybe<MessageChannelMessageAssociationConnection>;
   messageChannels?: Maybe<MessageChannelConnection>;
-  messageDuplicates?: Maybe<MessageConnection>;
+  messageDuplicates?: Maybe<Array<MessageConnection>>;
   messageParticipant?: Maybe<MessageParticipant>;
-  messageParticipantDuplicates?: Maybe<MessageParticipantConnection>;
+  messageParticipantDuplicates?: Maybe<Array<MessageParticipantConnection>>;
   messageParticipants?: Maybe<MessageParticipantConnection>;
   messageThread?: Maybe<MessageThread>;
-  messageThreadDuplicates?: Maybe<MessageThreadConnection>;
+  messageThreadDuplicates?: Maybe<Array<MessageThreadConnection>>;
   messageThreads?: Maybe<MessageThreadConnection>;
   messages?: Maybe<MessageConnection>;
   object: Object;
   objects: ObjectConnection;
   opportunities?: Maybe<OpportunityConnection>;
   opportunity?: Maybe<Opportunity>;
-  opportunityDuplicates?: Maybe<OpportunityConnection>;
+  opportunityDuplicates?: Maybe<Array<OpportunityConnection>>;
   people?: Maybe<PersonConnection>;
   person?: Maybe<Person>;
-  personDuplicates?: Maybe<PersonConnection>;
+  personDuplicates?: Maybe<Array<PersonConnection>>;
   timelineActivities?: Maybe<TimelineActivityConnection>;
   timelineActivity?: Maybe<TimelineActivity>;
-  timelineActivityDuplicates?: Maybe<TimelineActivityConnection>;
+  timelineActivityDuplicates?: Maybe<Array<TimelineActivityConnection>>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   view?: Maybe<View>;
-  viewDuplicates?: Maybe<ViewConnection>;
+  viewDuplicates?: Maybe<Array<ViewConnection>>;
   viewField?: Maybe<ViewField>;
-  viewFieldDuplicates?: Maybe<ViewFieldConnection>;
+  viewFieldDuplicates?: Maybe<Array<ViewFieldConnection>>;
   viewFields?: Maybe<ViewFieldConnection>;
   viewFilter?: Maybe<ViewFilter>;
-  viewFilterDuplicates?: Maybe<ViewFilterConnection>;
+  viewFilterDuplicates?: Maybe<Array<ViewFilterConnection>>;
   viewFilters?: Maybe<ViewFilterConnection>;
   viewSort?: Maybe<ViewSort>;
-  viewSortDuplicates?: Maybe<ViewSortConnection>;
+  viewSortDuplicates?: Maybe<Array<ViewSortConnection>>;
   viewSorts?: Maybe<ViewSortConnection>;
   views?: Maybe<ViewConnection>;
   webhook?: Maybe<Webhook>;
-  webhookDuplicates?: Maybe<WebhookConnection>;
+  webhookDuplicates?: Maybe<Array<WebhookConnection>>;
   webhooks?: Maybe<WebhookConnection>;
   workspaceMember?: Maybe<WorkspaceMember>;
-  workspaceMemberDuplicates?: Maybe<WorkspaceMemberConnection>;
+  workspaceMemberDuplicates?: Maybe<Array<WorkspaceMemberConnection>>;
   workspaceMembers?: Maybe<WorkspaceMemberConnection>;
 };
 
@@ -5552,8 +5613,8 @@ export type QueryActivityArgs = {
 
 
 export type QueryActivityDuplicatesArgs = {
-  data?: InputMaybe<ActivityCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ActivityCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5563,8 +5624,8 @@ export type QueryActivityTargetArgs = {
 
 
 export type QueryActivityTargetDuplicatesArgs = {
-  data?: InputMaybe<ActivityTargetCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ActivityTargetCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5585,8 +5646,8 @@ export type QueryApiKeyArgs = {
 
 
 export type QueryApiKeyDuplicatesArgs = {
-  data?: InputMaybe<ApiKeyCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ApiKeyCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5607,8 +5668,8 @@ export type QueryAttachmentArgs = {
 
 
 export type QueryAttachmentDuplicatesArgs = {
-  data?: InputMaybe<AttachmentCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<AttachmentCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5629,8 +5690,8 @@ export type QueryAuditLogArgs = {
 
 
 export type QueryAuditLogDuplicatesArgs = {
-  data?: InputMaybe<AuditLogCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<AuditLogCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5656,8 +5717,8 @@ export type QueryBlocklistArgs = {
 
 
 export type QueryBlocklistDuplicatesArgs = {
-  data?: InputMaybe<BlocklistCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<BlocklistCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5678,8 +5739,8 @@ export type QueryCalendarChannelArgs = {
 
 
 export type QueryCalendarChannelDuplicatesArgs = {
-  data?: InputMaybe<CalendarChannelCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CalendarChannelCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5689,8 +5750,8 @@ export type QueryCalendarChannelEventAssociationArgs = {
 
 
 export type QueryCalendarChannelEventAssociationDuplicatesArgs = {
-  data?: InputMaybe<CalendarChannelEventAssociationCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5722,8 +5783,8 @@ export type QueryCalendarEventArgs = {
 
 
 export type QueryCalendarEventDuplicatesArgs = {
-  data?: InputMaybe<CalendarEventCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CalendarEventCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5733,8 +5794,8 @@ export type QueryCalendarEventParticipantArgs = {
 
 
 export type QueryCalendarEventParticipantDuplicatesArgs = {
-  data?: InputMaybe<CalendarEventParticipantCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CalendarEventParticipantCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5777,8 +5838,8 @@ export type QueryCommentArgs = {
 
 
 export type QueryCommentDuplicatesArgs = {
-  data?: InputMaybe<CommentCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CommentCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5810,8 +5871,8 @@ export type QueryCompanyArgs = {
 
 
 export type QueryCompanyDuplicatesArgs = {
-  data?: InputMaybe<CompanyCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CompanyCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5821,8 +5882,8 @@ export type QueryConnectedAccountArgs = {
 
 
 export type QueryConnectedAccountDuplicatesArgs = {
-  data?: InputMaybe<ConnectedAccountCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ConnectedAccountCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5843,8 +5904,8 @@ export type QueryFavoriteArgs = {
 
 
 export type QueryFavoriteDuplicatesArgs = {
-  data?: InputMaybe<FavoriteCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<FavoriteCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5908,8 +5969,8 @@ export type QueryMessageChannelArgs = {
 
 
 export type QueryMessageChannelDuplicatesArgs = {
-  data?: InputMaybe<MessageChannelCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<MessageChannelCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5919,8 +5980,8 @@ export type QueryMessageChannelMessageAssociationArgs = {
 
 
 export type QueryMessageChannelMessageAssociationDuplicatesArgs = {
-  data?: InputMaybe<MessageChannelMessageAssociationCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5947,8 +6008,8 @@ export type QueryMessageChannelsArgs = {
 
 
 export type QueryMessageDuplicatesArgs = {
-  data?: InputMaybe<MessageCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<MessageCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5958,8 +6019,8 @@ export type QueryMessageParticipantArgs = {
 
 
 export type QueryMessageParticipantDuplicatesArgs = {
-  data?: InputMaybe<MessageParticipantCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<MessageParticipantCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5980,8 +6041,8 @@ export type QueryMessageThreadArgs = {
 
 
 export type QueryMessageThreadDuplicatesArgs = {
-  data?: InputMaybe<MessageThreadCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<MessageThreadCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6024,8 +6085,8 @@ export type QueryOpportunityArgs = {
 
 
 export type QueryOpportunityDuplicatesArgs = {
-  data?: InputMaybe<OpportunityCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<OpportunityCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6046,8 +6107,8 @@ export type QueryPersonArgs = {
 
 
 export type QueryPersonDuplicatesArgs = {
-  data?: InputMaybe<PersonCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<PersonCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6068,8 +6129,8 @@ export type QueryTimelineActivityArgs = {
 
 
 export type QueryTimelineActivityDuplicatesArgs = {
-  data?: InputMaybe<TimelineActivityCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<TimelineActivityCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6084,8 +6145,8 @@ export type QueryViewArgs = {
 
 
 export type QueryViewDuplicatesArgs = {
-  data?: InputMaybe<ViewCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ViewCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6095,8 +6156,8 @@ export type QueryViewFieldArgs = {
 
 
 export type QueryViewFieldDuplicatesArgs = {
-  data?: InputMaybe<ViewFieldCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ViewFieldCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6117,8 +6178,8 @@ export type QueryViewFilterArgs = {
 
 
 export type QueryViewFilterDuplicatesArgs = {
-  data?: InputMaybe<ViewFilterCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ViewFilterCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6139,8 +6200,8 @@ export type QueryViewSortArgs = {
 
 
 export type QueryViewSortDuplicatesArgs = {
-  data?: InputMaybe<ViewSortCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ViewSortCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6172,8 +6233,8 @@ export type QueryWebhookArgs = {
 
 
 export type QueryWebhookDuplicatesArgs = {
-  data?: InputMaybe<WebhookCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<WebhookCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6194,8 +6255,8 @@ export type QueryWorkspaceMemberArgs = {
 
 
 export type QueryWorkspaceMemberDuplicatesArgs = {
-  data?: InputMaybe<WorkspaceMemberCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<WorkspaceMemberCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -7327,7 +7388,6 @@ export type Workspace = {
   id: Scalars['UUID'];
   inviteHash?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
-  subscriptionStatus: SubscriptionStatus;
   updatedAt: Scalars['DateTime'];
 };
 
