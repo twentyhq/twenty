@@ -60,9 +60,12 @@ export const RecordIndexTableContainerEffect = ({
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
   const numSelected =
-    hasUserSelectedAllRow && selectedRowIds.length === tableRowIds.length
-      ? entityCountInCurrentView
-      : undefined;
+    hasUserSelectedAllRow && entityCountInCurrentView
+      ? selectedRowIds.length === tableRowIds.length
+        ? entityCountInCurrentView
+        : entityCountInCurrentView -
+          (tableRowIds.length - selectedRowIds.length) // unselected row Ids
+      : selectedRowIds.length;
 
   const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
     objectMetadataItem,

@@ -11,7 +11,6 @@ import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/c
 import { CalendarEventParticipant } from 'src/modules/calendar/types/calendar-event';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
@@ -28,10 +27,10 @@ export class CalendarEventParticipantService {
   ) {}
 
   public async updateCalendarEventParticipantsAfterPeopleCreation(
-    createdPeople: ObjectRecord<PersonWorkspaceEntity>[],
+    createdPeople: PersonWorkspaceEntity[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
+  ): Promise<CalendarEventParticipantWorkspaceEntity[]> {
     const participants = await this.calendarEventParticipantRepository.find({
       where: {
         handle: Any(createdPeople.map((person) => person.email)),
@@ -88,7 +87,7 @@ export class CalendarEventParticipantService {
     calendarEventParticipants: CalendarEventParticipant[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
+  ): Promise<CalendarEventParticipantWorkspaceEntity[]> {
     if (calendarEventParticipants.length === 0) {
       return [];
     }

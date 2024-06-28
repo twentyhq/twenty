@@ -13,11 +13,13 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
   objectMetadataItems,
   objectMetadataItem,
   cache,
+  recordGqlFields = undefined,
   record,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   cache: ApolloCache<object>;
+  recordGqlFields?: Record<string, any>;
   record: T;
 }) => {
   if (isUndefinedOrNull(objectMetadataItem)) {
@@ -32,6 +34,7 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
           objectMetadataItems,
           objectMetadataItem,
           computeReferences: true,
+          recordGqlFields,
         },
       )}
     `;

@@ -17265,6 +17265,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.chunk@npm:^4.2.9":
+  version: 4.2.9
+  resolution: "@types/lodash.chunk@npm:4.2.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 5759b3d969c5db4b0893b70261ae40d4b9a6466c984c16de6fa1d3945b3199cc09f948a444a3b4e6cfa0dd984044cf937cbc8dab5fe0ac8da67244ed74d9e4e4
+  languageName: node
+  linkType: hard
+
 "@types/lodash.compact@npm:^3.0.9":
   version: 3.0.9
   resolution: "@types/lodash.compact@npm:3.0.9"
@@ -34530,6 +34539,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.chunk@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "lodash.chunk@npm:4.2.0"
+  checksum: f9f99969561ad2f62af1f9a96c5bd0af776f000292b0d8db3126c28eb3b32e210d7c31b49c18d0d7901869bd769057046dc134b60cfa0c2c4ce017823a26bb23
+  languageName: node
+  linkType: hard
+
 "lodash.clonedeep@npm:^4.5.0":
   version: 4.5.0
   resolution: "lodash.clonedeep@npm:4.5.0"
@@ -47351,6 +47367,7 @@ __metadata:
     "@types/jest": "npm:^29.5.11"
     "@types/js-cookie": "npm:^3.0.3"
     "@types/lodash.camelcase": "npm:^4.3.7"
+    "@types/lodash.chunk": "npm:^4.2.9"
     "@types/lodash.compact": "npm:^3.0.9"
     "@types/lodash.debounce": "npm:^4.0.7"
     "@types/lodash.groupby": "npm:^4.6.9"
@@ -47462,6 +47479,7 @@ __metadata:
     jsonwebtoken: "npm:^9.0.0"
     libphonenumber-js: "npm:^1.10.26"
     lodash.camelcase: "npm:^4.3.0"
+    lodash.chunk: "npm:^4.2.0"
     lodash.compact: "npm:^3.0.1"
     lodash.debounce: "npm:^4.0.8"
     lodash.groupby: "npm:^4.6.0"

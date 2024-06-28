@@ -23,7 +23,7 @@ export class MessagingMessagesImportCronCommand extends CommandRunner {
       undefined,
       {
         repeat: {
-          every: 5000,
+          every: 10000,
         },
       },
     );

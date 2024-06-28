@@ -46,6 +46,15 @@ export class DataSourceService {
     });
   }
 
+  async getLastDataSourceMetadataFromWorkspaceId(
+    workspaceId: string,
+  ): Promise<DataSourceEntity | null> {
+    return this.dataSourceMetadataRepository.findOne({
+      where: { workspaceId },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async getLastDataSourceMetadataFromWorkspaceIdOrFail(
     workspaceId: string,
   ): Promise<DataSourceEntity> {

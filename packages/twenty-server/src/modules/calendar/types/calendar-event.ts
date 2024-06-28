@@ -1,9 +1,8 @@
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event.workspace-entity';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 export type CalendarEvent = Omit<
-  ObjectRecord<CalendarEventWorkspaceEntity>,
+  CalendarEventWorkspaceEntity,
   | 'createdAt'
   | 'updatedAt'
   | 'calendarChannelEventAssociations'
@@ -15,7 +14,7 @@ export type CalendarEvent = Omit<
 };
 
 export type CalendarEventParticipant = Omit<
-  ObjectRecord<CalendarEventParticipantWorkspaceEntity>,
+  CalendarEventParticipantWorkspaceEntity,
   | 'id'
   | 'createdAt'
   | 'updatedAt'

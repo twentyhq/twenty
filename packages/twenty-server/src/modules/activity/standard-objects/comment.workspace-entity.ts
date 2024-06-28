@@ -11,6 +11,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.comment,
@@ -37,11 +38,13 @@ export class CommentWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Author',
     description: 'Comment author',
     icon: 'IconCircleUser',
-    joinColumn: 'authorId',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'authoredComments',
   })
   author: Relation<WorkspaceMemberWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('author')
+  authorId: string;
 
   @WorkspaceRelation({
     standardId: COMMENT_STANDARD_FIELD_IDS.activity,
@@ -49,9 +52,11 @@ export class CommentWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Activity',
     description: 'Comment activity',
     icon: 'IconNotes',
-    joinColumn: 'activityId',
     inverseSideTarget: () => ActivityWorkspaceEntity,
     inverseSideFieldKey: 'comments',
   })
   activity: Relation<ActivityWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('activity')
+  activityId: string;
 }

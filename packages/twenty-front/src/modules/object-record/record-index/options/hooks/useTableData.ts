@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
@@ -64,9 +64,21 @@ export const useTableData = ({
   const hasUserSelectedAllRow = useRecoilValue(hasUserSelectedAllRowState);
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
+  // user has checked select all and then unselected some rows
+  const userHasUnselectedSomeRows =
+    hasUserSelectedAllRow && selectedRowIds.length < tableRowIds.length;
+
   const hasSelectedRows =
     selectedRowIds.length > 0 &&
     !(hasUserSelectedAllRow && selectedRowIds.length === tableRowIds.length);
+
+  const unselectedRowIds = useMemo(
+    () =>
+      userHasUnselectedSomeRows
+        ? tableRowIds.filter((id) => !selectedRowIds.includes(id))
+        : [],
+    [userHasUnselectedSomeRows, tableRowIds, selectedRowIds],
+  );
 
   const findManyRecordsParams = useFindManyParams(
     objectNameSingular,
@@ -83,9 +95,26 @@ export const useTableData = ({
     },
   };
 
-  const usedFindManyParams = hasSelectedRows
-    ? selectedFindManyParams
-    : findManyRecordsParams;
+  const unselectedFindManyParams = {
+    ...findManyRecordsParams,
+    filter: {
+      ...findManyRecordsParams.filter,
+      not: {
+        id: {
+          in: unselectedRowIds,
+        },
+      },
+    },
+  };
+
+  const usedFindManyParams =
+    hasSelectedRows && !userHasUnselectedSomeRows
+      ? selectedFindManyParams
+      : userHasUnselectedSomeRows
+        ? unselectedFindManyParams
+        : findManyRecordsParams;
+
+  console.log('debug: ', { usedFindManyParams });
 
   const { findManyRecords, totalCount, records, fetchMoreRecords, loading } =
     useLazyFindManyRecords({
@@ -123,6 +152,8 @@ export const useTableData = ({
       setPageCount(0);
 
       const complete = () => {
+        setPageCount(0);
+        setPreviousRecordCount(0);
         setIsDownloading(false);
         setProgress({
           displayType: 'number',
