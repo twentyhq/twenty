@@ -32,9 +32,9 @@ export const fileStorageModuleFactory = async (
       const bucketName = environmentService.get('STORAGE_S3_NAME');
       const endpoint = environmentService.get('STORAGE_S3_ENDPOINT');
       const region = environmentService.get('STORAGE_S3_REGION');
-      const accessKeyId = environmentService.get('STORAGE_S3_AccessKeyId');
+      const accessKeyId = environmentService.get('STORAGE_S3_ACCESS_KEY_ID');
       const secretAccessKey = environmentService.get(
-        'STORAGE_S3_SecretAccessKey',
+        'STORAGE_S3_SECRET_ACCESS_KEY',
       );
 
       return {

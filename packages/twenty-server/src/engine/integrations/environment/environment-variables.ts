@@ -223,12 +223,12 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsString()
   @IsOptional()
-  STORAGE_S3_AccessKeyId: string;
+  STORAGE_S3_ACCESS_KEY_ID: string;
 
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsString()
   @IsOptional()
-  STORAGE_S3_SecretAccessKey: string;
+  STORAGE_S3_SECRET_ACCESS_KEY: string;
 
   @IsString()
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
