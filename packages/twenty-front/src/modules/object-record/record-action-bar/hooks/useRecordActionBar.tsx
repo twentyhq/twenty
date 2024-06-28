@@ -139,9 +139,10 @@ export const useRecordActionBar = ({
   );
 
   const recordsNum = numSelected ?? selectedRecordIds.length;
+
   const deletionActions: ContextMenuEntry[] = useMemo(
     () =>
-      maxRecords !== undefined && selectedRecordIds.length <= maxRecords
+      maxRecords !== undefined && recordsNum <= maxRecords
         ? [
             {
               label: 'Delete',
