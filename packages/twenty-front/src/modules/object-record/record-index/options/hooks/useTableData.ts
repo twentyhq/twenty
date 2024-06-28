@@ -114,8 +114,6 @@ export const useTableData = ({
         ? unselectedFindManyParams
         : findManyRecordsParams;
 
-  console.log('debug: ', { usedFindManyParams });
-
   const { findManyRecords, totalCount, records, fetchMoreRecords, loading } =
     useLazyFindManyRecords({
       ...usedFindManyParams,
