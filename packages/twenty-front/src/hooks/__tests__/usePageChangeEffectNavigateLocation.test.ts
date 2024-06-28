@@ -290,7 +290,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
   describe('tests should be exhaustive', () => {
     it('all location and onboarding status should be tested', () => {
       const untestedSubscriptionStatus = [
-        SubscriptionStatus.Active,
+        SubscriptionStatus.Incomplete,
         SubscriptionStatus.IncompleteExpired,
         SubscriptionStatus.Paused,
         SubscriptionStatus.Trialing,
