@@ -11,6 +11,7 @@ import { LLMChatModelModule } from 'src/engine/integrations/llm-chat-model/llm-c
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
 import { LLMTracingModule } from 'src/engine/integrations/llm-tracing/llm-tracing.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 @Module({
   imports: [
     WorkspaceDataSourceModule,
@@ -21,6 +22,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
     LLMTracingModule,
     EnvironmentModule,
     ObjectMetadataModule,
+    WorkspaceSyncMetadataModule,
   ],
   exports: [],
   providers: [AskAIResolver, AskAIService],

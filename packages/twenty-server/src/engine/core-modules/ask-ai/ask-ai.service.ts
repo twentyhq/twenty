@@ -9,6 +9,8 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import groupBy from 'lodash.groupby';
 
+import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
+
 import { AskAIQueryResult } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
@@ -20,6 +22,9 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
+import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
+import { FeatureFlagFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/feature-flags.factory';
 
 @Injectable()
 export class AskAIService {
@@ -29,31 +34,41 @@ export class AskAIService {
     private readonly llmChatModelService: LLMChatModelService,
     private readonly llmTracingService: LLMTracingService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly standardObjectFactory: StandardObjectFactory,
+    private readonly featureFlagFactory: FeatureFlagFactory,
   ) {}
 
   private getLabelIdentifierSelectionSet(
     objectMetadata: ObjectMetadataEntity,
+    dataSourceId,
+    workspaceId,
+    workspaceFeatureFlagsMap,
   ): string | undefined {
-    const labelIdentifierFieldMetadata = objectMetadata.fields.find(
+    const customObjectLabelIdentifierFieldMetadata = objectMetadata.fields.find(
       (fieldMetadata) =>
         fieldMetadata.id === objectMetadata.labelIdentifierFieldMetadataId,
     );
 
-    // TOOD
-
-    /* const standardObjectMetadataCollection = this.standardObjectFactory.create(
+    const standardObjectMetadataCollection = this.standardObjectFactory.create(
       standardObjectMetadataDefinitions,
-      context,
+      { workspaceId, dataSourceId },
       workspaceFeatureFlagsMap,
-    ); */
+    );
 
-    // const standardObjectMetadata = computeStandardObject()
+    const standardObjectLabelIdentifierFieldMetadata =
+      standardObjectMetadataCollection
+        .find(
+          (standardObjectMetadata) =>
+            standardObjectMetadata.nameSingular === objectMetadata.nameSingular,
+        )
+        ?.fields.find(
+          (field: PartialFieldMetadata) =>
+            field.name === DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
+        ) as PartialFieldMetadata;
 
-    /*     console.log(
-      'getLabelIdentifierSelectionSet',
-      objectMetadata.namePlural,
-      labelIdentifierFieldMetadata?.type,
-    ); */
+    const labelIdentifierFieldMetadata =
+      customObjectLabelIdentifierFieldMetadata ??
+      standardObjectLabelIdentifierFieldMetadata;
 
     if (!labelIdentifierFieldMetadata)
       return DEFAULT_LABEL_IDENTIFIER_FIELD_NAME;
@@ -70,14 +85,20 @@ export class AskAIService {
     return labelIdentifierFieldMetadata.name;
   }
 
-  private async getEntitiesById(
+  private async getDisplayDataById(
     workspaceId: string,
+    dataSourceId: string,
     objectMetadataEntities: ObjectMetadataEntity[],
     sqlQueryResult: Record<string, any>[],
   ): Promise<any> {
     const uuids = sqlQueryResult
       .flatMap((row) => Object.values(row))
       .filter((value) => isUUID(value, 4));
+
+    const workspaceFeatureFlagsMap = await this.featureFlagFactory.create({
+      workspaceId,
+      dataSourceId,
+    });
 
     const query = `query {
       ${objectMetadataEntities
@@ -90,7 +111,12 @@ export class AskAIService {
       edges {
         node {
           id
-          ${this.getLabelIdentifierSelectionSet(objectMetadata)}
+          ${this.getLabelIdentifierSelectionSet(
+            objectMetadata,
+            dataSourceId,
+            workspaceId,
+            workspaceFeatureFlagsMap,
+          )}
         }
       }
     }`,
@@ -101,6 +127,14 @@ export class AskAIService {
     const records = await this.workspaceQueryRunnerService.execute(
       query,
       workspaceId,
+    );
+
+    console.log(
+      'getDisplayDataById',
+      'query',
+      query,
+      'records',
+      JSON.stringify(records, undefined, 2),
     );
 
     return {} as any;
@@ -240,10 +274,16 @@ export class AskAIService {
           workspaceDataSource,
           workspaceId,
           sqlQuery,
-        ); // TODO: Add return type to executeSQL function?
+        );
 
-      const recordDisplayDataById = await this.getEntitiesById(
+      const { dataSourceMetadata } =
+        await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
+          workspaceId,
+        );
+
+      const recordDisplayDataById = await this.getDisplayDataById(
         workspaceId,
+        dataSourceMetadata.id,
         objectMetadataEntities,
         sqlQueryResult,
       );
