@@ -341,5 +341,10 @@ export class BillingService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    await this.featureFlagRepository.delete({
+      workspaceId,
+      key: FeatureFlagKeys.IsFreeAccessEnabled,
+    });
   }
 }
