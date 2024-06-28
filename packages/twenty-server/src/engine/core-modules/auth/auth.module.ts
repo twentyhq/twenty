@@ -30,6 +30,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -65,6 +66,7 @@ const jwtModule = JwtModule.registerAsync({
     ]),
     HttpModule,
     UserWorkspaceModule,
+    WorkspaceModule,
     OnboardingModule,
     TwentyORMModule.forFeature([CalendarChannelWorkspaceEntity]),
     WorkspaceDataSourceModule,

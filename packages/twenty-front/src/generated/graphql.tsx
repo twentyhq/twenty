@@ -97,8 +97,8 @@ export type Billing = {
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   id: Scalars['UUID'];
-  interval?: Maybe<Scalars['String']>;
-  status: Scalars['String'];
+  interval?: Maybe<SubscriptionInterval>;
+  status: SubscriptionStatus;
 };
 
 export type BillingSubscriptionFilter = {
@@ -347,7 +347,7 @@ export type MutationChallengeArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
-  recurringInterval: Scalars['String'];
+  recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']>;
 };
 
@@ -467,10 +467,14 @@ export type ObjectFieldsConnection = {
   pageInfo: PageInfo;
 };
 
-/** Onboarding step */
-export enum OnboardingStep {
+/** Onboarding status */
+export enum OnboardingStatus {
+  Completed = 'COMPLETED',
   InviteTeam = 'INVITE_TEAM',
-  SyncEmail = 'SYNC_EMAIL'
+  PlanRequired = 'PLAN_REQUIRED',
+  ProfileCreation = 'PROFILE_CREATION',
+  SyncEmail = 'SYNC_EMAIL',
+  WorkspaceActivation = 'WORKSPACE_ACTIVATION'
 }
 
 export type OnboardingStepSuccess = {
@@ -502,7 +506,7 @@ export type PostgresCredentials = {
 export type ProductPriceEntity = {
   __typename?: 'ProductPriceEntity';
   created: Scalars['Float'];
-  recurringInterval: Scalars['String'];
+  recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
   unitAmount: Scalars['Float'];
 };
@@ -684,6 +688,24 @@ export enum SortNulls {
   NullsLast = 'NULLS_LAST'
 }
 
+export enum SubscriptionInterval {
+  Day = 'Day',
+  Month = 'Month',
+  Week = 'Week',
+  Year = 'Year'
+}
+
+export enum SubscriptionStatus {
+  Active = 'Active',
+  Canceled = 'Canceled',
+  Incomplete = 'Incomplete',
+  IncompleteExpired = 'IncompleteExpired',
+  PastDue = 'PastDue',
+  Paused = 'Paused',
+  Trialing = 'Trialing',
+  Unpaid = 'Unpaid'
+}
+
 export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String'];
@@ -827,7 +849,7 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['UUID'];
   lastName: Scalars['String'];
-  onboardingStep?: Maybe<OnboardingStep>;
+  onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetToken?: Maybe<Scalars['String']>;
@@ -896,7 +918,6 @@ export type Workspace = {
   id: Scalars['UUID'];
   inviteHash?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
-  subscriptionStatus: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -1156,7 +1177,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStep?: OnboardingStep | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: string, interval?: string | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   appToken: Scalars['String'];
@@ -1188,7 +1209,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStep?: OnboardingStep | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: string, interval?: string | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -1213,7 +1234,7 @@ export type BillingPortalSessionQueryVariables = Exact<{
 export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSession: { __typename?: 'SessionEntity', url?: string | null } };
 
 export type CheckoutSessionMutationVariables = Exact<{
-  recurringInterval: Scalars['String'];
+  recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']>;
 }>;
 
@@ -1225,7 +1246,7 @@ export type GetProductPricesQueryVariables = Exact<{
 }>;
 
 
-export type GetProductPricesQuery = { __typename?: 'Query', getProductPrices: { __typename?: 'ProductPricesEntity', productPrices: Array<{ __typename?: 'ProductPriceEntity', created: number, recurringInterval: string, stripePriceId: string, unitAmount: number }> } };
+export type GetProductPricesQuery = { __typename?: 'Query', getProductPrices: { __typename?: 'ProductPricesEntity', productPrices: Array<{ __typename?: 'ProductPriceEntity', created: number, recurringInterval: SubscriptionInterval, stripePriceId: string, unitAmount: number }> } };
 
 export type UpdateBillingSubscriptionMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1242,7 +1263,7 @@ export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]
 
 export type SkipSyncEmailOnboardingStepMutation = { __typename?: 'Mutation', skipSyncEmailOnboardingStep: { __typename?: 'OnboardingStepSuccess', success: boolean } };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStep?: OnboardingStep | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: string, interval?: string | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1259,7 +1280,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStep?: OnboardingStep | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: string, interval?: string | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> } };
 
 export type AddUserToWorkspaceMutationVariables = Exact<{
   inviteHash: Scalars['String'];
@@ -1292,7 +1313,7 @@ export type UpdateWorkspaceMutationVariables = Exact<{
 }>;
 
 
-export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: any, domainName?: string | null, displayName?: string | null, logo?: string | null, allowImpersonation: boolean, subscriptionStatus: string } };
+export type UpdateWorkspaceMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: any, domainName?: string | null, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
 
 export type UploadWorkspaceLogoMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -1403,7 +1424,7 @@ export const UserQueryFragmentFragmentDoc = gql`
   email
   canImpersonate
   supportUserHash
-  onboardingStep
+  onboardingStatus
   workspaceMember {
     id
     name {
@@ -1421,7 +1442,6 @@ export const UserQueryFragmentFragmentDoc = gql`
     domainName
     inviteHash
     allowImpersonation
-    subscriptionStatus
     activationStatus
     featureFlags {
       id
@@ -2221,7 +2241,7 @@ export type BillingPortalSessionQueryHookResult = ReturnType<typeof useBillingPo
 export type BillingPortalSessionLazyQueryHookResult = ReturnType<typeof useBillingPortalSessionLazyQuery>;
 export type BillingPortalSessionQueryResult = Apollo.QueryResult<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>;
 export const CheckoutSessionDocument = gql`
-    mutation CheckoutSession($recurringInterval: String!, $successUrlPath: String) {
+    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String) {
   checkoutSession(
     recurringInterval: $recurringInterval
     successUrlPath: $successUrlPath
@@ -2663,7 +2683,6 @@ export const UpdateWorkspaceDocument = gql`
     displayName
     logo
     allowImpersonation
-    subscriptionStatus
   }
 }
     `;

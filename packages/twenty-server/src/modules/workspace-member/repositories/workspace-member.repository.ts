@@ -11,22 +11,6 @@ export class WorkspaceMemberRepository {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async getByIds(
-    userIds: string[],
-    workspaceId: string,
-  ): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const result = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "userId" = ANY($1)`,
-      [userIds],
-      workspaceId,
-    );
-
-    return result;
-  }
-
   public async find(workspaceMemberId: string, workspaceId: string) {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
