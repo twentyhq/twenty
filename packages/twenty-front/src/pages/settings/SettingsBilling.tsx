@@ -114,10 +114,6 @@ export const SettingsBilling = () => {
     }
   };
 
-  const openPlanRequired = () => {
-    window.location.replace(AppPath.PlanRequired);
-  };
-
   const openSwitchingIntervalModal = () => {
     setIsSwitchingIntervalModalOpen(true);
   };
@@ -166,7 +162,7 @@ export const SettingsBilling = () => {
             text={'Subscription canceled. Please start a new one'}
             buttonTitle={'Subscribe'}
             accent={'danger'}
-            onClick={openPlanRequired}
+            to={AppPath.PlanRequired}
           />
         )}
         {displaySubscribeInfo ? (
@@ -174,7 +170,7 @@ export const SettingsBilling = () => {
             text={'Your workspace does not have an active subscription'}
             buttonTitle={'Subscribe'}
             accent={'danger'}
-            onClick={openPlanRequired}
+            to={AppPath.PlanRequired}
           />
         ) : (
           <>
