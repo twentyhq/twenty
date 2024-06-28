@@ -4,6 +4,7 @@ import { styled } from '@linaria/react';
 import { IconComponent, OverflowingTextWithTooltip } from '@ui/display';
 import {
   BORDER_COMMON,
+  COLOR,
   THEME_COMMON,
   ThemeColor,
   ThemeContext,
@@ -16,14 +17,17 @@ const spacing1 = THEME_COMMON.spacing(1);
 
 const StyledTag = styled.h3<{
   theme: ThemeType;
-  color: ThemeColor;
+  color: TagColor;
   weight: TagWeight;
+  variant: TagVariant;
   preventShrink?: boolean;
 }>`
   align-items: center;
-  background: ${({ color, theme }) => theme.tag.background[color]};
+  background: ${({ color, theme }) =>
+    color === 'transparent' ? color : theme.tag.background[color]};
   border-radius: ${BORDER_COMMON.radius.sm};
-  color: ${({ color, theme }) => theme.tag.text[color]};
+  color: ${({ color, theme }) =>
+    color === 'transparent' ? COLOR.gray50 : theme.tag.text[color]};
   display: inline-flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;
@@ -35,6 +39,10 @@ const StyledTag = styled.h3<{
   margin: 0;
   overflow: hidden;
   padding: 0 ${spacing2};
+  border: ${({ variant, theme }) =>
+    variant === 'outline'
+      ? `2px dashed ${theme.tag.background['gray']}`
+      : ''};
 
   gap: ${spacing1};
 
@@ -58,14 +66,17 @@ const StyledIconContainer = styled.div`
 `;
 
 type TagWeight = 'regular' | 'medium';
+type TagVariant = 'solid' | 'outline';
+type TagColor = ThemeColor | 'transparent';
 
 type TagProps = {
   className?: string;
-  color: ThemeColor;
+  color: TagColor;
   text: string;
   Icon?: IconComponent;
   onClick?: () => void;
   weight?: TagWeight;
+  variant?: TagVariant;
   preventShrink?: boolean;
 };
 
@@ -77,6 +88,7 @@ export const Tag = ({
   Icon,
   onClick,
   weight = 'regular',
+  variant = 'solid',
   preventShrink,
 }: TagProps) => {
   const { theme } = useContext(ThemeContext);
@@ -88,6 +100,7 @@ export const Tag = ({
       color={color}
       onClick={onClick}
       weight={weight}
+      variant={variant}
       preventShrink={preventShrink}
     >
       {!!Icon && (
