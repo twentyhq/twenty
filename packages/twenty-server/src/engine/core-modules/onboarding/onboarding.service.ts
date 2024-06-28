@@ -10,7 +10,6 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -36,7 +35,6 @@ export class OnboardingService {
   constructor(
     private readonly billingService: BillingService,
     private readonly workspaceManagerService: WorkspaceManagerService,
-    private readonly environmentService: EnvironmentService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly keyValuePairService: KeyValuePairService<OnboardingKeyValueType>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)

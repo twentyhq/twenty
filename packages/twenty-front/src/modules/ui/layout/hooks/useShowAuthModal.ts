@@ -1,19 +1,20 @@
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { useWorkspaceHasSubscription } from '@/workspace/hooks/useWorkspaceHasSubscription';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { isDefined } from '~/utils/isDefined';
 
 export const useShowAuthModal = () => {
   const isMatchingLocation = useIsMatchingLocation();
+  const isLoggedIn = useIsLogged();
   const onboardingStatus = useOnboardingStatus();
   const subscriptionStatus = useSubscriptionStatus();
-  const workspaceHasSubscription = useWorkspaceHasSubscription();
   const isDefaultLayoutAuthModalVisible = useRecoilValue(
     isDefaultLayoutAuthModalVisibleState,
   );
@@ -28,7 +29,7 @@ export const useShowAuthModal = () => {
       return isDefaultLayoutAuthModalVisible;
     }
     if (
-      !onboardingStatus ||
+      !isLoggedIn ||
       onboardingStatus === OnboardingStatus.PlanRequired ||
       onboardingStatus === OnboardingStatus.ProfileCreation ||
       onboardingStatus === OnboardingStatus.WorkspaceActivation ||
@@ -40,15 +41,15 @@ export const useShowAuthModal = () => {
     if (isMatchingLocation(AppPath.PlanRequired)) {
       return (
         (onboardingStatus === OnboardingStatus.Completed &&
-          !workspaceHasSubscription) ||
+          !isDefined(subscriptionStatus)) ||
         subscriptionStatus === SubscriptionStatus.Canceled
       );
     }
     return false;
   }, [
+    isLoggedIn,
     isDefaultLayoutAuthModalVisible,
     isMatchingLocation,
-    workspaceHasSubscription,
     onboardingStatus,
     subscriptionStatus,
   ]);

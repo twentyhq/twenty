@@ -1,17 +1,18 @@
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { useWorkspaceHasSubscription } from '@/workspace/hooks/useWorkspaceHasSubscription';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { isDefined } from '~/utils/isDefined';
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isMatchingLocation = useIsMatchingLocation();
+  const isLoggedIn = useIsLogged();
   const onboardingStatus = useOnboardingStatus();
   const subscriptionStatus = useSubscriptionStatus();
-  const workspaceHasSubscription = useWorkspaceHasSubscription();
   const { defaultHomePagePath } = useDefaultHomePagePath();
 
   const isMatchingOpenRoute =
@@ -36,7 +37,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     return;
   }
 
-  if (!onboardingStatus && !isMatchingOngoingUserCreationRoute) {
+  if (!isLoggedIn && !isMatchingOngoingUserCreationRoute) {
     return AppPath.SignInUp;
   }
 
@@ -99,18 +100,9 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.Completed &&
-    workspaceHasSubscription &&
-    subscriptionStatus !== SubscriptionStatus.Canceled &&
-    isMatchingOnboardingRoute
-  ) {
-    return defaultHomePagePath;
-  }
-
-  if (
-    onboardingStatus === OnboardingStatus.Completed &&
-    !workspaceHasSubscription &&
     isMatchingOnboardingRoute &&
-    !isMatchingLocation(AppPath.PlanRequired)
+    subscriptionStatus !== SubscriptionStatus.Canceled &&
+    (isDefined(subscriptionStatus) || !isMatchingLocation(AppPath.PlanRequired))
   ) {
     return defaultHomePagePath;
   }

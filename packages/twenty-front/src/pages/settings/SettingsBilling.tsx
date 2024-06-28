@@ -24,7 +24,6 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { useWorkspaceHasSubscription } from '@/workspace/hooks/useWorkspaceHasSubscription';
 import {
   OnboardingStatus,
   SubscriptionInterval,
@@ -72,7 +71,6 @@ export const SettingsBilling = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
   const subscriptionStatus = useSubscriptionStatus();
-  const workspaceHasSubscription = useWorkspaceHasSubscription();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const switchingInfo =
@@ -108,7 +106,7 @@ export const SettingsBilling = () => {
 
   const displaySubscribeInfo =
     onboardingStatus === OnboardingStatus.Completed &&
-    !workspaceHasSubscription;
+    !isDefined(subscriptionStatus);
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
