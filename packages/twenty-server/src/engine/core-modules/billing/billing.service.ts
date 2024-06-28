@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
@@ -49,6 +49,25 @@ export class BillingService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
+
+  async getActiveSubscriptionWorkspaceIds() {
+    return (
+      await this.workspaceRepository.find({
+        where: this.environmentService.get('IS_BILLING_ENABLED')
+          ? {
+              currentBillingSubscription: {
+                status: In([
+                  SubscriptionStatus.Active,
+                  SubscriptionStatus.Trialing,
+                  SubscriptionStatus.PastDue,
+                ]),
+              },
+            }
+          : {},
+        select: ['id'],
+      })
+    ).map((workspace) => workspace.id);
+  }
 
   async isBillingEnabledForWorkspace(workspaceId: string) {
     const isFreeAccessEnabled = await this.featureFlagRepository.findOneBy({
