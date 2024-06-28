@@ -30,6 +30,7 @@ const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   justify-content: space-between;
   max-width: 512px;
+  gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
   ${({ theme, accent }) => {
     switch (accent) {

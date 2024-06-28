@@ -41,7 +41,7 @@ const defaultHomePagePath = '/objects/companies';
 
 jest.mock('~/hooks/useDefaultHomePagePath');
 jest.mocked(useDefaultHomePagePath).mockReturnValue({
-  defaultHomePagePath: '/objects/companies',
+  defaultHomePagePath,
 });
 
 // prettier-ignore
