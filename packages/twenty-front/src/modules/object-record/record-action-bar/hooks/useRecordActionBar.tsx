@@ -168,13 +168,7 @@ export const useRecordActionBar = ({
             },
           ]
         : [],
-    [
-      maxRecords,
-      selectedRecordIds.length,
-      isDeleteRecordsModalOpen,
-      recordsNum,
-      handleDeleteClick,
-    ],
+    [maxRecords, isDeleteRecordsModalOpen, recordsNum, handleDeleteClick],
   );
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
