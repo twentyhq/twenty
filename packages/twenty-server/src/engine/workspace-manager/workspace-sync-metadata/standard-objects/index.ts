@@ -28,6 +28,7 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
+// TODO: Maybe we should automate this with the DisocverService of Nest.JS
 export const standardObjectMetadataDefinitions = [
   ActivityTargetWorkspaceEntity,
   ActivityWorkspaceEntity,

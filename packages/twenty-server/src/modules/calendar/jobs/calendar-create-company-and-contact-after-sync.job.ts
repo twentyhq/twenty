@@ -74,7 +74,7 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
             calendarChannelEventAssociations: {
               calendarChannelId,
             },
-            calendarEventParticipants: {
+            eventParticipants: {
               person: IsNull(),
               workspaceMember: IsNull(),
             },

@@ -51,5 +51,5 @@ export const formatGoogleCalendarEvent = (
         isOrganizer: attendee.organizer === true,
         responseStatus: formatResponseStatus(attendee.responseStatus),
       })) ?? [],
-  };
+  } as any;
 };
