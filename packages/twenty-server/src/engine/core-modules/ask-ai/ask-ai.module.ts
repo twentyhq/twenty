@@ -12,6 +12,7 @@ import { EnvironmentModule } from 'src/engine/integrations/environment/environme
 import { LLMTracingModule } from 'src/engine/integrations/llm-tracing/llm-tracing.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 @Module({
   imports: [
     WorkspaceDataSourceModule,
@@ -23,6 +24,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     EnvironmentModule,
     ObjectMetadataModule,
     WorkspaceSyncMetadataModule,
+    TwentyORMModule, // Or TwentyORMManager?
   ],
   exports: [],
   providers: [AskAIResolver, AskAIService],

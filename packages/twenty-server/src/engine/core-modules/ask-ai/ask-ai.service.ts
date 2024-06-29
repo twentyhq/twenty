@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { RunnableSequence } from '@langchain/core/runnables';
 import { StructuredOutputParser } from '@langchain/core/output_parsers';
-import { isUUID } from 'class-validator';
 import { DataSource, QueryFailedError } from 'typeorm';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
@@ -20,13 +19,10 @@ import { sqlGenerationPromptTemplate } from 'src/engine/core-modules/ask-ai/ask-
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { FeatureFlagFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/feature-flags.factory';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { capitalize } from 'src/utils/capitalize';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 
 @Injectable()
 export class AskAIService {
@@ -39,9 +35,10 @@ export class AskAIService {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly standardObjectFactory: StandardObjectFactory,
     private readonly featureFlagFactory: FeatureFlagFactory,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
-  private getLabelIdentifierSelectionSet(
+  private getLabelIdentifierName(
     objectMetadata: ObjectMetadataEntity,
     dataSourceId,
     workspaceId,
@@ -73,75 +70,15 @@ export class AskAIService {
       customObjectLabelIdentifierFieldMetadata ??
       standardObjectLabelIdentifierFieldMetadata;
 
-    if (!labelIdentifierFieldMetadata)
-      return DEFAULT_LABEL_IDENTIFIER_FIELD_NAME;
-
-    if (isCompositeFieldMetadataType(labelIdentifierFieldMetadata.type)) {
-      return compositeTypeDefintions
-        .get(labelIdentifierFieldMetadata.type)
-        ?.properties.map(
-          (property) =>
-            `${labelIdentifierFieldMetadata.name}${capitalize(property.name)}`,
-        )
-        .join('\n');
-    }
-
-    return labelIdentifierFieldMetadata.name;
-  }
-
-  private async getDisplayDataById(
-    workspaceId: string,
-    dataSourceId: string,
-    objectMetadataEntities: ObjectMetadataEntity[],
-    sqlQueryResult: Record<string, any>[],
-  ): Promise<any> {
-    const uuids = sqlQueryResult
-      .flatMap((row) => Object.values(row))
-      .filter((value) => isUUID(value, 4));
-
-    const workspaceFeatureFlagsMap = await this.featureFlagFactory.create({
-      workspaceId,
-      dataSourceId,
-    });
-
-    const query = `query {
-      ${objectMetadataEntities
-        .map(
-          (objectMetadata) => `${computeObjectTargetTable(
-            objectMetadata,
-          )}Collection(filter: {id: {in: [${uuids
-            .map((uuid) => `"${uuid}"`)
-            .join(', ')}]}}) {
-      edges {
-        node {
-          __typename
-          id
-          ${this.getLabelIdentifierSelectionSet(
-            objectMetadata,
-            dataSourceId,
-            workspaceId,
-            workspaceFeatureFlagsMap,
-          )}
-        }
-      }
-    }`,
-        )
-        .join('\n')}}`;
-
-    const records = await this.workspaceQueryRunnerService.execute(
-      query,
-      workspaceId,
+    return (
+      labelIdentifierFieldMetadata?.name ?? DEFAULT_LABEL_IDENTIFIER_FIELD_NAME
     );
-
-    console.log('records\n\n', JSON.stringify(records, undefined, 2));
-
-    return records;
   }
 
   private async getColInfosByTableName(dataSource: DataSource) {
     const { schema } = dataSource.options as PostgresConnectionOptions;
 
-    // From LangChain sql_utils.ts - TODO: Move elsewhere or replace with a query to fieldMetadata?
+    // From LangChain sql_utils.ts
     const sqlQuery = `SELECT 
               t.table_name, 
               c.* 
@@ -187,7 +124,7 @@ export class AskAIService {
   private getTableDescription(tableName: string, colInfos: any[]) {
     return [
       this.getCreateTableStatement(tableName, colInfos),
-      // this.getRelationDescriptions(),
+      this.getRelationDescriptions(),
     ].join('\n');
   }
 
@@ -218,11 +155,6 @@ export class AskAIService {
       );
 
     workspaceDataSource.setOptions({ schema: workspaceSchemaName });
-
-    const objectMetadataEntities =
-      await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
-        where: { isSystem: false, isActive: true },
-      });
 
     const workspaceSchemaDescription =
       await this.getWorkspaceSchemaDescription(workspaceDataSource);
@@ -271,22 +203,9 @@ export class AskAIService {
           sqlQuery,
         );
 
-      const { dataSourceMetadata } =
-        await this.workspaceDataSourceService.connectedToWorkspaceDataSourceAndReturnMetadata(
-          workspaceId,
-        );
-
-      const recordDisplayDataById = await this.getDisplayDataById(
-        workspaceId,
-        dataSourceMetadata.id,
-        objectMetadataEntities,
-        sqlQueryResult,
-      );
-
       return {
         sqlQuery,
         sqlQueryResult: JSON.stringify(sqlQueryResult),
-        recordDisplayDataById,
       };
     } catch (error) {
       if (error instanceof QueryFailedError) {

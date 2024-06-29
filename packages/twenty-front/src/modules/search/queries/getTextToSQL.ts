@@ -5,7 +5,6 @@ export const getAskAI = gql`
     getAskAI(text: $text) {
       sqlQuery
       sqlQueryResult
-      recordDisplayDataById
       queryFailedErrorMessage
     }
   }
