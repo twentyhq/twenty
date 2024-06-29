@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { RunnableSequence } from '@langchain/core/runnables';
 import { StructuredOutputParser } from '@langchain/core/output_parsers';
@@ -25,9 +25,12 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { FeatureFlagFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/feature-flags.factory';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { capitalize } from 'src/utils/capitalize';
 
 @Injectable()
 export class AskAIService {
+  private readonly logger = new Logger(AskAIService.name);
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
@@ -74,12 +77,13 @@ export class AskAIService {
       return DEFAULT_LABEL_IDENTIFIER_FIELD_NAME;
 
     if (isCompositeFieldMetadataType(labelIdentifierFieldMetadata.type)) {
-      return `${labelIdentifierFieldMetadata.name} {
-        ${compositeTypeDefintions
-          .get(labelIdentifierFieldMetadata.type)
-          ?.properties.map((property) => property.name)
-          .join('\n')}
-      }`;
+      return compositeTypeDefintions
+        .get(labelIdentifierFieldMetadata.type)
+        ?.properties.map(
+          (property) =>
+            `${labelIdentifierFieldMetadata.name}${capitalize(property.name)}`,
+        )
+        .join('\n');
     }
 
     return labelIdentifierFieldMetadata.name;
@@ -103,13 +107,14 @@ export class AskAIService {
     const query = `query {
       ${objectMetadataEntities
         .map(
-          (objectMetadata) => `${
-            objectMetadata.namePlural
-          }(filter: {id: {in: [${uuids
+          (objectMetadata) => `${computeObjectTargetTable(
+            objectMetadata,
+          )}Collection(filter: {id: {in: [${uuids
             .map((uuid) => `"${uuid}"`)
             .join(', ')}]}}) {
       edges {
         node {
+          __typename
           id
           ${this.getLabelIdentifierSelectionSet(
             objectMetadata,
@@ -123,21 +128,14 @@ export class AskAIService {
         )
         .join('\n')}}`;
 
-    // this.workspaceQueryRunnerService.executeAndParse?
     const records = await this.workspaceQueryRunnerService.execute(
       query,
       workspaceId,
     );
 
-    console.log(
-      'getDisplayDataById',
-      'query',
-      query,
-      'records',
-      JSON.stringify(records, undefined, 2),
-    );
+    console.log('records\n\n', JSON.stringify(records, undefined, 2));
 
-    return {} as any;
+    return records;
   }
 
   private async getColInfosByTableName(dataSource: DataSource) {
@@ -181,10 +179,7 @@ export class AskAIService {
   }
 
   private getRelationDescriptions() {
-    // TODO:
-    // 1. Get all fieldMetadata related to object as an argument (to avoid per-table queries)
-    // 2. Get all relationMetadata related to fields as an argument (call findManyRelationMetadataByFieldMetadataIds outside this function?)
-    // 3. Construct sentences like the following:
+    // TODO - Construct sentences like the following:
     // investorId: a foreign key referencing the person table, indicating the investor who owns this portfolio company.
     return '';
   }
@@ -301,7 +296,8 @@ export class AskAIService {
         };
       }
 
-      // TODO: logger.log error
+      this.logger.error(error.message, error.stack);
+
       return {
         sqlQuery,
       };
