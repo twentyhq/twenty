@@ -10,6 +10,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageThreadMember,
@@ -28,11 +29,13 @@ export class MessageThreadMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Message Thread',
     description: 'Message Thread that the member is part of',
     icon: 'IconMessage',
-    joinColumn: 'messageThreadId',
     inverseSideFieldKey: 'messageThreadMember',
     inverseSideTarget: () => MessageThreadWorkspaceEntity,
   })
   messageThread: Relation<MessageThreadWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('messageThread')
+  messageThreadId: string;
 
   @WorkspaceRelation({
     standardId: MESSAGE_THREAD_MEMBERS_STANDARD_FIELD_IDS.workspaceMember,
@@ -40,9 +43,11 @@ export class MessageThreadMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Workspace Member',
     description: 'Workspace Member that is part of the message thread',
     icon: 'IconCircleUser',
-    joinColumn: 'workspaceMemberId',
     inverseSideFieldKey: 'messageThreadMember',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
   })
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('workspaceMember')
+  workspaceMemberId: string;
 }
