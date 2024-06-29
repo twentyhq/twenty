@@ -118,7 +118,7 @@
         "config-dir": ".storybook"
       }
     },
-    "storybook:dev": {
+    "storybook:serve:dev": {
       "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": ["^build"],
@@ -128,7 +128,7 @@
         "config-dir": ".storybook"
       }
     },
-    "storybook:static": {
+    "storybook:serve:static": {
       "executor": "nx:run-commands",
       "dependsOn": ["storybook:build"],
       "options": {
@@ -138,6 +138,33 @@
         "host": "localhost",
         "port": 6006,
         "silent": true
+      }
+    },
+    "storybook:test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["^default", "excludeTests"],
+      "outputs": ["{projectRoot}/coverage/storybook"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "test-storybook --url http://localhost:{args.port} --maxWorkers=3 --coverage --coverageDirectory={args.coverageDir}",
+          "nx storybook:coverage {projectName} --coverageDir={args.coverageDir}"
+        ],
+        "parallel": false,
+        "coverageDir": "coverage/storybook",
+        "port": 6006
+      }
+    },
+    "storybook:test:no-coverage": {
+      "executor": "nx:runcommands",
+      "inputs": ["^defaut", "excludeTests"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "test-storybook --url http://localhost:{args.port} --maxWorkers=3"
+        ],
+        "port": 6006
       }
     },
     "storybook:coverage": {
@@ -161,34 +188,7 @@
         "text": { "reporter": "text" }
       }
     },
-    "storybook:test": {
-      "executor": "nx:run-commands",
-      "cache": true,
-      "inputs": ["^default", "excludeTests"],
-      "outputs": ["{projectRoot}/coverage/storybook"],
-      "options": {
-        "cwd": "{projectRoot}",
-        "commands": [
-          "test-storybook --url http://localhost:{args.port} --maxWorkers=3 --coverage --coverageDirectory={args.coverageDir}",
-          "nx storybook:coverage {projectName} --coverageDir={args.coverageDir}"
-        ],
-        "parallel": false,
-        "coverageDir": "coverage/storybook",
-        "port": 6006
-      }
-    },
-    "storybook:test:nocoverage": {
-      "executor": "nx:run-commands",
-      "inputs": ["^default", "excludeTests"],
-      "options": {
-        "cwd": "{projectRoot}",
-        "commands": [
-          "test-storybook --url http://localhost:{args.port} --maxWorkers=3"
-        ],
-        "port": 6006
-      }
-    },
-    "storybook:static:test": {
+    "storybook:serve-and-test:static": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -197,7 +197,7 @@
         "port": 6006
       }
     },
-    "storybook:performance:test": {
+    "storybook:serve-and-test:static:performance": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
