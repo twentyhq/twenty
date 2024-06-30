@@ -324,7 +324,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
-  MUTATION_MAXIMUM_RECORD_AFFECTED = 100;
+  MUTATION_MAXIMUM_AFFECTED_RECORDS = 100;
 
   REDIS_HOST = '127.0.0.1';
 

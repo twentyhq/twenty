@@ -1,24 +1,24 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException, Scope } from '@nestjs/common';
 
-import { WorkspacePreQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-pre-query-hook.interface';
+import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { CanAccessCalendarEventService } from 'src/modules/calendar/query-hooks/calendar-event/services/can-access-calendar-event.service';
-import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
 
-@Injectable()
-export class CalendarEventFindOnePreQueryHook implements WorkspacePreQueryHook {
+@WorkspaceQueryHook({
+  key: `calendarEvent.findOne`,
+  scope: Scope.REQUEST,
+})
+export class CalendarEventFindOnePreQueryHook
+  implements WorkspaceQueryHookInstance
+{
   constructor(
-    @InjectObjectMetadataRepository(
-      CalendarChannelEventAssociationWorkspaceEntity,
-    )
-    private readonly calendarChannelEventAssociationRepository: CalendarChannelEventAssociationRepository,
+    @InjectWorkspaceRepository(CalendarChannelEventAssociationWorkspaceEntity)
+    private readonly calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>,
     private readonly canAccessCalendarEventService: CanAccessCalendarEventService,
   ) {}
 
@@ -31,11 +31,14 @@ export class CalendarEventFindOnePreQueryHook implements WorkspacePreQueryHook {
       throw new BadRequestException('id filter is required');
     }
 
+    // TODO: Re-implement this using twenty ORM
     const calendarChannelCalendarEventAssociations =
-      await this.calendarChannelEventAssociationRepository.getByCalendarEventIds(
-        [payload?.filter?.id?.eq],
-        workspaceId,
-      );
+      await this.calendarChannelEventAssociationRepository.find({
+        where: {
+          calendarEventId: payload?.filter?.id?.eq,
+        },
+        relations: ['calendarChannel.connectedAccount'],
+      });
 
     if (calendarChannelCalendarEventAssociations.length === 0) {
       throw new NotFoundException();

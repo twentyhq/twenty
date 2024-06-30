@@ -7,6 +7,7 @@ import {
   Table,
   TableColumn,
   TableForeignKey,
+  TableIndex,
   TableUnique,
 } from 'typeorm';
 
@@ -22,6 +23,8 @@ import {
   WorkspaceMigrationColumnDropRelation,
   WorkspaceMigrationTableActionType,
   WorkspaceMigrationForeignTable,
+  WorkspaceMigrationIndexAction,
+  WorkspaceMigrationIndexActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
@@ -151,6 +154,7 @@ export class WorkspaceMigrationRunnerService {
             workspaceId,
           );
         }
+
         break;
       }
       case WorkspaceMigrationTableActionType.DROP:
@@ -177,10 +181,47 @@ export class WorkspaceMigrationRunnerService {
           tableMigration.columns,
         );
         break;
+
+      case WorkspaceMigrationTableActionType.ALTER_INDEXES:
+        if (tableMigration.indexes && tableMigration.indexes.length > 0) {
+          await this.handleIndexesChanges(
+            queryRunner,
+            schemaName,
+            tableMigration.newName ?? tableMigration.name,
+            tableMigration.indexes,
+          );
+        }
+        break;
       default:
         throw new Error(
           `Migration table action ${tableMigration.action} not supported`,
         );
+    }
+  }
+
+  private async handleIndexesChanges(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    indexes: WorkspaceMigrationIndexAction[],
+  ) {
+    for (const index of indexes) {
+      switch (index.action) {
+        case WorkspaceMigrationIndexActionType.CREATE:
+          await queryRunner.createIndex(
+            `${schemaName}.${tableName}`,
+            new TableIndex({
+              name: index.name,
+              columnNames: index.columns,
+            }),
+          );
+          break;
+        case WorkspaceMigrationIndexActionType.DROP:
+          await queryRunner.dropIndex(`${schemaName}.${tableName}`, index.name);
+          break;
+        default:
+          throw new Error(`Migration index action not supported`);
+      }
     }
   }
 

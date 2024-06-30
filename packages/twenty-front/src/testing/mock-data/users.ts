@@ -1,5 +1,11 @@
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { User, Workspace } from '~/generated/graphql';
+import {
+  OnboardingStatus,
+  SubscriptionInterval,
+  SubscriptionStatus,
+  User,
+  Workspace,
+} from '~/generated/graphql';
 
 type MockedUser = Pick<
   User,
@@ -10,7 +16,7 @@ type MockedUser = Pick<
   | 'canImpersonate'
   | '__typename'
   | 'supportUserHash'
-  | 'onboardingStep'
+  | 'onboardingStatus'
 > & {
   workspaceMember: WorkspaceMember | null;
   locale: string;
@@ -30,7 +36,6 @@ export const mockDefaultWorkspace: Workspace = {
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
   allowImpersonation: true,
-  subscriptionStatus: 'active',
   activationStatus: 'active',
   featureFlags: [
     {
@@ -58,8 +63,8 @@ export const mockDefaultWorkspace: Workspace = {
   currentBillingSubscription: {
     __typename: 'BillingSubscription',
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
-    interval: 'month',
-    status: 'active',
+    interval: SubscriptionInterval.Month,
+    status: SubscriptionStatus.Active,
   },
 };
 
@@ -79,49 +84,26 @@ export const mockedWorkspaceMemberData: WorkspaceMember = {
   userEmail: 'charles@test.com',
 };
 
-export const mockedUsersData: Array<MockedUser> = [
-  {
-    id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
-    __typename: 'User',
-    email: 'charles@test.com',
-    firstName: 'Charles',
-    lastName: 'Test',
-    canImpersonate: false,
-    supportUserHash:
-      'a95afad9ff6f0b364e2a3fd3e246a1a852c22b6e55a3ca33745a86c201f9c10d',
-    workspaceMember: mockedWorkspaceMemberData,
-    defaultWorkspace: mockDefaultWorkspace,
-    locale: 'en',
-    workspaces: [{ workspace: mockDefaultWorkspace }],
-    onboardingStep: null,
-  },
-  {
-    id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
-    __typename: 'User',
-    email: 'felix@test.com',
-    firstName: 'Felix',
-    lastName: 'Test',
-    canImpersonate: false,
-    supportUserHash:
-      '54ac3986035961724cdb9a7a30c70e6463a4b68f0ecd2014c727171a82144b74',
-    workspaceMember: {
-      ...mockedWorkspaceMemberData,
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
-      name: {
-        firstName: 'Felix',
-        lastName: 'Test',
-      },
-      userId: '81aeb270-d689-4515-bd5d-35dbe956da3b',
-    },
-    defaultWorkspace: mockDefaultWorkspace,
-    locale: 'en',
-    workspaces: [{ workspace: mockDefaultWorkspace }],
-    onboardingStep: null,
-  },
-];
+export const mockedUserData: MockedUser = {
+  id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
+  __typename: 'User',
+  email: 'charles@test.com',
+  firstName: 'Charles',
+  lastName: 'Test',
+  canImpersonate: false,
+  supportUserHash:
+    'a95afad9ff6f0b364e2a3fd3e246a1a852c22b6e55a3ca33745a86c201f9c10d',
+  workspaceMember: mockedWorkspaceMemberData,
+  defaultWorkspace: mockDefaultWorkspace,
+  locale: 'en',
+  workspaces: [{ workspace: mockDefaultWorkspace }],
+  onboardingStatus: OnboardingStatus.Completed,
+};
 
-export const mockedOnboardingUsersData: Array<MockedUser> = [
-  {
+export const mockedOnboardingUserData = (
+  onboardingStatus?: OnboardingStatus,
+) => {
+  return {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
     __typename: 'User',
     email: 'workspace-onboarding@test.com',
@@ -130,35 +112,10 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     canImpersonate: false,
     supportUserHash:
       '4fb61d34ed3a4aeda2476d4b308b5162db9e1809b2b8277e6fdc6efc4a609254',
-    workspaceMember: {
-      ...mockedWorkspaceMemberData,
-      id: 'd454f075-c72f-4ebe-bac7-d28e75e74a23',
-      name: {
-        firstName: '',
-        lastName: '',
-      },
-
-      userId: '7f793378-b939-43b7-8642-292c9510754c',
-    },
+    workspaceMember: null,
     defaultWorkspace: mockDefaultWorkspace,
     locale: 'en',
     workspaces: [{ workspace: mockDefaultWorkspace }],
-    onboardingStep: null,
-  },
-  {
-    id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
-    __typename: 'User',
-    email: 'profile-onboarding@test.com',
-    firstName: '',
-    lastName: '',
-    canImpersonate: false,
-    workspaceMember: null,
-    defaultWorkspace: {
-      ...mockDefaultWorkspace,
-      activationStatus: 'inactive',
-    },
-    locale: 'en',
-    workspaces: [{ workspace: mockDefaultWorkspace }],
-    onboardingStep: null,
-  },
-];
+    onboardingStatus: onboardingStatus || null,
+  };
+};

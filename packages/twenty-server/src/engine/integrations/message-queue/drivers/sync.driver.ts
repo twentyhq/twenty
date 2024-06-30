@@ -39,7 +39,7 @@ export class SyncDriver implements MessageQueueDriver {
     });
   }
 
-  async removeCron(queueName: MessageQueue, jobName: string) {
+  async removeCron(queueName: MessageQueue) {
     this.logger.log(`Removing '${queueName}' cron job with SyncDriver`);
   }
 

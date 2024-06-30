@@ -1,4 +1,4 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -41,8 +41,6 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
 
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
-  const { tableLastRowVisibleState } = useRecordTableStates();
-  const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const params = useFindManyParams(objectNameSingular);
 
@@ -58,7 +56,6 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     ...params,
     recordGqlFields,
     onCompleted: () => {
-      setLastRowVisible(false);
       setIsRecordTableInitialLoading(false);
     },
     onError: () => {

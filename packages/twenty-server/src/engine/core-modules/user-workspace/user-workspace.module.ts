@@ -9,6 +9,8 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Module({
   imports: [
@@ -21,6 +23,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
       ],
       services: [UserWorkspaceService],
     }),
+    TwentyORMModule.forFeature([WorkspaceMemberWorkspaceEntity]),
   ],
   exports: [UserWorkspaceService],
   providers: [UserWorkspaceService],

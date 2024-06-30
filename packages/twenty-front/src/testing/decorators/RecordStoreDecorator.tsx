@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import { Decorator } from '@storybook/react';
 
-import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
 export const RecordStoreDecorator: Decorator = (Story, context) => {
   const { records } = context.parameters;
 
-  const { setRecords } = useSetRecordInStore();
+  const { upsertRecords } = useUpsertRecordsInStore();
 
   useEffect(() => {
-    setRecords(records);
+    upsertRecords(records);
   });
 
   return <Story />;

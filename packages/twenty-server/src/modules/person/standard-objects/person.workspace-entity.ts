@@ -23,6 +23,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
@@ -41,7 +42,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
   })
   @WorkspaceIsNullable()
-  name: FullNameMetadata;
+  name: FullNameMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.email,
@@ -60,7 +61,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBrandLinkedin',
   })
   @WorkspaceIsNullable()
-  linkedinLink: LinkMetadata;
+  linkedinLink: LinkMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.xLink,
@@ -70,7 +71,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconBrandX',
   })
   @WorkspaceIsNullable()
-  xLink: LinkMetadata;
+  xLink: LinkMetadata | null;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.jobTitle,
@@ -118,7 +119,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  position: number;
+  position: number | null;
 
   // Relations
   @WorkspaceRelation({
@@ -127,12 +128,14 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Company',
     description: 'Contact’s company',
     icon: 'IconBuildingSkyscraper',
-    joinColumn: 'companyId',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'people',
   })
   @WorkspaceIsNullable()
-  company: Relation<CompanyWorkspaceEntity>;
+  company: Relation<CompanyWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('company')
+  companyId: string | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,

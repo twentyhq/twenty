@@ -20,8 +20,8 @@ describe('useRecoilScopeId', () => {
       ),
     });
 
-    const scopedId = result.current;
-    expect(scopedId).toBe(mockedContextValue);
+    const scopeId = result.current;
+    expect(scopeId).toBe(mockedContextValue);
   });
 
   it('Should throw an error when used outside of the specified context', () => {

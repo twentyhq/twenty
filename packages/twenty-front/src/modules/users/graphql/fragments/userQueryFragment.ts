@@ -8,7 +8,7 @@ export const USER_QUERY_FRAGMENT = gql`
     email
     canImpersonate
     supportUserHash
-    onboardingStep
+    onboardingStatus
     workspaceMember {
       id
       name {
@@ -26,7 +26,6 @@ export const USER_QUERY_FRAGMENT = gql`
       domainName
       inviteHash
       allowImpersonation
-      subscriptionStatus
       activationStatus
       featureFlags {
         id

@@ -10,7 +10,6 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import Stripe from 'stripe';
 
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -84,10 +83,6 @@ export class Workspace {
 
   @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
   featureFlags: Relation<FeatureFlagEntity[]>;
-
-  @Field(() => String)
-  @Column({ type: 'text', default: 'incomplete' })
-  subscriptionStatus: Stripe.Subscription.Status;
 
   @Field({ nullable: true })
   currentBillingSubscription: BillingSubscription;

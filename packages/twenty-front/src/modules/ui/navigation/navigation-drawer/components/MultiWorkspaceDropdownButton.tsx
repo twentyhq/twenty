@@ -33,9 +33,11 @@ const StyledContainer = styled.div`
   border: 1px solid transparent;
   display: flex;
   justify-content: space-between;
-  height: ${({ theme }) => theme.spacing(7)};
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(5)};
+  padding: calc(${({ theme }) => theme.spacing(1)} - 1px);
   width: 100%;
+
+  gap: ${({ theme }) => theme.spacing(1)};
 
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -46,7 +48,6 @@ const StyledContainer = styled.div`
 const StyledLabel = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`

@@ -141,8 +141,10 @@ export class GraphQLConfigService
     // Create a new contextId for each request
     const contextId = ContextIdFactory.create();
 
-    // Register the request in the contextId
-    this.moduleRef.registerRequestByContextId(context.req, contextId);
+    if (this.moduleRef.registerRequestByContextId) {
+      // Register the request in the contextId
+      this.moduleRef.registerRequestByContextId(context.req, contextId);
+    }
 
     // Resolve the WorkspaceSchemaFactory for the contextId
     const workspaceFactory = await this.moduleRef.resolve(

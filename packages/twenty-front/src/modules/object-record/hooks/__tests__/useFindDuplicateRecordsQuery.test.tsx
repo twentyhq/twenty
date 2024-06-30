@@ -5,8 +5,8 @@ import { RecoilRoot } from 'recoil';
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 
 const expectedQueryTemplate = `
-  query FindDuplicatePerson($id: ID!) {
-    personDuplicates(id: $id) {
+  query FindDuplicatePerson($ids: [ID!]!) {
+    personDuplicates(ids: $ids) {
       edges {
         node {
           __typename
@@ -39,7 +39,6 @@ const expectedQueryTemplate = `
         startCursor
         endCursor
       }
-      totalCount
      }
     }
 `.replace(/\s/g, '');
