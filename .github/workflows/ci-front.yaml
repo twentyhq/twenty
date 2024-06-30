@@ -64,7 +64,7 @@ jobs:
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
-        run: npx nx storybook:serve-and-test-static twenty-front --configuration=${{ matrix.storybook_scope }}
+        run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }}
   front-sb-test-performance:
     runs-on: ci-8-cores
     env:
