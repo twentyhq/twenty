@@ -3155,6 +3155,14 @@ export const getObjectMetadataItemsMock = () => {
             },
             toFieldMetadataId: '20202020-64e1-4080-b6ad-db03c3809885',
           },
+          relationDefinition: {
+            targetObjectMetadata: {
+              nameSingular: 'person',
+            },
+            targetFieldMetadata: {
+              name: 'company',
+            },
+          },
           toRelationMetadata: null,
         },
         {

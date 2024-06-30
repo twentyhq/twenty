@@ -59,6 +59,11 @@ export const companiesQueryResult = {
             url: '',
           },
           previousEmployees: {
+            annualRecurringRevenue: {
+              __typename: 'Currency',
+              amountMicros: null,
+              currencyCode: '',
+            },
             __typename: 'Person',
             id: '20202020-2d40-4e49-8df4-9c6a049191de',
             email: 'louis.duss@google.com',
@@ -138,6 +143,11 @@ export const companiesQueryResult = {
           domainName: 'facebook.com',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 2,
           linkedinLink: {
             __typename: 'Link',
@@ -160,6 +170,11 @@ export const companiesQueryResult = {
           domainName: 'qonto.com',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 3,
           linkedinLink: {
             __typename: 'Link',
@@ -182,6 +197,11 @@ export const companiesQueryResult = {
           domainName: 'microsoft.com',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 4,
           linkedinLink: {
             __typename: 'Link',
@@ -204,6 +224,11 @@ export const companiesQueryResult = {
           domainName: 'airbnb.com',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 5,
           linkedinLink: {
             __typename: 'Link',
@@ -226,6 +251,11 @@ export const companiesQueryResult = {
           domainName: 'google.com',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 6,
           linkedinLink: {
             __typename: 'Link',
@@ -248,6 +278,11 @@ export const companiesQueryResult = {
           domainName: 'netflix.com',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 7,
           linkedinLink: {
             __typename: 'Link',
@@ -270,6 +305,11 @@ export const companiesQueryResult = {
           domainName: 'libeo.io',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 8,
           linkedinLink: {
             __typename: 'Link',
@@ -292,6 +332,11 @@ export const companiesQueryResult = {
           domainName: 'claap.io',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 9,
           linkedinLink: {
             __typename: 'Link',
@@ -314,6 +359,11 @@ export const companiesQueryResult = {
           domainName: 'hasura.io',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 10,
           linkedinLink: {
             __typename: 'Link',
@@ -336,6 +386,11 @@ export const companiesQueryResult = {
           domainName: 'wework.com',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 11,
           linkedinLink: {
             __typename: 'Link',
@@ -358,6 +413,11 @@ export const companiesQueryResult = {
           domainName: 'samsung.com',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 12,
           linkedinLink: {
             __typename: 'Link',
@@ -380,6 +440,11 @@ export const companiesQueryResult = {
           domainName: 'algolia.com',
           address: '',
           previousEmployees: null,
+          annualRecurringRevenue: {
+            __typename: 'Currency',
+            amountMicros: null,
+            currencyCode: '',
+          },
           position: 13,
           linkedinLink: {
             __typename: 'Link',
