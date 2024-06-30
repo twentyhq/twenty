@@ -984,6 +984,8 @@ export type CalendarChannel = {
   connectedAccount?: Maybe<ConnectedAccount>;
   /** Connected Account id foreign key */
   connectedAccountId?: Maybe<Scalars['UUID']>;
+  /** Automatically create records for people you participated with in an event. */
+  contactAutoCreationPolicy?: Maybe<CalendarChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: Maybe<Scalars['DateTime']>;
   /** Handle */
@@ -1030,10 +1032,31 @@ export type CalendarChannelConnection = {
   totalCount?: Maybe<Scalars['Int']>;
 };
 
+/** Automatically create records for people you participated with in an event. */
+export enum CalendarChannelContactAutoCreationPolicyEnum {
+  /** As Organizer */
+  AsOrganizer = 'AS_ORGANIZER',
+  /** As Participant */
+  AsParticipant = 'AS_PARTICIPANT',
+  /** As Participant and Organizer */
+  AsParticipantAndOrganizer = 'AS_PARTICIPANT_AND_ORGANIZER',
+  /** None */
+  None = 'NONE'
+}
+
+export type CalendarChannelContactAutoCreationPolicyEnumFilter = {
+  eq?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>;
+  in?: InputMaybe<Array<InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>;
+};
+
 /** Calendar Channels */
 export type CalendarChannelCreateInput = {
   /** Connected Account id foreign key */
   connectedAccountId: Scalars['UUID'];
+  /** Automatically create records for people you participated with in an event. */
+  contactAutoCreationPolicy?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: InputMaybe<Scalars['DateTime']>;
   /** Handle */
@@ -1172,6 +1195,8 @@ export type CalendarChannelFilterInput = {
   and?: InputMaybe<Array<InputMaybe<CalendarChannelFilterInput>>>;
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<IdFilter>;
+  /** Automatically create records for people you participated with in an event. */
+  contactAutoCreationPolicy?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnumFilter>;
   /** Creation date */
   createdAt?: InputMaybe<DateFilter>;
   /** Handle */
@@ -1204,6 +1229,8 @@ export type CalendarChannelFilterInput = {
 export type CalendarChannelOrderByInput = {
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<OrderByDirection>;
+  /** Automatically create records for people you participated with in an event. */
+  contactAutoCreationPolicy?: InputMaybe<OrderByDirection>;
   /** Creation date */
   createdAt?: InputMaybe<OrderByDirection>;
   /** Handle */
@@ -1278,6 +1305,8 @@ export type CalendarChannelSyncStatusEnumFilter = {
 export type CalendarChannelUpdateInput = {
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<Scalars['UUID']>;
+  /** Automatically create records for people you participated with in an event. */
+  contactAutoCreationPolicy?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: InputMaybe<Scalars['DateTime']>;
   /** Handle */
@@ -2697,8 +2726,14 @@ export type MessageChannel = {
   connectedAccount?: Maybe<ConnectedAccount>;
   /** Connected Account id foreign key */
   connectedAccountId?: Maybe<Scalars['UUID']>;
+  /** Automatically create People records when receiving or sending emails */
+  contactAutoCreationPolicy?: Maybe<MessageChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: Maybe<Scalars['DateTime']>;
+  /** Exclude group emails */
+  excludeGroupEmails?: Maybe<Scalars['Boolean']>;
+  /** Exclude non professional emails */
+  excludeNonProfessionalEmails?: Maybe<Scalars['Boolean']>;
   /** Handle */
   handle?: Maybe<Scalars['String']>;
   /** Id */
@@ -2749,12 +2784,35 @@ export type MessageChannelConnection = {
   totalCount?: Maybe<Scalars['Int']>;
 };
 
+/** Automatically create People records when receiving or sending emails */
+export enum MessageChannelContactAutoCreationPolicyEnum {
+  /** None */
+  None = 'NONE',
+  /** Sent */
+  Sent = 'SENT',
+  /** Sent and Received */
+  SentAndReceived = 'SENT_AND_RECEIVED'
+}
+
+export type MessageChannelContactAutoCreationPolicyEnumFilter = {
+  eq?: InputMaybe<MessageChannelContactAutoCreationPolicyEnum>;
+  in?: InputMaybe<Array<InputMaybe<MessageChannelContactAutoCreationPolicyEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<MessageChannelContactAutoCreationPolicyEnum>;
+};
+
 /** Message Channels */
 export type MessageChannelCreateInput = {
   /** Connected Account id foreign key */
   connectedAccountId: Scalars['UUID'];
+  /** Automatically create People records when receiving or sending emails */
+  contactAutoCreationPolicy?: InputMaybe<MessageChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** Exclude group emails */
+  excludeGroupEmails?: InputMaybe<Scalars['Boolean']>;
+  /** Exclude non professional emails */
+  excludeNonProfessionalEmails?: InputMaybe<Scalars['Boolean']>;
   /** Handle */
   handle?: InputMaybe<Scalars['String']>;
   /** Id */
@@ -2794,8 +2852,14 @@ export type MessageChannelFilterInput = {
   and?: InputMaybe<Array<InputMaybe<MessageChannelFilterInput>>>;
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<IdFilter>;
+  /** Automatically create People records when receiving or sending emails */
+  contactAutoCreationPolicy?: InputMaybe<MessageChannelContactAutoCreationPolicyEnumFilter>;
   /** Creation date */
   createdAt?: InputMaybe<DateFilter>;
+  /** Exclude group emails */
+  excludeGroupEmails?: InputMaybe<BooleanFilter>;
+  /** Exclude non professional emails */
+  excludeNonProfessionalEmails?: InputMaybe<BooleanFilter>;
   /** Handle */
   handle?: InputMaybe<StringFilter>;
   /** Id */
@@ -2953,8 +3017,14 @@ export type MessageChannelMessageAssociationUpdateInput = {
 export type MessageChannelOrderByInput = {
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<OrderByDirection>;
+  /** Automatically create People records when receiving or sending emails */
+  contactAutoCreationPolicy?: InputMaybe<OrderByDirection>;
   /** Creation date */
   createdAt?: InputMaybe<OrderByDirection>;
+  /** Exclude group emails */
+  excludeGroupEmails?: InputMaybe<OrderByDirection>;
+  /** Exclude non professional emails */
+  excludeNonProfessionalEmails?: InputMaybe<OrderByDirection>;
   /** Handle */
   handle?: InputMaybe<OrderByDirection>;
   /** Id */
@@ -3052,8 +3122,14 @@ export type MessageChannelTypeEnumFilter = {
 export type MessageChannelUpdateInput = {
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<Scalars['UUID']>;
+  /** Automatically create People records when receiving or sending emails */
+  contactAutoCreationPolicy?: InputMaybe<MessageChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** Exclude group emails */
+  excludeGroupEmails?: InputMaybe<Scalars['Boolean']>;
+  /** Exclude non professional emails */
+  excludeNonProfessionalEmails?: InputMaybe<Scalars['Boolean']>;
   /** Handle */
   handle?: InputMaybe<Scalars['String']>;
   /** Id */
@@ -7389,6 +7465,7 @@ export type Workspace = {
   inviteHash?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
+  workspaceMembersCount?: Maybe<Scalars['Float']>;
 };
 
 

@@ -1203,6 +1203,7 @@ export type Workspace = {
   inviteHash?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
+  workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
 };
 
 

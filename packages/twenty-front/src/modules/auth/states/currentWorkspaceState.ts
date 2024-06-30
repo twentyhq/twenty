@@ -12,6 +12,7 @@ export type CurrentWorkspace = Pick<
   | 'featureFlags'
   | 'activationStatus'
   | 'currentBillingSubscription'
+  | 'workspaceMembersCount'
   | 'currentCacheVersion'
 >;
 
