@@ -251,7 +251,7 @@ export const CommandMenu = () => {
     callback: closeCommandMenu,
   });
 
-  const isAskAIEnabled = useIsFeatureEnabled('IS_ASK_AI_ENABLED');
+  const isCopilotEnabled = useIsFeatureEnabled('IS_COPILOT_ENABLED');
   const setAskAIQuery = useSetRecoilState(askAIQueryState);
   const openAskAIRightDrawer = useOpenAskAIRightDrawer();
 
@@ -267,7 +267,7 @@ export const CommandMenu = () => {
     },
   };
 
-  const askAiCommands: Command[] = isAskAIEnabled ? [askAiCommand] : [];
+  const askAiCommands: Command[] = isCopilotEnabled ? [askAiCommand] : [];
 
   const selectableItemIds = askAiCommands
     .map((cmd) => cmd.id)
@@ -315,7 +315,7 @@ export const CommandMenu = () => {
                     !activities.length && (
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
-                  {isAskAIEnabled && (
+                  {isCopilotEnabled && (
                     <CommandGroup heading={askAiCommand.label}>
                       <SelectableItem itemId={askAiCommand.id}>
                         <CommandMenuItem

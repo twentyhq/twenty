@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsOptional } from 'class-validator';
 
-@ObjectType('AskAIQueryResult')
-export class AskAIQueryResult {
+@ObjectType('AISQLQueryResult')
+export class AISQLQueryResult {
   @Field(() => String)
   sqlQuery: string;
 

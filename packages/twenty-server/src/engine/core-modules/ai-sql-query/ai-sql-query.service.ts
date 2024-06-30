@@ -10,32 +10,26 @@ import groupBy from 'lodash.groupby';
 
 import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
-import { AskAIQueryResult } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 import { LLMChatModelService } from 'src/engine/integrations/llm-chat-model/llm-chat-model.service';
 import { LLMTracingService } from 'src/engine/integrations/llm-tracing/llm-tracing.service';
-import { sqlGenerationPromptTemplate } from 'src/engine/core-modules/ask-ai/ask-ai.prompt-templates';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { FeatureFlagFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/feature-flags.factory';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { AISQLQueryResult } from 'src/engine/core-modules/ai-sql-query/dtos/ai-sql-query-result.dto';
+import { sqlGenerationPromptTemplate } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.prompt-templates';
 
 @Injectable()
-export class AskAIService {
-  private readonly logger = new Logger(AskAIService.name);
+export class AISQLQueryService {
+  private readonly logger = new Logger(AISQLQueryService.name);
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
     private readonly llmChatModelService: LLMChatModelService,
     private readonly llmTracingService: LLMTracingService,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly standardObjectFactory: StandardObjectFactory,
-    private readonly featureFlagFactory: FeatureFlagFactory,
-    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   private getLabelIdentifierName(
@@ -140,21 +134,18 @@ export class AskAIService {
       .join('\n\n');
   }
 
-  async query(
-    userId: string,
-    userEmail: string,
+  private async generateWithDataSource(
     workspaceId: string,
+    workspaceDataSource: DataSource,
     userQuestion: string,
-  ): Promise<AskAIQueryResult> {
+    traceMetadata: Record<string, string> = {},
+  ) {
     const workspaceSchemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
-
-    workspaceDataSource.setOptions({ schema: workspaceSchemaName });
+    workspaceDataSource.setOptions({
+      schema: workspaceSchemaName,
+    });
 
     const workspaceSchemaDescription =
       await this.getWorkspaceSchemaDescription(workspaceDataSource);
@@ -178,8 +169,7 @@ export class AskAIService {
 
     const metadata = {
       workspaceId,
-      userId,
-      userEmail,
+      ...traceMetadata,
     };
     const tracingCallbackHandler =
       this.llmTracingService.getCallbackHandler(metadata);
@@ -193,6 +183,44 @@ export class AskAIService {
       {
         callbacks: [tracingCallbackHandler],
       },
+    );
+
+    return sqlQuery;
+  }
+
+  async generate(
+    workspaceId: string,
+    userQuestion: string,
+    traceMetadata: Record<string, string> = {},
+  ) {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
+    return this.generateWithDataSource(
+      workspaceId,
+      workspaceDataSource,
+      userQuestion,
+      traceMetadata,
+    );
+  }
+
+  async generateAndExecute(
+    workspaceId: string,
+    userQuestion: string,
+    traceMetadata: Record<string, string> = {},
+  ): Promise<AISQLQueryResult> {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
+    const sqlQuery = await this.generateWithDataSource(
+      workspaceId,
+      workspaceDataSource,
+      userQuestion,
+      traceMetadata,
     );
 
     try {

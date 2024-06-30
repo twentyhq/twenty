@@ -10,7 +10,7 @@ import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timel
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
-import { AskAIModule } from 'src/engine/core-modules/ask-ai/ask-ai.module';
+import { AISQLQueryModule } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
@@ -32,7 +32,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
     TimelineCalendarEventModule,
     UserModule,
     WorkspaceModule,
-    AskAIModule,
+    AISQLQueryModule,
     PostgresCredentialsModule,
   ],
   exports: [

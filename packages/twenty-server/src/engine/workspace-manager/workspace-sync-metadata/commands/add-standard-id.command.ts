@@ -59,7 +59,7 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_POSTGRESQL_INTEGRATION_ENABLED: true,
             IS_STRIPE_INTEGRATION_ENABLED: false,
             IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED: true,
-            IS_ASK_AI_ENABLED: false,
+            IS_COPILOT_ENABLED: false,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
@@ -75,7 +75,7 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_POSTGRESQL_INTEGRATION_ENABLED: true,
           IS_STRIPE_INTEGRATION_ENABLED: false,
           IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED: true,
-          IS_ASK_AI_ENABLED: false,
+          IS_COPILOT_ENABLED: false,
         },
       );
 

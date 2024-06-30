@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const getAskAI = gql`
-  query GetAskAI($text: String!) {
-    getAskAI(text: $text) {
+  query GetAISQLQuery($text: String!) {
+    getAISQLQuery(text: $text) {
       sqlQuery
       sqlQueryResult
       queryFailedErrorMessage

@@ -8,7 +8,7 @@ import {
   AutosizeTextInput,
   AutosizeTextInputVariant,
 } from '@/ui/input/components/AutosizeTextInput';
-import { useGetAskAiQuery } from '~/generated/graphql';
+import { useGetAisqlQueryQuery } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -49,7 +49,7 @@ const StyledNewMessageArea = styled.div`
 export const RightDrawerAIChat = () => {
   const [askAIQuery, setAskAIQuery] = useRecoilState(askAIQueryState);
 
-  const { data, loading } = useGetAskAiQuery({
+  const { data, loading } = useGetAisqlQueryQuery({
     variables: {
       text: askAIQuery,
     },
@@ -64,16 +64,16 @@ export const RightDrawerAIChat = () => {
             <StyledAskAIQuery>{askAIQuery}</StyledAskAIQuery>
             <SQLQueryBuilder
               loading={loading}
-              sqlQuery={data?.getAskAI.sqlQuery}
+              sqlQuery={data?.getAISQLQuery.sqlQuery}
             />
             {!loading && (
               <StyledSQLQueryResult>
-                {typeof data?.getAskAI.sqlQueryResult === 'string' ? (
+                {typeof data?.getAISQLQuery.sqlQueryResult === 'string' ? (
                   <SQLQueryResultTable
-                    sqlQueryResult={data.getAskAI.sqlQueryResult}
+                    sqlQueryResult={data.getAISQLQuery.sqlQueryResult}
                   />
                 ) : (
-                  data?.getAskAI.queryFailedErrorMessage
+                  data?.getAISQLQuery.queryFailedErrorMessage
                 )}
               </StyledSQLQueryResult>
             )}
