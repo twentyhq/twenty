@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { SQLQueryBuilder } from '@/activities/ask-ai/right-drawer/components/SQLQueryBuilder';
-import { SQLQueryResultTable } from '@/activities/ask-ai/right-drawer/components/SQLQueryResultTable';
-import { askAIQueryState } from '@/activities/ask-ai/right-drawer/states/askAIQueryState';
+import { SQLQueryBuilder } from '@/activities/copilot/right-drawer/components/SQLQueryBuilder';
+import { SQLQueryResultTable } from '@/activities/copilot/right-drawer/components/SQLQueryResultTable';
+import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import {
   AutosizeTextInput,
   AutosizeTextInputVariant,
@@ -29,7 +29,7 @@ const StyledChatArea = styled.div`
   padding-bottom: 0px;
 `;
 
-const StyledAskAIQuery = styled.div`
+const StyledCopilotQuery = styled.div`
   font-weight: bold;
   padding-bottom: ${({ theme }) => theme.spacing(3)};
 `;
@@ -47,21 +47,21 @@ const StyledNewMessageArea = styled.div`
 `;
 
 export const RightDrawerAIChat = () => {
-  const [askAIQuery, setAskAIQuery] = useRecoilState(askAIQueryState);
+  const [copilotQuery, setCopilotQuery] = useRecoilState(copilotQueryState);
 
   const { data, loading } = useGetAisqlQueryQuery({
     variables: {
-      text: askAIQuery,
+      text: copilotQuery,
     },
-    skip: !askAIQuery,
+    skip: !copilotQuery,
   });
 
   return (
     <StyledContainer>
       <StyledChatArea>
-        {askAIQuery && (
+        {copilotQuery && (
           <div>
-            <StyledAskAIQuery>{askAIQuery}</StyledAskAIQuery>
+            <StyledCopilotQuery>{copilotQuery}</StyledCopilotQuery>
             <SQLQueryBuilder
               loading={loading}
               sqlQuery={data?.getAISQLQuery.sqlQuery}
@@ -86,7 +86,7 @@ export const RightDrawerAIChat = () => {
           placeholder="Ask about anything in Twenty"
           variant={AutosizeTextInputVariant.Icon}
           onValidate={(text) => {
-            setAskAIQuery(text);
+            setCopilotQuery(text);
           }}
         />
       </StyledNewMessageArea>

@@ -4,7 +4,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChartCandle, IconSql } from 'twenty-ui';
 
-import { SQL_QUERY_BUILDER_TAB_LIST_COMPONENT_ID } from '@/activities/ask-ai/right-drawer/constants/SqlQueryBuilder';
+import { SQL_QUERY_BUILDER_TAB_LIST_COMPONENT_ID } from '@/activities/copilot/right-drawer/constants/SqlQueryBuilder';
 import { AutosizeTextInput } from '@/ui/input/components/AutosizeTextInput';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 

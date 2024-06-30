@@ -5,8 +5,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles } from 'twenty-ui';
 
-import { useOpenAskAIRightDrawer } from '@/activities/ask-ai/right-drawer/hooks/useOpenAskAIRightDrawer';
-import { askAIQueryState } from '@/activities/ask-ai/right-drawer/states/askAIQueryState';
+import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
+import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -252,24 +252,24 @@ export const CommandMenu = () => {
   });
 
   const isCopilotEnabled = useIsFeatureEnabled('IS_COPILOT_ENABLED');
-  const setAskAIQuery = useSetRecoilState(askAIQueryState);
-  const openAskAIRightDrawer = useOpenAskAIRightDrawer();
+  const setCopilotQuery = useSetRecoilState(copilotQueryState);
+  const openCopilotRightDrawer = useOpenCopilotRightDrawer();
 
-  const askAiCommand: Command = {
-    id: 'ask-ai',
+  const copilotCommand: Command = {
+    id: 'copilot',
     to: '', // TODO
     Icon: IconSparkles,
-    label: 'Ask AI',
+    label: 'Open Copilot',
     type: CommandType.Navigate,
     onCommandClick: () => {
-      setAskAIQuery(commandMenuSearch);
-      openAskAIRightDrawer();
+      setCopilotQuery(commandMenuSearch);
+      openCopilotRightDrawer();
     },
   };
 
-  const askAiCommands: Command[] = isCopilotEnabled ? [askAiCommand] : [];
+  const copilotCommands: Command[] = isCopilotEnabled ? [copilotCommand] : [];
 
-  const selectableItemIds = askAiCommands
+  const selectableItemIds = copilotCommands
     .map((cmd) => cmd.id)
     .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
@@ -297,7 +297,7 @@ export const CommandMenu = () => {
                   hotkeyScope={AppHotkeyScope.CommandMenu}
                   onEnter={(itemId) => {
                     const command = [
-                      ...askAiCommands,
+                      ...copilotCommands,
                       ...commandMenuCommands,
                       ...otherCommands,
                     ].find((cmd) => cmd.id === itemId);
@@ -316,17 +316,17 @@ export const CommandMenu = () => {
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
                   {isCopilotEnabled && (
-                    <CommandGroup heading={askAiCommand.label}>
-                      <SelectableItem itemId={askAiCommand.id}>
+                    <CommandGroup heading="Copilot">
+                      <SelectableItem itemId={copilotCommand.id}>
                         <CommandMenuItem
-                          id={askAiCommand.id}
-                          Icon={askAiCommand.Icon}
-                          label={`${askAiCommand.label} ${
+                          id={copilotCommand.id}
+                          Icon={copilotCommand.Icon}
+                          label={`${copilotCommand.label} ${
                             commandMenuSearch.length > 2
                               ? `"${commandMenuSearch}"`
                               : ''
                           }`}
-                          onClick={askAiCommand.onCommandClick}
+                          onClick={copilotCommand.onCommandClick}
                         />
                       </SelectableItem>
                     </CommandGroup>

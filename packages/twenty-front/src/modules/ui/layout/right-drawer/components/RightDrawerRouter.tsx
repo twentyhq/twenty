@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { RightDrawerAIChat } from '@/activities/ask-ai/right-drawer/components/RightDrawerAIChat';
+import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/RightDrawerAIChat';
 import { RightDrawerCalendarEvent } from '@/activities/calendar/right-drawer/components/RightDrawerCalendarEvent';
 import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
 import { RightDrawerCreateActivity } from '@/activities/right-drawer/components/create/RightDrawerCreateActivity';
@@ -51,9 +51,9 @@ const RIGHT_DRAWER_PAGES_CONFIG = {
     page: <RightDrawerRecord />,
     topBar: <RightDrawerTopBar page={RightDrawerPages.ViewRecord} />,
   },
-  [RightDrawerPages.AskAI]: {
+  [RightDrawerPages.Copilot]: {
     page: <RightDrawerAIChat />,
-    topBar: <RightDrawerTopBar page={RightDrawerPages.AskAI} />,
+    topBar: <RightDrawerTopBar page={RightDrawerPages.Copilot} />,
   },
 };
 

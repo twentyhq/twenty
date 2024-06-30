@@ -6,5 +6,5 @@ export const RIGHT_DRAWER_PAGE_ICONS = {
   [RightDrawerPages.ViewEmailThread]: 'IconMail',
   [RightDrawerPages.ViewCalendarEvent]: 'IconCalendarEvent',
   [RightDrawerPages.ViewRecord]: 'Icon123',
-  [RightDrawerPages.AskAI]: 'IconSparkles',
+  [RightDrawerPages.Copilot]: 'IconSparkles',
 };
