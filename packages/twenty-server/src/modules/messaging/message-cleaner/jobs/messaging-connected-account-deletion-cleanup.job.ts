@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
@@ -10,7 +10,10 @@ export type MessagingConnectedAccountDeletionCleanupJobData = {
   connectedAccountId: string;
 };
 
-@Processor(MessageQueue.messagingQueue)
+@Processor({
+  queueName: MessageQueue.messagingQueue,
+  scope: Scope.REQUEST,
+})
 export class MessagingConnectedAccountDeletionCleanupJob {
   private readonly logger = new Logger(
     MessagingConnectedAccountDeletionCleanupJob.name,
