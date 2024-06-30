@@ -12,7 +12,7 @@ import {
   DateTimeFieldInputProps,
 } from '../DateTimeFieldInput';
 
-const formattedDate = new Date(2022, 1, 2);
+const formattedDate = new Date(2022, 0, 1, 2, 0, 0);
 
 const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
   const { setFieldValue } = useDateTimeField();
