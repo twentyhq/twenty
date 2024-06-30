@@ -66,7 +66,7 @@ export const InviteTeam = () => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
   const [sendInviteLink] = useSendInviteLinkMutation();
-  const setNextOnboardingStatus = useSetNextOnboardingStatus();
+  const { setNextOnboardingStatus, loading } = useSetNextOnboardingStatus();
   const currentUser = useRecoilValue(currentUserState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const {
@@ -160,7 +160,10 @@ export const InviteTeam = () => {
     [handleSubmit],
   );
 
-  if (currentUser?.onboardingStatus !== OnboardingStatus.InviteTeam) {
+  if (
+    currentUser?.onboardingStatus !== OnboardingStatus.InviteTeam ||
+    loading
+  ) {
     return <></>;
   }
 

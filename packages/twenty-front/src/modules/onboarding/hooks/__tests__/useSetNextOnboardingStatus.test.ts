@@ -30,7 +30,7 @@ const renderHooks = (
     () => {
       const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-      const setNextOnboardingStatus = useSetNextOnboardingStatus();
+      const { setNextOnboardingStatus } = useSetNextOnboardingStatus();
       return {
         currentUser,
         setCurrentUser,

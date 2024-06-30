@@ -57,7 +57,7 @@ type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
   const onboardingStatus = useOnboardingStatus();
-  const setNextOnboardingStatus = useSetNextOnboardingStatus();
+  const { setNextOnboardingStatus, loading } = useSetNextOnboardingStatus();
   const { enqueueSnackBar } = useSnackBar();
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
@@ -143,7 +143,7 @@ export const CreateProfile = () => {
     PageHotkeyScope.CreateProfile,
   );
 
-  if (onboardingStatus !== OnboardingStatus.ProfileCreation) {
+  if (onboardingStatus !== OnboardingStatus.ProfileCreation || loading) {
     return null;
   }
 

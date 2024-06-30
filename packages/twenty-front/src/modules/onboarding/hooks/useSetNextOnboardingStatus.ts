@@ -24,12 +24,13 @@ const getNextOnboardingStatus = (
 };
 
 export const useSetNextOnboardingStatus = () => {
-  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-  });
+  const { records: workspaceMembers, loading } =
+    useFindManyRecords<WorkspaceMember>({
+      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    });
   const currentUser = useRecoilValue(currentUserState);
 
-  return useRecoilCallback(
+  const setNextOnboardingStatus = useRecoilCallback(
     ({ set }) =>
       () => {
         const nextOnboardingStatus = getNextOnboardingStatus(
@@ -48,4 +49,8 @@ export const useSetNextOnboardingStatus = () => {
       },
     [workspaceMembers, currentUser],
   );
+  return {
+    loading,
+    setNextOnboardingStatus,
+  };
 };

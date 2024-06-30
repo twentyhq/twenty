@@ -40,7 +40,7 @@ const StyledActionLinkContainer = styled.div`
 export const SyncEmails = () => {
   const theme = useTheme();
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
-  const setNextOnboardingStatus = useSetNextOnboardingStatus();
+  const { setNextOnboardingStatus, loading } = useSetNextOnboardingStatus();
   const currentUser = useRecoilValue(currentUserState);
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.ShareEverything,
@@ -75,7 +75,7 @@ export const SyncEmails = () => {
     [continueWithoutSync],
   );
 
-  if (currentUser?.onboardingStatus !== OnboardingStatus.SyncEmail) {
+  if (currentUser?.onboardingStatus !== OnboardingStatus.SyncEmail || loading) {
     return <></>;
   }
 
