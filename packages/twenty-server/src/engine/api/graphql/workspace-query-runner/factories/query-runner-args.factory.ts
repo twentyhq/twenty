@@ -10,7 +10,10 @@ import {
   ResolverArgs,
   ResolverArgsType,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import {
+  Record,
+  RecordFilter,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { hasPositionField } from 'src/engine/metadata-modules/object-metadata/utils/has-position-field.util';
@@ -47,12 +50,12 @@ export class QueryRunnerArgsFactory {
         return {
           ...args,
           data: await Promise.all(
-            (args as CreateManyResolverArgs).data.map((arg, index) =>
+            (args as CreateManyResolverArgs).data?.map((arg, index) =>
               this.overrideDataByFieldMetadata(arg, options, fieldMetadataMap, {
                 argIndex: index,
                 shouldBackfillPosition,
               }),
-            ),
+            ) ?? [],
           ),
         } satisfies CreateManyResolverArgs;
       case ResolverArgsType.FindOne:
@@ -75,25 +78,27 @@ export class QueryRunnerArgsFactory {
       case ResolverArgsType.FindDuplicates:
         return {
           ...args,
-          id: await this.overrideValueByFieldMetadata(
-            'id',
-            (args as FindDuplicatesResolverArgs).id,
-            fieldMetadataMap,
+          ids: (await Promise.all(
+            (args as FindDuplicatesResolverArgs).ids?.map((id) =>
+              this.overrideValueByFieldMetadata('id', id, fieldMetadataMap),
+            ) ?? [],
+          )) as string[],
+          data: await Promise.all(
+            (args as FindDuplicatesResolverArgs).data?.map((arg, index) =>
+              this.overrideDataByFieldMetadata(arg, options, fieldMetadataMap, {
+                argIndex: index,
+                shouldBackfillPosition,
+              }),
+            ) ?? [],
           ),
-          data: await this.overrideDataByFieldMetadata(
-            (args as FindDuplicatesResolverArgs).data,
-            options,
-            fieldMetadataMap,
-            { shouldBackfillPosition: false },
-          ),
-        };
+        } satisfies FindDuplicatesResolverArgs;
       default:
         return args;
     }
   }
 
   private async overrideDataByFieldMetadata(
-    data: Record<string, any> | undefined,
+    data: Partial<Record> | undefined,
     options: WorkspaceQueryRunnerOptions,
     fieldMetadataMap: Map<string, FieldMetadataInterface>,
     argPositionBackfillInput: ArgPositionBackfillInput,

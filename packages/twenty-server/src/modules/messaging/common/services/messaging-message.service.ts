@@ -4,7 +4,6 @@ import { DataSource, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
@@ -39,7 +38,7 @@ export class MessagingMessageService {
 
   public async saveMessagesWithinTransaction(
     messages: GmailMessage[],
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     gmailMessageChannelId: string,
     workspaceId: string,
     transactionManager: EntityManager,
@@ -67,6 +66,12 @@ export class MessagingMessageService {
           workspaceId,
           transactionManager,
         );
+
+      if (!savedOrExistingMessageThreadId) {
+        throw new Error(
+          `No message thread found for message ${message.headerMessageId} in workspace ${workspaceId} in saveMessages`,
+        );
+      }
 
       const savedOrExistingMessageId =
         await this.saveMessageOrReturnExistingMessage(
@@ -99,7 +104,7 @@ export class MessagingMessageService {
   public async saveMessages(
     messages: GmailMessage[],
     workspaceDataSource: DataSource,
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     gmailMessageChannelId: string,
     workspaceId: string,
   ): Promise<Map<string, string>> {
@@ -153,6 +158,12 @@ export class MessagingMessageService {
                 manager,
               );
 
+            if (!savedOrExistingMessageThreadId) {
+              throw new Error(
+                `No message thread found for message ${message.headerMessageId} in workspace ${workspaceId} in saveMessages`,
+              );
+            }
+
             const savedOrExistingMessageId =
               await this.saveMessageOrReturnExistingMessage(
                 message,
@@ -191,7 +202,7 @@ export class MessagingMessageService {
   private async saveMessageOrReturnExistingMessage(
     message: GmailMessage,
     messageThreadId: string,
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
     manager: EntityManager,
   ): Promise<string> {

@@ -10,13 +10,19 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Module({
   imports: [
     StripeModule,
     UserWorkspaceModule,
     TypeOrmModule.forFeature(
-      [BillingSubscription, BillingSubscriptionItem, Workspace],
+      [
+        BillingSubscription,
+        BillingSubscriptionItem,
+        Workspace,
+        FeatureFlagEntity,
+      ],
       'core',
     ),
   ],

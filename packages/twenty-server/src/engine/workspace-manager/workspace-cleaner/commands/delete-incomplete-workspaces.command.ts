@@ -8,6 +8,7 @@ import { WorkspaceService } from 'src/engine/core-modules/workspace/services/wor
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
 type DeleteIncompleteWorkspacesCommandOptions = {
   dryRun?: boolean;
@@ -52,7 +53,7 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
     options: DeleteIncompleteWorkspacesCommandOptions,
   ): Promise<void> {
     const where: FindOptionsWhere<Workspace> = {
-      subscriptionStatus: 'incomplete',
+      currentBillingSubscription: { status: SubscriptionStatus.Incomplete },
     };
 
     if (options.workspaceIds) {

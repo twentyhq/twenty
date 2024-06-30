@@ -11,6 +11,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.auditLog,
@@ -39,7 +40,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
-  properties: JSON;
+  properties: JSON | null;
 
   @WorkspaceField({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.context,
@@ -50,7 +51,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
-  context: JSON;
+  context: JSON | null;
 
   @WorkspaceField({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectName,
@@ -78,7 +79,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
-  recordId: string;
+  recordId: string | null;
 
   @WorkspaceRelation({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.workspaceMember,
@@ -86,10 +87,12 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Workspace Member',
     description: 'Event workspace member',
     icon: 'IconCircleUser',
-    joinColumn: 'workspaceMemberId',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'auditLogs',
   })
   @WorkspaceIsNullable()
-  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('workspaceMember')
+  workspaceMemberId: string | null;
 }

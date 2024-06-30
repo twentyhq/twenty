@@ -1,10 +1,10 @@
 import uniq from 'lodash.uniq';
 import uniqBy from 'lodash.uniqby';
 
-import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
+import { Contact } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 
-export function getUniqueContactsAndHandles(contacts: Contacts): {
-  uniqueContacts: Contacts;
+export function getUniqueContactsAndHandles(contacts: Contact[]): {
+  uniqueContacts: Contact[];
   uniqueHandles: string[];
 } {
   if (contacts.length === 0) {

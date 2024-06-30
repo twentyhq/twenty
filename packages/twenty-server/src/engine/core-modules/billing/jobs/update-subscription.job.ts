@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -8,7 +8,10 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 export type UpdateSubscriptionJobData = { workspaceId: string };
 
-@Processor(MessageQueue.billingQueue)
+@Processor({
+  queueName: MessageQueue.billingQueue,
+  scope: Scope.REQUEST,
+})
 export class UpdateSubscriptionJob {
   protected readonly logger = new Logger(UpdateSubscriptionJob.name);
 
@@ -21,7 +24,7 @@ export class UpdateSubscriptionJob {
   @Process(UpdateSubscriptionJob.name)
   async handle(data: UpdateSubscriptionJobData): Promise<void> {
     const workspaceMembersCount =
-      await this.userWorkspaceService.getWorkspaceMemberCount(data.workspaceId);
+      await this.userWorkspaceService.getWorkspaceMemberCount();
 
     if (!workspaceMembersCount || workspaceMembersCount <= 0) {
       return;

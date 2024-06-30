@@ -1,7 +1,7 @@
 import React, { ReactElement, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { AppTooltip, IconComponent } from 'twenty-ui';
+import { AppTooltip, IconComponent, TooltipDelay } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
@@ -69,7 +69,6 @@ export type RecordInlineCellContainerProps = {
   editModeContentOnly?: boolean;
   displayModeContent: ReactElement;
   customEditHotkeyScope?: HotkeyScope;
-  isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
   loading?: boolean;
@@ -85,7 +84,6 @@ export const RecordInlineCellContainer = ({
   editModeContent,
   displayModeContent,
   customEditHotkeyScope,
-  isDisplayModeContentEmpty,
   editModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
@@ -136,6 +134,7 @@ export const RecordInlineCellContainer = ({
               noArrow
               place="bottom"
               positionStrategy="fixed"
+              delay={TooltipDelay.shortDelay}
             />
           )}
         </StyledLabelAndIconContainer>
@@ -148,7 +147,6 @@ export const RecordInlineCellContainer = ({
             disableHoverEffect,
             editModeContent,
             editModeContentOnly,
-            isDisplayModeContentEmpty,
             isDisplayModeFixHeight,
             buttonIcon,
             label,

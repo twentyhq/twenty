@@ -1,11 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import {
-  Avatar,
-  AvatarProps,
-  AvatarSize,
-  AvatarType,
-} from '@ui/display/avatar/components/Avatar';
+import { Avatar, AvatarProps } from '@ui/display/avatar/components/Avatar';
+import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
+import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import {
   AVATAR_URL_MOCK,
   CatalogDecorator,

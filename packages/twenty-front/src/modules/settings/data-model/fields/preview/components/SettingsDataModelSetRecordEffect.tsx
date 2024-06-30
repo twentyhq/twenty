@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type SettingsDataModelSetRecordEffectProps = {
@@ -10,11 +10,11 @@ type SettingsDataModelSetRecordEffectProps = {
 export const SettingsDataModelSetRecordEffect = ({
   record,
 }: SettingsDataModelSetRecordEffectProps) => {
-  const { setRecords: setRecordsInStore } = useSetRecordInStore();
+  const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
 
   useEffect(() => {
-    setRecordsInStore([record]);
-  }, [record, setRecordsInStore]);
+    upsertRecordsInStore([record]);
+  }, [record, upsertRecordsInStore]);
 
   return null;
 };

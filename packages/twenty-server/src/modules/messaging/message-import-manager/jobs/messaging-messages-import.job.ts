@@ -1,3 +1,5 @@
+import { Scope } from '@nestjs/common';
+
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
@@ -18,7 +20,10 @@ export type MessagingMessagesImportJobData = {
   workspaceId: string;
 };
 
-@Processor(MessageQueue.messagingQueue)
+@Processor({
+  queueName: MessageQueue.messagingQueue,
+  scope: Scope.REQUEST,
+})
 export class MessagingMessagesImportJob {
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
