@@ -1,14 +1,11 @@
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
-import { SQLQueryBuilder } from '@/activities/copilot/right-drawer/components/SQLQueryBuilder';
-import { SQLQueryResultTable } from '@/activities/copilot/right-drawer/components/SQLQueryResultTable';
 import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import {
   AutosizeTextInput,
   AutosizeTextInputVariant,
 } from '@/ui/input/components/AutosizeTextInput';
-import { useGetAisqlQueryQuery } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -29,16 +26,6 @@ const StyledChatArea = styled.div`
   padding-bottom: 0px;
 `;
 
-const StyledCopilotQuery = styled.div`
-  font-weight: bold;
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledSQLQueryResult = styled.div`
-  overflow-x: scroll;
-  padding-bottom: ${({ theme }) => theme.spacing(6)};
-`;
-
 const StyledNewMessageArea = styled.div`
   display: flex;
   flex-direction: column;
@@ -47,43 +34,15 @@ const StyledNewMessageArea = styled.div`
 `;
 
 export const RightDrawerAIChat = () => {
-  const [copilotQuery, setCopilotQuery] = useRecoilState(copilotQueryState);
-
-  const { data, loading } = useGetAisqlQueryQuery({
-    variables: {
-      text: copilotQuery,
-    },
-    skip: !copilotQuery,
-  });
+  const setCopilotQuery = useSetRecoilState(copilotQueryState);
 
   return (
     <StyledContainer>
-      <StyledChatArea>
-        {copilotQuery && (
-          <div>
-            <StyledCopilotQuery>{copilotQuery}</StyledCopilotQuery>
-            <SQLQueryBuilder
-              loading={loading}
-              sqlQuery={data?.getAISQLQuery.sqlQuery}
-            />
-            {!loading && (
-              <StyledSQLQueryResult>
-                {typeof data?.getAISQLQuery.sqlQueryResult === 'string' ? (
-                  <SQLQueryResultTable
-                    sqlQueryResult={data.getAISQLQuery.sqlQueryResult}
-                  />
-                ) : (
-                  data?.getAISQLQuery.queryFailedErrorMessage
-                )}
-              </StyledSQLQueryResult>
-            )}
-          </div>
-        )}
-      </StyledChatArea>
+      <StyledChatArea>{/* TODO */}</StyledChatArea>
       <StyledNewMessageArea>
         <AutosizeTextInput
           autoFocus
-          placeholder="Ask about anything in Twenty"
+          placeholder="Ask anything"
           variant={AutosizeTextInputVariant.Icon}
           onValidate={(text) => {
             setCopilotQuery(text);
