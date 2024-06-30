@@ -87,6 +87,9 @@ export class Workspace {
   @Field({ nullable: true })
   currentBillingSubscription: BillingSubscription;
 
+  @Field({ nullable: true })
+  workspaceMembersCount: number;
+
   @Field()
   activationStatus: 'active' | 'inactive';
 

@@ -66,6 +66,7 @@ export const mockDefaultWorkspace: Workspace = {
     interval: SubscriptionInterval.Month,
     status: SubscriptionStatus.Active,
   },
+  workspaceMembersCount: 1,
 };
 
 export const mockedWorkspaceMemberData: WorkspaceMember = {
