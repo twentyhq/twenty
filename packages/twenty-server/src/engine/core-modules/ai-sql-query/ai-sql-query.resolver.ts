@@ -37,14 +37,14 @@ export class AISQLQueryResolver {
     @AuthUser() user: User,
     @Args() { text }: GetAISQLQueryArgs,
   ) {
-    const isAISQLQueryEnabledFeatureFlag =
+    const isCopilotEnabledFeatureFlag =
       await this.featureFlagRepository.findOneBy({
         workspaceId,
         key: FeatureFlagKeys.IsCopilotEnabled,
         value: true,
       });
 
-    if (!isAISQLQueryEnabledFeatureFlag?.value) {
+    if (!isCopilotEnabledFeatureFlag?.value) {
       throw new ForbiddenException(
         `${FeatureFlagKeys.IsCopilotEnabled} feature flag is disabled`,
       );
