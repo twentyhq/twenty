@@ -1,6 +1,5 @@
 import { PromptTemplate } from '@langchain/core/prompts';
 
-// TODO: Add field metadata to prompt?
 export const sqlGenerationPromptTemplate = PromptTemplate.fromTemplate<{
   llmOutputJsonSchema: string;
   sqlCreateTableStatements: string;
