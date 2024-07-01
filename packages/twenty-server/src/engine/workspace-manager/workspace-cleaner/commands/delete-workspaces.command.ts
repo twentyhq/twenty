@@ -2,25 +2,25 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
-type DeleteIncompleteWorkspacesCommandOptions = {
+type DeleteWorkspacesCommandOptions = {
   dryRun?: boolean;
-  workspaceIds?: string[];
+  workspaceIds: string[];
 };
 
 @Command({
-  name: 'workspace:delete-incomplete',
-  description: 'Delete incomplete workspaces',
+  name: 'workspace:delete',
+  description: 'Delete workspace',
 })
-export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
-  private readonly logger = new Logger(DeleteIncompleteWorkspacesCommand.name);
+export class DeleteWorkspacesCommand extends CommandRunner {
+  private readonly logger = new Logger(DeleteWorkspacesCommand.name);
+
   constructor(
     private readonly workspaceService: WorkspaceService,
     @InjectRepository(Workspace, 'core')
@@ -42,7 +42,7 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
   @Option({
     flags: '-w, --workspace-ids [workspace_ids]',
     description: 'comma separated workspace ids',
-    required: false,
+    required: true,
   })
   parseWorkspaceIds(value: string): string[] {
     return value.split(',');
@@ -50,41 +50,34 @@ export class DeleteIncompleteWorkspacesCommand extends CommandRunner {
 
   async run(
     _passedParam: string[],
-    options: DeleteIncompleteWorkspacesCommandOptions,
+    options: DeleteWorkspacesCommandOptions,
   ): Promise<void> {
-    const where: FindOptionsWhere<Workspace> = {
-      currentBillingSubscription: { status: SubscriptionStatus.Incomplete },
-    };
-
-    if (options.workspaceIds) {
-      where.id = In(options.workspaceIds);
-    }
-
-    const incompleteWorkspaces = await this.workspaceRepository.findBy(where);
+    const workspaces = await this.workspaceRepository.find({
+      where: { id: In(options.workspaceIds) },
+    });
     const dataSources =
       await this.dataSourceService.getManyDataSourceMetadata();
     const workspaceIdsWithSchema = dataSources.map(
       (dataSource) => dataSource.workspaceId,
     );
-    const incompleteWorkspacesToDelete = incompleteWorkspaces.filter(
-      (incompleteWorkspace) =>
-        workspaceIdsWithSchema.includes(incompleteWorkspace.id),
+    const workspacesToDelete = workspaces.filter((Workspace) =>
+      workspaceIdsWithSchema.includes(Workspace.id),
     );
 
-    if (incompleteWorkspacesToDelete.length) {
+    if (workspacesToDelete.length) {
       this.logger.log(
-        `Running Deleting incomplete workspaces on ${incompleteWorkspacesToDelete.length} workspaces`,
+        `Running Deleting  workspaces on ${workspacesToDelete.length} workspaces`,
       );
     }
 
-    for (const incompleteWorkspace of incompleteWorkspacesToDelete) {
+    for (const workspace of workspacesToDelete) {
       this.logger.log(
         `${getDryRunLogHeader(options.dryRun)}Deleting workspace ${
-          incompleteWorkspace.id
-        } name: '${incompleteWorkspace.displayName}'`,
+          workspace.id
+        } name: '${workspace.displayName}'`,
       );
       if (!options.dryRun) {
-        await this.workspaceService.softDeleteWorkspace(incompleteWorkspace.id);
+        await this.workspaceService.softDeleteWorkspace(workspace.id);
       }
     }
   }
