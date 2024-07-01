@@ -40,7 +40,6 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { isDefined } from 'src/utils/is-defined';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
-import events from 'events';
 
 @Injectable()
 export class GoogleCalendarSyncService {
