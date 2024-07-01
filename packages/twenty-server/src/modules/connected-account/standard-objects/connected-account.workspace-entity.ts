@@ -99,7 +99,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMail',
   })
   @WorkspaceGate({
-    featureFlag: FeatureFlagKeys.IsProfileEmailsReadEnabled,
+    featureFlag: FeatureFlagKeys.IsMessagingAliasFetchingEnabled,
   })
   emailAliases: string;
 

@@ -29,7 +29,7 @@ export type GoogleAPIsRequest = Omit<
 
 export type GoogleAPIScopeConfig = {
   isCalendarEnabled?: boolean;
-  isProfileEmailsReadEnabled?: boolean;
+  isMessagingAliasFetchingEnabled?: boolean;
 };
 
 @Injectable()
@@ -54,7 +54,7 @@ export class GoogleAPIsStrategy extends PassportStrategy(
       scope.push('https://www.googleapis.com/auth/calendar.events');
     }
 
-    if (scopeConfig?.isProfileEmailsReadEnabled) {
+    if (scopeConfig?.isMessagingAliasFetchingEnabled) {
       scope.push('https://www.googleapis.com/auth/profile.emails.read');
     }
 

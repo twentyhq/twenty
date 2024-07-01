@@ -53,13 +53,12 @@ export class GoogleAPIsOauthGuard extends AuthGuard('google-apis') {
       isCalendarEnabled: !!this.environmentService.get(
         'MESSAGING_PROVIDER_GMAIL_ENABLED',
       ),
-      isProfileEmailsReadEnabled: !!(await this.featureFlagRepository.findOneBy(
-        {
+      isMessagingAliasFetchingEnabled:
+        !!(await this.featureFlagRepository.findOneBy({
           workspaceId,
-          key: FeatureFlagKeys.IsProfileEmailsReadEnabled,
+          key: FeatureFlagKeys.IsMessagingAliasFetchingEnabled,
           value: true,
-        },
-      )),
+        })),
     };
 
     new GoogleAPIsStrategy(this.environmentService, scopeConfig);

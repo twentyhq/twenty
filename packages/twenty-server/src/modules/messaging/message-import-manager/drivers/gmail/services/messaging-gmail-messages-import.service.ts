@@ -110,7 +110,7 @@ export class MessagingGmailMessagesImportService {
 
     if (
       await this.isFeatureEnabledService.isFeatureEnabled(
-        FeatureFlagKeys.IsProfileEmailsReadEnabled,
+        FeatureFlagKeys.IsMessagingAliasFetchingEnabled,
         workspaceId,
       )
     ) {
