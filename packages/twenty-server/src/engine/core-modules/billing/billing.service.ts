@@ -4,10 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import {
-  BillingSubscription,
-  SubscriptionStatus,
-} from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
@@ -15,7 +12,6 @@ export class BillingService {
   protected readonly logger = new Logger(BillingService.name);
   constructor(
     private readonly environmentService: EnvironmentService,
-    @InjectRepository(BillingSubscription, 'core')
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
