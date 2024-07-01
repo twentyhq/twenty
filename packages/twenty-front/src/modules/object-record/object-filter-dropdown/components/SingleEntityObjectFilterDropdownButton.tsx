@@ -17,6 +17,8 @@ import { GenericEntityFilterChip } from './GenericEntityFilterChip';
 import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownSearchInput } from './ObjectFilterDropdownSearchInput';
 
+const SINGLE_ENTITY_FILTER_DROPDOWN_ID = 'single-entity-filter-dropdown';
+
 export const SingleEntityObjectFilterDropdownButton = ({
   hotkeyScope,
 }: {
@@ -50,7 +52,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
 
   return (
     <Dropdown
-      dropdownId="single-entity-filter-dropdown"
+      dropdownId={SINGLE_ENTITY_FILTER_DROPDOWN_ID}
       dropdownHotkeyScope={hotkeyScope}
       dropdownOffset={{ x: 0, y: -28 }}
       clickableComponent={
@@ -75,7 +77,9 @@ export const SingleEntityObjectFilterDropdownButton = ({
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
           <ObjectFilterDropdownRecordRemoveFilterMenuItem />
-          <ObjectFilterDropdownRecordSelect viewComponentId={"single-entity-filter-dropdown"}/>
+          <ObjectFilterDropdownRecordSelect
+            viewComponentId={SINGLE_ENTITY_FILTER_DROPDOWN_ID}
+          />
         </>
       }
     />
