@@ -97,7 +97,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       if (!objectMetadata) {
         throw new FieldMetadataException(
           'Object metadata does not exist',
-          FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         );
       }
 

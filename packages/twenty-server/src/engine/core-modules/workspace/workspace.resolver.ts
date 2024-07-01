@@ -118,7 +118,7 @@ export class WorkspaceResolver {
     return this.workspaceCacheVersionService.getVersion(workspace.id);
   }
 
-  @ResolveField(() => BillingSubscription)
+  @ResolveField(() => BillingSubscription, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription | null> {
