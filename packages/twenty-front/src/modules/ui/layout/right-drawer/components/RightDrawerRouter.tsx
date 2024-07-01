@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/RightDrawerAIChat';
 import { RightDrawerCalendarEvent } from '@/activities/calendar/right-drawer/components/RightDrawerCalendarEvent';
+import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/RightDrawerAIChat';
 import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
 import { RightDrawerCreateActivity } from '@/activities/right-drawer/components/create/RightDrawerCreateActivity';
 import { RightDrawerEditActivity } from '@/activities/right-drawer/components/edit/RightDrawerEditActivity';
