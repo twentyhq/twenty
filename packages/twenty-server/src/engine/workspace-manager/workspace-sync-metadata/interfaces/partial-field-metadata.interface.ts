@@ -8,7 +8,7 @@ export type PartialFieldMetadata = Omit<
   FieldMetadataInterface,
   'id' | 'label' | 'description' | 'objectMetadataId'
 > & {
-  standardId: string;
+  standardId: string | null;
   label: string | ((objectMetadata: ObjectMetadataEntity) => string);
   description?: string | ((objectMetadata: ObjectMetadataEntity) => string);
   icon?: string;

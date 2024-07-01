@@ -75,7 +75,7 @@ export interface WorkspaceFieldMetadataArgs {
   readonly gate?: Gate;
 
   /**
-   * Is nullable field.
+   * Is deprecated field.
    */
   readonly isDeprecated?: boolean;
 }

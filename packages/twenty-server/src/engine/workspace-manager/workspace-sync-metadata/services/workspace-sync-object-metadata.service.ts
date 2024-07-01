@@ -125,6 +125,9 @@ export class WorkspaceSyncObjectMetadataService {
       for (const fieldComparatorResult of fieldComparatorResults) {
         switch (fieldComparatorResult.action) {
           case ComparatorAction.CREATE: {
+            if (fieldComparatorResult.object.isCustom) {
+              break;
+            }
             storage.addCreateFieldMetadata(fieldComparatorResult.object);
             break;
           }

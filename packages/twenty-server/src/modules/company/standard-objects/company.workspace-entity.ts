@@ -1,3 +1,5 @@
+import { Address } from 'nodemailer/lib/mailer';
+
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
@@ -22,6 +24,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
@@ -50,15 +53,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconLink',
   })
   domainName?: string;
-
-  @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.address,
-    type: FieldMetadataType.TEXT,
-    label: 'Address',
-    description: 'The company address',
-    icon: 'IconMap',
-  })
-  address: string;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.employees,
@@ -100,6 +94,28 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   annualRecurringRevenue: CurrencyMetadata | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
+    type: FieldMetadataType.TEXT,
+    label: 'Address (deprecated) ',
+    description:
+      'Address of the company - deprecated in favor of new address field',
+    icon: 'IconMap',
+  })
+  @WorkspaceIsDeprecated()
+  @WorkspaceIsNullable()
+  address_custom: string;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.address,
+    type: FieldMetadataType.ADDRESS,
+    label: 'Address',
+    description: 'Address of the company',
+    icon: 'IconMap',
+  })
+  @WorkspaceIsNullable()
+  address: Address;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.idealCustomerProfile,

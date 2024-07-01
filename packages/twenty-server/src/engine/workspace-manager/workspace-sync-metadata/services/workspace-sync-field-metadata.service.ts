@@ -6,6 +6,7 @@ import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-syn
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
+import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
@@ -16,6 +17,16 @@ import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/wor
 import { StandardFieldFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field.factory';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { computeStandardObject } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-object.util';
+
+export const formatFieldUpdate = (
+  object: Partial<ComputedPartialFieldMetadata> & { id: string },
+): Partial<ComputedPartialFieldMetadata> & { id: string } => {
+  if (object.isCustom === true && object.standardId !== null) {
+    return { ...object, standardId: null };
+  }
+
+  return object;
+};
 
 @Injectable()
 export class WorkspaceSyncFieldMetadataService {
@@ -87,7 +98,9 @@ export class WorkspaceSyncFieldMetadataService {
             break;
           }
           case ComparatorAction.UPDATE: {
-            storage.addUpdateFieldMetadata(fieldComparatorResult.object);
+            storage.addUpdateFieldMetadata(
+              formatFieldUpdate(fieldComparatorResult.object), // TODO
+            );
             break;
           }
           case ComparatorAction.DELETE: {

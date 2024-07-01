@@ -41,6 +41,7 @@ export class WorkspaceManagerService {
     await this.workspaceSyncMetadataService.synchronize({
       workspaceId,
       dataSourceId: dataSourceMetadata.id,
+      isInitializingWorkspace: true,
     });
 
     await this.prefillWorkspaceWithStandardObjects(

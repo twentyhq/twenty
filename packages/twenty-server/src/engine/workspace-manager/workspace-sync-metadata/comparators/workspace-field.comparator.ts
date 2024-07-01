@@ -30,6 +30,12 @@ const commonFieldPropertiesToIgnore = [
 
 const fieldPropertiesToStringify = ['defaultValue'] as const;
 
+const isDeprecatedField = (
+  standardFieldMetadata: ComputedPartialFieldMetadata | undefined,
+) => {
+  return standardFieldMetadata?.isCustom;
+};
+
 @Injectable()
 export class WorkspaceFieldComparator {
   constructor() {}
@@ -109,10 +115,6 @@ export class WorkspaceFieldComparator {
       const findField = (
         field: ComputedPartialFieldMetadata | FieldMetadataEntity,
       ) => {
-        if (field.isCustom) {
-          return field.name === fieldName;
-        }
-
         return field.standardId === fieldName;
       };
       // Object shouldn't have thousands of fields, so we can use find here
@@ -123,6 +125,9 @@ export class WorkspaceFieldComparator {
 
       switch (difference.type) {
         case 'CREATE': {
+          if (isDeprecatedField(standardFieldMetadata)) {
+            break;
+          }
           if (!standardFieldMetadata) {
             throw new Error(
               `Field ${fieldName} not found in standardObjectMetadata`,
