@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/google-email-alias-manager.service';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -15,7 +14,7 @@ export class EmailAliasManagerService {
   ) {}
 
   public async refreshEmailAliases(
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
     let emailAliases: string[];

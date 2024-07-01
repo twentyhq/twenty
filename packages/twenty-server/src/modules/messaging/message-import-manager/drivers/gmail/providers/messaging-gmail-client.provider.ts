@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { gmail_v1, google } from 'googleapis';
 
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
@@ -13,7 +12,7 @@ export class MessagingGmailClientProvider {
   ) {}
 
   public async getGmailClient(
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
   ): Promise<gmail_v1.Gmail> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getOAuth2Client(connectedAccount);

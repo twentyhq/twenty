@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { OAuth2Client } from 'google-auth-library';
 
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { GoogleOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client-manager.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
@@ -13,7 +12,7 @@ export class OAuth2ClientManagerService {
   ) {}
 
   public async getOAuth2Client(
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
   ): Promise<OAuth2Client> {
     const { refreshToken } = connectedAccount;
 

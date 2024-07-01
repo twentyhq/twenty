@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { calendar_v3 as calendarV3, google } from 'googleapis';
 
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
@@ -13,7 +12,7 @@ export class GoogleCalendarClientProvider {
   ) {}
 
   public async getGoogleCalendarClient(
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
   ): Promise<calendarV3.Calendar> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getOAuth2Client(connectedAccount);
