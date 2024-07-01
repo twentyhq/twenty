@@ -8,6 +8,7 @@ import { FindManyRemoteTablesInput } from 'src/engine/metadata-modules/remote-se
 import { RemoteTableInput } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table-input';
 import { RemoteTableDTO } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
+import { remoteTableGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/remote-server/remote-table/utils/remote-table-graphql-api-exception-handler.util';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
@@ -19,11 +20,15 @@ export class RemoteTableResolver {
     @Args('input') input: FindManyRemoteTablesInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.findDistantTablesWithStatus(
-      input.id,
-      workspaceId,
-      input.shouldFetchPendingSchemaUpdates,
-    );
+    try {
+      return this.remoteTableService.findDistantTablesWithStatus(
+        input.id,
+        workspaceId,
+        input.shouldFetchPendingSchemaUpdates,
+      );
+    } catch (error) {
+      remoteTableGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => RemoteTableDTO)
@@ -31,7 +36,11 @@ export class RemoteTableResolver {
     @Args('input') input: RemoteTableInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.syncRemoteTable(input, workspaceId);
+    try {
+      return this.remoteTableService.syncRemoteTable(input, workspaceId);
+    } catch (error) {
+      remoteTableGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => RemoteTableDTO)
@@ -39,7 +48,11 @@ export class RemoteTableResolver {
     @Args('input') input: RemoteTableInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.unsyncRemoteTable(input, workspaceId);
+    try {
+      return this.remoteTableService.unsyncRemoteTable(input, workspaceId);
+    } catch (error) {
+      remoteTableGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => RemoteTableDTO)
@@ -47,9 +60,13 @@ export class RemoteTableResolver {
     @Args('input') input: RemoteTableInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.syncRemoteTableSchemaChanges(
-      input,
-      workspaceId,
-    );
+    try {
+      return this.remoteTableService.syncRemoteTableSchemaChanges(
+        input,
+        workspaceId,
+      );
+    } catch (error) {
+      remoteTableGraphqlApiExceptionHandler(error);
+    }
   }
 }

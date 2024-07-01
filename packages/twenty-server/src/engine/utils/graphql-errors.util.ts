@@ -183,3 +183,11 @@ export class TimeoutError extends BaseGraphQLError {
     Object.defineProperty(this, 'name', { value: 'TimeoutError' });
   }
 }
+
+export class InternalServerError extends BaseGraphQLError {
+  constructor(message: string) {
+    super(message, ErrorCode.INTERNAL_SERVER_ERROR);
+
+    Object.defineProperty(this, 'name', { value: 'InternalServerError' });
+  }
+}
