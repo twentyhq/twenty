@@ -49,7 +49,7 @@ export class BlocklistReimportCalendarEventsJob {
       return;
     }
 
-    await this.googleCalendarSyncService.startGoogleCalendarSync(
+    await this.googleCalendarSyncService.processCalendarEventsImport(
       workspaceId,
       connectedAccount[0].id,
       handle,

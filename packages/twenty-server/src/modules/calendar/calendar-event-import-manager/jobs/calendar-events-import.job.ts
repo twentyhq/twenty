@@ -42,7 +42,7 @@ export class CalendarEventsImportJob {
       return;
     }
 
-    await this.googleCalendarSyncService.startGoogleCalendarSync(
+    await this.googleCalendarSyncService.processCalendarEventsImport(
       data.workspaceId,
       data.connectedAccountId,
     );

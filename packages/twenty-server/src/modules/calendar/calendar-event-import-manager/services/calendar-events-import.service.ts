@@ -70,7 +70,7 @@ export class CalendarEventsImportService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  public async startGoogleCalendarSync(
+  public async processCalendarEventsImport(
     workspaceId: string,
     connectedAccountId: string,
     emailOrDomainToReimport?: string,
