@@ -3,12 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository, In } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import {
   MessageChannelSyncStage,
@@ -21,35 +19,26 @@ import {
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageListFetchCronJob {
   private readonly logger = new Logger(MessagingMessageListFetchCronJob.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(DataSourceEntity, 'metadata')
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly environmentService: EnvironmentService,
+    private readonly billingService: BillingService,
   ) {}
 
   @Process(MessagingMessageListFetchCronJob.name)
   async handle(): Promise<void> {
-    const workspaceIds = (
-      await this.workspaceRepository.find({
-        where: this.environmentService.get('IS_BILLING_ENABLED')
-          ? {
-              subscriptionStatus: In(['active', 'trialing', 'past_due']),
-            }
-          : {},
-        select: ['id'],
-      })
-    ).map((workspace) => workspace.id);
+    const workspaceIds =
+      await this.billingService.getActiveSubscriptionWorkspaceIds();
 
     const dataSources = await this.dataSourceRepository.find({
       where: {

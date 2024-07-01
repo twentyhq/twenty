@@ -61,6 +61,7 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED: true,
             IS_PROFILE_EMAILS_READ_ENABLED: true,
             IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED: true,
+            IS_FREE_ACCESS_ENABLED: false,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
@@ -78,6 +79,7 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED: true,
           IS_PROFILE_EMAILS_READ_ENABLED: true,
           IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED: true,
+          IS_FREE_ACCESS_ENABLED: false,
         },
       );
 

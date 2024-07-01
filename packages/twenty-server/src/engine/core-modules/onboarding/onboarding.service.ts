@@ -1,13 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
-import { OnboardingStep } from 'src/engine/core-modules/onboarding/enums/onboarding-step.enum';
+import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { isDefined } from 'src/utils/is-defined';
+import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 
 enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
@@ -26,29 +33,71 @@ type OnboardingKeyValueType = {
 @Injectable()
 export class OnboardingService {
   constructor(
+    private readonly billingService: BillingService,
+    private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly keyValuePairService: KeyValuePairService<OnboardingKeyValueType>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
+    @InjectWorkspaceRepository(WorkspaceMemberWorkspaceEntity)
+    private readonly workspaceMemberRepository: WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
   ) {}
 
-  private async isSyncEmailOnboardingStep(user: User, workspace: Workspace) {
+  private async isSubscriptionIncompleteOnboardingStatus(user: User) {
+    const isBillingEnabledForWorkspace =
+      await this.billingService.isBillingEnabledForWorkspace(
+        user.defaultWorkspaceId,
+      );
+
+    if (!isBillingEnabledForWorkspace) {
+      return false;
+    }
+
+    const currentBillingSubscription =
+      await this.billingService.getCurrentBillingSubscription({
+        workspaceId: user.defaultWorkspaceId,
+      });
+
+    return (
+      !isDefined(currentBillingSubscription) ||
+      currentBillingSubscription?.status === SubscriptionStatus.Incomplete
+    );
+  }
+
+  private async isWorkspaceActivationOnboardingStatus(user: User) {
+    return !(await this.workspaceManagerService.doesDataSourceExist(
+      user.defaultWorkspaceId,
+    ));
+  }
+
+  private async isProfileCreationOnboardingStatus(user: User) {
+    const workspaceMember = await this.workspaceMemberRepository.findOneBy({
+      userId: user.id,
+    });
+
+    return (
+      workspaceMember &&
+      (!workspaceMember.name.firstName || !workspaceMember.name.lastName)
+    );
+  }
+
+  private async isSyncEmailOnboardingStatus(user: User) {
     const syncEmailValue = await this.keyValuePairService.get({
       userId: user.id,
-      workspaceId: workspace.id,
+      workspaceId: user.defaultWorkspaceId,
       key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
     });
     const isSyncEmailSkipped = syncEmailValue === OnboardingStepValues.SKIPPED;
     const connectedAccounts =
       await this.connectedAccountRepository.getAllByUserId(
         user.id,
-        workspace.id,
+        user.defaultWorkspaceId,
       );
 
     return !isSyncEmailSkipped && !connectedAccounts?.length;
   }
 
-  private async isInviteTeamOnboardingStep(workspace: Workspace) {
+  private async isInviteTeamOnboardingStatus(workspace: Workspace) {
     const inviteTeamValue = await this.keyValuePairService.get({
       workspaceId: workspace.id,
       key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
@@ -64,19 +113,28 @@ export class OnboardingService {
     );
   }
 
-  async getOnboardingStep(
-    user: User,
-    workspace: Workspace,
-  ): Promise<OnboardingStep | null> {
-    if (await this.isSyncEmailOnboardingStep(user, workspace)) {
-      return OnboardingStep.SYNC_EMAIL;
+  async getOnboardingStatus(user: User) {
+    if (await this.isSubscriptionIncompleteOnboardingStatus(user)) {
+      return OnboardingStatus.PLAN_REQUIRED;
     }
 
-    if (await this.isInviteTeamOnboardingStep(workspace)) {
-      return OnboardingStep.INVITE_TEAM;
+    if (await this.isWorkspaceActivationOnboardingStatus(user)) {
+      return OnboardingStatus.WORKSPACE_ACTIVATION;
     }
 
-    return null;
+    if (await this.isProfileCreationOnboardingStatus(user)) {
+      return OnboardingStatus.PROFILE_CREATION;
+    }
+
+    if (await this.isSyncEmailOnboardingStatus(user)) {
+      return OnboardingStatus.SYNC_EMAIL;
+    }
+
+    if (await this.isInviteTeamOnboardingStatus(user.defaultWorkspace)) {
+      return OnboardingStatus.INVITE_TEAM;
+    }
+
+    return OnboardingStatus.COMPLETED;
   }
 
   async skipInviteTeamOnboardingStep(workspaceId: string) {

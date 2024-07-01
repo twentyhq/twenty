@@ -6,11 +6,6 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
@@ -18,69 +13,34 @@ export class GoogleAPIRefreshAccessTokenService {
     private readonly environmentService: EnvironmentService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly messagingTelemetryService: MessagingTelemetryService,
-    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
   ) {}
 
   async refreshAndSaveAccessToken(
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
-  ): Promise<void> {
-    const { refreshToken } = connectedAccount;
+  ): Promise<string> {
+    const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
       throw new Error(
         `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
       );
     }
+    const accessToken = await this.refreshAccessToken(refreshToken);
 
-    try {
-      const accessToken = await this.refreshAccessToken(refreshToken);
+    await this.connectedAccountRepository.updateAccessToken(
+      accessToken,
+      connectedAccount.id,
+      workspaceId,
+    );
 
-      await this.connectedAccountRepository.updateAccessToken(
-        accessToken,
-        connectedAccount.id,
-        workspaceId,
-      );
-    } catch (error) {
-      const messageChannel =
-        await this.messageChannelRepository.getFirstByConnectedAccountId(
-          connectedAccount.id,
-          workspaceId,
-        );
+    await this.connectedAccountRepository.updateAccessToken(
+      accessToken,
+      connectedAccount.id,
+      workspaceId,
+    );
 
-      if (!messageChannel) {
-        throw new Error(
-          `No message channel found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
-        );
-      }
-
-      await this.messagingTelemetryService.track({
-        eventName: `refresh_token.error.insufficient_permissions`,
-        workspaceId,
-        connectedAccountId: messageChannel.connectedAccountId,
-        messageChannelId: messageChannel.id,
-        message: `${error.code}: ${error.reason}`,
-      });
-
-      await this.messagingChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
-        messageChannel.id,
-        workspaceId,
-      );
-
-      if (!messageChannel.connectedAccountId) {
-        throw new Error(
-          `No connected account ID found for message channel ${messageChannel.id} in workspace ${workspaceId}`,
-        );
-      }
-
-      await this.connectedAccountRepository.updateAuthFailedAt(
-        messageChannel.connectedAccountId,
-        workspaceId,
-      );
-    }
+    return accessToken;
   }
 
   async refreshAccessToken(refreshToken: string): Promise<string> {

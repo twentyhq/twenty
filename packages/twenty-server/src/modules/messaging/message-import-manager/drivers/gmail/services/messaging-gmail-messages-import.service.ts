@@ -23,6 +23,7 @@ import { MessageChannelRepository } from 'src/modules/messaging/common/repositor
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { IsFeatureEnabledService } from 'src/engine/core-modules/feature-flag/services/is-feature-enabled.service';
 import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 
 @Injectable()
 export class MessagingGmailMessagesImportService {
@@ -45,6 +46,8 @@ export class MessagingGmailMessagesImportService {
     private readonly messageChannelRepository: MessageChannelRepository,
     private readonly emailAliasManagerService: EmailAliasManagerService,
     private readonly isFeatureEnabledService: IsFeatureEnabledService,
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
   async processMessageBatchImport(
@@ -75,10 +78,35 @@ export class MessagingGmailMessagesImportService {
       workspaceId,
     );
 
-    await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
-      connectedAccount,
-      workspaceId,
-    );
+    let accessToken: string;
+
+    try {
+      accessToken =
+        await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+          connectedAccount,
+          workspaceId,
+        );
+    } catch (error) {
+      await this.messagingTelemetryService.track({
+        eventName: `refresh_token.error.insufficient_permissions`,
+        workspaceId,
+        connectedAccountId: messageChannel.connectedAccountId,
+        messageChannelId: messageChannel.id,
+        message: `${error.code}: ${error.reason}`,
+      });
+
+      await this.messagingChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
+        messageChannel.id,
+        workspaceId,
+      );
+
+      await this.connectedAccountRepository.updateAuthFailedAt(
+        messageChannel.connectedAccountId,
+        workspaceId,
+      );
+
+      return;
+    }
 
     if (
       await this.isFeatureEnabledService.isFeatureEnabled(
@@ -126,6 +154,7 @@ export class MessagingGmailMessagesImportService {
       const allMessages =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
           messageIdsToFetch,
+          accessToken,
           connectedAccount.id,
           workspaceId,
         );
