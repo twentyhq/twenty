@@ -75,7 +75,9 @@ export const SingleEntityObjectFilterDropdownButton = ({
           <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
           <ObjectFilterDropdownRecordRemoveFilterMenuItem />
-          <ObjectFilterDropdownRecordSelect viewComponentId={"single-entity-filter-dropdown"}/>
+          <ObjectFilterDropdownRecordSelect
+            viewComponentId={'single-entity-filter-dropdown'}
+          />
         </>
       }
     />
