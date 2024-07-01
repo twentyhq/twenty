@@ -166,10 +166,7 @@ export class GoogleAPIsService {
       }
     }
 
-    if (
-      this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
-      isCalendarEnabled
-    ) {
+    if (isCalendarEnabled) {
       await this.calendarQueueService.add<CalendarEventsImportJobData>(
         CalendarEventsImportJob.name,
         {
