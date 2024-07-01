@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -14,6 +17,10 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
     WorkspaceDataSourceModule,
     TwentyORMModule.forFeature([CalendarEventParticipantWorkspaceEntity]),
     ObjectMetadataRepositoryModule.forFeature([PersonWorkspaceEntity]),
+    TypeOrmModule.forFeature(
+      [ObjectMetadataEntity, FieldMetadataEntity],
+      'metadata',
+    ),
     AddPersonIdAndWorkspaceMemberIdModule,
   ],
   providers: [
