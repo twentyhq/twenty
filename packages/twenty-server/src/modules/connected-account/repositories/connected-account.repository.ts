@@ -306,4 +306,22 @@ export class ConnectedAccountRepository {
 
     return connectedAccount;
   }
+
+  public async updateEmailAliases(
+    emailAliases: string[],
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "emailAliases" = $1 WHERE "id" = $2`,
+      // TODO: modify emailAliases to be of fieldmetadatatype array
+      [emailAliases.join(','), connectedAccountId],
+      workspaceId,
+      transactionManager,
+    );
+  }
 }

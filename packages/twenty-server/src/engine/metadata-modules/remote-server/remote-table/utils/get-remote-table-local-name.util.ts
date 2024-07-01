@@ -1,9 +1,11 @@
-import { BadRequestException } from '@nestjs/common/exceptions';
-
 import { singular } from 'pluralize';
 import { DataSource } from 'typeorm';
 
 import { camelCase } from 'src/utils/camel-case';
+import {
+  RemoteTableException,
+  RemoteTableExceptionCode,
+} from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.exception';
 
 const MAX_SUFFIX = 10;
 
@@ -55,5 +57,8 @@ export const getRemoteTableLocalName = async (
     }
   }
 
-  throw new BadRequestException('Table name is already taken.');
+  throw new RemoteTableException(
+    'Table name is already taken',
+    RemoteTableExceptionCode.INVALID_REMOTE_TABLE_INPUT,
+  );
 };

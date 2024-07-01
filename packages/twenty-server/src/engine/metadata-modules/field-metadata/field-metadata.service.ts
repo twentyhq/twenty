@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { v4 as uuidV4 } from 'uuid';
@@ -39,9 +34,15 @@ import {
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
-import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import {
+  validateMetadataName,
+  InvalidStringException,
+} from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 
 import {
   FieldMetadataEntity,
@@ -94,7 +95,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
 
       if (!objectMetadata) {
-        throw new NotFoundException('Object does not exist');
+        throw new FieldMetadataException(
+          'Object metadata does not exist',
+          FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        );
       }
 
       if (!fieldMetadataInput.isRemoteCreation) {
@@ -107,7 +111,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           !fieldMetadataInput.options &&
           fieldMetadataInput.type !== FieldMetadataType.RATING
         ) {
-          throw new BadRequestException('Options are required for enum fields');
+          throw new FieldMetadataException(
+            'Options are required for enum fields',
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
         }
       }
 
@@ -127,7 +134,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       });
 
       if (fieldAlreadyExists) {
-        throw new ConflictException('Field already exists');
+        throw new FieldMetadataException(
+          'Field already exists',
+          FieldMetadataExceptionCode.FIELD_ALREADY_EXISTS,
+        );
       }
 
       const createdFieldMetadata = await fieldMetadataRepository.save({
@@ -183,7 +193,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       const workspaceQueryRunner = workspaceDataSource?.createQueryRunner();
 
       if (!workspaceQueryRunner) {
-        throw new Error('Could not create workspace query runner');
+        throw new FieldMetadataException(
+          'Could not create workspace query runner',
+          FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+        );
       }
 
       await workspaceQueryRunner.connect();
@@ -263,7 +276,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       });
 
       if (!existingFieldMetadata) {
-        throw new NotFoundException('Field does not exist');
+        throw new FieldMetadataException(
+          'Field does not exist',
+          FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        );
       }
 
       const objectMetadata =
@@ -277,7 +293,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
 
       if (!objectMetadata) {
-        throw new NotFoundException('Object does not exist');
+        throw new FieldMetadataException(
+          'Object metadata does not exist',
+          FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        );
       }
 
       assertMutationNotOnRemoteObject(objectMetadata);
@@ -287,15 +306,19 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           existingFieldMetadata.id &&
         fieldMetadataInput.isActive === false
       ) {
-        throw new BadRequestException(
+        throw new FieldMetadataException(
           'Cannot deactivate label identifier field',
+          FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         );
       }
 
       if (fieldMetadataInput.options) {
         for (const option of fieldMetadataInput.options) {
           if (!option.id) {
-            throw new BadRequestException('Option id is required');
+            throw new FieldMetadataException(
+              'Option id is required',
+              FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            );
           }
         }
       }
@@ -325,9 +348,17 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               ? updatableFieldInput.defaultValue
               : null,
       });
-      const updatedFieldMetadata = await fieldMetadataRepository.findOneOrFail({
+
+      const updatedFieldMetadata = await fieldMetadataRepository.findOne({
         where: { id },
       });
+
+      if (!updatedFieldMetadata) {
+        throw new FieldMetadataException(
+          'Field does not exist',
+          FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        );
+      }
 
       if (
         fieldMetadataInput.name ||
@@ -392,7 +423,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       });
 
       if (!fieldMetadata) {
-        throw new NotFoundException('Field does not exist');
+        throw new FieldMetadataException(
+          'Field does not exist',
+          FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        );
       }
 
       const objectMetadata =
@@ -403,7 +437,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         });
 
       if (!objectMetadata) {
-        throw new NotFoundException('Object does not exist');
+        throw new FieldMetadataException(
+          'Object metadata does not exist',
+          FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        );
       }
 
       await fieldMetadataRepository.delete(fieldMetadata.id);
@@ -454,7 +491,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     });
 
     if (!fieldMetadata) {
-      throw new NotFoundException('Field does not exist');
+      throw new FieldMetadataException(
+        'Field does not exist',
+        FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+      );
     }
 
     return fieldMetadata;
@@ -517,9 +557,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY ||
       relationMetadata.relationType === RelationMetadataType.MANY_TO_ONE
     ) {
-      throw new Error(`
+      throw new FieldMetadataException(
+        `
         Relation type ${relationMetadata.relationType} not supported
-      `);
+      `,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
     }
 
     if (isRelationFromSource) {
@@ -561,8 +604,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         validateMetadataName(fieldMetadataInput.name);
       } catch (error) {
         if (error instanceof InvalidStringException) {
-          throw new BadRequestException(
+          throw new FieldMetadataException(
             `Characters used in name "${fieldMetadataInput.name}" are not supported`,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
         } else {
           throw error;

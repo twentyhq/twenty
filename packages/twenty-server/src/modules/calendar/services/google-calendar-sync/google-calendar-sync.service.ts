@@ -108,9 +108,8 @@ export class GoogleCalendarSyncService {
     const calendarChannelId = calendarChannel.id;
 
     const { events, nextSyncToken } = await this.getEventsFromGoogleCalendar(
-      refreshToken,
+      connectedAccount,
       workspaceId,
-      connectedAccountId,
       emailOrDomainToReimport,
       syncToken,
     );
@@ -321,9 +320,8 @@ export class GoogleCalendarSyncService {
   }
 
   public async getEventsFromGoogleCalendar(
-    refreshToken: string,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
-    connectedAccountId: string,
     emailOrDomainToReimport?: string,
     syncToken?: string,
   ): Promise<{
@@ -332,7 +330,7 @@ export class GoogleCalendarSyncService {
   }> {
     const googleCalendarClient =
       await this.googleCalendarClientProvider.getGoogleCalendarClient(
-        refreshToken,
+        connectedAccount,
       );
 
     const startTime = Date.now();
@@ -360,7 +358,7 @@ export class GoogleCalendarSyncService {
 
           await this.calendarChannelRepository.update(
             {
-              id: connectedAccountId,
+              id: connectedAccount.id,
             },
             {
               syncCursor: '',
@@ -368,7 +366,7 @@ export class GoogleCalendarSyncService {
           );
 
           this.logger.log(
-            `Sync token is no longer valid for connected account ${connectedAccountId} in workspace ${workspaceId}, resetting sync cursor.`,
+            `Sync token is no longer valid for connected account ${connectedAccount.id} in workspace ${workspaceId}, resetting sync cursor.`,
           );
 
           return {
@@ -399,9 +397,9 @@ export class GoogleCalendarSyncService {
     const endTime = Date.now();
 
     this.logger.log(
-      `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId} getting events list in ${
-        endTime - startTime
-      }ms.`,
+      `google calendar sync for workspace ${workspaceId} and account ${
+        connectedAccount.id
+      } getting events list in ${endTime - startTime}ms.`,
     );
 
     return { events, nextSyncToken };

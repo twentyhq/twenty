@@ -16,33 +16,27 @@ export class GoogleAPIRefreshAccessTokenService {
   ) {}
 
   async refreshAndSaveAccessToken(
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
-    connectedAccountId: string,
   ): Promise<string> {
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
-      workspaceId,
-    );
-
-    if (!connectedAccount) {
-      throw new Error(
-        `No connected account found for ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-    }
-
     const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
       throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+        `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
       );
     }
-
     const accessToken = await this.refreshAccessToken(refreshToken);
 
     await this.connectedAccountRepository.updateAccessToken(
       accessToken,
-      connectedAccountId,
+      connectedAccount.id,
+      workspaceId,
+    );
+
+    await this.connectedAccountRepository.updateAccessToken(
+      accessToken,
+      connectedAccount.id,
       workspaceId,
     );
 
