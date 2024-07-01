@@ -15,7 +15,7 @@ export const MAX_RECORDS_TO_DISPLAY = 3;
 
 type ObjectFilterDropdownRecordSelectProps = {
   viewComponentId?: string;
-}
+};
 export const ObjectFilterDropdownRecordSelect = ({
   viewComponentId,
 }: ObjectFilterDropdownRecordSelectProps) => {
@@ -31,7 +31,8 @@ export const ObjectFilterDropdownRecordSelect = ({
   } = useFilterDropdown();
 
   const { removeCombinedViewFilter } = useCombinedViewFilters(viewComponentId);
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView(viewComponentId);
+  const { currentViewWithCombinedFiltersAndSorts } =
+    useGetCurrentView(viewComponentId);
 
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
