@@ -13,7 +13,12 @@ import { isDefined } from '~/utils/isDefined';
 export const EMPTY_FILTER_VALUE = '[]';
 export const MAX_RECORDS_TO_DISPLAY = 3;
 
-export const ObjectFilterDropdownRecordSelect = () => {
+type ObjectFilterDropdownRecordSelectProps = {
+  viewComponentId?: string;
+}
+export const ObjectFilterDropdownRecordSelect = ({
+  viewComponentId,
+}: ObjectFilterDropdownRecordSelectProps) => {
   const {
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,
@@ -25,8 +30,8 @@ export const ObjectFilterDropdownRecordSelect = () => {
     emptyFilterButKeepDefinition,
   } = useFilterDropdown();
 
-  const { removeCombinedViewFilter } = useCombinedViewFilters();
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+  const { removeCombinedViewFilter } = useCombinedViewFilters(viewComponentId);
+  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView(viewComponentId);
 
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
