@@ -1,4 +1,4 @@
-export class CustomError extends Error {
+export class CustomException extends Error {
   code: string;
 
   constructor(message: string, code: string) {

@@ -1,6 +1,6 @@
-import { CustomError } from 'src/utils/custom-error';
+import { CustomException } from 'src/utils/custom-exception';
 
-export class RemoteServerException extends CustomError {
+export class RemoteServerException extends CustomException {
   code: RemoteServerExceptionCode;
   constructor(message: string, code: RemoteServerExceptionCode) {
     super(message, code);

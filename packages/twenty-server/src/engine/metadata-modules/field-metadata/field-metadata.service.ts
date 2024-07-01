@@ -349,16 +349,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               : null,
       });
 
-      const updatedFieldMetadata = await fieldMetadataRepository
-        .findOneOrFail({
-          where: { id },
-        })
-        .catch(() => {
-          throw new FieldMetadataException(
-            'Field does not exist',
-            FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
-          );
-        });
+      const updatedFieldMetadata = await fieldMetadataRepository.findOne({
+        where: { id },
+      });
+
+      if (!updatedFieldMetadata) {
+        throw new FieldMetadataException(
+          'Field does not exist',
+          FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        );
+      }
 
       if (
         fieldMetadataInput.name ||

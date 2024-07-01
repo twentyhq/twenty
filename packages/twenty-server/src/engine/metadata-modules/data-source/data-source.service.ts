@@ -63,17 +63,17 @@ export class DataSourceService {
   async getLastDataSourceMetadataFromWorkspaceIdOrFail(
     workspaceId: string,
   ): Promise<DataSourceEntity> {
-    return this.dataSourceMetadataRepository
-      .findOneOrFail({
+    try {
+      return this.dataSourceMetadataRepository.findOneOrFail({
         where: { workspaceId },
         order: { createdAt: 'DESC' },
-      })
-      .catch(() => {
-        throw new DataSourceException(
-          `Data source not found for workspace ${workspaceId}`,
-          DataSourceExceptionCode.DATA_SOURCE_NOT_FOUND,
-        );
       });
+    } catch (error) {
+      throw new DataSourceException(
+        `Data source not found for workspace ${workspaceId}: ${error}`,
+        DataSourceExceptionCode.DATA_SOURCE_NOT_FOUND,
+      );
+    }
   }
 
   async delete(workspaceId: string): Promise<void> {

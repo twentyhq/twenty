@@ -1,6 +1,6 @@
-import { CustomError } from 'src/utils/custom-error';
+import { CustomException } from 'src/utils/custom-exception';
 
-export class DataSourceException extends CustomError {
+export class DataSourceException extends CustomException {
   constructor(message: string, code: DataSourceExceptionCode) {
     super(message, code);
   }
