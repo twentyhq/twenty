@@ -81,7 +81,7 @@ export class BlocklistItemDeleteCalendarEventsJob {
 
     await this.calendarChannelEventAssociationRepository.delete({
       calendarEvent: {
-        eventParticipants: {
+        calendarEventParticipants: {
           handle: isHandleDomain ? ILike(`%${handle}`) : handle,
         },
         calendarChannelEventAssociations: {

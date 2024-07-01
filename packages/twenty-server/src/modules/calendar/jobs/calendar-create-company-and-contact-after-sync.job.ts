@@ -70,11 +70,11 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
     const calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId =
       await this.calendarEventParticipantRepository.find({
         where: {
-          calendarEvent: {
+          calendarEventToto: {
             calendarChannelEventAssociations: {
               calendarChannelId,
             },
-            eventParticipants: {
+            calendarEventParticipants: {
               person: IsNull(),
               workspaceMember: IsNull(),
             },

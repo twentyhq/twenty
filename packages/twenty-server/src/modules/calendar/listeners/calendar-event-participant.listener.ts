@@ -61,7 +61,7 @@ export class CalendarEventParticipantListener {
         workspaceMemberId: payload.workspaceMemberId,
         workspaceId: payload.workspaceId,
         linkedObjectMetadataId: calendarEventObjectMetadata.id,
-        linkedRecordId: participant.calendarEventId,
+        linkedRecordId: participant.calendarEventTotoId,
         linkedRecordCachedName: '',
       })),
       payload.workspaceId,

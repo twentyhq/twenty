@@ -15,7 +15,6 @@ import { WorkspaceObjectComparator } from 'src/engine/workspace-manager/workspac
 import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationObjectFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-object.factory';
-import { computeStandardObject } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-object.util';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 
 @Injectable()
@@ -47,10 +46,6 @@ export class WorkspaceSyncObjectMetadataService {
         },
         relations: ['dataSource', 'fields'],
       });
-    const customObjectMetadataCollection =
-      originalObjectMetadataCollection.filter(
-        (objectMetadata) => objectMetadata.isCustom,
-      );
 
     // Create standard object metadata collection
     const standardObjectMetadataCollection = this.standardObjectFactory.create(
@@ -85,11 +80,8 @@ export class WorkspaceSyncObjectMetadataService {
     for (const standardObjectId in standardObjectMetadataMap) {
       const originalObjectMetadata =
         originalObjectMetadataMap[standardObjectId];
-      const standardObjectMetadata = computeStandardObject(
-        standardObjectMetadataMap[standardObjectId],
-        originalObjectMetadata,
-        customObjectMetadataCollection,
-      );
+      const standardObjectMetadata =
+        standardObjectMetadataMap[standardObjectId];
 
       /**
        * COMPARE OBJECT METADATA

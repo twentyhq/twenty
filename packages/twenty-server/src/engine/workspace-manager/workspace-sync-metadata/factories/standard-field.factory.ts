@@ -50,6 +50,15 @@ export class StandardFieldFactory {
           return acc;
         }
 
+        if (
+          isGatedAndNotEnabled(
+            workspaceEntityMetadataArgs.gate,
+            workspaceFeatureFlagsMap,
+          )
+        ) {
+          return acc;
+        }
+
         acc.set(
           workspaceEntityMetadataArgs.standardId,
           this.create(target, context, workspaceFeatureFlagsMap),

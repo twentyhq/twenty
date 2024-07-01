@@ -174,5 +174,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => CalendarEventParticipantWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  eventParticipants: Relation<CalendarEventParticipantWorkspaceEntity[]>;
+  calendarEventParticipants: Relation<
+    CalendarEventParticipantWorkspaceEntity[]
+  >;
 }

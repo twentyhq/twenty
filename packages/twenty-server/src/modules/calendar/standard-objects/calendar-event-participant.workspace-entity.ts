@@ -105,11 +105,11 @@ export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity
     description: 'Event ID',
     icon: 'IconCalendar',
     inverseSideTarget: () => CalendarEventWorkspaceEntity,
-    inverseSideFieldKey: 'eventParticipants',
+    inverseSideFieldKey: 'calendarEventParticipants',
   })
   calendarEventToto: Relation<CalendarEventWorkspaceEntity>;
 
-  @WorkspaceJoinColumn('calendarEvent')
+  @WorkspaceJoinColumn('calendarEventToto')
   calendarEventTotoId: string;
 
   @WorkspaceRelation({
