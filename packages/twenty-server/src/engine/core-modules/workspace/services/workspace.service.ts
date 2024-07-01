@@ -14,7 +14,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
@@ -30,7 +30,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly billingService: BillingService,
+    private readonly billingWorkspaceService: BillingWorkspaceService,
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
@@ -64,7 +64,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     assert(workspace, 'Workspace not found');
 
     await this.userWorkspaceRepository.delete({ workspaceId: id });
-    await this.billingService.deleteSubscription(workspace.id);
+    await this.billingWorkspaceService.deleteSubscription(workspace.id);
 
     await this.workspaceManagerService.delete(id);
 
