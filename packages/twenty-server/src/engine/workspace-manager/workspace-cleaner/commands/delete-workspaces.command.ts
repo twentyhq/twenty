@@ -4,10 +4,11 @@ import { Logger } from '@nestjs/common';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { In, Repository } from 'typeorm';
 
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 
 type DeleteWorkspacesCommandOptions = {
   dryRun?: boolean;
@@ -23,6 +24,7 @@ export class DeleteWorkspacesCommand extends CommandRunner {
 
   constructor(
     private readonly workspaceService: WorkspaceService,
+    private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly dataSourceService: DataSourceService,
@@ -55,11 +57,14 @@ export class DeleteWorkspacesCommand extends CommandRunner {
     const workspaces = await this.workspaceRepository.find({
       where: { id: In(options.workspaceIds) },
     });
+
     const dataSources =
       await this.dataSourceService.getManyDataSourceMetadata();
+
     const workspaceIdsWithSchema = dataSources.map(
       (dataSource) => dataSource.workspaceId,
     );
+
     const workspacesToDelete = workspaces.filter((Workspace) =>
       workspaceIdsWithSchema.includes(Workspace.id),
     );
@@ -76,8 +81,14 @@ export class DeleteWorkspacesCommand extends CommandRunner {
           workspace.id
         } name: '${workspace.displayName}'`,
       );
+      const workspaceServiceInstance =
+        await this.loadServiceWithWorkspaceContext.load(
+          this.workspaceService,
+          workspace.id,
+        );
+
       if (!options.dryRun) {
-        await this.workspaceService.softDeleteWorkspace(workspace.id);
+        await workspaceServiceInstance.softDeleteWorkspace(workspace.id);
       }
     }
   }
