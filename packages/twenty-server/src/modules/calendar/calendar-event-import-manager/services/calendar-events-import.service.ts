@@ -12,15 +12,14 @@ import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { formatGoogleCalendarEvent } from 'src/modules/calendar/utils/format-google-calendar-event.util';
+import { formatGoogleCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/utils/format-google-calendar-event.util';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import {
   CalendarEventParticipant,
   CalendarEventWithParticipants,
-} from 'src/modules/calendar/types/calendar-event';
-import { filterOutBlocklistedEvents } from 'src/modules/calendar/utils/filter-out-blocklisted-events.util';
+} from 'src/modules/calendar/common/types/calendar-event';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
@@ -40,6 +39,7 @@ import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/cale
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { filterOutBlocklistedEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-out-blocklisted-events.util';
 
 @Injectable()
 export class CalendarEventsImportService {
