@@ -1,16 +1,23 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconCheckbox, IconSearch, IconSettings } from 'twenty-ui';
+import {
+  IconCheckbox,
+  IconReportAnalytics,
+  IconSearch,
+  IconSettings,
+} from 'twenty-ui';
 
 import { CurrentUserDueTaskCountEffect } from '@/activities/tasks/components/CurrentUserDueTaskCountEffect';
 import { currentUserDueTaskCountState } from '@/activities/tasks/states/currentUserTaskCountState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
+import { useIsReportsPage } from '@/navigation/hooks/useIsReportsPage';
 import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import { useIsTasksPage } from '../hooks/useIsTasksPage';
 
@@ -19,6 +26,8 @@ export const MainNavigationDrawerItems = () => {
   const { toggleCommandMenu } = useCommandMenu();
   const isTasksPage = useIsTasksPage();
   const currentUserDueTaskCount = useRecoilValue(currentUserDueTaskCountState);
+  const isReportsEnabled = useIsFeatureEnabled('IS_REPORTS_ENABLED');
+  const isReportsPage = useIsReportsPage();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
@@ -50,6 +59,14 @@ export const MainNavigationDrawerItems = () => {
             Icon={IconCheckbox}
             count={currentUserDueTaskCount}
           />
+          {isReportsEnabled && (
+            <NavigationDrawerItem
+              label="Reports"
+              to="/reports"
+              active={isReportsPage}
+              Icon={IconReportAnalytics}
+            />
+          )}
         </NavigationDrawerSection>
       )}
 

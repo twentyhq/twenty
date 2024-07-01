@@ -136,6 +136,7 @@ export {
   IconRelationOneToOne,
   IconReload,
   IconRepeat,
+  IconReportAnalytics,
   IconRocket,
   IconSearch,
   IconSend,
