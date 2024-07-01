@@ -11,33 +11,31 @@ import { Repository } from 'typeorm';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import {
   GoogleAPIScopeConfig,
-  GoogleAPIsStrategy,
-} from 'src/engine/core-modules/auth/strategies/google-apis.auth.strategy';
+  GoogleAPIsOauthExchangeCodeForTokenStrategy,
+} from 'src/engine/core-modules/auth/strategies/google-apis-oauth-exchange-code-for-token.auth.strategy';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
 
 @Injectable()
-export class GoogleAPIsOauthGuard extends AuthGuard('google-apis') {
+export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
+  'google-apis',
+) {
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly tokenService: TokenService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {
-    super({
-      prompt: 'select_account',
-    });
+    super();
   }
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const transientToken = request.query.transientToken;
-    const redirectLocation = request.query.redirectLocation;
-    const calendarVisibility = request.query.calendarVisibility;
-    const messageVisibility = request.query.messageVisibility;
+    const state = JSON.parse(request.query.state);
 
     if (
       !this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED') &&
@@ -46,13 +44,11 @@ export class GoogleAPIsOauthGuard extends AuthGuard('google-apis') {
       throw new NotFoundException('Google apis auth is not enabled');
     }
 
-    const { workspaceId } =
-      await this.tokenService.verifyTransientToken(transientToken);
+    const { workspaceId } = await this.tokenService.verifyTransientToken(
+      state.transientToken,
+    );
 
     const scopeConfig: GoogleAPIScopeConfig = {
-      isCalendarEnabled: !!this.environmentService.get(
-        'MESSAGING_PROVIDER_GMAIL_ENABLED',
-      ),
       isMessagingAliasFetchingEnabled:
         !!(await this.featureFlagRepository.findOneBy({
           workspaceId,
@@ -61,26 +57,18 @@ export class GoogleAPIsOauthGuard extends AuthGuard('google-apis') {
         })),
     };
 
-    new GoogleAPIsStrategy(this.environmentService, scopeConfig);
+    new GoogleAPIsOauthExchangeCodeForTokenStrategy(
+      this.environmentService,
+      scopeConfig,
+    );
 
-    if (transientToken && typeof transientToken === 'string') {
-      request.params.transientToken = transientToken;
-    }
+    setRequestExtraParams(request, {
+      transientToken: state.transientToken,
+      redirectLocation: state.redirectLocation,
+      calendarVisibility: state.calendarVisibility,
+      messageVisibility: state.messageVisibility,
+    });
 
-    if (redirectLocation && typeof redirectLocation === 'string') {
-      request.params.redirectLocation = redirectLocation;
-    }
-
-    if (calendarVisibility && typeof calendarVisibility === 'string') {
-      request.params.calendarVisibility = calendarVisibility;
-    }
-
-    if (messageVisibility && typeof messageVisibility === 'string') {
-      request.params.messageVisibility = messageVisibility;
-    }
-
-    const activate = (await super.canActivate(context)) as boolean;
-
-    return activate;
+    return (await super.canActivate(context)) as boolean;
   }
 }
