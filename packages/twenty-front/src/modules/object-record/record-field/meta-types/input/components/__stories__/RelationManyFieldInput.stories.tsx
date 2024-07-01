@@ -45,15 +45,14 @@ const RelationManyFieldInputWithContext = () => {
       <FieldContextProvider
         fieldDefinition={{
           fieldMetadataId: 'relation',
-          label: 'Relation',
+          label: 'People',
           type: FieldMetadataType.Relation,
           iconName: 'IconLink',
           metadata: {
-            fieldName: 'Relation',
-            relationObjectMetadataNamePlural: 'workspaceMembers',
-            relationObjectMetadataNameSingular:
-              CoreObjectNameSingular.WorkspaceMember,
-            objectMetadataNameSingular: 'person',
+            fieldName: 'people',
+            relationObjectMetadataNamePlural: 'companies',
+            relationObjectMetadataNameSingular: CoreObjectNameSingular.Company,
+            objectMetadataNameSingular: 'company',
             relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
           },
         }}

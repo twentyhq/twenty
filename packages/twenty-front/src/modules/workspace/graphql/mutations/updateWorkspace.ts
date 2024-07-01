@@ -8,7 +8,6 @@ export const UPDATE_WORKSPACE = gql`
       displayName
       logo
       allowImpersonation
-      subscriptionStatus
     }
   }
 `;

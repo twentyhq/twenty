@@ -2,17 +2,25 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import Stripe from 'stripe';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import {
+  BillingSubscription,
+  SubscriptionInterval,
+  SubscriptionStatus,
+} from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { assert } from 'src/utils/assert';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 export enum AvailableProduct {
   BasePlan = 'base-plan',
@@ -34,11 +42,44 @@ export class BillingService {
     private readonly environmentService: EnvironmentService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
+
+  async getActiveSubscriptionWorkspaceIds() {
+    return (
+      await this.workspaceRepository.find({
+        where: this.environmentService.get('IS_BILLING_ENABLED')
+          ? {
+              currentBillingSubscription: {
+                status: In([
+                  SubscriptionStatus.Active,
+                  SubscriptionStatus.Trialing,
+                  SubscriptionStatus.PastDue,
+                ]),
+              },
+            }
+          : {},
+        select: ['id'],
+      })
+    ).map((workspace) => workspace.id);
+  }
+
+  async isBillingEnabledForWorkspace(workspaceId: string) {
+    const isFreeAccessEnabled = await this.featureFlagRepository.findOneBy({
+      workspaceId,
+      key: FeatureFlagKeys.IsFreeAccessEnabled,
+      value: true,
+    });
+
+    return (
+      !isFreeAccessEnabled && this.environmentService.get('IS_BILLING_ENABLED')
+    );
+  }
 
   getProductStripeId(product: AvailableProduct) {
     if (product === AvailableProduct.BasePlan) {
@@ -84,13 +125,13 @@ export class BillingService {
   }) {
     const notCanceledSubscriptions =
       await this.billingSubscriptionRepository.find({
-        where: { ...criteria, status: Not('canceled') },
+        where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
         relations: ['billingSubscriptionItems'],
       });
 
     assert(
       notCanceledSubscriptions.length <= 1,
-      `More than on not canceled subscription for workspace ${criteria.workspaceId}`,
+      `More than one not canceled subscription for workspace ${criteria.workspaceId}`,
     );
 
     return notCanceledSubscriptions?.[0];
@@ -171,7 +212,9 @@ export class BillingService {
       workspaceId: user.defaultWorkspaceId,
     });
     const newInterval =
-      billingSubscription?.interval === 'year' ? 'month' : 'year';
+      billingSubscription?.interval === SubscriptionInterval.Year
+        ? SubscriptionInterval.Month
+        : SubscriptionInterval.Year;
     const billingSubscriptionItem = await this.getBillingSubscriptionItem(
       user.defaultWorkspaceId,
     );
@@ -265,10 +308,6 @@ export class BillingService {
       return;
     }
 
-    await this.workspaceRepository.update(workspaceId, {
-      subscriptionStatus: data.object.status,
-    });
-
     await this.billingSubscriptionRepository.upsert(
       {
         workspaceId: workspaceId,
@@ -302,5 +341,10 @@ export class BillingService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    await this.featureFlagRepository.delete({
+      workspaceId,
+      key: FeatureFlagKeys.IsFreeAccessEnabled,
+    });
   }
 }

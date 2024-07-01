@@ -64,6 +64,9 @@ export default defineConfig(({ command, mode }) => {
           '**/Tag.tsx',
           '**/MultiSelectFieldDisplay.tsx',
           '**/RatingInput.tsx',
+          '**/RecordTableCellContainer.tsx',
+          '**/RecordTableCellDisplayContainer.tsx',
+          '**/Avatar.tsx',
         ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],

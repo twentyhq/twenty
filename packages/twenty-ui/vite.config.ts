@@ -33,6 +33,7 @@ export default defineConfig({
         '**/OverflowingTextWithTooltip.tsx',
         '**/Chip.tsx',
         '**/Tag.tsx',
+        '**/Avatar.tsx',
       ],
       babelOptions: {
         presets: ['@babel/preset-typescript', '@babel/preset-react'],

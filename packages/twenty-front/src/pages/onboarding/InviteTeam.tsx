@@ -17,7 +17,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useSetNextOnboardingStep } from '@/onboarding/hooks/useSetNextOnboardingStep';
+import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -27,7 +27,10 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { AnimatedTranslation } from '@/ui/utilities/animation/components/AnimatedTranslation';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { OnboardingStep, useSendInviteLinkMutation } from '~/generated/graphql';
+import {
+  OnboardingStatus,
+  useSendInviteLinkMutation,
+} from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledAnimatedContainer = styled.div`
@@ -63,7 +66,7 @@ export const InviteTeam = () => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
   const [sendInviteLink] = useSendInviteLinkMutation();
-  const setNextOnboardingStep = useSetNextOnboardingStep();
+  const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useRecoilValue(currentUserState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const {
@@ -133,7 +136,7 @@ export const InviteTeam = () => {
       );
       const result = await sendInviteLink({ variables: { emails } });
 
-      setNextOnboardingStep(OnboardingStep.InviteTeam);
+      setNextOnboardingStatus();
 
       if (isDefined(result.errors)) {
         throw result.errors;
@@ -145,7 +148,7 @@ export const InviteTeam = () => {
         });
       }
     },
-    [enqueueSnackBar, sendInviteLink, setNextOnboardingStep],
+    [enqueueSnackBar, sendInviteLink, setNextOnboardingStatus],
   );
 
   useScopedHotkeys(
@@ -157,7 +160,7 @@ export const InviteTeam = () => {
     [handleSubmit],
   );
 
-  if (currentUser?.onboardingStep !== OnboardingStep.InviteTeam) {
+  if (currentUser?.onboardingStatus !== OnboardingStatus.InviteTeam) {
     return <></>;
   }
 

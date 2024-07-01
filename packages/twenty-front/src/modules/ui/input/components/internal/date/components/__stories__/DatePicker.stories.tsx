@@ -11,7 +11,7 @@ const meta: Meta<typeof InternalDatePicker> = {
   argTypes: {
     date: { control: 'date' },
   },
-  args: { date: new Date('January 1, 2023 00:00:00') },
+  args: { date: new Date('January 1, 2023 02:00:00') },
 };
 
 export default meta;

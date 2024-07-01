@@ -20,6 +20,7 @@ import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messagi
 import { MessagingErrorHandlingService } from 'src/modules/messaging/common/services/messaging-error-handling.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/common/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 
 @Injectable()
 export class MessagingGmailMessagesImportService {
@@ -40,6 +41,8 @@ export class MessagingGmailMessagesImportService {
     private readonly blocklistRepository: BlocklistRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
   async processMessageBatchImport(
@@ -70,10 +73,35 @@ export class MessagingGmailMessagesImportService {
       workspaceId,
     );
 
-    await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
-      workspaceId,
-      connectedAccount.id,
-    );
+    let accessToken: string;
+
+    try {
+      accessToken =
+        await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+          workspaceId,
+          connectedAccount.id,
+        );
+    } catch (error) {
+      await this.messagingTelemetryService.track({
+        eventName: `refresh_token.error.insufficient_permissions`,
+        workspaceId,
+        connectedAccountId: messageChannel.connectedAccountId,
+        messageChannelId: messageChannel.id,
+        message: `${error.code}: ${error.reason}`,
+      });
+
+      await this.messagingChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
+        messageChannel.id,
+        workspaceId,
+      );
+
+      await this.connectedAccountRepository.updateAuthFailedAt(
+        messageChannel.connectedAccountId,
+        workspaceId,
+      );
+
+      return;
+    }
 
     const messageIdsToFetch =
       (await this.cacheStorage.setPop(
@@ -97,6 +125,7 @@ export class MessagingGmailMessagesImportService {
       const allMessages =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
           messageIdsToFetch,
+          accessToken,
           connectedAccount.id,
           workspaceId,
         );

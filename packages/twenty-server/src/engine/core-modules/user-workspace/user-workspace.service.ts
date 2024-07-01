@@ -107,9 +107,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       return undefined;
     }
 
-    const workspaceMemberCount = await this.workspaceMemberRepository.count();
-
-    return workspaceMemberCount;
+    return await this.workspaceMemberRepository.count();
   }
 
   async checkUserWorkspaceExists(

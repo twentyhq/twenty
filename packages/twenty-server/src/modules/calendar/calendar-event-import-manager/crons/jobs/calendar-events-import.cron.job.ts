@@ -3,9 +3,7 @@ import { Scope } from '@nestjs/common';
 
 import { Repository, In } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
@@ -18,6 +16,7 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
+import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
@@ -25,29 +24,19 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-ob
 })
 export class CalendarEventsImportCronJob {
   constructor(
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(DataSourceEntity, 'metadata')
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
-    private readonly environmentService: EnvironmentService,
     @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
     private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly billingService: BillingService,
   ) {}
 
   @Process(CalendarEventsImportCronJob.name)
   async handle(): Promise<void> {
-    const workspaceIds = (
-      await this.workspaceRepository.find({
-        where: this.environmentService.get('IS_BILLING_ENABLED')
-          ? {
-              subscriptionStatus: In(['active', 'trialing', 'past_due']),
-            }
-          : {},
-        select: ['id'],
-      })
-    ).map((workspace) => workspace.id);
+    const workspaceIds =
+      await this.billingService.getActiveSubscriptionWorkspaceIds();
 
     const dataSources = await this.dataSourceRepository.find({
       where: {

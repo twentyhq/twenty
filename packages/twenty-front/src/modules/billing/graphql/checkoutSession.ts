@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const CHECKOUT_SESSION = gql`
   mutation CheckoutSession(
-    $recurringInterval: String!
+    $recurringInterval: SubscriptionInterval!
     $successUrlPath: String
   ) {
     checkoutSession(
