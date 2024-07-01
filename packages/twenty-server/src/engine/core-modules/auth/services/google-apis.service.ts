@@ -173,9 +173,6 @@ export class GoogleAPIsService {
           workspaceId,
           connectedAccountId: newOrExistingConnectedAccountId,
         },
-        {
-          retryLimit: 2,
-        },
       );
     }
   }
