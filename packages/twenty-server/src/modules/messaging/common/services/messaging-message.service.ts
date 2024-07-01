@@ -1,17 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { DataSource, EntityManager } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageThreadRepository } from 'src/modules/messaging/common/repositories/message-thread.repository';
 import { MessageRepository } from 'src/modules/messaging/common/repositories/message.repository';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
@@ -19,8 +17,6 @@ import { MessagingMessageThreadService } from 'src/modules/messaging/common/serv
 
 @Injectable()
 export class MessagingMessageService {
-  private readonly logger = new Logger(MessagingMessageService.name);
-
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectObjectMetadataRepository(
@@ -29,8 +25,6 @@ export class MessagingMessageService {
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     @InjectObjectMetadataRepository(MessageWorkspaceEntity)
     private readonly messageRepository: MessageRepository,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
     @InjectObjectMetadataRepository(MessageThreadWorkspaceEntity)
     private readonly messageThreadRepository: MessageThreadRepository,
     private readonly messageThreadService: MessagingMessageThreadService,
@@ -101,104 +95,6 @@ export class MessagingMessageService {
     return messageExternalIdsAndIdsMap;
   }
 
-  public async saveMessages(
-    messages: GmailMessage[],
-    workspaceDataSource: DataSource,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-    gmailMessageChannelId: string,
-    workspaceId: string,
-  ): Promise<Map<string, string>> {
-    const messageExternalIdsAndIdsMap = new Map<string, string>();
-
-    try {
-      let keepImporting = true;
-
-      for (const message of messages) {
-        if (!keepImporting) {
-          break;
-        }
-
-        await workspaceDataSource?.transaction(
-          async (manager: EntityManager) => {
-            const gmailMessageChannel =
-              await this.messageChannelRepository.getByIds(
-                [gmailMessageChannelId],
-                workspaceId,
-                manager,
-              );
-
-            if (gmailMessageChannel.length === 0) {
-              this.logger.error(
-                `No message channel found for connected account ${connectedAccount.id} in workspace ${workspaceId} in saveMessages`,
-              );
-
-              keepImporting = false;
-
-              return;
-            }
-
-            const existingMessageChannelMessageAssociationsCount =
-              await this.messageChannelMessageAssociationRepository.countByMessageExternalIdsAndMessageChannelId(
-                [message.externalId],
-                gmailMessageChannelId,
-                workspaceId,
-                manager,
-              );
-
-            if (existingMessageChannelMessageAssociationsCount > 0) {
-              return;
-            }
-
-            // TODO: This does not handle all thread merging use cases and might create orphan threads.
-            const savedOrExistingMessageThreadId =
-              await this.messageThreadService.saveMessageThreadOrReturnExistingMessageThread(
-                message.headerMessageId,
-                message.messageThreadExternalId,
-                workspaceId,
-                manager,
-              );
-
-            if (!savedOrExistingMessageThreadId) {
-              throw new Error(
-                `No message thread found for message ${message.headerMessageId} in workspace ${workspaceId} in saveMessages`,
-              );
-            }
-
-            const savedOrExistingMessageId =
-              await this.saveMessageOrReturnExistingMessage(
-                message,
-                savedOrExistingMessageThreadId,
-                connectedAccount,
-                workspaceId,
-                manager,
-              );
-
-            messageExternalIdsAndIdsMap.set(
-              message.externalId,
-              savedOrExistingMessageId,
-            );
-
-            await this.messageChannelMessageAssociationRepository.insert(
-              gmailMessageChannelId,
-              savedOrExistingMessageId,
-              message.externalId,
-              savedOrExistingMessageThreadId,
-              message.messageThreadExternalId,
-              workspaceId,
-              manager,
-            );
-          },
-        );
-      }
-    } catch (error) {
-      throw new Error(
-        `Error saving connected account ${connectedAccount.id} messages to workspace ${workspaceId}: ${error.message}`,
-      );
-    }
-
-    return messageExternalIdsAndIdsMap;
-  }
-
   private async saveMessageOrReturnExistingMessage(
     message: GmailMessage,
     messageThreadId: string,
@@ -219,8 +115,11 @@ export class MessagingMessageService {
 
     const newMessageId = v4();
 
-    const messageDirection =
-      connectedAccount.handle === message.fromHandle ? 'outgoing' : 'incoming';
+    const messageDirection = connectedAccount.emailAliases?.includes(
+      message.fromHandle,
+    )
+      ? 'outgoing'
+      : 'incoming';
 
     const receivedAt = new Date(parseInt(message.internalDate));
 

@@ -14,7 +14,7 @@ import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inje
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { isDefined } from 'src/utils/is-defined';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
 
 enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
@@ -33,7 +33,7 @@ type OnboardingKeyValueType = {
 @Injectable()
 export class OnboardingService {
   constructor(
-    private readonly billingService: BillingService,
+    private readonly billingWorkspaceService: BillingWorkspaceService,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly keyValuePairService: KeyValuePairService<OnboardingKeyValueType>,
@@ -45,7 +45,7 @@ export class OnboardingService {
 
   private async isSubscriptionIncompleteOnboardingStatus(user: User) {
     const isBillingEnabledForWorkspace =
-      await this.billingService.isBillingEnabledForWorkspace(
+      await this.billingWorkspaceService.isBillingEnabledForWorkspace(
         user.defaultWorkspaceId,
       );
 
@@ -54,7 +54,7 @@ export class OnboardingService {
     }
 
     const currentBillingSubscription =
-      await this.billingService.getCurrentBillingSubscription({
+      await this.billingWorkspaceService.getCurrentBillingSubscription({
         workspaceId: user.defaultWorkspaceId,
       });
 
