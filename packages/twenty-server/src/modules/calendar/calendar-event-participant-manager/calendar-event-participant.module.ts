@@ -4,6 +4,7 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { AddPersonIdAndWorkspaceMemberIdModule } from 'src/modules/calendar-messaging-participant/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.module';
+import { CalendarEventParticipantListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant.listener';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -15,7 +16,10 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
     ObjectMetadataRepositoryModule.forFeature([PersonWorkspaceEntity]),
     AddPersonIdAndWorkspaceMemberIdModule,
   ],
-  providers: [CalendarEventParticipantService],
+  providers: [
+    CalendarEventParticipantService,
+    CalendarEventParticipantListener,
+  ],
   exports: [CalendarEventParticipantService],
 })
 export class CalendarEventParticipantModule {}

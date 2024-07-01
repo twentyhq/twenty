@@ -12,6 +12,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant.module';
 import { AutoCompaniesAndContactsCreationMessageChannelListener } from 'src/modules/connected-account/auto-companies-and-contacts-creation/listeners/auto-companies-and-contacts-creation-message-channel.listener';
+import { AutoCompaniesAndContactsCreationCalendarChannelListener } from 'src/modules/connected-account/auto-companies-and-contacts-creation/listeners/auto-companies-and-contacts-creation-calendar-channel.listener';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AutoCompaniesAndContactsCreationMessageChannelListener } from 'src/modu
   providers: [
     CreateCompanyAndContactService,
     AutoCompaniesAndContactsCreationMessageChannelListener,
+    AutoCompaniesAndContactsCreationCalendarChannelListener,
   ],
   exports: [CreateCompanyAndContactService],
 })

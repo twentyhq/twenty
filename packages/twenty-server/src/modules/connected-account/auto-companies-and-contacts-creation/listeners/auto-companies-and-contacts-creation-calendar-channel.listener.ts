@@ -13,7 +13,7 @@ import {
 } from 'src/modules/messaging/message-participants-manager/jobs/calendar-create-company-and-contact-after-sync.job';
 
 @Injectable()
-export class CalendarChannelListener {
+export class AutoCompaniesAndContactsCreationCalendarChannelListener {
   constructor(
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
