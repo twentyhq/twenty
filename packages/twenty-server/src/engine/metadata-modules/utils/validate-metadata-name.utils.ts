@@ -1,5 +1,3 @@
-import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
-
 const VALID_STRING_PATTERN = /^[a-z][a-zA-Z0-9]*$/;
 
 export const validateMetadataName = (string: string) => {
@@ -7,3 +5,11 @@ export const validateMetadataName = (string: string) => {
     throw new InvalidStringException(string);
   }
 };
+
+export class InvalidStringException extends Error {
+  constructor(string: string) {
+    const message = `String "${string}" is not valid`;
+
+    super(message);
+  }
+}

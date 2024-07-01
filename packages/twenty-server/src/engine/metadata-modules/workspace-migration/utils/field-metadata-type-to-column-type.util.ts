@@ -1,4 +1,8 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  WorkspaceMigrationException,
+  WorkspaceMigrationExceptionCode,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
 export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
   fieldMetadataType: Type,
@@ -34,6 +38,9 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.RAW_JSON:
       return 'jsonb';
     default:
-      throw new Error(`Cannot convert ${fieldMetadataType} to column type.`);
+      throw new WorkspaceMigrationException(
+        `Cannot convert ${fieldMetadataType} to column type.`,
+        WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
+      );
   }
 };

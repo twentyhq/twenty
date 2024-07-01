@@ -1,6 +1,7 @@
 import React, { ReactElement, useContext } from 'react';
-import { clsx } from 'clsx';
+import { styled } from '@linaria/react';
 import { useRecoilValue } from 'recoil';
+import { BORDER_COMMON, ThemeContext } from 'twenty-ui';
 
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -22,7 +23,38 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
 import { RecordTableCellEditMode } from './RecordTableCellEditMode';
 
-import styles from './RecordTableCellContainer.module.css';
+const StyledTd = styled.td<{
+  isInEditMode: boolean;
+  backgroundColor: string;
+}>`
+  background: ${({ backgroundColor }) => backgroundColor};
+  z-index: ${({ isInEditMode }) => (isInEditMode ? '4 !important' : 3)};
+`;
+
+const borderRadiusSm = BORDER_COMMON.radius.sm;
+
+const StyledBaseContainer = styled.div<{
+  hasSoftFocus: boolean;
+  fontColorExtraLight: string;
+  backgroundColorTransparentSecondary: string;
+}>`
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: 32px;
+  position: relative;
+  user-select: none;
+
+  background: ${({ hasSoftFocus, backgroundColorTransparentSecondary }) =>
+    hasSoftFocus ? backgroundColorTransparentSecondary : 'none'};
+
+  border-radius: ${({ hasSoftFocus }) =>
+    hasSoftFocus ? borderRadiusSm : 'none'};
+
+  border: ${({ hasSoftFocus, fontColorExtraLight }) =>
+    hasSoftFocus ? `1px solid ${fontColorExtraLight}` : 'none'};
+`;
 
 export type RecordTableCellContainerProps = {
   editModeContent: ReactElement;
@@ -43,6 +75,8 @@ export const RecordTableCellContainer = ({
   nonEditModeContent,
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const { setIsFocused } = useFieldFocus();
   const { openTableCell } = useOpenRecordTableCellFromCell();
 
@@ -100,27 +134,28 @@ export const RecordTableCellContainer = ({
     }
   };
 
+  const tdBackgroundColor = isSelected
+    ? theme.accent.quaternary
+    : theme.background.primary;
+
   return (
-    <td
-      className={clsx({
-        [styles.tdInEditMode]: isInEditMode,
-        [styles.tdNotInEditMode]: !isInEditMode,
-        [styles.tdIsSelected]: isSelected,
-        [styles.tdIsNotSelected]: !isSelected,
-      })}
+    <StyledTd
+      backgroundColor={tdBackgroundColor}
+      isInEditMode={isInEditMode}
       onContextMenu={handleContextMenu}
     >
       <CellHotkeyScopeContext.Provider
         value={editHotkeyScope ?? DEFAULT_CELL_SCOPE}
       >
-        <div
+        <StyledBaseContainer
           onMouseLeave={handleContainerMouseLeave}
           onMouseMove={handleContainerMouseMove}
           onClick={handleContainerClick}
-          className={clsx({
-            [styles.cellBaseContainer]: true,
-            [styles.cellBaseContainerSoftFocus]: hasSoftFocus,
-          })}
+          backgroundColorTransparentSecondary={
+            theme.background.transparent.secondary
+          }
+          fontColorExtraLight={theme.font.color.extraLight}
+          hasSoftFocus={hasSoftFocus}
         >
           {isInEditMode ? (
             <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
@@ -134,8 +169,8 @@ export const RecordTableCellContainer = ({
               {nonEditModeContent}
             </RecordTableCellDisplayMode>
           )}
-        </div>
+        </StyledBaseContainer>
       </CellHotkeyScopeContext.Provider>
-    </td>
+    </StyledTd>
   );
 };

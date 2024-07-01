@@ -13,6 +13,10 @@ import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/works
 import { ColumnActionAbstractFactory } from 'src/engine/metadata-modules/workspace-migration/factories/column-action-abstract.factory';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import {
+  WorkspaceMigrationException,
+  WorkspaceMigrationExceptionCode,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
 export type CompositeFieldMetadataType =
   | FieldMetadataType.ADDRESS
@@ -34,8 +38,9 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
       this.logger.error(
         `Composite type not found for field metadata type: ${fieldMetadata.type}`,
       );
-      throw new Error(
+      throw new WorkspaceMigrationException(
         `Composite type not found for field metadata type: ${fieldMetadata.type}`,
+        WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
       );
     }
 
@@ -74,8 +79,9 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
       this.logger.error(
         `Composite type not found for field metadata type: ${currentFieldMetadata.type} or ${alteredFieldMetadata.type}`,
       );
-      throw new Error(
+      throw new WorkspaceMigrationException(
         `Composite type not found for field metadata type: ${currentFieldMetadata.type} or ${alteredFieldMetadata.type}`,
+        WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
       );
     }
 
@@ -91,8 +97,9 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
         this.logger.error(
           `Current property not found for altered property: ${alteredProperty.name}`,
         );
-        throw new Error(
+        throw new WorkspaceMigrationException(
           `Current property not found for altered property: ${alteredProperty.name}`,
+          WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
         );
       }
 
