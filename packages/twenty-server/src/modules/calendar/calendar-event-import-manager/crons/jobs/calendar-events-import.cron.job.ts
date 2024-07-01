@@ -15,8 +15,8 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 @Processor({
   queueName: MessageQueue.cronQueue,

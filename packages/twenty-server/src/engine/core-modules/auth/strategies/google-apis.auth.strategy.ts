@@ -5,8 +5,8 @@ import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { Request } from 'express';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { CalendarChannelVisibility } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 export type GoogleAPIsRequest = Omit<
   Request,

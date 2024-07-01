@@ -7,10 +7,6 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import {
-  CalendarChannelWorkspaceEntity,
-  CalendarChannelVisibility,
-} from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import {
   ConnectedAccountWorkspaceEntity,
@@ -36,6 +32,10 @@ import {
   CalendarEventsImportJob,
   CalendarEventsImportJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
+import {
+  CalendarChannelWorkspaceEntity,
+  CalendarChannelVisibility,
+} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 @Injectable()
 export class GoogleAPIsService {
