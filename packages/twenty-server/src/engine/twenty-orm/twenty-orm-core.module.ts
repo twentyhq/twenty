@@ -31,6 +31,7 @@ import {
   MODULE_OPTIONS_TOKEN,
 } from 'src/engine/twenty-orm/twenty-orm.module-definition';
 import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
+import { TwentyORMUnscopedManager } from 'src/engine/twenty-orm/twenty-orm-unscoped.manager';
 
 @Global()
 @Module({
@@ -38,11 +39,13 @@ import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/l
   providers: [
     ...entitySchemaFactories,
     TwentyORMManager,
+    TwentyORMUnscopedManager,
     LoadServiceWithWorkspaceContext,
   ],
   exports: [
     EntitySchemaFactory,
     TwentyORMManager,
+    TwentyORMUnscopedManager,
     LoadServiceWithWorkspaceContext,
   ],
 })

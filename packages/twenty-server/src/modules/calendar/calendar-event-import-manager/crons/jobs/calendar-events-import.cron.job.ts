@@ -1,5 +1,4 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Scope } from '@nestjs/common';
 
 import { Repository, In } from 'typeorm';
 
@@ -10,16 +9,15 @@ import { Process } from 'src/engine/integrations/message-queue/decorators/proces
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { TwentyORMUnscopedManager } from 'src/engine/twenty-orm/twenty-orm-unscoped.manager';
 import {
   CalendarEventsImportJobData,
   CalendarEventsImportJob,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
-  scope: Scope.REQUEST,
 })
 export class CalendarEventsImportCronJob {
   constructor(
@@ -28,7 +26,7 @@ export class CalendarEventsImportCronJob {
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly billingService: BillingService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMManager: TwentyORMUnscopedManager,
   ) {}
 
   @Process(CalendarEventsImportCronJob.name)
@@ -52,14 +50,12 @@ export class CalendarEventsImportCronJob {
           workspaceId,
           CalendarChannelWorkspaceEntity,
         );
-
       const calendarChannels = await calendarChannelRepository.find({});
 
       for (const calendarChannel of calendarChannels) {
         if (!calendarChannel?.isSyncEnabled) {
           continue;
         }
-
         await this.messageQueueService.add<CalendarEventsImportJobData>(
           CalendarEventsImportJob.name,
           {
