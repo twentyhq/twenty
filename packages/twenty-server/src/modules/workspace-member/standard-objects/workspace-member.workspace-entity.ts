@@ -168,13 +168,13 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
       },
       {
         value: WorkspaceMemberTimeFormatEnum.HH_MM,
-        label: 'Military',
+        label: '24HRS',
         position: 1,
         color: 'red',
       },
       {
         value: WorkspaceMemberTimeFormatEnum.H_MM_AA,
-        label: 'Standard',
+        label: '12HRS',
         position: 2,
         color: 'purple',
       },
