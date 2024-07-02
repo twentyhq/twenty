@@ -1,9 +1,5 @@
 import { Logger, Scope } from '@nestjs/common';
 
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
@@ -22,10 +18,7 @@ export class CalendarEventsImportJob {
   private readonly logger = new Logger(CalendarEventsImportJob.name);
 
   constructor(
-    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly googleCalendarSyncService: CalendarEventsImportService,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
   @Process(CalendarEventsImportJob.name)

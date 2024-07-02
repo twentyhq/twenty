@@ -64,7 +64,7 @@ export class CalendarEventsImportCronJob {
           CalendarEventsImportJob.name,
           {
             workspaceId,
-            connectedAccountId: calendarChannel.connectedAccount.id,
+            connectedAccountId: calendarChannel.connectedAccountId,
           },
         );
       }
