@@ -55,9 +55,7 @@ export const SelectFieldInput = ({
   // handlers
   const handleClearField = () => {
     clearField();
-    if (isDefined(onCancel)) {
-      onCancel();
-    }
+    onCancel?.();
   };
 
   useListenClickOutside({

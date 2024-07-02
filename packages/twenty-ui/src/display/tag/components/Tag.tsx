@@ -4,7 +4,6 @@ import { styled } from '@linaria/react';
 import { IconComponent, OverflowingTextWithTooltip } from '@ui/display';
 import {
   BORDER_COMMON,
-  COLOR,
   THEME_COMMON,
   ThemeColor,
   ThemeContext,
@@ -27,7 +26,7 @@ const StyledTag = styled.h3<{
     color === 'transparent' ? color : theme.tag.background[color]};
   border-radius: ${BORDER_COMMON.radius.sm};
   color: ${({ color, theme }) =>
-    color === 'transparent' ? COLOR.gray50 : theme.tag.text[color]};
+    color === 'transparent' ? theme.tag.text['gray'] : theme.tag.text[color]};
   display: inline-flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;
@@ -40,9 +39,7 @@ const StyledTag = styled.h3<{
   overflow: hidden;
   padding: 0 ${spacing2};
   border: ${({ variant, theme }) =>
-    variant === 'outline'
-      ? `2px dashed ${theme.tag.background['gray']}`
-      : ''};
+    variant === 'outline' ? `2px dashed ${theme.tag.background['gray']}` : ''};
 
   gap: ${spacing1};
 
