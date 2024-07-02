@@ -1,16 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
-import { OAuth2Client } from 'google-auth-library';
 import { gmail_v1, google } from 'googleapis';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class MessagingGmailClientProvider {
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(
+    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+  ) {}
 
-  public async getGmailClient(refreshToken: string): Promise<gmail_v1.Gmail> {
-    const oAuth2Client = await this.getOAuth2Client(refreshToken);
+  public async getGmailClient(
+    connectedAccount: ConnectedAccountWorkspaceEntity,
+  ): Promise<gmail_v1.Gmail> {
+    const oAuth2Client =
+      await this.oAuth2ClientManagerService.getOAuth2Client(connectedAccount);
 
     const gmailClient = google.gmail({
       version: 'v1',
@@ -18,23 +23,5 @@ export class MessagingGmailClientProvider {
     });
 
     return gmailClient;
-  }
-
-  private async getOAuth2Client(refreshToken: string): Promise<OAuth2Client> {
-    const gmailClientId = this.environmentService.get('AUTH_GOOGLE_CLIENT_ID');
-    const gmailClientSecret = this.environmentService.get(
-      'AUTH_GOOGLE_CLIENT_SECRET',
-    );
-
-    const oAuth2Client = new google.auth.OAuth2(
-      gmailClientId,
-      gmailClientSecret,
-    );
-
-    oAuth2Client.setCredentials({
-      refresh_token: refreshToken,
-    });
-
-    return oAuth2Client;
   }
 }

@@ -1,5 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
-
+import { FieldMetadataException } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 
 describe('serializeDefaultValue', () => {
@@ -15,8 +14,10 @@ describe('serializeDefaultValue', () => {
     expect(serializeDefaultValue('now')).toBe('now()');
   });
 
-  it('should throw BadRequestException for invalid dynamic default value type', () => {
-    expect(() => serializeDefaultValue('invalid')).toThrow(BadRequestException);
+  it('should throw FieldMetadataException for invalid dynamic default value type', () => {
+    expect(() => serializeDefaultValue('invalid')).toThrow(
+      FieldMetadataException,
+    );
   });
 
   it('should handle string static default value', () => {

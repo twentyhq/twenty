@@ -58,6 +58,8 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         value: true,
       });
 
+    const emailAliases = connectedAccount.emailAliases?.split(',') || [];
+
     const isContactCreationForSentAndReceivedEmailsEnabled =
       isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag?.value;
 
@@ -80,15 +82,21 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
 
           return messageId
-            ? message.participants.map((participant: Participant) => ({
-                ...participant,
-                messageId,
-                shouldCreateContact:
-                  messageChannel.isContactAutoCreationEnabled &&
-                  (isContactCreationForSentAndReceivedEmailsEnabled ||
-                    message.participants.find((p) => p.role === 'from')
-                      ?.handle === connectedAccount.handle),
-              }))
+            ? message.participants.map((participant: Participant) => {
+                const fromHandle =
+                  message.participants.find((p) => p.role === 'from')?.handle ||
+                  '';
+
+                return {
+                  ...participant,
+                  messageId,
+                  shouldCreateContact:
+                    messageChannel.isContactAutoCreationEnabled &&
+                    (isContactCreationForSentAndReceivedEmailsEnabled ||
+                      emailAliases.includes(fromHandle)) &&
+                    !emailAliases.includes(participant.handle),
+                };
+              })
             : [];
         });
 

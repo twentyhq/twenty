@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager, IsNull } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -30,10 +30,11 @@ export class MessagingMessageCleanerService {
         const nonAssociatedMessages = await this.messageRepository.find(
           {
             where: {
-              messageChannelMessageAssociations: IsNull(),
+              messageChannelMessageAssociations: [],
             },
             take: limit,
             skip: offset,
+            relations: ['messageChannelMessageAssociations'],
           },
           transactionManager,
         );
@@ -61,7 +62,7 @@ export class MessagingMessageCleanerService {
         const orphanThreads = await this.messageThreadRepository.find(
           {
             where: {
-              messages: IsNull(),
+              messages: [],
             },
             take: limit,
             skip: offset,
