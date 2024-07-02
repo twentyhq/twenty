@@ -9,7 +9,6 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 @Injectable()
@@ -25,8 +24,8 @@ export class MessageParticipantListener {
   @OnEvent('messageParticipant.matched')
   public async handleMessageParticipantMatched(payload: {
     workspaceId: string;
-    userId: string;
-    messageParticipants: ObjectRecord<MessageParticipantWorkspaceEntity>[];
+    workspaceMemberId: string;
+    messageParticipants: MessageParticipantWorkspaceEntity[];
   }): Promise<void> {
     const messageParticipants = payload.messageParticipants ?? [];
 
@@ -60,7 +59,7 @@ export class MessageParticipantListener {
         properties: null,
         objectName: 'message',
         recordId: participant.personId,
-        workspaceMemberId: payload.userId,
+        workspaceMemberId: payload.workspaceMemberId,
         workspaceId: payload.workspaceId,
         linkedObjectMetadataId: messageObjectMetadata.id,
         linkedRecordId: participant.messageId,

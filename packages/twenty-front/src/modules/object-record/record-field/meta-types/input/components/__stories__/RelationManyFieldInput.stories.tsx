@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RelationManyFieldInput } from '@/object-record/record-field/meta-types/input/components/RelationManyFieldInput';
+import { RelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInput';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
@@ -45,22 +45,21 @@ const RelationManyFieldInputWithContext = () => {
       <FieldContextProvider
         fieldDefinition={{
           fieldMetadataId: 'relation',
-          label: 'Relation',
+          label: 'People',
           type: FieldMetadataType.Relation,
           iconName: 'IconLink',
           metadata: {
-            fieldName: 'Relation',
-            relationObjectMetadataNamePlural: 'workspaceMembers',
-            relationObjectMetadataNameSingular:
-              CoreObjectNameSingular.WorkspaceMember,
-            objectMetadataNameSingular: 'person',
+            fieldName: 'people',
+            relationObjectMetadataNamePlural: 'companies',
+            relationObjectMetadataNameSingular: CoreObjectNameSingular.Company,
+            objectMetadataNameSingular: 'company',
             relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
           },
         }}
         entityId={'entityId'}
       >
         <RelationWorkspaceSetterEffect />
-        <RelationManyFieldInput />
+        <RelationFromManyFieldInput />
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div" />
     </div>

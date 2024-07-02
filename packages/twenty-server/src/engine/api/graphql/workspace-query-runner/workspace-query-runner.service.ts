@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   Logger,
   RequestTimeoutException,
@@ -43,7 +42,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
-import { WorkspacePreQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/workspace-pre-query-hook.service';
+import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
@@ -52,6 +51,8 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -72,11 +73,12 @@ export class WorkspaceQueryRunnerService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
     private readonly queryResultGettersFactory: QueryResultGettersFactory,
-    @Inject(MessageQueue.webhookQueue)
+    @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
-    private readonly workspacePreQueryHookService: WorkspacePreQueryHookService,
+    private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly environmentService: EnvironmentService,
+    private readonly duplicateService: DuplicateService,
   ) {}
 
   async findMany<
@@ -101,7 +103,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -148,7 +150,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -167,16 +169,16 @@ export class WorkspaceQueryRunnerService {
   }
 
   async findDuplicates<TRecord extends IRecord = IRecord>(
-    args: FindDuplicatesResolverArgs<TRecord>,
+    args: FindDuplicatesResolverArgs<Partial<TRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<TRecord> | undefined> {
-    if (!args.data && !args.id) {
+    if (!args.data && !args.ids) {
       throw new BadRequestException(
         'You have to provide either "data" or "id" argument',
       );
     }
 
-    if (!args.id && isEmpty(args.data)) {
+    if (!args.ids && isEmpty(args.data)) {
       throw new BadRequestException(
         'The "data" condition can not be empty when ID input not provided',
       );
@@ -190,40 +192,27 @@ export class WorkspaceQueryRunnerService {
       ResolverArgsType.FindDuplicates,
     )) as FindDuplicatesResolverArgs<TRecord>;
 
-    let existingRecord: Record<string, unknown> | undefined;
+    let existingRecords: IRecord[] | undefined = undefined;
 
-    if (computedArgs.id) {
-      const existingRecordQuery =
-        this.workspaceQueryBuilderFactory.findDuplicatesExistingRecord(
-          computedArgs.id,
-          options,
-        );
-
-      const existingRecordResult = await this.execute(
-        existingRecordQuery,
+    if (computedArgs.ids && computedArgs.ids.length > 0) {
+      existingRecords = await this.duplicateService.findExistingRecords(
+        computedArgs.ids,
+        objectMetadataItem,
         workspaceId,
       );
 
-      const parsedResult = await this.parseResult<Record<string, unknown>>(
-        existingRecordResult,
-        objectMetadataItem,
-        '',
-      );
-
-      existingRecord = parsedResult?.edges?.[0]?.node;
-
-      if (!existingRecord) {
-        throw new NotFoundError(`Object with id ${args.id} not found`);
+      if (!existingRecords || existingRecords.length === 0) {
+        throw new NotFoundError(`Object with id ${args.ids} not found`);
       }
     }
 
     const query = await this.workspaceQueryBuilderFactory.findDuplicates(
       computedArgs,
       options,
-      existingRecord,
+      existingRecords,
     );
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -237,16 +226,21 @@ export class WorkspaceQueryRunnerService {
       result,
       objectMetadataItem,
       '',
+      true,
     );
   }
 
   async createMany<Record extends IRecord = IRecord>(
-    args: CreateManyResolverArgs<Record>,
+    args: CreateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
+
+    if (args.upsert) {
+      return await this.upsertMany(args, options);
+    }
 
     args.data.forEach((record) => {
       if (record?.id) {
@@ -260,7 +254,7 @@ export class WorkspaceQueryRunnerService {
       ResolverArgsType.CreateMany,
     )) as CreateManyResolverArgs<Record>;
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -305,17 +299,73 @@ export class WorkspaceQueryRunnerService {
     return parsedResults;
   }
 
+  async upsertMany<Record extends IRecord = IRecord>(
+    args: CreateManyResolverArgs<Partial<Record>>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<Record[] | undefined> {
+    const ids = args.data
+      .map((item) => item.id)
+      .filter((id) => id !== undefined);
+
+    const existingRecords =
+      ids.length > 0
+        ? await this.duplicateService.findExistingRecords(
+            ids as string[],
+            options.objectMetadataItem,
+            options.workspaceId,
+          )
+        : [];
+
+    const existingRecordsMap = new Map(
+      existingRecords.map((record) => [record.id, record]),
+    );
+
+    const results: Record[] = [];
+    const recordsToCreate: Partial<Record>[] = [];
+
+    for (const payload of args.data) {
+      if (payload.id && existingRecordsMap.has(payload.id)) {
+        const result = await this.updateOne(
+          { id: payload.id, data: payload },
+          options,
+        );
+
+        if (result) {
+          results.push(result);
+        }
+      } else {
+        recordsToCreate.push(payload);
+      }
+    }
+
+    if (recordsToCreate.length > 0) {
+      const createResults = await this.createMany(
+        { data: recordsToCreate } as CreateManyResolverArgs<Partial<Record>>,
+        options,
+      );
+
+      if (createResults) {
+        results.push(...createResults);
+      }
+    }
+
+    return results;
+  }
+
   async createOne<Record extends IRecord = IRecord>(
-    args: CreateOneResolverArgs<Record>,
+    args: CreateOneResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    const results = await this.createMany({ data: [args.data] }, options);
+    const results = await this.createMany(
+      { data: [args.data], upsert: args.upsert },
+      options,
+    );
 
     return results?.[0];
   }
 
   async updateOne<Record extends IRecord = IRecord>(
-    args: UpdateOneResolverArgs<Record>,
+    args: UpdateOneResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
@@ -333,7 +383,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -373,7 +423,7 @@ export class WorkspaceQueryRunnerService {
   }
 
   async updateMany<Record extends IRecord = IRecord>(
-    args: UpdateManyResolverArgs<Record>,
+    args: UpdateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { userId, workspaceId, objectMetadataItem } = options;
@@ -382,14 +432,14 @@ export class WorkspaceQueryRunnerService {
     args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
 
     const maximumRecordAffected = this.environmentService.get(
-      'MUTATION_MAXIMUM_RECORD_AFFECTED',
+      'MUTATION_MAXIMUM_AFFECTED_RECORDS',
     );
     const query = await this.workspaceQueryBuilderFactory.updateMany(args, {
       ...options,
       atMost: maximumRecordAffected,
     });
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -434,14 +484,14 @@ export class WorkspaceQueryRunnerService {
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     const maximumRecordAffected = this.environmentService.get(
-      'MUTATION_MAXIMUM_RECORD_AFFECTED',
+      'MUTATION_MAXIMUM_AFFECTED_RECORDS',
     );
     const query = await this.workspaceQueryBuilderFactory.deleteMany(args, {
       ...options,
       atMost: maximumRecordAffected,
     });
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -509,7 +559,7 @@ export class WorkspaceQueryRunnerService {
     );
     // TODO END
 
-    await this.workspacePreQueryHookService.executePreHooks(
+    await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -609,11 +659,21 @@ export class WorkspaceQueryRunnerService {
     graphqlResult: PGGraphQLResult | undefined,
     objectMetadataItem: ObjectMetadataInterface,
     command: string,
+    isMultiQuery = false,
   ): Promise<Result> {
     const entityKey = `${command}${computeObjectTargetTable(
       objectMetadataItem,
     )}Collection`;
-    const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
+    const result = !isMultiQuery
+      ? graphqlResult?.[0]?.resolve?.data?.[entityKey]
+      : Object.keys(graphqlResult?.[0]?.resolve?.data).reduce(
+          (acc: IRecord[], dataItem, index) => {
+            acc.push(graphqlResult?.[0]?.resolve?.data[`${entityKey}${index}`]);
+
+            return acc;
+          },
+          [],
+        );
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
     if (
@@ -631,7 +691,7 @@ export class WorkspaceQueryRunnerService {
         errors,
         {
           atMost: this.environmentService.get(
-            'MUTATION_MAXIMUM_RECORD_AFFECTED',
+            'MUTATION_MAXIMUM_AFFECTED_RECORDS',
           ),
         } satisfies PgGraphQLConfig,
       );

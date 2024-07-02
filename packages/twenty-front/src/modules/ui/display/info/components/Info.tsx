@@ -1,8 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconInfoCircle } from 'twenty-ui';
 
+import { AppPath } from '@/types/AppPath';
 import { Button } from '@/ui/input/button/components/Button';
 
 export type InfoAccent = 'blue' | 'danger';
@@ -11,6 +13,7 @@ export type InfoProps = {
   text: string;
   buttonTitle?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  to?: AppPath;
 };
 
 const StyledTextContainer = styled.div`
@@ -30,6 +33,7 @@ const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   justify-content: space-between;
   max-width: 512px;
+  gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
   ${({ theme, accent }) => {
     switch (accent) {
@@ -46,11 +50,17 @@ const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
     }
   }}
 `;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;
+
 export const Info = ({
   accent = 'blue',
   text,
   buttonTitle,
   onClick,
+  to,
 }: InfoProps) => {
   const theme = useTheme();
   return (
@@ -59,12 +69,23 @@ export const Info = ({
         <StyledIconInfoCircle size={theme.icon.size.md} />
         {text}
       </StyledTextContainer>
-      {buttonTitle && onClick && (
+      {buttonTitle && to && (
+        <StyledLink to={to}>
+          <Button
+            title={buttonTitle}
+            size={'small'}
+            variant={'secondary'}
+            accent={accent}
+          />
+        </StyledLink>
+      )}
+      {buttonTitle && onClick && !to && (
         <Button
           title={buttonTitle}
           onClick={onClick}
           size={'small'}
           variant={'secondary'}
+          accent={accent}
         />
       )}
     </StyledInfo>

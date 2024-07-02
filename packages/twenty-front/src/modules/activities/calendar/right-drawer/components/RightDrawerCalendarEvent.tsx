@@ -5,17 +5,17 @@ import { FIND_ONE_CALENDAR_EVENT_OPERATION_SIGNATURE } from '@/activities/calend
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
 export const RightDrawerCalendarEvent = () => {
-  const { setRecords } = useSetRecordInStore();
+  const { upsertRecords } = useUpsertRecordsInStore();
   const viewableRecordId = useRecoilValue(viewableRecordIdState);
   const { record: calendarEvent } = useFindOneRecord<CalendarEvent>({
     objectNameSingular:
       FIND_ONE_CALENDAR_EVENT_OPERATION_SIGNATURE.objectNameSingular,
     objectRecordId: viewableRecordId ?? '',
     recordGqlFields: FIND_ONE_CALENDAR_EVENT_OPERATION_SIGNATURE.fields,
-    onCompleted: (record) => setRecords([record]),
+    onCompleted: (record) => upsertRecords([record]),
   });
 
   if (!calendarEvent) {

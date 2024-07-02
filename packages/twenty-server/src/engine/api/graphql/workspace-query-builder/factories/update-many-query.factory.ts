@@ -28,7 +28,7 @@ export class UpdateManyQueryFactory {
     Record extends IRecord = IRecord,
     Filter extends RecordFilter = RecordFilter,
   >(
-    args: UpdateManyResolverArgs<Record, Filter>,
+    args: UpdateManyResolverArgs<Partial<Record>, Filter>,
     options: UpdateManyQueryFactoryOptions,
   ) {
     const fieldsString = await this.fieldsStringFactory.create(

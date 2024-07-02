@@ -22,7 +22,7 @@ export class CaptchaModule {
         }
 
         switch (config.type) {
-          case CaptchaDriverType.GoogleRecatpcha:
+          case CaptchaDriverType.GoogleRecaptcha:
             return new GoogleRecaptchaDriver(config.options);
           case CaptchaDriverType.Turnstile:
             return new TurnstileDriver(config.options);

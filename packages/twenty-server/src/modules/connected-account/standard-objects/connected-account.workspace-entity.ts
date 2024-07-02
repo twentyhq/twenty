@@ -17,6 +17,9 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 export enum ConnectedAccountProvider {
   GOOGLE = 'google',
@@ -86,7 +89,19 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconX',
   })
   @WorkspaceIsNullable()
-  authFailedAt: Date;
+  authFailedAt: Date | null;
+
+  @WorkspaceField({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.emailAliases,
+    type: FieldMetadataType.TEXT,
+    label: 'Email Aliases',
+    description: 'Email Aliases',
+    icon: 'IconMail',
+  })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKeys.IsMessagingAliasFetchingEnabled,
+  })
+  emailAliases: string;
 
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
@@ -94,11 +109,13 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Account Owner',
     description: 'Account Owner',
     icon: 'IconUserCircle',
-    joinColumn: 'accountOwnerId',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'connectedAccounts',
   })
   accountOwner: Relation<WorkspaceMemberWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('accountOwner')
+  accountOwnerId: string;
 
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.messageChannels,

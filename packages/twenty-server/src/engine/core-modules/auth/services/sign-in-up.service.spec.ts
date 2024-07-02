@@ -8,6 +8,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 describe('SignInUpService', () => {
   let service: SignInUpService;
@@ -38,6 +39,10 @@ describe('SignInUpService', () => {
         },
         {
           provide: HttpService,
+          useValue: {},
+        },
+        {
+          provide: WorkspaceService,
           useValue: {},
         },
       ],

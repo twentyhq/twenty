@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 
-const StyledEmptyContainer = styled.div`
+const StyledEmptyContainer = styled(motion.div)`
   align-items: center;
   width: 100%;
   height: 100%;
@@ -12,6 +13,14 @@ const StyledEmptyContainer = styled.div`
 `;
 
 export { StyledEmptyContainer as AnimatedPlaceholderEmptyContainer };
+
+export const EMPTY_PLACEHOLDER_TRANSITION_PROPS = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  transition: {
+    duration: 0.15,
+  },
+};
 
 const StyledEmptyTextContainer = styled.div`
   align-items: center;

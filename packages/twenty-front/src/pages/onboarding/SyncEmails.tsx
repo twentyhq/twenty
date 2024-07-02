@@ -9,7 +9,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
-import { useSetNextOnboardingStep } from '@/onboarding/hooks/useSetNextOnboardingStep';
+import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
@@ -19,7 +19,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
-  OnboardingStep,
+  OnboardingStatus,
   useSkipSyncEmailOnboardingStepMutation,
 } from '~/generated/graphql';
 
@@ -40,12 +40,12 @@ const StyledActionLinkContainer = styled.div`
 export const SyncEmails = () => {
   const theme = useTheme();
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
-  const setNextOnboardingStep = useSetNextOnboardingStep();
+  const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useRecoilValue(currentUserState);
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.ShareEverything,
   );
-  const [skipSyncEmailOnboardingStepMutation] =
+  const [skipSyncEmailOnboardingStatusMutation] =
     useSkipSyncEmailOnboardingStepMutation();
 
   const handleButtonClick = async () => {
@@ -62,8 +62,8 @@ export const SyncEmails = () => {
   };
 
   const continueWithoutSync = async () => {
-    await skipSyncEmailOnboardingStepMutation();
-    setNextOnboardingStep(OnboardingStep.SyncEmail);
+    await skipSyncEmailOnboardingStatusMutation();
+    setNextOnboardingStatus();
   };
 
   useScopedHotkeys(
@@ -75,7 +75,7 @@ export const SyncEmails = () => {
     [continueWithoutSync],
   );
 
-  if (currentUser?.onboardingStep !== OnboardingStep.SyncEmail) {
+  if (currentUser?.onboardingStatus !== OnboardingStatus.SyncEmail) {
     return <></>;
   }
 

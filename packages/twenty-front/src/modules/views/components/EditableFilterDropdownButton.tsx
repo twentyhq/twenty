@@ -62,13 +62,13 @@ export const EditableFilterDropdownButton = ({
   const handleRemove = () => {
     closeDropdown();
 
-    removeCombinedViewFilter(viewFilter.fieldMetadataId);
+    removeCombinedViewFilter(viewFilter.id);
   };
 
   const handleDropdownClickOutside = useCallback(() => {
-    const { value, fieldMetadataId } = viewFilter;
+    const { id: fieldId, value } = viewFilter;
     if (!value) {
-      removeCombinedViewFilter(fieldMetadataId);
+      removeCombinedViewFilter(fieldId);
     }
   }, [viewFilter, removeCombinedViewFilter]);
 

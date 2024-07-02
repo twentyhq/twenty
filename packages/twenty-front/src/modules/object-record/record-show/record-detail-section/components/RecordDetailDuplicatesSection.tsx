@@ -12,18 +12,19 @@ export const RecordDetailDuplicatesSection = ({
   objectRecordId: string;
   objectNameSingular: string;
 }) => {
-  const { records: duplicateRecords } = useFindDuplicateRecords({
-    objectRecordId,
+  const { results: queryResults } = useFindDuplicateRecords({
+    objectRecordIds: [objectRecordId],
     objectNameSingular,
   });
 
-  if (!duplicateRecords.length) return null;
+  if (!queryResults || !queryResults[0] || queryResults[0].length === 0)
+    return null;
 
   return (
     <RecordDetailSection>
       <RecordDetailSectionHeader title="Duplicates" />
       <RecordDetailRecordsList>
-        {duplicateRecords.slice(0, 5).map((duplicateRecord) => (
+        {queryResults[0].slice(0, 5).map((duplicateRecord) => (
           <RecordDetailRecordsListItem key={duplicateRecord.id}>
             <RecordChip
               record={duplicateRecord}

@@ -16,6 +16,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 export enum MessageChannelSyncStatus {
   // TO BE DEPRECATED
@@ -49,6 +50,12 @@ export enum MessageChannelVisibility {
 export enum MessageChannelType {
   EMAIL = 'email',
   SMS = 'sms',
+}
+
+export enum MessageChannelContactAutoCreationPolicy {
+  SENT_AND_RECEIVED = 'SENT_AND_RECEIVED',
+  SENT = 'SENT',
+  NONE = 'NONE',
 }
 
 @WorkspaceEntity({
@@ -125,6 +132,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   })
   type: string;
 
+  // TODO: Deprecate this field and migrate data to contactAutoCreationFor
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
@@ -134,6 +142,57 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: true,
   })
   isContactAutoCreationEnabled: boolean;
+
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.contactAutoCreationPolicy,
+    type: FieldMetadataType.SELECT,
+    label: 'Contact auto creation policy',
+    description:
+      'Automatically create People records when receiving or sending emails',
+    icon: 'IconUserCircle',
+    options: [
+      {
+        value: MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED,
+        label: 'Sent and Received',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: MessageChannelContactAutoCreationPolicy.SENT,
+        label: 'Sent',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelContactAutoCreationPolicy.NONE,
+        label: 'None',
+        position: 2,
+        color: 'red',
+      },
+    ],
+    defaultValue: `'${MessageChannelContactAutoCreationPolicy.SENT}'`,
+  })
+  contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
+
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeNonProfessionalEmails,
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Exclude non professional emails',
+    description: 'Exclude non professional emails',
+    icon: 'IconBriefcase',
+    defaultValue: true,
+  })
+  excludeNonProfessionalEmails: boolean;
+
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.excludeGroupEmails,
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Exclude group emails',
+    description: 'Exclude group emails',
+    icon: 'IconUsersGroup',
+    defaultValue: true,
+  })
+  excludeGroupEmails: boolean;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
@@ -162,7 +221,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
-  syncedAt: string;
+  syncedAt: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
@@ -224,7 +283,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     ],
   })
   @WorkspaceIsNullable()
-  syncStatus: MessageChannelSyncStatus;
+  syncStatus: MessageChannelSyncStatus | null;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStage,
@@ -282,7 +341,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
-  syncStageStartedAt: string;
+  syncStageStartedAt: string | null;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
@@ -300,11 +359,13 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Connected Account',
     description: 'Connected Account',
     icon: 'IconUserCircle',
-    joinColumn: 'connectedAccountId',
     inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
     inverseSideFieldKey: 'messageChannels',
   })
   connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('connectedAccount')
+  connectedAccountId: string;
 
   @WorkspaceRelation({
     standardId:

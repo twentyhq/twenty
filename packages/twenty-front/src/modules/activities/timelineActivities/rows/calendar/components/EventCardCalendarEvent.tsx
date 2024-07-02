@@ -5,7 +5,7 @@ import { useOpenCalendarEventRightDrawer } from '@/activities/calendar/right-dra
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import {
   formatToHumanReadableDay,
   formatToHumanReadableMonth,
@@ -85,7 +85,7 @@ export const EventCardCalendarEvent = ({
 }: {
   calendarEventId: string;
 }) => {
-  const { setRecords } = useSetRecordInStore();
+  const { upsertRecords } = useUpsertRecordsInStore();
 
   const {
     record: calendarEvent,
@@ -101,7 +101,7 @@ export const EventCardCalendarEvent = ({
       endsAt: true,
     },
     onCompleted: (data) => {
-      setRecords([data]);
+      upsertRecords([data]);
     },
   });
 

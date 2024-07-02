@@ -383,19 +383,35 @@ export const InternalDatePicker = ({
     onChange?.(newDate);
   };
 
+  const dateWithoutTime = DateTime.fromJSDate(date)
+    .toLocal()
+    .set({
+      day: date.getUTCDate(),
+      month: date.getUTCMonth() + 1,
+      year: date.getUTCFullYear(),
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    })
+    .toJSDate();
+
+  const dateToUse = isDateTimeInput ? date : dateWithoutTime;
+
   return (
     <StyledContainer onKeyDown={handleKeyDown}>
       <div className={clearable ? 'clearable ' : ''}>
         <ReactDatePicker
           open={true}
-          selected={internalDate}
-          openToDate={internalDate}
+          selected={dateToUse}
+          openToDate={dateToUse}
+          disabledKeyboardNavigation
           onChange={(newDate) => {
             onChange?.(newDate);
           }}
           customInput={
             <DateTimeInput
-              date={internalDate}
+              date={dateToUse}
               isDateTimeInput={isDateTimeInput}
               onChange={onChange}
             />
@@ -424,13 +440,13 @@ export const InternalDatePicker = ({
                   options={months}
                   disableBlur
                   onChange={handleChangeMonth}
-                  value={date.getMonth()}
+                  value={date.getUTCMonth()}
                   fullWidth
                 />
                 <Select
                   dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
                   onChange={handleChangeYear}
-                  value={date.getFullYear()}
+                  value={date.getUTCFullYear()}
                   options={years}
                   disableBlur
                   fullWidth
@@ -450,16 +466,24 @@ export const InternalDatePicker = ({
               </StyledCustomDatePickerHeader>
             </>
           )}
-          onSelect={(date: Date, event) => {
-            const dateUTC = DateTime.fromJSDate(date, {
-              zone: 'utc',
-            }).toJSDate();
+          onSelect={(date: Date) => {
+            const dateParsedWithoutTime = DateTime.fromObject(
+              {
+                day: date.getDate(),
+                month: date.getMonth() + 1,
+                year: date.getFullYear(),
+                hour: 0,
+                minute: 0,
+                second: 0,
+              },
+              { zone: 'utc' },
+            ).toJSDate();
 
-            if (event?.type === 'click') {
-              handleMouseSelect?.(dateUTC);
-            } else {
-              onChange?.(dateUTC);
-            }
+            const dateForUpdate = isDateTimeInput
+              ? date
+              : dateParsedWithoutTime;
+
+            handleMouseSelect?.(dateForUpdate);
           }}
         />
       </div>

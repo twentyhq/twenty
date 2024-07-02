@@ -13,6 +13,7 @@ import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 
 interface SynchronizeOptions {
   applyChanges?: boolean;
@@ -31,6 +32,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
     private readonly workspaceSyncFieldMetadataService: WorkspaceSyncFieldMetadataService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,
   ) {}
 
   /**
@@ -97,11 +99,21 @@ export class WorkspaceSyncMetadataService {
           workspaceFeatureFlagsMap,
         );
 
+      // 4 - Sync standard indexes on standard objects
+      const workspaceIndexMigrations =
+        await this.workspaceSyncIndexMetadataService.synchronize(
+          context,
+          manager,
+          storage,
+          workspaceFeatureFlagsMap,
+        );
+
       // Save workspace migrations into the database
       workspaceMigrations = await workspaceMigrationRepository.save([
         ...workspaceObjectMigrations,
         ...workspaceFieldMigrations,
         ...workspaceRelationMigrations,
+        ...workspaceIndexMigrations,
       ]);
 
       // If we're running a dry run, rollback the transaction and do not execute migrations

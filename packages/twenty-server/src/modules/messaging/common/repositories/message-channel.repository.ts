@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import {
   MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
@@ -18,7 +17,7 @@ export class MessageChannelRepository {
 
   public async create(
     messageChannel: Pick<
-      ObjectRecord<MessageChannelWorkspaceEntity>,
+      MessageChannelWorkspaceEntity,
       | 'id'
       | 'connectedAccountId'
       | 'type'
@@ -57,7 +56,11 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStatus" = NULL, "syncCursor" = '', "syncStageStartedAt" = NULL
+      `UPDATE ${dataSourceSchema}."messageChannel"
+      SET "syncStatus" = NULL,
+      "syncStage" = '${MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING}',
+      "syncCursor" = '',
+      "syncStageStartedAt" = NULL
       WHERE "connectedAccountId" = $1`,
       [connectedAccountId],
       workspaceId,
@@ -68,7 +71,7 @@ export class MessageChannelRepository {
   public async getAll(
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>[]> {
+  ): Promise<MessageChannelWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -84,7 +87,7 @@ export class MessageChannelRepository {
     connectedAccountId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>[]> {
+  ): Promise<MessageChannelWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -99,7 +102,7 @@ export class MessageChannelRepository {
   public async getFirstByConnectedAccountIdOrFail(
     connectedAccountId: string,
     workspaceId: string,
-  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>> {
+  ): Promise<MessageChannelWorkspaceEntity> {
     const messageChannel = await this.getFirstByConnectedAccountId(
       connectedAccountId,
       workspaceId,
@@ -118,7 +121,7 @@ export class MessageChannelRepository {
     connectedAccountId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity> | undefined> {
+  ): Promise<MessageChannelWorkspaceEntity | undefined> {
     const messageChannels = await this.getByConnectedAccountId(
       connectedAccountId,
       workspaceId,
@@ -132,7 +135,7 @@ export class MessageChannelRepository {
     ids: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>[]> {
+  ): Promise<MessageChannelWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -148,7 +151,7 @@ export class MessageChannelRepository {
     id: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>> {
+  ): Promise<MessageChannelWorkspaceEntity> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -167,7 +170,7 @@ export class MessageChannelRepository {
     workspaceMemberId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>[]> {
+  ): Promise<MessageChannelWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -19,10 +20,11 @@ export type MessagingMessagesImportJobData = {
   workspaceId: string;
 };
 
-@Injectable()
-export class MessagingMessagesImportJob
-  implements MessageQueueJob<MessagingMessagesImportJobData>
-{
+@Processor({
+  queueName: MessageQueue.messagingQueue,
+  scope: Scope.REQUEST,
+})
+export class MessagingMessagesImportJob {
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
@@ -32,6 +34,7 @@ export class MessagingMessagesImportJob
     private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
+  @Process(MessagingMessagesImportJob.name)
   async handle(data: MessagingMessagesImportJobData): Promise<void> {
     const { messageChannelId, workspaceId } = data;
 

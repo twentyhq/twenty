@@ -14,7 +14,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';
-import { mockedUsersData } from '~/testing/mock-data/users';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 const userMetadataLoaderMocks = {
   msw: {
@@ -22,7 +22,7 @@ const userMetadataLoaderMocks = {
       graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
         return HttpResponse.json({
           data: {
-            currentUser: mockedUsersData[0],
+            currentUser: mockedUserData,
           },
         });
       }),

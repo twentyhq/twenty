@@ -1,9 +1,8 @@
-import { Inject } from '@nestjs/common';
-
 import { Command, CommandRunner } from 'nest-commander';
 
 import { dataSeedDemoWorkspaceCronPattern } from 'src/database/commands/data-seed-demo-workspace/crons/data-seed-demo-workspace-cron-pattern';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 
@@ -13,7 +12,7 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 })
 export class StopDataSeedDemoWorkspaceCronCommand extends CommandRunner {
   constructor(
-    @Inject(MessageQueue.cronQueue)
+    @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
     super();

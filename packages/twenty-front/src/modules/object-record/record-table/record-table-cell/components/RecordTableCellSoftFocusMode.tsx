@@ -13,7 +13,6 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
 import { RecordTableCellButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton';
-import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -130,15 +129,10 @@ export const RecordTableCellSoftFocusMode = ({
     */
   };
 
-  const { column, row } = useCurrentTableCellPosition();
-
   useListenClickOutside({
     refs: [scrollRef],
     callback: () => {
       closeCurrentTableCell();
-      document.dispatchEvent(
-        new CustomEvent(`soft-focus-move-${row}:${column}`, { detail: false }),
-      );
     },
   });
 
@@ -159,6 +153,7 @@ export const RecordTableCellSoftFocusMode = ({
       <RecordTableCellDisplayContainer
         onClick={handleClick}
         scrollRef={scrollRef}
+        softFocus
       >
         {editModeContentOnly ? editModeContent : nonEditModeContent}
       </RecordTableCellDisplayContainer>

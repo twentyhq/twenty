@@ -1,5 +1,7 @@
-import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
-import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import {
+  validateMetadataName,
+  InvalidStringException,
+} from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 
 describe('validateMetadataName', () => {
   it('does not throw if string is valid', () => {

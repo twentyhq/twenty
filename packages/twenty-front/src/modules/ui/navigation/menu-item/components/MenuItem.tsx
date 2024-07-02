@@ -1,5 +1,6 @@
 import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
-import { IconComponent } from 'twenty-ui';
+import { useTheme } from '@emotion/react';
+import { IconChevronRight, IconComponent } from 'twenty-ui';
 
 import { LightIconButtonProps } from '@/ui/input/button/components/LightIconButton';
 import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
@@ -30,6 +31,7 @@ export type MenuItemProps = {
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
   testId?: string;
   text: ReactNode;
+  hasSubMenu?: boolean;
 };
 
 export const MenuItem = ({
@@ -43,7 +45,9 @@ export const MenuItem = ({
   onMouseLeave,
   testId,
   text,
+  hasSubMenu = false,
 }: MenuItemProps) => {
+  const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -72,6 +76,13 @@ export const MenuItem = ({
           <LightIconButtonGroup iconButtons={iconButtons} size="small" />
         )}
       </div>
+
+      {hasSubMenu && (
+        <IconChevronRight
+          size={theme.icon.size.sm}
+          color={theme.font.color.tertiary}
+        />
+      )}
     </StyledHoverableMenuItemBase>
   );
 };
