@@ -7,16 +7,15 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import {
   CalendarEventsImportJobData,
   CalendarEventsImportJob,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
@@ -26,11 +25,10 @@ export class CalendarEventsImportCronJob {
   constructor(
     @InjectRepository(DataSourceEntity, 'metadata')
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
-    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly billingService: BillingService,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   @Process(CalendarEventsImportCronJob.name)
@@ -49,7 +47,13 @@ export class CalendarEventsImportCronJob {
     );
 
     for (const workspaceId of workspaceIdsWithDataSources) {
-      const calendarChannels = await this.calendarChannelRepository.find({});
+      const calendarChannelRepository =
+        await this.twentyORMManager.getRepositoryForWorkspace(
+          workspaceId,
+          CalendarChannelWorkspaceEntity,
+        );
+
+      const calendarChannels = await calendarChannelRepository.find({});
 
       for (const calendarChannel of calendarChannels) {
         if (!calendarChannel?.isSyncEnabled) {
@@ -60,10 +64,7 @@ export class CalendarEventsImportCronJob {
           CalendarEventsImportJob.name,
           {
             workspaceId,
-            connectedAccountId: calendarChannel.connectedAccount.id,
-          },
-          {
-            retryLimit: 2,
+            connectedAccountId: calendarChannel.connectedAccountId,
           },
         );
       }
