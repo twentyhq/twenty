@@ -9,10 +9,7 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
   imports: [TwentyORMModule.forFeature([CalendarEventWorkspaceEntity])],
   providers: [
     CalendarEventCleanerService,
-    {
-      provide: DeleteConnectedAccountAssociatedCalendarDataJob.name,
-      useClass: DeleteConnectedAccountAssociatedCalendarDataJob,
-    },
+    DeleteConnectedAccountAssociatedCalendarDataJob,
   ],
   exports: [CalendarEventCleanerService],
 })

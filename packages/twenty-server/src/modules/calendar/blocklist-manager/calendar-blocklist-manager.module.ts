@@ -10,14 +10,8 @@ import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-
   imports: [CalendarEventCleanerModule, CalendarEventImportManagerModule],
   providers: [
     CalendarBlocklistListener,
-    {
-      provide: BlocklistItemDeleteCalendarEventsJob.name,
-      useClass: BlocklistItemDeleteCalendarEventsJob,
-    },
-    {
-      provide: BlocklistReimportCalendarEventsJob.name,
-      useClass: BlocklistReimportCalendarEventsJob,
-    },
+    BlocklistItemDeleteCalendarEventsJob,
+    BlocklistReimportCalendarEventsJob,
   ],
   exports: [],
 })
