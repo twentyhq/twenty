@@ -33,32 +33,6 @@ export class CalendarEventsImportJob {
     this.logger.log(
       `google calendar sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );
-    try {
-      const { connectedAccountId, workspaceId } = data;
-
-      const connectedAccount = await this.connectedAccountRepository.getById(
-        connectedAccountId,
-        workspaceId,
-      );
-
-      if (!connectedAccount) {
-        throw new Error(
-          `No connected account found for ${connectedAccountId} in workspace ${workspaceId}`,
-        );
-      }
-
-      await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
-        connectedAccount,
-        workspaceId,
-      );
-    } catch (e) {
-      this.logger.error(
-        `Error refreshing access token for connected account ${data.connectedAccountId} in workspace ${data.workspaceId}`,
-        e,
-      );
-
-      return;
-    }
 
     await this.googleCalendarSyncService.processCalendarEventsImport(
       data.workspaceId,
