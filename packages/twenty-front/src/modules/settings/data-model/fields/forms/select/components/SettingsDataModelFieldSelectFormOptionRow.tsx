@@ -22,6 +22,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
+import { NAME_MAXIMUM_LENGTH } from '~/pages/settings/data-model/constants/NameMaximumLength';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
@@ -133,6 +134,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           })
         }
         RightIcon={isDefault ? IconCheck : undefined}
+        maxLength={NAME_MAXIMUM_LENGTH}
       />
       <Dropdown
         dropdownId={dropdownIds.actions}

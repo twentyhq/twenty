@@ -34,6 +34,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { NAME_MAXIMUM_LENGTH } from '~/pages/settings/data-model/constants/NameMaximumLength';
 import { isDefined } from '~/utils/isDefined';
 
 type SettingsDataModelFieldEditFormValues = z.infer<
@@ -202,6 +203,7 @@ export const SettingsObjectFieldEdit = () => {
               <SettingsDataModelFieldAboutForm
                 disabled={!activeMetadataField.isCustom}
                 fieldMetadataItem={activeMetadataField}
+                maxLength={NAME_MAXIMUM_LENGTH}
               />
             </Section>
             <Section>

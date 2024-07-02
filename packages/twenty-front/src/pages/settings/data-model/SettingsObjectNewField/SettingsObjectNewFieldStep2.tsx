@@ -31,6 +31,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { NAME_MAXIMUM_LENGTH } from '~/pages/settings/data-model/constants/NameMaximumLength';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -202,7 +203,9 @@ export const SettingsObjectNewFieldStep2 = () => {
                 title="Name and description"
                 description="The name and description of this field"
               />
-              <SettingsDataModelFieldAboutForm />
+              <SettingsDataModelFieldAboutForm
+                maxLength={NAME_MAXIMUM_LENGTH}
+              />
             </Section>
             <Section>
               <H2Title

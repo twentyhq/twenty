@@ -13,6 +13,7 @@ import { RelationType } from '@/settings/data-model/types/RelationType';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { NAME_MAXIMUM_LENGTH } from '~/pages/settings/data-model/constants/NameMaximumLength';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
   relation: z.object({
@@ -163,6 +164,7 @@ export const SettingsDataModelFieldRelationForm = ({
               value={value}
               onChange={onChange}
               fullWidth
+              maxLength={NAME_MAXIMUM_LENGTH}
             />
           )}
         />
