@@ -20,6 +20,7 @@ import {
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { isEmptyObject } from '~/utils/isEmptyObject';
 import { logError } from '~/utils/logError';
 
 const StyledContainer = styled.div`
@@ -56,53 +57,55 @@ export const DateTimeSettings = () => {
 
   if (!isDefined(currentWorkspaceMember)) return;
 
-  const handleTimeZoneChange = (timeZone: string) => {
-    const workspaceMember = {
-      ...currentWorkspaceMember,
-      timeZone,
-    };
-    setCurrentWorkspaceMember(workspaceMember);
+  const handleSettingsChange = (
+    settingName: 'timeZone' | 'dateFormat' | 'timeFormat',
+    value: string,
+  ) => {
+    const workspaceMember: any = {};
+    const dateTime: any = {};
 
-    setDateTimeFormat({
-      ...dateTimeFormat,
-      timeZone: timeZone === 'system' ? detectTimeZone() : timeZone,
-    });
+    switch (settingName) {
+      case 'timeZone': {
+        workspaceMember[settingName] = value;
+        dateTime[settingName] = value === 'system' ? detectTimeZone() : value;
+        break;
+      }
+      case 'dateFormat': {
+        workspaceMember[settingName] = getWorkspaceEnumFromDateFormat(
+          value as DateFormat,
+        );
+        dateTime[settingName] =
+          (value as DateFormat) === DateFormat.SYSTEM
+            ? detectDateFormat()
+            : (value as DateFormat);
+        break;
+      }
+      case 'timeFormat': {
+        workspaceMember[settingName] = getWorkspaceEnumFromTimeFormat(
+          value as TimeFormat,
+        );
+        dateTime[settingName] =
+          (value as TimeFormat) === TimeFormat.SYSTEM
+            ? detectTimeFormat()
+            : (value as TimeFormat);
+        break;
+      }
+    }
 
-    updateWorkspaceMember(workspaceMember);
-  };
+    if (!isEmptyObject(dateTime)) {
+      setDateTimeFormat({
+        ...dateTimeFormat,
+        ...dateTime,
+      });
+    }
 
-  const handleDateFormatChange = (dateFormat: DateFormat) => {
-    const workspaceMember = {
-      ...currentWorkspaceMember,
-      dateFormat: getWorkspaceEnumFromDateFormat(dateFormat),
-    };
-
-    setCurrentWorkspaceMember(workspaceMember);
-
-    setDateTimeFormat({
-      ...dateTimeFormat,
-      dateFormat:
-        dateFormat === DateFormat.SYSTEM ? detectDateFormat() : dateFormat,
-    });
-
-    updateWorkspaceMember(workspaceMember);
-  };
-
-  const handleTimeFormatChange = (timeFormat: TimeFormat) => {
-    const workspaceMember = {
-      ...currentWorkspaceMember,
-      timeFormat: getWorkspaceEnumFromTimeFormat(timeFormat),
-    };
-
-    setCurrentWorkspaceMember(workspaceMember);
-
-    setDateTimeFormat({
-      ...dateTimeFormat,
-      timeFormat:
-        timeFormat === TimeFormat.SYSTEM ? detectTimeFormat() : timeFormat,
-    });
-
-    updateWorkspaceMember(workspaceMember);
+    if (!isEmptyObject(workspaceMember)) {
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        ...workspaceMember,
+      });
+      updateWorkspaceMember(workspaceMember);
+    }
   };
 
   const timeZone =
@@ -124,16 +127,16 @@ export const DateTimeSettings = () => {
     <StyledContainer>
       <DateTimeSettingsTimeZoneSelect
         value={timeZone}
-        onChange={handleTimeZoneChange}
+        onChange={(value) => handleSettingsChange('timeZone', value)}
       />
       <DateTimeSettingsDateFormatSelect
         value={dateFormat}
-        onChange={handleDateFormatChange}
+        onChange={(value) => handleSettingsChange('dateFormat', value)}
         timeZone={timeZone}
       />
       <DateTimeSettingsTimeFormatSelect
         value={timeFormat}
-        onChange={handleTimeFormatChange}
+        onChange={(value) => handleSettingsChange('timeFormat', value)}
         timeZone={timeZone}
       />
     </StyledContainer>
