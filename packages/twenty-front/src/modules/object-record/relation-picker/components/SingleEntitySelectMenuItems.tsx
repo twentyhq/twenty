@@ -32,6 +32,7 @@ export type SingleEntitySelectMenuItemsProps = {
   isAllEntitySelected?: boolean;
   isAllEntitySelectShown?: boolean;
   onAllEntitySelected?: () => void;
+  hotkeyScope?: string;
 };
 
 export const SingleEntitySelectMenuItems = ({
@@ -49,6 +50,7 @@ export const SingleEntitySelectMenuItems = ({
   isAllEntitySelected,
   isAllEntitySelectShown,
   onAllEntitySelected,
+  hotkeyScope = RelationPickerHotkeyScope.RelationPicker,
 }: SingleEntitySelectMenuItemsProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -62,7 +64,7 @@ export const SingleEntitySelectMenuItems = ({
     () => {
       onCancel?.();
     },
-    RelationPickerHotkeyScope.RelationPicker,
+    hotkeyScope,
     [onCancel],
   );
 
@@ -73,15 +75,15 @@ export const SingleEntitySelectMenuItems = ({
       <SelectableList
         selectableListId="single-entity-select-base-list"
         selectableItemIdArray={selectableItemIds}
-        hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+        hotkeyScope={hotkeyScope}
         onEnter={(itemId) => {
-          if (showCreateButton === true) {
+          const entityIndex = entitiesInDropdown.findIndex(
+            (entity) => entity.id === itemId,
+          );
+          if (entityIndex < 0 && showCreateButton === true) {
             onCreate?.();
           } else {
-            const entity = entitiesInDropdown.findIndex(
-              (entity) => entity.id === itemId,
-            );
-            onEntitySelected(entitiesInDropdown[entity]);
+            onEntitySelected(entitiesInDropdown[entityIndex]);
           }
         }}
       >

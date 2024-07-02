@@ -81,6 +81,7 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
             ? entities.selectedEntities[0]
             : undefined)
         }
+        hotkeyScope={relationPickerScopeId}
         onCreate={onCreateWithInput}
         {...{
           EmptyIcon,
