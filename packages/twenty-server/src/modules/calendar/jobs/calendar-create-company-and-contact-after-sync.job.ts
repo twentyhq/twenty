@@ -70,7 +70,7 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
     const calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId =
       await this.calendarEventParticipantRepository.find({
         where: {
-          calendarEventToto: {
+          calendarEvent: {
             calendarChannelEventAssociations: {
               calendarChannelId,
             },

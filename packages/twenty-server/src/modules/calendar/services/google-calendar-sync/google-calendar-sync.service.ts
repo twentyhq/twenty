@@ -495,9 +495,9 @@ export class GoogleCalendarSyncService {
           const existingCalendarEventParticipants =
             await this.calendarEventParticipantsRepository.find({
               where: {
-                calendarEventTotoId: Any(
+                calendarEventId: Any(
                   participantsToUpdate
-                    .map((participant) => participant.calendarEventTotoId)
+                    .map((participant) => participant.calendarEventId)
                     .filter(isDefined),
                 ),
               },
