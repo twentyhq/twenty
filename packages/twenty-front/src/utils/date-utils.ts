@@ -1,6 +1,7 @@
 /* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { isDate, isNumber, isString } from '@sniptt/guards';
 import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
+import formatInTimeZone from 'date-fns-tz/formatInTimeZone';
 import { DateTime } from 'luxon';
 import moize from 'moize';
 
@@ -152,6 +153,21 @@ const getMonthLabels = () => {
 };
 
 const getMonthLabelsMemoized = moize(getMonthLabels);
+
+const formatDatetime = (
+  date: Date | string,
+  timeZone: string,
+  dateFormat: string,
+  timeFormat: string,
+) => {
+  return formatInTimeZone(
+    parseDate(date).toJSDate(),
+    timeZone,
+    `${dateFormat} ${timeFormat}`,
+  );
+};
+
+export const formatDatetimeMemoized = moize(formatDatetime);
 
 export const formatISOStringToHumanReadableDateTime = (date: string) => {
   const monthLabels = getMonthLabelsMemoized();
