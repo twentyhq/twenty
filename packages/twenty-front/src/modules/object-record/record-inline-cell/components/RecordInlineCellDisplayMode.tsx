@@ -1,8 +1,11 @@
+import { useContext } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
+import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { RecordInlineCellContainerProps } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 
@@ -68,6 +71,8 @@ export const RecordInlineCellDisplayMode = ({
   buttonIcon,
   editModeContentOnly,
 }: React.PropsWithChildren<RecordInlineCellDisplayModeProps>) => {
+  const { fieldDefinition } = useContext(FieldContext);
+
   const { isFocused } = useFieldFocus();
   const isDisplayModeContentEmpty = useIsFieldEmpty();
   const showEditButton =
@@ -75,6 +80,9 @@ export const RecordInlineCellDisplayMode = ({
     isFocused &&
     !isDisplayModeContentEmpty &&
     !editModeContentOnly;
+
+  const shouldDisplayEditModeOnFocus =
+    isFocused && isFieldRating(fieldDefinition);
 
   return (
     <>
@@ -84,7 +92,8 @@ export const RecordInlineCellDisplayMode = ({
         isHovered={isHovered}
       >
         <StyledRecordInlineCellNormalModeInnerContainer>
-          {isDisplayModeContentEmpty || !children ? (
+          {(!shouldDisplayEditModeOnFocus && isDisplayModeContentEmpty) ||
+          !children ? (
             <StyledEmptyField>{emptyPlaceholder}</StyledEmptyField>
           ) : (
             children
