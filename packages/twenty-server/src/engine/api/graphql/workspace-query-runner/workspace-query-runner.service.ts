@@ -53,6 +53,10 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -69,6 +73,10 @@ export class WorkspaceQueryRunnerService {
   private readonly logger = new Logger(WorkspaceQueryRunnerService.name);
 
   constructor(
+    @InjectWorkspaceRepository(WorkspaceMemberWorkspaceEntity)
+    private readonly workspaceMemberRepository: WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
+    @InjectWorkspaceRepository(BlocklistWorkspaceEntity)
+    private readonly blocklistWorkspaceRepository: WorkspaceRepository<BlocklistWorkspaceEntity>,
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
@@ -536,6 +544,8 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
+    let deletedWorkspaceMember: WorkspaceMemberWorkspaceEntity | null = null;
+    let deletedBlocklistItem: BlocklistWorkspaceEntity | null = null;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
@@ -545,19 +555,25 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    // TODO START: remove this awful patch and use our upcoming custom ORM is developed
-    const deletedWorkspaceMember = await this.handleDeleteWorkspaceMember(
-      args.id,
-      workspaceId,
-      objectMetadataItem,
-    );
+    if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.workspaceMember) {
+      deletedWorkspaceMember = await this.workspaceMemberRepository.findOne({
+        where: { id: args.id },
+        select: { userId: true },
+      });
+    }
 
-    const deletedBlocklistItem = await this.handleDeleteBlocklistItem(
-      args.id,
-      workspaceId,
-      objectMetadataItem,
-    );
-    // TODO END
+    if (objectMetadataItem.standardId === STANDARD_OBJECT_IDS.blocklist) {
+      deletedBlocklistItem = await this.blocklistWorkspaceRepository.findOne({
+        where: { id: args.id },
+        select: {
+          handle: true,
+          workspaceMember: {
+            id: true,
+          },
+        },
+        relations: ['workspaceMember'],
+      });
+    }
 
     await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
@@ -738,66 +754,5 @@ export class WorkspaceQueryRunnerService {
         { retryLimit: 3 },
       );
     });
-  }
-
-  async handleDeleteWorkspaceMember(
-    id: string,
-    workspaceId: string,
-    objectMetadataItem: ObjectMetadataInterface,
-  ) {
-    if (objectMetadataItem.nameSingular !== 'workspaceMember') {
-      return;
-    }
-
-    const workspaceMemberResult = await this.executeAndParse<IRecord>(
-      `
-      query {
-        workspaceMemberCollection(filter: {id: {eq: "${id}"}}) {
-          edges {
-            node {
-              userId: userId
-            }
-          }
-        }
-      }
-      `,
-      objectMetadataItem,
-      '',
-      workspaceId,
-    );
-
-    return workspaceMemberResult.edges?.[0]?.node;
-  }
-
-  async handleDeleteBlocklistItem(
-    id: string,
-    workspaceId: string,
-    objectMetadataItem: ObjectMetadataInterface,
-  ) {
-    if (objectMetadataItem.standardId !== STANDARD_OBJECT_IDS.blocklist) {
-      return;
-    }
-
-    const blocklistItemResult = await this.executeAndParse<IRecord>(
-      `
-      query {
-        blocklistCollection(filter: {id: {eq: "${id}"}}) {
-          edges {
-            node {
-              handle
-              workspaceMember {
-                id
-              }
-            }
-          }
-        }
-      }
-      `,
-      objectMetadataItem,
-      '',
-      workspaceId,
-    );
-
-    return blocklistItemResult.edges?.[0]?.node;
   }
 }
