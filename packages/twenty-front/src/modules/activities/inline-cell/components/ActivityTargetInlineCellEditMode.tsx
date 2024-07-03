@@ -28,7 +28,6 @@ import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-rec
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
-import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 
 const StyledSelectContainer = styled.div`
   position: absolute;
