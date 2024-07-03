@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Nullable, useIcons } from 'twenty-ui';
@@ -7,7 +7,6 @@ import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMe
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { FieldIdentifierType } from '@/settings/data-model/types/FieldIdentifierType';
-import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -18,12 +17,11 @@ import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {
   ActionIcon: ReactNode;
-  fieldMetadataItem: FieldMetadataItem & { fieldType: string | boolean };
+  fieldMetadataItem: FieldMetadataItem;
   identifierType?: Nullable<FieldIdentifierType>;
   variant?: 'field-type' | 'identifier';
   isRemoteObjectField?: boolean;
   to?: string;
-  updateDataTypes: (id: string, label?: string) => void;
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
@@ -44,7 +42,9 @@ export const SettingsObjectFieldItemTableRow = ({
   ActionIcon,
   fieldMetadataItem,
   to,
-  updateDataTypes,
+  identifierType,
+  variant = 'field-type',
+  isRemoteObjectField,
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -60,18 +60,6 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const fieldType = fieldMetadataItem.type;
   const isFieldTypeSupported = isFieldTypeSupportedInSettings(fieldType);
-  useEffect(() => {
-    const fieldTypeConfig = getSettingsFieldTypeConfig(fieldMetadataItem.type);
-    const label =
-      relationObjectMetadataItem?.labelPlural ?? fieldTypeConfig?.label;
-    //Hoist data types to parent component state to determine sort order
-    updateDataTypes(fieldMetadataItem.id, label);
-  }, [
-    fieldMetadataItem.id,
-    fieldMetadataItem.type,
-    relationObjectMetadataItem,
-    updateDataTypes,
-  ]);
 
   if (!isFieldTypeSupported) return null;
 
@@ -87,7 +75,17 @@ export const SettingsObjectFieldItemTableRow = ({
         )}
         {fieldMetadataItem.label}
       </StyledNameTableCell>
-      <TableCell>{fieldMetadataItem.fieldType}</TableCell>
+      <TableCell>
+        {variant === 'field-type' &&
+          (isRemoteObjectField
+            ? 'Remote'
+            : fieldMetadataItem.isCustom
+              ? 'Custom'
+              : 'Standard')}
+        {variant === 'identifier' &&
+          !!identifierType &&
+          (identifierType === 'label' ? 'Record text' : 'Record image')}
+      </TableCell>
       <TableCell>
         <SettingsObjectFieldDataType
           Icon={RelationIcon}

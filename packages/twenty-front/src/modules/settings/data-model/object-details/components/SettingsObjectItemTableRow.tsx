@@ -6,20 +6,13 @@ import { useIcons } from 'twenty-ui';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
-import {
-  getObjectTypeLabel,
-  ObjectTypeLabel,
-} from '@/settings/data-model/utils/getObjectTypeLabel';
+import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 export type SettingsObjectItemTableRowProps = {
   action: ReactNode;
-  objectItem: ObjectMetadataItem & {
-    objectTypeLabelText: ObjectTypeLabel['labelText'];
-    fieldsCount: number;
-    instancesCount: number;
-  };
+  objectItem: ObjectMetadataItem;
   to?: string;
   updateInstanceCount: (id: string, instanceCount: number) => void;
 };
@@ -69,7 +62,9 @@ export const SettingsObjectItemTableRow = ({
       <TableCell>
         <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
       </TableCell>
-      <TableCell align="right">{objectItem.fieldsCount}</TableCell>
+      <TableCell align="right">
+        {objectItem.fields.filter((field) => !field.isSystem).length}
+      </TableCell>
       <TableCell align="right">{totalCount}</TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledObjectTableRow>

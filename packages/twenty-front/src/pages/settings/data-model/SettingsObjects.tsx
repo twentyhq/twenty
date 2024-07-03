@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import {
   H1Title,
   H2Title,
@@ -11,6 +12,7 @@ import {
   IconSettings,
 } from 'twenty-ui';
 
+import { tableSortFamilyState } from '@/activities/states/tabelSortFamilyState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
@@ -37,8 +39,8 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
-import { useTableSort } from '~/hooks/useTableSort';
-enum SortKeys {
+import { useSortedArray } from '~/hooks/useSortedArray';
+export enum SortKeys {
   labelPlural = 'labelPlural',
   objectTypeLabelText = 'objectTypeLabelText',
   fieldsCount = 'fieldsCount',
@@ -48,7 +50,7 @@ type InstanceCountStateType = { [key: string]: number };
 type TableHeading = {
   label: string;
   sortKey: SortKeys;
-  align?: 'center' | 'left' | 'right';
+  align?: 'left' | 'right';
   type?: string;
 }[];
 export type MetadataFieldRowType = ObjectMetadataItem & {
@@ -81,6 +83,11 @@ const tableHeadings: TableHeading = [
   },
 ];
 
+const settingsObjectKey = {
+  tableId: 'settingsObject',
+  initialFieldName: SortKeys.labelPlural,
+};
+
 export const SettingsObjects = () => {
   const [instanceCountObj, setInstanceCount] = useState<InstanceCountStateType>(
     {},
@@ -109,13 +116,26 @@ export const SettingsObjects = () => {
     inactiveObjectMetadataItems,
   );
 
-  const [sortedActiveObjectMetadataItems, handleActiveSort, sortConfig] =
-    useTableSort<MetadataFieldRowType>(SortKeys.labelPlural, activeRowData);
-  const [sortedInActiveObjectMetadataItems, handleInActiveSort] =
-    useTableSort<MetadataFieldRowType>(SortKeys.labelPlural, inActiveRowData);
+  const [sortConfig, setSortConfig] = useRecoilState(
+    tableSortFamilyState(settingsObjectKey),
+  );
+  const sortedActiveObjectMetadataItems = useSortedArray<MetadataFieldRowType>(
+    activeRowData,
+    settingsObjectKey,
+  );
+  const sortedInActiveObjectMetadataItems =
+    useSortedArray<MetadataFieldRowType>(inActiveRowData, settingsObjectKey);
   const handleSort = (key: keyof MetadataFieldRowType) => {
-    handleActiveSort(key);
-    handleInActiveSort(key);
+    setSortConfig((preVal) => {
+      if (preVal.fieldName === key) {
+        const orderBy =
+          preVal.orderBy === 'AscNullsLast' ? 'DescNullsLast' : 'AscNullsLast';
+
+        return { orderBy, fieldName: key };
+      } else {
+        return { orderBy: 'AscNullsLast', fieldName: key };
+      }
+    });
   };
 
   const updateInstanceCount = useCallback((id: string, val: number) => {
@@ -125,8 +145,8 @@ export const SettingsObjects = () => {
     }));
   }, []);
   const SortIcon = ({ sortKey }: { sortKey: SortKeys }) => {
-    if (sortKey !== sortConfig.sortByColumnKey) return null;
-    return sortConfig.sortOrder === 'ascending' ? (
+    if (sortKey !== sortConfig.fieldName) return null;
+    return sortConfig.orderBy === 'AscNullsLast' ? (
       <IconArrowUp size="14" />
     ) : (
       <IconArrowDown size="14" />
@@ -159,12 +179,12 @@ export const SettingsObjects = () => {
                     align={item?.align}
                     onClick={() => handleSort(item.sortKey)}
                   >
-                    {sortConfig.sortByColumnKey === item.sortKey &&
+                    {sortConfig.fieldName === item.sortKey &&
                       item.type === 'number' && (
                         <SortIcon sortKey={item.sortKey} />
                       )}
                     {item.label}
-                    {sortConfig.sortByColumnKey === item.sortKey &&
+                    {sortConfig.fieldName === item.sortKey &&
                       item.type !== 'number' && (
                         <SortIcon sortKey={item.sortKey} />
                       )}

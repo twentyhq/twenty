@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 import {
   H2Title,
   IconArrowDown,
@@ -9,9 +10,11 @@ import {
   IconSettings,
 } from 'twenty-ui';
 
+import { tableSortFamilyState } from '@/activities/states/tabelSortFamilyState';
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
@@ -27,6 +30,7 @@ import {
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { SettingsObjectSummaryCard } from '@/settings/data-model/object-details/components/SettingsObjectSummaryCard';
 import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
+import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -38,14 +42,14 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
-import { useTableSort } from '~/hooks/useTableSort';
+import { useSortedArray } from '~/hooks/useSortedArray';
 
 const StyledDiv = styled.div`
   display: flex;
   justify-content: flex-end;
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
-enum SortKeys {
+export enum SortKeys {
   label = 'label',
   fieldType = 'fieldType',
   dataType = 'dataType',
@@ -54,13 +58,15 @@ type MetadataFieldRowType = FieldMetadataItem & {
   fieldType: string | boolean;
   dataType?: string;
 };
-type DataTypesType = { [key: string]: string | undefined };
 
 type TableHeading = {
   label: string;
   sortKey: SortKeys;
 }[];
-
+const settingsObjectDetailKey = {
+  tableId: 'SettingsObjectDetail',
+  initialFieldName: SortKeys.label,
+};
 export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
 
@@ -81,7 +87,7 @@ export const SettingsObjectDetail = () => {
     deactivateMetadataField,
     deleteMetadataField,
   } = useFieldMetadataItem();
-  const [dataTypes, setDataTypes] = useState<DataTypesType>({});
+  const getRelationMetadata = useGetRelationMetadata();
   let activeMetadataFieldsRows: MetadataFieldRowType[] = [];
   let deactivatedMetadataFieldRows: MetadataFieldRowType[] = [];
 
@@ -109,11 +115,19 @@ export const SettingsObjectDetail = () => {
             );
           }
         };
+        const fieldTypeConfig = getSettingsFieldTypeConfig(
+          fieldMetadataItem.type,
+        );
+        const { relationObjectMetadataItem } =
+          getRelationMetadata({
+            fieldMetadataItem,
+          }) ?? {};
 
         return {
           ...fieldMetadataItem,
           [SortKeys.fieldType]: getFieldType(),
-          [SortKeys.dataType]: dataTypes[fieldMetadataItem.id],
+          [SortKeys.dataType]:
+            relationObjectMetadataItem?.labelPlural ?? fieldTypeConfig?.label,
         };
       });
     };
@@ -129,27 +143,32 @@ export const SettingsObjectDetail = () => {
       deactivatedMetadataFields,
     );
   }
+  const [sortConfig, setSortConfig] = useRecoilState(
+    tableSortFamilyState(settingsObjectDetailKey),
+  );
+  const sortedActiveMetadataFieldsRows = useSortedArray<MetadataFieldRowType>(
+    activeMetadataFieldsRows,
+    settingsObjectDetailKey,
+  );
 
-  const [sortedActiveMetadataFieldsRows, handleActiveSort, sortConfig] =
-    useTableSort<MetadataFieldRowType>(
-      SortKeys.label,
-      activeMetadataFieldsRows,
-    );
-
-  const [sortedDeactivatedMetadataFieldsRows, handleDeactivatedSort] =
-    useTableSort<MetadataFieldRowType>(
-      SortKeys.label,
+  const sortedDeactivatedMetadataFieldsRows =
+    useSortedArray<MetadataFieldRowType>(
       deactivatedMetadataFieldRows,
+      settingsObjectDetailKey,
     );
 
   const handleSort = (key: keyof MetadataFieldRowType) => {
-    handleActiveSort(key);
-    handleDeactivatedSort(key);
-  };
+    setSortConfig((preVal) => {
+      if (preVal.fieldName === key) {
+        const orderBy =
+          preVal.orderBy === 'AscNullsLast' ? 'DescNullsLast' : 'AscNullsLast';
 
-  const updateDataTypes = useCallback((id: string, label?: string) => {
-    setDataTypes((prevState: DataTypesType) => ({ ...prevState, [id]: label }));
-  }, []);
+        return { orderBy, fieldName: key };
+      } else {
+        return { orderBy: 'AscNullsLast', fieldName: key };
+      }
+    });
+  };
 
   if (!activeObjectMetadataItem) return null;
 
@@ -188,8 +207,8 @@ export const SettingsObjectDetail = () => {
     },
   ];
   const SortIcon = ({ sortKey }: { sortKey: SortKeys }) => {
-    if (sortKey !== sortConfig.sortByColumnKey) return null;
-    return sortConfig.sortOrder === 'ascending' ? (
+    if (sortKey !== sortConfig.fieldName) return null;
+    return sortConfig.orderBy === 'AscNullsLast' ? (
       <IconArrowUp size="14" />
     ) : (
       <IconArrowDown size="14" />
@@ -227,7 +246,7 @@ export const SettingsObjectDetail = () => {
                   onClick={() => handleSort(item.sortKey)}
                 >
                   {item.label}
-                  {sortConfig.sortByColumnKey === item.sortKey && (
+                  {sortConfig.fieldName === item.sortKey && (
                     <SortIcon sortKey={item.sortKey} />
                   )}
                 </TableHeader>
@@ -251,7 +270,6 @@ export const SettingsObjectDetail = () => {
 
                   return (
                     <SettingsObjectFieldItemTableRow
-                      updateDataTypes={updateDataTypes}
                       key={activeMetadataField.id}
                       fieldMetadataItem={activeMetadataField}
                       isRemoteObjectField={activeObjectMetadataItem.isRemote}
@@ -288,7 +306,6 @@ export const SettingsObjectDetail = () => {
                 {sortedDeactivatedMetadataFieldsRows.map(
                   (deactivatedMetadataField) => (
                     <SettingsObjectFieldItemTableRow
-                      updateDataTypes={updateDataTypes}
                       key={deactivatedMetadataField.id}
                       variant={
                         activeObjectMetadataItem.isCustom
