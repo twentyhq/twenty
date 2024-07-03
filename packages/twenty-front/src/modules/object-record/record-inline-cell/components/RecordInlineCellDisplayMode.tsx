@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
+import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { RecordInlineCellContainerProps } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
@@ -82,7 +83,8 @@ export const RecordInlineCellDisplayMode = ({
     !editModeContentOnly;
 
   const shouldDisplayEditModeOnFocus =
-    isFocused && isFieldRating(fieldDefinition);
+    isFocused &&
+    (isFieldRating(fieldDefinition) || isFieldBoolean(fieldDefinition));
 
   return (
     <>
