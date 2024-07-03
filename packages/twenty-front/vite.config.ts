@@ -67,6 +67,7 @@ export default defineConfig(({ command, mode }) => {
           '**/RecordTableCellContainer.tsx',
           '**/RecordTableCellDisplayContainer.tsx',
           '**/Avatar.tsx',
+          '**/RecordTableBodyDroppable.tsx',
         ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],

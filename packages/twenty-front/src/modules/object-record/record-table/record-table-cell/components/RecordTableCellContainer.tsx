@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { useRecoilValue } from 'recoil';
 import { BORDER_COMMON, ThemeContext } from 'twenty-ui';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -59,7 +60,6 @@ const StyledBaseContainer = styled.div<{
 export type RecordTableCellContainerProps = {
   editModeContent: ReactElement;
   nonEditModeContent: ReactElement;
-  editHotkeyScope?: HotkeyScope;
   transparent?: boolean;
   maxContentWidth?: number;
   onSubmit?: () => void;
@@ -73,7 +73,6 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 export const RecordTableCellContainer = ({
   editModeContent,
   nonEditModeContent,
-  editHotkeyScope,
 }: RecordTableCellContainerProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -138,15 +137,17 @@ export const RecordTableCellContainer = ({
     ? theme.accent.quaternary
     : theme.background.primary;
 
+  const { hotkeyScope } = useContext(FieldContext);
+
+  const editHotkeyScope = { scope: hotkeyScope } ?? DEFAULT_CELL_SCOPE;
+
   return (
     <StyledTd
       backgroundColor={tdBackgroundColor}
       isInEditMode={isInEditMode}
       onContextMenu={handleContextMenu}
     >
-      <CellHotkeyScopeContext.Provider
-        value={editHotkeyScope ?? DEFAULT_CELL_SCOPE}
-      >
+      <CellHotkeyScopeContext.Provider value={editHotkeyScope}>
         <StyledBaseContainer
           onMouseLeave={handleContainerMouseLeave}
           onMouseMove={handleContainerMouseMove}

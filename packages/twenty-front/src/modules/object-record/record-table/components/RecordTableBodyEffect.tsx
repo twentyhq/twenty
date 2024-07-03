@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { isRecordTableScrolledLeftState } from '@/object-record/record-table/states/isRecordTableScrolledLeftState';
 import { isRecordTableScrolledTopState } from '@/object-record/record-table/states/isRecordTableScrolledTopState';
@@ -11,13 +12,9 @@ import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
-type RecordTableBodyEffectProps = {
-  objectNameSingular: string;
-};
+export const RecordTableBodyEffect = () => {
+  const { objectNameSingular } = useContext(RecordTableContext);
 
-export const RecordTableBodyEffect = ({
-  objectNameSingular,
-}: RecordTableBodyEffectProps) => {
   const {
     fetchMoreRecords: fetchMoreObjects,
     records,

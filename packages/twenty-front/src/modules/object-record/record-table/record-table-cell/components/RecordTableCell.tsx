@@ -8,13 +8,8 @@ import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEv
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-export const RecordTableCell = ({
-  customHotkeyScope,
-}: {
-  customHotkeyScope: HotkeyScope;
-}) => {
+export const RecordTableCell = () => {
   const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
     useContext(RecordTableContext);
   const { entityId, fieldDefinition } = useContext(FieldContext);
@@ -90,7 +85,6 @@ export const RecordTableCell = ({
   return (
     <FieldFocusContextProvider>
       <RecordTableCellContainer
-        editHotkeyScope={customHotkeyScope}
         editModeContent={
           <FieldInput
             recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}

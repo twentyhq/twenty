@@ -7,7 +7,7 @@ export const RecordTablePendingRow = () => {
   const { pendingRecordIdState } = useRecordTableStates();
   const pendingRecordId = useRecoilValue(pendingRecordIdState);
 
-  if (!pendingRecordId) return;
+  if (!pendingRecordId) return <></>;
 
   return (
     <RecordTableRow

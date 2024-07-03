@@ -1,20 +1,13 @@
 import { useRecoilValue } from 'recoil';
 
-import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/components/RecordTableBodyFetchMoreLoader';
+import { RecordTableBodyDragDropContext } from '@/object-record/record-table/components/RecordTableBodyDragDropContext';
+import { RecordTableBodyDroppable } from '@/object-record/record-table/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/components/RecordTableBodyLoading';
+import { RecordTablePendingRow } from '@/object-record/record-table/components/RecordTablePendingRow';
 import { RecordTableRow } from '@/object-record/record-table/components/RecordTableRow';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { DraggableTableBody } from '@/ui/layout/draggable-list/components/DraggableTableBody';
 
-type RecordTableBodyProps = {
-  objectNameSingular: string;
-  recordTableId: string;
-};
-
-export const RecordTableBody = ({
-  objectNameSingular,
-  recordTableId,
-}: RecordTableBodyProps) => {
+export const RecordTableBody = () => {
   const { tableRowIdsState, isRecordTableInitialLoadingState } =
     useRecordTableStates();
 
@@ -29,25 +22,19 @@ export const RecordTableBody = ({
   }
 
   return (
-    <>
-      <DraggableTableBody
-        objectNameSingular={objectNameSingular}
-        recordTableId={recordTableId}
-        draggableItems={
-          <>
-            {tableRowIds.map((recordId, rowIndex) => {
-              return (
-                <RecordTableRow
-                  key={recordId}
-                  recordId={recordId}
-                  rowIndex={rowIndex}
-                />
-              );
-            })}
-          </>
-        }
-      />
-      <RecordTableBodyFetchMoreLoader objectNameSingular={objectNameSingular} />
-    </>
+    <RecordTableBodyDragDropContext>
+      <RecordTableBodyDroppable>
+        <RecordTablePendingRow />
+        {tableRowIds.map((recordId, rowIndex) => {
+          return (
+            <RecordTableRow
+              key={recordId}
+              recordId={recordId}
+              rowIndex={rowIndex}
+            />
+          );
+        })}
+      </RecordTableBodyDroppable>
+    </RecordTableBodyDragDropContext>
   );
 };

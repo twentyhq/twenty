@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { ReactNode, useContext } from 'react';
 
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -8,13 +8,16 @@ import { RecordUpdateContext } from '@/object-record/record-table/contexts/Entit
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { RecordTableCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCell';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export const RecordTableCellFieldContextWrapper = () => {
+export const RecordTableCellFieldContextWrapper = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const { objectMetadataItem } = useContext(RecordTableContext);
   const { columnDefinition } = useContext(RecordTableCellContext);
   const { recordId, pathToShowPage } = useContext(RecordTableRowContext);
@@ -49,7 +52,7 @@ export const RecordTableCellFieldContextWrapper = () => {
         }),
       }}
     >
-      <RecordTableCell customHotkeyScope={{ scope: customHotkeyScope }} />
+      {children}
     </FieldContext.Provider>
   );
 };
