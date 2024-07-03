@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { RecordInlineCellContainerProps } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 
@@ -76,6 +77,10 @@ export const RecordInlineCellDisplayMode = ({
     !isDisplayModeContentEmpty &&
     !editModeContentOnly;
 
+  const isFieldInputOnly = useIsFieldInputOnly();
+
+  const shouldDisplayEditModeOnFocus = isFocused && isFieldInputOnly;
+
   return (
     <>
       <StyledRecordInlineCellNormalModeOuterContainer
@@ -84,7 +89,8 @@ export const RecordInlineCellDisplayMode = ({
         isHovered={isHovered}
       >
         <StyledRecordInlineCellNormalModeInnerContainer>
-          {isDisplayModeContentEmpty || !children ? (
+          {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
+          !children ? (
             <StyledEmptyField>{emptyPlaceholder}</StyledEmptyField>
           ) : (
             children

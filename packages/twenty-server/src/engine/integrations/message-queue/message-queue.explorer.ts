@@ -156,7 +156,7 @@ export class MessageQueueExplorer implements OnModuleInit {
       }),
     );
 
-    if (isRequestScoped && job.data) {
+    if (isRequestScoped) {
       const contextId = createContextId();
 
       if (this.moduleRef.registerRequestByContextId) {
@@ -164,7 +164,7 @@ export class MessageQueueExplorer implements OnModuleInit {
           {
             // Add workspaceId to the request object
             req: {
-              workspaceId: job.data.workspaceId,
+              workspaceId: job.data?.workspaceId,
             },
           },
           contextId,

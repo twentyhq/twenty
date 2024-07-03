@@ -8,9 +8,9 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
-import { computeStandardObject } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-object.util';
 import { StandardFieldFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field.factory';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
+import { computeStandardFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-fields.util';
 
 interface RunCommandOptions {
   workspaceId?: string;
@@ -123,11 +123,8 @@ export class AddStandardIdCommand extends CommandRunner {
           continue;
         }
 
-        const computedStandardObjectMetadata = computeStandardObject(
-          standardObjectMetadata ?? {
-            ...originalObjectMetadata,
-            fields: standardFieldMetadataCollection,
-          },
+        const computedStandardFieldMetadataCollection = computeStandardFields(
+          standardFieldMetadataCollection,
           originalObjectMetadata,
           customObjectMetadataCollection,
         );
@@ -135,13 +132,13 @@ export class AddStandardIdCommand extends CommandRunner {
         if (!originalObjectMetadata.isCustom) {
           updateObjectMetadataCollection.push({
             id: originalObjectMetadata.id,
-            standardId: computedStandardObjectMetadata.standardId,
+            standardId: originalObjectMetadata.standardId,
           });
         }
 
         for (const fieldMetadata of originalObjectMetadata.fields) {
           const standardFieldMetadata =
-            computedStandardObjectMetadata.fields.find(
+            computedStandardFieldMetadataCollection.find(
               (field) => field.name === fieldMetadata.name && !field.isCustom,
             );
 
