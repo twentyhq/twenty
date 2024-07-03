@@ -20,13 +20,11 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
       `;
     } else if (disabled === true) {
       return css`
-        background: inherit;
+        background: ${theme.background.transparent.light};
         &:hover {
-          background: inherit;
+          background: ${theme.background.transparent.light};
         }
-
-        color: ${theme.font.color.tertiary};
-
+        color: ${theme.font.color.disabled};
         cursor: default;
       `;
     } else if (hovered === true) {
