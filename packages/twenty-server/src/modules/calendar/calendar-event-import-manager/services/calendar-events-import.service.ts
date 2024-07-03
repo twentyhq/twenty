@@ -70,6 +70,7 @@ export class CalendarEventsImportService {
   ) {}
 
   public async processCalendarEventsImport(
+    calendarChannel: CalendarChannelWorkspaceEntity,
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
     emailOrDomainToReimport?: string,
@@ -77,12 +78,6 @@ export class CalendarEventsImportService {
     await this.calendarChannelSyncStatusService.markAsCalendarEventsImportOngoing(
       connectedAccount.id,
     );
-
-    const calendarChannel = await this.calendarChannelRepository.findOneBy({
-      connectedAccount: {
-        id: connectedAccount.id,
-      },
-    });
 
     const syncToken = calendarChannel?.syncCursor || undefined;
 
