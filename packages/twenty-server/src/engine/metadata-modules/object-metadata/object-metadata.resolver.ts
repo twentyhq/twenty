@@ -23,12 +23,15 @@ export class ObjectMetadataResolver {
   ) {}
 
   @Mutation(() => ObjectMetadataDTO)
-  deleteOneObject(
+  async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.objectMetadataService.deleteOneObject(input, workspaceId);
+      return await this.objectMetadataService.deleteOneObject(
+        input,
+        workspaceId,
+      );
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(error);
     }
@@ -42,7 +45,10 @@ export class ObjectMetadataResolver {
     try {
       await this.beforeUpdateOneObject.run(input, workspaceId);
 
-      return this.objectMetadataService.updateOneObject(input, workspaceId);
+      return await this.objectMetadataService.updateOneObject(
+        input,
+        workspaceId,
+      );
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(error);
     }
