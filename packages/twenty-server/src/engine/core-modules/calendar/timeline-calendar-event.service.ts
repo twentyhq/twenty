@@ -122,7 +122,7 @@ export class TimelineCalendarEventService {
 
     return {
       totalNumberOfCalendarEvents: total,
-      timelineCalendarEvents: timelineCalendarEvents,
+      timelineCalendarEvents,
     };
   }
 

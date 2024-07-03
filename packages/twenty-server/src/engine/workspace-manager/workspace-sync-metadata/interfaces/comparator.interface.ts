@@ -33,9 +33,9 @@ export interface ComparatorDeleteResult<T> {
 
 export type ObjectComparatorResult =
   | ComparatorSkipResult
-  | ComparatorCreateResult<Omit<ComputedPartialWorkspaceEntity, 'fields'>>
+  | ComparatorCreateResult<ComputedPartialWorkspaceEntity>
   | ComparatorUpdateResult<
-      Partial<Omit<ComputedPartialWorkspaceEntity, 'fields'>> & { id: string }
+      Partial<ComputedPartialWorkspaceEntity> & { id: string }
     >;
 
 export type FieldComparatorResult =

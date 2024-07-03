@@ -8,13 +8,17 @@ import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-syn
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 
+import { StandardFieldFactory } from './standard-field.factory';
+
 @Injectable()
 export class StandardObjectFactory {
+  constructor(private readonly standardFieldFactory: StandardFieldFactory) {}
+
   create(
     standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Omit<PartialWorkspaceEntity, 'fields'>[] {
+  ): PartialWorkspaceEntity[] {
     return standardObjectMetadataDefinitions
       .map((metadata) =>
         this.createObjectMetadata(metadata, context, workspaceFeatureFlagsMap),
@@ -26,7 +30,7 @@ export class StandardObjectFactory {
     target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Omit<PartialWorkspaceEntity, 'fields'> | undefined {
+  ): PartialWorkspaceEntity | undefined {
     const workspaceEntityMetadataArgs =
       metadataArgsStorage.filterEntities(target);
 
@@ -45,6 +49,12 @@ export class StandardObjectFactory {
       return undefined;
     }
 
+    const fields = this.standardFieldFactory.create(
+      target,
+      context,
+      workspaceFeatureFlagsMap,
+    );
+
     return {
       ...workspaceEntityMetadataArgs,
       // TODO: Remove targetTableName when we remove the old metadata
@@ -54,6 +64,7 @@ export class StandardObjectFactory {
       isCustom: false,
       isRemote: false,
       isSystem: workspaceEntityMetadataArgs.isSystem ?? false,
+      fields,
     };
   }
 }

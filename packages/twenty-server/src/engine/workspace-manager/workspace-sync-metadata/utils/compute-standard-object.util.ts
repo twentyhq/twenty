@@ -1,8 +1,8 @@
 import {
-  ComputedPartialFieldMetadata,
-  PartialComputedFieldMetadata,
-  PartialFieldMetadata,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
+  ComputedPartialWorkspaceEntity,
+  PartialWorkspaceEntity,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
+import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -11,18 +11,16 @@ import {
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
-export const computeStandardFields = (
-  standardFieldMetadataCollection: (
-    | PartialFieldMetadata
-    | PartialComputedFieldMetadata
-  )[],
+export const computeStandardObject = (
+  standardObjectMetadata: Omit<PartialWorkspaceEntity, 'standardId'> & {
+    standardId: string | null;
+  },
   originalObjectMetadata: ObjectMetadataEntity,
   customObjectMetadataCollection: ObjectMetadataEntity[] = [],
-): ComputedPartialFieldMetadata[] => {
+): ComputedPartialWorkspaceEntity => {
   const fields: ComputedPartialFieldMetadata[] = [];
 
-  for (const partialFieldMetadata of standardFieldMetadataCollection) {
-    // Relation from standard object to custom object
+  for (const partialFieldMetadata of standardObjectMetadata.fields) {
     if ('argsFactory' in partialFieldMetadata) {
       // Compute standard fields of custom object
       for (const customObjectMetadata of customObjectMetadataCollection) {
@@ -65,7 +63,6 @@ export const computeStandardFields = (
         });
       }
     } else {
-      // Relation from standard object to standard object
       const labelText =
         typeof partialFieldMetadata.label === 'function'
           ? partialFieldMetadata.label(originalObjectMetadata)
@@ -83,5 +80,8 @@ export const computeStandardFields = (
     }
   }
 
-  return fields;
+  return {
+    ...standardObjectMetadata,
+    fields,
+  };
 };
