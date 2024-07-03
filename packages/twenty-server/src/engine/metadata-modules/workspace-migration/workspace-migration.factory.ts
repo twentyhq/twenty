@@ -12,6 +12,10 @@ import {
 import { BasicColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/basic-column-action.factory';
 import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 import { CompositeColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+import {
+  WorkspaceMigrationException,
+  WorkspaceMigrationExceptionCode,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
 @Injectable()
 export class WorkspaceMigrationFactory {
@@ -131,7 +135,10 @@ export class WorkspaceMigrationFactory {
         undefinedOrAlteredFieldMetadata,
       );
 
-      throw new Error(`No field metadata provided for action ${action}`);
+      throw new WorkspaceMigrationException(
+        `No field metadata provided for action ${action}`,
+        WorkspaceMigrationExceptionCode.INVALID_ACTION,
+      );
     }
 
     const columnActions = this.createColumnAction(
@@ -161,7 +168,10 @@ export class WorkspaceMigrationFactory {
         },
       );
 
-      throw new Error(`No factory found for type ${alteredFieldMetadata.type}`);
+      throw new WorkspaceMigrationException(
+        `No factory found for type ${alteredFieldMetadata.type}`,
+        WorkspaceMigrationExceptionCode.NO_FACTORY_FOUND,
+      );
     }
 
     return factory.create(

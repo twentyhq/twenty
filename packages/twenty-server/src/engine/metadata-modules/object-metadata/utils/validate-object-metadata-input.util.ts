@@ -1,9 +1,13 @@
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
-
-import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import {
+  validateMetadataName,
+  InvalidStringException,
+} from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { camelCase } from 'src/utils/camel-case';
 
 const coreObjectNames = [
@@ -55,7 +59,10 @@ export const validateObjectMetadataInputOrThrow = <
 const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
   if (name) {
     if (reservedKeywords.includes(name)) {
-      throw new ForbiddenException(`The name "${name}" is not available`);
+      throw new ObjectMetadataException(
+        `The name "${name}" is not available`,
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
     }
   }
 };
@@ -63,7 +70,10 @@ const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
 const validateNameCamelCasedOrThrow = (name?: string) => {
   if (name) {
     if (name !== camelCase(name)) {
-      throw new ForbiddenException(`Name should be in camelCase: ${name}`);
+      throw new ObjectMetadataException(
+        `Name should be in camelCase: ${name}`,
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
     }
   }
 };
@@ -75,8 +85,9 @@ const validateNameCharactersOrThrow = (name?: string) => {
     }
   } catch (error) {
     if (error instanceof InvalidStringException) {
-      throw new BadRequestException(
+      throw new ObjectMetadataException(
         `Characters used in name "${name}" are not supported`,
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
       );
     } else {
       throw error;

@@ -12,11 +12,9 @@ import { mapObjectMetadataByUniqueIdentifier } from 'src/engine/workspace-manage
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
 import { WorkspaceObjectComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-object.comparator';
-import { WorkspaceFieldComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-field.comparator';
 import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationObjectFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-object.factory';
-import { computeStandardObject } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-object.util';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 
 @Injectable()
@@ -26,7 +24,6 @@ export class WorkspaceSyncObjectMetadataService {
   constructor(
     private readonly standardObjectFactory: StandardObjectFactory,
     private readonly workspaceObjectComparator: WorkspaceObjectComparator,
-    private readonly workspaceFieldComparator: WorkspaceFieldComparator,
     private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
     private readonly workspaceMigrationObjectFactory: WorkspaceMigrationObjectFactory,
   ) {}
@@ -49,10 +46,6 @@ export class WorkspaceSyncObjectMetadataService {
         },
         relations: ['dataSource', 'fields'],
       });
-    const customObjectMetadataCollection =
-      originalObjectMetadataCollection.filter(
-        (objectMetadata) => objectMetadata.isCustom,
-      );
 
     // Create standard object metadata collection
     const standardObjectMetadataCollection = this.standardObjectFactory.create(
@@ -87,11 +80,8 @@ export class WorkspaceSyncObjectMetadataService {
     for (const standardObjectId in standardObjectMetadataMap) {
       const originalObjectMetadata =
         originalObjectMetadataMap[standardObjectId];
-      const standardObjectMetadata = computeStandardObject(
-        standardObjectMetadataMap[standardObjectId],
-        originalObjectMetadata,
-        customObjectMetadataCollection,
-      );
+      const standardObjectMetadata =
+        standardObjectMetadataMap[standardObjectId];
 
       /**
        * COMPARE OBJECT METADATA
@@ -109,38 +99,41 @@ export class WorkspaceSyncObjectMetadataService {
       if (objectComparatorResult.action === ComparatorAction.UPDATE) {
         storage.addUpdateObjectMetadata(objectComparatorResult.object);
       }
+      // <<<<<<< HEAD
 
-      /**
-       * COMPARE FIELD METADATA
-       * NOTE: This should be moved to WorkspaceSyncFieldMetadataService for more clarity since
-       * this code only adds field metadata to the storage but it's actually used in the other service.
-       * NOTE2: WorkspaceSyncFieldMetadataService has been added for custom fields sync, it should be refactored to handle
-       * both custom and non-custom fields.
-       */
-      const fieldComparatorResults = this.workspaceFieldComparator.compare(
-        originalObjectMetadata,
-        standardObjectMetadata,
-      );
+      //       /**
+      //        * COMPARE FIELD METADATA
+      //        * NOTE: This should be moved to WorkspaceSyncFieldMetadataService for more clarity since
+      //        * this code only adds field metadata to the storage but it's actually used in the other service.
+      //        * NOTE2: WorkspaceSyncFieldMetadataService has been added for custom fields sync, it should be refactored to handle
+      //        * both custom and non-custom fields.
+      //        */
+      //       const fieldComparatorResults = this.workspaceFieldComparator.compare(
+      //         originalObjectMetadata,
+      //         standardObjectMetadata,
+      //       );
 
-      for (const fieldComparatorResult of fieldComparatorResults) {
-        switch (fieldComparatorResult.action) {
-          case ComparatorAction.CREATE: {
-            if (fieldComparatorResult.object.isCustom) {
-              break;
-            }
-            storage.addCreateFieldMetadata(fieldComparatorResult.object);
-            break;
-          }
-          case ComparatorAction.UPDATE: {
-            storage.addUpdateFieldMetadata(fieldComparatorResult.object);
-            break;
-          }
-          case ComparatorAction.DELETE: {
-            storage.addDeleteFieldMetadata(fieldComparatorResult.object);
-            break;
-          }
-        }
-      }
+      //       for (const fieldComparatorResult of fieldComparatorResults) {
+      //         switch (fieldComparatorResult.action) {
+      //           case ComparatorAction.CREATE: {
+      //             if (fieldComparatorResult.object.isCustom) {
+      //               break;
+      //             }
+      //             storage.addCreateFieldMetadata(fieldComparatorResult.object);
+      //             break;
+      //           }
+      //           case ComparatorAction.UPDATE: {
+      //             storage.addUpdateFieldMetadata(fieldComparatorResult.object);
+      //             break;
+      //           }
+      //           case ComparatorAction.DELETE: {
+      //             storage.addDeleteFieldMetadata(fieldComparatorResult.object);
+      //             break;
+      //           }
+      //         }
+      //       }
+      // =======
+      // >>>>>>> c57c5b255419b5fcc61b4e28c494ec36f8b2dcf7
     }
 
     this.logger.log('Updating workspace metadata');

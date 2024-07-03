@@ -9,9 +9,6 @@ import { assert, assertNotNull } from 'src/utils/assert';
 import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { MessagingFetchByBatchesService } from 'src/modules/messaging/common/services/messaging-fetch-by-batch.service';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class MessagingGmailFetchMessagesByBatchesService {
@@ -21,29 +18,15 @@ export class MessagingGmailFetchMessagesByBatchesService {
 
   constructor(
     private readonly fetchByBatchesService: MessagingFetchByBatchesService,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
   async fetchAllMessages(
     messageIds: string[],
+    accessToken: string,
     connectedAccountId: string,
     workspaceId: string,
   ): Promise<GmailMessage[]> {
     let startTime = Date.now();
-
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
-      workspaceId,
-    );
-
-    if (!connectedAccount) {
-      throw new Error(
-        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
-      );
-    }
-
-    const accessToken = connectedAccount.accessToken;
 
     const { messageIdsByBatch, batchResponses } =
       await this.fetchByBatchesService.fetchAllByBatches(

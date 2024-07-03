@@ -7,14 +7,6 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import {
-  GoogleCalendarSyncJobData,
-  GoogleCalendarSyncJob,
-} from 'src/modules/calendar/jobs/google-calendar-sync.job';
-import {
-  CalendarChannelWorkspaceEntity,
-  CalendarChannelVisibility,
-} from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import {
   ConnectedAccountWorkspaceEntity,
@@ -36,6 +28,14 @@ import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inje
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
+import {
+  CalendarEventsImportJob,
+  CalendarEventsImportJobData,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
+import {
+  CalendarChannelWorkspaceEntity,
+  CalendarChannelVisibility,
+} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -166,18 +166,12 @@ export class GoogleAPIsService {
       }
     }
 
-    if (
-      this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
-      isCalendarEnabled
-    ) {
-      await this.calendarQueueService.add<GoogleCalendarSyncJobData>(
-        GoogleCalendarSyncJob.name,
+    if (isCalendarEnabled) {
+      await this.calendarQueueService.add<CalendarEventsImportJobData>(
+        CalendarEventsImportJob.name,
         {
           workspaceId,
           connectedAccountId: newOrExistingConnectedAccountId,
-        },
-        {
-          retryLimit: 2,
         },
       );
     }

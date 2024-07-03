@@ -1,15 +1,20 @@
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { isDefined } from '~/utils/isDefined';
 
 export const useShowAuthModal = () => {
   const isMatchingLocation = useIsMatchingLocation();
+  const isLoggedIn = useIsLogged();
   const onboardingStatus = useOnboardingStatus();
+  const subscriptionStatus = useSubscriptionStatus();
   const isDefaultLayoutAuthModalVisible = useRecoilValue(
     isDefaultLayoutAuthModalVisibleState,
   );
@@ -24,21 +29,28 @@ export const useShowAuthModal = () => {
       return isDefaultLayoutAuthModalVisible;
     }
     if (
-      OnboardingStatus.Incomplete === onboardingStatus ||
-      OnboardingStatus.OngoingUserCreation === onboardingStatus ||
-      OnboardingStatus.OngoingProfileCreation === onboardingStatus ||
-      OnboardingStatus.OngoingWorkspaceActivation === onboardingStatus ||
-      OnboardingStatus.OngoingSyncEmail === onboardingStatus ||
-      OnboardingStatus.OngoingInviteTeam === onboardingStatus
+      !isLoggedIn ||
+      onboardingStatus === OnboardingStatus.PlanRequired ||
+      onboardingStatus === OnboardingStatus.ProfileCreation ||
+      onboardingStatus === OnboardingStatus.WorkspaceActivation ||
+      onboardingStatus === OnboardingStatus.SyncEmail ||
+      onboardingStatus === OnboardingStatus.InviteTeam
     ) {
       return true;
     }
     if (isMatchingLocation(AppPath.PlanRequired)) {
       return (
-        OnboardingStatus.CompletedWithoutSubscription === onboardingStatus ||
-        OnboardingStatus.Canceled === onboardingStatus
+        (onboardingStatus === OnboardingStatus.Completed &&
+          !isDefined(subscriptionStatus)) ||
+        subscriptionStatus === SubscriptionStatus.Canceled
       );
     }
     return false;
-  }, [isDefaultLayoutAuthModalVisible, isMatchingLocation, onboardingStatus]);
+  }, [
+    isLoggedIn,
+    isDefaultLayoutAuthModalVisible,
+    isMatchingLocation,
+    onboardingStatus,
+    subscriptionStatus,
+  ]);
 };

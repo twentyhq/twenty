@@ -1,7 +1,9 @@
 import { ThemeColor } from 'twenty-ui';
 
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
+import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { WithNarrowedStringLiteralProperty } from '~/types/WithNarrowedStringLiteralProperty';
 
 import { CurrencyCode } from './CurrencyCode';
 
@@ -110,6 +112,18 @@ export type FieldRelationMetadata = {
   useEditButton?: boolean;
 };
 
+export type FieldRelationOneMetadata = WithNarrowedStringLiteralProperty<
+  FieldRelationMetadata,
+  'relationType',
+  'TO_ONE_OBJECT'
+>;
+
+export type FieldRelationManyMetadata = WithNarrowedStringLiteralProperty<
+  FieldRelationMetadata,
+  'relationType',
+  'FROM_MANY_OBJECTS'
+>;
+
 export type FieldSelectMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -174,10 +188,13 @@ export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
-export type FieldRelationValue<T extends EntityForSelect | EntityForSelect[]> =
-  T | null;
+export type FieldRelationToOneValue = EntityForSelect | null;
 
-// See https://zod.dev/?id=json-type
-type Literal = string | number | boolean | null;
-export type Json = Literal | { [key: string]: Json } | Json[];
+export type FieldRelationFromManyValue = EntityForSelect[] | [];
+
+export type FieldRelationValue<
+  T extends FieldRelationToOneValue | FieldRelationFromManyValue,
+> = T;
+
+export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;

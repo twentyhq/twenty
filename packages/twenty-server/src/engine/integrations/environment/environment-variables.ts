@@ -220,6 +220,16 @@ export class EnvironmentVariables {
   @IsOptional()
   STORAGE_S3_ENDPOINT: string;
 
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  @IsOptional()
+  STORAGE_S3_ACCESS_KEY_ID: string;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  @IsOptional()
+  STORAGE_S3_SECRET_ACCESS_KEY: string;
+
   @IsString()
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
   STORAGE_LOCAL_PATH = '.local-storage';
@@ -324,7 +334,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
-  MUTATION_MAXIMUM_RECORD_AFFECTED = 100;
+  MUTATION_MAXIMUM_AFFECTED_RECORDS = 100;
 
   REDIS_HOST = '127.0.0.1';
 

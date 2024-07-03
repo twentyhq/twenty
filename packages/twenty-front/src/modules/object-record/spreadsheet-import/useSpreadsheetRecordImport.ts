@@ -1,11 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconComponent, useIcons } from 'twenty-ui';
+import { useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { getSpreadSheetValidation } from '@/object-record/spreadsheet-import/util/getSpreadSheetValidation';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
-import { SpreadsheetOptions, Validation } from '@/spreadsheet-import/types';
+import { Field, SpreadsheetOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -26,21 +26,13 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
     .filter(
       (x) =>
         x.isActive &&
-        !x.isSystem &&
+        (!x.isSystem || x.name === 'id') &&
         x.name !== 'createdAt' &&
         (x.type !== FieldMetadataType.Relation || x.toRelationMetadata),
     )
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  const templateFields: {
-    icon: IconComponent;
-    label: string;
-    key: string;
-    fieldType: {
-      type: 'input' | 'checkbox';
-    };
-    validations?: Validation[];
-  }[] = [];
+  const templateFields: Field<string>[] = [];
   for (const field of fields) {
     if (field.type === FieldMetadataType.FullName) {
       templateFields.push({
@@ -80,6 +72,34 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
           field.label + ' (ID)',
         ),
       });
+    } else if (field.type === FieldMetadataType.Select) {
+      templateFields.push({
+        icon: getIcon(field.icon),
+        label: field.label,
+        key: field.name,
+        fieldType: {
+          type: 'select',
+          options:
+            field.options?.map((option) => ({
+              label: option.label,
+              value: option.value,
+            })) || [],
+        },
+        validations: getSpreadSheetValidation(
+          field.type,
+          field.label + ' (ID)',
+        ),
+      });
+    } else if (field.type === FieldMetadataType.Boolean) {
+      templateFields.push({
+        icon: getIcon(field.icon),
+        label: field.label,
+        key: field.name,
+        fieldType: {
+          type: 'checkbox',
+        },
+        validations: getSpreadSheetValidation(field.type, field.label),
+      });
     } else {
       templateFields.push({
         icon: getIcon(field.icon),
@@ -110,11 +130,15 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
 
             switch (field.type) {
               case FieldMetadataType.Boolean:
-                fieldMapping[field.name] = value === 'true' || value === true;
+                if (value !== undefined) {
+                  fieldMapping[field.name] = value === 'true' || value === true;
+                }
                 break;
               case FieldMetadataType.Number:
               case FieldMetadataType.Numeric:
-                fieldMapping[field.name] = Number(value);
+                if (value !== undefined) {
+                  fieldMapping[field.name] = Number(value);
+                }
                 break;
               case FieldMetadataType.Currency:
                 if (value !== undefined) {
@@ -154,14 +178,16 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                 }
                 break;
               default:
-                fieldMapping[field.name] = value;
+                if (value !== undefined) {
+                  fieldMapping[field.name] = value;
+                }
                 break;
             }
           }
           return fieldMapping;
         });
         try {
-          await createManyRecords(createInputs);
+          await createManyRecords(createInputs, true);
         } catch (error: any) {
           enqueueSnackBar(error?.message || 'Something went wrong', {
             variant: SnackBarVariant.Error,

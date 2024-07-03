@@ -27,15 +27,11 @@ export class WorkspaceMemberDeleteOnePreQueryHook
     const authorId = payload.id;
 
     await this.attachmentRepository.delete({
-      author: {
-        id: authorId,
-      },
+      authorId,
     });
 
     await this.commentRepository.delete({
-      author: {
-        id: authorId,
-      },
+      authorId,
     });
   }
 }

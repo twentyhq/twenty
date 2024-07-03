@@ -66,7 +66,9 @@ export const MatchColumnSelect = ({
   const handleSearchFilterChange = useCallback(
     (text: string) => {
       setOptions(
-        initialOptions.filter((option) => option.label.includes(text)),
+        initialOptions.filter((option) =>
+          option.label.toLowerCase().includes(text.toLowerCase()),
+        ),
       );
     },
     [initialOptions],
@@ -123,7 +125,7 @@ export const MatchColumnSelect = ({
             <DropdownMenu
               data-select-disable
               ref={dropdownContainerRef}
-              width={refs.domReference.current?.clientWidth}
+              // width={refs.domReference.current?.clientWidth}
             >
               <DropdownMenuSearchInput
                 value={searchFilter}
