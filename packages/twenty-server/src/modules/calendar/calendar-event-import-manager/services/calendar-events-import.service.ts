@@ -1,14 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-import { Any, Repository } from 'typeorm';
-import { calendar_v3 as calendarV3 } from 'googleapis';
-import { GaxiosError } from 'gaxios';
+import { Any } from 'typeorm';
 
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { formatGoogleCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/utils/format-google-calendar-event.util';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -31,22 +26,19 @@ import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
-import { GoogleCalendarClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/providers/google-calendar.provider';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { filterEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
+import { GoogleCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-get-events.service';
 
 @Injectable()
 export class CalendarEventsImportService {
   private readonly logger = new Logger(CalendarEventsImportService.name);
 
   constructor(
-    private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectWorkspaceRepository(CalendarEventWorkspaceEntity)
     private readonly calendarEventRepository: WorkspaceRepository<CalendarEventWorkspaceEntity>,
     @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
@@ -57,8 +49,6 @@ export class CalendarEventsImportService {
     private readonly calendarEventParticipantsRepository: WorkspaceRepository<CalendarEventParticipantWorkspaceEntity>,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectWorkspaceDatasource()
     private readonly workspaceDataSource: WorkspaceDataSource,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
@@ -67,6 +57,7 @@ export class CalendarEventsImportService {
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
+    private readonly googleCalendarGetEventsService: GoogleCalendarGetEventsService,
   ) {}
 
   public async processCalendarEventsImport(
@@ -81,18 +72,15 @@ export class CalendarEventsImportService {
 
     const syncToken = calendarChannel?.syncCursor || undefined;
 
-    if (!calendarChannel) {
-      return;
-    }
-
     const calendarChannelId = calendarChannel.id;
 
-    const { events, nextSyncToken } = await this.getEventsFromGoogleCalendar(
-      connectedAccount,
-      workspaceId,
-      '',
-      syncToken,
-    );
+    const { events, nextSyncToken } =
+      await this.googleCalendarGetEventsService.getEventsFromGoogleCalendar(
+        connectedAccount,
+        workspaceId,
+        '',
+        syncToken,
+      );
 
     if (!events || events?.length === 0) {
       return;
@@ -217,92 +205,6 @@ export class CalendarEventsImportService {
     await this.calendarChannelSyncStatusService.markAsCalendarEventsImportCompleted(
       connectedAccount.id,
     );
-  }
-
-  public async getEventsFromGoogleCalendar(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-    workspaceId: string,
-    emailOrDomainToReimport?: string,
-    syncToken?: string,
-  ): Promise<{
-    events: calendarV3.Schema$Event[];
-    nextSyncToken: string | null | undefined;
-  }> {
-    const googleCalendarClient =
-      await this.googleCalendarClientProvider.getGoogleCalendarClient(
-        connectedAccount,
-      );
-
-    const startTime = Date.now();
-
-    let nextSyncToken: string | null | undefined;
-    let nextPageToken: string | undefined;
-    const events: calendarV3.Schema$Event[] = [];
-
-    let hasMoreEvents = true;
-
-    while (hasMoreEvents) {
-      const googleCalendarEvents = await googleCalendarClient.events
-        .list({
-          calendarId: 'primary',
-          maxResults: 500,
-          syncToken: emailOrDomainToReimport ? undefined : syncToken,
-          pageToken: nextPageToken,
-          q: emailOrDomainToReimport,
-          showDeleted: true,
-        })
-        .catch(async (error: GaxiosError) => {
-          if (error.response?.status !== 410) {
-            throw error;
-          }
-
-          await this.calendarChannelRepository.update(
-            {
-              id: connectedAccount.id,
-            },
-            {
-              syncCursor: '',
-            },
-          );
-
-          this.logger.log(
-            `Sync token is no longer valid for connected account ${connectedAccount.id} in workspace ${workspaceId}, resetting sync cursor.`,
-          );
-
-          return {
-            data: {
-              items: [],
-              nextSyncToken: undefined,
-              nextPageToken: undefined,
-            },
-          };
-        });
-
-      nextSyncToken = googleCalendarEvents.data.nextSyncToken;
-      nextPageToken = googleCalendarEvents.data.nextPageToken || undefined;
-
-      const { items } = googleCalendarEvents.data;
-
-      if (!items || items.length === 0) {
-        break;
-      }
-
-      events.push(...items);
-
-      if (!nextPageToken) {
-        hasMoreEvents = false;
-      }
-    }
-
-    const endTime = Date.now();
-
-    this.logger.log(
-      `google calendar sync for workspace ${workspaceId} and account ${
-        connectedAccount.id
-      } getting events list in ${endTime - startTime}ms.`,
-    );
-
-    return { events, nextSyncToken };
   }
 
   public async saveGoogleCalendarEvents(
