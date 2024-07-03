@@ -45,7 +45,6 @@ export class WorkspaceSyncFieldMetadataService {
         where: {
           workspaceId: context.workspaceId,
           // We're only interested in standard fields
-          fields: { isCustom: false },
         },
         relations: ['dataSource', 'fields'],
       });
