@@ -29,6 +29,7 @@ export const MultiRecordSelect = ({
   loading,
   searchFilter,
   setSearchFilter,
+  hotkeyScope = RelationPickerHotkeyScope.RelationPicker,
 }: {
   onChange?: (
     changedRecordForSelect: ObjectRecordForSelect,
@@ -40,6 +41,7 @@ export const MultiRecordSelect = ({
   loading: boolean;
   searchFilter: string;
   setSearchFilter: (searchFilter: string) => void;
+  hotkeyScope?: string;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -112,7 +114,7 @@ export const MultiRecordSelect = ({
               <SelectableList
                 selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
                 selectableItemIdArray={selectableItemIds}
-                hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+                hotkeyScope={hotkeyScope}
                 onEnter={(recordId) => {
                   const recordIsSelected = internalSelectedRecords?.some(
                     (selectedRecord) => selectedRecord.record.id === recordId,

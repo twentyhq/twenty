@@ -17,6 +17,7 @@ export const MultipleObjectRecordSelect = ({
   onChange,
   onSubmit,
   selectedObjectRecordIds,
+  hotkeyScope,
 }: {
   onChange?: (
     changedRecordForSelect: ObjectRecordForSelect,
@@ -24,6 +25,7 @@ export const MultipleObjectRecordSelect = ({
   ) => void;
   onSubmit?: (objectRecordsForSelect: ObjectRecordForSelect[]) => void;
   selectedObjectRecordIds: SelectedObjectRecordId[];
+  hotkeyScope: string;
 }) => {
   const [searchFilter, setSearchFilter] = useState<string>('');
 
@@ -63,6 +65,7 @@ export const MultipleObjectRecordSelect = ({
       loading={loading}
       searchFilter={searchFilter}
       setSearchFilter={setSearchFilter}
+      hotkeyScope={hotkeyScope}
     />
   );
 };

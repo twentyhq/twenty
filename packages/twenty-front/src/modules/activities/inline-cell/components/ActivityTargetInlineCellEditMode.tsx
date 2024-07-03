@@ -20,6 +20,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { MultipleObjectRecordSelect } from '@/object-record/relation-picker/components/MultipleObjectRecordSelect';
 import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
+import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 
 const StyledSelectContainer = styled.div`
   position: absolute;
@@ -175,6 +176,7 @@ export const ActivityTargetInlineCellEditMode = ({
     <StyledSelectContainer>
       <MultipleObjectRecordSelect
         selectedObjectRecordIds={selectedTargetObjectIds}
+        hotkeyScope={ActivityEditorHotkeyScope.ActivityTargets}
         onSubmit={handleSubmit}
       />
     </StyledSelectContainer>
