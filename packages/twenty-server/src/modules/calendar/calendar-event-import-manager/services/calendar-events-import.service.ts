@@ -40,6 +40,7 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/stan
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { filterOutBlocklistedEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-out-blocklisted-events.util';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 
 @Injectable()
 export class CalendarEventsImportService {
@@ -68,6 +69,7 @@ export class CalendarEventsImportService {
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
   ) {}
 
   public async processCalendarEventsImport(
@@ -75,6 +77,10 @@ export class CalendarEventsImportService {
     connectedAccountId: string,
     emailOrDomainToReimport?: string,
   ): Promise<void> {
+    await this.calendarChannelSyncStatusService.markAsCalendarEventsImportOngoing(
+      connectedAccountId,
+    );
+
     const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
       workspaceId,
@@ -168,13 +174,9 @@ export class CalendarEventsImportService {
 
     // TODO: When we will be able to add unicity contraint on iCalUID, we will do a INSERT ON CONFLICT DO UPDATE
 
-    let startTime = Date.now();
-
     const existingEventsICalUIDs = existingCalendarEvents.map(
       (calendarEvent) => calendarEvent.iCalUID,
     );
-
-    let endTime = Date.now();
 
     const eventsToSave = formattedEvents.filter(
       (calendarEvent) =>
@@ -184,8 +186,6 @@ export class CalendarEventsImportService {
     const eventsToUpdate = formattedEvents.filter((calendarEvent) =>
       existingEventsICalUIDs.includes(calendarEvent.iCalUID),
     );
-
-    startTime = Date.now();
 
     const existingCalendarChannelEventAssociations =
       await this.calendarChannelEventAssociationRepository.find({
@@ -198,14 +198,6 @@ export class CalendarEventsImportService {
           },
         },
       });
-
-    endTime = Date.now();
-
-    this.logger.log(
-      `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: getting existing calendar channel event associations in ${
-        endTime - startTime
-      }ms.`,
-    );
 
     const calendarChannelEventAssociationsToSave = formattedEvents
       .filter(
@@ -220,59 +212,31 @@ export class CalendarEventsImportService {
         calendarChannelId,
       }));
 
-    if (events.length > 0) {
-      await this.saveGoogleCalendarEvents(
-        eventsToSave,
-        eventsToUpdate,
-        calendarChannelEventAssociationsToSave,
-        connectedAccount,
-        calendarChannel,
-        workspaceId,
-      );
+    await this.saveGoogleCalendarEvents(
+      eventsToSave,
+      eventsToUpdate,
+      calendarChannelEventAssociationsToSave,
+      connectedAccount,
+      calendarChannel,
+      workspaceId,
+    );
 
-      startTime = Date.now();
+    await this.calendarChannelEventAssociationRepository.delete({
+      eventExternalId: Any(cancelledEventExternalIds),
+      calendarChannel: {
+        id: calendarChannelId,
+      },
+    });
 
-      await this.calendarChannelEventAssociationRepository.delete({
-        eventExternalId: Any(cancelledEventExternalIds),
-        calendarChannel: {
-          id: calendarChannelId,
-        },
-      });
-
-      endTime = Date.now();
-
-      this.logger.log(
-        `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: deleting calendar channel event associations in ${
-          endTime - startTime
-        }ms.`,
-      );
-
-      startTime = Date.now();
-
-      await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
-        workspaceId,
-      );
-
-      endTime = Date.now();
-
-      this.logger.log(
-        `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: cleaning calendar events in ${
-          endTime - startTime
-        }ms.`,
-      );
-    } else {
-      this.logger.log(
-        `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
-      );
-    }
+    await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
+      workspaceId,
+    );
 
     if (!nextSyncToken) {
       throw new Error(
         `No next sync token found for connected account ${connectedAccountId} in workspace ${workspaceId} during sync`,
       );
     }
-
-    startTime = Date.now();
 
     await this.calendarChannelRepository.update(
       {
@@ -283,18 +247,8 @@ export class CalendarEventsImportService {
       },
     );
 
-    endTime = Date.now();
-
-    this.logger.log(
-      `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: updating sync cursor in ${
-        endTime - startTime
-      }ms.`,
-    );
-
-    this.logger.log(
-      `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId} ${
-        syncToken ? `and ${syncToken} syncToken ` : ''
-      }done.`,
+    await this.calendarChannelSyncStatusService.markAsCalendarEventsImportCompleted(
+      connectedAccountId,
     );
   }
 
