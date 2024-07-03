@@ -14,6 +14,7 @@ import { GoogleCalendarDriverModule } from 'src/modules/calendar/calendar-event-
 import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant.module';
+import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -46,6 +47,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     GoogleCalendarDriverModule,
     BillingModule,
     GoogleAPIRefreshAccessTokenModule,
+    CalendarCommonModule,
   ],
   providers: [
     CalendarEventsImportService,

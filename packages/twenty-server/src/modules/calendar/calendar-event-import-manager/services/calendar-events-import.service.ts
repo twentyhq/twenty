@@ -8,10 +8,7 @@ import { GaxiosError } from 'gaxios';
 
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { formatGoogleCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/utils/format-google-calendar-event.util';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -39,8 +36,8 @@ import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/cale
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
-import { filterOutBlocklistedEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-out-blocklisted-events.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { filterEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
 
 @Injectable()
 export class CalendarEventsImportService {
@@ -73,35 +70,17 @@ export class CalendarEventsImportService {
   ) {}
 
   public async processCalendarEventsImport(
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
-    connectedAccountId: string,
     emailOrDomainToReimport?: string,
   ): Promise<void> {
     await this.calendarChannelSyncStatusService.markAsCalendarEventsImportOngoing(
-      connectedAccountId,
+      connectedAccount.id,
     );
-
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
-      workspaceId,
-    );
-
-    if (!connectedAccount) {
-      return;
-    }
-
-    const refreshToken = connectedAccount.refreshToken;
-    const workspaceMemberId = connectedAccount.accountOwnerId;
-
-    if (!refreshToken) {
-      throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId} during sync`,
-      );
-    }
 
     const calendarChannel = await this.calendarChannelRepository.findOneBy({
       connectedAccount: {
-        id: connectedAccountId,
+        id: connectedAccount.id,
       },
     });
 
@@ -116,31 +95,24 @@ export class CalendarEventsImportService {
     const { events, nextSyncToken } = await this.getEventsFromGoogleCalendar(
       connectedAccount,
       workspaceId,
-      emailOrDomainToReimport,
+      '',
       syncToken,
     );
 
     if (!events || events?.length === 0) {
-      this.logger.log(
-        `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
-      );
-
       return;
     }
 
-    if (!workspaceMemberId) {
-      throw new Error(
-        `Workspace member ID is undefined for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-    }
+    const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
+      connectedAccount.accountOwnerId,
+      workspaceId,
+    );
 
-    const blocklist = await this.getBlocklist(workspaceMemberId, workspaceId);
-
-    let filteredEvents = filterOutBlocklistedEvents(
-      calendarChannel.handle,
+    let filteredEvents = filterEvents(
+      calendarChannel,
       events,
-      blocklist,
-    ).filter((event) => event.status !== 'cancelled');
+      blocklist.map((e) => e.handle),
+    );
 
     if (emailOrDomainToReimport) {
       filteredEvents = filteredEvents.filter(
@@ -234,7 +206,7 @@ export class CalendarEventsImportService {
 
     if (!nextSyncToken) {
       throw new Error(
-        `No next sync token found for connected account ${connectedAccountId} in workspace ${workspaceId} during sync`,
+        `No next sync token found for connected account ${connectedAccount.id} in workspace ${workspaceId} during sync`,
       );
     }
 
@@ -248,29 +220,8 @@ export class CalendarEventsImportService {
     );
 
     await this.calendarChannelSyncStatusService.markAsCalendarEventsImportCompleted(
-      connectedAccountId,
+      connectedAccount.id,
     );
-  }
-
-  public async getBlocklist(workspaceMemberId: string, workspaceId: string) {
-    const isBlocklistEnabledFeatureFlag =
-      await this.featureFlagRepository.findOneBy({
-        workspaceId,
-        key: FeatureFlagKeys.IsBlocklistEnabled,
-        value: true,
-      });
-
-    const isBlocklistEnabled =
-      isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
-
-    const blocklist = isBlocklistEnabled
-      ? await this.blocklistRepository.getByWorkspaceMemberId(
-          workspaceMemberId,
-          workspaceId,
-        )
-      : [];
-
-    return blocklist.map((blocklist) => blocklist.handle);
   }
 
   public async getEventsFromGoogleCalendar(
