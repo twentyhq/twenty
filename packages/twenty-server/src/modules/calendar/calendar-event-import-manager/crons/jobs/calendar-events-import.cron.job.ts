@@ -50,12 +50,14 @@ export class CalendarEventsImportCronJob {
           workspaceId,
           CalendarChannelWorkspaceEntity,
         );
+
       const calendarChannels = await calendarChannelRepository.find({});
 
       for (const calendarChannel of calendarChannels) {
         if (!calendarChannel?.isSyncEnabled) {
           continue;
         }
+
         await this.messageQueueService.add<CalendarEventsImportJobData>(
           CalendarEventsImportJob.name,
           {
