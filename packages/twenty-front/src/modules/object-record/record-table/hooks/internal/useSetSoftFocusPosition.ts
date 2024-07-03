@@ -24,23 +24,9 @@ export const useSetSoftFocusPosition = (recordTableId?: string) => {
 
         set(isSoftFocusOnTableCellFamilyState(currentPosition), false);
 
-        document.dispatchEvent(
-          new CustomEvent(
-            `soft-focus-move-${currentPosition.row}:${currentPosition.column}`,
-            { detail: false },
-          ),
-        );
-
         set(softFocusPositionState, newPosition);
 
         set(isSoftFocusOnTableCellFamilyState(newPosition), true);
-
-        document.dispatchEvent(
-          new CustomEvent(
-            `soft-focus-move-${newPosition.row}:${newPosition.column}`,
-            { detail: true },
-          ),
-        );
       };
     },
     [

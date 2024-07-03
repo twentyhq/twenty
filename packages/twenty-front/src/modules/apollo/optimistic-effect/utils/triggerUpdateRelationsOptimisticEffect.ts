@@ -70,6 +70,7 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         isDeeplyEqual(
           currentFieldValueOnSourceRecord,
           updatedFieldValueOnSourceRecord,
+          { strict: true },
         )
       ) {
         return;

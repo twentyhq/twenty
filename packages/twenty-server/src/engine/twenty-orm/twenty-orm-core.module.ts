@@ -30,12 +30,21 @@ import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN,
 } from 'src/engine/twenty-orm/twenty-orm.module-definition';
+import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 
 @Global()
 @Module({
   imports: [DataSourceModule],
-  providers: [...entitySchemaFactories, TwentyORMManager],
-  exports: [EntitySchemaFactory, TwentyORMManager],
+  providers: [
+    ...entitySchemaFactories,
+    TwentyORMManager,
+    LoadServiceWithWorkspaceContext,
+  ],
+  exports: [
+    EntitySchemaFactory,
+    TwentyORMManager,
+    LoadServiceWithWorkspaceContext,
+  ],
 })
 export class TwentyORMCoreModule
   extends ConfigurableModuleClass

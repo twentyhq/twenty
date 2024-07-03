@@ -16,6 +16,7 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { getJoinColumn } from 'src/engine/twenty-orm/utils/get-join-column.util';
 
 @Injectable()
 export class StandardFieldFactory {
@@ -139,6 +140,14 @@ export class StandardFieldFactory {
     const foreignKeyStandardId = createDeterministicUuid(
       workspaceRelationMetadataArgs.standardId,
     );
+    const joinColumnMetadataArgsCollection =
+      metadataArgsStorage.filterJoinColumns(
+        workspaceRelationMetadataArgs.target,
+      );
+    const joinColumn = getJoinColumn(
+      joinColumnMetadataArgsCollection,
+      workspaceRelationMetadataArgs,
+    );
 
     if (
       isGatedAndNotEnabled(
@@ -149,11 +158,11 @@ export class StandardFieldFactory {
       return [];
     }
 
-    if (workspaceRelationMetadataArgs.joinColumn) {
+    if (joinColumn) {
       fieldMetadataCollection.push({
         type: FieldMetadataType.UUID,
         standardId: foreignKeyStandardId,
-        name: workspaceRelationMetadataArgs.joinColumn,
+        name: joinColumn,
         label: `${workspaceRelationMetadataArgs.label} id (foreign key)`,
         description: `${workspaceRelationMetadataArgs.description} id foreign key`,
         icon: workspaceRelationMetadataArgs.icon,

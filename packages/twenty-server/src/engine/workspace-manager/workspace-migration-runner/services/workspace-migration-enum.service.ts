@@ -49,10 +49,6 @@ export class WorkspaceMigrationEnumService {
         typeof enumValue !== 'string',
     );
 
-    if (!columnDefinition.isNullable && !columnDefinition.defaultValue) {
-      columnDefinition.defaultValue = serializeDefaultValue(enumValues[0]);
-    }
-
     const oldColumnName = `${columnDefinition.columnName}_old_${v4()}`;
 
     // Rename old column

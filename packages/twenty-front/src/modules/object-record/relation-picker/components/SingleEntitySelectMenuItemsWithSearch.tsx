@@ -44,7 +44,6 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
   const { entities, relationPickerSearchFilter } =
     useRelationPickerEntitiesOptions({
       relationObjectNameSingular,
-      relationPickerScopeId,
       selectedRelationRecordIds,
       excludedRelationRecordIds,
     });

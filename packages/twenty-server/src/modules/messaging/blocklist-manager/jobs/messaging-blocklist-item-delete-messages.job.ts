@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
@@ -17,7 +17,10 @@ export type BlocklistItemDeleteMessagesJobData = {
   blocklistItemId: string;
 };
 
-@Processor(MessageQueue.messagingQueue)
+@Processor({
+  queueName: MessageQueue.messagingQueue,
+  scope: Scope.REQUEST,
+})
 export class BlocklistItemDeleteMessagesJob {
   private readonly logger = new Logger(BlocklistItemDeleteMessagesJob.name);
 
@@ -55,6 +58,12 @@ export class BlocklistItemDeleteMessagesJob {
     this.logger.log(
       `Deleting messages from ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
     );
+
+    if (!workspaceMemberId) {
+      throw new Error(
+        `Workspace member ID is not defined for blocklist item ${blocklistItemId} in workspace ${workspaceId}`,
+      );
+    }
 
     const messageChannels =
       await this.messageChannelRepository.getIdsByWorkspaceMemberId(

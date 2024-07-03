@@ -9,7 +9,6 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -23,8 +22,6 @@ import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/
 import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
 import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
 import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 
 @Injectable()
 export class MessagingGmailFullMessageListFetchService {
@@ -42,16 +39,13 @@ export class MessagingGmailFullMessageListFetchService {
       MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
-    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
   ) {}
 
   public async processMessageListFetch(
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
-    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
     await this.messagingChannelSyncStatusService.markAsMessagesListFetchOngoing(
@@ -59,27 +53,8 @@ export class MessagingGmailFullMessageListFetchService {
       workspaceId,
     );
 
-    await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
-      workspaceId,
-      connectedAccount.id,
-    );
-
-    const refreshedConnectedAccount =
-      await this.connectedAccountRepository.getById(
-        connectedAccount.id,
-        workspaceId,
-      );
-
-    if (!refreshedConnectedAccount) {
-      throw new Error(
-        `Connected account ${connectedAccount.id} not found in workspace ${workspaceId}`,
-      );
-    }
-
     const gmailClient: gmail_v1.Gmail =
-      await this.gmailClientProvider.getGmailClient(
-        refreshedConnectedAccount.refreshToken,
-      );
+      await this.gmailClientProvider.getGmailClient(connectedAccount);
 
     const { error: gmailError } =
       await this.fetchAllMessageIdsFromGmailAndStoreInCache(

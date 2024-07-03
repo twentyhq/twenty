@@ -7,7 +7,7 @@ import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage
 import { EventCardMessageNotShared } from '@/activities/timelineActivities/rows/message/components/EventCardMessageNotShared';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledEventCardMessageContainer = styled.div`
@@ -56,7 +56,7 @@ export const EventCardMessage = ({
   messageId: string;
   authorFullName: string;
 }) => {
-  const { setRecords } = useSetRecordInStore();
+  const { upsertRecords } = useUpsertRecordsInStore();
 
   const {
     record: message,
@@ -75,7 +75,7 @@ export const EventCardMessage = ({
       },
     },
     onCompleted: (data) => {
-      setRecords([data]);
+      upsertRecords([data]);
     },
   });
 

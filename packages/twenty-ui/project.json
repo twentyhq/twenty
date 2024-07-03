@@ -43,10 +43,10 @@
         "test": {}
       }
     },
-    "storybook:dev": {
+    "storybook:serve:dev": {
       "options": { "port": 6007 }
     },
-    "storybook:static": {
+    "storybook:serve:static": {
       "options": {
         "buildTarget": "twenty-ui:storybook:build",
         "port": 6007
@@ -59,7 +59,7 @@
     "storybook:test": {
       "options": { "port": 6007 }
     },
-    "storybook:static:test": {
+    "storybook:serve-and-test:static": {
       "options": { "port": 6007 }
     }
   }

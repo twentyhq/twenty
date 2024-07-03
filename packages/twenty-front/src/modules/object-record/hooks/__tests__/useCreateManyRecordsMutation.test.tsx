@@ -5,8 +5,8 @@ import { RecoilRoot } from 'recoil';
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
 
 const expectedQueryTemplate = `
-  mutation CreatePeople($data: [PersonCreateInput!]!) {
-    createPeople(data: $data) {
+  mutation CreatePeople($data: [PersonCreateInput!]!, $upsert: Boolean) {
+    createPeople(data: $data, upsert: $upsert) {
       __typename
       xLink {
         label
