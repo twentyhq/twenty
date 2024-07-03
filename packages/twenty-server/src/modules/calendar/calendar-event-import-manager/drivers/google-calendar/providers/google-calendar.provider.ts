@@ -12,7 +12,10 @@ export class GoogleCalendarClientProvider {
   ) {}
 
   public async getGoogleCalendarClient(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'provider' | 'refreshToken'
+    >,
   ): Promise<calendarV3.Calendar> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getOAuth2Client(connectedAccount);

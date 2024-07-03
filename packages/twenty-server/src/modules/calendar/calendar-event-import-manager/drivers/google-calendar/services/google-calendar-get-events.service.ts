@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { calendar_v3 as calendarV3 } from 'googleapis';
 import { GaxiosError } from 'gaxios';
@@ -8,26 +8,23 @@ import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inje
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { GoogleCalendarClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/providers/google-calendar.provider';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 
 @Injectable()
 export class GoogleCalendarGetEventsService {
-  private readonly logger = new Logger(GoogleCalendarGetEventsService.name);
-
   constructor(
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
     @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
     private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
   ) {}
 
-  public async getEventsFromGoogleCalendar(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-    workspaceId: string,
-    emailOrDomainToReimport?: string,
-    syncToken?: string,
-  ): Promise<{
-    events: calendarV3.Schema$Event[];
-    nextSyncToken: string | null | undefined;
-  }> {
+  public async getCalendarEvents(
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'provider' | 'refreshToken' | 'id'
+    >,
+    syncCursor?: string,
+  ): Promise<GetCalendarEventsResponse> {
     const googleCalendarClient =
       await this.googleCalendarClientProvider.getGoogleCalendarClient(
         connectedAccount,
@@ -44,9 +41,8 @@ export class GoogleCalendarGetEventsService {
         .list({
           calendarId: 'primary',
           maxResults: 500,
-          syncToken: emailOrDomainToReimport ? undefined : syncToken,
+          syncToken: syncCursor,
           pageToken: nextPageToken,
-          q: emailOrDomainToReimport,
           showDeleted: true,
         })
         .catch(async (error: GaxiosError) => {
@@ -62,10 +58,6 @@ export class GoogleCalendarGetEventsService {
               syncCursor: '',
             },
           );
-
-          //   this.logger.log(
-          //     `Sync token is no longer valid for connected account ${connectedAccount.id} in workspace ${workspaceId}, resetting sync cursor.`,
-          //   );
 
           return {
             data: {
@@ -92,6 +84,6 @@ export class GoogleCalendarGetEventsService {
       }
     }
 
-    return { events, nextSyncToken };
+    return { events, nextSyncCursor: nextSyncToken || '' };
   }
 }

@@ -70,16 +70,12 @@ export class CalendarEventsImportService {
       connectedAccount.id,
     );
 
-    const syncToken = calendarChannel?.syncCursor || undefined;
-
     const calendarChannelId = calendarChannel.id;
 
-    const { events, nextSyncToken } =
-      await this.googleCalendarGetEventsService.getEventsFromGoogleCalendar(
+    const { events, nextSyncCursor } =
+      await this.googleCalendarGetEventsService.getCalendarEvents(
         connectedAccount,
-        workspaceId,
-        '',
-        syncToken,
+        calendarChannel.syncCursor,
       );
 
     if (!events || events?.length === 0) {
@@ -187,18 +183,12 @@ export class CalendarEventsImportService {
       workspaceId,
     );
 
-    if (!nextSyncToken) {
-      throw new Error(
-        `No next sync token found for connected account ${connectedAccount.id} in workspace ${workspaceId} during sync`,
-      );
-    }
-
     await this.calendarChannelRepository.update(
       {
         id: calendarChannel.id,
       },
       {
-        syncCursor: nextSyncToken,
+        syncCursor: nextSyncCursor,
       },
     );
 
