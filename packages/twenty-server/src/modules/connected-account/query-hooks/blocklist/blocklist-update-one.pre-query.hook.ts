@@ -18,10 +18,10 @@ export class BlocklistUpdateOnePreQueryHook
   async execute(
     userId: string,
     workspaceId: string,
-    payload: UpdateOneResolverArgs<BlocklistItem>,
+    args: UpdateOneResolverArgs<BlocklistItem>,
   ): Promise<void> {
     await this.blocklistValidationService.validateBlocklistForUpdateOne(
-      payload,
+      args,
       userId,
       workspaceId,
     );

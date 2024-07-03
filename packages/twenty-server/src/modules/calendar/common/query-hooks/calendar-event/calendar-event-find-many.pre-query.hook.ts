@@ -25,16 +25,16 @@ export class CalendarEventFindManyPreQueryHook
   async execute(
     userId: string,
     workspaceId: string,
-    payload: FindManyResolverArgs,
+    args: FindManyResolverArgs,
   ): Promise<void> {
-    if (!payload?.filter?.id?.eq) {
+    if (!args?.filter?.id?.eq) {
       throw new BadRequestException('id filter is required');
     }
 
     const calendarChannelCalendarEventAssociations =
       await this.calendarChannelEventAssociationRepository.find({
         where: {
-          calendarEventId: payload?.filter?.id?.eq,
+          calendarEventId: args?.filter?.id?.eq,
         },
         relations: ['calendarChannel.connectedAccount'],
       });

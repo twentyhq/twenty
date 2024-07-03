@@ -22,9 +22,9 @@ export class WorkspaceMemberDeleteOnePreQueryHook
   async execute(
     userId: string,
     workspaceId: string,
-    payload: DeleteOneResolverArgs,
+    args: DeleteOneResolverArgs,
   ): Promise<void> {
-    const authorId = payload.id;
+    const authorId = args.id;
 
     await this.attachmentRepository.delete({
       authorId,

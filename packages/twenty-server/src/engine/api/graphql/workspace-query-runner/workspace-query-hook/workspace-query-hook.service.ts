@@ -5,7 +5,7 @@ import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/work
 import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage';
 import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookExplorer } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.explorer';
-import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
+import { WorkspaceQueryHookArgs } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 
 @Injectable()
 export class WorkspaceQueryHookService {
@@ -21,7 +21,7 @@ export class WorkspaceQueryHookService {
     workspaceId: string,
     objectName: string,
     methodName: T,
-    payload: WorkspacePreQueryHookPayload<T>,
+    args: WorkspaceQueryHookArgs<T>,
   ): Promise<void> {
     const key: WorkspaceQueryHookKey = `${objectName}.${methodName}`;
     const preHookInstances =
@@ -33,7 +33,7 @@ export class WorkspaceQueryHookService {
 
     for (const preHookInstance of preHookInstances) {
       await this.workspaceQueryHookExplorer.handleHook(
-        [userId, workspaceId, payload],
+        [userId, workspaceId, args],
         preHookInstance.instance,
         preHookInstance.host,
         preHookInstance.isRequestScoped,

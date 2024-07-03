@@ -22,9 +22,9 @@ export class ConnectedAccountDeleteOnePreQueryHook
   async execute(
     _userId: string,
     workspaceId: string,
-    payload: DeleteOneResolverArgs,
+    args: DeleteOneResolverArgs,
   ): Promise<void> {
-    const connectedAccountId = payload.id;
+    const connectedAccountId = args.id;
 
     const messageChannels = await this.messageChannelRepository.findBy({
       connectedAccountId,

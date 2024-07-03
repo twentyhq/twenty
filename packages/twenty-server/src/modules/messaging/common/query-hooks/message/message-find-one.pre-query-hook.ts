@@ -23,11 +23,11 @@ export class MessageFindOnePreQueryHook implements WorkspaceQueryHookInstance {
   async execute(
     userId: string,
     workspaceId: string,
-    payload: FindOneResolverArgs,
+    args: FindOneResolverArgs,
   ): Promise<void> {
     const messageChannelMessageAssociations =
       await this.messageChannelMessageAssociationService.getByMessageIds(
-        [payload?.filter?.id?.eq],
+        [args?.filter?.id?.eq],
         workspaceId,
       );
 

@@ -15,7 +15,7 @@ export enum WorkspaceQueryHookType {
   PostHook = 'PostHook',
 }
 
-export type WorkspacePreQueryHookPayload<T> = T extends 'createMany'
+export type WorkspaceQueryHookArgs<T> = T extends 'createMany'
   ? CreateManyResolverArgs
   : T extends 'createOne'
     ? CreateOneResolverArgs
