@@ -3,7 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
-import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
+import {
+  ComparatorAction,
+  FieldComparatorResult,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
@@ -133,8 +136,6 @@ export class WorkspaceSyncFieldMetadataService {
       originalObjectMetadataCollection,
     );
 
-    this.logger.log('Comparing standard objects and fields metadata');
-
     // Loop over all standard objects and compare them with the objects in DB
     for (const [
       standardObjectId,
@@ -155,22 +156,7 @@ export class WorkspaceSyncFieldMetadataService {
         computedStandardFieldMetadataCollection,
       );
 
-      for (const fieldComparatorResult of fieldComparatorResults) {
-        switch (fieldComparatorResult.action) {
-          case ComparatorAction.CREATE: {
-            storage.addCreateFieldMetadata(fieldComparatorResult.object);
-            break;
-          }
-          case ComparatorAction.UPDATE: {
-            storage.addUpdateFieldMetadata(fieldComparatorResult.object);
-            break;
-          }
-          case ComparatorAction.DELETE: {
-            storage.addDeleteFieldMetadata(fieldComparatorResult.object);
-            break;
-          }
-        }
-      }
+      this.storeComparatorResults(fieldComparatorResults, storage);
     }
   }
 
@@ -205,20 +191,27 @@ export class WorkspaceSyncFieldMetadataService {
         standardFieldMetadataCollection,
       );
 
-      for (const fieldComparatorResult of fieldComparatorResults) {
-        switch (fieldComparatorResult.action) {
-          case ComparatorAction.CREATE: {
-            storage.addCreateFieldMetadata(fieldComparatorResult.object);
-            break;
-          }
-          case ComparatorAction.UPDATE: {
-            storage.addUpdateFieldMetadata(fieldComparatorResult.object);
-            break;
-          }
-          case ComparatorAction.DELETE: {
-            storage.addDeleteFieldMetadata(fieldComparatorResult.object);
-            break;
-          }
+      this.storeComparatorResults(fieldComparatorResults, storage);
+    }
+  }
+
+  private storeComparatorResults(
+    fieldComparatorResults: FieldComparatorResult[],
+    storage: WorkspaceSyncStorage,
+  ): void {
+    for (const fieldComparatorResult of fieldComparatorResults) {
+      switch (fieldComparatorResult.action) {
+        case ComparatorAction.CREATE: {
+          storage.addCreateFieldMetadata(fieldComparatorResult.object);
+          break;
+        }
+        case ComparatorAction.UPDATE: {
+          storage.addUpdateFieldMetadata(fieldComparatorResult.object);
+          break;
+        }
+        case ComparatorAction.DELETE: {
+          storage.addDeleteFieldMetadata(fieldComparatorResult.object);
+          break;
         }
       }
     }
