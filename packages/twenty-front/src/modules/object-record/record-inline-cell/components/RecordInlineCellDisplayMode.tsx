@@ -89,7 +89,7 @@ export const RecordInlineCellDisplayMode = ({
         isHovered={isHovered}
       >
         <StyledRecordInlineCellNormalModeInnerContainer>
-          {(!shouldDisplayEditModeOnFocus && isDisplayModeContentEmpty) ||
+          {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
           !children ? (
             <StyledEmptyField>{emptyPlaceholder}</StyledEmptyField>
           ) : (
