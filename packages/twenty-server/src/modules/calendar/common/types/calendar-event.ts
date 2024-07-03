@@ -30,6 +30,7 @@ export type CalendarEventParticipant = Omit<
 export type CalendarEventWithParticipants = CalendarEvent & {
   externalId: string;
   participants: CalendarEventParticipant[];
+  status: string;
 };
 
 export type CalendarEventParticipantWithId = CalendarEventParticipant & {

@@ -1,16 +1,40 @@
-import { calendar_v3 as calendarV3 } from 'googleapis';
-
 import { filterOutBlocklistedEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-out-blocklisted-events.util';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 
-export const filterEvents = (
+export const filterEventsAndReturnCancelledEvents = (
   calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'handle'>,
-  events: calendarV3.Schema$Event[],
+  events: CalendarEventWithParticipants[],
   blocklist: string[],
-) => {
-  return filterOutBlocklistedEvents(
+): {
+  filteredEvents: CalendarEventWithParticipants[];
+  cancelledEvents: CalendarEventWithParticipants[];
+} => {
+  const filteredEvents = filterOutBlocklistedEvents(
     calendarChannel.handle,
     events,
     blocklist,
-  ).filter((event) => event.status !== 'cancelled');
+  );
+
+  return filteredEvents.reduce(
+    (
+      acc: {
+        filteredEvents: CalendarEventWithParticipants[];
+        cancelledEvents: CalendarEventWithParticipants[];
+      },
+      event,
+    ) => {
+      if (event.status === 'cancelled') {
+        acc.cancelledEvents.push(event);
+      } else {
+        acc.filteredEvents.push(event);
+      }
+
+      return acc;
+    },
+    {
+      filteredEvents: [],
+      cancelledEvents: [],
+    },
+  );
 };

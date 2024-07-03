@@ -31,8 +31,8 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/stan
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import { filterEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
 import { GoogleCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-get-events.service';
+import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
 
 @Injectable()
 export class CalendarEventsImportService {
@@ -64,7 +64,6 @@ export class CalendarEventsImportService {
     calendarChannel: CalendarChannelWorkspaceEntity,
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
-    emailOrDomainToReimport?: string,
   ): Promise<void> {
     await this.calendarChannelSyncStatusService.markAsCalendarEventsImportOngoing(
       connectedAccount.id,
@@ -87,24 +86,16 @@ export class CalendarEventsImportService {
       workspaceId,
     );
 
-    let filteredEvents = filterEvents(
-      calendarChannel,
-      events,
-      blocklist.map((e) => e.handle),
-    );
-
-    if (emailOrDomainToReimport) {
-      filteredEvents = filteredEvents.filter(
-        (event) =>
-          event.attendees?.some(
-            (attendee) => attendee.email?.endsWith(emailOrDomainToReimport),
-          ),
+    const { filteredEvents, cancelledEvents } =
+      filterEventsAndReturnCancelledEvents(
+        calendarChannel,
+        events,
+        blocklist.map((blocklist) => blocklist.handle),
       );
-    }
 
-    const cancelledEventExternalIds = filteredEvents
-      .filter((event) => event.status === 'cancelled')
-      .map((event) => event.id as string);
+    const cancelledEventExternalIds = cancelledEvents.map(
+      (event) => event.externalId,
+    );
 
     const existingCalendarEvents = await this.calendarEventRepository.find({
       where: {
