@@ -8,11 +8,11 @@ export const getDateFormatFromWorkspaceEnum = (
   switch (dateLabel) {
     case WorkspaceMemberDateFormatEnum.System:
       return detectDateFormat();
-    case WorkspaceMemberDateFormatEnum.MmmDYyyy:
+    case WorkspaceMemberDateFormatEnum.MonthFirst:
       return DateFormat.MONTH_FIRST;
-    case WorkspaceMemberDateFormatEnum.DMmmYyyy:
+    case WorkspaceMemberDateFormatEnum.DayFirst:
       return DateFormat.DAY_FIRST;
-    case WorkspaceMemberDateFormatEnum.YyyyMmmD:
+    case WorkspaceMemberDateFormatEnum.YearFirst:
       return DateFormat.YEAR_FIRST;
     default:
       return DateFormat.MONTH_FIRST;
@@ -24,12 +24,12 @@ export const getWorkspaceEnumFromDateFormat = (dateLabel: DateFormat) => {
     case DateFormat.SYSTEM:
       return WorkspaceMemberDateFormatEnum.System;
     case DateFormat.MONTH_FIRST:
-      return WorkspaceMemberDateFormatEnum.MmmDYyyy;
+      return WorkspaceMemberDateFormatEnum.MonthFirst;
     case DateFormat.DAY_FIRST:
-      return WorkspaceMemberDateFormatEnum.DMmmYyyy;
+      return WorkspaceMemberDateFormatEnum.DayFirst;
     case DateFormat.YEAR_FIRST:
-      return WorkspaceMemberDateFormatEnum.YyyyMmmD;
+      return WorkspaceMemberDateFormatEnum.YearFirst;
     default:
-      return WorkspaceMemberDateFormatEnum.MmmDYyyy;
+      return WorkspaceMemberDateFormatEnum.MonthFirst;
   }
 };

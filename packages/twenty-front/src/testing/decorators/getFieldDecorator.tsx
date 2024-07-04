@@ -43,7 +43,7 @@ const RecordMockSetterEffect = ({
     setDateTimeFormat({
       timeZone: detectTimeZone(),
       dateFormat: DateFormat.MONTH_FIRST,
-      timeFormat: TimeFormat.MILITARY,
+      timeFormat: TimeFormat.HOUR_24,
     });
   }, [setDateTimeFormat]);
 

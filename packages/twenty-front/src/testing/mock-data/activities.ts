@@ -65,8 +65,8 @@ const workspaceMember: WorkspaceMember = {
   userEmail: 'charles@test.com',
   colorScheme: 'Light',
   timeZone: detectTimeZone(),
-  dateFormat: WorkspaceMemberDateFormatEnum.MmmDYyyy,
-  timeFormat: WorkspaceMemberTimeFormatEnum.HhMm,
+  dateFormat: WorkspaceMemberDateFormatEnum.MonthFirst,
+  timeFormat: WorkspaceMemberTimeFormatEnum.Hour_24,
 };
 
 export const mockedTasks: Array<MockedActivity> = [

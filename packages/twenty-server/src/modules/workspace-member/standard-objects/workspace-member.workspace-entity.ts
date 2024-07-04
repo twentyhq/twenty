@@ -1,3 +1,4 @@
+import { registerEnumType } from '@nestjs/graphql';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
@@ -29,16 +30,27 @@ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/co
 
 export enum WorkspaceMemberDateFormatEnum {
   SYSTEM = 'SYSTEM',
-  MMM_D_YYYY = 'MMM_D_YYYY',
-  D_MMM_YYYY = 'D_MMM_YYYY',
-  YYYY_MMM_D = 'YYYY_MMM_D',
+  MONTH_FIRST = 'MONTH_FIRST',
+  DAY_FIRST = 'DAY_FIRST',
+  YEAR_FIRST = 'YEAR_FIRST',
 }
 
 export enum WorkspaceMemberTimeFormatEnum {
   SYSTEM = 'SYSTEM',
-  HH_MM = 'HH_MM',
-  H_MM_AA = 'H_MM_AA',
+  HOUR_12 = 'HOUR_12',
+  HOUR_24 = 'HOUR_24',
 }
+
+registerEnumType(WorkspaceMemberTimeFormatEnum, {
+  name: 'WorkspaceMemberTimeFormatEnum',
+  description: 'Time time as Military, Standard or system as default',
+});
+
+registerEnumType(WorkspaceMemberDateFormatEnum, {
+  name: 'WorkspaceMemberDateFormatEnum',
+  description:
+    'Date format as Month first, Day first, Year first or system as default',
+});
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workspaceMember,
@@ -131,19 +143,19 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'turquoise',
       },
       {
-        value: WorkspaceMemberDateFormatEnum.MMM_D_YYYY,
+        value: WorkspaceMemberDateFormatEnum.MONTH_FIRST,
         label: 'Month First',
         position: 1,
         color: 'red',
       },
       {
-        value: WorkspaceMemberDateFormatEnum.D_MMM_YYYY,
+        value: WorkspaceMemberDateFormatEnum.DAY_FIRST,
         label: 'Day First',
         position: 2,
         color: 'purple',
       },
       {
-        value: WorkspaceMemberDateFormatEnum.YYYY_MMM_D,
+        value: WorkspaceMemberDateFormatEnum.YEAR_FIRST,
         label: 'Year First',
         position: 3,
         color: 'sky',
@@ -167,13 +179,13 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'sky',
       },
       {
-        value: WorkspaceMemberTimeFormatEnum.HH_MM,
+        value: WorkspaceMemberTimeFormatEnum.HOUR_24,
         label: '24HRS',
         position: 1,
         color: 'red',
       },
       {
-        value: WorkspaceMemberTimeFormatEnum.H_MM_AA,
+        value: WorkspaceMemberTimeFormatEnum.HOUR_12,
         label: '12HRS',
         position: 2,
         color: 'purple',

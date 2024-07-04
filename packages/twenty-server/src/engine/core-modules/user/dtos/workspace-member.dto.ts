@@ -1,4 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
@@ -7,17 +7,6 @@ import {
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-
-registerEnumType(WorkspaceMemberDateFormatEnum, {
-  name: 'WorkspaceMemberDateFormatEnum',
-  description:
-    'Date format as Month first, Day first, Year first or system as default',
-});
-
-registerEnumType(WorkspaceMemberTimeFormatEnum, {
-  name: 'WorkspaceMemberTimeFormatEnum',
-  description: 'Time time as Military, Standard or system as default',
-});
 
 @ObjectType('FullName')
 export class FullName {

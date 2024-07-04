@@ -961,16 +961,16 @@ export type WorkspaceMember = {
 
 /** Date format as Month first, Day first, Year first or system as default */
 export enum WorkspaceMemberDateFormatEnum {
-  DMmmYyyy = 'D_MMM_YYYY',
-  MmmDYyyy = 'MMM_D_YYYY',
+  DayFirst = 'DAY_FIRST',
+  MonthFirst = 'MONTH_FIRST',
   System = 'SYSTEM',
-  YyyyMmmD = 'YYYY_MMM_D'
+  YearFirst = 'YEAR_FIRST'
 }
 
 /** Time time as Military, Standard or system as default */
 export enum WorkspaceMemberTimeFormatEnum {
-  HhMm = 'HH_MM',
-  HMmAa = 'H_MM_AA',
+  Hour_12 = 'HOUR_12',
+  Hour_24 = 'HOUR_24',
   System = 'SYSTEM'
 }
 

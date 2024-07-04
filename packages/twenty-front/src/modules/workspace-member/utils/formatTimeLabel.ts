@@ -8,12 +8,12 @@ export const getTimeFormatFromWorkspaceEnum = (
   switch (timeFormat) {
     case WorkspaceMemberTimeFormatEnum.System:
       return detectTimeFormat();
-    case WorkspaceMemberTimeFormatEnum.HhMm:
-      return TimeFormat.MILITARY;
-    case WorkspaceMemberTimeFormatEnum.HMmAa:
-      return TimeFormat.STANDARD;
+    case WorkspaceMemberTimeFormatEnum.Hour_24:
+      return TimeFormat.HOUR_24;
+    case WorkspaceMemberTimeFormatEnum.Hour_12:
+      return TimeFormat.HOUR_12;
     default:
-      return TimeFormat.MILITARY;
+      return TimeFormat.HOUR_24;
   }
 };
 
@@ -21,11 +21,11 @@ export const getWorkspaceEnumFromTimeFormat = (timeFormat: TimeFormat) => {
   switch (timeFormat) {
     case TimeFormat.SYSTEM:
       return WorkspaceMemberTimeFormatEnum.System;
-    case TimeFormat.MILITARY:
-      return WorkspaceMemberTimeFormatEnum.HhMm;
-    case TimeFormat.STANDARD:
-      return WorkspaceMemberTimeFormatEnum.HMmAa;
+    case TimeFormat.HOUR_24:
+      return WorkspaceMemberTimeFormatEnum.Hour_24;
+    case TimeFormat.HOUR_12:
+      return WorkspaceMemberTimeFormatEnum.Hour_12;
     default:
-      return WorkspaceMemberTimeFormatEnum.HhMm;
+      return WorkspaceMemberTimeFormatEnum.Hour_24;
   }
 };
