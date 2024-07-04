@@ -4,8 +4,9 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import {
-  validateMetadataName,
+  validateMetadataNameOrThrow,
   InvalidStringException,
 } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { camelCase } from 'src/utils/camel-case';
@@ -54,6 +55,9 @@ export const validateObjectMetadataInputOrThrow = <
 
   validateNameIsNotReservedKeywordOrThrow(objectMetadataInput.nameSingular);
   validateNameIsNotReservedKeywordOrThrow(objectMetadataInput.namePlural);
+
+  validateNameIsNotTooLongThrow(objectMetadataInput.nameSingular);
+  validateNameIsNotTooLongThrow(objectMetadataInput.namePlural);
 };
 
 const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
@@ -78,10 +82,21 @@ const validateNameCamelCasedOrThrow = (name?: string) => {
   }
 };
 
+const validateNameIsNotTooLongThrow = (name?: string) => {
+  if (name) {
+    if (exceedsDatabaseIdentifierMaximumLength(name)) {
+      throw new ObjectMetadataException(
+        `Name exceeds 63 characters: ${name}`,
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
+    }
+  }
+};
+
 const validateNameCharactersOrThrow = (name?: string) => {
   try {
     if (name) {
-      validateMetadataName(name);
+      validateMetadataNameOrThrow(name);
     }
   } catch (error) {
     if (error instanceof InvalidStringException) {
