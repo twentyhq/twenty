@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT, useIcons } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
+import { isRecordTableScrolledLeftState } from '@/object-record/record-table/states/isRecordTableScrolledLeftState';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
@@ -52,10 +52,14 @@ export const ColumnHead = ({ column }: ColumnHeadProps) => {
   const { getIcon } = useIcons();
   const Icon = getIcon(column.iconName);
 
-  const scrollLeft = useRecoilValue(scrollLeftState);
+  const isRecordTableScrolledLeft = useRecoilValue(
+    isRecordTableScrolledLeftState,
+  );
 
   return (
-    <StyledTitle hideTitle={!!column.isLabelIdentifier && scrollLeft > 0}>
+    <StyledTitle
+      hideTitle={!!column.isLabelIdentifier && !isRecordTableScrolledLeft}
+    >
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>

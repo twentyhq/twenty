@@ -7,12 +7,12 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { ColumnHead } from '@/object-record/record-table/components/ColumnHead';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
+import { isRecordTableScrolledLeftState } from '@/object-record/record-table/states/isRecordTableScrolledLeftState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
@@ -166,11 +166,14 @@ export const RecordTableHeaderCell = ({
     onMouseUp: handleResizeHandlerEnd,
   });
 
+  const isRecordTableScrolledLeft = useRecoilValue(
+    isRecordTableScrolledLeftState,
+  );
+
   const isMobile = useIsMobile();
-  const scrollLeft = useRecoilValue(scrollLeftState);
 
   const disableColumnResize =
-    column.isLabelIdentifier && isMobile && scrollLeft > 0;
+    column.isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
 
   return (
     <StyledColumnHeaderCell
@@ -191,7 +194,7 @@ export const RecordTableHeaderCell = ({
         ) : (
           <ColumnHeadWithDropdown column={column} />
         )}
-        {(useIsMobile() || iconVisibility) && !!column.isLabelIdentifier && (
+        {(isMobile || iconVisibility) && !!column.isLabelIdentifier && (
           <StyledHeaderIcon>
             <LightIconButton
               Icon={IconPlus}

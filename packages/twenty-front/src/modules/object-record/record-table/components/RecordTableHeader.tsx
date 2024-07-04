@@ -34,14 +34,29 @@ const StyledTableHead = styled.thead<{
     background-color: ${({ theme }) => theme.background.primary};
     border-right: 1px solid ${({ theme }) => theme.border.color.light};
     top: 0;
-    z-index: ${({ isScrolledTop }) => (isScrolledTop ? 0 : 10)};
+    z-index: ${({ isScrolledTop, isScrolledLeft }) =>
+      !isScrolledLeft && !isScrolledTop
+        ? 2
+        : !isScrolledLeft
+          ? 0
+          : !isScrolledTop
+            ? 2
+            : 0};
     position: sticky;
   }
 
   th:nth-of-type(1),
   th:nth-of-type(2),
   th:nth-of-type(3) {
-    z-index: 12;
+    z-index: ${({ isScrolledTop, isScrolledLeft }) =>
+      !isScrolledLeft && !isScrolledTop
+        ? 7
+        : !isScrolledLeft
+          ? 3
+          : !isScrolledTop
+            ? 6
+            : 0};
+
     background-color: ${({ theme }) => theme.background.primary};
   }
 
