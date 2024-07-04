@@ -15,16 +15,16 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { getUniqueContactsAndHandles } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-unique-contacts-and-handles.util';
-import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
-import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
+import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
-import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/connected-account/auto-companies-and-contacts-creation/constants/contacts-creation-batch-size.constant';
 import { Contact } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -43,7 +43,7 @@ export class CreateCompanyAndContactService {
   ) {}
 
   async createCompaniesAndPeople(
-    connectedAccountHandle: string,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     contactsToCreate: Contact[],
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -62,9 +62,9 @@ export class CreateCompanyAndContactService {
       );
 
     const contactsToCreateFromOtherCompanies =
-      filterOutContactsFromCompanyOrWorkspace(
+      filterOutSelfAndContactsFromCompanyOrWorkspace(
         contactsToCreate,
-        connectedAccountHandle,
+        connectedAccount,
         workspaceMembers,
       );
 
@@ -150,7 +150,7 @@ export class CreateCompanyAndContactService {
       await this.workspaceDataSource?.transaction(
         async (transactionManager: EntityManager) => {
           const createdPeople = await this.createCompaniesAndPeople(
-            connectedAccount.handle,
+            connectedAccount,
             contactsBatch,
             workspaceId,
             transactionManager,

@@ -25,6 +25,7 @@ import { MessageQueueMetadataAccessor } from './message-queue-metadata.accessor'
 interface ProcessorGroup {
   instance: object;
   host: Module;
+  processorName: string;
   processMethodNames: string[];
   isRequestScoped: boolean;
 }
@@ -77,6 +78,7 @@ export class MessageQueueExplorer implements OnModuleInit {
       (acc, wrapper) => {
         const { instance, metatype } = wrapper;
         const methodNames = this.metadataScanner.getAllMethodNames(instance);
+        const processorName = wrapper.name;
         const { queueName } =
           this.metadataAccessor.getProcessorMetadata(
             instance.constructor || metatype,
@@ -109,6 +111,7 @@ export class MessageQueueExplorer implements OnModuleInit {
         acc[queueName].push({
           instance,
           host: wrapper.host,
+          processorName,
           processMethodNames,
           isRequestScoped: !wrapper.isDependencyTreeStatic(),
         });
@@ -137,7 +140,11 @@ export class MessageQueueExplorer implements OnModuleInit {
   ) {
     queue.work(async (job) => {
       for (const processorGroup of processorGroupCollection) {
-        await this.handleProcessor(processorGroup, job);
+        const { processorName } = processorGroup;
+
+        if (job.name === processorName) {
+          await this.handleProcessor(processorGroup, job);
+        }
       }
     }, options);
   }
@@ -156,7 +163,7 @@ export class MessageQueueExplorer implements OnModuleInit {
       }),
     );
 
-    if (isRequestScoped && job.data) {
+    if (isRequestScoped) {
       const contextId = createContextId();
 
       if (this.moduleRef.registerRequestByContextId) {
@@ -164,7 +171,7 @@ export class MessageQueueExplorer implements OnModuleInit {
           {
             // Add workspaceId to the request object
             req: {
-              workspaceId: job.data.workspaceId,
+              workspaceId: job.data?.workspaceId,
             },
           },
           contextId,
