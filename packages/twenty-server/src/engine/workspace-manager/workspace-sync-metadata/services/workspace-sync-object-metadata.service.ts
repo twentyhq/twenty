@@ -99,41 +99,6 @@ export class WorkspaceSyncObjectMetadataService {
       if (objectComparatorResult.action === ComparatorAction.UPDATE) {
         storage.addUpdateObjectMetadata(objectComparatorResult.object);
       }
-      // <<<<<<< HEAD
-
-      //       /**
-      //        * COMPARE FIELD METADATA
-      //        * NOTE: This should be moved to WorkspaceSyncFieldMetadataService for more clarity since
-      //        * this code only adds field metadata to the storage but it's actually used in the other service.
-      //        * NOTE2: WorkspaceSyncFieldMetadataService has been added for custom fields sync, it should be refactored to handle
-      //        * both custom and non-custom fields.
-      //        */
-      //       const fieldComparatorResults = this.workspaceFieldComparator.compare(
-      //         originalObjectMetadata,
-      //         standardObjectMetadata,
-      //       );
-
-      //       for (const fieldComparatorResult of fieldComparatorResults) {
-      //         switch (fieldComparatorResult.action) {
-      //           case ComparatorAction.CREATE: {
-      //             if (fieldComparatorResult.object.isCustom) {
-      //               break;
-      //             }
-      //             storage.addCreateFieldMetadata(fieldComparatorResult.object);
-      //             break;
-      //           }
-      //           case ComparatorAction.UPDATE: {
-      //             storage.addUpdateFieldMetadata(fieldComparatorResult.object);
-      //             break;
-      //           }
-      //           case ComparatorAction.DELETE: {
-      //             storage.addDeleteFieldMetadata(fieldComparatorResult.object);
-      //             break;
-      //           }
-      //         }
-      //       }
-      // =======
-      // >>>>>>> c57c5b255419b5fcc61b4e28c494ec36f8b2dcf7
     }
 
     this.logger.log('Updating workspace metadata');

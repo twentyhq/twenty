@@ -64,44 +64,6 @@ export class WorkspaceSyncFieldMetadataService {
       workspaceFeatureFlagsMap,
     );
 
-    // Loop over all custom objects from the DB and compare their fields with standard fields
-    // for (const customObjectMetadata of customObjectMetadataCollection) {
-    //   // Also, maybe it's better to refactor a bit and move generation part into a separate module ?
-    //   const standardObjectMetadata = computeStandardObject(
-    //     {
-    //       ...customObjectMetadata,
-    //       fields: standardFieldMetadataCollection,
-    //     },
-    //     customObjectMetadata,
-    //   );
-
-    //   /**
-    //    * COMPARE FIELD METADATA
-    //    */
-    //   const fieldComparatorResults = this.workspaceFieldComparator.compare(
-    //     customObjectMetadata,
-    //     standardObjectMetadata,
-    //   );
-
-    //   for (const fieldComparatorResult of fieldComparatorResults) {
-    //     switch (fieldComparatorResult.action) {
-    //       case ComparatorAction.CREATE: {
-    //         storage.addCreateFieldMetadata(fieldComparatorResult.object);
-    //         break;
-    //       }
-    //       case ComparatorAction.UPDATE: {
-    //         storage.addUpdateFieldMetadata(
-    //           formatFieldUpdate(fieldComparatorResult.object), // TODO
-    //         );
-    //         break;
-    //       }
-    //       case ComparatorAction.DELETE: {
-    //         storage.addDeleteFieldMetadata(fieldComparatorResult.object);
-    //         break;
-    //       }
-    //     }
-    //   }
-    // }
     await this.synchronizeCustomObjectFields(
       context,
       customObjectMetadataCollection,
