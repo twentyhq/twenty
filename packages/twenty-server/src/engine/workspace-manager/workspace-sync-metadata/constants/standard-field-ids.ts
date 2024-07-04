@@ -27,6 +27,22 @@ export const ACTIVITY_STANDARD_FIELD_IDS = {
   assignee: '20202020-4259-48e4-9e77-6b92991906d5',
 };
 
+export const ANALYTICS_QUERY_STANDARD_FIELD_IDS = {
+  chart: '20202020-9084-4c96-944c-3a359c3f6b03',
+  measure: '20202020-9573-4359-b500-f8a9895c848f',
+  sourceObjectNameSingular: '20202020-7acd-412f-af03-62b5630df552',
+  field: '20202020-5206-419e-9df6-d8f8f75e75e9',
+  analyticsQueryFilters: '20202020-2229-4c35-9f3b-9e1199ec3c7c',
+  groupBy: '20202020-4a7b-4021-b1d4-6e6f282cedee',
+};
+
+export const ANALYTICS_QUERY_FILTER_STANDARD_FIELD_IDS = {
+  analyticsQuery: '20202020-7023-4c2c-ae1e-8bdaea1d6dbf',
+  field: '20202020-24f0-4f4d-a845-b7d80e5c661b',
+  operator: '20202020-3994-49f3-a0c0-9bd77978879a',
+  value: '20202020-2b74-47ea-8a9d-f5d97f3f95f3',
+};
+
 export const API_KEY_STANDARD_FIELD_IDS = {
   name: '20202020-72e6-4079-815b-436ce8a62f23',
   expiresAt: '20202020-659b-4241-af59-66515b8e7d40',
@@ -54,6 +70,15 @@ export const BASE_OBJECT_STANDARD_FIELD_IDS = {
 export const BLOCKLIST_STANDARD_FIELD_IDS = {
   handle: '20202020-eef3-44ed-aa32-4641d7fd4a3e',
   workspaceMember: '20202020-548d-4084-a947-fa20a39f7c06',
+};
+
+export const CHART_STANDARD_FIELD_IDS = {
+  title: '20202020-e5aa-45b1-aec0-431420660570',
+  description: '20202020-71b2-4df1-8cb3-120d55272b12',
+  report: '20202020-ed98-46de-a874-eb65660e3b13',
+  analyticsQuery: '20202020-13c2-4d66-a631-605c85953648',
+  analyticsQueryResult: '20202020-4db0-4a48-b742-3da6cfbd146d',
+  analyticsQueryResultCreatedAt: '20202020-c8fb-437d-9994-1720eac571ec',
 };
 
 export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS = {
@@ -277,6 +302,11 @@ export const PERSON_STANDARD_FIELD_IDS = {
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
   calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
+};
+
+export const REPORT_STANDARD_FIELD_IDS = {
+  title: '20202020-4eb0-4241-bbf8-2a20edb5658d',
+  charts: '20202020-af27-44f3-9826-5b3ac2266853',
 };
 
 export const VIEW_FIELD_STANDARD_FIELD_IDS = {
