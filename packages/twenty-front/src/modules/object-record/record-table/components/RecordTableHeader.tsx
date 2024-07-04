@@ -11,7 +11,57 @@ import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScroll
 import { RecordTableHeaderPlusButtonContent } from './RecordTableHeaderPlusButtonContent';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
-const StyledTableHead = styled.thead`
+const StyledTableHead = styled.thead<{ isFrozen: boolean }>`
+  th {
+    border-block: 1px solid ${({ theme }) => theme.border.color.light};
+    color: ${({ theme }) => theme.font.color.tertiary};
+    padding: 0;
+    text-align: left;
+
+    :last-child {
+      border-right-color: transparent;
+    }
+    :first-of-type {
+      border-top-color: transparent;
+      border-bottom-color: transparent;
+    }
+  }
+
+  th {
+    background-color: ${({ theme }) => theme.background.primary};
+    border-right: 1px solid ${({ theme }) => theme.border.color.light};
+  }
+
+  th {
+    position: ${({ isFrozen }) => (isFrozen ? 'sticky' : 'static')};
+    top: 0;
+  }
+
+  th:nth-of-type(1),
+  th:nth-of-type(2),
+  th:nth-of-type(3) {
+    z-index: 12;
+    background-color: ${({ theme }) => theme.background.primary};
+  }
+
+  th:nth-of-type(1) {
+    width: 9px;
+    left: 0;
+    border-right-color: ${({ theme }) => theme.background.primary};
+  }
+
+  th:nth-of-type(2) {
+    left: 9px;
+    border-right-color: ${({ theme }) => theme.background.primary};
+  }
+
+  th:nth-of-type(3) {
+    left: 39px;
+  }
+
+  th {
+    z-index: ${({ isFrozen }) => (!isFrozen ? 0 : 9)};
+  }
   cursor: pointer;
 `;
 
@@ -52,8 +102,10 @@ const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
 
 export const RecordTableHeader = ({
   createRecord,
+  isFrozen = false,
 }: {
   createRecord: () => void;
+  isFrozen?: boolean;
 }) => {
   const { visibleTableColumnsSelector, hiddenTableColumnsSelector } =
     useRecordTableStates();
@@ -69,7 +121,7 @@ export const RecordTableHeader = ({
   const theme = useTheme();
 
   return (
-    <StyledTableHead data-select-disable>
+    <StyledTableHead data-select-disable isFrozen={isFrozen}>
       <tr>
         <th></th>
         <th

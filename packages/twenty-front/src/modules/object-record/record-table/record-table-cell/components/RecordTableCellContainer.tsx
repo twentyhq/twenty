@@ -52,7 +52,7 @@ const StyledBaseContainer = styled.div<{
   border-radius: ${({ hasSoftFocus }) =>
     hasSoftFocus ? borderRadiusSm : 'none'};
 
-  border: ${({ hasSoftFocus, fontColorExtraLight }) =>
+  outline: ${({ hasSoftFocus, fontColorExtraLight }) =>
     hasSoftFocus ? `1px solid ${fontColorExtraLight}` : 'none'};
 `;
 

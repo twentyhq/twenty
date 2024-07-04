@@ -6,7 +6,7 @@ import { MOBILE_VIEWPORT, RGBA } from 'twenty-ui';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/components/RecordTableBodyEffect';
-import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
+import { RecordTableHeaderWrapper } from '@/object-record/record-table/components/RecordTableHeaderWrapper';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
@@ -33,21 +33,6 @@ const StyledTable = styled.table<{
 
   width: calc(100% - ${({ theme }) => theme.table.horizontalCellMargin} * 2);
 
-  th {
-    border-block: 1px solid ${({ theme }) => theme.border.color.light};
-    color: ${({ theme }) => theme.font.color.tertiary};
-    padding: 0;
-    text-align: left;
-
-    :last-child {
-      border-right-color: transparent;
-    }
-    :first-of-type {
-      border-top-color: transparent;
-      border-bottom-color: transparent;
-    }
-  }
-
   td {
     border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
     color: ${({ theme }) => theme.font.color.primary};
@@ -64,39 +49,6 @@ const StyledTable = styled.table<{
       border-top-color: transparent;
       border-bottom-color: transparent;
     }
-  }
-
-  th {
-    background-color: ${({ theme }) => theme.background.primary};
-    border-right: 1px solid ${({ theme }) => theme.border.color.light};
-  }
-
-  thead th {
-    position: sticky;
-    top: 0;
-    z-index: 9;
-  }
-
-  thead th:nth-of-type(1),
-  thead th:nth-of-type(2),
-  thead th:nth-of-type(3) {
-    z-index: 12;
-    background-color: ${({ theme }) => theme.background.primary};
-  }
-
-  thead th:nth-of-type(1) {
-    width: 9px;
-    left: 0;
-    border-right-color: ${({ theme }) => theme.background.primary};
-  }
-
-  thead th:nth-of-type(2) {
-    left: 9px;
-    border-right-color: ${({ theme }) => theme.background.primary};
-  }
-
-  thead th:nth-of-type(3) {
-    left: 39px;
   }
 
   tbody td:nth-of-type(1),
@@ -246,7 +198,7 @@ export const RecordTable = ({
           }}
         >
           <StyledTable className="entity-table-cell">
-            <RecordTableHeader createRecord={createRecord} />
+            <RecordTableHeaderWrapper createRecord={createRecord} />
             <RecordTableBodyEffect objectNameSingular={objectNameSingular} />
             <RecordTableBody
               objectNameSingular={objectNameSingular}
