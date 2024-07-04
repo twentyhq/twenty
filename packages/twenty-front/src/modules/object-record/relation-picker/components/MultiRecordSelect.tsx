@@ -1,6 +1,7 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
@@ -9,7 +10,6 @@ import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
 import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -17,6 +17,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 export const StyledSelectableItem = styled(SelectableItem)`
@@ -31,6 +34,8 @@ export const MultiRecordSelect = ({
   onSubmit?: () => void;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const setHotkeyScope = useSetHotkeyScope();
+  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
   const relationPickerScopedId = useAvailableScopeIdOrThrow(
     RelationPickerScopeInternalContext,
@@ -57,6 +62,19 @@ export const MultiRecordSelect = ({
   const debouncedSetSearchFilter = useDebouncedCallback(setSearchFilter, 100, {
     leading: true,
   });
+
+  useEffect(() => {
+    setHotkeyScope(relationPickerScopedId);
+  }, [setHotkeyScope, relationPickerScopedId]);
+
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onSubmit?.();
+      goBackToPreviousHotkeyScope();
+    },
+    relationPickerScopedId,
+  );
 
   const handleFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +105,8 @@ export const MultiRecordSelect = ({
               <SelectableList
                 selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
                 selectableItemIdArray={objectRecordsIdsMultiSelect}
-                hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+                hotkeyScope={relationPickerScopedId}
+                onEnter={onChange}
               >
                 {objectRecordsIdsMultiSelect?.map((recordId) => {
                   return (

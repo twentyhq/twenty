@@ -36,11 +36,18 @@ export const MultipleObjectRecordSelectItem = ({
     RelationPickerScopeInternalContext,
   );
 
-  const { objectRecordMultiSelectFamilyState } =
+  const {
+    objectRecordMultiSelectFamilyState,
+    objectRecordMultiSelectCheckedRecordsIdsState,
+  } =
     useObjectRecordMultiSelectScopedStates(scopeId);
 
   const record = useRecoilValue(
     objectRecordMultiSelectFamilyState(objectRecordId),
+  );
+
+  const objectRecordMultiSelectCheckedRecordsIds = useRecoilValue(
+    objectRecordMultiSelectCheckedRecordsIdsState,
   );
 
   if (!record) {
@@ -51,11 +58,15 @@ export const MultipleObjectRecordSelectItem = ({
     onChange?.(objectRecordId);
   };
 
-  const { selected, recordIdentifier } = record;
+  const { recordIdentifier } = record;
 
   if (!isDefined(recordIdentifier)) {
     return null;
   }
+
+  const selected = objectRecordMultiSelectCheckedRecordsIds.find(
+    (checkedObjectRecord) => checkedObjectRecord === objectRecordId,
+  ) ? true : false;
 
   return (
     <StyledSelectableItem itemId={objectRecordId} key={objectRecordId + v4()}>
