@@ -188,10 +188,6 @@ export class WorkspaceSyncFieldMetadataService {
         customObjectMetadataCollection,
       );
 
-      console.log('standardObjectId', standardObjectId);
-      console.log('originalObjectMetadataMap', originalObjectMetadataMap);
-      console.log(originalObjectMetadata);
-
       const fieldComparatorResults = this.workspaceFieldComparator.compare(
         originalObjectMetadata.id,
         originalObjectMetadata.fields,
