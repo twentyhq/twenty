@@ -1,5 +1,6 @@
 import { DocSearch } from '@docsearch/react';
 import { StoredDocSearchHit } from '@docsearch/react/dist/esm/types';
+import { env } from 'next-runtime-env';
 
 interface AlgoliaHit extends StoredDocSearchHit {
   _snippetResult?: {
@@ -47,11 +48,8 @@ export const AlgoliaDocSearch = ({ pathname }: AlgoliaDocSearchProps) => {
           </a>
         </section>
       )}
-      appId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID ?? 'J2OX2P2QAO'}
-      apiKey={
-        process.env.NEXT_PUBLIC_ALGOLIA_API_KEY ??
-        'e3de1c1c0b50bd5ea3ffa1ee7ea3f56d'
-      }
+      appId={env('NEXT_PUBLIC_ALGOLIA_APP_ID') ?? ''}
+      apiKey={env('NEXT_PUBLIC_ALGOLIA_API_KEY') ?? ''}
       indexName={`twenty-${indexName}`}
     />
   );

@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { Gabarito, Inter } from 'next/font/google';
+import { PublicEnvScript } from 'next-runtime-env';
 
 import { AppHeader } from '@/app/_components/ui/layout/header';
 
@@ -40,6 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${gabarito.variable} ${inter.variable}`}>
       <body>
+        <PublicEnvScript />
         <EmotionRootStyleRegistry>
           <AppHeader />
           <div className="container">{children}</div>
