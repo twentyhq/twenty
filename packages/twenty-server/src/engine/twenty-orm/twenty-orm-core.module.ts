@@ -31,33 +31,13 @@ import {
   MODULE_OPTIONS_TOKEN,
 } from 'src/engine/twenty-orm/twenty-orm.module-definition';
 import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 
 @Global()
 @Module({
   imports: [DataSourceModule],
   providers: [
     ...entitySchemaFactories,
-    {
-      provide: TwentyORMManager,
-      useFactory(
-        entitySchemaFactory: EntitySchemaFactory,
-        workspaceDataSourceFactory: WorkspaceDatasourceFactory,
-        workspaceDatasource: WorkspaceDataSource | null,
-      ) {
-        return new TwentyORMManager(
-          workspaceDatasource,
-          entitySchemaFactory,
-          workspaceDataSourceFactory,
-        );
-      },
-      inject: [
-        EntitySchemaFactory,
-        WorkspaceDatasourceFactory,
-        { token: TWENTY_ORM_WORKSPACE_DATASOURCE, optional: true },
-      ],
-    },
+    TwentyORMManager,
     LoadServiceWithWorkspaceContext,
   ],
   exports: [
