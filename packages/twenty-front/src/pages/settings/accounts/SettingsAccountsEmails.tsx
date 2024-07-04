@@ -1,4 +1,4 @@
-import { H2Title, IconSettings } from 'twenty-ui';
+import { IconSettings } from 'twenty-ui';
 
 import { SettingsAccountsMessageChannelsContainer } from '@/settings/accounts/components/SettingsAccountsMessageChannelsContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -16,10 +16,6 @@ export const SettingsAccountsEmails = () => (
         ]}
       />
       <Section>
-        <H2Title
-          title="Emails sync"
-          description="Sync your inboxes and set your privacy settings"
-        />
         <SettingsAccountsMessageChannelsContainer />
       </Section>
     </SettingsPageContainer>

@@ -1,88 +1,71 @@
 import { useTheme } from '@emotion/react';
-import { Section } from '@react-email/components';
-import { useRecoilValue } from 'recoil';
-import {
-  H2Title,
-  IconHome,
-  IconRefresh,
-  IconTimelineEvent,
-  IconUser,
-} from 'twenty-ui';
+import styled from '@emotion/styled';
+import { H2Title, IconRefresh, IconUser } from 'twenty-ui';
 
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { MessageChannel } from '@/accounts/types/MessageChannel';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
 import { SettingsAccountsInboxVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
-import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
-import { SettingsAccountsSynchronizationStatusProps } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
+import { Section } from '@/ui/layout/section/components/Section';
+import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
-  messageChannel: Pick<MessageChannel, 'id'>;
+  messageChannel: Pick<
+    MessageChannel,
+    'id' | 'visibility' | 'isContactAutoCreationEnabled' | 'isSyncEnabled'
+  >;
 };
+
+const StyledDetailsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(6)};
+  padding-top: ${({ theme }) => theme.spacing(6)};
+`;
 
 export const SettingsAccountsMessageChannelDetails = ({
   messageChannel,
 }: SettingsAccountsMessageChannelDetailsProps) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const theme = useTheme();
 
-  const { records: accounts } = useFindManyRecords<ConnectedAccount>({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    filter: {
-      accountOwnerId: {
-        eq: currentWorkspaceMember?.id,
-      },
-    },
-  });
-
-  const { records: messageChannels } = useFindManyRecords<
-    MessageChannel & {
-      connectedAccount: ConnectedAccount;
-    }
-  >({
+  const { updateOneRecord } = useUpdateOneRecord<MessageChannel>({
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
-    filter: {
-      connectedAccountId: {
-        in: accounts.map((account) => account.id),
-      },
-    },
   });
 
-  const messageChannelsWithSyncedEmails: (MessageChannel & {
-    connectedAccount: ConnectedAccount;
-  } & SettingsAccountsSynchronizationStatusProps)[] = messageChannels.map(
-    (messageChannel) => ({
-      ...messageChannel,
-      syncStatus: messageChannel.syncStatus,
-    }),
-  );
+  const handleVisibilityChange = (value: MessageChannelVisibility) => {
+    updateOneRecord({
+      idToUpdate: messageChannel.id,
+      updateOneRecordInput: {
+        visibility: value,
+      },
+    });
+  };
 
-  const tabs = [
-    {
-      id: 'summary',
-      title: 'Summary',
-      Icon: IconHome,
-    },
-    {
-      id: 'timeline',
-      title: 'Timeline',
-      Icon: IconTimelineEvent,
-    },
-  ];
+  const handleContactAutoCreationToggle = (value: boolean) => {
+    updateOneRecord({
+      idToUpdate: messageChannel.id,
+      updateOneRecordInput: {
+        isContactAutoCreationEnabled: value,
+      },
+    });
+  };
 
-  if (!messageChannelsWithSyncedEmails.length) {
-    return <SettingsAccountsListEmptyStateCard />;
-  }
+  const handleIsSyncEnabledToggle = (value: boolean) => {
+    updateOneRecord({
+      idToUpdate: messageChannel.id,
+      updateOneRecordInput: {
+        isSyncEnabled: value,
+      },
+    });
+  };
 
   return (
-    <>
+    <StyledDetailsContainer>
       <Section>
         <H2Title
-          title="Email visibility"
+          title="Visibility"
           description="Define what will be visible to other users in your workspace"
         />
         <SettingsAccountsInboxVisibilitySettingsCard
@@ -128,6 +111,6 @@ export const SettingsAccountsMessageChannelDetails = ({
           onToggle={handleIsSyncEnabledToggle}
         />
       </Section>
-    </>
+    </StyledDetailsContainer>
   );
 };

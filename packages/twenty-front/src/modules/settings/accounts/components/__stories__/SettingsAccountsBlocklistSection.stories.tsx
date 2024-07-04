@@ -5,8 +5,7 @@ import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/S
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 
 const meta: Meta<typeof SettingsAccountsBlocklistSection> = {
-  title:
-    'Modules/Settings/Accounts/Blocklist/SettingsAccountsBlocklistSection',
+  title: 'Modules/Settings/Accounts/Blocklist/SettingsAccountsBlocklistSection',
   component: SettingsAccountsBlocklistInput,
   decorators: [ComponentDecorator],
 };
