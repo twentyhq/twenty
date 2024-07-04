@@ -5,7 +5,7 @@ import { EntityManager } from 'typeorm';
 import compact from 'lodash.compact';
 import chunk from 'lodash.chunk';
 
-import { getDomainNameFromHandle } from 'src/modules/calendar-messaging-participant/utils/get-domain-name-from-handle.util';
+import { getDomainNameFromHandle } from 'src/modules/calendar-messaging-participant-manager/utils/get-domain-name-from-handle.util';
 import { CreateCompanyService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company/create-company.service';
 import { CreateContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-contact/create-contact.service';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
@@ -21,10 +21,10 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/connected-account/auto-companies-and-contacts-creation/constants/contacts-creation-batch-size.constant';
 import { Contact } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { CalendarEventParticipantService } from 'src/modules/calendar/common/services/calendar-event-participant.service';
 
 @Injectable()
 export class CreateCompanyAndContactService {

@@ -13,11 +13,13 @@ import {
   CalendarEventParticipant,
   CalendarEventParticipantWithCalendarEventId,
 } from 'src/modules/calendar/common/types/calendar-event';
-import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
+import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant-manager/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 
+// Todo: this is not the right place for this file. The code needs to be refactored in term of business modules with a precise scope.
+// Putting it here to avoid circular dependencies for now.
 @Injectable()
 export class CalendarEventParticipantService {
   constructor(

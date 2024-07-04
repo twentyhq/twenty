@@ -14,7 +14,6 @@ import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inje
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
-import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -22,6 +21,7 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
+import { CalendarEventParticipantService } from 'src/modules/calendar/common/services/calendar-event-participant.service';
 
 @Injectable()
 export class CalendarSaveEventsService {

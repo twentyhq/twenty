@@ -49,11 +49,11 @@ export class BlocklistReimportCalendarEventsJob {
       return;
     }
 
-    await this.googleCalendarSyncService.processCalendarEventsImport(
-      workspaceId,
-      connectedAccount[0].id,
-      handle,
-    );
+    // await this.googleCalendarSyncService.processCalendarEventsImport(
+    //   connectedAccount,
+    //   handle,
+    //   workspaceId,
+    // );
 
     this.logger.log(
       `Reimporting calendar events from ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId} done`,

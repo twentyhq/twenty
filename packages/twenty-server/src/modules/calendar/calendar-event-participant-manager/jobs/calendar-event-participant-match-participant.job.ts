@@ -3,10 +3,9 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
-import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
+import { CalendarEventParticipantService } from 'src/modules/calendar/common/services/calendar-event-participant.service';
 
-export type MatchParticipantJobData = {
+export type CalendarEventParticipantMatchParticipantJobData = {
   workspaceId: string;
   email: string;
   personId?: string;
@@ -14,25 +13,19 @@ export type MatchParticipantJobData = {
 };
 
 @Processor({
-  queueName: MessageQueue.messagingQueue,
+  queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
 })
-export class MatchParticipantJob {
+export class CalendarEventParticipantMatchParticipantJob {
   constructor(
-    private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
   ) {}
 
-  @Process(MatchParticipantJob.name)
-  async handle(data: MatchParticipantJobData): Promise<void> {
+  @Process(CalendarEventParticipantMatchParticipantJob.name)
+  async handle(
+    data: CalendarEventParticipantMatchParticipantJobData,
+  ): Promise<void> {
     const { workspaceId, email, personId, workspaceMemberId } = data;
-
-    await this.messageParticipantService.matchMessageParticipants(
-      workspaceId,
-      email,
-      personId,
-      workspaceMemberId,
-    );
 
     await this.calendarEventParticipantService.matchCalendarEventParticipants(
       workspaceId,

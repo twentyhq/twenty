@@ -4,9 +4,8 @@ import { Processor } from 'src/engine/integrations/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 
-export type UnmatchParticipantJobData = {
+export type MessageParticipantUnmatchParticipantJobData = {
   workspaceId: string;
   email: string;
   personId?: string;
@@ -17,24 +16,18 @@ export type UnmatchParticipantJobData = {
   queueName: MessageQueue.messagingQueue,
   scope: Scope.REQUEST,
 })
-export class UnmatchParticipantJob {
+export class MessageParticipantUnmatchParticipantJob {
   constructor(
     private readonly messageParticipantService: MessagingMessageParticipantService,
-    private readonly calendarEventParticipantService: CalendarEventParticipantService,
   ) {}
 
-  @Process(UnmatchParticipantJob.name)
-  async handle(data: UnmatchParticipantJobData): Promise<void> {
+  @Process(MessageParticipantUnmatchParticipantJob.name)
+  async handle(
+    data: MessageParticipantUnmatchParticipantJobData,
+  ): Promise<void> {
     const { workspaceId, email, personId, workspaceMemberId } = data;
 
     await this.messageParticipantService.unmatchMessageParticipants(
-      workspaceId,
-      email,
-      personId,
-      workspaceMemberId,
-    );
-
-    await this.calendarEventParticipantService.unmatchCalendarEventParticipants(
       workspaceId,
       email,
       personId,

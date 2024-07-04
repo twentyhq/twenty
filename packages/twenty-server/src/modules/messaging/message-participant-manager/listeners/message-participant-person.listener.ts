@@ -8,17 +8,17 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
-  MatchParticipantJobData,
-  MatchParticipantJob,
-} from 'src/modules/calendar-messaging-participant/jobs/match-participant.job';
+  MessageParticipantMatchParticipantJobData,
+  MessageParticipantMatchParticipantJob,
+} from 'src/modules/messaging/message-participant-manager/jobs/message-participant-match-participant.job';
 import {
-  UnmatchParticipantJobData,
-  UnmatchParticipantJob,
-} from 'src/modules/calendar-messaging-participant/jobs/unmatch-participant.job';
+  MessageParticipantUnmatchParticipantJobData,
+  MessageParticipantUnmatchParticipantJob,
+} from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Injectable()
-export class ParticipantPersonListener {
+export class MessageParticipantPersonListener {
   constructor(
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -32,8 +32,8 @@ export class ParticipantPersonListener {
       return;
     }
 
-    await this.messageQueueService.add<MatchParticipantJobData>(
-      MatchParticipantJob.name,
+    await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
+      MessageParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         email: payload.properties.after.email,
@@ -52,8 +52,8 @@ export class ParticipantPersonListener {
         payload.properties.after,
       ).includes('email')
     ) {
-      await this.messageQueueService.add<UnmatchParticipantJobData>(
-        UnmatchParticipantJob.name,
+      await this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
+        MessageParticipantUnmatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
           email: payload.properties.before.email,
@@ -61,8 +61,8 @@ export class ParticipantPersonListener {
         },
       );
 
-      await this.messageQueueService.add<MatchParticipantJobData>(
-        MatchParticipantJob.name,
+      await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
+        MessageParticipantMatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
           email: payload.properties.after.email,

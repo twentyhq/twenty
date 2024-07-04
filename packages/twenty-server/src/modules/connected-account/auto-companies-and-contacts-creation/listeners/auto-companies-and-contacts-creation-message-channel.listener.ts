@@ -10,7 +10,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import {
   MessagingCreateCompanyAndContactAfterSyncJobData,
   MessagingCreateCompanyAndContactAfterSyncJob,
-} from 'src/modules/messaging/message-participants-manager/jobs/messaging-create-company-and-contact-after-sync.job';
+} from 'src/modules/messaging/message-participant-manager/jobs/messaging-create-company-and-contact-after-sync.job';
 
 @Injectable()
 export class AutoCompaniesAndContactsCreationMessageChannelListener {
