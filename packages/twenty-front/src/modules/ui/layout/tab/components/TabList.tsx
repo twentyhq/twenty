@@ -15,7 +15,7 @@ type SingleTabProps = {
   id: string;
   hide?: boolean;
   disabled?: boolean;
-  hasBetaPill?: boolean;
+  pill?: string;
 };
 
 type TabListProps = {
@@ -62,7 +62,7 @@ export const TabList = ({ tabs, tabListId, loading }: TabListProps) => {
                   setActiveTabId(tab.id);
                 }}
                 disabled={tab.disabled ?? loading}
-                hasBetaPill={tab.hasBetaPill}
+                pill={tab.pill}
               />
             ))}
         </StyledContainer>
