@@ -1,4 +1,4 @@
-import { isIdentifierNameTooLong } from 'src/engine/metadata-modules/utils/validate-identifier-length.utils';
+import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 
 const VALID_STRING_PATTERN = /^[a-z][a-zA-Z0-9]*$/;
 
@@ -6,7 +6,7 @@ export const validateMetadataNameOrThrow = (name: string) => {
   if (!name.match(VALID_STRING_PATTERN)) {
     throw new InvalidStringException(name);
   }
-  if (isIdentifierNameTooLong(name)) {
+  if (exceedsDatabaseIdentifierMaximumLength(name)) {
     throw new NameTooLongException(name);
   }
 };

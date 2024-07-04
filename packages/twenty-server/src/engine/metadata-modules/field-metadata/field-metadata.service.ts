@@ -44,7 +44,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { isIdentifierNameTooLong } from 'src/engine/metadata-modules/utils/validate-identifier-length.utils';
+import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 
 import {
   FieldMetadataEntity,
@@ -623,7 +623,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (fieldMetadataInput.options) {
       for (const option of fieldMetadataInput.options) {
-        if (isIdentifierNameTooLong(option.value)) {
+        if (exceedsDatabaseIdentifierMaximumLength(option.value)) {
           throw new FieldMetadataException(
             `Option value "${option.value}" exceeds 63 characters`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

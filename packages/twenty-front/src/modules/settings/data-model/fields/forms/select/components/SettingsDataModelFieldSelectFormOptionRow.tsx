@@ -13,6 +13,7 @@ import {
 import { v4 } from 'uuid';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/select/utils/getOptionValueFromLabel';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -22,7 +23,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
-import { NAME_MAXIMUM_LENGTH } from '~/pages/settings/data-model/constants/NameMaximumLength';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
@@ -134,7 +134,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           })
         }
         RightIcon={isDefault ? IconCheck : undefined}
-        maxLength={NAME_MAXIMUM_LENGTH}
+        maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
       />
       <Dropdown
         dropdownId={dropdownIds.actions}
