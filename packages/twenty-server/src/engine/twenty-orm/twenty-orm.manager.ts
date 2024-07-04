@@ -8,6 +8,8 @@ import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-literal.storage';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 
 @Injectable()
 export class TwentyORMManager {
@@ -29,7 +31,19 @@ export class TwentyORMManager {
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     entityClass: Type<T>,
-  ): Promise<WorkspaceRepository<T>> {
+  ): Promise<WorkspaceRepository<T>>;
+
+  async getRepositoryForWorkspace(
+    workspaceId: string,
+    objectMetadata: ObjectMetadataEntity,
+  ): Promise<WorkspaceRepository<CustomWorkspaceEntity>>;
+
+  async getRepositoryForWorkspace<T extends ObjectLiteral>(
+    workspaceId: string,
+    entityClassOrObjectMetadata: Type<T> | ObjectMetadataEntity,
+  ): Promise<
+    WorkspaceRepository<T> | WorkspaceRepository<CustomWorkspaceEntity>
+  > {
     const entities = ObjectLiteralStorage.getAllEntitySchemas();
     const workspaceDataSource = await this.workspaceDataSourceFactory.create(
       entities,
@@ -40,7 +54,27 @@ export class TwentyORMManager {
       throw new Error('Workspace data source not found');
     }
 
-    const entitySchema = this.entitySchemaFactory.create(entityClass);
+    if (entityClassOrObjectMetadata instanceof ObjectMetadataEntity) {
+      if (
+        !entityClassOrObjectMetadata.fields ||
+        entityClassOrObjectMetadata.fields.length === 0
+      ) {
+        throw new Error('Object metadata fields not found');
+      }
+
+      // TODO: Duplicate code need to refactor this
+      const entitySchema = this.entitySchemaFactory.create(
+        entityClassOrObjectMetadata,
+      );
+
+      return workspaceDataSource.getRepository<CustomWorkspaceEntity>(
+        entitySchema,
+      );
+    }
+
+    const entitySchema = this.entitySchemaFactory.create(
+      entityClassOrObjectMetadata,
+    );
 
     return workspaceDataSource.getRepository<T>(entitySchema);
   }

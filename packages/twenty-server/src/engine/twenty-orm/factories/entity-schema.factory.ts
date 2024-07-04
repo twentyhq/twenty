@@ -6,6 +6,7 @@ import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entit
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-literal.storage';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Injectable()
 export class EntitySchemaFactory {
@@ -14,28 +15,46 @@ export class EntitySchemaFactory {
     private readonly entitySchemaRelationFactory: EntitySchemaRelationFactory,
   ) {}
 
-  create<T>(target: Type<T>): EntitySchema {
-    const entityMetadataArgs = metadataArgsStorage.filterEntities(target);
+  create<T>(target: Type<T>): EntitySchema;
+
+  create(objectMetadata: ObjectMetadataEntity): EntitySchema;
+
+  create<T>(
+    targetOrObjectMetadata: Type<T> | ObjectMetadataEntity,
+  ): EntitySchema {
+    if (targetOrObjectMetadata instanceof ObjectMetadataEntity) {
+      const columns = this.entitySchemaColumnFactory.createFromObjectMetadata(
+        targetOrObjectMetadata.fields,
+      );
+
+      return;
+    }
+
+    const entityMetadataArgs = metadataArgsStorage.filterEntities(
+      targetOrObjectMetadata,
+    );
 
     if (!entityMetadataArgs) {
       throw new Error('Entity metadata args are missing on this target');
     }
 
-    const fieldMetadataArgsCollection =
-      metadataArgsStorage.filterFields(target);
+    const fieldMetadataArgsCollection = metadataArgsStorage.filterFields(
+      targetOrObjectMetadata,
+    );
     const joinColumnsMetadataArgsCollection =
-      metadataArgsStorage.filterJoinColumns(target);
-    const relationMetadataArgsCollection =
-      metadataArgsStorage.filterRelations(target);
+      metadataArgsStorage.filterJoinColumns(targetOrObjectMetadata);
+    const relationMetadataArgsCollection = metadataArgsStorage.filterRelations(
+      targetOrObjectMetadata,
+    );
 
-    const columns = this.entitySchemaColumnFactory.create(
+    const columns = this.entitySchemaColumnFactory.createFromMetadataArgs(
       fieldMetadataArgsCollection,
       relationMetadataArgsCollection,
       joinColumnsMetadataArgsCollection,
     );
 
     const relations = this.entitySchemaRelationFactory.create(
-      target,
+      targetOrObjectMetadata,
       relationMetadataArgsCollection,
       joinColumnsMetadataArgsCollection,
     );
@@ -47,7 +66,7 @@ export class EntitySchemaFactory {
       relations,
     });
 
-    ObjectLiteralStorage.setObjectLiteral(entitySchema, target);
+    ObjectLiteralStorage.setObjectLiteral(entitySchema, targetOrObjectMetadata);
 
     return entitySchema;
   }
