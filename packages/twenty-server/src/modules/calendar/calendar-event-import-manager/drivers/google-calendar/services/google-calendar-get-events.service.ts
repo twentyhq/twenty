@@ -9,6 +9,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { GoogleCalendarClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/providers/google-calendar.provider';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import { formatGoogleCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/format-google-calendar-event.util';
 
 @Injectable()
 export class GoogleCalendarGetEventsService {
@@ -84,6 +85,9 @@ export class GoogleCalendarGetEventsService {
       }
     }
 
-    return { events, nextSyncCursor: nextSyncToken || '' };
+    return {
+      calendarEvents: formatGoogleCalendarEvents(events),
+      nextSyncCursor: nextSyncToken || '',
+    };
   }
 }

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { GoogleCalendarGetEventsService as GoogleCalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-get-events.service';
+import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type GetCalendarEventsResponse = {
-  events: any[];
+  calendarEvents: CalendarEventWithParticipants[];
   nextSyncCursor: string;
 };
 

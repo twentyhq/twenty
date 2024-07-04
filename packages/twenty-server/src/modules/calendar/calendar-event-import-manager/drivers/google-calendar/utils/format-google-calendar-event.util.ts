@@ -1,16 +1,17 @@
 import { calendar_v3 as calendarV3 } from 'googleapis';
-import { v4 } from 'uuid';
 
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 
-export const formatGoogleCalendarEvent = (
-  event: calendarV3.Schema$Event,
-  iCalUIDCalendarEventIdMap: Map<string, string>,
-): CalendarEventWithParticipants => {
-  const id =
-    (event.iCalUID && iCalUIDCalendarEventIdMap.get(event.iCalUID)) ?? v4();
+export const formatGoogleCalendarEvents = (
+  events: calendarV3.Schema$Event[],
+): CalendarEventWithParticipants[] => {
+  return events.map(formatGoogleCalendarEvent);
+};
 
+const formatGoogleCalendarEvent = (
+  event: calendarV3.Schema$Event,
+): CalendarEventWithParticipants => {
   const formatResponseStatus = (status: string | null | undefined) => {
     switch (status) {
       case 'accepted':
@@ -25,7 +26,6 @@ export const formatGoogleCalendarEvent = (
   };
 
   return {
-    id,
     title: event.summary ?? '',
     isCanceled: event.status === 'cancelled',
     isFullDay: event.start?.dateTime == null,
@@ -44,12 +44,12 @@ export const formatGoogleCalendarEvent = (
     recurringEventExternalId: event.recurringEventId ?? '',
     participants:
       event.attendees?.map((attendee) => ({
-        calendarEventId: id,
         iCalUID: event.iCalUID ?? '',
         handle: attendee.email ?? '',
         displayName: attendee.displayName ?? '',
         isOrganizer: attendee.organizer === true,
         responseStatus: formatResponseStatus(attendee.responseStatus),
       })) ?? [],
+    status: event.status ?? '',
   };
 };
