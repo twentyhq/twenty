@@ -70,72 +70,75 @@ export class UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand extends Co
       this.logger.log(chalk.yellow('No workspace found'));
 
       return;
-    } else {
-      this.logger.log(
-        chalk.green(`Running command on ${workspaceIds.length} workspaces`),
-      );
     }
+    this.logger.log(
+      chalk.green(`Running command on ${workspaceIds.length} workspaces`),
+    );
 
     for (const workspaceId of workspaceIds) {
-      const dataSourceMetadatas =
-        await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
+      const dataSourceMetadata =
+        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
           workspaceId,
         );
 
-      for (const dataSourceMetadata of dataSourceMetadatas) {
-        const workspaceDataSource =
-          await this.typeORMService.connectToDataSource(dataSourceMetadata);
+      if (!dataSourceMetadata) {
+        throw new Error(
+          `Could not find dataSourceMetadata for workspace ${workspaceId}`,
+        );
+      }
 
-        if (workspaceDataSource) {
-          const queryRunner = workspaceDataSource.createQueryRunner();
+      const workspaceDataSource =
+        await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-          await queryRunner.connect();
-          await queryRunner.startTransaction();
+      if (workspaceDataSource) {
+        const queryRunner = workspaceDataSource.createQueryRunner();
 
-          try {
-            const booleanFields = await this.fieldMetadataRepository.findBy({
-              workspaceId,
-              type: FieldMetadataType.BOOLEAN,
-            });
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
-            for (const booleanField of booleanFields) {
-              if (booleanField.defaultValue === null) {
-                await this.fieldMetadataRepository.update(booleanField.id, {
-                  defaultValue: false,
-                });
-              }
+        try {
+          const booleanFields = await this.fieldMetadataRepository.findBy({
+            workspaceId,
+            type: FieldMetadataType.BOOLEAN,
+          });
 
-              const objectMetadataItemForField =
-                await this.objectMetadataRepository.findOneBy({
-                  id: booleanField.objectMetadataId,
-                });
+          for (const booleanField of booleanFields) {
+            const objectMetadataItemForField =
+              await this.objectMetadataRepository.findOneBy({
+                id: booleanField.objectMetadataId,
+              });
 
-              if (!objectMetadataItemForField) {
-                throw new Error(
-                  `Could not find objectMetadataItem for field ${booleanField.id}`,
-                );
-              }
-
-              const fieldName = booleanField.name;
-              const tableName = computeObjectTargetTable(
-                objectMetadataItemForField,
-              );
-
-              await queryRunner.query(
-                `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${fieldName}" = 'false' WHERE "${fieldName}" IS NULL`,
+            if (!objectMetadataItemForField) {
+              throw new Error(
+                `Could not find objectMetadataItem for field ${booleanField.id}`,
               );
             }
 
-            await queryRunner.commitTransaction();
-          } catch (error) {
-            await queryRunner.rollbackTransaction();
-            this.logger.log(
-              chalk.red(`Running command on workspace ${workspaceId} failed`),
+            if (!objectMetadataItemForField) {
+              throw new Error(
+                `Could not find objectMetadataItem for field ${booleanField.id}`,
+              );
+            }
+
+            const fieldName = booleanField.name;
+            const tableName = computeObjectTargetTable(
+              objectMetadataItemForField,
             );
-            throw error;
-          } finally {
-            await queryRunner.release();
+
+            await queryRunner.query(
+              `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${fieldName}" = 'false' WHERE "${fieldName}" IS NULL`,
+            );
           }
+
+          await queryRunner.commitTransaction();
+        } catch (error) {
+          await queryRunner.rollbackTransaction();
+          this.logger.log(
+            chalk.red(`Running command on workspace ${workspaceId} failed`),
+          );
+          throw error;
+        } finally {
+          await queryRunner.release();
         }
       }
 
