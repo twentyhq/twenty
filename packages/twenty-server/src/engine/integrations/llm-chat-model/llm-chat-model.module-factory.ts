@@ -12,8 +12,6 @@ export const llmChatModelModuleFactory = (
       return { type: LLMChatModelDriver.OpenAI };
     }
     default:
-      throw new Error(
-        `Invalid LLM chat model driver (${driver}), check your .env file`,
-      );
+    // `No LLM chat model driver (${driver})`);
   }
 };

@@ -17,7 +17,7 @@ export class LLMChatModelModule {
       useFactory: (...args: any[]) => {
         const config = options.useFactory(...args);
 
-        switch (config.type) {
+        switch (config?.type) {
           case LLMChatModelDriver.OpenAI: {
             return new OpenAIDriver();
           }

@@ -9,6 +9,6 @@ export interface LLMChatModelModuleOptions {
 }
 
 export type LLMChatModelModuleAsyncOptions = {
-  useFactory: (...args: any[]) => LLMChatModelModuleOptions;
+  useFactory: (...args: any[]) => LLMChatModelModuleOptions | undefined;
 } & Pick<ModuleMetadata, 'imports'> &
   Pick<FactoryProvider, 'inject'>;

@@ -8,8 +8,6 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import groupBy from 'lodash.groupby';
 
-import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
-
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 import { LLMChatModelService } from 'src/engine/integrations/llm-chat-model/llm-chat-model.service';
@@ -17,7 +15,6 @@ import { LLMTracingService } from 'src/engine/integrations/llm-tracing/llm-traci
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { AISQLQueryResult } from 'src/engine/core-modules/ai-sql-query/dtos/ai-sql-query-result.dto';
 import { sqlGenerationPromptTemplate } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.prompt-templates';
 
@@ -43,7 +40,7 @@ export class AISQLQueryService {
         fieldMetadata.id === objectMetadata.labelIdentifierFieldMetadataId,
     );
 
-    const standardObjectMetadataCollection = this.standardObjectFactory.create(
+    /* const standardObjectMetadataCollection = this.standardObjectFactory.create(
       standardObjectMetadataDefinitions,
       { workspaceId, dataSourceId },
       workspaceFeatureFlagsMap,
@@ -58,11 +55,11 @@ export class AISQLQueryService {
         ?.fields.find(
           (field: PartialFieldMetadata) =>
             field.name === DEFAULT_LABEL_IDENTIFIER_FIELD_NAME,
-        ) as PartialFieldMetadata;
+        ) as PartialFieldMetadata; */
 
     const labelIdentifierFieldMetadata =
-      customObjectLabelIdentifierFieldMetadata ??
-      standardObjectLabelIdentifierFieldMetadata;
+      customObjectLabelIdentifierFieldMetadata; /*??
+      standardObjectLabelIdentifierFieldMetadata*/
 
     return (
       labelIdentifierFieldMetadata?.name ?? DEFAULT_LABEL_IDENTIFIER_FIELD_NAME
