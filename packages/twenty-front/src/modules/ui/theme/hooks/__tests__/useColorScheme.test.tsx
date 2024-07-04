@@ -5,8 +5,8 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+  WorkspaceMemberDateFormat,
+  WorkspaceMemberTimeFormat,
 } from '~/generated/graphql';
 
 const updateOneRecordMock = jest.fn();
@@ -29,8 +29,8 @@ const workspaceMember: Omit<
   },
   locale: 'en',
   timeZone: 'system',
-  dateFormat: WorkspaceMemberDateFormatEnum.System,
-  timeFormat: WorkspaceMemberTimeFormatEnum.System,
+  dateFormat: WorkspaceMemberDateFormat.System,
+  timeFormat: WorkspaceMemberTimeFormat.System,
 };
 
 describe('useColorScheme', () => {

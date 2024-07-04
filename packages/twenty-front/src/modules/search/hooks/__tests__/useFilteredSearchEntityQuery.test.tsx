@@ -9,8 +9,8 @@ import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMet
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import {
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+  WorkspaceMemberDateFormat,
+  WorkspaceMemberTimeFormat,
 } from '~/generated/graphql';
 
 import {
@@ -78,8 +78,8 @@ describe('useFilteredSearchEntityQuery', () => {
           name: { firstName: 'John', lastName: 'Connor' },
           locale: 'en',
           timeZone: 'system',
-          dateFormat: WorkspaceMemberDateFormatEnum.System,
-          timeFormat: WorkspaceMemberTimeFormatEnum.System,
+          dateFormat: WorkspaceMemberDateFormat.System,
+          timeFormat: WorkspaceMemberTimeFormat.System,
         });
 
         const mockObjectMetadataItems = getObjectMetadataItemsMock();

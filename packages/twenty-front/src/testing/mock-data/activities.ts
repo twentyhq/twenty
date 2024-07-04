@@ -6,8 +6,8 @@ import { Person } from '@/people/types/Person';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import {
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+  WorkspaceMemberDateFormat,
+  WorkspaceMemberTimeFormat,
 } from '~/generated/graphql';
 
 type MockedActivity = Pick<
@@ -65,8 +65,8 @@ const workspaceMember: WorkspaceMember = {
   userEmail: 'charles@test.com',
   colorScheme: 'Light',
   timeZone: detectTimeZone(),
-  dateFormat: WorkspaceMemberDateFormatEnum.MonthFirst,
-  timeFormat: WorkspaceMemberTimeFormatEnum.Hour_24,
+  dateFormat: WorkspaceMemberDateFormat.MonthFirst,
+  timeFormat: WorkspaceMemberTimeFormat.Hour_24,
 };
 
 export const mockedTasks: Array<MockedActivity> = [

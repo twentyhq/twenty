@@ -1,7 +1,7 @@
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import {
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+  WorkspaceMemberDateFormat,
+  WorkspaceMemberTimeFormat,
 } from '~/generated/graphql';
 
 import { getDisplayNameFromParticipant } from '../getDisplayNameFromParticipant';
@@ -49,8 +49,8 @@ describe('getDisplayNameFromParticipant', () => {
       userEmail: '',
       userId: '',
       timeZone: 'system',
-      dateFormat: WorkspaceMemberDateFormatEnum.System,
-      timeFormat: WorkspaceMemberTimeFormatEnum.System,
+      dateFormat: WorkspaceMemberDateFormat.System,
+      timeFormat: WorkspaceMemberTimeFormat.System,
     },
   };
 

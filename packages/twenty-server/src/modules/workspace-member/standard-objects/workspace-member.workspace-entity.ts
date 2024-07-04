@@ -29,26 +29,26 @@ import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/a
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 
-export enum WorkspaceMemberDateFormatEnum {
+export enum WorkspaceMemberDateFormat {
   SYSTEM = 'SYSTEM',
   MONTH_FIRST = 'MONTH_FIRST',
   DAY_FIRST = 'DAY_FIRST',
   YEAR_FIRST = 'YEAR_FIRST',
 }
 
-export enum WorkspaceMemberTimeFormatEnum {
+export enum WorkspaceMemberTimeFormat {
   SYSTEM = 'SYSTEM',
   HOUR_12 = 'HOUR_12',
   HOUR_24 = 'HOUR_24',
 }
 
-registerEnumType(WorkspaceMemberTimeFormatEnum, {
-  name: 'WorkspaceMemberTimeFormatEnum',
+registerEnumType(WorkspaceMemberTimeFormat, {
+  name: 'WorkspaceMemberTimeFormat',
   description: 'Time time as Military, Standard or system as default',
 });
 
-registerEnumType(WorkspaceMemberDateFormatEnum, {
-  name: 'WorkspaceMemberDateFormatEnum',
+registerEnumType(WorkspaceMemberDateFormat, {
+  name: 'WorkspaceMemberDateFormat',
   description:
     'Date format as Month first, Day first, Year first or system as default',
 });
@@ -138,31 +138,31 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalendarEvent',
     options: [
       {
-        value: WorkspaceMemberDateFormatEnum.SYSTEM,
+        value: WorkspaceMemberDateFormat.SYSTEM,
         label: 'System',
         position: 0,
         color: 'turquoise',
       },
       {
-        value: WorkspaceMemberDateFormatEnum.MONTH_FIRST,
+        value: WorkspaceMemberDateFormat.MONTH_FIRST,
         label: 'Month First',
         position: 1,
         color: 'red',
       },
       {
-        value: WorkspaceMemberDateFormatEnum.DAY_FIRST,
+        value: WorkspaceMemberDateFormat.DAY_FIRST,
         label: 'Day First',
         position: 2,
         color: 'purple',
       },
       {
-        value: WorkspaceMemberDateFormatEnum.YEAR_FIRST,
+        value: WorkspaceMemberDateFormat.YEAR_FIRST,
         label: 'Year First',
         position: 3,
         color: 'sky',
       },
     ],
-    defaultValue: `'${WorkspaceMemberDateFormatEnum.SYSTEM}'`,
+    defaultValue: `'${WorkspaceMemberDateFormat.SYSTEM}'`,
   })
   dateFormat: string;
 
@@ -174,25 +174,25 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconClock2',
     options: [
       {
-        value: WorkspaceMemberTimeFormatEnum.SYSTEM,
+        value: WorkspaceMemberTimeFormat.SYSTEM,
         label: 'System',
         position: 0,
         color: 'sky',
       },
       {
-        value: WorkspaceMemberTimeFormatEnum.HOUR_24,
+        value: WorkspaceMemberTimeFormat.HOUR_24,
         label: '24HRS',
         position: 1,
         color: 'red',
       },
       {
-        value: WorkspaceMemberTimeFormatEnum.HOUR_12,
+        value: WorkspaceMemberTimeFormat.HOUR_12,
         label: '12HRS',
         position: 2,
         color: 'purple',
       },
     ],
-    defaultValue: `'${WorkspaceMemberTimeFormatEnum.SYSTEM}'`,
+    defaultValue: `'${WorkspaceMemberTimeFormat.SYSTEM}'`,
   })
   timeFormat: string;
 

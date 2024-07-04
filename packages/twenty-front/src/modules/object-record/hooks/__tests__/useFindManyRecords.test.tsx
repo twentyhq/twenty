@@ -14,8 +14,8 @@ import {
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import {
-  WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberTimeFormatEnum,
+  WorkspaceMemberDateFormat,
+  WorkspaceMemberTimeFormat,
 } from '~/generated/graphql';
 
 const mocks = [
@@ -68,8 +68,8 @@ describe('useFindManyRecords', () => {
           name: { firstName: 'John', lastName: 'Connor' },
           locale: 'en',
           timeZone: 'system',
-          dateFormat: WorkspaceMemberDateFormatEnum.System,
-          timeFormat: WorkspaceMemberTimeFormatEnum.System,
+          dateFormat: WorkspaceMemberDateFormat.System,
+          timeFormat: WorkspaceMemberTimeFormat.System,
         });
 
         const mockObjectMetadataItems = getObjectMetadataItemsMock();
