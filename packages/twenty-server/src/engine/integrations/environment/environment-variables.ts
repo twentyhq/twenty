@@ -371,7 +371,7 @@ export class EnvironmentVariables {
 
   OPENROUTER_API_KEY: string;
 
-  LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver = LLMChatModelDriver.OpenAI;
+  LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver;
 
   OPENAI_API_KEY: string;
 
