@@ -4,7 +4,7 @@ import { RecordTableBodyDragDropContext } from '@/object-record/record-table/com
 import { RecordTableBodyDroppable } from '@/object-record/record-table/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/components/RecordTableBodyLoading';
 import { RecordTablePendingRow } from '@/object-record/record-table/components/RecordTablePendingRow';
-import { RecordTableRow } from '@/object-record/record-table/components/RecordTableRow';
+import { RecordTableRows } from '@/object-record/record-table/components/RecordTableRows';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 
 export const RecordTableBody = () => {
@@ -25,15 +25,7 @@ export const RecordTableBody = () => {
     <RecordTableBodyDragDropContext>
       <RecordTableBodyDroppable>
         <RecordTablePendingRow />
-        {tableRowIds.map((recordId, rowIndex) => {
-          return (
-            <RecordTableRow
-              key={recordId}
-              recordId={recordId}
-              rowIndex={rowIndex}
-            />
-          );
-        })}
+        <RecordTableRows />
       </RecordTableBodyDroppable>
     </RecordTableBodyDragDropContext>
   );

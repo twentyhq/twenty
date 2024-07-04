@@ -1,3 +1,4 @@
+import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/components/RecordTableCellCheckbox';
 import { RecordTableCellGrip } from '@/object-record/record-table/components/RecordTableCellGrip';
 import { RecordTableCells } from '@/object-record/record-table/components/RecordTableCells';
@@ -25,6 +26,7 @@ export const RecordTableRow = ({
       <RecordTableCellCheckbox />
       <RecordTableCells />
       <RecordTableLastEmptyCell />
+      <RecordValueSetterEffect recordId={recordId} />
     </RecordTableRowWrapper>
   );
 };

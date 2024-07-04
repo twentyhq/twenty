@@ -7,9 +7,11 @@ import { RecordTableRowContext } from '@/object-record/record-table/contexts/Rec
 export const RecordTableCells = () => {
   const { inView, isDragging } = useContext(RecordTableRowContext);
 
-  return !inView && !isDragging ? (
-    <RecordTableCellsEmpty />
-  ) : (
+  const areCellsVisible = inView || isDragging;
+
+  return areCellsVisible ? (
     <RecordTableCellsVisible />
+  ) : (
+    <RecordTableCellsEmpty />
   );
 };

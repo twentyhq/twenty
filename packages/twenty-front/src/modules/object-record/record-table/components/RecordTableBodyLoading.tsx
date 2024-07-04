@@ -2,10 +2,8 @@ import { useRecoilValue } from 'recoil';
 
 import { CheckboxCell } from '@/object-record/record-table/components/CheckboxCell';
 import { GripCell } from '@/object-record/record-table/components/GripCell';
-import {
-  StyledTd,
-  StyledTr,
-} from '@/object-record/record-table/components/RecordTableRow';
+import { RecordTableTd } from '@/object-record/record-table/components/RecordTableTd';
+import { StyledRecordTableTr } from '@/object-record/record-table/components/StyledRecordTableTr';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
 
@@ -16,22 +14,22 @@ export const RecordTableBodyLoading = () => {
   return (
     <tbody>
       {Array.from({ length: 8 }).map((_, rowIndex) => (
-        <StyledTr
+        <StyledRecordTableTr
           isDragging={false}
           data-testid={`row-id-${rowIndex}`}
           data-selectable-id={`row-id-${rowIndex}`}
           key={rowIndex}
         >
-          <StyledTd data-select-disable>
+          <RecordTableTd data-select-disable>
             <GripCell isDragging={false} />
-          </StyledTd>
-          <StyledTd>
+          </RecordTableTd>
+          <RecordTableTd>
             <CheckboxCell />
-          </StyledTd>
+          </RecordTableTd>
           {visibleTableColumns.map((column) => (
             <RecordTableCellLoading key={column.fieldMetadataId} />
           ))}
-        </StyledTr>
+        </StyledRecordTableTr>
       ))}
     </tbody>
   );
