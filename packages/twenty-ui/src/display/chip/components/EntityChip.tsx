@@ -17,6 +17,7 @@ export type EntityChipProps = {
   variant?: EntityChipVariant;
   LeftIcon?: IconComponent;
   className?: string;
+  onClick?: () => void;
 };
 
 export enum EntityChipVariant {
@@ -33,11 +34,13 @@ export const EntityChip = ({
   variant = EntityChipVariant.Regular,
   LeftIcon,
   className,
+  onClick,
 }: EntityChipProps) => {
   const navigate = useNavigate();
   const theme = useTheme();
 
   const handleLinkClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    onClick?.();
     if (isNonEmptyString(linkToEntity)) {
       event.stopPropagation();
       navigate(linkToEntity);

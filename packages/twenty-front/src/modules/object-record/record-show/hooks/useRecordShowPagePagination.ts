@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -8,6 +9,7 @@ import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/uti
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { recordPositionInternalState } from '@/object-record/record-field/states/recordPositionInternalState';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
@@ -28,15 +30,19 @@ export const useRecordShowPagePagination = (
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('view');
+
+  const recordPositionInternal = useRecoilValue(recordPositionInternalState);
+
+  const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
   const [hasPreviousRecord, setHasPreviousRecord] = useState(false);
   const [hasNextRecord, setHasNextRecord] = useState(false);
-  const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
-  const [viewName, setViewName] = useState('');
   const [objectRecords, setObjectRecords] = useState<ObjectRecord[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [isLoadedRecords, setIsLoadedRecords] = useState(false);
   const [isLoadingPagination, setIsLoadingPagination] = useState(true);
   const [hasNextPage, setHasNextPage] = useState<boolean | undefined>();
+
+  const [viewName, setViewName] = useState('');
 
   const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
@@ -201,9 +207,10 @@ export const useRecordShowPagePagination = (
     navigate(indexPath);
   };
 
-  const currentViewName = `${
-    currentRecordIndex + 1
-  } of ${totalRecords} in ${viewName}`;
+  const currentViewName =
+    recordPositionInternal !== null
+      ? `${recordPositionInternal + 1} of ${totalRecords} in ${viewName}`
+      : `${viewName} (${totalRecords})`;
 
   return {
     viewName: currentViewName,

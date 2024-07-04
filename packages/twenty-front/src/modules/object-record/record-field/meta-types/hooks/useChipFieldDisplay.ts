@@ -1,14 +1,16 @@
 import { useContext } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
 import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
+import { recordPositionInternalState } from '@/object-record/record-field/states/recordPositionInternalState';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { useRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { isDefined } from '~/utils/isDefined';
@@ -18,7 +20,11 @@ import { FieldContext } from '../../contexts/FieldContext';
 export const useChipFieldDisplay = () => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const { viewBarId } = useContext(RecordTableContext);
+  const { rowIndex } = useContext(RecordTableRowContext);
   const { currentViewIdState } = useViewStates(viewBarId);
+  const setRecordPositionInternalState = useSetRecoilState(
+    recordPositionInternalState,
+  );
 
   const currentViewId = useRecoilValue(currentViewIdState);
 
@@ -56,9 +62,14 @@ export const useChipFieldDisplay = () => {
     return recordChipData;
   };
 
+  const setRecordPosition = () => {
+    setRecordPositionInternalState(rowIndex);
+  };
+
   return {
     objectNameSingular,
     recordValue,
     generateRecordChipData: formatRecordChipData,
+    setRecordPosition,
   };
 };

@@ -3,7 +3,8 @@ import { EntityChip } from 'twenty-ui';
 import { useChipFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useChipFieldDisplay';
 
 export const ChipFieldDisplay = () => {
-  const { recordValue, generateRecordChipData } = useChipFieldDisplay();
+  const { recordValue, generateRecordChipData, setRecordPosition } =
+    useChipFieldDisplay();
 
   if (!recordValue) {
     return null;
@@ -18,6 +19,7 @@ export const ChipFieldDisplay = () => {
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       linkToEntity={recordChipData.linkToShowPage}
+      onClick={setRecordPosition}
     />
   );
 };
