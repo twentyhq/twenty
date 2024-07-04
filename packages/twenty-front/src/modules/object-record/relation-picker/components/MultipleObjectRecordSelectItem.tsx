@@ -39,8 +39,7 @@ export const MultipleObjectRecordSelectItem = ({
   const {
     objectRecordMultiSelectFamilyState,
     objectRecordMultiSelectCheckedRecordsIdsState,
-  } =
-    useObjectRecordMultiSelectScopedStates(scopeId);
+  } = useObjectRecordMultiSelectScopedStates(scopeId);
 
   const record = useRecoilValue(
     objectRecordMultiSelectFamilyState(objectRecordId),
@@ -66,7 +65,9 @@ export const MultipleObjectRecordSelectItem = ({
 
   const selected = objectRecordMultiSelectCheckedRecordsIds.find(
     (checkedObjectRecord) => checkedObjectRecord === objectRecordId,
-  ) ? true : false;
+  )
+    ? true
+    : false;
 
   return (
     <StyledSelectableItem itemId={objectRecordId} key={objectRecordId + v4()}>
