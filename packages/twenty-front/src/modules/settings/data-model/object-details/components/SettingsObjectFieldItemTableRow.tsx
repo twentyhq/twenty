@@ -41,10 +41,10 @@ const StyledIconTableCell = styled(TableCell)`
 export const SettingsObjectFieldItemTableRow = ({
   ActionIcon,
   fieldMetadataItem,
-  to,
   identifierType,
   variant = 'field-type',
   isRemoteObjectField,
+  to,
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
