@@ -1,4 +1,5 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { RecordTableCellContextProps } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContextProps } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -10,12 +11,13 @@ export const recordTableRow: RecordTableRowContextProps = {
   pathToShowPage: '/',
   objectNameSingular: 'objectNameSingular',
   isReadOnly: false,
+  dragHandleProps: {} as any,
+  isDragging: false,
+  inView: true,
+  isPendingRow: false,
 };
 
-export const recordTableCell: {
-  columnDefinition: ColumnDefinition<FieldMetadata>;
-  columnIndex: number;
-} = {
+export const recordTableCell:RecordTableCellContextProps= {
   columnIndex: 3,
   columnDefinition: {
     size: 1,
@@ -29,4 +31,10 @@ export const recordTableCell: {
       fieldName: 'fieldName',
     },
   },
+  cellPosition: {
+    row: 1,
+    column: 1,
+  },
+  hasSoftFocus: false,
+  isInEditMode: false,
 };

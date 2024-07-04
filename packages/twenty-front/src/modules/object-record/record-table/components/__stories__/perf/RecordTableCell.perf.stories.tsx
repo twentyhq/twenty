@@ -73,6 +73,9 @@ const meta: Meta = {
               onContextMenu: () => {},
               onCellMouseEnter: () => {},
               visibleTableColumns: mockPerformance.visibleTableColumns as any,
+              objectNameSingular:
+                mockPerformance.objectMetadataItem.nameSingular,
+              recordTableId: 'recordTableId',
             }}
           >
             <RecordTableScope
@@ -92,12 +95,19 @@ const meta: Meta = {
                     }) + mockPerformance.entityId,
                   isSelected: false,
                   isReadOnly: false,
+                  isDragging: false,
+                  dragHandleProps: null,
+                  inView: true,
+                  isPendingRow: false,
                 }}
               >
                 <RecordTableCellContext.Provider
                   value={{
                     columnDefinition: mockPerformance.fieldDefinition,
                     columnIndex: 0,
+                    cellPosition: { row: 0, column: 0 },
+                    hasSoftFocus: false,
+                    isInEditMode: false,
                   }}
                 >
                   <FieldContext.Provider
