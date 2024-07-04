@@ -24,10 +24,53 @@ export class StandardFieldFactory {
     target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Array<PartialFieldMetadata | PartialComputedFieldMetadata> {
+  ): (PartialFieldMetadata | PartialComputedFieldMetadata)[];
+
+  create(
+    targets: (typeof BaseWorkspaceEntity)[],
+    context: WorkspaceSyncContext,
+    workspaceFeatureFlagsMap: FeatureFlagMap, // Map of standardId to field metadata
+  ): Map<string, (PartialFieldMetadata | PartialComputedFieldMetadata)[]>;
+
+  create(
+    targetOrTargets:
+      | typeof BaseWorkspaceEntity
+      | (typeof BaseWorkspaceEntity)[],
+    context: WorkspaceSyncContext,
+    workspaceFeatureFlagsMap: FeatureFlagMap,
+  ):
+    | (PartialFieldMetadata | PartialComputedFieldMetadata)[]
+    | Map<string, (PartialFieldMetadata | PartialComputedFieldMetadata)[]> {
+    if (Array.isArray(targetOrTargets)) {
+      return targetOrTargets.reduce((acc, target) => {
+        const workspaceEntityMetadataArgs =
+          metadataArgsStorage.filterEntities(target);
+
+        if (!workspaceEntityMetadataArgs) {
+          return acc;
+        }
+
+        if (
+          isGatedAndNotEnabled(
+            workspaceEntityMetadataArgs.gate,
+            workspaceFeatureFlagsMap,
+          )
+        ) {
+          return acc;
+        }
+
+        acc.set(
+          workspaceEntityMetadataArgs.standardId,
+          this.create(target, context, workspaceFeatureFlagsMap),
+        );
+
+        return acc;
+      }, new Map<string, (PartialFieldMetadata | PartialComputedFieldMetadata)[]>());
+    }
+
     const workspaceEntityMetadataArgs =
-      metadataArgsStorage.filterEntities(target);
-    const metadataCollections = this.collectMetadata(target);
+      metadataArgsStorage.filterEntities(targetOrTargets);
+    const metadataCollections = this.collectMetadata(targetOrTargets);
 
     return [
       ...this.processMetadata(

@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch",
+    "@langchain/mistralai": "^0.0.24",
+    "@langchain/openai": "^0.1.3",
     "@nestjs/cache-manager": "^2.2.1",
     "@nestjs/devtools-integration": "^0.1.6",
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch",
@@ -25,13 +27,16 @@
     "graphql-middleware": "^6.1.35",
     "jsdom": "~22.1.0",
     "jwt-decode": "^4.0.0",
+    "langchain": "^0.2.6",
+    "langfuse-langchain": "^3.11.2",
     "lodash.differencewith": "^4.5.0",
     "lodash.omitby": "^4.6.0",
     "lodash.uniq": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
     "passport": "^0.7.0",
     "psl": "^1.9.0",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+    "zod-to-json-schema": "^3.23.1"
   },
   "devDependencies": {
     "@nestjs/cli": "10.3.0",

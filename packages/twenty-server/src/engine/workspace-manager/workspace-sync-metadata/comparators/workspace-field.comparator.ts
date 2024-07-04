@@ -7,9 +7,7 @@ import {
   FieldComparatorResult,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
-import { ComputedPartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import {
   FieldMetadataEntity,
@@ -35,8 +33,9 @@ export class WorkspaceFieldComparator {
   constructor() {}
 
   public compare(
-    originalObjectMetadata: ObjectMetadataEntity,
-    standardObjectMetadata: ComputedPartialWorkspaceEntity,
+    originalObjectMetadataId: string,
+    originalFieldMetadataCollection: FieldMetadataEntity[],
+    standardFieldMetadataCollection: ComputedPartialFieldMetadata[],
   ): FieldComparatorResult[] {
     const result: FieldComparatorResult[] = [];
     const fieldPropertiesToUpdateMap: Record<
@@ -46,7 +45,7 @@ export class WorkspaceFieldComparator {
 
     // Double security to only compare non-custom fields
     const filteredOriginalFieldCollection =
-      originalObjectMetadata.fields.filter((field) => !field.isCustom);
+      originalFieldMetadataCollection.filter((field) => !field.isCustom);
     const originalFieldMetadataMap = transformMetadataForComparison(
       filteredOriginalFieldCollection,
       {
@@ -73,7 +72,7 @@ export class WorkspaceFieldComparator {
       },
     );
     const standardFieldMetadataMap = transformMetadataForComparison(
-      standardObjectMetadata.fields,
+      standardFieldMetadataCollection,
       {
         shouldIgnoreProperty: (property, originalMetadata) => {
           if (commonFieldPropertiesToIgnore.includes(property)) {
@@ -117,9 +116,9 @@ export class WorkspaceFieldComparator {
       };
       // Object shouldn't have thousands of fields, so we can use find here
       const standardFieldMetadata =
-        standardObjectMetadata.fields.find(findField);
+        standardFieldMetadataCollection.find(findField);
       const originalFieldMetadata =
-        originalObjectMetadata.fields.find(findField);
+        originalFieldMetadataCollection.find(findField);
 
       switch (difference.type) {
         case 'CREATE': {
@@ -133,7 +132,7 @@ export class WorkspaceFieldComparator {
             action: ComparatorAction.CREATE,
             object: {
               ...standardFieldMetadata,
-              objectMetadataId: originalObjectMetadata.id,
+              objectMetadataId: originalObjectMetadataId,
             },
           });
           break;
