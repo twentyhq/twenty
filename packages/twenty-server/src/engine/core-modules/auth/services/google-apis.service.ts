@@ -167,13 +167,21 @@ export class GoogleAPIsService {
     }
 
     if (isCalendarEnabled) {
-      await this.calendarQueueService.add<CalendarEventsImportJobData>(
-        CalendarEventsImportJob.name,
-        {
-          workspaceId,
+      const calendarChannels = await this.calendarChannelRepository.find({
+        where: {
           connectedAccountId: newOrExistingConnectedAccountId,
         },
-      );
+      });
+
+      for (const calendarChannel of calendarChannels) {
+        await this.calendarQueueService.add<CalendarEventsImportJobData>(
+          CalendarEventsImportJob.name,
+          {
+            calendarChannelId: calendarChannel.id,
+            workspaceId,
+          },
+        );
+      }
     }
   }
 }

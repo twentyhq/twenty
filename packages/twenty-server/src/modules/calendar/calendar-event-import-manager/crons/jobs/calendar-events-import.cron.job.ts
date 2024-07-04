@@ -63,8 +63,8 @@ export class CalendarEventsImportCronJob {
         await this.messageQueueService.add<CalendarEventsImportJobData>(
           CalendarEventsImportJob.name,
           {
+            calendarChannelId: calendarChannel.id,
             workspaceId,
-            connectedAccountId: calendarChannel.connectedAccountId,
           },
         );
       }

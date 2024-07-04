@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { CalendarEventWithParticipantsAndCalendarEventId } from 'src/modules/calendar/common/types/calendar-event';
+import { Any } from 'typeorm';
+
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
@@ -19,6 +19,9 @@ import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/cale
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 
 @Injectable()
 export class CalendarSaveEventsService {
@@ -37,18 +40,70 @@ export class CalendarSaveEventsService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  public async saveCalendarEvents(
-    eventsToSave: CalendarEventWithParticipantsAndCalendarEventId[],
-    eventsToUpdate: CalendarEventWithParticipantsAndCalendarEventId[],
-    calendarChannelEventAssociationsToSave: {
-      calendarEventId: string;
-      eventExternalId: string;
-      calendarChannelId: string;
-    }[],
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+  public async saveCalendarEventsAndEnqueueContactCreationJob(
+    filteredEvents: CalendarEventWithParticipants[],
     calendarChannel: CalendarChannelWorkspaceEntity,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
+    const existingCalendarEvents = await this.calendarEventRepository.find({
+      where: {
+        iCalUID: Any(filteredEvents.map((event) => event.iCalUID as string)),
+      },
+    });
+
+    const iCalUIDCalendarEventIdMap = new Map(
+      existingCalendarEvents.map((calendarEvent) => [
+        calendarEvent.iCalUID,
+        calendarEvent.id,
+      ]),
+    );
+
+    const calendarEventsWithIds = injectIdsInCalendarEvents(
+      filteredEvents,
+      iCalUIDCalendarEventIdMap,
+    );
+
+    // TODO: When we will be able to add unicity contraint on iCalUID, we will do a INSERT ON CONFLICT DO UPDATE
+
+    const existingEventsICalUIDs = existingCalendarEvents.map(
+      (calendarEvent) => calendarEvent.iCalUID,
+    );
+
+    const eventsToSave = calendarEventsWithIds.filter(
+      (calendarEvent) =>
+        !existingEventsICalUIDs.includes(calendarEvent.iCalUID),
+    );
+
+    const eventsToUpdate = calendarEventsWithIds.filter((calendarEvent) =>
+      existingEventsICalUIDs.includes(calendarEvent.iCalUID),
+    );
+
+    const existingCalendarChannelEventAssociations =
+      await this.calendarChannelEventAssociationRepository.find({
+        where: {
+          eventExternalId: Any(
+            calendarEventsWithIds.map((calendarEvent) => calendarEvent.id),
+          ),
+          calendarChannel: {
+            id: calendarChannel.id,
+          },
+        },
+      });
+
+    const calendarChannelEventAssociationsToSave = calendarEventsWithIds
+      .filter(
+        (calendarEvent) =>
+          !existingCalendarChannelEventAssociations.some(
+            (association) => association.eventExternalId === calendarEvent.id,
+          ),
+      )
+      .map((calendarEvent) => ({
+        calendarEventId: calendarEvent.id,
+        eventExternalId: calendarEvent.externalId,
+        calendarChannelId: calendarChannel.id,
+      }));
+
     const participantsToSave = eventsToSave.flatMap(
       (event) => event.participants,
     );

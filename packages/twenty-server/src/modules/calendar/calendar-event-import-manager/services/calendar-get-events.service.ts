@@ -10,18 +10,23 @@ export type GetCalendarEventsResponse = {
 };
 
 @Injectable()
-export class CalendarGetEventsService {
+export class CalendarGetCalendarEventsService {
   constructor(
     private readonly googleCalendarGetCalendarEventsService: GoogleCalendarGetCalendarEventsService,
   ) {}
 
   public async getCalendarEvents(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'provider' | 'refreshToken' | 'id'
+    >,
+    syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {
     switch (connectedAccount.provider) {
       case 'google':
         return this.googleCalendarGetCalendarEventsService.getCalendarEvents(
           connectedAccount,
+          syncCursor,
         );
       default:
         throw new Error(
