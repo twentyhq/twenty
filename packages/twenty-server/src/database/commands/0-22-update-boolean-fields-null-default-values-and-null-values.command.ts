@@ -1,8 +1,8 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { Repository, IsNull, DataSource } from 'typeorm';
 import chalk from 'chalk';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -13,7 +13,6 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 interface UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommandOptions {
@@ -32,13 +31,11 @@ export class UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand extends Co
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    @InjectDataSource('metadata')
+    private readonly metadataDataSource: DataSource,
   ) {
     super();
   }
@@ -56,21 +53,18 @@ export class UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand extends Co
     _passedParam: string[],
     options: UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommandOptions,
   ): Promise<void> {
-    let workspaceIds: string[] = [];
-
-    if (options.workspaceId) {
-      workspaceIds = [options.workspaceId];
-    } else {
-      workspaceIds = (await this.workspaceRepository.find()).map(
-        (workspace) => workspace.id,
-      );
-    }
+    const workspaceIds = options.workspaceId
+      ? [options.workspaceId]
+      : (await this.workspaceRepository.find()).map(
+          (workspace) => workspace.id,
+        );
 
     if (!workspaceIds.length) {
       this.logger.log(chalk.yellow('No workspace found'));
 
       return;
     }
+
     this.logger.log(
       chalk.green(`Running command on ${workspaceIds.length} workspaces`),
     );
@@ -90,56 +84,67 @@ export class UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand extends Co
       const workspaceDataSource =
         await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-      if (workspaceDataSource) {
-        const queryRunner = workspaceDataSource.createQueryRunner();
+      if (!workspaceDataSource) {
+        throw new Error(
+          `Could not connect to dataSource for workspace ${workspaceId}`,
+        );
+      }
 
-        await queryRunner.connect();
-        await queryRunner.startTransaction();
+      const workspaceQueryRunner = workspaceDataSource.createQueryRunner();
+      const metadataQueryRunner = this.metadataDataSource.createQueryRunner();
 
-        try {
-          const booleanFields = await this.fieldMetadataRepository.findBy({
-            workspaceId,
-            type: FieldMetadataType.BOOLEAN,
+      await workspaceQueryRunner.connect();
+      await metadataQueryRunner.connect();
+
+      await workspaceQueryRunner.startTransaction();
+      await metadataQueryRunner.startTransaction();
+
+      try {
+        const fieldMetadataRepository =
+          metadataQueryRunner.manager.getRepository(FieldMetadataEntity);
+
+        const booleanFieldsWithoutDefaultValue =
+          await fieldMetadataRepository.find({
+            where: {
+              workspaceId,
+              type: FieldMetadataType.BOOLEAN,
+              defaultValue: IsNull(),
+            },
+            relations: ['object'],
           });
 
-          for (const booleanField of booleanFields) {
-            const objectMetadataItemForField =
-              await this.objectMetadataRepository.findOneBy({
-                id: booleanField.objectMetadataId,
-              });
-
-            if (!objectMetadataItemForField) {
-              throw new Error(
-                `Could not find objectMetadataItem for field ${booleanField.id}`,
-              );
-            }
-
-            if (!objectMetadataItemForField) {
-              throw new Error(
-                `Could not find objectMetadataItem for field ${booleanField.id}`,
-              );
-            }
-
-            const fieldName = booleanField.name;
-            const tableName = computeObjectTargetTable(
-              objectMetadataItemForField,
-            );
-
-            await queryRunner.query(
-              `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${fieldName}" = 'false' WHERE "${fieldName}" IS NULL`,
+        for (const booleanField of booleanFieldsWithoutDefaultValue) {
+          if (!booleanField.object) {
+            throw new Error(
+              `Could not find objectMetadataItem for field ${booleanField.id}`,
             );
           }
 
-          await queryRunner.commitTransaction();
-        } catch (error) {
-          await queryRunner.rollbackTransaction();
-          this.logger.log(
-            chalk.red(`Running command on workspace ${workspaceId} failed`),
+          // Could be done via a batch update but it's safer in this context to run it sequentially with the ALTER TABLE
+          await fieldMetadataRepository.update(booleanField.id, {
+            defaultValue: false,
+          });
+
+          const fieldName = booleanField.name;
+          const tableName = computeObjectTargetTable(booleanField.object);
+
+          await workspaceQueryRunner.query(
+            `ALTER TABLE "${dataSourceMetadata.schema}"."${tableName}" ALTER COLUMN "${fieldName}" SET DEFAULT false;`,
           );
-          throw error;
-        } finally {
-          await queryRunner.release();
         }
+
+        await workspaceQueryRunner.commitTransaction();
+        await metadataQueryRunner.commitTransaction();
+      } catch (error) {
+        await workspaceQueryRunner.rollbackTransaction();
+        await metadataQueryRunner.rollbackTransaction();
+        this.logger.log(
+          chalk.red(`Running command on workspace ${workspaceId} failed`),
+        );
+        throw error;
+      } finally {
+        await workspaceQueryRunner.release();
+        await metadataQueryRunner.release();
       }
 
       await this.workspaceCacheVersionService.incrementVersion(workspaceId);
