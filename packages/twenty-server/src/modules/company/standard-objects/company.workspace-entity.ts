@@ -106,7 +106,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsDeprecated()
   @WorkspaceIsNullable()
-  address_custom: string;
+  address_old: string;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.address,
