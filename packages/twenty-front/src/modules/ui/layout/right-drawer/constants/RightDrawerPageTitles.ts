@@ -6,4 +6,5 @@ export const RIGHT_DRAWER_PAGE_TITLES = {
   [RightDrawerPages.ViewEmailThread]: 'Email Thread',
   [RightDrawerPages.ViewCalendarEvent]: 'Calendar Event',
   [RightDrawerPages.ViewRecord]: 'Record Editor',
+  [RightDrawerPages.Copilot]: 'Copilot',
 };
