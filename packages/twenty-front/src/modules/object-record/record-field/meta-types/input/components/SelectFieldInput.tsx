@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
+import { useClearField } from '@/object-record/record-field/hooks/useClearField';
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -30,12 +31,15 @@ export const SelectFieldInput = ({
 }: SelectFieldInputProps) => {
   const { persistField, fieldDefinition, fieldValue, hotkeyScope } =
     useSelectField();
+  const clearField = useClearField();
+
   const [searchFilter, setSearchFilter] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = fieldDefinition.metadata.options.find(
     (option) => option.value === fieldValue,
   );
+
   const optionsToSelect =
     fieldDefinition.metadata.options.filter((option) => {
       return (
@@ -43,9 +47,16 @@ export const SelectFieldInput = ({
         option.label.toLowerCase().includes(searchFilter.toLowerCase())
       );
     }) || [];
+
   const optionsInDropDown = selectedOption
     ? [selectedOption, ...optionsToSelect]
     : optionsToSelect;
+
+  // handlers
+  const handleClearField = () => {
+    clearField();
+    onCancel?.();
+  };
 
   useListenClickOutside({
     refs: [containerRef],
@@ -85,7 +96,17 @@ export const SelectFieldInput = ({
           autoFocus
         />
         <DropdownMenuSeparator />
+
         <DropdownMenuItemsContainer hasMaxHeight>
+          <MenuItemSelectTag
+            key={`No ${fieldDefinition.label}`}
+            selected={false}
+            text={`No ${fieldDefinition.label}`}
+            color="transparent"
+            variant="outline"
+            onClick={handleClearField}
+          />
+
           {optionsInDropDown.map((option) => {
             return (
               <MenuItemSelectTag

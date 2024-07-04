@@ -26,7 +26,10 @@ export class RemoteServerResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.remoteServerService.createOneRemoteServer(input, workspaceId);
+      return await this.remoteServerService.createOneRemoteServer(
+        input,
+        workspaceId,
+      );
     } catch (error) {
       remoteServerGraphqlApiExceptionHandler(error);
     }
@@ -38,7 +41,10 @@ export class RemoteServerResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.remoteServerService.updateOneRemoteServer(input, workspaceId);
+      return await this.remoteServerService.updateOneRemoteServer(
+        input,
+        workspaceId,
+      );
     } catch (error) {
       remoteServerGraphqlApiExceptionHandler(error);
     }
@@ -50,7 +56,10 @@ export class RemoteServerResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.remoteServerService.deleteOneRemoteServer(id, workspaceId);
+      return await this.remoteServerService.deleteOneRemoteServer(
+        id,
+        workspaceId,
+      );
     } catch (error) {
       remoteServerGraphqlApiExceptionHandler(error);
     }
@@ -62,7 +71,7 @@ export class RemoteServerResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.remoteServerService.findOneByIdWithinWorkspace(
+      return await this.remoteServerService.findOneByIdWithinWorkspace(
         id,
         workspaceId,
       );
@@ -78,7 +87,7 @@ export class RemoteServerResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.remoteServerService.findManyByTypeWithinWorkspace(
+      return await this.remoteServerService.findManyByTypeWithinWorkspace(
         foreignDataWrapperType,
         workspaceId,
       );

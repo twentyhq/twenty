@@ -17,12 +17,12 @@ export class RelationMetadataResolver {
   ) {}
 
   @Mutation(() => RelationMetadataDTO)
-  deleteOneRelation(
+  async deleteOneRelation(
     @Args('input') input: DeleteOneRelationInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.relationMetadataService.deleteOneRelation(
+      return await this.relationMetadataService.deleteOneRelation(
         input.id,
         workspaceId,
       );
