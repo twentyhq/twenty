@@ -1,17 +1,17 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { SettingsAccountsEmailsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistInput';
-import { SettingsAccountsEmailsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistSection';
+import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
+import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 
-const meta: Meta<typeof SettingsAccountsEmailsBlocklistSection> = {
+const meta: Meta<typeof SettingsAccountsBlocklistSection> = {
   title:
-    'Modules/Settings/Accounts/Blocklist/SettingsAccountsEmailsBlocklistSection',
-  component: SettingsAccountsEmailsBlocklistInput,
+    'Modules/Settings/Accounts/Blocklist/SettingsAccountsBlocklistSection',
+  component: SettingsAccountsBlocklistInput,
   decorators: [ComponentDecorator],
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsAccountsEmailsBlocklistSection>;
+type Story = StoryObj<typeof SettingsAccountsBlocklistSection>;
 
 export const Default: Story = {};

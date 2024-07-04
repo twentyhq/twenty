@@ -3,7 +3,7 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
-import { SettingsAccountsEmailsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistTableRow';
+import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsBlocklistTableRow';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const onRemoveJestFn = fn();
@@ -15,10 +15,10 @@ const ClearMocksDecorator: Decorator = (Story, context) => {
   return <Story />;
 };
 
-const meta: Meta<typeof SettingsAccountsEmailsBlocklistTableRow> = {
+const meta: Meta<typeof SettingsAccountsBlocklistTableRow> = {
   title:
-    'Modules/Settings/Accounts/Blocklist/SettingsAccountsEmailsBlocklistTableRow',
-  component: SettingsAccountsEmailsBlocklistTableRow,
+    'Modules/Settings/Accounts/Blocklist/SettingsAccountsBlocklistTableRow',
+  component: SettingsAccountsBlocklistTableRow,
   decorators: [ComponentDecorator, ClearMocksDecorator],
   args: {
     blocklistItem: mockedBlocklist[0],
@@ -34,7 +34,7 @@ const meta: Meta<typeof SettingsAccountsEmailsBlocklistTableRow> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsAccountsEmailsBlocklistTableRow>;
+type Story = StoryObj<typeof SettingsAccountsBlocklistTableRow>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {

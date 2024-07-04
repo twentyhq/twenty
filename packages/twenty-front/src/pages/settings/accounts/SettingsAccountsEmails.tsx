@@ -1,6 +1,6 @@
 import { H2Title, IconSettings } from 'twenty-ui';
 
-import { SettingsAccountsMessageChannelsListCard } from '@/settings/accounts/components/SettingsAccountsMessageChannelsListCard';
+import { SettingsAccountsMessageChannelsContainer } from '@/settings/accounts/components/SettingsAccountsMessageChannelsContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -20,7 +20,7 @@ export const SettingsAccountsEmails = () => (
           title="Emails sync"
           description="Sync your inboxes and set your privacy settings"
         />
-        <SettingsAccountsMessageChannelsListCard />
+        <SettingsAccountsMessageChannelsContainer />
       </Section>
     </SettingsPageContainer>
   </SubMenuTopBarContainer>

@@ -19,7 +19,7 @@ const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-type SettingsAccountsEmailsBlocklistInputProps = {
+type SettingsAccountsBlocklistInputProps = {
   updateBlockedEmailList: (email: string) => void;
   blockedEmailOrDomainList: string[];
 };
@@ -50,10 +50,10 @@ type FormInput = {
   emailOrDomain: string;
 };
 
-export const SettingsAccountsEmailsBlocklistInput = ({
+export const SettingsAccountsBlocklistInput = ({
   updateBlockedEmailList,
   blockedEmailOrDomainList,
-}: SettingsAccountsEmailsBlocklistInputProps) => {
+}: SettingsAccountsBlocklistInputProps) => {
   const { reset, handleSubmit, control, formState } = useForm<FormInput>({
     mode: 'onSubmit',
     resolver: zodResolver(validationSchema(blockedEmailOrDomainList)),

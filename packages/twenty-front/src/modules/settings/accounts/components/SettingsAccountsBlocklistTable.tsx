@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
 
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
-import { SettingsAccountsEmailsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistTableRow';
+import { SettingsAccountsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsBlocklistTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
-type SettingsAccountsEmailsBlocklistTableProps = {
+type SettingsAccountsBlocklistTableProps = {
   blocklist: BlocklistItem[];
   handleBlockedEmailRemove: (id: string) => void;
 };
@@ -20,10 +20,10 @@ const StyledTableBody = styled(TableBody)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
-export const SettingsAccountsEmailsBlocklistTable = ({
+export const SettingsAccountsBlocklistTable = ({
   blocklist,
   handleBlockedEmailRemove,
-}: SettingsAccountsEmailsBlocklistTableProps) => {
+}: SettingsAccountsBlocklistTableProps) => {
   return (
     <>
       {blocklist.length > 0 && (
@@ -35,7 +35,7 @@ export const SettingsAccountsEmailsBlocklistTable = ({
           </TableRow>
           <StyledTableBody>
             {blocklist.map((blocklistItem) => (
-              <SettingsAccountsEmailsBlocklistTableRow
+              <SettingsAccountsBlocklistTableRow
                 key={blocklistItem.id}
                 blocklistItem={blocklistItem}
                 onRemove={handleBlockedEmailRemove}
