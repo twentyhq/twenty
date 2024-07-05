@@ -21,7 +21,7 @@ export type CalendarEventsImportJobData = {
   queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
 })
-export class CalendarEventsImportJob {
+export class CalendarEventListFetchJob {
   constructor(
     private readonly googleCalendarSyncService: CalendarEventsImportService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
@@ -30,17 +30,18 @@ export class CalendarEventsImportJob {
     private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
   ) {}
 
-  @Process(CalendarEventsImportJob.name)
+  @Process(CalendarEventListFetchJob.name)
   async handle(data: CalendarEventsImportJobData): Promise<void> {
     const { workspaceId, calendarChannelId } = data;
 
     const calendarChannel = await this.calendarChannelRepository.findOne({
       where: {
         id: calendarChannelId,
+        isSyncEnabled: true,
       },
     });
 
-    if (!calendarChannel || !calendarChannel?.isSyncEnabled) {
+    if (!calendarChannel) {
       return;
     }
 

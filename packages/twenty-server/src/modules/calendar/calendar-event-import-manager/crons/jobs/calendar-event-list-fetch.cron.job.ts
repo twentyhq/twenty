@@ -11,15 +11,18 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
+  CalendarChannelSyncStage,
+  CalendarChannelWorkspaceEntity,
+} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import {
   CalendarEventsImportJobData,
-  CalendarEventsImportJob,
-} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+  CalendarEventListFetchJob,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
 })
-export class CalendarEventsImportCronJob {
+export class CalendarEventListFetchCronJob {
   constructor(
     @InjectRepository(DataSourceEntity, 'metadata')
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
@@ -29,7 +32,7 @@ export class CalendarEventsImportCronJob {
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
-  @Process(CalendarEventsImportCronJob.name)
+  @Process(CalendarEventListFetchCronJob.name)
   async handle(): Promise<void> {
     const workspaceIds =
       await this.billingService.getActiveSubscriptionWorkspaceIds();
@@ -51,15 +54,18 @@ export class CalendarEventsImportCronJob {
           CalendarChannelWorkspaceEntity,
         );
 
-      const calendarChannels = await calendarChannelRepository.find({});
+      const calendarChannels = await calendarChannelRepository.find({
+        where: {
+          isSyncEnabled: true,
+          syncStage:
+            CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING ||
+            CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+        },
+      });
 
       for (const calendarChannel of calendarChannels) {
-        if (!calendarChannel?.isSyncEnabled) {
-          continue;
-        }
-
         await this.messageQueueService.add<CalendarEventsImportJobData>(
-          CalendarEventsImportJob.name,
+          CalendarEventListFetchJob.name,
           {
             calendarChannelId: calendarChannel.id,
             workspaceId,
