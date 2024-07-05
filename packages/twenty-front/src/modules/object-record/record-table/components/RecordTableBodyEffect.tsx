@@ -6,10 +6,11 @@ import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useL
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { isRecordTableScrolledLeftState } from '@/object-record/record-table/states/isRecordTableScrolledLeftState';
-import { isRecordTableScrolledTopState } from '@/object-record/record-table/states/isRecordTableScrolledTopState';
+import { isRecordTableScrolledTopComponentState } from '@/object-record/record-table/states/isRecordTableScrolledTopComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
 export const RecordTableBodyEffect = () => {
@@ -33,8 +34,8 @@ export const RecordTableBodyEffect = () => {
   const tableLastRowVisible = useRecoilValue(tableLastRowVisibleState);
 
   const scrollTop = useRecoilValue(scrollTopState);
-  const setIsRecordTableScrolledTop = useSetRecoilState(
-    isRecordTableScrolledTopState,
+  const setIsRecordTableScrolledTop = useSetRecoilComponentState(
+    isRecordTableScrolledTopComponentState,
   );
 
   useEffect(() => {

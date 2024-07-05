@@ -5,7 +5,8 @@ import { CheckboxCell } from '@/object-record/record-table/components/CheckboxCe
 import { RecordTableTd } from '@/object-record/record-table/components/RecordTableTd';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { isRecordTableScrolledLeftState } from '@/object-record/record-table/states/isRecordTableScrolledLeftState';
-import { isRecordTableScrolledTopState } from '@/object-record/record-table/states/isRecordTableScrolledTopState';
+import { isRecordTableScrolledTopComponentState } from '@/object-record/record-table/states/isRecordTableScrolledTopComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTableCellCheckbox = () => {
   const { isSelected, isDragging } = useContext(RecordTableRowContext);
@@ -13,8 +14,8 @@ export const RecordTableCellCheckbox = () => {
   const isRecordTableScrolledLeft = useRecoilValue(
     isRecordTableScrolledLeftState,
   );
-  const isRecordTableScrolledTop = useRecoilValue(
-    isRecordTableScrolledTopState,
+  const isRecordTableScrolledTop = useRecoilComponentValue(
+    isRecordTableScrolledTopComponentState,
   );
 
   const zIndex =

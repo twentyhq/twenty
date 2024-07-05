@@ -7,7 +7,8 @@ import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/co
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/components/RecordTableHeaderDragDropColumn';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { isRecordTableScrolledLeftState } from '@/object-record/record-table/states/isRecordTableScrolledLeftState';
-import { isRecordTableScrolledTopState } from '@/object-record/record-table/states/isRecordTableScrolledTopState';
+import { isRecordTableScrolledTopComponentState } from '@/object-record/record-table/states/isRecordTableScrolledTopComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const StyledTableHead = styled.thead<{
   isScrolledTop?: boolean;
@@ -93,8 +94,8 @@ export const RecordTableHeader = ({
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
-  const isRecordTableScrolledTop = useRecoilValue(
-    isRecordTableScrolledTopState,
+  const isRecordTableScrolledTop = useRecoilComponentValue(
+    isRecordTableScrolledTopComponentState,
   );
 
   const isRecordTableScrolledLeft = useRecoilValue(

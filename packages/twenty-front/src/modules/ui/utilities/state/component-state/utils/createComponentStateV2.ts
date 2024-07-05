@@ -1,0 +1,31 @@
+import { AtomEffect, atomFamily } from 'recoil';
+
+import { ScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/types/ScopeInternalContext';
+import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+
+type CreateComponentStateV2Type<ValueType> = {
+  key: string;
+  defaultValue: ValueType;
+  componentContext?: ScopeInternalContext<any> | null;
+  effects?: AtomEffect<ValueType>[];
+};
+
+export const createComponentStateV2 = <ValueType>({
+  key,
+  defaultValue,
+  componentContext,
+  effects,
+}: CreateComponentStateV2Type<ValueType>) => {
+  // if (isDefined(componentContext)) {
+  //   componentContextStateMap.set(key, componentContext);
+  // }
+
+  return {
+    key,
+    atomFamily: atomFamily<ValueType, ComponentStateKey>({
+      key,
+      default: defaultValue,
+      effects: effects,
+    }),
+  };
+};
