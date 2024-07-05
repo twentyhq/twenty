@@ -4,7 +4,6 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { ColumnHead } from '@/object-record/record-table/components/ColumnHead';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -186,11 +185,7 @@ export const RecordTableHeaderCell = ({
       onMouseLeave={() => setIconVisibility(false)}
     >
       <StyledColumnHeadContainer>
-        {column.isLabelIdentifier ? (
-          <ColumnHead column={column} />
-        ) : (
-          <ColumnHeadWithDropdown column={column} />
-        )}
+        <ColumnHeadWithDropdown column={column} />
         {(useIsMobile() || iconVisibility) && !!column.isLabelIdentifier && (
           <StyledHeaderIcon>
             <LightIconButton

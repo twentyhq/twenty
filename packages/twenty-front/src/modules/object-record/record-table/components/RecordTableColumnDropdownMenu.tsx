@@ -33,12 +33,13 @@ export const RecordTableColumnDropdownMenu = ({
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
   const secondVisibleColumn = visibleTableColumns[1];
+  const canMove = column.isLabelIdentifier !== true;
   const canMoveLeft =
-    column.fieldMetadataId !== secondVisibleColumn?.fieldMetadataId;
+    column.fieldMetadataId !== secondVisibleColumn?.fieldMetadataId && canMove;
 
   const lastVisibleColumn = visibleTableColumns[visibleTableColumns.length - 1];
   const canMoveRight =
-    column.fieldMetadataId !== lastVisibleColumn?.fieldMetadataId;
+    column.fieldMetadataId !== lastVisibleColumn?.fieldMetadataId && canMove;
 
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
@@ -83,7 +84,9 @@ export const RecordTableColumnDropdownMenu = ({
 
   const isSortable = column.isSortable === true;
   const isFilterable = column.isFilterable === true;
-  const showSeparator = isFilterable || isSortable;
+  const showSeparator =
+    (isFilterable || isSortable) && column.isLabelIdentifier !== true;
+  const canHide = column.isLabelIdentifier !== true;
 
   return (
     <DropdownMenuItemsContainer>
@@ -116,11 +119,13 @@ export const RecordTableColumnDropdownMenu = ({
           text="Move right"
         />
       )}
-      <MenuItem
-        LeftIcon={IconEyeOff}
-        onClick={handleColumnVisibility}
-        text="Hide"
-      />
+      {canHide && (
+        <MenuItem
+          LeftIcon={IconEyeOff}
+          onClick={handleColumnVisibility}
+          text="Hide"
+        />
+      )}
     </DropdownMenuItemsContainer>
   );
 };
