@@ -8,6 +8,10 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
+  MessageParticipantMatchParticipantJobData,
+  MessageParticipantMatchParticipantJob,
+} from 'src/modules/messaging/message-participant-manager/jobs/message-participant-match-participant.job';
+import {
   MessageParticipantUnmatchParticipantJobData,
   MessageParticipantUnmatchParticipantJob,
 } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
@@ -28,8 +32,8 @@ export class MessageParticipantWorkspaceMemberListener {
       return;
     }
 
-    await this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
-      MessageParticipantUnmatchParticipantJob.name,
+    await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
+      MessageParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         email: payload.properties.after.userEmail,
@@ -57,8 +61,8 @@ export class MessageParticipantWorkspaceMemberListener {
         },
       );
 
-      await this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
-        MessageParticipantUnmatchParticipantJob.name,
+      await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(
+        MessageParticipantMatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
           email: payload.properties.after.userEmail,
