@@ -1,7 +1,5 @@
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordTableCellContextProps } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContextProps } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const recordTableRow: RecordTableRowContextProps = {
@@ -32,8 +30,8 @@ export const recordTableCell:RecordTableCellContextProps= {
     },
   },
   cellPosition: {
-    row: 1,
-    column: 1,
+    row: 2,
+    column: 3,
   },
   hasSoftFocus: false,
   isInEditMode: false,
