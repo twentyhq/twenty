@@ -40,6 +40,15 @@ export const RecordTableBodyEffect = () => {
 
   useEffect(() => {
     setIsRecordTableScrolledTop(scrollTop === 0);
+    if (scrollTop > 0) {
+      document
+        .getElementById('record-table-header')
+        ?.classList.add('header-sticky');
+    } else {
+      document
+        .getElementById('record-table-header')
+        ?.classList.remove('header-sticky');
+    }
   }, [scrollTop, setIsRecordTableScrolledTop]);
 
   const scrollLeft = useRecoilValue(scrollLeftState);
@@ -54,9 +63,15 @@ export const RecordTableBodyEffect = () => {
       document
         .getElementById('record-table-body')
         ?.classList.add('first-columns-sticky');
+      document
+        .getElementById('record-table-header')
+        ?.classList.add('first-columns-sticky');
     } else {
       document
         .getElementById('record-table-body')
+        ?.classList.remove('first-columns-sticky');
+      document
+        .getElementById('record-table-header')
         ?.classList.remove('first-columns-sticky');
     }
   }, [scrollLeft, setIsRecordTableScrolledLeft]);

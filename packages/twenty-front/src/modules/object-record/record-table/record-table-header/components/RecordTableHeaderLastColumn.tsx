@@ -22,13 +22,17 @@ const StyledPlusIconHeaderCell = styled.th<{
   padding-left: ${theme.spacing(3)};
   `;
   }};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
   border-left: none !important;
+  color: ${({ theme }) => theme.font.color.tertiary};
   min-width: 32px;
+  border-right: none !important;
+
   ${({ isTableWiderThanScreen, theme }) =>
     isTableWiderThanScreen
       ? `
     width: 32px;
-    border-right: none !important;
     background-color: ${theme.background.primary};
     `
       : ''};

@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { Checkbox } from '@/ui/input/components/Checkbox';
+import { useTheme } from '@emotion/react';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -35,9 +36,13 @@ export const RecordTableHeaderCheckboxColumn = () => {
     }
   };
 
+  const theme = useTheme();
+
   return (
     <th
       style={{
+        borderBottom: `1px solid ${theme.border.color.light}`,
+        borderTop: `1px solid ${theme.border.color.light}`,
         width: 30,
         minWidth: 30,
         maxWidth: 30,

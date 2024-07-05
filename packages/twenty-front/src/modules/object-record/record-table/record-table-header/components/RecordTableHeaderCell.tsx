@@ -1,12 +1,12 @@
-import { useCallback, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { RecordTableColumnHead } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHead';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
+import { RecordTableColumnHead } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHead';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -24,6 +24,14 @@ const StyledColumnHeaderCell = styled.th<{
   columnWidth: number;
   isResizing?: boolean;
 }>`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  padding: 0;
+  text-align: left;
+
+  background-color: ${({ theme }) => theme.background.primary};
+  border-right: 1px solid ${({ theme }) => theme.border.color.light};
   ${({ columnWidth }) => `
       min-width: ${columnWidth}px;
       width: ${columnWidth}px;
