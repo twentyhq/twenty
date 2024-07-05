@@ -6,7 +6,7 @@ import { IconPlus } from 'twenty-ui';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
-import { RecordTableColumnHead } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHead';
+import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -15,8 +15,6 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
-
-import { RecordTableColumnHeadWithDropdown } from './RecordTableColumnHeadWithDropdown';
 
 const COLUMN_MIN_WIDTH = 104;
 
@@ -198,12 +196,8 @@ export const RecordTableHeaderCell = ({
       onMouseLeave={() => setIconVisibility(false)}
     >
       <StyledColumnHeadContainer>
-        {column.isLabelIdentifier ? (
-          <RecordTableColumnHead column={column} />
-        ) : (
-          <RecordTableColumnHeadWithDropdown column={column} />
-        )}
-        {(isMobile || iconVisibility) && !!column.isLabelIdentifier && (
+        <RecordTableColumnHeadWithDropdown column={column} />
+        {(useIsMobile() || iconVisibility) && !!column.isLabelIdentifier && (
           <StyledHeaderIcon>
             <LightIconButton
               Icon={IconPlus}
