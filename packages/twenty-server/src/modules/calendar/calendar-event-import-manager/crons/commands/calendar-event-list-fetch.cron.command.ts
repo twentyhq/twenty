@@ -8,10 +8,10 @@ import { CalendarEventListFetchCronJob } from 'src/modules/calendar/calendar-eve
 const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/5 * * * *';
 
 @Command({
-  name: 'cron:calendar:calendar-events-import',
-  description: 'Starts a cron job to import calendar events',
+  name: 'cron:calendar:calendar-event-list-fetch',
+  description: 'Starts a cron job to fetch the calendar event list',
 })
-export class CalendarEventsImportCronCommand extends CommandRunner {
+export class CalendarEventListFetchCronCommand extends CommandRunner {
   constructor(
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
