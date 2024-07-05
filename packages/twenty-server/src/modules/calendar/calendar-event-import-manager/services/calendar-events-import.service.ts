@@ -36,7 +36,7 @@ export class CalendarEventsImportService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
-    await this.calendarChannelSyncStatusService.markAsCalendarEventsImportOngoing(
+    await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
       connectedAccount.id,
     );
 
@@ -93,7 +93,7 @@ export class CalendarEventsImportService {
       },
     );
 
-    await this.calendarChannelSyncStatusService.markAsCalendarEventsImportCompleted(
+    await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
       connectedAccount.id,
     );
   }
