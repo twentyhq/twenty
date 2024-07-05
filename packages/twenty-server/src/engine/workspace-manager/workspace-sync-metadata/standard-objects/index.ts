@@ -30,6 +30,7 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 import { ReportWorkspaceEntity } from 'src/modules/reports/standard-objects/report.workspace-entity';
 import { AnalyticsQueryWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query.workspace-entity';
 import { AnalyticsQueryFilterWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query-filter.workspace-entity';
+import { ChartWorkspaceEntity } from 'src/modules/reports/standard-objects/chart.workspace-entity';
 
 export const standardObjectMetadataDefinitions = [
   ActivityTargetWorkspaceEntity,
@@ -45,7 +46,7 @@ export const standardObjectMetadataDefinitions = [
   CalendarChannelWorkspaceEntity,
   CalendarChannelEventAssociationWorkspaceEntity,
   CalendarEventParticipantWorkspaceEntity,
-  // ChartWorkspaceEntity,
+  ChartWorkspaceEntity,
   CommentWorkspaceEntity,
   CompanyWorkspaceEntity,
   ConnectedAccountWorkspaceEntity,
