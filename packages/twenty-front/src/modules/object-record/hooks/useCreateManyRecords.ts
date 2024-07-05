@@ -1,8 +1,4 @@
-import {
-  FetchResult,
-  InternalRefetchQueriesInclude,
-  useApolloClient,
-} from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
@@ -22,10 +18,6 @@ type useCreateManyRecordsProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   skipPostOptmisticEffect?: boolean;
-  refetchQueries?:
-    | InternalRefetchQueriesInclude
-    | ((result: FetchResult<any>) => InternalRefetchQueriesInclude)
-    | undefined;
 };
 
 export const useCreateManyRecords = <
@@ -34,7 +26,6 @@ export const useCreateManyRecords = <
   objectNameSingular,
   recordGqlFields,
   skipPostOptmisticEffect = false,
-  refetchQueries,
 }: useCreateManyRecordsProps) => {
   const apolloClient = useApolloClient();
 
@@ -122,7 +113,6 @@ export const useCreateManyRecords = <
           objectMetadataItems,
         });
       },
-      refetchQueries,
     });
 
     return createdObjects.data?.[mutationResponseField] ?? [];

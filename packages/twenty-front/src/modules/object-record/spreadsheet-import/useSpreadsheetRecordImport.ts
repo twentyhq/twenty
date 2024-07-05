@@ -1,10 +1,8 @@
-import { getOperationName } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
-import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { getSpreadSheetValidation } from '@/object-record/spreadsheet-import/util/getSpreadSheetValidation';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { Field, SpreadsheetOptions } from '@/spreadsheet-import/types';
@@ -115,13 +113,8 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
     }
   }
 
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular,
-  });
-
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular,
-    refetchQueries: [getOperationName(findManyRecordsQuery) ?? ''],
   });
 
   const openRecordSpreadsheetImport = (
