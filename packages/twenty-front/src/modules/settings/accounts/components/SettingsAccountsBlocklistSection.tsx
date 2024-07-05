@@ -7,11 +7,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingsAccountsEmailsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistInput';
-import { SettingsAccountsEmailsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistTable';
+import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
+import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { Section } from '@/ui/layout/section/components/Section';
 
-export const SettingsAccountsEmailsBlocklistSection = () => {
+export const SettingsAccountsBlocklistSection = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { records: blocklist } = useFindManyRecords<BlocklistItem>({
@@ -44,11 +44,11 @@ export const SettingsAccountsEmailsBlocklistSection = () => {
         title="Blocklist"
         description="Exclude the following people and domains from my email sync"
       />
-      <SettingsAccountsEmailsBlocklistInput
+      <SettingsAccountsBlocklistInput
         blockedEmailOrDomainList={blocklist.map((item) => item.handle)}
         updateBlockedEmailList={updateBlockedEmailList}
       />
-      <SettingsAccountsEmailsBlocklistTable
+      <SettingsAccountsBlocklistTable
         blocklist={blocklist}
         handleBlockedEmailRemove={handleBlockedEmailRemove}
       />

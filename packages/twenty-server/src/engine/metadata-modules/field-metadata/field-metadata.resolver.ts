@@ -31,12 +31,12 @@ export class FieldMetadataResolver {
   constructor(private readonly fieldMetadataService: FieldMetadataService) {}
 
   @Mutation(() => FieldMetadataDTO)
-  createOneField(
+  async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.fieldMetadataService.createOne({
+      return await this.fieldMetadataService.createOne({
         ...input.field,
         workspaceId,
       });
@@ -46,12 +46,12 @@ export class FieldMetadataResolver {
   }
 
   @Mutation(() => FieldMetadataDTO)
-  updateOneField(
+  async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.fieldMetadataService.updateOne(input.id, {
+      return await this.fieldMetadataService.updateOne(input.id, {
         ...input.update,
         workspaceId,
       });
@@ -95,7 +95,7 @@ export class FieldMetadataResolver {
     }
 
     try {
-      return this.fieldMetadataService.deleteOneField(input, workspaceId);
+      return await this.fieldMetadataService.deleteOneField(input, workspaceId);
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
     }
@@ -114,7 +114,7 @@ export class FieldMetadataResolver {
       const relationMetadataItem =
         await context.loaders.relationMetadataLoader.load(fieldMetadata.id);
 
-      return this.fieldMetadataService.getRelationDefinitionFromRelationMetadata(
+      return await this.fieldMetadataService.getRelationDefinitionFromRelationMetadata(
         fieldMetadata,
         relationMetadataItem,
       );

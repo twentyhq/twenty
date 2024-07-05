@@ -1,5 +1,4 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Scope } from '@nestjs/common';
 
 import { Repository, In } from 'typeorm';
 
@@ -11,15 +10,14 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import {
   CalendarEventsImportJobData,
   CalendarEventsImportJob,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
-  scope: Scope.REQUEST,
 })
 export class CalendarEventsImportCronJob {
   constructor(

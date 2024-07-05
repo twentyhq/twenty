@@ -21,7 +21,7 @@ export class RemoteTableResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.remoteTableService.findDistantTablesWithStatus(
+      return await this.remoteTableService.findDistantTablesWithStatus(
         input.id,
         workspaceId,
         input.shouldFetchPendingSchemaUpdates,
@@ -37,7 +37,7 @@ export class RemoteTableResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.remoteTableService.syncRemoteTable(input, workspaceId);
+      return await this.remoteTableService.syncRemoteTable(input, workspaceId);
     } catch (error) {
       remoteTableGraphqlApiExceptionHandler(error);
     }
@@ -49,7 +49,10 @@ export class RemoteTableResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.remoteTableService.unsyncRemoteTable(input, workspaceId);
+      return await this.remoteTableService.unsyncRemoteTable(
+        input,
+        workspaceId,
+      );
     } catch (error) {
       remoteTableGraphqlApiExceptionHandler(error);
     }
@@ -61,7 +64,7 @@ export class RemoteTableResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return this.remoteTableService.syncRemoteTableSchemaChanges(
+      return await this.remoteTableService.syncRemoteTableSchemaChanges(
         input,
         workspaceId,
       );

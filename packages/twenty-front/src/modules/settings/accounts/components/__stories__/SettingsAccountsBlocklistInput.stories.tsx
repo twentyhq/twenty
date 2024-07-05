@@ -2,7 +2,7 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { SettingsAccountsEmailsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistInput';
+import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsBlocklistInput';
 
 const updateBlockedEmailListJestFn = fn();
 
@@ -13,10 +13,9 @@ const ClearMocksDecorator: Decorator = (Story, context) => {
   return <Story />;
 };
 
-const meta: Meta<typeof SettingsAccountsEmailsBlocklistInput> = {
-  title:
-    'Modules/Settings/Accounts/Blocklist/SettingsAccountsEmailsBlocklistInput',
-  component: SettingsAccountsEmailsBlocklistInput,
+const meta: Meta<typeof SettingsAccountsBlocklistInput> = {
+  title: 'Modules/Settings/Accounts/Blocklist/SettingsAccountsBlocklistInput',
+  component: SettingsAccountsBlocklistInput,
   decorators: [ComponentDecorator, ClearMocksDecorator],
   args: {
     updateBlockedEmailList: updateBlockedEmailListJestFn,
@@ -31,7 +30,7 @@ const meta: Meta<typeof SettingsAccountsEmailsBlocklistInput> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsAccountsEmailsBlocklistInput>;
+type Story = StoryObj<typeof SettingsAccountsBlocklistInput>;
 
 export const Default: Story = {};
 

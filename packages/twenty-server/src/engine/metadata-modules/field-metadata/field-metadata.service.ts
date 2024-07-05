@@ -35,14 +35,16 @@ import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import {
-  validateMetadataName,
+  validateMetadataNameOrThrow,
   InvalidStringException,
+  NameTooLongException,
 } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 
 import {
   FieldMetadataEntity,
@@ -601,15 +603,31 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   >(fieldMetadataInput: T): T {
     if (fieldMetadataInput.name) {
       try {
-        validateMetadataName(fieldMetadataInput.name);
+        validateMetadataNameOrThrow(fieldMetadataInput.name);
       } catch (error) {
         if (error instanceof InvalidStringException) {
           throw new FieldMetadataException(
             `Characters used in name "${fieldMetadataInput.name}" are not supported`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
+        } else if (error instanceof NameTooLongException) {
+          throw new FieldMetadataException(
+            `Name "${fieldMetadataInput.name}" exceeds 63 characters`,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
         } else {
           throw error;
+        }
+      }
+    }
+
+    if (fieldMetadataInput.options) {
+      for (const option of fieldMetadataInput.options) {
+        if (exceedsDatabaseIdentifierMaximumLength(option.value)) {
+          throw new FieldMetadataException(
+            `Option value "${option.value}" exceeds 63 characters`,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
         }
       }
     }

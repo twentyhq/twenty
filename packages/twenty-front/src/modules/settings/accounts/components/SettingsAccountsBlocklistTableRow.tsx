@@ -6,15 +6,15 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
-type SettingsAccountsEmailsBlocklistTableRowProps = {
+type SettingsAccountsBlocklistTableRowProps = {
   blocklistItem: BlocklistItem;
   onRemove: (id: string) => void;
 };
 
-export const SettingsAccountsEmailsBlocklistTableRow = ({
+export const SettingsAccountsBlocklistTableRow = ({
   blocklistItem,
   onRemove,
-}: SettingsAccountsEmailsBlocklistTableRowProps) => {
+}: SettingsAccountsBlocklistTableRowProps) => {
   return (
     <TableRow key={blocklistItem.id}>
       <TableCell>{blocklistItem.handle}</TableCell>
