@@ -7,6 +7,8 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
+// TODO: Move inside person module and workspace-member module
+
 @Injectable()
 export class AddPersonIdAndWorkspaceMemberIdService {
   constructor(

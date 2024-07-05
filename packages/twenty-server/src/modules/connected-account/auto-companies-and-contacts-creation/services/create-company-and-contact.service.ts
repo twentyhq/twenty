@@ -7,7 +7,7 @@ import compact from 'lodash.compact';
 import chunk from 'lodash.chunk';
 import { record } from 'zod';
 
-import { getDomainNameFromHandle } from 'src/modules/calendar-messaging-participant-manager/utils/get-domain-name-from-handle.util';
+import { getDomainNameFromHandle } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-domain-name-from-handle.util';
 import { CreateCompanyService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company/create-company.service';
 import { CreateContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-contact/create-contact.service';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
