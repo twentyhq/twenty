@@ -1,3 +1,5 @@
+import { Relation } from 'typeorm';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { CHART_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -5,6 +7,13 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import {
+  RelationMetadataType,
+  RelationOnDeleteAction,
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { ReportWorkspaceEntity } from 'src/modules/reports/standard-objects/report.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.chart,
@@ -34,7 +43,7 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   description: string;
 
-  /*   @WorkspaceRelation({
+  @WorkspaceRelation({
     standardId: CHART_STANDARD_FIELD_IDS.report,
     label: 'Report',
     description: 'The report the chart belongs to',
@@ -48,7 +57,7 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
   report: Relation<ReportWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('report')
-  reportId: string; */
+  reportId: string;
 
   /*   @WorkspaceRelation({
     standardId: CHART_STANDARD_FIELD_IDS.analyticsQueries,
