@@ -1,0 +1,6 @@
+{
+    "name": "twenty-code-runner",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "projectType": "library",
+    "tags": ["scope:backend"]
+}

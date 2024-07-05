@@ -22,6 +22,8 @@ import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspa
 import { UpdateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/0-20-update-message-channel-sync-status-enum.command';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand } from 'src/database/commands/0-22-update-boolean-fields-null-default-values-and-null-values.command';
+import { CreateAWSLambdaModule } from 'src/database/commands/create-aws-lambda/create-aws-lambda.module';
+import { CreateAWSLambdaCommand } from 'src/database/commands/create-aws-lambda/create-aws-lambda.command';
 
 @Module({
   imports: [
@@ -39,6 +41,7 @@ import { UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand } from 'src/da
     ObjectMetadataModule,
     DataSeedDemoWorkspaceModule,
     WorkspaceCacheVersionModule,
+    CreateAWSLambdaModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
@@ -50,6 +53,7 @@ import { UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand } from 'src/da
     UpdateMessageChannelVisibilityEnumCommand,
     UpdateMessageChannelSyncStatusEnumCommand,
     UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand,
+    CreateAWSLambdaCommand,
   ],
 })
 export class DatabaseCommandModule {}

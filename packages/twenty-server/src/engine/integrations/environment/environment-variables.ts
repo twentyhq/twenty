@@ -398,6 +398,8 @@ export class EnvironmentVariables {
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
   CHROME_EXTENSION_ID: string;
+
+  AWS_PROFILE = 'twenty';
 }
 
 export const validate = (
