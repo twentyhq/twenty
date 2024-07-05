@@ -75,6 +75,28 @@ export const RecordTableWithWrappers = ({
 
   const isRemote = foundObjectMetadataItem?.isRemote ?? false;
 
+  const handleColumnsChange = useRecoilCallback(
+    () => (columns) => {
+      saveViewFields(
+        mapColumnDefinitionsToViewFields(
+          columns as ColumnDefinition<FieldMetadata>[],
+        ),
+      );
+    },
+    [saveViewFields],
+  );
+
+  if (!isRecordTableInitialLoading && tableRowIds.length === 0) {
+    return (
+      <RecordTableEmptyState
+        objectNameSingular={objectNameSingular}
+        objectLabel={objectLabel}
+        createRecord={createRecord}
+        isRemote={isRemote}
+      />
+    );
+  }
+
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>
       <ScrollWrapper>
@@ -85,16 +107,7 @@ export const RecordTableWithWrappers = ({
                 <RecordTable
                   recordTableId={recordTableId}
                   objectNameSingular={objectNameSingular}
-                  onColumnsChange={useRecoilCallback(
-                    () => (columns) => {
-                      saveViewFields(
-                        mapColumnDefinitionsToViewFields(
-                          columns as ColumnDefinition<FieldMetadata>[],
-                        ),
-                      );
-                    },
-                    [saveViewFields],
-                  )}
+                  onColumnsChange={handleColumnsChange}
                   createRecord={createRecord}
                 />
                 <DragSelect
@@ -107,16 +120,6 @@ export const RecordTableWithWrappers = ({
                 recordTableId={recordTableId}
                 tableBodyRef={tableBodyRef}
               />
-              {!isRecordTableInitialLoading &&
-                // we cannot rely on count states because this is not available for remote objects
-                tableRowIds.length === 0 && (
-                  <RecordTableEmptyState
-                    objectNameSingular={objectNameSingular}
-                    objectLabel={objectLabel}
-                    createRecord={createRecord}
-                    isRemote={isRemote}
-                  />
-                )}
             </StyledTableContainer>
           </StyledTableWithHeader>
         </RecordUpdateContext.Provider>

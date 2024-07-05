@@ -1,41 +1,29 @@
-import { useState } from 'react';
-import styled from '@emotion/styled';
-import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
+import { ReactNode, useContext } from 'react';
+import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { v4 } from 'uuid';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { RecordTablePendingRow } from '@/object-record/record-table/components/RecordTablePendingRow';
+import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useComputeNewRowPosition } from '@/object-record/record-table/hooks/useComputeNewRowPosition';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { isDefined } from '~/utils/isDefined';
 
-type DraggableTableBodyProps = {
-  draggableItems: React.ReactNode;
-  objectNameSingular: string;
-  recordTableId: string;
-};
-
-const StyledTbody = styled.tbody`
-  overflow: hidden;
-`;
-
-export const DraggableTableBody = ({
-  objectNameSingular,
-  draggableItems,
-  recordTableId,
-}: DraggableTableBodyProps) => {
-  const [v4Persistable] = useState(v4());
-
-  const { tableRowIdsState } = useRecordTableStates();
-
-  const tableRowIds = useRecoilValue(tableRowIdsState);
+export const RecordTableBodyDragDropContext = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
+  const { objectNameSingular, recordTableId } = useContext(RecordTableContext);
 
   const { updateOneRecord: updateOneRow } = useUpdateOneRecord({
     objectNameSingular,
   });
+
+  const { tableRowIdsState } = useRecordTableStates();
+
+  const tableRowIds = useRecoilValue(tableRowIdsState);
 
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(recordTableId);
@@ -45,6 +33,7 @@ export const DraggableTableBody = ({
   const setIsRemoveSortingModalOpenState = useSetRecoilState(
     isRemoveSortingModalOpenState,
   );
+
   const computeNewRowPosition = useComputeNewRowPosition();
 
   const handleDragEnd = (result: DropResult) => {
@@ -68,20 +57,6 @@ export const DraggableTableBody = ({
   };
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <Droppable droppableId={v4Persistable}>
-        {(provided) => (
-          <StyledTbody
-            ref={provided.innerRef}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...provided.droppableProps}
-          >
-            <RecordTablePendingRow />
-            {draggableItems}
-            {provided.placeholder}
-          </StyledTbody>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <DragDropContext onDragEnd={handleDragEnd}>{children}</DragDropContext>
   );
 };

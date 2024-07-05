@@ -1,9 +1,10 @@
-import { useCallback, useContext } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useContext } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
@@ -18,7 +19,9 @@ const StyledContainer = styled.div`
   justify-content: center;
 `;
 
-export const CheckboxCell = () => {
+export const RecordTableCellCheckbox = () => {
+  const { isSelected } = useContext(RecordTableRowContext);
+
   const { recordId } = useContext(RecordTableRowContext);
   const { isRowSelectedFamilyState } = useRecordTableStates();
   const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
@@ -31,8 +34,10 @@ export const CheckboxCell = () => {
   }, [currentRowSelected, setActionBarOpenState, setCurrentRowSelected]);
 
   return (
-    <StyledContainer onClick={handleClick}>
-      <Checkbox checked={currentRowSelected} />
-    </StyledContainer>
+    <RecordTableTd isSelected={isSelected} hasRightBorder={false}>
+      <StyledContainer onClick={handleClick}>
+        <Checkbox checked={currentRowSelected} />
+      </StyledContainer>
+    </RecordTableTd>
   );
 };

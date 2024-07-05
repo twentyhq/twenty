@@ -14,16 +14,16 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
-import { useTableColumns } from '../hooks/useTableColumns';
-import { ColumnDefinition } from '../types/ColumnDefinition';
+import { useTableColumns } from '../../hooks/useTableColumns';
+import { ColumnDefinition } from '../../types/ColumnDefinition';
 
-export type RecordTableColumnDropdownMenuProps = {
+export type RecordTableColumnHeadDropdownMenuProps = {
   column: ColumnDefinition<FieldMetadata>;
 };
 
-export const RecordTableColumnDropdownMenu = ({
+export const RecordTableColumnHeadDropdownMenu = ({
   column,
-}: RecordTableColumnDropdownMenuProps) => {
+}: RecordTableColumnHeadDropdownMenuProps) => {
   const {
     visibleTableColumnsSelector,
     onToggleColumnFilterState,

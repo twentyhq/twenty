@@ -1,14 +1,14 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT, useIcons } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
+import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
-import { ColumnDefinition } from '../types/ColumnDefinition';
+import { ColumnDefinition } from '../../types/ColumnDefinition';
 
-type ColumnHeadProps = {
+type RecordTableColumnHeadProps = {
   column: ColumnDefinition<FieldMetadata>;
 };
 
@@ -46,16 +46,22 @@ const StyledText = styled.span`
   white-space: nowrap;
 `;
 
-export const ColumnHead = ({ column }: ColumnHeadProps) => {
+export const RecordTableColumnHead = ({
+  column,
+}: RecordTableColumnHeadProps) => {
   const theme = useTheme();
 
   const { getIcon } = useIcons();
   const Icon = getIcon(column.iconName);
 
-  const scrollLeft = useRecoilValue(scrollLeftState);
+  const isRecordTableScrolledLeft = useRecoilComponentValue(
+    isRecordTableScrolledLeftComponentState,
+  );
 
   return (
-    <StyledTitle hideTitle={!!column.isLabelIdentifier && scrollLeft > 0}>
+    <StyledTitle
+      hideTitle={!!column.isLabelIdentifier && !isRecordTableScrolledLeft}
+    >
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>

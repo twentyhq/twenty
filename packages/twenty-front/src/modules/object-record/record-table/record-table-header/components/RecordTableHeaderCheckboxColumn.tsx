@@ -2,9 +2,9 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { Checkbox } from '@/ui/input/components/Checkbox';
-
-import { useRecordTable } from '../hooks/useRecordTable';
+import { useTheme } from '@emotion/react';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
 `;
 
-export const SelectAllCheckbox = () => {
+export const RecordTableHeaderCheckboxColumn = () => {
   const { allRowsSelectedStatusSelector } = useRecordTableStates();
 
   const allRowsSelectedStatus = useRecoilValue(allRowsSelectedStatusSelector());
@@ -36,13 +36,26 @@ export const SelectAllCheckbox = () => {
     }
   };
 
+  const theme = useTheme();
+
   return (
-    <StyledContainer>
-      <Checkbox
-        checked={checked}
-        onChange={onChange}
-        indeterminate={indeterminate}
-      />
-    </StyledContainer>
+    <th
+      style={{
+        borderBottom: `1px solid ${theme.border.color.light}`,
+        borderTop: `1px solid ${theme.border.color.light}`,
+        width: 30,
+        minWidth: 30,
+        maxWidth: 30,
+        borderRight: 'transparent',
+      }}
+    >
+      <StyledContainer>
+        <Checkbox
+          checked={checked}
+          onChange={onChange}
+          indeterminate={indeterminate}
+        />
+      </StyledContainer>
+    </th>
   );
 };

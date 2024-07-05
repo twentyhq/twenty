@@ -5,7 +5,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 
-export const RemoveSortingModal = ({
+export const RecordIndexRemoveSortingModal = ({
   recordTableId,
 }: {
   recordTableId: string;

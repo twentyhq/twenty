@@ -1,20 +1,20 @@
-import { useCallback, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
+import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
+import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
-
-import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
 
 const COLUMN_MIN_WIDTH = 104;
 
@@ -22,6 +22,14 @@ const StyledColumnHeaderCell = styled.th<{
   columnWidth: number;
   isResizing?: boolean;
 }>`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  padding: 0;
+  text-align: left;
+
+  background-color: ${({ theme }) => theme.background.primary};
+  border-right: 1px solid ${({ theme }) => theme.border.color.light};
   ${({ columnWidth }) => `
       min-width: ${columnWidth}px;
       width: ${columnWidth}px;
@@ -165,11 +173,14 @@ export const RecordTableHeaderCell = ({
     onMouseUp: handleResizeHandlerEnd,
   });
 
+  const isRecordTableScrolledLeft = useRecoilComponentValue(
+    isRecordTableScrolledLeftComponentState,
+  );
+
   const isMobile = useIsMobile();
-  const scrollLeft = useRecoilValue(scrollLeftState);
 
   const disableColumnResize =
-    column.isLabelIdentifier && isMobile && scrollLeft > 0;
+    column.isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
 
   return (
     <StyledColumnHeaderCell
@@ -185,7 +196,7 @@ export const RecordTableHeaderCell = ({
       onMouseLeave={() => setIconVisibility(false)}
     >
       <StyledColumnHeadContainer>
-        <ColumnHeadWithDropdown column={column} />
+        <RecordTableColumnHeadWithDropdown column={column} />
         {(useIsMobile() || iconVisibility) && !!column.isLabelIdentifier && (
           <StyledHeaderIcon>
             <LightIconButton
