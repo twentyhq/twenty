@@ -56,40 +56,21 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  report: Relation<ReportWorkspaceEntity>;
+  report: Relation<ReportWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('report')
   reportId: string;
 
   @WorkspaceRelation({
-    standardId: CHART_STANDARD_FIELD_IDS.analyticsQuery,
-    label: 'Analytics query',
-    description: 'Associated analytics query',
+    standardId: CHART_STANDARD_FIELD_IDS.analyticsQueries,
+    label: 'Analytics queries',
+    description: 'Associated analytics queries',
     icon: 'IconDatabaseSearch',
-    type: RelationMetadataType.ONE_TO_ONE,
+    type: RelationMetadataType.ONE_TO_MANY, // TODO: Change to RelationMetadataType.ONE_TO_ONE
     inverseSideTarget: () => AnalyticsQueryWorkspaceEntity,
     inverseSideFieldKey: 'chart',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  analyticsQuery: Relation<AnalyticsQueryWorkspaceEntity>;
-
-  @WorkspaceField({
-    standardId: CHART_STANDARD_FIELD_IDS.analyticsQueryResult,
-    type: FieldMetadataType.RAW_JSON,
-    label: 'Analytics query result',
-    description: 'Result of the analytics query',
-    icon: 'IconTable',
-  })
   @WorkspaceIsNullable()
-  analyticsQueryResult: object;
-
-  @WorkspaceField({
-    standardId: CHART_STANDARD_FIELD_IDS.analyticsQueryResultCreatedAt,
-    type: FieldMetadataType.DATE_TIME,
-    label: 'Analytics query result created at',
-    description: 'Timestamp of when the analytics query was successfully run',
-    icon: 'IconCalendarTime',
-  })
-  @WorkspaceIsNullable()
-  analyticsQueryResultCreatedAt: Date;
+  analyticsQueries: Relation<AnalyticsQueryWorkspaceEntity[]>;
 }

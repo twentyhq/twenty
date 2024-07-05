@@ -13,7 +13,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { AnalyticsQueryFilterWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query-filter.workspace-entity';
-import { ChartWorkspaceEntity } from 'src/modules/reports/standard-objects/chart.workspace-entity';
+// import { ChartWorkspaceEntity } from 'src/modules/reports/standard-objects/chart.workspace-entity';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
@@ -25,18 +25,18 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
   icon: 'IconDatabaseSearch',
 })
 export class AnalyticsQueryWorkspaceEntity extends BaseWorkspaceEntity {
-  @WorkspaceRelation({
+  /*   @WorkspaceRelation({
     standardId: ANALYTICS_QUERY_STANDARD_FIELD_IDS.chart,
     label: 'Chart',
     description: 'The chart this analytics query belongs to',
     icon: 'IconChartBar',
-    type: RelationMetadataType.ONE_TO_ONE,
+    type: RelationMetadataType.MANY_TO_ONE,
     inverseSideTarget: () => ChartWorkspaceEntity,
-    inverseSideFieldKey: 'analyticsQuery',
+    inverseSideFieldKey: 'analyticsQueries',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  chart: Relation<ChartWorkspaceEntity>;
+  chart: Relation<ChartWorkspaceEntity>; */
 
   @WorkspaceJoinColumn('chart')
   chartId: string;
@@ -90,4 +90,24 @@ export class AnalyticsQueryWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   groupBy: string;
+
+  @WorkspaceField({
+    standardId: ANALYTICS_QUERY_STANDARD_FIELD_IDS.result,
+    type: FieldMetadataType.RAW_JSON,
+    label: 'Query result',
+    description: 'Result of the analytics query',
+    icon: 'IconTable',
+  })
+  @WorkspaceIsNullable()
+  analyticsQueryResult: object;
+
+  @WorkspaceField({
+    standardId: ANALYTICS_QUERY_STANDARD_FIELD_IDS.resultCreatedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Query result created at',
+    description: 'Timestamp of when the analytics query was successfully run',
+    icon: 'IconCalendarTime',
+  })
+  @WorkspaceIsNullable()
+  analyticsQueryResultCreatedAt: Date;
 }

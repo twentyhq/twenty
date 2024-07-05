@@ -34,6 +34,8 @@ export const ANALYTICS_QUERY_STANDARD_FIELD_IDS = {
   field: '20202020-5206-419e-9df6-d8f8f75e75e9',
   analyticsQueryFilters: '20202020-2229-4c35-9f3b-9e1199ec3c7c',
   groupBy: '20202020-4a7b-4021-b1d4-6e6f282cedee',
+  result: '20202020-4db0-4a48-b742-3da6cfbd146d',
+  resultCreatedAt: '20202020-c8fb-437d-9994-1720eac571ec',
 };
 
 export const ANALYTICS_QUERY_FILTER_STANDARD_FIELD_IDS = {
@@ -76,9 +78,7 @@ export const CHART_STANDARD_FIELD_IDS = {
   title: '20202020-e5aa-45b1-aec0-431420660570',
   description: '20202020-71b2-4df1-8cb3-120d55272b12',
   report: '20202020-ed98-46de-a874-eb65660e3b13',
-  analyticsQuery: '20202020-13c2-4d66-a631-605c85953648',
-  analyticsQueryResult: '20202020-4db0-4a48-b742-3da6cfbd146d',
-  analyticsQueryResultCreatedAt: '20202020-c8fb-437d-9994-1720eac571ec',
+  analyticsQueries: '20202020-13c2-4d66-a631-605c85953648',
 };
 
 export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS = {
