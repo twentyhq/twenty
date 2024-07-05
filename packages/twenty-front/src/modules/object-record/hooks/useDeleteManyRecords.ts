@@ -4,6 +4,7 @@ import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
 import { isDefined } from '~/utils/isDefined';
@@ -51,55 +52,66 @@ export const useDeleteManyRecords = ({
     objectMetadataItem.namePlural,
   );
 
-  const deleteRecordsWithIds = async (
-    idsToDelete: string[],
-    options?: DeleteManyRecordsOptions,
-  ) => {
-    const deletedRecords = await apolloClient.mutate({
-      mutation: deleteManyRecordsMutation,
-      variables: {
-        filter: { id: { in: idsToDelete } },
-      },
-      optimisticResponse: options?.skipOptimisticEffect
-        ? undefined
-        : {
-            [mutationResponseField]: idsToDelete.map((idToDelete) => ({
-              __typename: capitalize(objectNameSingular),
-              id: idToDelete,
-            })),
-          },
-      update: options?.skipOptimisticEffect
-        ? undefined
-        : (cache, { data }) => {
-            const records = data?.[mutationResponseField];
-
-            if (!records?.length) return;
-
-            const cachedRecords = records
-              .map((record) => getRecordFromCache(record.id, cache))
-              .filter(isDefined);
-
-            triggerDeleteRecordsOptimisticEffect({
-              cache,
-              objectMetadataItem,
-              recordsToDelete: cachedRecords,
-              objectMetadataItems,
-            });
-          },
-    });
-
-    return deletedRecords.data?.[mutationResponseField] ?? null;
-  };
-
   const deleteManyRecords = async (
     idsToDelete: string[],
     options?: DeleteManyRecordsOptions,
-    chunkSize = 30,
   ) => {
-    const chunkedIds = chunkArray(idsToDelete, chunkSize);
-    return Promise.all(
-      chunkedIds.map((ids) => deleteRecordsWithIds(ids, options)),
+    const numberOfBatches = Math.ceil(
+      idsToDelete.length / DEFAULT_MUTATION_BATCH_SIZE,
     );
+
+    const deletedRecords = [];
+
+    for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
+      const batchIds = idsToDelete.slice(
+        batchIndex * DEFAULT_MUTATION_BATCH_SIZE,
+        (batchIndex + 1) * DEFAULT_MUTATION_BATCH_SIZE,
+      );
+
+      console.log({
+        batchIds,
+      });
+
+      const deletedRecordsResponse = await apolloClient.mutate({
+        mutation: deleteManyRecordsMutation,
+        variables: {
+          filter: { id: { in: batchIds } },
+        },
+        optimisticResponse: options?.skipOptimisticEffect
+          ? undefined
+          : {
+              [mutationResponseField]: batchIds.map((idToDelete) => ({
+                __typename: capitalize(objectNameSingular),
+                id: idToDelete,
+              })),
+            },
+        update: options?.skipOptimisticEffect
+          ? undefined
+          : (cache, { data }) => {
+              const records = data?.[mutationResponseField];
+
+              if (!records?.length) return;
+
+              const cachedRecords = records
+                .map((record) => getRecordFromCache(record.id, cache))
+                .filter(isDefined);
+
+              triggerDeleteRecordsOptimisticEffect({
+                cache,
+                objectMetadataItem,
+                recordsToDelete: cachedRecords,
+                objectMetadataItems,
+              });
+            },
+      });
+
+      const deletedRecordsForThisBatch =
+        deletedRecordsResponse.data?.[mutationResponseField] ?? [];
+
+      deletedRecords.push(...deletedRecordsForThisBatch);
+    }
+
+    return deletedRecords;
   };
 
   return { deleteManyRecords };
