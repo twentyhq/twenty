@@ -19,16 +19,6 @@ type DeleteManyRecordsOptions = {
   skipOptimisticEffect?: boolean;
 };
 
-const chunkArray = <T>(array: T[], chunkSize: number): T[][] =>
-  array.reduce<T[][]>((acc, item, index) => {
-    const chunkIndex = Math.floor(index / chunkSize);
-    if (!acc[chunkIndex]) {
-      acc[chunkIndex] = [];
-    }
-    acc[chunkIndex].push(item);
-    return acc;
-  }, []);
-
 export const useDeleteManyRecords = ({
   objectNameSingular,
 }: useDeleteOneRecordProps) => {
