@@ -3,7 +3,7 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { mockedBlocklist } from '@/settings/accounts/components/__stories__/mockedBlocklist';
-import { SettingsAccountsEmailsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistTable';
+import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 const handleBlockedEmailRemoveJestFn = fn();
@@ -15,10 +15,9 @@ const ClearMocksDecorator: Decorator = (Story, context) => {
   return <Story />;
 };
 
-const meta: Meta<typeof SettingsAccountsEmailsBlocklistTable> = {
-  title:
-    'Modules/Settings/Accounts/Blocklist/SettingsAccountsEmailsBlocklistTable',
-  component: SettingsAccountsEmailsBlocklistTable,
+const meta: Meta<typeof SettingsAccountsBlocklistTable> = {
+  title: 'Modules/Settings/Accounts/Blocklist/SettingsAccountsBlocklistTable',
+  component: SettingsAccountsBlocklistTable,
   decorators: [ComponentDecorator, ClearMocksDecorator],
   args: {
     blocklist: mockedBlocklist,
@@ -34,7 +33,7 @@ const meta: Meta<typeof SettingsAccountsEmailsBlocklistTable> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsAccountsEmailsBlocklistTable>;
+type Story = StoryObj<typeof SettingsAccountsBlocklistTable>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {

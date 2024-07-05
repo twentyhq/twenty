@@ -21,6 +21,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { UpdateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/0-20-update-message-channel-sync-status-enum.command';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand } from 'src/database/commands/0-22-update-boolean-fields-null-default-values-and-null-values.command';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
     StopDataSeedDemoWorkspaceCronCommand,
     UpdateMessageChannelVisibilityEnumCommand,
     UpdateMessageChannelSyncStatusEnumCommand,
+    UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand,
   ],
 })
 export class DatabaseCommandModule {}
