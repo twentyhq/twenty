@@ -2,7 +2,7 @@ import { Scope } from '@nestjs/common';
 
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
+import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 export type MessageParticipantUnmatchParticipantJobData = {

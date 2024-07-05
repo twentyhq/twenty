@@ -10,10 +10,8 @@ import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-mes
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessagingErrorHandlingService } from 'src/modules/messaging/common/services/messaging-error-handling.service';
 import { MessagingFetchByBatchesService } from 'src/modules/messaging/common/services/messaging-fetch-by-batch.service';
-import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
 import { MessagingMessageThreadService } from 'src/modules/messaging/common/services/messaging-message-thread.service';
 import { MessagingMessageService } from 'src/modules/messaging/common/services/messaging-message.service';
-import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/common/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -38,22 +36,18 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
   providers: [
     MessagingMessageService,
     MessagingMessageThreadService,
-    MessagingSaveMessagesAndEnqueueContactCreationService,
     MessagingErrorHandlingService,
     MessagingTelemetryService,
     MessagingChannelSyncStatusService,
-    MessagingMessageParticipantService,
     MessagingFetchByBatchesService,
     AddPersonIdAndWorkspaceMemberIdService,
   ],
   exports: [
     MessagingMessageService,
     MessagingMessageThreadService,
-    MessagingSaveMessagesAndEnqueueContactCreationService,
     MessagingErrorHandlingService,
     MessagingTelemetryService,
     MessagingChannelSyncStatusService,
-    MessagingMessageParticipantService,
     MessagingFetchByBatchesService,
   ],
 })

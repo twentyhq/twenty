@@ -18,8 +18,6 @@ import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inje
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 
-// Todo: this is not the right place for this file. The code needs to be refactored in term of business modules with a precise scope.
-// Putting it here to avoid circular dependencies for now.
 @Injectable()
 export class CalendarEventParticipantService {
   constructor(

@@ -23,7 +23,7 @@ import {
   ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
 import { MessagingMessageService } from 'src/modules/messaging/common/services/messaging-message.service';
-import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
+import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
