@@ -8,9 +8,13 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
-  MessageParticipantUnmatchParticipantJobData,
-  MessageParticipantUnmatchParticipantJob,
-} from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
+  CalendarEventParticipantMatchParticipantJob,
+  CalendarEventParticipantMatchParticipantJobData,
+} from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-match-participant.job';
+import {
+  CalendarEventParticipantUnmatchParticipantJobData,
+  CalendarEventParticipantUnmatchParticipantJob,
+} from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-unmatch-participant.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -28,8 +32,8 @@ export class CalendarEventParticipantWorkspaceMemberListener {
       return;
     }
 
-    await this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
-      MessageParticipantUnmatchParticipantJob.name,
+    await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
+      CalendarEventParticipantMatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         email: payload.properties.after.userEmail,
@@ -48,8 +52,8 @@ export class CalendarEventParticipantWorkspaceMemberListener {
         payload.properties.after,
       ).includes('userEmail')
     ) {
-      await this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
-        MessageParticipantUnmatchParticipantJob.name,
+      await this.messageQueueService.add<CalendarEventParticipantUnmatchParticipantJobData>(
+        CalendarEventParticipantUnmatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
           email: payload.properties.before.userEmail,
@@ -57,8 +61,8 @@ export class CalendarEventParticipantWorkspaceMemberListener {
         },
       );
 
-      await this.messageQueueService.add<MessageParticipantUnmatchParticipantJobData>(
-        MessageParticipantUnmatchParticipantJob.name,
+      await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
+        CalendarEventParticipantMatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
           email: payload.properties.after.userEmail,

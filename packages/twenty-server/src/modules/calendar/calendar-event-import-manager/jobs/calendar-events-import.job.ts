@@ -8,10 +8,7 @@ import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  CalendarChannelSyncStage,
-  CalendarChannelWorkspaceEntity,
-} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 
@@ -40,7 +37,6 @@ export class CalendarEventsImportJob {
     const calendarChannel = await this.calendarChannelRepository.findOne({
       where: {
         id: calendarChannelId,
-        syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
       },
     });
 

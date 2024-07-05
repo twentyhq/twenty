@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import compact from 'lodash.compact';
 import chunk from 'lodash.chunk';
-import { record } from 'zod';
 
 import { getDomainNameFromHandle } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-domain-name-from-handle.util';
 import { CreateCompanyService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company/create-company.service';
@@ -166,7 +165,7 @@ export class CreateCompanyAndContactService {
           recordId: createdPerson.id,
           objectMetadata,
           properties: {
-            after: record,
+            after: createdPerson,
           },
         } satisfies ObjectRecordCreateEvent<any>);
       }
