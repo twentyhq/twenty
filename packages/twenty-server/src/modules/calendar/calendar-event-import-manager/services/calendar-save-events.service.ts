@@ -28,8 +28,6 @@ export class CalendarSaveEventsService {
   constructor(
     @InjectWorkspaceRepository(CalendarEventWorkspaceEntity)
     private readonly calendarEventRepository: WorkspaceRepository<CalendarEventWorkspaceEntity>,
-    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
     @InjectWorkspaceRepository(CalendarChannelEventAssociationWorkspaceEntity)
     private readonly calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>,
     @InjectWorkspaceDatasource()
@@ -122,7 +120,7 @@ export class CalendarSaveEventsService {
         transactionManager,
       );
 
-      await this.calendarChannelRepository.save(
+      await this.calendarEventRepository.save(
         eventsToUpdate,
         {},
         transactionManager,
