@@ -13,6 +13,7 @@ import { CalendarEventParticipantUnmatchParticipantJob } from 'src/modules/calen
 import { CalendarEventParticipantPersonListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant-person.listener';
 import { CalendarEventParticipantWorkspaceMemberListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant-workspace-member.listener';
 import { CalendarEventParticipantListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant.listener';
+import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
@@ -31,6 +32,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
     CalendarCommonModule,
   ],
   providers: [
+    CalendarEventParticipantService,
     CalendarCreateCompanyAndContactAfterSyncJob,
     CalendarEventParticipantMatchParticipantJob,
     CalendarEventParticipantUnmatchParticipantJob,
@@ -39,6 +41,6 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
     CalendarEventParticipantWorkspaceMemberListener,
     AddPersonIdAndWorkspaceMemberIdService,
   ],
-  exports: [],
+  exports: [CalendarEventParticipantService],
 })
 export class CalendarEventParticipantManagerModule {}

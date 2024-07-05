@@ -21,7 +21,7 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
-import { CalendarEventParticipantService } from 'src/modules/calendar/common/services/calendar-event-participant.service';
+import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 
 @Injectable()
 export class CalendarSaveEventsService {

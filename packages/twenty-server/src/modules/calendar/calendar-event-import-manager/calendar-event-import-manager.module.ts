@@ -12,6 +12,7 @@ import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-e
 import { CalendarEventsImportCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-events-import.cron.job';
 import { GoogleCalendarDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/google-calendar-driver.module';
 import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
+import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
@@ -50,8 +51,10 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     BillingModule,
     GoogleAPIRefreshAccessTokenModule,
     CalendarCommonModule,
+    CalendarEventParticipantManagerModule,
   ],
   providers: [
+    CalendarChannelSyncStatusService,
     CalendarEventsImportService,
     CalendarGetCalendarEventsService,
     CalendarSaveEventsService,
