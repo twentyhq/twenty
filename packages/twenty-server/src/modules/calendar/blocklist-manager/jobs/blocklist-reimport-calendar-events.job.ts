@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { Any } from 'typeorm';
 
@@ -18,7 +18,6 @@ import {
 export type BlocklistReimportCalendarEventsJobData = {
   workspaceId: string;
   workspaceMemberId: string;
-  handle: string;
 };
 
 @Processor({
@@ -26,8 +25,6 @@ export type BlocklistReimportCalendarEventsJobData = {
   scope: Scope.REQUEST,
 })
 export class BlocklistReimportCalendarEventsJob {
-  private readonly logger = new Logger(BlocklistReimportCalendarEventsJob.name);
-
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
