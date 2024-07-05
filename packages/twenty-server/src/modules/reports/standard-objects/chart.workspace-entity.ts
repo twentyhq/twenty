@@ -14,6 +14,7 @@ import {
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { ReportWorkspaceEntity } from 'src/modules/reports/standard-objects/report.workspace-entity';
+import { AnalyticsQueryWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.chart,
@@ -59,16 +60,16 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('report')
   reportId: string;
 
-  /*   @WorkspaceRelation({
+  @WorkspaceRelation({
     standardId: CHART_STANDARD_FIELD_IDS.analyticsQueries,
     label: 'Analytics queries',
     description: 'Associated analytics queries',
     icon: 'IconDatabaseSearch',
-    type: RelationMetadataType.ONE_TO_MANY, // TODO: Change to RelationMetadataType.ONE_TO_ONE
+    type: RelationMetadataType.ONE_TO_MANY, // TODO: Change to RelationMetadataType.ONE_TO_ONE and figure out why workspace:sync-metadata command fails
     inverseSideTarget: () => AnalyticsQueryWorkspaceEntity,
     inverseSideFieldKey: 'chart',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  analyticsQueries: Relation<AnalyticsQueryWorkspaceEntity[]>; */
+  analyticsQueries: Relation<AnalyticsQueryWorkspaceEntity[]>;
 }

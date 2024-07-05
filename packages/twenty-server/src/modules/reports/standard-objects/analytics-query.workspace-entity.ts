@@ -13,7 +13,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { AnalyticsQueryFilterWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query-filter.workspace-entity';
-// import { ChartWorkspaceEntity } from 'src/modules/reports/standard-objects/chart.workspace-entity';
+import { ChartWorkspaceEntity } from 'src/modules/reports/standard-objects/chart.workspace-entity';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
@@ -25,7 +25,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
   icon: 'IconDatabaseSearch',
 })
 export class AnalyticsQueryWorkspaceEntity extends BaseWorkspaceEntity {
-  /*   @WorkspaceRelation({
+  @WorkspaceRelation({
     standardId: ANALYTICS_QUERY_STANDARD_FIELD_IDS.chart,
     label: 'Chart',
     description: 'The chart this analytics query belongs to',
@@ -36,10 +36,10 @@ export class AnalyticsQueryWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  chart: Relation<ChartWorkspaceEntity>; */
+  chart: Relation<ChartWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('chart')
-  chartId: string;
+  chartId: string | null;
 
   @WorkspaceField({
     standardId: ANALYTICS_QUERY_STANDARD_FIELD_IDS.measure,
