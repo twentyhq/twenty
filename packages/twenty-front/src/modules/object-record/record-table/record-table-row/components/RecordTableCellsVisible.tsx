@@ -4,8 +4,8 @@ import { useRecoilValue } from 'recoil';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCell';
-import { RecordTableCellTd } from '@/object-record/record-table/record-table-cell/components/RecordTableCellTd';
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
+import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 
 export const RecordTableCellsVisible = () => {
   const { isDragging } = useContext(RecordTableRowContext);
@@ -18,9 +18,9 @@ export const RecordTableCellsVisible = () => {
   return (
     <>
       <RecordTableCellWrapper column={visibleTableColumns[0]} columnIndex={0}>
-        <RecordTableCellTd firstColumn>
+        <RecordTableTd>
           <RecordTableCell />
-        </RecordTableCellTd>
+        </RecordTableTd>
       </RecordTableCellWrapper>
       {!isDragging &&
         tableColumnsAfterFirst.map((column, columnIndex) => (
@@ -29,9 +29,9 @@ export const RecordTableCellsVisible = () => {
             column={column}
             columnIndex={columnIndex + 1}
           >
-            <RecordTableCellTd>
+            <RecordTableTd>
               <RecordTableCell />
-            </RecordTableCellTd>
+            </RecordTableTd>
           </RecordTableCellWrapper>
         ))}
     </>

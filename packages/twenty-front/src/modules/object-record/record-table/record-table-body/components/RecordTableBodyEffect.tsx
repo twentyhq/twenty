@@ -1,11 +1,11 @@
 import { useContext, useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { isRecordTableScrolledLeftState } from '@/object-record/record-table/states/isRecordTableScrolledLeftState';
+import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { isRecordTableScrolledTopComponentState } from '@/object-record/record-table/states/isRecordTableScrolledTopComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
@@ -43,12 +43,22 @@ export const RecordTableBodyEffect = () => {
   }, [scrollTop, setIsRecordTableScrolledTop]);
 
   const scrollLeft = useRecoilValue(scrollLeftState);
-  const setIsRecordTableScrolledLeft = useSetRecoilState(
-    isRecordTableScrolledLeftState,
+
+  const setIsRecordTableScrolledLeft = useSetRecoilComponentState(
+    isRecordTableScrolledLeftComponentState,
   );
 
   useEffect(() => {
     setIsRecordTableScrolledLeft(scrollLeft === 0);
+    if (scrollLeft > 0) {
+      document
+        .getElementById('record-table-body')
+        ?.classList.add('first-columns-sticky');
+    } else {
+      document
+        .getElementById('record-table-body')
+        ?.classList.remove('first-columns-sticky');
+    }
   }, [scrollLeft, setIsRecordTableScrolledLeft]);
 
   const rowHeight = 32;

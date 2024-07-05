@@ -2,11 +2,12 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
-import { RecordTableHeaderCell } from '@/object-record/record-table/components/RecordTableHeaderCell';
-import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/components/RecordTableHeaderCheckboxColumn';
-import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/components/RecordTableHeaderDragDropColumn';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { isRecordTableScrolledLeftState } from '@/object-record/record-table/states/isRecordTableScrolledLeftState';
+import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
+import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
+import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
+import { RecordTableHeaderLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastColumn';
+import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { isRecordTableScrolledTopComponentState } from '@/object-record/record-table/states/isRecordTableScrolledTopComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
@@ -98,8 +99,8 @@ export const RecordTableHeader = ({
     isRecordTableScrolledTopComponentState,
   );
 
-  const isRecordTableScrolledLeft = useRecoilValue(
-    isRecordTableScrolledLeftState,
+  const isRecordTableScrolledLeft = useRecoilComponentValue(
+    isRecordTableScrolledLeftComponentState,
   );
 
   return (
@@ -118,6 +119,7 @@ export const RecordTableHeader = ({
             createRecord={createRecord}
           />
         ))}
+        <RecordTableHeaderLastColumn />
       </tr>
     </StyledTableHead>
   );

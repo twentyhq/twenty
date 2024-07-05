@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { RecordTableTd } from '@/object-record/record-table/components/RecordTableTd';
+import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 

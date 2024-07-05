@@ -1,12 +1,12 @@
-import { useContext } from 'react';
 import { Theme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconPlus, ThemeContext } from 'twenty-ui';
 
-import { RecordTableHeaderPlusButtonContent } from '@/object-record/record-table/components/RecordTableHeaderPlusButtonContent';
 import { HIDDEN_TABLE_COLUMN_DROPDOWN_ID } from '@/object-record/record-table/constants/HiddenTableColumnDropdownId';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { RecordTableHeaderPlusButtonContent } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
 

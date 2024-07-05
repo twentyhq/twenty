@@ -1,6 +1,6 @@
-import { ReactNode, useContext } from 'react';
 import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
+import { ReactNode, useContext } from 'react';
 import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui';
 
 import { isDefined } from '~/utils/isDefined';
@@ -14,13 +14,16 @@ const StyledTd = styled.td<{
   sticky?: boolean;
   freezeFirstColumns?: boolean;
   left?: number;
+  hasRightBorder?: boolean;
+  hasBottomBorder?: boolean;
 }>`
-  border-bottom: 1px solid ${({ borderColor }) => borderColor};
+  border-bottom: 1px solid
+    ${({ borderColor, hasBottomBorder }) =>
+      hasBottomBorder ? borderColor : 'transparent'};
   color: ${({ fontColor }) => fontColor};
-  border-right: 1px solid ${({ borderColor }) => borderColor};
-
-  position: ${({ sticky }) => (sticky === true ? 'sticky' : 'relative')};
-  left: ${({ left }) => (isDefined(left) ? `${left}px` : 'auto')};
+  border-right: 1px solid
+    ${({ borderColor, hasRightBorder }) =>
+      hasRightBorder ? borderColor : 'transparent'};
 
   padding: 0;
 
@@ -54,14 +57,19 @@ export const RecordTableTd = ({
   sticky,
   freezeFirstColumns,
   left,
+  hasRightBorder = true,
+  hasBottomBorder = true,
   ...dragHandleProps
 }: {
+  className?: string;
   children?: ReactNode;
   zIndex?: number;
   isSelected?: boolean;
   isDragging?: boolean;
   sticky?: boolean;
   freezeFirstColumns?: boolean;
+  hasRightBorder?: boolean;
+  hasBottomBorder?: boolean;
   left?: number;
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
@@ -83,6 +91,8 @@ export const RecordTableTd = ({
       sticky={sticky}
       freezeFirstColumns={freezeFirstColumns}
       left={left}
+      hasRightBorder={hasRightBorder}
+      hasBottomBorder={hasBottomBorder}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
     >

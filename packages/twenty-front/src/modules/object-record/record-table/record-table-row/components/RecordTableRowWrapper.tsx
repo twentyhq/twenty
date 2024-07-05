@@ -5,10 +5,10 @@ import { Draggable } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
-import { StyledRecordTableTr } from '@/object-record/record-table/components/StyledRecordTableTr';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 export const RecordTableRowWrapper = ({
@@ -41,7 +41,7 @@ export const RecordTableRowWrapper = ({
   return (
     <Draggable key={recordId} draggableId={recordId} index={rowIndex}>
       {(draggableProvided, draggableSnapshot) => (
-        <StyledRecordTableTr
+        <RecordTableTr
           ref={(node) => {
             elementRef(node);
             draggableProvided.innerRef(node);
@@ -80,7 +80,7 @@ export const RecordTableRowWrapper = ({
           >
             {children}
           </RecordTableRowContext.Provider>
-        </StyledRecordTableTr>
+        </RecordTableTr>
       )}
     </Draggable>
   );

@@ -2,6 +2,7 @@ import { AtomEffect, atomFamily } from 'recoil';
 
 import { ScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/types/ScopeInternalContext';
 import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { isDefined } from '~/utils/isDefined';
 
 type CreateComponentStateV2Type<ValueType> = {
   key: string;
@@ -16,9 +17,13 @@ export const createComponentStateV2 = <ValueType>({
   componentContext,
   effects,
 }: CreateComponentStateV2Type<ValueType>) => {
-  // if (isDefined(componentContext)) {
-  //   componentContextStateMap.set(key, componentContext);
-  // }
+  if (isDefined(componentContext)) {
+    if (!isDefined((window as any).componentContextStateMap)) {
+      (window as any).componentContextStateMap = new Map();
+    }
+
+    (window as any).componentContextStateMap.set(key, componentContext);
+  }
 
   return {
     key,

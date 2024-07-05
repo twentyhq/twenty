@@ -4,18 +4,19 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { ColumnHead } from '@/object-record/record-table/components/ColumnHead';
+import { RecordTableColumnHead } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHead';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
-import { isRecordTableScrolledLeftState } from '@/object-record/record-table/states/isRecordTableScrolledLeftState';
+import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
-import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
+import { RecordTableColumnHeadWithDropdown } from './RecordTableColumnHeadWithDropdown';
 
 const COLUMN_MIN_WIDTH = 104;
 
@@ -166,8 +167,8 @@ export const RecordTableHeaderCell = ({
     onMouseUp: handleResizeHandlerEnd,
   });
 
-  const isRecordTableScrolledLeft = useRecoilValue(
-    isRecordTableScrolledLeftState,
+  const isRecordTableScrolledLeft = useRecoilComponentValue(
+    isRecordTableScrolledLeftComponentState,
   );
 
   const isMobile = useIsMobile();
@@ -190,9 +191,9 @@ export const RecordTableHeaderCell = ({
     >
       <StyledColumnHeadContainer>
         {column.isLabelIdentifier ? (
-          <ColumnHead column={column} />
+          <RecordTableColumnHead column={column} />
         ) : (
-          <ColumnHeadWithDropdown column={column} />
+          <RecordTableColumnHeadWithDropdown column={column} />
         )}
         {(isMobile || iconVisibility) && !!column.isLabelIdentifier && (
           <StyledHeaderIcon>

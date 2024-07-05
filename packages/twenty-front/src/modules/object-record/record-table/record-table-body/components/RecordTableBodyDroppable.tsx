@@ -1,18 +1,32 @@
-import { ReactNode, useContext, useState } from 'react';
 import { Theme } from '@emotion/react';
 import { Droppable } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
-import { useRecoilValue } from 'recoil';
+import { ReactNode, useContext, useState } from 'react';
 import { ThemeContext } from 'twenty-ui';
 import { v4 } from 'uuid';
 
-import { isRecordTableScrolledLeftState } from '@/object-record/record-table/states/isRecordTableScrolledLeftState';
-
 const StyledTbody = styled.tbody<{
   theme: Theme;
-  freezeFirstColumns?: boolean;
 }>`
   overflow: hidden;
+
+  &.first-columns-sticky {
+    td:nth-child(1) {
+      position: sticky;
+      left: 0;
+      z-index: 5;
+    }
+    td:nth-child(2) {
+      position: sticky;
+      left: 9px;
+      z-index: 5;
+    }
+    td:nth-child(3) {
+      position: sticky;
+      left: 39px;
+      z-index: 5;
+    }
+  }
 `;
 
 export const RecordTableBodyDroppable = ({
@@ -24,16 +38,12 @@ export const RecordTableBodyDroppable = ({
 
   const { theme } = useContext(ThemeContext);
 
-  const isRecordTableScrolledLeft = useRecoilValue(
-    isRecordTableScrolledLeftState,
-  );
-
   return (
     <Droppable droppableId={v4Persistable}>
       {(provided) => (
         <StyledTbody
+          id="record-table-body"
           theme={theme}
-          freezeFirstColumns={!isRecordTableScrolledLeft}
           ref={provided.innerRef}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...provided.droppableProps}

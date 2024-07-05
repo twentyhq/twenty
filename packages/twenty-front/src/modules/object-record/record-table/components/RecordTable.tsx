@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
-import { RecordTableBodyEffect } from '@/object-record/record-table/components/RecordTableBodyEffect';
+import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
+import { RecordTableBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEffect';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
-import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
+import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 

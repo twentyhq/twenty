@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
-import { RecordTableRow } from '@/object-record/record-table/components/RecordTableRow';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
 
 export const RecordTablePendingRow = () => {
   const { pendingRecordIdState } = useRecordTableStates();

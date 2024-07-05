@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 
-import { RecordTableCellsEmpty } from '@/object-record/record-table/components/RecordTableCellsEmpty';
-import { RecordTableCellsVisible } from '@/object-record/record-table/components/RecordTableCellsVisible';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableCellsEmpty } from '@/object-record/record-table/record-table-row/components/RecordTableCellsEmpty';
+import { RecordTableCellsVisible } from '@/object-record/record-table/record-table-row/components/RecordTableCellsVisible';
 
 export const RecordTableCells = () => {
   const { inView, isDragging } = useContext(RecordTableRowContext);
