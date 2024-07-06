@@ -11,7 +11,6 @@ import {
 } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
-import { Charts } from '@/activities/reports/components/Charts';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
@@ -52,6 +51,8 @@ import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
+import { ChartEditor } from '~/pages/reports/ChartEditor';
+import { Charts } from '~/pages/reports/Charts';
 import { Reports } from '~/pages/reports/Reports';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
@@ -156,6 +157,7 @@ const createRouter = (isBillingEnabled?: boolean) =>
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.ReportsPage} element={<Reports />} />
           <Route path={AppPath.ChartsPage} element={<Charts />} />
+          <Route path={AppPath.ChartEditorPage} element={<ChartEditor />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />

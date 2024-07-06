@@ -1,27 +1,27 @@
-interface ReportGroupTimeSpan {
-  name: string;
+export interface ReportGroupTimeSpan {
+  title: string;
   minSinceMs: number;
 }
 
 export const REPORT_GROUP_TIME_SPANS: ReportGroupTimeSpan[] = [
   {
-    name: 'today',
+    title: 'today',
     minSinceMs: 0,
   },
   {
-    name: 'over a day ago',
+    title: 'one day ago',
     minSinceMs: 1000 * 60 * 60 * 24,
   },
   {
-    name: 'over a week ago',
+    title: 'one week ago',
     minSinceMs: 1000 * 60 * 60 * 24 * 7,
   },
   {
-    name: 'over a month ago',
+    title: 'one month ago',
     minSinceMs: 1000 * 60 * 60 * 24 * 30,
   },
   {
-    name: 'over a year ago',
+    title: 'one year ago',
     minSinceMs: 1000 * 60 * 60 * 24 * 365,
   },
   ...[
@@ -36,7 +36,7 @@ export const REPORT_GROUP_TIME_SPANS: ReportGroupTimeSpan[] = [
     'ten',
   ].map((yearCount, i) => {
     return {
-      name: `over ${yearCount} years ago`,
+      title: `${yearCount} years ago`,
       minSinceMs: 1000 * 60 * 60 * 24 * 365 * (i + 2),
     };
   }),
