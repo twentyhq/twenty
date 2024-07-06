@@ -199,7 +199,7 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   );
 };
 
-const playInteraction: PlayFunction<any, any> = async ({ canvasElement }) => {
+const playInteraction: PlayFunction<any, any> = async () => {
   const canvas = within(document.body);
 
   const button = await canvas.findByRole('button');
@@ -251,7 +251,7 @@ export const SearchWithLoadingMenu: Story = {
       </>
     ),
   },
-  play: async ({ canvasElement }) => {
+  play: async () => {
     const canvas = within(document.body);
 
     const button = await canvas.findByRole('button');
