@@ -11,6 +11,7 @@ import {
 } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
+import { Charts } from '@/activities/reports/components/Charts';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
@@ -154,6 +155,7 @@ const createRouter = (isBillingEnabled?: boolean) =>
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.ReportsPage} element={<Reports />} />
+          <Route path={AppPath.ChartsPage} element={<Charts />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />

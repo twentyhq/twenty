@@ -75,6 +75,15 @@ export class WorkspaceSyncRelationMetadataService {
         },
       });
 
+    console.log(
+      'bbbbbbbbb',
+      JSON.stringify(
+        originalObjectMetadataCollection.map((o) => o.nameSingular),
+        undefined,
+        2,
+      ), // Chart is missing ???
+    );
+
     // Create standard relation metadata collection
     const standardRelationMetadataCollection =
       this.standardRelationFactory.create(

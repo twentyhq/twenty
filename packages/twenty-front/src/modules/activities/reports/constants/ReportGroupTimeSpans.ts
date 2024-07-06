@@ -1,6 +1,9 @@
-import { ReportGroup } from '@/activities/reports/types/ReportGroup';
+interface ReportGroupTimeSpan {
+  name: string;
+  minSinceMs: number;
+}
 
-export const REPORT_GROUPS: ReportGroup[] = [
+export const REPORT_GROUP_TIME_SPANS: ReportGroupTimeSpan[] = [
   {
     name: 'today',
     minSinceMs: 0,

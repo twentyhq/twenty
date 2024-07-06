@@ -47,7 +47,9 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
         if (issues.length > 0) {
           if (!options.force) {
             this.logger.error(
-              `Workspace contains ${issues.length} issues, aborting.`,
+              `Workspace contains ${
+                issues.length
+              } issues, aborting. ${JSON.stringify(issues, undefined, 2)}`,
             );
 
             this.logger.log(
