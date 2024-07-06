@@ -31,8 +31,8 @@ export const Disabled: Story = {
 };
 
 export const WithOpenSelect: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const inputField = await canvas.findByText('Text');
 
@@ -49,8 +49,8 @@ export const WithExcludedFieldTypes: Story = {
   args: {
     excludedFieldTypes: [FieldMetadataType.Uuid, FieldMetadataType.Numeric],
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const inputField = await canvas.findByText('Text');
 
