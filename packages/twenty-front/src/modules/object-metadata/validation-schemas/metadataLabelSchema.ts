@@ -23,7 +23,7 @@ export const metadataLabelSchema = (existingLabels?: string[]) => {
     )
     .refine((label) => {
       try {
-        if(!existingLabels || !label || label.length == 0) {
+        if (!existingLabels || !label?.length) {
         return true
       }
       return !existingLabels.includes(computeMetadataNameFromLabelOrThrow(label));
