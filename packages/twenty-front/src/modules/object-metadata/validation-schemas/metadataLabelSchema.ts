@@ -22,10 +22,12 @@ export const metadataLabelSchema = (existingLabels?: string[]) => {
       },
     )
     .refine((label) => {
-      try{if(!existingLabels) {
+      try {
+        if(!existingLabels || !label || label.length == 0) {
         return true
       }
-      return !existingLabels.includes(label);}
+      return !existingLabels.includes(computeMetadataNameFromLabelOrThrow(label));
+    }
       catch(error) {
         return false
       }

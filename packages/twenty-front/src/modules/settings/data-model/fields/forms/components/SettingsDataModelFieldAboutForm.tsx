@@ -43,7 +43,6 @@ export const SettingsDataModelFieldAboutForm = ({
   const validateLabel = () => {
     trigger('label')
   }
-  console.log(errors.label, "errors near label")
   return (
     <>
       <StyledInputsContainer>
