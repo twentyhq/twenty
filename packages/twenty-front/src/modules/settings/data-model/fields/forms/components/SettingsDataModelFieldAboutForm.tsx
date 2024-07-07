@@ -8,15 +8,17 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 
-export const settingsDataModelFieldAboutFormSchema =
-  fieldMetadataItemSchema.pick({
+export const settingsDataModelFieldAboutFormSchema = (existingLabels?: string[]) => {
+  return fieldMetadataItemSchema(existingLabels || []).pick({
     description: true,
     icon: true,
     label: true,
   });
+};
 
+// Correctly infer the type from the returned schema
 type SettingsDataModelFieldAboutFormValues = z.infer<
-  typeof settingsDataModelFieldAboutFormSchema
+  ReturnType<typeof settingsDataModelFieldAboutFormSchema>
 >;
 
 type SettingsDataModelFieldAboutFormProps = {
@@ -37,8 +39,11 @@ export const SettingsDataModelFieldAboutForm = ({
   fieldMetadataItem,
   maxLength,
 }: SettingsDataModelFieldAboutFormProps) => {
-  const { control } = useFormContext<SettingsDataModelFieldAboutFormValues>();
-
+  const { control, trigger, formState: {errors} } = useFormContext<SettingsDataModelFieldAboutFormValues>();
+  const validateLabel = () => {
+    trigger('label')
+  }
+  console.log(errors.label, "errors near label")
   return (
     <>
       <StyledInputsContainer>
@@ -63,7 +68,11 @@ export const SettingsDataModelFieldAboutForm = ({
             <TextInput
               placeholder="Employees"
               value={value}
-              onChange={onChange}
+              onChange={(e) => {
+                onChange(e)
+                validateLabel()
+              }}
+              error={errors.label?.message=='Label must be unique' ? "This name is already taken": undefined}
               disabled={disabled}
               maxLength={maxLength}
               fullWidth

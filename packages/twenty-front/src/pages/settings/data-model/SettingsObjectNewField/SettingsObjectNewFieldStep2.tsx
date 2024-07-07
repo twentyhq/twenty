@@ -35,9 +35,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-type SettingsDataModelNewFieldFormValues = z.infer<
-  typeof settingsFieldFormSchema
->;
+type SettingsDataModelNewFieldFormValues = z.infer<ReturnType<typeof settingsFieldFormSchema>>;
 
 const StyledSettingsObjectFieldTypeSelect = styled(
   SettingsDataModelFieldTypeSelect,
@@ -59,9 +57,9 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(settingsFieldFormSchema),
+    resolver: zodResolver(settingsFieldFormSchema(activeObjectMetadataItem?.fields.map((value) => value.name))),
   });
-
+  
   useEffect(() => {
     if (!activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
@@ -111,7 +109,6 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const canSave =
     formConfig.formState.isValid && !formConfig.formState.isSubmitting;
-
   const handleSave = async (
     formValues: SettingsDataModelNewFieldFormValues,
   ) => {
@@ -121,7 +118,7 @@ export const SettingsObjectNewFieldStep2 = () => {
         'relation' in formValues
       ) {
         const { relation: relationFormValues, ...fieldFormValues } = formValues;
-
+        
         await createOneRelationMetadata({
           relationType: relationFormValues.type,
           field: pick(fieldFormValues, ['icon', 'label', 'description']),
@@ -145,7 +142,6 @@ export const SettingsObjectNewFieldStep2 = () => {
           ...formValues,
           objectMetadataId: activeObjectMetadataItem.id,
         });
-
         // TODO: fix optimistic update logic
         // Forcing a refetch for now but it's not ideal
         await apolloClient.refetchQueries({
