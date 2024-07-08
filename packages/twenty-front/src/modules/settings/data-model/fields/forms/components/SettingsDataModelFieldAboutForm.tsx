@@ -22,6 +22,7 @@ type SettingsDataModelFieldAboutFormValues = z.infer<
 type SettingsDataModelFieldAboutFormProps = {
   disabled?: boolean;
   fieldMetadataItem?: FieldMetadataItem;
+  maxLength?: number;
 };
 
 const StyledInputsContainer = styled.div`
@@ -34,6 +35,7 @@ const StyledInputsContainer = styled.div`
 export const SettingsDataModelFieldAboutForm = ({
   disabled,
   fieldMetadataItem,
+  maxLength,
 }: SettingsDataModelFieldAboutFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldAboutFormValues>();
 
@@ -63,6 +65,7 @@ export const SettingsDataModelFieldAboutForm = ({
               value={value}
               onChange={onChange}
               disabled={disabled}
+              maxLength={maxLength}
               fullWidth
             />
           )}

@@ -1,12 +1,13 @@
-import { useRef } from 'react';
-import { Keys } from 'react-hotkeys-hook';
 import {
   autoUpdate,
   flip,
+  FloatingPortal,
   offset,
   Placement,
   useFloating,
 } from '@floating-ui/react';
+import { useRef } from 'react';
+import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
@@ -85,7 +86,7 @@ export const Dropdown = ({
   };
 
   useListenClickOutside({
-    refs: [containerRef],
+    refs: [refs.floating],
     callback: () => {
       onClickOutside?.();
 
@@ -131,15 +132,17 @@ export const Dropdown = ({
           />
         )}
         {isDropdownOpen && (
-          <DropdownMenu
-            disableBlur={disableBlur}
-            width={dropdownMenuWidth ?? dropdownWidth}
-            data-select-disable
-            ref={refs.setFloating}
-            style={floatingStyles}
-          >
-            {dropdownComponents}
-          </DropdownMenu>
+          <FloatingPortal>
+            <DropdownMenu
+              disableBlur={disableBlur}
+              width={dropdownMenuWidth ?? dropdownWidth}
+              data-select-disable
+              ref={refs.setFloating}
+              style={floatingStyles}
+            >
+              {dropdownComponents}
+            </DropdownMenu>
+          </FloatingPortal>
         )}
         <DropdownOnToggleEffect
           onDropdownClose={onClose}

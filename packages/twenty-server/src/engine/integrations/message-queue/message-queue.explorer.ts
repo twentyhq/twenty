@@ -25,7 +25,6 @@ import { MessageQueueMetadataAccessor } from './message-queue-metadata.accessor'
 interface ProcessorGroup {
   instance: object;
   host: Module;
-  processorName: string;
   processMethodNames: string[];
   isRequestScoped: boolean;
 }
@@ -78,7 +77,6 @@ export class MessageQueueExplorer implements OnModuleInit {
       (acc, wrapper) => {
         const { instance, metatype } = wrapper;
         const methodNames = this.metadataScanner.getAllMethodNames(instance);
-        const processorName = wrapper.name;
         const { queueName } =
           this.metadataAccessor.getProcessorMetadata(
             instance.constructor || metatype,
@@ -111,7 +109,6 @@ export class MessageQueueExplorer implements OnModuleInit {
         acc[queueName].push({
           instance,
           host: wrapper.host,
-          processorName,
           processMethodNames,
           isRequestScoped: !wrapper.isDependencyTreeStatic(),
         });
@@ -140,11 +137,7 @@ export class MessageQueueExplorer implements OnModuleInit {
   ) {
     queue.work(async (job) => {
       for (const processorGroup of processorGroupCollection) {
-        const { processorName } = processorGroup;
-
-        if (job.name === processorName) {
-          await this.handleProcessor(processorGroup, job);
-        }
+        await this.handleProcessor(processorGroup, job);
       }
     }, options);
   }
@@ -153,15 +146,20 @@ export class MessageQueueExplorer implements OnModuleInit {
     { instance, host, processMethodNames, isRequestScoped }: ProcessorGroup,
     job: MessageQueueJob<MessageQueueJobData>,
   ) {
-    const processMetadataCollection = new Map(
-      processMethodNames.map((name) => {
+    const filteredProcessMethodNames = processMethodNames.filter(
+      (processMethodName) => {
         const metadata = this.metadataAccessor.getProcessMetadata(
-          instance[name],
+          instance[processMethodName],
         );
 
-        return [name, metadata];
-      }),
+        return metadata && job.name === metadata.jobName;
+      },
     );
+
+    // Return early if no matching methods found
+    if (filteredProcessMethodNames.length === 0) {
+      return;
+    }
 
     if (isRequestScoped) {
       const contextId = createContextId();
@@ -187,29 +185,31 @@ export class MessageQueueExplorer implements OnModuleInit {
 
       await this.invokeProcessMethods(
         contextInstance,
-        processMetadataCollection,
+        filteredProcessMethodNames,
         job,
       );
     } else {
-      await this.invokeProcessMethods(instance, processMetadataCollection, job);
+      await this.invokeProcessMethods(
+        instance,
+        filteredProcessMethodNames,
+        job,
+      );
     }
   }
 
   private async invokeProcessMethods(
     instance: object,
-    processMetadataCollection: Map<string, any>,
+    processMethodNames: string[],
     job: MessageQueueJob<MessageQueueJobData>,
   ) {
-    for (const [methodName, metadata] of processMetadataCollection) {
-      if (job.name === metadata?.jobName) {
-        try {
-          await instance[methodName].call(instance, job.data);
-        } catch (err) {
-          if (!shouldFilterException(err)) {
-            this.exceptionHandlerService.captureExceptions([err]);
-          }
-          throw err;
+    for (const processMethodName of processMethodNames) {
+      try {
+        await instance[processMethodName].call(instance, job.data);
+      } catch (err) {
+        if (!shouldFilterException(err)) {
+          this.exceptionHandlerService.captureExceptions([err]);
         }
+        throw err;
       }
     }
   }

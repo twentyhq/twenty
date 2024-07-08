@@ -1,31 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntityManager, Repository } from 'typeorm';
 
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-  CreateCompanyAndContactJobData,
   CreateCompanyAndContactJob,
+  CreateCompanyAndContactJobData,
 } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
+import { MessagingMessageService } from 'src/modules/messaging/common/services/messaging-message.service';
 import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+  MessageChannelContactAutoCreationPolicy,
+  MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import {
   GmailMessage,
   Participant,
   ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
-import { MessagingMessageService } from 'src/modules/messaging/common/services/messaging-message.service';
-import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { isGroupEmail } from 'src/utils/is-group-email';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 export class MessagingSaveMessagesAndEnqueueContactCreationService {
@@ -51,17 +53,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         workspaceId,
       );
 
-    const isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag =
-      await this.featureFlagRepository.findOneBy({
-        workspaceId: workspaceId,
-        key: FeatureFlagKeys.IsContactCreationForSentAndReceivedEmailsEnabled,
-        value: true,
-      });
-
     const emailAliases = connectedAccount.emailAliases?.split(',') || [];
-
-    const isContactCreationForSentAndReceivedEmailsEnabled =
-      isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag?.value;
 
     let savedMessageParticipants: MessageParticipantWorkspaceEntity[] = [];
 
@@ -87,14 +79,35 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   message.participants.find((p) => p.role === 'from')?.handle ||
                   '';
 
+                const isMessageSentByConnectedAccount =
+                  emailAliases.includes(fromHandle);
+
+                const isParticipantConnectedAccount = emailAliases.includes(
+                  participant.handle,
+                );
+
+                const isExcludedByNonProfessionalEmails =
+                  messageChannel.excludeNonProfessionalEmails &&
+                  !isWorkEmail(participant.handle);
+
+                const isExcludedByGroupEmails =
+                  messageChannel.excludeGroupEmails &&
+                  isGroupEmail(participant.handle);
+
+                const shouldCreateContact =
+                  !isParticipantConnectedAccount &&
+                  !isExcludedByNonProfessionalEmails &&
+                  !isExcludedByGroupEmails &&
+                  (messageChannel.contactAutoCreationPolicy ===
+                    MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED ||
+                    (messageChannel.contactAutoCreationPolicy ===
+                      MessageChannelContactAutoCreationPolicy.SENT &&
+                      isMessageSentByConnectedAccount));
+
                 return {
                   ...participant,
                   messageId,
-                  shouldCreateContact:
-                    messageChannel.isContactAutoCreationEnabled &&
-                    (isContactCreationForSentAndReceivedEmailsEnabled ||
-                      emailAliases.includes(fromHandle)) &&
-                    !emailAliases.includes(participant.handle),
+                  shouldCreateContact,
                 };
               })
             : [];

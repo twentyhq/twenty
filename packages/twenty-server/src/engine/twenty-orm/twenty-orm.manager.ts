@@ -1,9 +1,8 @@
-import { Injectable, Type } from '@nestjs/common';
+import { Injectable, Optional, Type } from '@nestjs/common';
 
 import { ObjectLiteral } from 'typeorm';
 
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
@@ -14,8 +13,8 @@ import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-en
 @Injectable()
 export class TwentyORMManager {
   constructor(
-    @InjectWorkspaceDatasource()
-    private readonly workspaceDataSource: WorkspaceDataSource,
+    @Optional()
+    private readonly workspaceDataSource: WorkspaceDataSource | null,
     private readonly entitySchemaFactory: EntitySchemaFactory,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
   ) {}
@@ -24,6 +23,10 @@ export class TwentyORMManager {
     entityClass: Type<T>,
   ): WorkspaceRepository<T> {
     const entitySchema = this.entitySchemaFactory.create(entityClass);
+
+    if (!this.workspaceDataSource) {
+      throw new Error('Workspace data source not found');
+    }
 
     return this.workspaceDataSource.getRepository<T>(entitySchema);
   }
