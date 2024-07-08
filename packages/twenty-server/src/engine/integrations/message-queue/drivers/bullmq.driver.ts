@@ -48,6 +48,7 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     await Promise.all([
       ...queues.map((q) => q.close()),
       ...workers.map((w) => w.close()),
+      this.flowProducer.close(),
     ]);
   }
 
