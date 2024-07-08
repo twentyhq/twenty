@@ -157,7 +157,7 @@ export class AddGraphqlConstraintsCommentsCommand extends CommandRunner {
                 const foreignKeyName = existingForeignKeys?.[0].constraint_name;
 
                 if (foreignKeyName) {
-                  console.log(`
+                  const comment = `
                     COMMENT ON CONSTRAINT "${foreignKeyName}" ON "${schemaName}"."${
                       relationMetadata.toObjectMetadata.nameSingular
                     }" IS e'@graphql({"foreign_name": "${
@@ -165,16 +165,12 @@ export class AddGraphqlConstraintsCommentsCommand extends CommandRunner {
                     }", "local_name": "${capitalize(
                       relationMetadata.fromFieldMetadata.name,
                     )}"})';
-                  `);
-                  await queryRunner.query(`
-                    COMMENT ON CONSTRAINT "${foreignKeyName}" ON "${schemaName}"."${
-                      relationMetadata.toObjectMetadata.nameSingular
-                    }" IS e'@graphql({"foreign_name": "${
-                      relationMetadata.fromObjectMetadata.nameSingular
-                    }", "local_name": "${capitalize(
-                      relationMetadata.fromFieldMetadata.name,
-                    )}"})';
-                  `);
+                  `;
+
+                  console.log(comment);
+                  console.log(relationMetadata);
+                  console.log('----------------------');
+                  await queryRunner.query(comment);
                 }
               }
             }
