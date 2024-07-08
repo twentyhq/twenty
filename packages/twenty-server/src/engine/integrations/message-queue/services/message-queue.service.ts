@@ -4,10 +4,13 @@ import {
   QueueCronJobOptions,
   QueueJobOptions,
 } from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
-import { MessageQueueDriver } from 'src/engine/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
-  MessageQueueJobData,
+  FlowDefinition,
+  MessageQueueDriver,
+} from 'src/engine/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
+import {
   MessageQueueJob,
+  MessageQueueJobData,
 } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
 
@@ -52,5 +55,9 @@ export class MessageQueueService {
     options?: MessageQueueWorkerOptions,
   ) {
     return this.driver.work(this.queueName, handler, options);
+  }
+
+  addFlow<T extends MessageQueueJobData>(flow: FlowDefinition<T>) {
+    return this.driver.addFlow(flow);
   }
 }
