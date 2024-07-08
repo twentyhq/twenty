@@ -6,7 +6,7 @@ const StyledEllipsisDisplay = styled.div<{ maxWidth?: number }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
-  `;
+`;
 
 type EllipsisDisplayProps = {
   children: React.ReactNode;

@@ -9,18 +9,20 @@ const DESKTOP_MAX_LENGTH = 20;
 
 export const FullNameFieldDisplay = () => {
   const { fieldValue } = useFullNameFieldDisplay();
-  const isMobile = useIsMobile(); 
+  const isMobile = useIsMobile();
 
   const truncateTheContent = (contentToTruncate: string, maxLength: number) => {
-   return contentToTruncate.length > maxLength ? `${contentToTruncate.slice(0, maxLength)}...` : contentToTruncate;
-  }
+    return contentToTruncate.length > maxLength
+      ? `${contentToTruncate.slice(0, maxLength)}...`
+      : contentToTruncate;
+  };
 
   const content = [fieldValue?.firstName, fieldValue?.lastName]
     .filter(isNonEmptyString)
     .join(' ');
 
-    const maxLength = isMobile ? MOBILE_MAX_LENGTH : DESKTOP_MAX_LENGTH;
-    const truncatedContent = truncateTheContent(content, maxLength);
+  const maxLength = isMobile ? MOBILE_MAX_LENGTH : DESKTOP_MAX_LENGTH;
+  const truncatedContent = truncateTheContent(content, maxLength);
 
-    return <TextDisplay text={truncatedContent} />;
+  return <TextDisplay text={truncatedContent} />;
 };
