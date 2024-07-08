@@ -1,8 +1,8 @@
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
-import { SettingsAccountsVisibilitySettingCardMedia } from '@/settings/accounts/components/SettingsAccountsVisibilitySettingCardMedia';
+import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
-type SettingsAccountsInboxVisibilitySettingsCardProps = {
+type SettingsAccountsMessageVisibilityCardProps = {
   onChange: (nextValue: MessageChannelVisibility) => void;
   value?: MessageChannelVisibility;
 };
@@ -13,7 +13,7 @@ const inboxSettingsVisibilityOptions = [
     description: 'Subject, body and attachments will be shared with your team.',
     value: MessageChannelVisibility.ShareEverything,
     cardMedia: (
-      <SettingsAccountsVisibilitySettingCardMedia
+      <SettingsAccountsVisibilityIcon
         metadata="active"
         subject="active"
         body="active"
@@ -25,7 +25,7 @@ const inboxSettingsVisibilityOptions = [
     description: 'Subject and metadata will be shared with your team.',
     value: MessageChannelVisibility.Subject,
     cardMedia: (
-      <SettingsAccountsVisibilitySettingCardMedia
+      <SettingsAccountsVisibilityIcon
         metadata="active"
         subject="active"
         body="inactive"
@@ -37,7 +37,7 @@ const inboxSettingsVisibilityOptions = [
     description: 'Timestamp and participants will be shared with your team.',
     value: MessageChannelVisibility.Metadata,
     cardMedia: (
-      <SettingsAccountsVisibilitySettingCardMedia
+      <SettingsAccountsVisibilityIcon
         metadata="active"
         subject="inactive"
         body="inactive"
@@ -46,10 +46,10 @@ const inboxSettingsVisibilityOptions = [
   },
 ];
 
-export const SettingsAccountsInboxVisibilitySettingsCard = ({
+export const SettingsAccountsMessageVisibilityCard = ({
   onChange,
   value = MessageChannelVisibility.ShareEverything,
-}: SettingsAccountsInboxVisibilitySettingsCardProps) => (
+}: SettingsAccountsMessageVisibilityCardProps) => (
   <SettingsAccountsRadioSettingsCard
     options={inboxSettingsVisibilityOptions}
     value={value}
