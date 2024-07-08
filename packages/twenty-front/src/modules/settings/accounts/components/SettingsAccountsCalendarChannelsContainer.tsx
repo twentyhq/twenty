@@ -11,6 +11,7 @@ import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/componen
 import { SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountCalendarChannelsTabListComponentId';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import React from 'react';
 
 export const SettingsAccountsCalendarChannelsContainer = () => {
   const { activeTabIdState } = useTabList(
@@ -59,13 +60,13 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
         tabs={tabs}
       />
       {calendarChannels.map((calendarChannel) => (
-        <>
+        <React.Fragment key={calendarChannel.id}>
           {calendarChannel.id === activeTabId && (
             <SettingsAccountsCalendarChannelDetails
               calendarChannel={calendarChannel}
             />
           )}
-        </>
+        </React.Fragment>
       ))}
       {false && activeTabId === 'general' && (
         <SettingsAccountsCalendarChannelsGeneral />
