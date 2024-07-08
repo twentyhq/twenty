@@ -92,7 +92,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
 
                 const isExcludedByGroupEmails =
                   messageChannel.excludeGroupEmails &&
-                  !isGroupEmail(participant.handle);
+                  isGroupEmail(participant.handle);
 
                 const shouldCreateContact =
                   !isParticipantConnectedAccount &&
