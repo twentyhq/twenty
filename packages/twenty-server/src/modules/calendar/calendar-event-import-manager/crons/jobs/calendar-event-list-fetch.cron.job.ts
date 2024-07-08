@@ -1,23 +1,23 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository, In } from 'typeorm';
+import { Any, In, Repository } from 'typeorm';
 
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import {
+  CalendarEventListFetchJob,
+  CalendarEventsImportJobData,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import {
   CalendarChannelSyncStage,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import {
-  CalendarEventsImportJobData,
-  CalendarEventListFetchJob,
-} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
@@ -57,9 +57,10 @@ export class CalendarEventListFetchCronJob {
       const calendarChannels = await calendarChannelRepository.find({
         where: {
           isSyncEnabled: true,
-          syncStage:
-            CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING ||
+          syncStage: Any([
+            CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING,
             CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
+          ]),
         },
       });
 
