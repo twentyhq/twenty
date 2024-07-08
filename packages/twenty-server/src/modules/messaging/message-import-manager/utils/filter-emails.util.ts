@@ -1,17 +1,30 @@
 import { isEmailBlocklisted } from 'src/modules/calendar-messaging-participant/utils/is-email-blocklisted.util';
 import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 // Todo: refactor this into several utils
 export const filterEmails = (
   messageChannelHandle: string,
   messages: GmailMessage[],
+  excludeGroupEmails: boolean,
+  excludeNonProfessionalEmails: boolean,
   blocklist: string[],
 ) => {
-  return filterOutBlocklistedMessages(
+  let filteredMessages = filterOutBlocklistedMessages(
     messageChannelHandle,
-    filterOutIcsAttachments(filterOutNonPersonalEmails(messages)),
+    filterOutIcsAttachments(messages),
     blocklist,
   );
+
+  if (excludeGroupEmails) {
+    filteredMessages = filterOutGroupEmails(filteredMessages);
+  }
+
+  if (excludeNonProfessionalEmails) {
+    filteredMessages = filterOutNonProfessionlEmails(filteredMessages);
+  }
+
+  return filteredMessages;
 };
 
 const filterOutBlocklistedMessages = (
@@ -47,21 +60,33 @@ const filterOutIcsAttachments = (messages: GmailMessage[]) => {
   });
 };
 
-const isPersonEmail = (email: string): boolean => {
+const isGroupEmail = (email: string): boolean => {
   const nonPersonalPattern =
     /noreply|no-reply|do_not_reply|no\.reply|^(info@|contact@|hello@|support@|feedback@|service@|help@|invites@|invite@|welcome@|alerts@|team@|notifications@|notification@|news@)/;
 
-  return !nonPersonalPattern.test(email);
+  return nonPersonalPattern.test(email);
 };
 
-const filterOutNonPersonalEmails = (messages: GmailMessage[]) => {
+const filterOutGroupEmails = (messages: GmailMessage[]) => {
+  return messages.filter((message) => {
+    if (!message.participants) {
+      return true;
+    }
+
+    return message.participants.every(
+      (participant) => !isGroupEmail(participant.handle),
+    );
+  });
+};
+
+const filterOutNonProfessionlEmails = (messages: GmailMessage[]) => {
   return messages.filter((message) => {
     if (!message.participants) {
       return true;
     }
 
     return message.participants.every((participant) =>
-      isPersonEmail(participant.handle),
+      isWorkEmail(participant.handle),
     );
   });
 };
