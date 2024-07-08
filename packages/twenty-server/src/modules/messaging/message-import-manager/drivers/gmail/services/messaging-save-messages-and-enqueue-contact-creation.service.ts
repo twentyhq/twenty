@@ -82,9 +82,9 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 const isMessageSentByConnectedAccount =
                   emailAliases.includes(fromHandle);
 
-                const isParticipantConnectedAccount = emailAliases.includes(
-                  participant.handle,
-                );
+                const isParticipantConnectedAccount =
+                  emailAliases.includes(participant.handle) ||
+                  participant.handle === connectedAccount.handle;
 
                 const isExcludedByNonProfessionalEmails =
                   messageChannel.excludeNonProfessionalEmails &&
