@@ -1,18 +1,24 @@
 import { OnModuleDestroy } from '@nestjs/common';
 
+import { FlowProducer, JobsOptions, Queue, QueueOptions, Worker } from 'bullmq';
 import omitBy from 'lodash.omitby';
-import { JobsOptions, Queue, QueueOptions, Worker } from 'bullmq';
 
 import {
   QueueCronJobOptions,
   QueueJobOptions,
 } from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
+import {
+  MessageQueueJob,
+  MessageQueueJobData,
+} from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
-import { MessageQueueDriver } from './interfaces/message-queue-driver.interface';
+import {
+  FlowDefinition,
+  MessageQueueDriver,
+} from './interfaces/message-queue-driver.interface';
 
 export type BullMQDriverOptions = QueueOptions;
 
@@ -25,8 +31,11 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     MessageQueue,
     Worker
   >;
+  private flowProducer: FlowProducer;
 
-  constructor(private options: BullMQDriverOptions) {}
+  constructor(private options: BullMQDriverOptions) {
+    this.flowProducer = new FlowProducer(this.options);
+  }
 
   register(queueName: MessageQueue): void {
     this.queueMap[queueName] = new Queue(queueName, this.options);
@@ -117,5 +126,9 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
+  }
+
+  addFlow<T extends MessageQueueJobData>(flow: FlowDefinition<T>): void {
+    this.flowProducer.add(flow);
   }
 }

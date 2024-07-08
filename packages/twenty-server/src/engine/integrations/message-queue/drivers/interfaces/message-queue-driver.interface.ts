@@ -7,6 +7,17 @@ import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
+export interface FlowDefinition<T extends MessageQueueJobData> {
+  queueName: MessageQueue;
+  /**
+   * Job name
+   */
+  name: string;
+  data: T;
+  options?: QueueJobOptions;
+  children?: FlowDefinition<T>[];
+}
+
 export interface MessageQueueDriver {
   add<T extends MessageQueueJobData>(
     queueName: MessageQueue,
@@ -26,5 +37,6 @@ export interface MessageQueueDriver {
     options?: QueueCronJobOptions,
   );
   removeCron(queueName: MessageQueue, jobName: string, pattern?: string);
+  addFlow<T extends MessageQueueJobData>(flow: FlowDefinition<T>): void;
   register?(queueName: MessageQueue): void;
 }

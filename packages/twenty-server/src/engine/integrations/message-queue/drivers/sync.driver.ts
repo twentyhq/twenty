@@ -1,13 +1,16 @@
 import { Logger } from '@nestjs/common';
 
 import {
-  MessageQueueJobData,
   MessageQueueJob,
+  MessageQueueJobData,
 } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
-import { MessageQueueDriver } from './interfaces/message-queue-driver.interface';
+import {
+  FlowDefinition,
+  MessageQueueDriver,
+} from './interfaces/message-queue-driver.interface';
 
 export class SyncDriver implements MessageQueueDriver {
   private readonly logger = new Logger(SyncDriver.name);
@@ -62,5 +65,11 @@ export class SyncDriver implements MessageQueueDriver {
     } else {
       this.logger.error(`No handler found for job: ${queueName}`);
     }
+  }
+
+  addFlow<T extends MessageQueueJobData>(_flow: FlowDefinition<T>): void {
+    throw new Error(
+      'Unsupported method. Please use BullMQ driver to have access to the workflow feature.',
+    );
   }
 }

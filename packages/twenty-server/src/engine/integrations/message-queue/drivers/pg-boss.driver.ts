@@ -6,12 +6,18 @@ import {
   QueueCronJobOptions,
   QueueJobOptions,
 } from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
+import {
+  MessageQueueJob,
+  MessageQueueJobData,
+} from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
-import { MessageQueueDriver } from './interfaces/message-queue-driver.interface';
+import {
+  FlowDefinition,
+  MessageQueueDriver,
+} from './interfaces/message-queue-driver.interface';
 
 export type PgBossDriverOptions = PgBoss.ConstructorOptions;
 
@@ -101,6 +107,12 @@ export class PgBossDriver
             singletonKey: options?.id,
           }
         : {},
+    );
+  }
+
+  addFlow<T extends MessageQueueJobData>(_flow: FlowDefinition<T>): void {
+    throw new Error(
+      'Unsupported method. Please use BullMQ driver to have access to the workflow feature.',
     );
   }
 }
