@@ -26,6 +26,8 @@ import {
   Participant,
   ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
+import { isGroupEmail } from 'src/utils/is-group-email';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 export class MessagingSaveMessagesAndEnqueueContactCreationService {
@@ -84,23 +86,23 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   participant.handle,
                 );
 
+                const isExcludedByNonProfessionalEmails =
+                  messageChannel.excludeNonProfessionalEmails &&
+                  !isWorkEmail(participant.handle);
+
+                const isExcludedByGroupEmails =
+                  messageChannel.excludeGroupEmails &&
+                  !isGroupEmail(participant.handle);
+
                 const shouldCreateContact =
                   !isParticipantConnectedAccount &&
+                  !isExcludedByNonProfessionalEmails &&
+                  !isExcludedByGroupEmails &&
                   (messageChannel.contactAutoCreationPolicy ===
                     MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED ||
                     (messageChannel.contactAutoCreationPolicy ===
                       MessageChannelContactAutoCreationPolicy.SENT &&
                       isMessageSentByConnectedAccount));
-
-                if (!shouldCreateContact) {
-                  console.log(
-                    'should not create contact for mail',
-                    message.subject,
-                    participant.handle,
-                    fromHandle,
-                    messageChannel.contactAutoCreationPolicy,
-                  );
-                }
 
                 return {
                   ...participant,
