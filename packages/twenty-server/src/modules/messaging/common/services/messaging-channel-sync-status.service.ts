@@ -61,8 +61,6 @@ export class MessagingChannelSyncStatusService {
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
     );
 
-    // TODO: remove nextPageToken from cache
-
     await this.messageChannelRepository.resetSyncCursor(
       messageChannelId,
       workspaceId,

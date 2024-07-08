@@ -46,7 +46,6 @@ export class CalendarBlocklistListener {
       {
         workspaceId: payload.workspaceId,
         workspaceMemberId: payload.properties.before.workspaceMember.id,
-        handle: payload.properties.before.handle,
       },
     );
   }
@@ -68,7 +67,6 @@ export class CalendarBlocklistListener {
       {
         workspaceId: payload.workspaceId,
         workspaceMemberId: payload.properties.after.workspaceMember.id,
-        handle: payload.properties.before.handle,
       },
     );
   }

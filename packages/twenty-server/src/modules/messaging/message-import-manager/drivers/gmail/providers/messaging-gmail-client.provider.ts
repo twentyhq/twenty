@@ -12,7 +12,10 @@ export class MessagingGmailClientProvider {
   ) {}
 
   public async getGmailClient(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'provider' | 'refreshToken'
+    >,
   ): Promise<gmail_v1.Gmail> {
     const oAuth2Client =
       await this.oAuth2ClientManagerService.getOAuth2Client(connectedAccount);
