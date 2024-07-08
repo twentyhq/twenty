@@ -1,12 +1,14 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { H2Title, IconRefresh, IconUser } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 
-import { MessageChannel } from '@/accounts/types/MessageChannel';
+import {
+  MessageChannel,
+  MessageChannelContactAutoCreationPolicy,
+} from '@/accounts/types/MessageChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
-import { SettingsAccountsInboxVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
+import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
+import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { Section } from '@/ui/layout/section/components/Section';
 import { MessageChannelVisibility } from '~/generated-metadata/graphql';
@@ -14,7 +16,12 @@ import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 type SettingsAccountsMessageChannelDetailsProps = {
   messageChannel: Pick<
     MessageChannel,
-    'id' | 'visibility' | 'isContactAutoCreationEnabled' | 'isSyncEnabled'
+    | 'id'
+    | 'visibility'
+    | 'contactAutoCreationPolicy'
+    | 'excludeNonProfessionalEmails'
+    | 'excludeGroupEmails'
+    | 'isSyncEnabled'
   >;
 };
 
@@ -28,8 +35,6 @@ const StyledDetailsContainer = styled.div`
 export const SettingsAccountsMessageChannelDetails = ({
   messageChannel,
 }: SettingsAccountsMessageChannelDetailsProps) => {
-  const theme = useTheme();
-
   const { updateOneRecord } = useUpdateOneRecord<MessageChannel>({
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
   });
@@ -43,20 +48,31 @@ export const SettingsAccountsMessageChannelDetails = ({
     });
   };
 
-  const handleContactAutoCreationToggle = (value: boolean) => {
+  const handleContactAutoCreationChange = (
+    value: MessageChannelContactAutoCreationPolicy,
+  ) => {
     updateOneRecord({
       idToUpdate: messageChannel.id,
       updateOneRecordInput: {
-        isContactAutoCreationEnabled: value,
+        contactAutoCreationPolicy: value,
       },
     });
   };
 
-  const handleIsSyncEnabledToggle = (value: boolean) => {
+  const handleIsGroupEmailExcludedToggle = (value: boolean) => {
     updateOneRecord({
       idToUpdate: messageChannel.id,
       updateOneRecordInput: {
-        isSyncEnabled: value,
+        excludeGroupEmails: value,
+      },
+    });
+  };
+
+  const handleIsNonProfessionalEmailExcludedToggle = (value: boolean) => {
+    updateOneRecord({
+      idToUpdate: messageChannel.id,
+      updateOneRecordInput: {
+        excludeNonProfessionalEmails: value,
       },
     });
   };
@@ -68,7 +84,7 @@ export const SettingsAccountsMessageChannelDetails = ({
           title="Visibility"
           description="Define what will be visible to other users in your workspace"
         />
-        <SettingsAccountsInboxVisibilitySettingsCard
+        <SettingsAccountsMessageVisibilityCard
           value={messageChannel.visibility}
           onChange={handleVisibilityChange}
         />
@@ -76,39 +92,29 @@ export const SettingsAccountsMessageChannelDetails = ({
       <Section>
         <H2Title
           title="Contact auto-creation"
-          description="Automatically create contacts for people you’ve sent emails to"
+          description="Automatically create People records when receiving or sending emails"
         />
-        <SettingsAccountsToggleSettingCard
-          cardMedia={
-            <SettingsAccountsCardMedia>
-              <IconUser
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.lg}
-              />
-            </SettingsAccountsCardMedia>
-          }
-          title="Auto-creation"
-          value={!!messageChannel.isContactAutoCreationEnabled}
-          onToggle={handleContactAutoCreationToggle}
+        <SettingsAccountsMessageAutoCreationCard
+          value={messageChannel.contactAutoCreationPolicy}
+          onChange={handleContactAutoCreationChange}
         />
       </Section>
       <Section>
-        <H2Title
-          title="Synchronization"
-          description="Past and future emails will automatically be synced to this workspace"
-        />
         <SettingsAccountsToggleSettingCard
-          cardMedia={
-            <SettingsAccountsCardMedia>
-              <IconRefresh
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.lg}
-              />
-            </SettingsAccountsCardMedia>
-          }
-          title="Sync emails"
-          value={!!messageChannel.isSyncEnabled}
-          onToggle={handleIsSyncEnabledToggle}
+          parameters={[
+            {
+              title: 'Exclude non-professional emails',
+              description: 'Don’t sync emails from/to Gmail, Outlook...',
+              value: !!messageChannel.excludeNonProfessionalEmails,
+              onToggle: handleIsNonProfessionalEmailExcludedToggle,
+            },
+            {
+              title: 'Exclude group emails',
+              description: 'Don’t sync emails from team@ support@ noreply@...',
+              value: !!messageChannel.excludeGroupEmails,
+              onToggle: handleIsGroupEmailExcludedToggle,
+            },
+          ]}
         />
       </Section>
     </StyledDetailsContainer>

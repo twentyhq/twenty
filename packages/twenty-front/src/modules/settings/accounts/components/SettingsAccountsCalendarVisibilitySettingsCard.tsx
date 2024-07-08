@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
-import { SettingsAccountsVisibilitySettingCardMedia } from '@/settings/accounts/components/SettingsAccountsVisibilitySettingCardMedia';
+import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
 import { CalendarChannelVisibility } from '~/generated/graphql';
 
 type SettingsAccountsEventVisibilitySettingsCardProps = {
@@ -9,7 +9,7 @@ type SettingsAccountsEventVisibilitySettingsCardProps = {
   value?: CalendarChannelVisibility;
 };
 
-const StyledCardMedia = styled(SettingsAccountsVisibilitySettingCardMedia)`
+const StyledCardMedia = styled(SettingsAccountsVisibilityIcon)`
   height: ${({ theme }) => theme.spacing(6)};
 `;
 
