@@ -40,6 +40,7 @@ export const SettingsAccountsMessageAutoCreationCard = ({
   value = MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED,
 }: SettingsAccountsMessageAutoCreationCardProps) => (
   <SettingsAccountsRadioSettingsCard
+    name="message-auto-creation"
     options={autoCreationOptions}
     value={value}
     onChange={onChange}

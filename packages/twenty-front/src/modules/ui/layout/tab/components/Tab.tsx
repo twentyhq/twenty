@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent, Pill } from 'twenty-ui';
@@ -41,6 +40,7 @@ const StyledHover = styled.span`
   padding: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 
   &:hover {
     background: ${({ theme }) => theme.background.tertiary};
