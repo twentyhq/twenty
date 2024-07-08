@@ -33,6 +33,7 @@ export const SettingsAccountsEventVisibilitySettingsCard = ({
   value = CalendarChannelVisibility.ShareEverything,
 }: SettingsAccountsEventVisibilitySettingsCardProps) => (
   <SettingsAccountsRadioSettingsCard
+    name="event-visibility"
     options={eventSettingsVisibilityOptions}
     value={value}
     onChange={onChange}

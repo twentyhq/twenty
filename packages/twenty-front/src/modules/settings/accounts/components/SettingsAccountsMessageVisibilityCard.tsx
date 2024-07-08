@@ -51,6 +51,7 @@ export const SettingsAccountsMessageVisibilityCard = ({
   value = MessageChannelVisibility.ShareEverything,
 }: SettingsAccountsMessageVisibilityCardProps) => (
   <SettingsAccountsRadioSettingsCard
+    name="message-visibility"
     options={inboxSettingsVisibilityOptions}
     value={value}
     onChange={onChange}
