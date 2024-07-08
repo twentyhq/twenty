@@ -53,7 +53,6 @@ import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
-import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/SettingsAccountsCalendarsSettings';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
@@ -178,10 +177,6 @@ const createRouter = (isBillingEnabled?: boolean) =>
                 <Route
                   path={SettingsPath.AccountsCalendars}
                   element={<SettingsAccountsCalendars />}
-                />
-                <Route
-                  path={SettingsPath.AccountsCalendarsSettings}
-                  element={<SettingsAccountsCalendarsSettings />}
                 />
                 <Route
                   path={SettingsPath.AccountsEmails}
