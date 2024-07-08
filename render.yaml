@@ -36,8 +36,8 @@ services:
         name: twenty_postgres
         type: pserv
         property: port
-- type: web
-  name: worker
+- type: worker
+  name: twenty-worker
   runtime: image
   image:
     url: twentycrm/twenty:latest
