@@ -10,14 +10,14 @@ import {
   UpdateSubscriptionJobData,
 } from 'src/engine/core-modules/billing/jobs/update-subscription.job';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
 
 @Injectable()
 export class BillingWorkspaceMemberListener {
   constructor(
     @InjectMessageQueue(MessageQueue.billingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly billingService: BillingService,
+    private readonly billingWorkspaceService: BillingWorkspaceService,
   ) {}
 
   @OnEvent('workspaceMember.created')
@@ -26,7 +26,7 @@ export class BillingWorkspaceMemberListener {
     payload: ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>,
   ) {
     const isBillingEnabledForWorkspace =
-      await this.billingService.isBillingEnabledForWorkspace(
+      await this.billingWorkspaceService.isBillingEnabledForWorkspace(
         payload.workspaceId,
       );
 

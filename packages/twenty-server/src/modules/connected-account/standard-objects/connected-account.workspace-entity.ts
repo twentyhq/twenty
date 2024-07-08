@@ -7,7 +7,6 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { CONNECTED_ACCOUNT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -17,7 +16,10 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 export enum ConnectedAccountProvider {
   GOOGLE = 'google',
@@ -88,6 +90,18 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   authFailedAt: Date | null;
+
+  @WorkspaceField({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.emailAliases,
+    type: FieldMetadataType.TEXT,
+    label: 'Email Aliases',
+    description: 'Email Aliases',
+    icon: 'IconMail',
+  })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKeys.IsMessagingAliasFetchingEnabled,
+  })
+  emailAliases: string;
 
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,

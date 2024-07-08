@@ -23,6 +23,8 @@ export enum FeatureFlagKeys {
   IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
   IsContactCreationForSentAndReceivedEmailsEnabled = 'IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED',
   IsForeignKeyCommentConstraintEnabled = 'IS_FOREIGN_KEY_COMMENT_CONSTRAINT_ENABLED',
+  IsCopilotEnabled = 'IS_COPILOT_ENABLED',
+  IsMessagingAliasFetchingEnabled = 'IS_MESSAGING_ALIAS_FETCHING_ENABLED',
   IsGoogleCalendarSyncV2Enabled = 'IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED',
   IsFreeAccessEnabled = 'IS_FREE_ACCESS_ENABLED',
 }

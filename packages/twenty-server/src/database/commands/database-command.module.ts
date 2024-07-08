@@ -25,6 +25,7 @@ import { AddGraphqlConstraintsCommentsCommand } from 'src/database/commands/0.0.
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand } from 'src/database/commands/0-22-update-boolean-fields-null-default-values-and-null-values.command';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-met
     UpdateMessageChannelVisibilityEnumCommand,
     UpdateMessageChannelSyncStatusEnumCommand,
     AddGraphqlConstraintsCommentsCommand,
+    UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand,
   ],
 })
 export class DatabaseCommandModule {}

@@ -11,7 +11,7 @@ const meta: Meta<typeof InternalDatePicker> = {
   argTypes: {
     date: { control: 'date' },
   },
-  args: { date: new Date('January 1, 2023 00:00:00') },
+  args: { date: new Date('January 1, 2023 02:00:00') },
 };
 
 export default meta;
@@ -20,8 +20,8 @@ type Story = StoryObj<typeof InternalDatePicker>;
 export const Default: Story = {};
 
 export const WithOpenMonthSelect: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const monthSelect = await canvas.findByText('January');
 

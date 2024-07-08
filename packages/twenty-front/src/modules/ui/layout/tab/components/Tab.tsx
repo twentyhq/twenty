@@ -11,7 +11,7 @@ type TabProps = {
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
-  hasBetaPill?: boolean;
+  pill?: string;
 };
 
 const StyledTab = styled.div<{ active?: boolean; disabled?: boolean }>`
@@ -59,7 +59,7 @@ export const Tab = ({
   onClick,
   className,
   disabled,
-  hasBetaPill,
+  pill,
 }: TabProps) => {
   const theme = useTheme();
   return (
@@ -73,7 +73,7 @@ export const Tab = ({
       <StyledHover>
         {Icon && <Icon size={theme.icon.size.md} />}
         {title}
-        {hasBetaPill && <Pill label="Beta" />}
+        {pill && <Pill label={pill} />}
       </StyledHover>
     </StyledTab>
   );

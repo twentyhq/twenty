@@ -47,9 +47,6 @@ export class WorkspaceMetadataUpdaterService {
         storage.objectMetadataCreateCollection.map((objectMetadata) => ({
           ...objectMetadata,
           isActive: true,
-          fields: objectMetadata.fields.map((field) =>
-            this.prepareFieldMetadataForCreation(field),
-          ),
         })) as DeepPartial<ObjectMetadataEntity>[],
       );
     const identifiers = createdPartialObjectMetadataCollection.map(

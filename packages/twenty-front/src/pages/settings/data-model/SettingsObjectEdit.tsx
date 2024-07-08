@@ -1,8 +1,8 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { zodResolver } from '@hookform/resolvers/zod';
-import pick from 'lodash.pick';
 import { H2Title, IconArchive, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -81,7 +81,12 @@ export const SettingsObjectEdit = () => {
         ),
       });
 
-      navigate(`${settingsObjectsPagePath}/${getObjectSlug(formValues)}`);
+      navigate(
+        `${settingsObjectsPagePath}/${getObjectSlug({
+          ...formValues,
+          namePlural: formValues.labelPlural,
+        })}`,
+      );
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,

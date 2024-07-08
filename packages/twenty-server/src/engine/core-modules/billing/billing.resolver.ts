@@ -3,8 +3,8 @@ import { UseGuards } from '@nestjs/common';
 
 import {
   AvailableProduct,
-  BillingService,
-} from 'src/engine/core-modules/billing/billing.service';
+  BillingWorkspaceService,
+} from 'src/engine/core-modules/billing/billing.workspace-service';
 import { ProductInput } from 'src/engine/core-modules/billing/dto/product.input';
 import { assert } from 'src/utils/assert';
 import { ProductPricesEntity } from 'src/engine/core-modules/billing/dto/product-prices.entity';
@@ -18,11 +18,14 @@ import { UpdateBillingEntity } from 'src/engine/core-modules/billing/dto/update-
 
 @Resolver()
 export class BillingResolver {
-  constructor(private readonly billingService: BillingService) {}
+  constructor(
+    private readonly billingWorkspaceService: BillingWorkspaceService,
+  ) {}
 
   @Query(() => ProductPricesEntity)
   async getProductPrices(@Args() { product }: ProductInput) {
-    const stripeProductId = this.billingService.getProductStripeId(product);
+    const stripeProductId =
+      this.billingWorkspaceService.getProductStripeId(product);
 
     assert(
       stripeProductId,
@@ -32,7 +35,7 @@ export class BillingResolver {
     );
 
     const productPrices =
-      await this.billingService.getProductPrices(stripeProductId);
+      await this.billingWorkspaceService.getProductPrices(stripeProductId);
 
     return {
       totalNumberOfPrices: productPrices.length,
@@ -47,7 +50,7 @@ export class BillingResolver {
     @Args() { returnUrlPath }: BillingSessionInput,
   ) {
     return {
-      url: await this.billingService.computeBillingPortalSessionURL(
+      url: await this.billingWorkspaceService.computeBillingPortalSessionURL(
         user.defaultWorkspaceId,
         returnUrlPath,
       ),
@@ -60,7 +63,7 @@ export class BillingResolver {
     @AuthUser() user: User,
     @Args() { recurringInterval, successUrlPath }: CheckoutSessionInput,
   ) {
-    const stripeProductId = this.billingService.getProductStripeId(
+    const stripeProductId = this.billingWorkspaceService.getProductStripeId(
       AvailableProduct.BasePlan,
     );
 
@@ -70,7 +73,7 @@ export class BillingResolver {
     );
 
     const productPrices =
-      await this.billingService.getProductPrices(stripeProductId);
+      await this.billingWorkspaceService.getProductPrices(stripeProductId);
 
     const stripePriceId = productPrices.filter(
       (price) => price.recurringInterval === recurringInterval,
@@ -82,7 +85,7 @@ export class BillingResolver {
     );
 
     return {
-      url: await this.billingService.computeCheckoutSessionURL(
+      url: await this.billingWorkspaceService.computeCheckoutSessionURL(
         user,
         stripePriceId,
         successUrlPath,
@@ -93,7 +96,7 @@ export class BillingResolver {
   @Mutation(() => UpdateBillingEntity)
   @UseGuards(JwtAuthGuard)
   async updateBillingSubscription(@AuthUser() user: User) {
-    await this.billingService.updateBillingSubscription(user);
+    await this.billingWorkspaceService.updateBillingSubscription(user);
 
     return { success: true };
   }
