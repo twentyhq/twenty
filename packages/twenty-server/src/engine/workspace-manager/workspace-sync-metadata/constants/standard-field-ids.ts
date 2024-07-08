@@ -157,6 +157,7 @@ export const AUDIT_LOGS_STANDARD_FIELD_IDS = {
   properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
   context: '20202020-b9d1-4058-9a75-7469cab5ca8c',
   objectName: '20202020-76ba-4c47-b7e5-96034005d00a',
+  objectMetadataId: '20202020-127b-409d-9864-0ec44aa9ed98',
   recordId: '20202020-c578-4acf-bf94-eb53b035cea2',
   workspaceMember: '20202020-6e96-4300-b3f5-67a707147385',
 };

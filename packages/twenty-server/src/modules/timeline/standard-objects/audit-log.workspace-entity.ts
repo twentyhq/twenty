@@ -63,7 +63,7 @@ export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
   objectName: string;
 
   @WorkspaceField({
-    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectName,
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectMetadataId,
     type: FieldMetadataType.TEXT,
     label: 'Object name',
     description: 'If the event is related to a particular object',
