@@ -31,7 +31,7 @@ export const ANALYTICS_QUERY_STANDARD_FIELD_IDS = {
   chart: '20202020-9084-4c96-944c-3a359c3f6b03',
   measure: '20202020-9573-4359-b500-f8a9895c848f',
   sourceObjectNameSingular: '20202020-7acd-412f-af03-62b5630df552',
-  field: '20202020-5206-419e-9df6-d8f8f75e75e9',
+  fieldPath: '20202020-ff88-41ba-9158-ce9711e50606',
   analyticsQueryFilters: '20202020-2229-4c35-9f3b-9e1199ec3c7c',
   groupBy: '20202020-4a7b-4021-b1d4-6e6f282cedee',
   result: '20202020-4db0-4a48-b742-3da6cfbd146d',

@@ -60,13 +60,13 @@ export class AnalyticsQueryWorkspaceEntity extends BaseWorkspaceEntity {
   sourceObjectNameSingular: string;
 
   @WorkspaceField({
-    standardId: ANALYTICS_QUERY_STANDARD_FIELD_IDS.field,
+    standardId: ANALYTICS_QUERY_STANDARD_FIELD_IDS.fieldPath,
     type: FieldMetadataType.TEXT,
-    label: 'Field',
-    description: 'Field of the source object',
+    label: 'Field path',
+    description: 'Dot-separated path to the source field.',
     icon: 'IconForms',
   })
-  field: string;
+  fieldPath: string;
 
   @WorkspaceRelation({
     standardId: ANALYTICS_QUERY_STANDARD_FIELD_IDS.analyticsQueryFilters,

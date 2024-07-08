@@ -26,6 +26,7 @@ const StyledTitleBar = styled.div`
   width: 100%;
 `;
 
+// H1Title instead?
 const StyledTitle = styled.h3`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};

@@ -7,7 +7,7 @@ export interface AnalyticsQuery {
   chartId: string;
   measure: AnalyticsQueryMeasure;
   sourceObjectNameSingular: string;
-  field: string;
+  fieldPath: string;
   analyticsQueryFilters: AnalyticsQueryFilter[];
   groupBy: string;
   analyticsQueryResult: any; // TODO
