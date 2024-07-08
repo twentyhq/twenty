@@ -4,7 +4,7 @@ import { SettingsAccountsCardMedia } from '@/settings/accounts/components/Settin
 
 type VisibilityElementState = 'active' | 'inactive';
 
-type SettingsAccountsVisibilitySettingCardMediaProps = {
+type SettingsAccountsVisibilityIconProps = {
   className?: string;
   metadata?: VisibilityElementState;
   subject?: VisibilityElementState;
@@ -31,12 +31,12 @@ const StyledBodySkeleton = styled(StyledSubjectSkeleton)`
   flex: 1 0 auto;
 `;
 
-export const SettingsAccountsVisibilitySettingCardMedia = ({
+export const SettingsAccountsVisibilityIcon = ({
   className,
   metadata,
   subject,
   body,
-}: SettingsAccountsVisibilitySettingCardMediaProps) => (
+}: SettingsAccountsVisibilityIconProps) => (
   <StyledCardMedia className={className}>
     {!!metadata && <StyledMetadataSkeleton isActive={metadata === 'active'} />}
     {!!subject && <StyledSubjectSkeleton isActive={subject === 'active'} />}

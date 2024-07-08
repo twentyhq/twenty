@@ -3,21 +3,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
+import {
+  MessageChannelContactAutoCreationPolicy,
+  MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 export type MessagingCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
@@ -55,10 +55,11 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
       workspaceId,
     );
 
-    const { isContactAutoCreationEnabled, connectedAccountId } =
-      messageChannel[0];
+    const { contactAutoCreationPolicy, connectedAccountId } = messageChannel[0];
 
-    if (!isContactAutoCreationEnabled) {
+    if (
+      contactAutoCreationPolicy === MessageChannelContactAutoCreationPolicy.NONE
+    ) {
       return;
     }
 
@@ -73,25 +74,17 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
       );
     }
 
-    const isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag =
-      await this.featureFlagRepository.findOneBy({
-        workspaceId: workspaceId,
-        key: FeatureFlagKeys.IsContactCreationForSentAndReceivedEmailsEnabled,
-        value: true,
-      });
-
-    const isContactCreationForSentAndReceivedEmailsEnabled =
-      isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag?.value;
-
-    const contactsToCreate = isContactCreationForSentAndReceivedEmailsEnabled
-      ? await this.messageParticipantRepository.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
-          messageChannelId,
-          workspaceId,
-        )
-      : await this.messageParticipantRepository.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberIdAndMessageOutgoing(
-          messageChannelId,
-          workspaceId,
-        );
+    const contactsToCreate =
+      contactAutoCreationPolicy ===
+      MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED
+        ? await this.messageParticipantRepository.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+            messageChannelId,
+            workspaceId,
+          )
+        : await this.messageParticipantRepository.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberIdAndMessageOutgoing(
+            messageChannelId,
+            workspaceId,
+          );
 
     await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
       connectedAccount,

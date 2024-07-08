@@ -10,6 +10,7 @@ import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/compo
 import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountMessageChannelsTabListComponentId';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import React from 'react';
 
 export const SettingsAccountsMessageChannelsContainer = () => {
   const { activeTabIdState } = useTabList(
@@ -58,13 +59,13 @@ export const SettingsAccountsMessageChannelsContainer = () => {
         tabs={tabs}
       />
       {messageChannels.map((messageChannel) => (
-        <>
+        <React.Fragment key={messageChannel.id}>
           {messageChannel.id === activeTabId && (
             <SettingsAccountsMessageChannelDetails
               messageChannel={messageChannel}
             />
           )}
-        </>
+        </React.Fragment>
       ))}
     </>
   );
