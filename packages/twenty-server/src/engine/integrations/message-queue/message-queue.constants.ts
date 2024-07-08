@@ -15,5 +15,6 @@ export enum MessageQueue {
   workspaceQueue = 'workspace-queue',
   recordPositionBackfillQueue = 'record-position-backfill-queue',
   entityEventsToDbQueue = 'entity-events-to-db-queue',
+  workflowQueue = 'workflow-queue',
   testQueue = 'test-queue',
 }
