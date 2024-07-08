@@ -1,10 +1,10 @@
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { Chip, ChipVariant } from 'twenty-ui';
 
-import { AnimatedContainer } from '@/object-record/record-table/components/AnimatedContainer';
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
+import { AnimatedContainer } from '@/ui/utilities/animation/components/AnimatedContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
