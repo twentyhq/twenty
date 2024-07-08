@@ -12,7 +12,7 @@ export const OnboardingSyncEmailsSettingsCard = ({
   value = MessageChannelVisibility.ShareEverything,
 }: OnboardingSyncEmailsSettingsCardProps) => (
   <SettingsAccountsRadioSettingsCard
-    name="sync-emails"
+    name="sync-emails-visiblity"
     options={onboardingSyncEmailsOptions}
     value={value}
     onChange={onChange}
