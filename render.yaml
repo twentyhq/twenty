@@ -37,7 +37,7 @@ services:
         type: pserv
         property: port
 - type: worker
-  name: twenty-worker
+  name: worker
   runtime: image
   image:
     url: twentycrm/twenty:latest
