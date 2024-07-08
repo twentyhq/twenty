@@ -42,10 +42,6 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
   });
 
   const tabs = [
-    {
-      id: 'general',
-      title: 'General',
-    },
     ...calendarChannels.map((calendarChannel) => ({
       id: calendarChannel.id,
       title: calendarChannel.handle,
@@ -71,7 +67,9 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
           )}
         </>
       ))}
-      {activeTabId === 'general' && <SettingsAccountsCalendarChannelsGeneral />}
+      {false && activeTabId === 'general' && (
+        <SettingsAccountsCalendarChannelsGeneral />
+      )}
     </>
   );
 };

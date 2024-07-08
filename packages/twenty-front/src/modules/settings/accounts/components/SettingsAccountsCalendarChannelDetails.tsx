@@ -7,7 +7,6 @@ import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/component
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
-import { useParams } from 'react-router-dom';
 import { H2Title, IconRefresh, IconUser } from 'twenty-ui';
 import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
@@ -34,15 +33,13 @@ export const SettingsAccountsCalendarChannelDetails = ({
 }: SettingsAccountsCalendarChannelDetailsProps) => {
   const theme = useTheme();
 
-  const { accountUuid: calendarChannelId = '' } = useParams();
-
   const { updateOneRecord } = useUpdateOneRecord<CalendarChannel>({
     objectNameSingular: CoreObjectNameSingular.CalendarChannel,
   });
 
   const handleVisibilityChange = (value: CalendarChannelVisibility) => {
     updateOneRecord({
-      idToUpdate: calendarChannelId,
+      idToUpdate: calendarChannel.id,
       updateOneRecordInput: {
         visibility: value,
       },
@@ -51,7 +48,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
 
   const handleContactAutoCreationToggle = (value: boolean) => {
     updateOneRecord({
-      idToUpdate: calendarChannelId,
+      idToUpdate: calendarChannel.id,
       updateOneRecordInput: {
         isContactAutoCreationEnabled: value,
       },
@@ -60,7 +57,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
 
   const handleSyncEventsToggle = (value: boolean) => {
     updateOneRecord({
-      idToUpdate: calendarChannelId,
+      idToUpdate: calendarChannel.id,
       updateOneRecordInput: {
         isSyncEnabled: value,
       },
