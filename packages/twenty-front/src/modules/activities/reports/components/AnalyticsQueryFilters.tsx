@@ -6,6 +6,6 @@ interface AnalyticsQueryFiltersProps {
 }
 
 export const AnalyticsQueryFilters = (props: AnalyticsQueryFiltersProps) =>
-  props.analyticsQuery?.analyticsQueryFilters.map((analytcsQueryFilter) => (
+  props.analyticsQuery?.analyticsQueryFilters?.map((analytcsQueryFilter) => (
     <AnalyticsQueryFilter analyticsQueryFilter={analytcsQueryFilter} />
   ));

@@ -13,15 +13,12 @@ const StyledContainer = styled.div`
 `;
 
 export const AnalyticsQueryFilter = (props: AnalyticsQueryFilterProps) => {
-  const fieldOptions: { value: string; label: string }[] = [];
-  const operatorOptions: { value: string; label: string }[] = [];
-
   return (
     <StyledContainer>
       <Select
         fullWidth
         dropdownId="analytics-query-field-select"
-        options={fieldOptions}
+        options={[]}
         //value={}
         onChange={async () => {
           // TODO: Save
@@ -30,7 +27,7 @@ export const AnalyticsQueryFilter = (props: AnalyticsQueryFilterProps) => {
       <Select
         fullWidth
         dropdownId="analytics-query-operator-select"
-        options={operatorOptions}
+        options={[]}
         //value={}
         onChange={async () => {
           // TODO: Save

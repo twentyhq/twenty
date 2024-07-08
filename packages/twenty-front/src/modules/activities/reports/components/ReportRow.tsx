@@ -1,7 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { IconTrash } from 'twenty-ui';
 
 import { Report } from '@/activities/reports/types/Report';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { IconButton } from '@/ui/input/button/components/IconButton';
 import { beautifyExactDate } from '~/utils/date-utils';
 
 const StyledContainer = styled.div`
@@ -53,6 +57,10 @@ interface ReportRowProps {
 export const ReportRow = (props: ReportRowProps) => {
   const navigate = useNavigate();
 
+  const { deleteOneRecord: deleteOneReport } = useDeleteOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Report,
+  });
+
   return (
     <StyledContainer
       onClick={async () => {
@@ -71,6 +79,13 @@ export const ReportRow = (props: ReportRowProps) => {
         <StyledDueDate>
           {props.report.createdAt && beautifyExactDate(props.report.createdAt)}
         </StyledDueDate>
+        <IconButton
+          variant="tertiary"
+          Icon={IconTrash}
+          onClick={() => {
+            deleteOneReport(props.report.id);
+          }}
+        />
       </StyledRightSideContainer>
     </StyledContainer>
   );

@@ -4,6 +4,7 @@ import { IconPlus } from 'twenty-ui';
 
 import { Chart } from '@/activities/reports/components/Chart';
 import { ReportsLayout } from '@/activities/reports/components/ReportsLayout';
+import { AnalyticsQuery as AnalyticsQueryType } from '@/activities/reports/types/AnalyticsQuery';
 import { Chart as ChartType } from '@/activities/reports/types/Chart';
 import { Report } from '@/activities/reports/types/Report';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -45,6 +46,11 @@ export const Charts = () => {
     objectNameSingular: CoreObjectNameSingular.Chart,
   });
 
+  const { createOneRecord: createOneAnalyticsQuery } =
+    useCreateOneRecord<AnalyticsQueryType>({
+      objectNameSingular: CoreObjectNameSingular.AnalyticsQuery,
+    });
+
   return (
     <ReportsLayout hasBackButton>
       <StyledChartsContainer>
@@ -64,6 +70,9 @@ export const Charts = () => {
           variant={'secondary'}
           onClick={async () => {
             const chart = await createOneChart({ title: 'New Chart' });
+            await createOneAnalyticsQuery({
+              chartId: chart.id,
+            });
             await navigate(`/reports/${reportId}/charts/${chart.id}`);
           }}
         />
