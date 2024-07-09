@@ -1,18 +1,18 @@
 import { useLazyQuery } from '@apollo/client';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
+import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
+import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
+import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
+import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
+import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useFindManyRecordsState } from '@/object-record/utils/useFindManyRecordsUtils';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isDefined } from '~/utils/isDefined';
-import { logError } from '~/utils/logError';
+import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
 type UseLazyFindManyRecordsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
@@ -24,9 +24,10 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   filter,
   orderBy,
   limit,
-  onCompleted,
   recordGqlFields,
   fetchPolicy,
+  onCompleted,
+  onError,
 }: UseLazyFindManyRecordsParams<T>) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -37,8 +38,29 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     recordGqlFields,
   });
 
-  const { enqueueSnackBar } = useSnackBar();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
+    objectMetadataItem,
+    handleError: onError,
+  });
+
+  const queryIdentifier = getQueryIdentifier({
+    objectNameSingular,
+    filter,
+    orderBy,
+    limit,
+  });
+
+  const [, setHasNextPage] = useRecoilState(
+    hasNextPageFamilyState(queryIdentifier),
+  );
+
+  const { handleFindManyRecordsCompleted } = useHandleFindManyRecordsCompleted({
+    objectMetadataItem,
+    queryIdentifier,
+    onCompleted,
+  });
 
   const [findManyRecords, { data, loading, error, fetchMore }] =
     useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
@@ -48,59 +70,52 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         orderBy,
       },
       fetchPolicy: fetchPolicy,
-      onCompleted: (data) => {
-        if (!isDefined(data)) {
-          onCompleted?.([]);
-        }
-
-        const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
-
-        const records = getRecordsFromRecordConnection({
-          recordConnection: data?.[objectMetadataItem.namePlural],
-        }) as T[];
-
-        onCompleted?.(records, {
-          pageInfo,
-          totalCount: data?.[objectMetadataItem.namePlural]?.totalCount,
-        });
-
-        if (isDefined(data?.[objectMetadataItem.namePlural])) {
-          setLastCursor(pageInfo.endCursor ?? '');
-          setHasNextPage(pageInfo.hasNextPage ?? false);
-        }
-      },
-      onError: (error) => {
-        logError(
-          `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
-            error,
-        );
-        enqueueSnackBar(
-          `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
-          {
-            variant: SnackBarVariant.Error,
-          },
-        );
-      },
+      onCompleted: handleFindManyRecordsCompleted,
+      onError: handleFindManyRecordsError,
     });
 
-  const {
-    findManyQueryStateIdentifier,
-    setLastCursor,
-    setHasNextPage,
-    fetchMoreRecords,
-    totalCount,
-    records,
-  } = useFindManyRecordsState<T>({
-    objectNameSingular,
-    filter,
-    orderBy,
-    limit,
-    onCompleted,
-    fetchMore,
-    data,
-    error,
-    objectMetadataItem,
-  });
+  const { fetchMoreRecords, totalCount, records } =
+    useFetchMoreRecordsWithPagination<T>({
+      objectNameSingular,
+      filter,
+      orderBy,
+      limit,
+      onCompleted,
+      fetchMore,
+      data,
+      error,
+      objectMetadataItem,
+    });
+
+  const findManyRecordsLazy = useRecoilCallback(
+    ({ set }) =>
+      async () => {
+        if (!currentWorkspaceMember) {
+          return null;
+        }
+
+        const result = await findManyRecords();
+
+        const hasNextPage =
+          result?.data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ??
+          false;
+
+        const lastCursor =
+          result?.data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ??
+          '';
+
+        set(hasNextPageFamilyState(queryIdentifier), hasNextPage);
+        set(cursorFamilyState(queryIdentifier), lastCursor);
+
+        return result;
+      },
+    [
+      queryIdentifier,
+      currentWorkspaceMember,
+      findManyRecords,
+      objectMetadataItem,
+    ],
+  );
 
   return {
     objectMetadataItem,
@@ -109,7 +124,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     loading,
     error,
     fetchMoreRecords,
-    queryStateIdentifier: findManyQueryStateIdentifier,
-    findManyRecords: currentWorkspaceMember ? findManyRecords : () => {},
+    queryStateIdentifier: queryIdentifier,
+    findManyRecords: findManyRecordsLazy,
   };
 };

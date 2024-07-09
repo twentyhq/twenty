@@ -73,7 +73,7 @@ describe('useFindManyRecords', () => {
 
         return useFindManyRecords({
           objectNameSingular: 'person',
-          onCompleted,
+          onCompleted: onCompleted,
         });
       },
       {
