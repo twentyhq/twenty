@@ -1,15 +1,17 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  CreateDateColumn,
+  Entity,
   JoinColumn,
   ManyToOne,
-  Relation,
   OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
 } from 'typeorm';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-field-metadata/index-field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Entity('indexMetadata')
 export class IndexMetadataEntity {
@@ -40,4 +42,10 @@ export class IndexMetadataEntity {
     },
   )
   indexFieldMetadatas: Relation<IndexFieldMetadataEntity[]>;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
 }
