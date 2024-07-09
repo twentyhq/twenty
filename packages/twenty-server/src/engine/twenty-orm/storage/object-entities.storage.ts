@@ -1,0 +1,55 @@
+import { EntitySchema } from 'typeorm';
+
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+
+export class ObjectEntitiesStorage {
+  private static readonly objects: Map<EntitySchema, ObjectMetadataEntity> =
+    new Map();
+
+  public static getObjectLiteral(
+    target: EntitySchema,
+  ): ObjectMetadataEntity | undefined {
+    return this.objects.get(target);
+  }
+
+  public static setObjectLiteral(
+    target: EntitySchema,
+    objectMetadata: ObjectMetadataEntity,
+  ): void {
+    this.objects.set(target, objectMetadata);
+  }
+
+  public static getObjectMetadataCollection(): ObjectMetadataEntity[] {
+    return Array.from(this.objects.values());
+  }
+
+  public static getAllEntitySchemas(): EntitySchema[] {
+    return Array.from(this.objects.keys());
+  }
+
+  public static getEntityByObjectMetadataName(
+    objectMetadataName: string,
+  ): EntitySchema | null {
+    return (
+      Array.from(this.objects.entries()).find(
+        ([, objectMetadata]) =>
+          objectMetadata.nameSingular === objectMetadataName,
+      )?.[0] ?? null
+    );
+  }
+
+  public static getObjectMetadataByObjectMetadataName(
+    objectMetadataName: string,
+  ): ObjectMetadataEntity | null {
+    return (
+      Array.from(this.objects.entries()).find(
+        ([, objectMetadata]) =>
+          objectMetadata.nameSingular === objectMetadataName,
+      )?.[1] ?? null
+    );
+  }
+
+  public static clear(): void {
+    this.objects.clear();
+  }
+}

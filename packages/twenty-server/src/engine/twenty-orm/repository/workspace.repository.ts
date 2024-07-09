@@ -17,12 +17,12 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 
-import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
-import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-literal.storage';
+import { ObjectEntitiesStorage } from 'src/engine/twenty-orm/storage/object-entities.storage';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isPlainObject } from 'src/utils/is-plain-object';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 export class WorkspaceRepository<
   Entity extends ObjectLiteral,
@@ -549,23 +549,20 @@ export class WorkspaceRepository<
   /**
    * PRIVATE METHODS
    */
-  private getCompositeFieldMetadataArgs() {
-    const objectLiteral = ObjectLiteralStorage.getObjectLiteral(
+  private getCompositeFieldMetadata(
+    objectMetadataEntity = ObjectEntitiesStorage.getObjectLiteral(
       this.target as any,
-    );
-
-    if (!objectLiteral) {
-      throw new Error('Object literal is missing');
+    ),
+  ) {
+    if (!objectMetadataEntity) {
+      throw new Error('Object metadata entity is missing');
     }
 
-    const fieldMetadataArgsCollection =
-      metadataArgsStorage.filterFields(objectLiteral);
-    const compositeFieldMetadataArgsCollection =
-      fieldMetadataArgsCollection.filter((fieldMetadataArg) =>
-        isCompositeFieldMetadataType(fieldMetadataArg.type),
-      );
+    const compositeFieldMetadataCollection = objectMetadataEntity.fields.filter(
+      (fieldMetadata) => isCompositeFieldMetadataType(fieldMetadata.type),
+    );
 
-    return compositeFieldMetadataArgsCollection;
+    return compositeFieldMetadataCollection;
   }
 
   private transformOptions<
@@ -590,20 +587,19 @@ export class WorkspaceRepository<
     if (Array.isArray(data)) {
       return data.map((item) => this.formatData(item)) as T;
     }
-    const compositeFieldMetadataArgsCollection =
-      this.getCompositeFieldMetadataArgs();
-    const compositeFieldMetadataArgsMap = new Map(
-      compositeFieldMetadataArgsCollection.map((fieldMetadataArg) => [
-        fieldMetadataArg.name,
-        fieldMetadataArg,
+    const compositeFieldMetadataCollection = this.getCompositeFieldMetadata();
+    const compositeFieldMetadataMap = new Map(
+      compositeFieldMetadataCollection.map((fieldMetadata) => [
+        fieldMetadata.name,
+        fieldMetadata,
       ]),
     );
     const newData: object = {};
 
     for (const [key, value] of Object.entries(data)) {
-      const fieldMetadataArgs = compositeFieldMetadataArgsMap.get(key);
+      const fieldMetadata = compositeFieldMetadataMap.get(key);
 
-      if (!fieldMetadataArgs) {
+      if (!fieldMetadata) {
         if (isPlainObject(value)) {
           newData[key] = this.formatData(value);
         } else {
@@ -612,7 +608,7 @@ export class WorkspaceRepository<
         continue;
       }
 
-      const compositeType = compositeTypeDefintions.get(fieldMetadataArgs.type);
+      const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
 
       if (!compositeType) {
         continue;
@@ -620,7 +616,7 @@ export class WorkspaceRepository<
 
       for (const compositeProperty of compositeType.properties) {
         const compositeKey = computeCompositeColumnName(
-          fieldMetadataArgs.name,
+          fieldMetadata.name,
           compositeProperty,
         );
         const value = data?.[key]?.[compositeProperty.name];
@@ -638,63 +634,58 @@ export class WorkspaceRepository<
 
   private formatResult<T>(
     data: T,
-    target = ObjectLiteralStorage.getObjectLiteral(this.target as any),
+    objectMetadata = ObjectEntitiesStorage.getObjectLiteral(this.target as any),
   ): T {
     if (!data) {
       return data;
     }
 
     if (Array.isArray(data)) {
-      return data.map((item) => this.formatResult(item, target)) as T;
+      return data.map((item) => this.formatResult(item, objectMetadata)) as T;
     }
 
     if (!isPlainObject(data)) {
       return data;
     }
 
-    if (!target) {
-      throw new Error('Object literal is missing');
+    if (!objectMetadata) {
+      throw new Error('Object metadata is missing');
     }
 
-    const fieldMetadataArgsCollection =
-      metadataArgsStorage.filterFields(target);
-    const relationMetadataArgsCollection =
-      metadataArgsStorage.filterRelations(target);
-    const compositeFieldMetadataArgsCollection =
-      fieldMetadataArgsCollection.filter((fieldMetadataArg) =>
-        isCompositeFieldMetadataType(fieldMetadataArg.type),
-      );
-    const compositeFieldMetadataArgsMap = new Map(
-      compositeFieldMetadataArgsCollection.flatMap((fieldMetadataArg) => {
-        const compositeType = compositeTypeDefintions.get(
-          fieldMetadataArg.type,
-        );
+    const compositeFieldMetadataCollection =
+      this.getCompositeFieldMetadata(objectMetadata);
+    const compositeFieldMetadataMap = new Map(
+      compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
+        const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
 
         if (!compositeType) return [];
 
         // Map each composite property to a [key, value] pair
         return compositeType.properties.map((compositeProperty) => [
-          computeCompositeColumnName(fieldMetadataArg.name, compositeProperty),
+          computeCompositeColumnName(fieldMetadata.name, compositeProperty),
           {
-            parentField: fieldMetadataArg.name,
+            parentField: fieldMetadata.name,
             ...compositeProperty,
           },
         ]);
       }),
     );
-    const relationMetadataArgsMap = new Map(
-      relationMetadataArgsCollection.map((relationMetadataArgs) => [
-        relationMetadataArgs.name,
-        relationMetadataArgs,
-      ]),
+    const relationMetadataMap = new Map(
+      objectMetadata.fields
+        .filter(({ type }) => isRelationFieldMetadataType(type))
+        .map((fieldMetadata) => [
+          fieldMetadata.name,
+          fieldMetadata.fromRelationMetadata ??
+            fieldMetadata.toRelationMetadata,
+        ]),
     );
     const newData: object = {};
 
     for (const [key, value] of Object.entries(data)) {
-      const compositePropertyArgs = compositeFieldMetadataArgsMap.get(key);
-      const relationMetadataArgs = relationMetadataArgsMap.get(key);
+      const compositePropertyArgs = compositeFieldMetadataMap.get(key);
+      const relationMetadata = relationMetadataMap.get(key);
 
-      if (!compositePropertyArgs && !relationMetadataArgs) {
+      if (!compositePropertyArgs && !relationMetadata) {
         if (isPlainObject(value)) {
           newData[key] = this.formatResult(value);
         } else {
@@ -703,11 +694,21 @@ export class WorkspaceRepository<
         continue;
       }
 
-      if (relationMetadataArgs) {
-        newData[key] = this.formatResult(
-          value,
-          relationMetadataArgs.inverseSideTarget() as any,
-        );
+      if (relationMetadata) {
+        const inverseSideObjectName =
+          relationMetadata.toObjectMetadata.nameSingular;
+        const objectMetadata =
+          ObjectEntitiesStorage.getObjectMetadataByObjectMetadataName(
+            inverseSideObjectName,
+          );
+
+        if (!objectMetadata) {
+          throw new Error(
+            `Object metadata for object metadata "${inverseSideObjectName}" is missing`,
+          );
+        }
+
+        newData[key] = this.formatResult(value, objectMetadata);
         continue;
       }
 

@@ -2,30 +2,55 @@ import { Injectable, Optional, Type } from '@nestjs/common';
 
 import { ObjectLiteral } from 'typeorm';
 
-import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
-import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-literal.storage';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
+import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
+import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
+import { ObjectEntitiesStorage } from 'src/engine/twenty-orm/storage/object-entities.storage';
 
 @Injectable()
 export class TwentyORMManager {
   constructor(
     @Optional()
+    @InjectWorkspaceDatasource()
     private readonly workspaceDataSource: WorkspaceDataSource | null,
-    private readonly entitySchemaFactory: EntitySchemaFactory,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
   ) {}
 
-  getRepository<T extends ObjectLiteral>(
+  async getRepository(
+    objectMetadataName: string,
+  ): Promise<
+    WorkspaceRepository<CustomWorkspaceEntity & { [key: string]: any }>
+  >;
+
+  async getRepository<T extends ObjectLiteral>(
     entityClass: Type<T>,
-  ): WorkspaceRepository<T> {
-    const entitySchema = this.entitySchemaFactory.create(entityClass);
+  ): Promise<WorkspaceRepository<T>>;
+
+  async getRepository<T extends ObjectLiteral>(
+    entityClassOrobjectMetadataName: Type<T> | string,
+  ): Promise<WorkspaceRepository<T>> {
+    let objectMetadataName: string;
+
+    if (typeof entityClassOrobjectMetadataName === 'string') {
+      objectMetadataName = entityClassOrobjectMetadataName;
+    } else {
+      objectMetadataName = convertClassNameToObjectMetadataName(
+        entityClassOrobjectMetadataName.name,
+      );
+    }
+
+    const entitySchema =
+      ObjectEntitiesStorage.getEntityByObjectMetadataName(objectMetadataName);
 
     if (!this.workspaceDataSource) {
       throw new Error('Workspace data source not found');
+    }
+
+    if (!entitySchema) {
+      throw new Error('Entity schema not found');
     }
 
     return this.workspaceDataSource.getRepository<T>(entitySchema);
@@ -38,16 +63,28 @@ export class TwentyORMManager {
 
   async getRepositoryForWorkspace(
     workspaceId: string,
-    objectMetadata: ObjectMetadataEntity,
+    objectMetadataName: string,
   ): Promise<WorkspaceRepository<CustomWorkspaceEntity>>;
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
-    entityClassOrObjectMetadata: Type<T> | ObjectMetadataEntity,
+    entityClassOrobjectMetadataName: Type<T> | string,
   ): Promise<
     WorkspaceRepository<T> | WorkspaceRepository<CustomWorkspaceEntity>
   > {
-    const entities = ObjectLiteralStorage.getAllEntitySchemas();
+    let objectMetadataName: string;
+
+    if (typeof entityClassOrobjectMetadataName === 'string') {
+      objectMetadataName = entityClassOrobjectMetadataName;
+    } else {
+      objectMetadataName = convertClassNameToObjectMetadataName(
+        entityClassOrobjectMetadataName.name,
+      );
+    }
+
+    const entities = ObjectEntitiesStorage.getAllEntitySchemas();
+    const entitySchema =
+      ObjectEntitiesStorage.getEntityByObjectMetadataName(objectMetadataName);
     const workspaceDataSource = await this.workspaceDataSourceFactory.create(
       entities,
       workspaceId,
@@ -57,27 +94,9 @@ export class TwentyORMManager {
       throw new Error('Workspace data source not found');
     }
 
-    if (entityClassOrObjectMetadata instanceof ObjectMetadataEntity) {
-      if (
-        !entityClassOrObjectMetadata.fields ||
-        entityClassOrObjectMetadata.fields.length === 0
-      ) {
-        throw new Error('Object metadata fields not found');
-      }
-
-      // TODO: Duplicate code need to refactor this
-      const entitySchema = this.entitySchemaFactory.create(
-        entityClassOrObjectMetadata,
-      );
-
-      return workspaceDataSource.getRepository<CustomWorkspaceEntity>(
-        entitySchema,
-      );
+    if (!entitySchema) {
+      throw new Error('Entity schema not found');
     }
-
-    const entitySchema = this.entitySchemaFactory.create(
-      entityClassOrObjectMetadata,
-    );
 
     return workspaceDataSource.getRepository<T>(entitySchema);
   }

@@ -1,73 +1,85 @@
-import { Injectable, Type } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntitySchema } from 'typeorm';
+import { EntitySchema, Repository } from 'typeorm';
 
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
-import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
-import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-literal.storage';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectEntitiesStorage } from 'src/engine/twenty-orm/storage/object-entities.storage';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class EntitySchemaFactory {
   constructor(
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly entitySchemaColumnFactory: EntitySchemaColumnFactory,
     private readonly entitySchemaRelationFactory: EntitySchemaRelationFactory,
   ) {}
 
-  create<T>(target: Type<T>): EntitySchema;
+  async create(objectMetadata: ObjectMetadataEntity): Promise<EntitySchema>;
 
-  create(objectMetadata: ObjectMetadataEntity): EntitySchema;
+  async create(objectMetadataName: string): Promise<EntitySchema>;
 
-  create<T>(
-    targetOrObjectMetadata: Type<T> | ObjectMetadataEntity,
-  ): EntitySchema {
-    if (targetOrObjectMetadata instanceof ObjectMetadataEntity) {
-      const columns = this.entitySchemaColumnFactory.createFromObjectMetadata(
-        targetOrObjectMetadata.fields,
+  async create(
+    objectMetadataOrObjectMetadataName: ObjectMetadataEntity | string,
+  ): Promise<EntitySchema> {
+    let objectMetadata: ObjectMetadataEntity | null =
+      typeof objectMetadataOrObjectMetadataName !== 'string'
+        ? objectMetadataOrObjectMetadataName
+        : null;
+
+    if (typeof objectMetadataOrObjectMetadataName === 'string') {
+      objectMetadata = await this.getObjectMetadataByName(
+        objectMetadataOrObjectMetadataName,
       );
-
-      return;
     }
 
-    const entityMetadataArgs = metadataArgsStorage.filterEntities(
-      targetOrObjectMetadata,
-    );
-
-    if (!entityMetadataArgs) {
-      throw new Error('Entity metadata args are missing on this target');
+    if (!objectMetadata) {
+      throw new Error('Object metadata not found');
     }
 
-    const fieldMetadataArgsCollection = metadataArgsStorage.filterFields(
-      targetOrObjectMetadata,
-    );
-    const joinColumnsMetadataArgsCollection =
-      metadataArgsStorage.filterJoinColumns(targetOrObjectMetadata);
-    const relationMetadataArgsCollection = metadataArgsStorage.filterRelations(
-      targetOrObjectMetadata,
-    );
-
-    const columns = this.entitySchemaColumnFactory.createFromMetadataArgs(
-      fieldMetadataArgsCollection,
-      relationMetadataArgsCollection,
-      joinColumnsMetadataArgsCollection,
+    const columns = this.entitySchemaColumnFactory.create(
+      objectMetadata.fields,
     );
 
     const relations = this.entitySchemaRelationFactory.create(
-      targetOrObjectMetadata,
-      relationMetadataArgsCollection,
-      joinColumnsMetadataArgsCollection,
+      objectMetadata.fields,
     );
 
     const entitySchema = new EntitySchema({
-      name: entityMetadataArgs.nameSingular,
-      tableName: entityMetadataArgs.nameSingular,
+      name: objectMetadata.nameSingular,
+      tableName: computeTableName(
+        objectMetadata.nameSingular,
+        objectMetadata.isCustom,
+      ),
       columns,
       relations,
     });
 
-    ObjectLiteralStorage.setObjectLiteral(entitySchema, targetOrObjectMetadata);
+    ObjectEntitiesStorage.setObjectLiteral(entitySchema, objectMetadata);
 
     return entitySchema;
+  }
+
+  private async getObjectMetadataByName(
+    objectMetadataName: string,
+  ): Promise<ObjectMetadataEntity | null> {
+    const objectMetadata = await this.objectMetadataRepository.findOne({
+      where: {
+        nameSingular: objectMetadataName,
+      },
+      relations: [
+        'fields',
+        'fields.object',
+        'fields.fromRelationMetadata',
+        'fields.toRelationMetadata',
+        'fields.fromRelationMetadata.toObjectMetadata',
+        'fields.toRelationMetadata.toObjectMetadata',
+      ],
+    });
+
+    return objectMetadata;
   }
 }

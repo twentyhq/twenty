@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntitySchemaRelationOptions } from 'typeorm';
+import lowerFirst from 'lodash.lowerfirst';
 import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 
-import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
-import { WorkspaceJoinColumnsMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-join-columns-metadata-args.interface';
-
-import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { getJoinColumn } from 'src/engine/twenty-orm/utils/get-join-column.util';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 type EntitySchemaRelationMap = {
   [key: string]: EntitySchemaRelationOptions;
@@ -17,29 +15,40 @@ type EntitySchemaRelationMap = {
 @Injectable()
 export class EntitySchemaRelationFactory {
   create(
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    target: Function,
-    relationMetadataArgsCollection: WorkspaceRelationMetadataArgs[],
-    joinColumnsMetadataArgsCollection: WorkspaceJoinColumnsMetadataArgs[],
+    fieldMetadataCollection: FieldMetadataEntity[],
   ): EntitySchemaRelationMap {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
-    for (const relationMetadataArgs of relationMetadataArgsCollection) {
-      const objectName = convertClassNameToObjectMetadataName(target.name);
-      const oppositeTarget = relationMetadataArgs.inverseSideTarget();
-      const oppositeObjectName = convertClassNameToObjectMetadataName(
-        oppositeTarget.name,
-      );
-      const relationType = this.getRelationType(relationMetadataArgs);
-      const joinColumn = getJoinColumn(
-        joinColumnsMetadataArgsCollection,
-        relationMetadataArgs,
-      );
+    for (const fieldMetadata of fieldMetadataCollection) {
+      if (!isRelationFieldMetadataType(fieldMetadata.type)) {
+        continue;
+      }
 
-      entitySchemaRelationMap[relationMetadataArgs.name] = {
+      const relationMetadata =
+        fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
+
+      if (!relationMetadata) {
+        throw new Error(
+          `Relation metadata is missing for field ${fieldMetadata.name}`,
+        );
+      }
+
+      const relationType = this.getRelationType(relationMetadata.relationType);
+      const joinColumnKey = fieldMetadata.name + 'Id';
+      // Lower only first letter of the object name
+      const target = lowerFirst(fieldMetadata.object.nameSingular);
+      const inverseSide =
+        lowerFirst(relationMetadata.toObjectMetadata.nameSingular) ?? target;
+      const joinColumn = fieldMetadataCollection.find(
+        (field) => field.name === joinColumnKey,
+      )
+        ? joinColumnKey
+        : null;
+
+      entitySchemaRelationMap[fieldMetadata.name] = {
         type: relationType,
-        target: oppositeObjectName,
-        inverseSide: relationMetadataArgs.inverseSideFieldKey ?? objectName,
+        target,
+        inverseSide,
         joinColumn: joinColumn
           ? {
               name: joinColumn,
@@ -52,9 +61,9 @@ export class EntitySchemaRelationFactory {
   }
 
   private getRelationType(
-    relationMetadataArgs: WorkspaceRelationMetadataArgs,
+    relationMetadataType: RelationMetadataType,
   ): RelationType {
-    switch (relationMetadataArgs.type) {
+    switch (relationMetadataType) {
       case RelationMetadataType.ONE_TO_MANY:
         return 'one-to-many';
       case RelationMetadataType.MANY_TO_ONE:
