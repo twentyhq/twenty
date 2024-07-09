@@ -7,6 +7,7 @@ import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inje
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
+import { CalendarEventImportErrorHandlerService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-error-handling.service';
 import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
@@ -29,6 +30,7 @@ export class CalendarEventsImportService {
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarSaveEventsService: CalendarSaveEventsService,
+    private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
   ) {}
 
   public async processCalendarEventsImport(
