@@ -1,5 +1,5 @@
-import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRef } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -18,6 +18,7 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 
+import { isNull } from '@sniptt/guards';
 import { RecordTableInternalEffect } from './RecordTableInternalEffect';
 
 const StyledTableWithHeader = styled.div`
@@ -48,14 +49,19 @@ export const RecordTableWithWrappers = ({
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { isRecordTableInitialLoadingState, tableRowIdsState } =
-    useRecordTableStates(recordTableId);
+  const {
+    isRecordTableInitialLoadingState,
+    tableRowIdsState,
+    pendingRecordIdState,
+  } = useRecordTableStates(recordTableId);
 
   const isRecordTableInitialLoading = useRecoilValue(
     isRecordTableInitialLoadingState,
   );
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
+
+  const pendingRecordId = useRecoilValue(pendingRecordIdState);
 
   const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
@@ -86,7 +92,11 @@ export const RecordTableWithWrappers = ({
     [saveViewFields],
   );
 
-  if (!isRecordTableInitialLoading && tableRowIds.length === 0) {
+  if (
+    !isRecordTableInitialLoading &&
+    tableRowIds.length === 0 &&
+    isNull(pendingRecordId)
+  ) {
     return (
       <RecordTableEmptyState
         objectNameSingular={objectNameSingular}
