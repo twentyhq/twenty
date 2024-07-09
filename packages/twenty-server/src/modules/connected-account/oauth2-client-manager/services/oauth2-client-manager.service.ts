@@ -12,7 +12,10 @@ export class OAuth2ClientManagerService {
   ) {}
 
   public async getOAuth2Client(
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'provider' | 'refreshToken'
+    >,
   ): Promise<OAuth2Client> {
     const { refreshToken } = connectedAccount;
 

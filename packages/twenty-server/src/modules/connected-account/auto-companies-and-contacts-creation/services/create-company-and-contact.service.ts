@@ -1,25 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
-import { EntityManager } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
+import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
-import { getDomainNameFromHandle } from 'src/modules/calendar-messaging-participant/utils/get-domain-name-from-handle.util';
-import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
-import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/connected-account/auto-companies-and-contacts-creation/constants/contacts-creation-batch-size.constant';
 import { CreateCompanyService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company/create-company.service';
 import { CreateContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-contact/create-contact.service';
 import { Contact } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
+import { getDomainNameFromHandle } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-domain-name-from-handle.util';
 import { getUniqueContactsAndHandles } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-unique-contacts-and-handles.util';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
-import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
@@ -35,14 +33,12 @@ export class CreateCompanyAndContactService {
     private readonly personRepository: PersonRepository,
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberRepository: WorkspaceMemberRepository,
-    @InjectWorkspaceDatasource()
-    private readonly workspaceDataSource: WorkspaceDataSource,
-    private readonly messageParticipantService: MessagingMessageParticipantService,
-    private readonly calendarEventParticipantService: CalendarEventParticipantService,
     private readonly eventEmitter: EventEmitter2,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  async createCompaniesAndPeople(
+  private async createCompaniesAndPeople(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     contactsToCreate: Contact[],
     workspaceId: string,
@@ -137,47 +133,37 @@ export class CreateCompanyAndContactService {
       CONTACTS_CREATION_BATCH_SIZE,
     );
 
+    // TODO: Remove this when events are emitted directly inside TwentyORM
+
+    const objectMetadata = await this.objectMetadataRepository.findOne({
+      where: {
+        standardId: STANDARD_OBJECT_IDS.person,
+        workspaceId,
+      },
+    });
+
+    if (!objectMetadata) {
+      throw new Error('Object metadata not found');
+    }
+
     for (const contactsBatch of contactsBatches) {
-      let updatedMessageParticipants: MessageParticipantWorkspaceEntity[] = [];
-      let updatedCalendarEventParticipants: CalendarEventParticipantWorkspaceEntity[] =
-        [];
-
-      await this.workspaceDataSource?.transaction(
-        async (transactionManager: EntityManager) => {
-          const createdPeople = await this.createCompaniesAndPeople(
-            connectedAccount,
-            contactsBatch,
-            workspaceId,
-            transactionManager,
-          );
-
-          updatedMessageParticipants =
-            await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-              createdPeople,
-              workspaceId,
-              transactionManager,
-            );
-
-          updatedCalendarEventParticipants =
-            await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterPeopleCreation(
-              createdPeople,
-              workspaceId,
-              transactionManager,
-            );
-        },
+      const createdPeople = await this.createCompaniesAndPeople(
+        connectedAccount,
+        contactsBatch,
+        workspaceId,
       );
 
-      this.eventEmitter.emit(`messageParticipant.matched`, {
-        workspaceId,
-        workspaceMemberId: connectedAccount.accountOwnerId,
-        messageParticipants: updatedMessageParticipants,
-      });
-
-      this.eventEmitter.emit(`calendarEventParticipant.matched`, {
-        workspaceId,
-        workspaceMemberId: connectedAccount.accountOwnerId,
-        calendarEventParticipants: updatedCalendarEventParticipants,
-      });
+      for (const createdPerson of createdPeople) {
+        this.eventEmitter.emit('person.created', {
+          name: 'person.created',
+          workspaceId,
+          recordId: createdPerson.id,
+          objectMetadata,
+          properties: {
+            after: createdPerson,
+          },
+        } satisfies ObjectRecordCreateEvent<any>);
+      }
     }
   }
 }

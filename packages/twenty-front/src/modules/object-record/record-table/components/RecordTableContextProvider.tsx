@@ -13,7 +13,7 @@ import {
   useOpenRecordTableCellV2,
 } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useTriggerContextMenu } from '@/object-record/record-table/record-table-cell/hooks/useTriggerContextMenu';
-import { useUpsertRecordV2 } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecordV2';
+import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 
@@ -32,7 +32,7 @@ export const RecordTableContextProvider = ({
     objectNameSingular,
   });
 
-  const { upsertRecord } = useUpsertRecordV2({
+  const { upsertRecord } = useUpsertRecord({
     objectNameSingular,
   });
 
