@@ -6,11 +6,12 @@ import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionB
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import SharedNavigationModal from '@/ui/navigation/shared/components/NavigationModal';
 
+import { isDefined } from '~/utils/isDefined';
 import { ActionBarItem } from './ActionBarItem';
 
 type ActionBarProps = {
   selectedIds?: string[];
-  totalSelectedRecordsNumber?: number;
+  totalNumberOfSelectedRecords?: number;
 };
 
 const StyledContainerActionBar = styled.div`
@@ -43,7 +44,7 @@ const StyledLabel = styled.div`
 
 export const ActionBar = ({
   selectedIds = [],
-  totalSelectedRecordsNumber,
+  totalNumberOfSelectedRecords,
 }: ActionBarProps) => {
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
 
@@ -61,7 +62,11 @@ export const ActionBar = ({
     return null;
   }
 
-  const selectedNumberLabel = totalSelectedRecordsNumber ?? selectedIds?.length;
+  const selectedNumberLabel =
+    totalNumberOfSelectedRecords ?? selectedIds?.length;
+
+  const showSelectedNumberLabel =
+    isDefined(totalNumberOfSelectedRecords) || Array.isArray(selectedIds);
 
   return (
     <>
@@ -70,7 +75,7 @@ export const ActionBar = ({
         className="action-bar"
         ref={wrapperRef}
       >
-        {(totalSelectedRecordsNumber || selectedIds) && (
+        {showSelectedNumberLabel && (
           <StyledLabel>{selectedNumberLabel} selected:</StyledLabel>
         )}
         {actionBarEntries.map((item, index) => (
