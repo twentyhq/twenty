@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
+import { useEffect, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
@@ -10,7 +10,7 @@ import { ActionBarItem } from './ActionBarItem';
 
 type ActionBarProps = {
   selectedIds?: string[];
-  numSelected?: number;
+  totalSelectedRecordsNumber?: number;
 };
 
 const StyledContainerActionBar = styled.div`
@@ -43,7 +43,7 @@ const StyledLabel = styled.div`
 
 export const ActionBar = ({
   selectedIds = [],
-  numSelected,
+  totalSelectedRecordsNumber,
 }: ActionBarProps) => {
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
 
@@ -61,6 +61,8 @@ export const ActionBar = ({
     return null;
   }
 
+  const selectedNumberLabel = totalSelectedRecordsNumber ?? selectedIds?.length;
+
   return (
     <>
       <StyledContainerActionBar
@@ -68,10 +70,8 @@ export const ActionBar = ({
         className="action-bar"
         ref={wrapperRef}
       >
-        {(numSelected || selectedIds) && (
-          <StyledLabel>
-            {numSelected ?? selectedIds?.length} selected:
-          </StyledLabel>
+        {(totalSelectedRecordsNumber || selectedIds) && (
+          <StyledLabel>{selectedNumberLabel} selected:</StyledLabel>
         )}
         {actionBarEntries.map((item, index) => (
           <ActionBarItem key={index} item={item} />

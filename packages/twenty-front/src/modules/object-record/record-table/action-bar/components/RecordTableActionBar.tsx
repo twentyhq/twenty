@@ -23,7 +23,7 @@ export const RecordTableActionBar = ({
   const tableRowIds = useRecoilValue(tableRowIdsState);
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
-  const numSelected =
+  const totalRecordsSelectedNumber =
     hasUserSelectedAllRow && entityCountInCurrentView
       ? selectedRowIds.length === tableRowIds.length
         ? entityCountInCurrentView
@@ -35,5 +35,10 @@ export const RecordTableActionBar = ({
     return null;
   }
 
-  return <ActionBar selectedIds={selectedRowIds} numSelected={numSelected} />;
+  return (
+    <ActionBar
+      selectedIds={selectedRowIds}
+      totalSelectedRecordsNumber={totalRecordsSelectedNumber}
+    />
+  );
 };
