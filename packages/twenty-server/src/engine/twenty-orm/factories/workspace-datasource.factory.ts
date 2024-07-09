@@ -17,9 +17,11 @@ export class WorkspaceDatasourceFactory {
   public async create(
     entities: EntitySchema[],
     workspaceId: string,
+    cacheVersion: string | null,
   ): Promise<WorkspaceDataSource | null> {
+    const storageKey = `${workspaceId}-${cacheVersion}`;
     const storedWorkspaceDataSource =
-      DataSourceStorage.getDataSource(workspaceId);
+      DataSourceStorage.getDataSource(storageKey);
 
     if (storedWorkspaceDataSource) {
       return storedWorkspaceDataSource;
@@ -53,7 +55,7 @@ export class WorkspaceDatasourceFactory {
 
     await workspaceDataSource.initialize();
 
-    DataSourceStorage.setDataSource(workspaceId, workspaceDataSource);
+    DataSourceStorage.setDataSource(storageKey, workspaceDataSource);
 
     return workspaceDataSource;
   }

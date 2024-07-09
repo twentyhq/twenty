@@ -7,6 +7,16 @@ export class DataSourceStorage {
     new Map();
 
   public static getDataSource(key: string): WorkspaceDataSource | undefined {
+    // Destroy all data sources that belong to the workspace if the cache version change
+    for (const [dataSourceKey, dataSource] of this.dataSources.entries()) {
+      const workspaceId = key.split('-')?.[0];
+
+      if (workspaceId && dataSourceKey.startsWith(workspaceId)) {
+        dataSource.destroy();
+        this.dataSources.delete(dataSourceKey);
+      }
+    }
+
     return this.dataSources.get(key);
   }
 

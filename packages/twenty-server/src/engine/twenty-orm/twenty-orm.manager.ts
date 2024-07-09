@@ -9,6 +9,7 @@ import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-en
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { ObjectEntitiesStorage } from 'src/engine/twenty-orm/storage/object-entities.storage';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 
 @Injectable()
 export class TwentyORMManager {
@@ -17,6 +18,7 @@ export class TwentyORMManager {
     @InjectWorkspaceDatasource()
     private readonly workspaceDataSource: WorkspaceDataSource | null,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {}
 
   async getRepository(
@@ -72,6 +74,9 @@ export class TwentyORMManager {
   ): Promise<
     WorkspaceRepository<T> | WorkspaceRepository<CustomWorkspaceEntity>
   > {
+    const cacheVersion =
+      await this.workspaceCacheVersionService.getVersion(workspaceId);
+
     let objectMetadataName: string;
 
     if (typeof entityClassOrobjectMetadataName === 'string') {
@@ -88,6 +93,7 @@ export class TwentyORMManager {
     const workspaceDataSource = await this.workspaceDataSourceFactory.create(
       entities,
       workspaceId,
+      cacheVersion,
     );
 
     if (!workspaceDataSource) {

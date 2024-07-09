@@ -21,7 +21,6 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { DataSourceStorage } from 'src/engine/twenty-orm/storage/data-source.storage';
-import { ScopedWorkspaceIdFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-datasource.factory';
 import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN,
@@ -29,12 +28,15 @@ import {
 import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 
 @Global()
 @Module({
   imports: [
     TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
     DataSourceModule,
+    WorkspaceCacheVersionModule,
   ],
   providers: [
     ...entitySchemaFactories,
@@ -56,16 +58,18 @@ export class TwentyORMCoreModule
   static register(options: TwentyORMOptions): DynamicModule {
     const dynamicModule = super.register(options);
 
+    // TODO: Avoid code duplication here
     const providers: Provider[] = [
       {
         provide: TWENTY_ORM_WORKSPACE_DATASOURCE,
         useFactory: async (
           objectMetadataRepository: Repository<ObjectMetadataEntity>,
           entitySchemaFactory: EntitySchemaFactory,
-          scopedWorkspaceIdFactory: ScopedWorkspaceIdFactory,
+          scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
           workspaceDataSourceFactory: WorkspaceDatasourceFactory,
         ) => {
-          const workspaceId = scopedWorkspaceIdFactory.create();
+          const { workspaceId, cacheVersion } =
+            scopedWorkspaceContextFactory.create();
 
           if (!workspaceId) {
             return null;
@@ -94,6 +98,7 @@ export class TwentyORMCoreModule
           const workspaceDataSource = await workspaceDataSourceFactory.create(
             entities,
             workspaceId,
+            cacheVersion,
           );
 
           return workspaceDataSource;
@@ -101,7 +106,7 @@ export class TwentyORMCoreModule
         inject: [
           getRepositoryToken(ObjectMetadataEntity, 'metadata'),
           EntitySchemaFactory,
-          ScopedWorkspaceIdFactory,
+          ScopedWorkspaceContextFactory,
           WorkspaceDatasourceFactory,
         ],
       },
@@ -127,11 +132,12 @@ export class TwentyORMCoreModule
         useFactory: async (
           objectMetadataRepository: Repository<ObjectMetadataEntity>,
           entitySchemaFactory: EntitySchemaFactory,
-          scopedWorkspaceIdFactory: ScopedWorkspaceIdFactory,
+          scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
           workspaceDataSourceFactory: WorkspaceDatasourceFactory,
           options: TwentyORMOptions,
         ) => {
-          const workspaceId = scopedWorkspaceIdFactory.create();
+          const { workspaceId, cacheVersion } =
+            scopedWorkspaceContextFactory.create();
 
           if (!workspaceId) {
             return null;
@@ -160,6 +166,7 @@ export class TwentyORMCoreModule
           const workspaceDataSource = await workspaceDataSourceFactory.create(
             entities,
             workspaceId,
+            cacheVersion,
           );
 
           return workspaceDataSource;
@@ -167,7 +174,7 @@ export class TwentyORMCoreModule
         inject: [
           getRepositoryToken(ObjectMetadataEntity, 'metadata'),
           EntitySchemaFactory,
-          ScopedWorkspaceIdFactory,
+          ScopedWorkspaceContextFactory,
           WorkspaceDatasourceFactory,
           MODULE_OPTIONS_TOKEN,
         ],
