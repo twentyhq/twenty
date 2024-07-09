@@ -34,6 +34,7 @@ export class EntitySchemaRelationFactory {
       }
 
       const relationType = this.getRelationType(relationMetadata.relationType);
+      // TODO: This will work for now but we need to handle this better in the future for custom names on the join column
       const joinColumnKey = fieldMetadata.name + 'Id';
       // Lower only first letter of the object name
       const target = lowerFirst(fieldMetadata.object.nameSingular);
