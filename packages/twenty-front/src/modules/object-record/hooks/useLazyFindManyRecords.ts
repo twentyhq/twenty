@@ -119,7 +119,8 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     totalCount,
     loading,
     error,
-    fetchMoreRecords,
+    fetchMore,
+    fetchMoreRecordsWithPagination: fetchMoreRecords,
     queryStateIdentifier: queryIdentifier,
     findManyRecords: findManyRecordsLazy,
   };

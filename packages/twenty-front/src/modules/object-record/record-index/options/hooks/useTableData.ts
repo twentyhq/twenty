@@ -114,11 +114,16 @@ export const useTableData = ({
         ? unselectedFindManyParams
         : findManyRecordsParams;
 
-  const { findManyRecords, totalCount, records, fetchMoreRecords, loading } =
-    useLazyFindManyRecords({
-      ...usedFindManyParams,
-      limit: pageSize,
-    });
+  const {
+    findManyRecords,
+    totalCount,
+    records,
+    fetchMoreRecordsWithPagination,
+    loading,
+  } = useLazyFindManyRecords({
+    ...usedFindManyParams,
+    limit: pageSize,
+  });
 
   useEffect(() => {
     const MAXIMUM_REQUESTS = isDefined(totalCount)
@@ -128,7 +133,9 @@ export const useTableData = ({
     const fetchNextPage = async () => {
       setInflight(true);
       setPreviousRecordCount(records.length);
-      await fetchMoreRecords();
+
+      await fetchMoreRecordsWithPagination();
+
       setPageCount((state) => state + 1);
       setProgress({
         exportedRecordCount: records.length,
@@ -170,7 +177,7 @@ export const useTableData = ({
     }
   }, [
     delayMs,
-    fetchMoreRecords,
+    fetchMoreRecordsWithPagination,
     inflight,
     isDownloading,
     pageCount,

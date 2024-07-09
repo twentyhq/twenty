@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import {
   IconClick,
   IconFileExport,
@@ -11,9 +11,9 @@ import {
   IconTrash,
 } from 'twenty-ui';
 
-import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
 import { useDeleteTableData } from '@/object-record/record-index/options/hooks/useDeleteTableData';
 import {
@@ -51,9 +51,6 @@ export const useRecordActionBar = ({
   const { executeQuickActionOnOneRecord } = useExecuteQuickActionOnOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
-
-  const apiConfig = useRecoilValue(apiConfigState);
-  const maxRecords = apiConfig?.mutationMaximumAffectedRecords;
 
   const handleFavoriteButtonClick = useRecoilCallback(
     ({ snapshot }) =>
@@ -96,19 +93,21 @@ export const useRecordActionBar = ({
     recordIndexId: objectMetadataItem.namePlural,
   };
 
-  const { deleteTableData } = useDeleteTableData(baseTableDataParams);
+  const { deleteTableData, deleteProgress } =
+    useDeleteTableData(baseTableDataParams);
 
-  const handleDeleteClick = useCallback(async () => {
-    selectedRecordIds.forEach((recordId) => {
-      const foundFavorite = favorites?.find(
-        (favorite) => favorite.recordId === recordId,
-      );
-      if (foundFavorite !== undefined) {
-        deleteFavorite(foundFavorite.id);
-      }
-    });
+  const handleDeleteClick = () => {
+    // selectedRecordIds.forEach((recordId) => {
+    //   const foundFavorite = favorites?.find(
+    //     (favorite) => favorite.recordId === recordId,
+    //   );
+    //   if (foundFavorite !== undefined) {
+    //     deleteFavorite(foundFavorite.id);
+    //   }
+    // });
+
     deleteTableData();
-  }, [deleteFavorite, deleteTableData, favorites, selectedRecordIds]);
+  };
 
   const handleExecuteQuickActionOnClick = useCallback(async () => {
     callback?.();
@@ -126,7 +125,7 @@ export const useRecordActionBar = ({
 
   const isRemoteObject = objectMetadataItem.isRemote;
 
-  const baseActions: ContextMenuEntry[] = useMemo(
+  const menuActions: ContextMenuEntry[] = useMemo(
     () => [
       {
         label: displayedExportProgress(progress),
@@ -138,38 +137,40 @@ export const useRecordActionBar = ({
     [download, progress],
   );
 
-  const recordsNum = numSelected ?? selectedRecordIds.length;
+  const numberOfSelectedRecords = numSelected ?? selectedRecordIds.length;
+  const canDelete =
+    !isRemoteObject && numberOfSelectedRecords < DELETE_MAX_COUNT;
 
-  const deletionActions: ContextMenuEntry[] = useMemo(
-    () =>
-      maxRecords !== undefined && recordsNum <= maxRecords
-        ? [
-            {
-              label: 'Delete',
-              Icon: IconTrash,
-              accent: 'danger',
-              onClick: () => setIsDeleteRecordsModalOpen(true),
-              ConfirmationModal: (
-                <ConfirmationModal
-                  isOpen={isDeleteRecordsModalOpen}
-                  setIsOpen={setIsDeleteRecordsModalOpen}
-                  title={`Delete ${recordsNum} ${
-                    recordsNum === 1 ? `record` : 'records'
-                  }`}
-                  subtitle={`This action cannot be undone. This will permanently delete ${
-                    recordsNum === 1 ? 'this record' : 'these records'
-                  }`}
-                  onConfirmClick={() => handleDeleteClick()}
-                  deleteButtonText={`Delete ${
-                    recordsNum > 1 ? 'Records' : 'Record'
-                  }`}
-                />
-              ),
-            },
-          ]
-        : [],
-    [maxRecords, isDeleteRecordsModalOpen, recordsNum, handleDeleteClick],
-  );
+  if (canDelete) {
+    menuActions.push({
+      label: 'Delete',
+      Icon: IconTrash,
+      accent: 'danger',
+      onClick: (event) => {
+        console.log('asd');
+        event?.stopPropagation();
+        event?.preventDefault();
+        handleDeleteClick();
+        setIsDeleteRecordsModalOpen(true);
+      },
+      ConfirmationModal: (
+        <ConfirmationModal
+          isOpen={isDeleteRecordsModalOpen}
+          setIsOpen={setIsDeleteRecordsModalOpen}
+          title={`Delete ${numberOfSelectedRecords} ${
+            numberOfSelectedRecords === 1 ? `record` : 'records'
+          }`}
+          subtitle={`This action cannot be undone. This will permanently delete ${
+            numberOfSelectedRecords === 1 ? 'this record' : 'these records'
+          }`}
+          onConfirmClick={() => handleDeleteClick()}
+          deleteButtonText={`Delete ${
+            numberOfSelectedRecords > 1 ? 'Records' : 'Record'
+          }`}
+        />
+      ),
+    });
+  }
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
     'IS_QUICK_ACTIONS_ENABLED',
@@ -184,8 +185,7 @@ export const useRecordActionBar = ({
   return {
     setContextMenuEntries: useCallback(() => {
       setContextMenuEntries([
-        ...(isRemoteObject ? [] : deletionActions),
-        ...baseActions,
+        ...menuActions,
         ...(!isRemoteObject && isFavorite && hasOnlyOneRecordSelected
           ? [
               {
@@ -206,8 +206,7 @@ export const useRecordActionBar = ({
           : []),
       ]);
     }, [
-      baseActions,
-      deletionActions,
+      menuActions,
       handleFavoriteButtonClick,
       hasOnlyOneRecordSelected,
       isFavorite,
@@ -236,15 +235,12 @@ export const useRecordActionBar = ({
               },
             ]
           : []),
-        ...(isRemoteObject ? [] : deletionActions),
-        ...baseActions,
+        ...menuActions,
       ]);
     }, [
-      baseActions,
+      menuActions,
       dataExecuteQuickActionOnmentEnabled,
-      deletionActions,
       handleExecuteQuickActionOnClick,
-      isRemoteObject,
       setActionBarEntriesState,
     ]),
   };
