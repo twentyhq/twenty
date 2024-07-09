@@ -1,10 +1,6 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
-  FieldMetadataType,
-  ObjectEdge,
-  ObjectMetadataItemsQuery,
+	ObjectMetadataItemsQuery
 } from '~/generated-metadata/graphql';
-import { CalendarChannelVisibility, MessageChannelVisibility } from "~/generated/graphql";
 
 // This file is not designed to be manually edited.
 // It's an extract from the dev seeded environment metadata call

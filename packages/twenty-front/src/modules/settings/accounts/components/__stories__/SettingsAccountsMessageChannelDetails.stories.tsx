@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
+import { MessageChannelContactAutoCreationPolicy } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
@@ -12,7 +13,9 @@ const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
   args: {
     messageChannel: {
       id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6a',
-      isContactAutoCreationEnabled: true,
+      contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy.SENT,
+      excludeNonProfessionalEmails: true,
+      excludeGroupEmails: false,
       isSyncEnabled: true,
       visibility: MessageChannelVisibility.ShareEverything,
     },

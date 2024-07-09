@@ -6,6 +6,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useGetAvailableFieldsForKanban = () => {
   const { viewObjectMetadataIdState } = useViewStates();
@@ -31,7 +32,13 @@ export const useGetAvailableFieldsForKanban = () => {
   const navigateToSelectSettings = useCallback(() => {
     setNavigationMemorizedUrl(location.pathname + location.search);
 
-    navigate(`/settings/objects/${objectMetadataItem?.namePlural}`);
+    if (isDefined(objectMetadataItem?.namePlural)) {
+      navigate(
+        `/settings/objects/${objectMetadataItem?.namePlural}/new-field/step-2`,
+      );
+    } else {
+      navigate(`/settings/objects`);
+    }
   }, [
     navigate,
     objectMetadataItem?.namePlural,
