@@ -16,7 +16,6 @@ export const SettingsObjectEditApiTextField = () => {
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
   const StyledIconContainer = styled.div`
-    // background-color:red;
     border-right: 1px solid ${({ theme }) => theme.color.yellow};
     left: -${({ theme }) => theme.spacing(7)};
     position: absolute;
@@ -24,7 +23,6 @@ export const SettingsObjectEditApiTextField = () => {
     padding-right: ${({ theme }) => theme.spacing(0.5)};
   `;
   useEffect(() => {
-    // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
     if (ref.current) {
       setContainerHeight(ref.current.clientHeight);
     }
