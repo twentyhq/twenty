@@ -86,14 +86,12 @@ export const LinksFieldMenuItem = ({
                         text="Edit"
                         onClick={onEdit}
                       />
-                      {!isPrimary && (
-                        <MenuItem
-                          accent="danger"
-                          LeftIcon={IconTrash}
-                          text="Delete"
-                          onClick={onDelete}
-                        />
-                      )}
+                      <MenuItem
+                        accent="danger"
+                        LeftIcon={IconTrash}
+                        text="Delete"
+                        onClick={onDelete}
+                      />
                     </DropdownMenuItemsContainer>
                   }
                 />
