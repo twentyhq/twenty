@@ -5,7 +5,9 @@ import { settingsDataModelFieldSettingsFormSchema } from '@/settings/data-model/
 import { settingsDataModelFieldTypeFormSchema } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 
 export const settingsFieldFormSchema = z
-  .object({})
+  .object({
+    apiName: z.string().optional(),
+  })
   .merge(settingsDataModelFieldAboutFormSchema)
   .merge(settingsDataModelFieldTypeFormSchema)
   .and(settingsDataModelFieldSettingsFormSchema);

@@ -36,6 +36,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { SettingsObjectEditApiTextField } from '~/pages/settings/data-model/SettingsObjectEditApiTextField';
 
 type SettingsDataModelFieldEditFormValues = z.infer<
   typeof settingsFieldFormSchema
@@ -205,6 +206,13 @@ export const SettingsObjectFieldEdit = () => {
                 fieldMetadataItem={activeMetadataField}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
               />
+            </Section>
+            <Section>
+              <H2Title
+                title="API Name"
+                description="Set a custom API name for this object."
+              />
+              <SettingsObjectEditApiTextField />
             </Section>
             <Section>
               <H2Title

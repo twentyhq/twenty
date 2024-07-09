@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconArchive, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
@@ -28,9 +28,13 @@ import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsObjectEditApiTextField } from '~/pages/settings/data-model/SettingsObjectEditApiTextField';
 
 const objectEditFormSchema = z
-  .object({})
+  .object({
+    apiName: z.string().optional(),
+  })
   .merge(settingsDataModelObjectAboutFormSchema)
   .merge(settingsDataModelObjectIdentifiersFormSchema);
 
@@ -65,14 +69,12 @@ export const SettingsObjectEdit = () => {
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isDirty && isValid && !isSubmitting;
-
   const handleSave = async (
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
     const dirtyFieldKeys = Object.keys(
       formConfig.formState.dirtyFields,
     ) as (keyof SettingsDataModelObjectEditFormValues)[];
-
     try {
       await updateOneObjectMetadataItem({
         idToUpdate: activeObjectMetadataItem.id,
@@ -80,7 +82,6 @@ export const SettingsObjectEdit = () => {
           pick(formValues, dirtyFieldKeys),
         ),
       });
-
       navigate(
         `${settingsObjectsPagePath}/${getObjectSlug({
           ...formValues,
@@ -141,6 +142,13 @@ export const SettingsObjectEdit = () => {
               disableNameEdit
               objectMetadataItem={activeObjectMetadataItem}
             />
+          </Section>
+          <Section>
+            <H2Title
+              title="API Name"
+              description="Set a custom API name for this object."
+            />
+            <SettingsObjectEditApiTextField />
           </Section>
           <Section>
             <H2Title

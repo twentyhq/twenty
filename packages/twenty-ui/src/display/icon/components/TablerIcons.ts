@@ -163,4 +163,5 @@ export {
   IconWand,
   IconWorld,
   IconX,
+  IconTool,
 } from '@tabler/icons-react';
