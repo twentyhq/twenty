@@ -80,7 +80,8 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   '';
 
                 const isMessageSentByConnectedAccount =
-                  handleAliases.includes(fromHandle);
+                  handleAliases.includes(fromHandle) ||
+                  fromHandle === connectedAccount.handle;
 
                 const isParticipantConnectedAccount =
                   handleAliases.includes(participant.handle) ||
