@@ -71,7 +71,7 @@ export const RecordIndexTableContainerEffect = ({
     objectMetadataItem,
     selectedRecordIds: selectedRowIds,
     callback: resetTableRowSelection,
-    numSelected,
+    totalNumberOfRecordsSelected: numSelected,
   });
 
   const handleToggleColumnFilter = useHandleToggleColumnFilter({

@@ -32,14 +32,14 @@ type useRecordActionBarProps = {
   objectMetadataItem: ObjectMetadataItem;
   selectedRecordIds: string[];
   callback?: () => void;
-  numSelected?: number;
+  totalNumberOfRecordsSelected?: number;
 };
 
 export const useRecordActionBar = ({
   objectMetadataItem,
   selectedRecordIds,
   callback,
-  numSelected,
+  totalNumberOfRecordsSelected,
 }: useRecordActionBarProps) => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
@@ -115,7 +115,8 @@ export const useRecordActionBar = ({
 
   const isRemoteObject = objectMetadataItem.isRemote;
 
-  const numberOfSelectedRecords = numSelected ?? selectedRecordIds.length;
+  const numberOfSelectedRecords =
+    totalNumberOfRecordsSelected ?? selectedRecordIds.length;
   const canDelete =
     !isRemoteObject && numberOfSelectedRecords < DELETE_MAX_COUNT;
 
