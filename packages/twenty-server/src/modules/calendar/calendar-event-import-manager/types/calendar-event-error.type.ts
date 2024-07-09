@@ -2,7 +2,7 @@ export enum CalendarEventErrorCode {
   UNKNOWN = 'UNKNOWN',
 }
 
-export type CalendarEventError = {
+export interface CalendarEventError {
   message: string;
   code: CalendarEventErrorCode;
-};
+}

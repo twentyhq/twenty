@@ -8,8 +8,12 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
 import { CalendarEventImportErrorHandlerService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-error-handling.service';
-import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import {
+  CalendarGetCalendarEventsService,
+  GetCalendarEventsResponse,
+} from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
+import { CalendarEventErrorCode } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-error.type';
 import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
@@ -41,12 +45,30 @@ export class CalendarEventsImportService {
     await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
       calendarChannel.id,
     );
+    let calendarEvents: GetCalendarEventsResponse['calendarEvents'] = [];
+    let nextSyncCursor: GetCalendarEventsResponse['nextSyncCursor'] = '';
 
-    const { calendarEvents, nextSyncCursor } =
-      await this.getCalendarEventsService.getCalendarEvents(
-        connectedAccount,
-        calendarChannel.syncCursor,
+    try {
+      const getCalendarEventsResponse =
+        await this.getCalendarEventsService.getCalendarEvents(
+          connectedAccount,
+          calendarChannel.syncCursor,
+        );
+
+      calendarEvents = getCalendarEventsResponse.calendarEvents;
+      nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
+    } catch (error) {
+      await this.calendarEventImportErrorHandlerService.handleError(
+        {
+          code: CalendarEventErrorCode.UNKNOWN,
+          message: `Error fetching calendar events: ${JSON.stringify(error)}`,
+        },
+        calendarChannel,
+        workspaceId,
       );
+
+      return;
+    }
 
     if (!calendarEvents || calendarEvents?.length === 0) {
       await this.calendarChannelRepository.update(
