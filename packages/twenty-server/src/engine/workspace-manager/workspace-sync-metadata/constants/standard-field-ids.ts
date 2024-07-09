@@ -140,7 +140,7 @@ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   authFailedAt: '20202020-d268-4c6b-baff-400d402b430a',
   messageChannels: '20202020-24f7-4362-8468-042204d1e445',
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
-  emailAliases: '20202020-8a3d-46be-814f-6228af16c47b',
+  handleAliases: '20202020-8a3d-46be-814f-6228af16c47b',
 };
 
 export const EVENT_STANDARD_FIELD_IDS = {

@@ -11,7 +11,7 @@ export class GoogleEmailAliasManagerService {
     private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
   ) {}
 
-  public async getEmailAliases(
+  public async getHandleAliases(
     connectedAccount: ConnectedAccountWorkspaceEntity,
   ) {
     const oAuth2Client =
@@ -29,7 +29,7 @@ export class GoogleEmailAliasManagerService {
 
     const emailAddresses = emailsResponse.data.emailAddresses;
 
-    const emailAliases =
+    const handleAliases =
       emailAddresses
         ?.filter((emailAddress) => {
           return emailAddress.metadata?.primary !== true;
@@ -38,6 +38,6 @@ export class GoogleEmailAliasManagerService {
           return emailAddress.value || '';
         }) || [];
 
-    return emailAliases;
+    return handleAliases;
   }
 }
