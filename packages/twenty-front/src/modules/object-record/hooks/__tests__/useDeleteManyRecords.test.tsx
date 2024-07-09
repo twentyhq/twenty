@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import {
@@ -23,7 +23,7 @@ const mocks = [
     },
     result: jest.fn(() => ({
       data: {
-        deletePeople: responseData,
+        deletePeople: [responseData],
       },
     })),
   },
