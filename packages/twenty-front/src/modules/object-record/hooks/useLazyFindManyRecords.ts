@@ -1,5 +1,5 @@
 import { useLazyQuery } from '@apollo/client';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -51,10 +51,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     orderBy,
     limit,
   });
-
-  const [, setHasNextPage] = useRecoilState(
-    hasNextPageFamilyState(queryIdentifier),
-  );
 
   const { handleFindManyRecordsCompleted } = useHandleFindManyRecordsCompleted({
     objectMetadataItem,
