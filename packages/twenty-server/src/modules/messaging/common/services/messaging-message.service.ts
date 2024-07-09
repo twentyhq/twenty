@@ -3,17 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageThreadRepository } from 'src/modules/messaging/common/repositories/message-thread.repository';
 import { MessageRepository } from 'src/modules/messaging/common/repositories/message.repository';
+import { MessagingMessageThreadService } from 'src/modules/messaging/common/services/messaging-message-thread.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
-import { MessagingMessageThreadService } from 'src/modules/messaging/common/services/messaging-message-thread.service';
 
 @Injectable()
 export class MessagingMessageService {
@@ -115,11 +115,11 @@ export class MessagingMessageService {
 
     const newMessageId = v4();
 
-    const messageDirection = connectedAccount.emailAliases?.includes(
-      message.fromHandle,
-    )
-      ? 'outgoing'
-      : 'incoming';
+    const messageDirection =
+      connectedAccount.handle === message.fromHandle ||
+      connectedAccount.emailAliases?.includes(message.fromHandle)
+        ? 'outgoing'
+        : 'incoming';
 
     const receivedAt = new Date(parseInt(message.internalDate));
 

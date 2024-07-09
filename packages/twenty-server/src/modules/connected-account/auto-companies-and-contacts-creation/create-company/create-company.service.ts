@@ -5,9 +5,9 @@ import { v4 } from 'uuid';
 import axios, { AxiosInstance } from 'axios';
 
 import { CompanyRepository } from 'src/modules/company/repositories/company.repository';
-import { getCompanyNameFromDomainName } from 'src/modules/calendar-messaging-participant/utils/get-company-name-from-domain-name.util';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { getCompanyNameFromDomainName } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-company-name-from-domain-name.util';
 @Injectable()
 export class CreateCompanyService {
   private readonly httpService: AxiosInstance;

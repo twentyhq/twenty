@@ -1,14 +1,7 @@
 module.exports = {
   root: true,
   extends: ['plugin:prettier/recommended'],
-  plugins: [
-    '@nx',
-    'prefer-arrow',
-    'import',
-    'simple-import-sort',
-    'unused-imports',
-    'unicorn',
-  ],
+  plugins: ['@nx', 'prefer-arrow', 'import', 'unused-imports', 'unicorn'],
   rules: {
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
@@ -52,26 +45,6 @@ module.exports = {
         classPropertiesAllowed: false,
       },
     ],
-
-    'simple-import-sort/imports': [
-      'error',
-      {
-        groups: [
-          // Packages
-          ['^react', '^@?\\w'],
-          // Internal modules
-          ['^(@|~|src|@ui)(/.*|$)'],
-          // Side effect imports
-          ['^\\u0000'],
-          // Relative imports
-          ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
-          ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
-          // CSS imports
-          ['^.+\\.?(css)$'],
-        ],
-      },
-    ],
-    'simple-import-sort/exports': 'error',
 
     'unused-imports/no-unused-imports': 'warn',
     'unused-imports/no-unused-vars': [

@@ -22,7 +22,7 @@ import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/connected
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { CalendarModule } from 'src/modules/calendar/calendar.module';
-import { CalendarEventParticipantModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant.module';
+import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
 
 @Module({
   imports: [
@@ -37,7 +37,7 @@ import { CalendarEventParticipantModule } from 'src/modules/calendar/calendar-ev
     WorkspaceModule,
     MessagingModule,
     CalendarModule,
-    CalendarEventParticipantModule,
+    CalendarEventParticipantManagerModule,
     TimelineActivityModule,
     StripeModule,
     WorkspaceQueryRunnerJobModule,
