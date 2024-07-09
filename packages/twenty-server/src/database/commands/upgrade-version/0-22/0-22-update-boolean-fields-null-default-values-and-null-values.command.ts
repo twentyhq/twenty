@@ -1,13 +1,13 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@nestjs/common';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { Command, CommandRunner, Option } from 'nest-commander';
-import { Repository, IsNull, DataSource } from 'typeorm';
 import chalk from 'chalk';
+import { Command, CommandRunner, Option } from 'nest-commander';
+import { DataSource, IsNull, Repository } from 'typeorm';
 
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
@@ -20,7 +20,7 @@ interface UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommandOptions {
 }
 
 @Command({
-  name: 'migrate-0.22:update-boolean-field-null-default-values-and-null-values',
+  name: 'upgrade-0.22:update-boolean-field-null-default-values-and-null-values',
   description:
     'Update boolean fields null default values and null values to false',
 })
