@@ -51,20 +51,13 @@ export const useDeleteTableData = ({
       recordIdsToDelete = allRecordIds.filter(
         (recordId) => !unselectedRecordIds.includes(recordId),
       );
-
-      console.log({
-        unselectedRecordIds,
-        recordIdsToDelete,
-      });
     }
 
-    console.log({ recordIdsToDelete });
+    resetTableRowSelection();
 
     await deleteManyRecords(recordIdsToDelete, {
-      delayInMsBetweenRequests: 25,
+      delayInMsBetweenRequests: 50,
     });
-
-    resetTableRowSelection();
   };
 
   return { deleteTableData: deleteRecords };

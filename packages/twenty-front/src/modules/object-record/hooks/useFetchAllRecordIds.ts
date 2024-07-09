@@ -1,6 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
+import { useCallback } from 'react';
 import { isDefined } from '~/utils/isDefined';
 
 type UseLazyFetchAllRecordIdsParams<T> = Omit<
@@ -24,7 +25,7 @@ export const useFetchAllRecordIds = <T>({
     objectNameSingular,
   });
 
-  const fetchAllRecordIds = async () => {
+  const fetchAllRecordIds = useCallback(async () => {
     console.log({
       objectNameSingular,
     });
@@ -77,7 +78,12 @@ export const useFetchAllRecordIds = <T>({
     const recordIds = Array.from(recordIdSet);
 
     return recordIds;
-  };
+  }, [
+    fetchMore,
+    findManyRecords,
+    objectMetadataItem.namePlural,
+    objectNameSingular,
+  ]);
 
   return {
     fetchAllRecordIds,
