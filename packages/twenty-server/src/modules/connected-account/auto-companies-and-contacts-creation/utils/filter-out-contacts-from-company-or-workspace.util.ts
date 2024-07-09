@@ -1,7 +1,7 @@
-import { getDomainNameFromHandle } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-domain-name-from-handle.util';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { Contact } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
+import { getDomainNameFromHandle } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-domain-name-from-handle.util';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export function filterOutSelfAndContactsFromCompanyOrWorkspace(
   contacts: Contact[],
@@ -10,7 +10,7 @@ export function filterOutSelfAndContactsFromCompanyOrWorkspace(
 ): Contact[] {
   const selfDomainName = getDomainNameFromHandle(connectedAccount.handle);
 
-  const emailAliases = connectedAccount.emailAliases?.split(',') || [];
+  const handleAliases = connectedAccount.handleAliases?.split(',') || [];
 
   const workspaceMembersMap = workspaceMembers.reduce(
     (map, workspaceMember) => {
@@ -25,6 +25,6 @@ export function filterOutSelfAndContactsFromCompanyOrWorkspace(
     (contact) =>
       getDomainNameFromHandle(contact.handle) !== selfDomainName &&
       !workspaceMembersMap[contact.handle] &&
-      !emailAliases.includes(contact.handle),
+      !handleAliases.includes(contact.handle),
   );
 }
