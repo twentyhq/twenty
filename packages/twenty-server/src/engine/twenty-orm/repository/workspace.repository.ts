@@ -550,7 +550,7 @@ export class WorkspaceRepository<
    * PRIVATE METHODS
    */
   private getCompositeFieldMetadata(
-    objectMetadataEntity = ObjectEntitiesStorage.getObjectLiteral(
+    objectMetadataEntity = ObjectEntitiesStorage.getObjectMetadataEntity(
       this.target as any,
     ),
   ) {
@@ -634,7 +634,9 @@ export class WorkspaceRepository<
 
   private formatResult<T>(
     data: T,
-    objectMetadata = ObjectEntitiesStorage.getObjectLiteral(this.target as any),
+    objectMetadata = ObjectEntitiesStorage.getObjectMetadataEntity(
+      this.target as any,
+    ),
   ): T {
     if (!data) {
       return data;

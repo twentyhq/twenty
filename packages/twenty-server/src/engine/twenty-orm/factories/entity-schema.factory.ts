@@ -58,7 +58,7 @@ export class EntitySchemaFactory {
       relations,
     });
 
-    ObjectEntitiesStorage.setObjectLiteral(entitySchema, objectMetadata);
+    ObjectEntitiesStorage.setObjectMetadataEntity(entitySchema, objectMetadata);
 
     return entitySchema;
   }

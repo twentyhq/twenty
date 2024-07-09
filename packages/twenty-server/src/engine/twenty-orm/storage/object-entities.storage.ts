@@ -6,13 +6,13 @@ export class ObjectEntitiesStorage {
   private static readonly objects: Map<EntitySchema, ObjectMetadataEntity> =
     new Map();
 
-  public static getObjectLiteral(
+  public static getObjectMetadataEntity(
     target: EntitySchema,
   ): ObjectMetadataEntity | undefined {
     return this.objects.get(target);
   }
 
-  public static setObjectLiteral(
+  public static setObjectMetadataEntity(
     target: EntitySchema,
     objectMetadata: ObjectMetadataEntity,
   ): void {
