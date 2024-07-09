@@ -12,19 +12,19 @@ export const RecordTableActionBar = ({
   const {
     selectedRowIdsSelector,
     tableRowIdsState,
-    hasUserSelectedAllRowsState: hasUserSelectedAllRowState,
+    hasUserSelectedAllRowsState,
   } = useRecordTableStates(recordTableId);
 
   const { entityCountInCurrentViewState } = useViewStates(recordTableId);
   const entityCountInCurrentView = useRecoilValue(
     entityCountInCurrentViewState,
   );
-  const hasUserSelectedAllRow = useRecoilValue(hasUserSelectedAllRowState);
+  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
   const tableRowIds = useRecoilValue(tableRowIdsState);
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
   const totalRecordsSelectedNumber =
-    hasUserSelectedAllRow && entityCountInCurrentView
+    hasUserSelectedAllRows && entityCountInCurrentView
       ? selectedRowIds.length === tableRowIds.length
         ? entityCountInCurrentView
         : entityCountInCurrentView -

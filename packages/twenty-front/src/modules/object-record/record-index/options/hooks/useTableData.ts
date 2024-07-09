@@ -55,22 +55,22 @@ export const useTableData = ({
     visibleTableColumnsSelector,
     selectedRowIdsSelector,
     tableRowIdsState,
-    hasUserSelectedAllRowsState: hasUserSelectedAllRowState,
+    hasUserSelectedAllRowsState,
   } = useRecordTableStates(recordIndexId);
 
   const columns = useRecoilValue(visibleTableColumnsSelector());
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
-  const hasUserSelectedAllRow = useRecoilValue(hasUserSelectedAllRowState);
+  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
   // user has checked select all and then unselected some rows
   const userHasUnselectedSomeRows =
-    hasUserSelectedAllRow && selectedRowIds.length < tableRowIds.length;
+    hasUserSelectedAllRows && selectedRowIds.length < tableRowIds.length;
 
   const hasSelectedRows =
     selectedRowIds.length > 0 &&
-    !(hasUserSelectedAllRow && selectedRowIds.length === tableRowIds.length);
+    !(hasUserSelectedAllRows && selectedRowIds.length === tableRowIds.length);
 
   const unselectedRowIds = useMemo(
     () =>

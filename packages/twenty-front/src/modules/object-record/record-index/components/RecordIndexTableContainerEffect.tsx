@@ -47,22 +47,20 @@ export const RecordIndexTableContainerEffect = ({
     setAvailableTableColumns(columnDefinitions);
   }, [columnDefinitions, setAvailableTableColumns]);
 
-  const {
-    tableRowIdsState,
-    hasUserSelectedAllRowsState: hasUserSelectedAllRowState,
-  } = useRecordTableStates(recordTableId);
+  const { tableRowIdsState, hasUserSelectedAllRowsState } =
+    useRecordTableStates(recordTableId);
 
   const { entityCountInCurrentViewState } = useViewStates(recordTableId);
   const entityCountInCurrentView = useRecoilValue(
     entityCountInCurrentViewState,
   );
-  const hasUserSelectedAllRow = useRecoilValue(hasUserSelectedAllRowState);
+  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
   const numSelected =
-    hasUserSelectedAllRow && entityCountInCurrentView
+    hasUserSelectedAllRows && entityCountInCurrentView
       ? selectedRowIds.length === tableRowIds.length
         ? entityCountInCurrentView
         : entityCountInCurrentView -

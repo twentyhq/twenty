@@ -45,7 +45,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     onToggleColumnFilterState,
     onToggleColumnSortState,
     pendingRecordIdState,
-    hasUserSelectedAllRowsState: hasUserSelectedAllRowState,
+    hasUserSelectedAllRowsState,
   } = useRecordTableStates(recordTableId);
 
   const setAvailableTableColumns = useRecoilCallback(
@@ -227,6 +227,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
     setPendingRecordId,
-    hasUserSelectedAllRowState,
+    hasUserSelectedAllRowsState,
   };
 };
