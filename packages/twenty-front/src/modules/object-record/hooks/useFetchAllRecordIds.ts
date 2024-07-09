@@ -26,9 +26,6 @@ export const useFetchAllRecordIds = <T>({
   });
 
   const fetchAllRecordIds = useCallback(async () => {
-    console.log({
-      objectNameSingular,
-    });
     if (!isDefined(findManyRecords)) {
       return [];
     }
@@ -66,24 +63,12 @@ export const useFetchAllRecordIds = <T>({
       }
 
       lastCursor = fetchMoreResult.pageInfo.endCursor ?? '';
-
-      const newProgress = Math.round((recordIdSet.size / totalCount) * 100);
-
-      console.log({
-        lastCursor,
-        newProgress,
-        fetchMoreResult,
-      });
     }
+
     const recordIds = Array.from(recordIdSet);
 
     return recordIds;
-  }, [
-    fetchMore,
-    findManyRecords,
-    objectMetadataItem.namePlural,
-    objectNameSingular,
-  ]);
+  }, [fetchMore, findManyRecords, objectMetadataItem.namePlural]);
 
   return {
     fetchAllRecordIds,

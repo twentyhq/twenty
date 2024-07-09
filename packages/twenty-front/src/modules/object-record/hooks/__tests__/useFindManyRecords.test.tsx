@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -73,7 +73,7 @@ describe('useFindManyRecords', () => {
 
         return useFindManyRecords({
           objectNameSingular: 'person',
-          onCompleted: onCompleted,
+          onCompleted,
         });
       },
       {

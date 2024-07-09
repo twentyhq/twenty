@@ -1,1 +1,1 @@
-export const DELETE_MAX_COUNT = 3000;
+export const DELETE_MAX_COUNT = 10000;

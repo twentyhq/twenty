@@ -24,7 +24,6 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
   return useRecoilCallback(
     ({ snapshot }) =>
       () => {
-        console.log('useLeaveTableFocus');
         const isSoftFocusActive = getSnapshotValue(
           snapshot,
           isSoftFocusActiveState,

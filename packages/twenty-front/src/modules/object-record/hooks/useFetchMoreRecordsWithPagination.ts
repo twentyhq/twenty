@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import {
   ApolloError,
   ApolloQueryResult,
@@ -8,6 +7,7 @@ import {
 } from '@apollo/client';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo } from 'react';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -24,7 +24,6 @@ import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyReco
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { isDefined } from '~/utils/isDefined';
-import { sleep } from '~/utils/sleep';
 import { capitalize } from '~/utils/string/capitalize';
 
 import { cursorFamilyState } from '../states/cursorFamilyState';
@@ -108,8 +107,6 @@ export const useFetchMoreRecordsWithPagination = <
           .getLoadable(cursorFamilyState(queryIdentifier))
           .getValue();
 
-        console.log({ lastCursorLocal });
-
         // Remote objects does not support hasNextPage. We cannot rely on it to fetch more records.
         if (
           hasNextPageLocal ||
@@ -146,15 +143,6 @@ export const useFetchMoreRecordsWithPagination = <
                   fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo;
 
                 if (isDefined(data?.[objectMetadataItem.namePlural])) {
-                  console.log({
-                    pageInfo,
-                    hasNextPage: pageInfo?.hasNextPage,
-                    totalCount:
-                      fetchMoreResult?.[objectMetadataItem.namePlural]
-                        ?.totalCount,
-                    data: fetchMoreResult?.[objectMetadataItem.namePlural],
-                  });
-
                   set(
                     cursorFamilyState(queryIdentifier),
                     pageInfo.endCursor ?? '',
@@ -203,8 +191,6 @@ export const useFetchMoreRecordsWithPagination = <
           } finally {
             setIsFetchingMoreObjects(false);
           }
-
-          await sleep(1);
         }
       },
     [
