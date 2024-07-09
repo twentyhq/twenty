@@ -75,7 +75,7 @@ const fieldMultiSelectMock = {
   ],
 };
 
-const fieldRelationMock = {
+export const fieldRelationMock = {
   name: 'fieldRelation',
   type: FieldMetadataType.RELATION,
   fromRelationMetadata: {
