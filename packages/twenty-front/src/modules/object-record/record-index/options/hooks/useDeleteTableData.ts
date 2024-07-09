@@ -1,3 +1,4 @@
+import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
 import { UseTableDataOptions } from '@/object-record/record-index/options/hooks/useTableData';
@@ -33,6 +34,7 @@ export const useDeleteTableData = ({
   const { deleteManyRecords } = useDeleteManyRecords({
     objectNameSingular,
   });
+  const { favorites, deleteFavorite } = useFavorites();
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
@@ -54,6 +56,16 @@ export const useDeleteTableData = ({
     }
 
     resetTableRowSelection();
+
+    for (const recordIdToDelete of recordIdsToDelete) {
+      const foundFavorite = favorites?.find(
+        (favorite) => favorite.recordId === recordIdToDelete,
+      );
+
+      if (foundFavorite !== undefined) {
+        deleteFavorite(foundFavorite.id);
+      }
+    }
 
     await deleteManyRecords(recordIdsToDelete, {
       delayInMsBetweenRequests: 50,

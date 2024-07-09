@@ -96,15 +96,6 @@ export const useRecordActionBar = ({
   const { deleteTableData } = useDeleteTableData(baseTableDataParams);
 
   const handleDeleteClick = useCallback(() => {
-    // selectedRecordIds.forEach((recordId) => {
-    //   const foundFavorite = favorites?.find(
-    //     (favorite) => favorite.recordId === recordId,
-    //   );
-    //   if (foundFavorite !== undefined) {
-    //     deleteFavorite(foundFavorite.id);
-    //   }
-    // });
-
     deleteTableData();
   }, [deleteTableData]);
 
