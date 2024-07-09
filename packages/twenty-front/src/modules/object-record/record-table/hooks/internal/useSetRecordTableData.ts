@@ -19,7 +19,7 @@ export const useSetRecordTableData = ({
     tableRowIdsState,
     numberOfTableRowsState,
     isRowSelectedFamilyState,
-    hasUserSelectedAllRowState,
+    hasUserSelectedAllRowsState: hasUserSelectedAllRowState,
   } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(

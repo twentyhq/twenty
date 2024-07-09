@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import {
   IconClick,
@@ -93,10 +93,9 @@ export const useRecordActionBar = ({
     recordIndexId: objectMetadataItem.namePlural,
   };
 
-  const { deleteTableData, deleteProgress } =
-    useDeleteTableData(baseTableDataParams);
+  const { deleteTableData } = useDeleteTableData(baseTableDataParams);
 
-  const handleDeleteClick = () => {
+  const handleDeleteClick = useCallback(() => {
     // selectedRecordIds.forEach((recordId) => {
     //   const foundFavorite = favorites?.find(
     //     (favorite) => favorite.recordId === recordId,
@@ -107,7 +106,7 @@ export const useRecordActionBar = ({
     // });
 
     deleteTableData();
-  };
+  }, [deleteTableData]);
 
   const handleExecuteQuickActionOnClick = useCallback(async () => {
     callback?.();
@@ -125,52 +124,58 @@ export const useRecordActionBar = ({
 
   const isRemoteObject = objectMetadataItem.isRemote;
 
-  const menuActions: ContextMenuEntry[] = useMemo(
-    () => [
-      {
-        label: displayedExportProgress(progress),
-        Icon: IconFileExport,
-        accent: 'default',
-        onClick: () => download(),
-      },
-    ],
-    [download, progress],
-  );
-
   const numberOfSelectedRecords = numSelected ?? selectedRecordIds.length;
   const canDelete =
     !isRemoteObject && numberOfSelectedRecords < DELETE_MAX_COUNT;
 
-  if (canDelete) {
-    menuActions.push({
-      label: 'Delete',
-      Icon: IconTrash,
-      accent: 'danger',
-      onClick: (event) => {
-        console.log('asd');
-        event?.stopPropagation();
-        event?.preventDefault();
-        handleDeleteClick();
-        setIsDeleteRecordsModalOpen(true);
-      },
-      ConfirmationModal: (
-        <ConfirmationModal
-          isOpen={isDeleteRecordsModalOpen}
-          setIsOpen={setIsDeleteRecordsModalOpen}
-          title={`Delete ${numberOfSelectedRecords} ${
-            numberOfSelectedRecords === 1 ? `record` : 'records'
-          }`}
-          subtitle={`This action cannot be undone. This will permanently delete ${
-            numberOfSelectedRecords === 1 ? 'this record' : 'these records'
-          }`}
-          onConfirmClick={() => handleDeleteClick()}
-          deleteButtonText={`Delete ${
-            numberOfSelectedRecords > 1 ? 'Records' : 'Record'
-          }`}
-        />
-      ),
-    });
-  }
+  const menuActions: ContextMenuEntry[] = useMemo(
+    () =>
+      [
+        {
+          label: displayedExportProgress(progress),
+          Icon: IconFileExport,
+          accent: 'default',
+          onClick: () => download(),
+        } satisfies ContextMenuEntry,
+        canDelete
+          ? ({
+              label: 'Delete',
+              Icon: IconTrash,
+              accent: 'danger',
+              onClick: () => {
+                setIsDeleteRecordsModalOpen(true);
+                handleDeleteClick();
+              },
+              ConfirmationModal: (
+                <ConfirmationModal
+                  isOpen={isDeleteRecordsModalOpen}
+                  setIsOpen={setIsDeleteRecordsModalOpen}
+                  title={`Delete ${numberOfSelectedRecords} ${
+                    numberOfSelectedRecords === 1 ? `record` : 'records'
+                  }`}
+                  subtitle={`This action cannot be undone. This will permanently delete ${
+                    numberOfSelectedRecords === 1
+                      ? 'this record'
+                      : 'these records'
+                  }`}
+                  onConfirmClick={() => handleDeleteClick()}
+                  deleteButtonText={`Delete ${
+                    numberOfSelectedRecords > 1 ? 'Records' : 'Record'
+                  }`}
+                />
+              ),
+            } satisfies ContextMenuEntry)
+          : undefined,
+      ].filter(isDefined),
+    [
+      download,
+      progress,
+      canDelete,
+      handleDeleteClick,
+      isDeleteRecordsModalOpen,
+      numberOfSelectedRecords,
+    ],
+  );
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
     'IS_QUICK_ACTIONS_ENABLED',

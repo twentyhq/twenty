@@ -7,6 +7,6 @@ export type ContextMenuEntry = {
   label: string;
   Icon: IconComponent;
   accent?: MenuItemAccent;
-  onClick: (event?: MouseEvent<HTMLElement>) => void;
+  onClick?: (event?: MouseEvent<HTMLElement>) => void;
   ConfirmationModal?: ReactNode;
 };

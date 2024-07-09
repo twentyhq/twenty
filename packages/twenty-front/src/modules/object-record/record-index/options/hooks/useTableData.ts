@@ -55,7 +55,7 @@ export const useTableData = ({
     visibleTableColumnsSelector,
     selectedRowIdsSelector,
     tableRowIdsState,
-    hasUserSelectedAllRowState,
+    hasUserSelectedAllRowsState: hasUserSelectedAllRowState,
   } = useRecordTableStates(recordIndexId);
 
   const columns = useRecoilValue(visibleTableColumnsSelector());

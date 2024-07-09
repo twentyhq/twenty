@@ -15,6 +15,8 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
   const closeCurrentCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
 
+  const setHasUserSelectedAllRows = useSetHasUserSelectedAllRows(recordTableId);
+
   const selectAllRows = useSetHasUserSelectedAllRows(recordTableId);
 
   const { isSoftFocusActiveState } = useRecordTableStates(recordTableId);
@@ -22,6 +24,7 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
   return useRecoilCallback(
     ({ snapshot }) =>
       () => {
+        console.log('useLeaveTableFocus');
         const isSoftFocusActive = getSnapshotValue(
           snapshot,
           isSoftFocusActiveState,
@@ -41,6 +44,7 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
 
         closeCurrentCellInEditMode();
         disableSoftFocus();
+        setHasUserSelectedAllRows(false);
         selectAllRows(false);
       },
     [
@@ -48,6 +52,7 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
       disableSoftFocus,
       isSoftFocusActiveState,
       selectAllRows,
+      setHasUserSelectedAllRows,
     ],
   );
 };

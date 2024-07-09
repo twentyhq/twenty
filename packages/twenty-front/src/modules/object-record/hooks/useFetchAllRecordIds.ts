@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
@@ -10,20 +8,11 @@ type UseLazyFetchAllRecordIdsParams<T> = Omit<
   'skip'
 >;
 
-type FetchAllRecordIdsStatus = 'idle' | 'loading' | 'success' | 'error';
-
-export const useLazyFetchAllRecordIds = <T>({
+export const useFetchAllRecordIds = <T>({
   objectNameSingular,
   filter,
   orderBy,
-  callback,
-}: UseLazyFetchAllRecordIdsParams<T> & {
-  callback?: (recordIds: string[]) => void;
-}) => {
-  const [fetchProgress, setFetchProgress] = useState(0);
-  const [fetchStatus, setFetchStatus] =
-    useState<FetchAllRecordIdsStatus>('idle');
-
+}: UseLazyFetchAllRecordIdsParams<T>) => {
   const { fetchMore, findManyRecords } = useLazyFindManyRecords({
     objectNameSingular,
     filter,
@@ -36,11 +25,11 @@ export const useLazyFetchAllRecordIds = <T>({
   });
 
   const fetchAllRecordIds = async () => {
-    setFetchStatus('loading');
-    setFetchProgress(0);
-
+    console.log({
+      objectNameSingular,
+    });
     if (!isDefined(findManyRecords)) {
-      return;
+      return [];
     }
 
     const findManyRecordsDataResult = await findManyRecords();
@@ -52,20 +41,9 @@ export const useLazyFetchAllRecordIds = <T>({
 
     const recordsCount = firstQueryResult?.edges.length ?? 0;
 
-    const progress = Math.round((recordsCount / totalCount) * 100);
-
-    setFetchProgress(progress);
-
     const recordIdSet = new Set(
       firstQueryResult?.edges?.map((edge) => edge.node.id) ?? [],
     );
-
-    console.log({
-      records: recordIdSet,
-      queryResult: firstQueryResult,
-      totalCount,
-      progress,
-    });
 
     const remainingCount = totalCount - recordsCount;
 
@@ -90,28 +68,18 @@ export const useLazyFetchAllRecordIds = <T>({
 
       const newProgress = Math.round((recordIdSet.size / totalCount) * 100);
 
-      setFetchProgress(newProgress);
-
       console.log({
         lastCursor,
         newProgress,
         fetchMoreResult,
       });
     }
-
-    setFetchStatus('success');
-    setFetchProgress(100);
-
     const recordIds = Array.from(recordIdSet);
-
-    callback?.(recordIds);
 
     return recordIds;
   };
 
   return {
     fetchAllRecordIds,
-    fetchProgress,
-    fetchStatus,
   };
 };

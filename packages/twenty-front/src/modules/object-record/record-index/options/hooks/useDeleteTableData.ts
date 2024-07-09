@@ -1,55 +1,71 @@
-import { useCallback } from 'react';
-
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
-import { useLazyFetchAllRecordIds } from '@/object-record/hooks/useLazyFetchAllRecordIds';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
 import { UseTableDataOptions } from '@/object-record/record-index/options/hooks/useTableData';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import { useRecoilValue } from 'recoil';
 
 type UseDeleteTableDataOptions = Omit<UseTableDataOptions, 'callback'>;
 
 export const useDeleteTableData = ({
-  delayMs,
-  maximumRequests = 100,
   objectNameSingular,
-  pageSize = 30,
   recordIndexId,
 }: UseDeleteTableDataOptions) => {
-  const { fetchAllRecordIds, fetchProgress } = useLazyFetchAllRecordIds({
+  const { fetchAllRecordIds } = useFetchAllRecordIds({
     objectNameSingular,
   });
 
-  const { resetTableRowSelection } = useRecordTable({
+  const {
+    resetTableRowSelection,
+    selectedRowIdsSelector,
+    hasUserSelectedAllRowState,
+  } = useRecordTable({
     recordTableId: recordIndexId,
   });
 
-  const { deleteManyRecords } = useDeleteManyRecords({ objectNameSingular });
-
-  const deleteRecords = useCallback(
-    async (
-      rows: ObjectRecord[],
-      _columns: ColumnDefinition<FieldMetadata>[],
-    ) => {
-      const recordIds = rows.map((record) => record.id);
-
-      await deleteManyRecords(recordIds);
-      resetTableRowSelection();
-    },
-    [deleteManyRecords, resetTableRowSelection],
+  const tableRowIds = useRecoilValue(
+    tableRowIdsComponentState({
+      scopeId: getScopeIdFromComponentId(recordIndexId),
+    }),
   );
 
-  // const { getTableData: deleteTableData } = useTableData({
-  //   delayMs,
-  //   maximumRequests,
-  //   objectNameSingular,
-  //   pageSize,
-  //   recordIndexId,
-  //   callback: deleteRecords,
-  // });
+  const { deleteManyRecords } = useDeleteManyRecords({
+    objectNameSingular,
+  });
 
-  const deleteProgress = fetchProgress / 2;
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
-  return { deleteTableData: fetchAllRecordIds, deleteProgress };
+  const hasUserSelectedAllRow = useRecoilValue(hasUserSelectedAllRowState);
+
+  const deleteRecords = async () => {
+    let recordIdsToDelete = selectedRowIds;
+
+    if (hasUserSelectedAllRow) {
+      const allRecordIds = await fetchAllRecordIds();
+
+      const unselectedRecordIds = tableRowIds.filter(
+        (recordId) => !selectedRowIds.includes(recordId),
+      );
+
+      recordIdsToDelete = allRecordIds.filter(
+        (recordId) => !unselectedRecordIds.includes(recordId),
+      );
+
+      console.log({
+        unselectedRecordIds,
+        recordIdsToDelete,
+      });
+    }
+
+    console.log({ recordIdsToDelete });
+
+    await deleteManyRecords(recordIdsToDelete, {
+      delayInMsBetweenRequests: 25,
+    });
+
+    resetTableRowSelection();
+  };
+
+  return { deleteTableData: deleteRecords };
 };

@@ -8,6 +8,7 @@ import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMu
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
 import { isDefined } from '~/utils/isDefined';
+import { sleep } from '~/utils/sleep';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useDeleteOneRecordProps = {
@@ -17,6 +18,7 @@ type useDeleteOneRecordProps = {
 
 type DeleteManyRecordsOptions = {
   skipOptimisticEffect?: boolean;
+  delayInMsBetweenRequests?: number;
 };
 
 export const useDeleteManyRecords = ({
@@ -58,10 +60,6 @@ export const useDeleteManyRecords = ({
         (batchIndex + 1) * DEFAULT_MUTATION_BATCH_SIZE,
       );
 
-      console.log({
-        batchIds,
-      });
-
       const deletedRecordsResponse = await apolloClient.mutate({
         mutation: deleteManyRecordsMutation,
         variables: {
@@ -99,6 +97,10 @@ export const useDeleteManyRecords = ({
         deletedRecordsResponse.data?.[mutationResponseField] ?? [];
 
       deletedRecords.push(...deletedRecordsForThisBatch);
+
+      if (isDefined(options?.delayInMsBetweenRequests)) {
+        await sleep(options.delayInMsBetweenRequests);
+      }
     }
 
     return deletedRecords;

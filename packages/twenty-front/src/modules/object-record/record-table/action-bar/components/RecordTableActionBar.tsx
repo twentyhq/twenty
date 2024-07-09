@@ -12,7 +12,7 @@ export const RecordTableActionBar = ({
   const {
     selectedRowIdsSelector,
     tableRowIdsState,
-    hasUserSelectedAllRowState,
+    hasUserSelectedAllRowsState: hasUserSelectedAllRowState,
   } = useRecordTableStates(recordTableId);
 
   const { entityCountInCurrentViewState } = useViewStates(recordTableId);
