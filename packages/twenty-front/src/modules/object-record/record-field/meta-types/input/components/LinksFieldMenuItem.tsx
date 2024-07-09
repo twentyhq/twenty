@@ -46,6 +46,11 @@ export const LinksFieldMenuItem = ({
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
+  const handleDeleteClick = () => {
+    setIsHovered(false);
+    onDelete?.();
+  };
+
   // Make sure dropdown closes on unmount.
   useEffect(() => {
     if (isDropdownOpen) {
@@ -90,7 +95,7 @@ export const LinksFieldMenuItem = ({
                         accent="danger"
                         LeftIcon={IconTrash}
                         text="Delete"
-                        onClick={onDelete}
+                        onClick={handleDeleteClick}
                       />
                     </DropdownMenuItemsContainer>
                   }
