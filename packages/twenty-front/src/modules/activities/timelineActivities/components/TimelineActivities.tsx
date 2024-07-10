@@ -63,7 +63,7 @@ export const TimelineActivities = ({
             There are no activities associated with this record.{' '}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-        <TimelineCreateButtonGroup targetableObject={targetableObject} />
+        <TimelineCreateButtonGroup />
       </AnimatedPlaceholderEmptyContainer>
     );
   }
