@@ -25,7 +25,6 @@ export class FunctionService {
   ) {}
 
   async upsertFunction(
-    workspaceId: string,
     user: User,
     { createReadStream, filename, mimetype }: FileUpload,
     name: string,
