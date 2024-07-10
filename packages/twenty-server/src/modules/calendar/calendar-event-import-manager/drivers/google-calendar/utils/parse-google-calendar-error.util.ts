@@ -1,7 +1,7 @@
 import { GoogleCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/types/google-calendar-error.type';
 import {
-    CalendarEventError,
-    CalendarEventErrorCode,
+  CalendarEventError,
+  CalendarEventErrorCode,
 } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-error.type';
 
 export const parseGoogleCalendarError = (
