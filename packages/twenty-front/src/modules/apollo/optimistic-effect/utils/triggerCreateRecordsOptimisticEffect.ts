@@ -7,7 +7,11 @@ import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
+import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
+
+import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { isDefined } from '~/utils/isDefined';
+import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 /*
   TODO: for now new records are added to all cached record lists, no matter what the variables (filters, orderBy, etc.) are.
@@ -19,11 +23,13 @@ export const triggerCreateRecordsOptimisticEffect = ({
   objectMetadataItem,
   recordsToCreate,
   objectMetadataItems,
+  shouldMatchRootQueryFilter,
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
   recordsToCreate: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];
+  shouldMatchRootQueryFilter?: boolean;
 }) => {
   recordsToCreate.forEach((record) =>
     triggerUpdateRelationsOptimisticEffect({
@@ -39,12 +45,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
     fields: {
       [objectMetadataItem.namePlural]: (
         rootQueryCachedResponse,
-        {
-          DELETE: _DELETE,
-          readField,
-          storeFieldName: _storeFieldName,
-          toReference,
-        },
+        { DELETE: _DELETE, readField, storeFieldName, toReference },
       ) => {
         const shouldSkip = !isObjectRecordConnectionWithRefs(
           objectMetadataItem.nameSingular,
@@ -54,6 +55,13 @@ export const triggerCreateRecordsOptimisticEffect = ({
         if (shouldSkip) {
           return rootQueryCachedResponse;
         }
+
+        const { fieldVariables: rootQueryVariables } =
+          parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
+            storeFieldName,
+          );
+
+        const rootQueryFilter = rootQueryVariables?.filter;
 
         const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
 
@@ -74,6 +82,22 @@ export const triggerCreateRecordsOptimisticEffect = ({
         const hasAddedRecords = recordsToCreate
           .map((recordToCreate) => {
             if (isNonEmptyString(recordToCreate.id)) {
+              if (
+                isDefined(rootQueryFilter) &&
+                shouldMatchRootQueryFilter === true
+              ) {
+                const recordToCreateMatchesThisRootQueryFilter =
+                  isRecordMatchingFilter({
+                    record: recordToCreate,
+                    filter: rootQueryFilter,
+                    objectMetadataItem,
+                  });
+
+                if (!recordToCreateMatchesThisRootQueryFilter) {
+                  return false;
+                }
+              }
+
               const recordToCreateReference = toReference(recordToCreate);
 
               if (!recordToCreateReference) {

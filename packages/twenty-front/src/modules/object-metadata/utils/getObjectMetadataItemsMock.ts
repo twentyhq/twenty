@@ -3039,7 +3039,7 @@ export const getObjectMetadataItemsMock = () => {
         {
           __typename: 'field',
           id: '20202020-ad10-4117-a039-3f04b7a5f939',
-          type: 'TEXT',
+          type: 'ADDRESS',
           name: 'address',
           label: 'Address',
           description: 'The company address',

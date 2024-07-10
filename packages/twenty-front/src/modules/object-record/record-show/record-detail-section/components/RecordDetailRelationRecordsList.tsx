@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 
 import { RecordDetailRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsList';
 import { RecordDetailRelationRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListItem';
@@ -20,7 +20,7 @@ export const RecordDetailRelationRecordsList = ({
   return (
     <RecordDetailRecordsList>
       {relationRecords.slice(0, 5).map((relationRecord) => (
-        <>
+        <Fragment key={relationRecord.id}>
           <RecordDetailRelationRecordsListItemEffect
             key={`${relationRecord.id}-effect`}
             relationRecordId={relationRecord.id}
@@ -31,7 +31,7 @@ export const RecordDetailRelationRecordsList = ({
             onClick={handleItemClick}
             relationRecord={relationRecord}
           />
-        </>
+        </Fragment>
       ))}
     </RecordDetailRecordsList>
   );

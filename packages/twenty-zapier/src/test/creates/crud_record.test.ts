@@ -14,7 +14,7 @@ describe('creates.create_company', () => {
       nameSingular: 'Company',
       crudZapierOperation: Operation.create,
       name: 'Company Name',
-      address: 'Company Address',
+      address: { addressCity: 'Paris' },
       domainName: 'Company Domain Name',
       linkedinLink: { url: '/linkedin_url', label: 'Test linkedinUrl' },
       xLink: { url: '/x_url', label: 'Test xUrl' },
