@@ -131,6 +131,10 @@ export class UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand extends Co
           const tableName = computeObjectTargetTable(booleanField.object);
 
           await workspaceQueryRunner.query(
+            `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${fieldName}" = 'false' WHERE "${fieldName}" IS NULL`,
+          );
+
+          await workspaceQueryRunner.query(
             `ALTER TABLE "${dataSourceMetadata.schema}"."${tableName}" ALTER COLUMN "${fieldName}" SET DEFAULT false;`,
           );
         }
