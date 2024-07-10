@@ -25,7 +25,6 @@ export const ObjectFilterDropdownDateInput = () => {
 
   const handleChange = (date: Date | null) => {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
-
     selectFilter?.({
       id: selectedFilter?.id ? selectedFilter.id : v4(),
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
