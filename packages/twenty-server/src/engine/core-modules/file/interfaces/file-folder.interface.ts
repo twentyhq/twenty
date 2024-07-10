@@ -5,6 +5,7 @@ export enum FileFolder {
   WorkspaceLogo = 'workspace-logo',
   Attachment = 'attachment',
   PersonPicture = 'person-picture',
+  Function = 'function',
 }
 
 registerEnumType(FileFolder, {

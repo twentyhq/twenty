@@ -12,6 +12,7 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { AISQLQueryModule } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
+import { FunctionModule } from 'src/engine/core-modules/function/function.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { FileModule } from './file/file.module';
@@ -26,6 +27,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
     ClientConfigModule,
     FeatureFlagModule,
     FileModule,
+    FunctionModule,
     OpenApiModule,
     AppTokenModule,
     TimelineMessagingModule,
