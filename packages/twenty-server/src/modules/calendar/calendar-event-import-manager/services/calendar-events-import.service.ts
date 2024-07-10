@@ -7,7 +7,10 @@ import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inje
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
-import { CalendarEventImportErrorHandlerService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-error-handling.service';
+import {
+  CalendarEventImportErrorHandlerService,
+  CalendarEventImportSyncStep,
+} from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-error-handling.service';
 import {
   CalendarGetCalendarEventsService,
   GetCalendarEventsResponse,
@@ -16,7 +19,10 @@ import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-i
 import { CalendarEventErrorCode } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-error.type';
 import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import {
+  CalendarChannelSyncStage,
+  CalendarChannelWorkspaceEntity,
+} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -42,6 +48,12 @@ export class CalendarEventsImportService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
+    const syncStep =
+      calendarChannel.syncStage ===
+      CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING
+        ? CalendarEventImportSyncStep.FULL_CALENDAR_EVENT_LIST_FETCH
+        : CalendarEventImportSyncStep.PARTIAL_CALENDAR_EVENT_LIST_FETCH;
+
     await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
       calendarChannel.id,
     );
@@ -63,6 +75,7 @@ export class CalendarEventsImportService {
           code: CalendarEventErrorCode.UNKNOWN,
           message: `Error fetching calendar events: ${JSON.stringify(error)}`,
         },
+        syncStep,
         calendarChannel,
         workspaceId,
       );
