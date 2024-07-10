@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -109,8 +109,8 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const canSave =
-    formConfig.formState.isValid && !formConfig.formState.isSubmitting;
+  const { isValid, isSubmitting } = formConfig.formState;
+  const canSave = isValid && !isSubmitting;
 
   const handleSave = async (
     formValues: SettingsDataModelNewFieldFormValues,
@@ -193,6 +193,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               {!activeObjectMetadataItem.isRemote && (
                 <SaveAndCancelButtons
                   isSaveDisabled={!canSave}
+                  isCancelDisabled={isSubmitting}
                   onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
                   onSave={formConfig.handleSubmit(handleSave)}
                 />
