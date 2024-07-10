@@ -26,6 +26,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { FunctionWorkspaceEntity } from 'src/modules/function/stadard-objects/function.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workspaceMember,
@@ -241,4 +242,16 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   auditLogs: Relation<AuditLogWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredFunctions,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Authored functions',
+    description: 'Authored functions',
+    icon: 'IconRobot',
+    inverseSideTarget: () => FunctionWorkspaceEntity,
+    inverseSideFieldKey: 'author',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  authoredFunctions: Relation<FunctionWorkspaceEntity[]>;
 }

@@ -9,15 +9,11 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { FunctionService } from 'src/engine/core-modules/function/function.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => String)
 export class FunctionResolver {
-  constructor(
-    private readonly functionService: FunctionService,
-    private readonly fileUploadService: FileUploadService,
-  ) {}
+  constructor(private readonly functionService: FunctionService) {}
 
   @Mutation(() => String)
   async upsertFunction(

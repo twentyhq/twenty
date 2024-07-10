@@ -200,6 +200,7 @@ export const FUNCTION_STANDARD_FIELD_IDS = {
   builtSourcePath: '20202020-dd26-42c6-8c3c-413b84dea9ef',
   lambdaName: '20202020-dd26-42c6-8c3c-65d073cad03f',
   name: '20202020-dd26-42c6-8c3c-d19b06d6ec8e',
+  author: '20202020-dd26-42c6-8c3c-d19b06d6ec8f',
 };
 
 export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS = {
@@ -349,6 +350,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   calendarEventParticipants: '20202020-0dbc-4841-9ce1-3e793b5b3512',
   timelineActivities: '20202020-e15b-47b8-94fe-8200e3c66615',
   auditLogs: '20202020-2f54-4739-a5e2-99563385e83d',
+  authoredFunctions: '20202020-2f54-4739-a5e2-99563385e83e',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {

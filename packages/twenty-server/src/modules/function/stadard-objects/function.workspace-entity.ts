@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -6,6 +8,10 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { FUNCTION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 export enum FunctionSyncStatus {
   NOT_READY = 'NOT_READY',
@@ -28,6 +34,20 @@ export class FunctionWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Name of the function',
   })
   name: string;
+
+  @WorkspaceRelation({
+    standardId: FUNCTION_STANDARD_FIELD_IDS.author,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Author',
+    description: 'Function author',
+    icon: 'IconCircleUser',
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
+    inverseSideFieldKey: 'authoredFunctions',
+  })
+  author: Relation<WorkspaceMemberWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('author')
+  authorId: string;
 
   @WorkspaceField({
     standardId: FUNCTION_STANDARD_FIELD_IDS.rawSourcePath,
