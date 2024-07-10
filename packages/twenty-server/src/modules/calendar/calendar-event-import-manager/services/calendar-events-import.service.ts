@@ -16,7 +16,6 @@ import {
   GetCalendarEventsResponse,
 } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
-import { CalendarEventErrorCode } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-error.type';
 import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import {
@@ -71,10 +70,7 @@ export class CalendarEventsImportService {
       nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
     } catch (error) {
       await this.calendarEventImportErrorHandlerService.handleError(
-        {
-          code: CalendarEventErrorCode.UNKNOWN,
-          message: `Error fetching calendar events: ${JSON.stringify(error)}`,
-        },
+        error,
         syncStep,
         calendarChannel,
         workspaceId,
