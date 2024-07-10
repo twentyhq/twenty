@@ -4,10 +4,15 @@ import { IconComponent } from 'twenty-ui';
 import { NavigationBarItem } from './NavigationBarItem';
 
 const StyledContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.tertiary};
+  bottom: 0;
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
   justify-content: center;
+  left: 0;
   padding: ${({ theme }) => theme.spacing(3)};
+  position: fixed;
+  right: 0;
   z-index: 1001;
 `;
 
