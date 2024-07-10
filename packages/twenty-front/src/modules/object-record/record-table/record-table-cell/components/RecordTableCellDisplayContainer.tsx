@@ -10,8 +10,6 @@ const StyledOuterContainer = styled.div<{
   overflow: hidden;
   padding-left: 6px;
   width: 100%;
-
-  margin: ${({ hasSoftFocus }) => (hasSoftFocus === true ? '-1px' : 'none')};
 `;
 
 const StyledInnerContainer = styled.div`
