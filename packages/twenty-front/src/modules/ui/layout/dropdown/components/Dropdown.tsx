@@ -40,6 +40,7 @@ type DropdownProps = {
   dropdownStrategy?: 'fixed' | 'absolute';
   disableBlur?: boolean;
   onClickOutside?: () => void;
+  usePortal?: boolean;
   onClose?: () => void;
   onOpen?: () => void;
 };
@@ -56,6 +57,7 @@ export const Dropdown = ({
   dropdownStrategy = 'absolute',
   dropdownOffset = { x: 0, y: 0 },
   disableBlur = false,
+  usePortal = false,
   onClickOutside,
   onClose,
   onOpen,
@@ -131,7 +133,7 @@ export const Dropdown = ({
             onHotkeyTriggered={handleHotkeyTriggered}
           />
         )}
-        {isDropdownOpen && (
+        {isDropdownOpen && usePortal && (
           <FloatingPortal>
             <DropdownMenu
               disableBlur={disableBlur}
@@ -143,6 +145,17 @@ export const Dropdown = ({
               {dropdownComponents}
             </DropdownMenu>
           </FloatingPortal>
+        )}
+        {isDropdownOpen && !usePortal && (
+          <DropdownMenu
+            disableBlur={disableBlur}
+            width={dropdownMenuWidth ?? dropdownWidth}
+            data-select-disable
+            ref={refs.setFloating}
+            style={floatingStyles}
+          >
+            {dropdownComponents}
+          </DropdownMenu>
         )}
         <DropdownOnToggleEffect
           onDropdownClose={onClose}

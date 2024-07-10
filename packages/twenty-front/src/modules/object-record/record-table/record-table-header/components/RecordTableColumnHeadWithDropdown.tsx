@@ -28,6 +28,7 @@ export const RecordTableColumnHeadWithDropdown = ({
       clickableComponent={<RecordTableColumnHead column={column} />}
       dropdownComponents={<RecordTableColumnHeadDropdownMenu column={column} />}
       dropdownOffset={{ x: -1 }}
+      usePortal
       dropdownPlacement="bottom-start"
       dropdownHotkeyScope={{ scope: column.fieldMetadataId + '-header' }}
     />

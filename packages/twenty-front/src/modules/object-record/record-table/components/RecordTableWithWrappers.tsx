@@ -1,14 +1,11 @@
-import { useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRef } from 'react';
+import { useRecoilCallback } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
-import { RecordTableEmptyState } from '@/object-record/record-table/components/RecordTableEmptyState';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -31,6 +28,10 @@ const StyledTableContainer = styled.div`
   position: relative;
 `;
 
+const StyledTableInternalContainer = styled.div`
+  height: 100%;
+`;
+
 type RecordTableWithWrappersProps = {
   objectNameSingular: string;
   recordTableId: string;
@@ -48,32 +49,13 @@ export const RecordTableWithWrappers = ({
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { isRecordTableInitialLoadingState, tableRowIdsState } =
-    useRecordTableStates(recordTableId);
-
-  const isRecordTableInitialLoading = useRecoilValue(
-    isRecordTableInitialLoadingState,
-  );
-
-  const tableRowIds = useRecoilValue(tableRowIdsState);
-
   const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
   });
 
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
-    {
-      objectNameSingular,
-    },
-  );
-
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
-
-  const objectLabel = foundObjectMetadataItem?.labelSingular;
-
-  const isRemote = foundObjectMetadataItem?.isRemote ?? false;
 
   const handleColumnsChange = useRecoilCallback(
     () => (columns) => {
@@ -86,24 +68,13 @@ export const RecordTableWithWrappers = ({
     [saveViewFields],
   );
 
-  if (!isRecordTableInitialLoading && tableRowIds.length === 0) {
-    return (
-      <RecordTableEmptyState
-        objectNameSingular={objectNameSingular}
-        objectLabel={objectLabel}
-        createRecord={createRecord}
-        isRemote={isRemote}
-      />
-    );
-  }
-
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>
       <ScrollWrapper>
         <RecordUpdateContext.Provider value={updateRecordMutation}>
           <StyledTableWithHeader>
             <StyledTableContainer>
-              <div ref={tableBodyRef}>
+              <StyledTableInternalContainer ref={tableBodyRef}>
                 <RecordTable
                   recordTableId={recordTableId}
                   objectNameSingular={objectNameSingular}
@@ -115,7 +86,7 @@ export const RecordTableWithWrappers = ({
                   onDragSelectionStart={resetTableRowSelection}
                   onDragSelectionChange={setRowSelected}
                 />
-              </div>
+              </StyledTableInternalContainer>
               <RecordTableInternalEffect
                 recordTableId={recordTableId}
                 tableBodyRef={tableBodyRef}

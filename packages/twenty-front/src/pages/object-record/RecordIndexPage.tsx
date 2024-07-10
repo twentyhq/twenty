@@ -1,5 +1,5 @@
-import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useParams } from 'react-router-dom';
 import { v4 } from 'uuid';
 
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
