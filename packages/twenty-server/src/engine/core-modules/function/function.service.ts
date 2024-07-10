@@ -7,10 +7,22 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import {
+  FunctionSyncStatus,
+  FunctionWorkspaceEntity,
+} from 'src/modules/function/stadard-objects/function.workspace-entity';
 
 @Injectable()
 export class FunctionService {
-  constructor(private readonly fileUploadService: FileUploadService) {}
+  constructor(
+    private readonly fileUploadService: FileUploadService,
+    private readonly userService: UserService,
+    @InjectWorkspaceRepository(FunctionWorkspaceEntity)
+    private readonly functionRepository: WorkspaceRepository<FunctionWorkspaceEntity>,
+  ) {}
 
   async upsertFunction(
     workspaceId: string,
@@ -23,24 +35,30 @@ export class FunctionService {
     const typescriptCode = fileContent.toString('utf8');
     const javascriptCode = this.compileTypeScript(typescriptCode);
 
-    const { path: sourcePath } = await this.fileUploadService.uploadFile({
+    const { path: sourceCodePath } = await this.fileUploadService.uploadFile({
       file: typescriptCode,
       filename,
       mimeType: mimetype,
       fileFolder: FileFolder.Function,
     });
 
-    const { path: compiledPath } = await this.fileUploadService.uploadFile({
+    const { path: builtSourcePath } = await this.fileUploadService.uploadFile({
       file: javascriptCode,
       filename: '.js',
       mimeType: mimetype,
       fileFolder: FileFolder.Function,
     });
 
-    console.log(sourcePath);
-    console.log(compiledPath);
+    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+    const createdFunction = await this.functionRepository.save({
+      name,
+      author: workspaceMember,
+      sourceCodePath,
+      builtSourcePath,
+      syncStatus: FunctionSyncStatus.READY,
+    });
 
-    return sourcePath;
+    return createdFunction.sourceCodePath;
   }
 
   private async readStreamToBuffer(
