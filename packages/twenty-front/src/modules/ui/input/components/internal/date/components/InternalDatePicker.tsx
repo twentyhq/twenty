@@ -19,7 +19,6 @@ import { isDefined } from '~/utils/isDefined';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import { useState } from 'react';
-import { previousDay } from 'date-fns';
 
 export const months = [
   { label: 'January', value: 0 },
