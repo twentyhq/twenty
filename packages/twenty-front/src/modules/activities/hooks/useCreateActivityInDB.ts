@@ -17,7 +17,7 @@ export const useCreateActivityInDB = () => {
   const { createManyRecords: createManyActivityTargets } =
     useCreateManyRecords<ActivityTarget>({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-      skipPostOptmisticEffect: true,
+      shouldMatchRootQueryFilter: true,
     });
 
   const createActivityInDB = async (activityToCreate: ActivityForEditor) => {
