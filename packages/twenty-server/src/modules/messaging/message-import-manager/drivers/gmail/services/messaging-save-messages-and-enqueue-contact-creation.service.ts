@@ -53,7 +53,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         workspaceId,
       );
 
-    const emailAliases = connectedAccount.emailAliases?.split(',') || [];
+    const handleAliases = connectedAccount.handleAliases?.split(',') || [];
 
     let savedMessageParticipants: MessageParticipantWorkspaceEntity[] = [];
 
@@ -80,10 +80,11 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   '';
 
                 const isMessageSentByConnectedAccount =
-                  emailAliases.includes(fromHandle);
+                  handleAliases.includes(fromHandle) ||
+                  fromHandle === connectedAccount.handle;
 
                 const isParticipantConnectedAccount =
-                  emailAliases.includes(participant.handle) ||
+                  handleAliases.includes(participant.handle) ||
                   participant.handle === connectedAccount.handle;
 
                 const isExcludedByNonProfessionalEmails =

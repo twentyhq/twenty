@@ -115,7 +115,7 @@ export class MessagingGmailMessagesImportService {
       )
     ) {
       try {
-        await this.emailAliasManagerService.refreshEmailAliases(
+        await this.emailAliasManagerService.refreshHandleAliases(
           connectedAccount,
           workspaceId,
         );

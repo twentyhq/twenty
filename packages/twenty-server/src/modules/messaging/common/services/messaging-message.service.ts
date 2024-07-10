@@ -117,7 +117,7 @@ export class MessagingMessageService {
 
     const messageDirection =
       connectedAccount.handle === message.fromHandle ||
-      connectedAccount.emailAliases?.includes(message.fromHandle)
+      connectedAccount.handleAliases?.includes(message.fromHandle)
         ? 'outgoing'
         : 'incoming';
 

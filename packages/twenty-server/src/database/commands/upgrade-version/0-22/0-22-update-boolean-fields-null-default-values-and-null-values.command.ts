@@ -76,9 +76,10 @@ export class UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand extends Co
         );
 
       if (!dataSourceMetadata) {
-        throw new Error(
+        this.logger.log(
           `Could not find dataSourceMetadata for workspace ${workspaceId}`,
         );
+        continue;
       }
 
       const workspaceDataSource =
@@ -115,9 +116,10 @@ export class UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand extends Co
 
         for (const booleanField of booleanFieldsWithoutDefaultValue) {
           if (!booleanField.object) {
-            throw new Error(
+            this.logger.log(
               `Could not find objectMetadataItem for field ${booleanField.id}`,
             );
+            continue;
           }
 
           // Could be done via a batch update but it's safer in this context to run it sequentially with the ALTER TABLE
@@ -127,6 +129,10 @@ export class UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand extends Co
 
           const fieldName = booleanField.name;
           const tableName = computeObjectTargetTable(booleanField.object);
+
+          await workspaceQueryRunner.query(
+            `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${fieldName}" = 'false' WHERE "${fieldName}" IS NULL`,
+          );
 
           await workspaceQueryRunner.query(
             `ALTER TABLE "${dataSourceMetadata.schema}"."${tableName}" ALTER COLUMN "${fieldName}" SET DEFAULT false;`,
