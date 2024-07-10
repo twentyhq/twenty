@@ -2,14 +2,14 @@ import { Injectable, Optional, Type } from '@nestjs/common';
 
 import { ObjectLiteral } from 'typeorm';
 
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
-import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
-import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
-import { ObjectEntitiesStorage } from 'src/engine/twenty-orm/storage/object-entities.storage';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
+import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { ObjectEntitiesStorage } from 'src/engine/twenty-orm/storage/object-entities.storage';
+import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
 export class TwentyORMManager {
@@ -21,11 +21,9 @@ export class TwentyORMManager {
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {}
 
-  async getRepository(
+  async getRepository<T extends ObjectLiteral>(
     objectMetadataName: string,
-  ): Promise<
-    WorkspaceRepository<CustomWorkspaceEntity & { [key: string]: any }>
-  >;
+  ): Promise<WorkspaceRepository<T>>;
 
   async getRepository<T extends ObjectLiteral>(
     entityClass: Type<T>,
