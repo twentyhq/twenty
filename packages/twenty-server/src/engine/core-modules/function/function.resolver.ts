@@ -22,4 +22,14 @@ export class FunctionResolver {
   ) {
     return await this.functionService.upsertFunction(user, file, name);
   }
+
+  @Mutation(() => String)
+  async executeFunction(
+    @AuthUser() user: User,
+    @Args('name', { type: () => String }) name: string,
+  ) {
+    return JSON.stringify(
+      await this.functionService.executeFunction(user, name),
+    );
+  }
 }

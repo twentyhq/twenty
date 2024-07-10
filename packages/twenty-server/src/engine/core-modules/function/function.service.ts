@@ -14,15 +14,30 @@ import {
   FunctionSyncStatus,
   FunctionWorkspaceEntity,
 } from 'src/modules/function/stadard-objects/function.workspace-entity';
+import { CodeExecutorService } from 'src/engine/code-executor/code-executor.service';
 
 @Injectable()
 export class FunctionService {
   constructor(
+    private readonly codeExecutorService: CodeExecutorService,
     private readonly fileUploadService: FileUploadService,
     private readonly userService: UserService,
     @InjectWorkspaceRepository(FunctionWorkspaceEntity)
     private readonly functionRepository: WorkspaceRepository<FunctionWorkspaceEntity>,
   ) {}
+
+  async executeFunction(user: User, name: string) {
+    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+
+    const functionToExecute = await this.functionRepository.findOneOrFail({
+      where: {
+        name,
+        authorId: workspaceMember?.id,
+      },
+    });
+
+    return this.codeExecutorService.execute(functionToExecute);
+  }
 
   async upsertFunction(
     user: User,
