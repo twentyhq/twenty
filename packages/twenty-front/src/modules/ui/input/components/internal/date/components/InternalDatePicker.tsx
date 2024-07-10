@@ -18,6 +18,8 @@ import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals
 import { isDefined } from '~/utils/isDefined';
 
 import 'react-datepicker/dist/react-datepicker.css';
+import { useState } from 'react';
+import { previousDay } from 'date-fns';
 
 export const months = [
   { label: 'January', value: 0 },
@@ -308,6 +310,11 @@ export type InternalDatePickerProps = {
   keyboardEventsDisabled?: boolean;
   onClear?: () => void;
 };
+type SelectedDate = {
+  month: number;
+  day: number;
+  year: number;
+};
 
 export const InternalDatePicker = ({
   date,
@@ -321,6 +328,11 @@ export const InternalDatePicker = ({
   onClear,
 }: InternalDatePickerProps) => {
   const internalDate = date ?? new Date();
+  const [selectedDate, setSelectedDate] = useState<SelectedDate>({
+    year: internalDate.getFullYear(),
+    month: internalDate.getMonth(), // Note: JavaScript months are 0-indexed
+    day: internalDate.getDate(),
+  });
 
   const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
   const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
@@ -374,12 +386,14 @@ export const InternalDatePicker = ({
   const handleChangeMonth = (month: number) => {
     const newDate = new Date(date);
     newDate.setMonth(month);
+    setSelectedDate({ ...selectedDate, month: newDate.getMonth() });
     onChange?.(newDate);
   };
 
   const handleChangeYear = (year: number) => {
     const newDate = new Date(date);
     newDate.setFullYear(year);
+    setSelectedDate({ ...selectedDate, year: newDate.getFullYear() });
     onChange?.(newDate);
   };
 
@@ -395,7 +409,6 @@ export const InternalDatePicker = ({
       millisecond: 0,
     })
     .toJSDate();
-
   const dateToUse = isDateTimeInput ? date : dateWithoutTime;
 
   return (
@@ -440,13 +453,13 @@ export const InternalDatePicker = ({
                   options={months}
                   disableBlur
                   onChange={handleChangeMonth}
-                  value={date.getUTCMonth()}
+                  value={selectedDate.month}
                   fullWidth
                 />
                 <Select
                   dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
                   onChange={handleChangeYear}
-                  value={date.getUTCFullYear()}
+                  value={selectedDate.year}
                   options={years}
                   disableBlur
                   fullWidth
