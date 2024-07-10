@@ -44,6 +44,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Is canceled',
     description: 'Is canceled',
     icon: 'IconCalendarCancel',
+    defaultValue: false,
   })
   isCanceled: boolean;
 
@@ -53,6 +54,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Is Full Day',
     description: 'Is Full Day',
     icon: 'Icon24Hours',
+    defaultValue: false,
   })
   isFullDay: boolean;
 

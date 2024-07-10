@@ -20,8 +20,8 @@ type Story = StoryObj<typeof InternalDatePicker>;
 export const Default: Story = {};
 
 export const WithOpenMonthSelect: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const monthSelect = await canvas.findByText('January');
 

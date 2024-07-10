@@ -145,6 +145,7 @@ const TextInputV2Component = (
     RightIcon,
     LeftIcon,
     autoComplete,
+    maxLength,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
@@ -182,7 +183,15 @@ const TextInputV2Component = (
             onChange?.(event.target.value);
           }}
           onKeyDown={onKeyDown}
-          {...{ autoFocus, disabled, placeholder, required, value, LeftIcon }}
+          {...{
+            autoFocus,
+            disabled,
+            placeholder,
+            required,
+            value,
+            LeftIcon,
+            maxLength,
+          }}
         />
         <StyledTrailingIconContainer>
           {error && (

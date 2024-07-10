@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
 
-import { AnimatedContainer } from '@/object-record/record-table/components/AnimatedContainer';
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
+import { AnimatedContainer } from '@/ui/utilities/animation/components/AnimatedContainer';
 
 const StyledButtonContainer = styled.div`
   margin: ${({ theme }) => theme.spacing(1)};

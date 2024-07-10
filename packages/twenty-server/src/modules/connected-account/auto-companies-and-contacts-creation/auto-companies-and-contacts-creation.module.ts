@@ -9,10 +9,9 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
-import { CalendarEventParticipantModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant.module';
 import { AutoCompaniesAndContactsCreationMessageChannelListener } from 'src/modules/connected-account/auto-companies-and-contacts-creation/listeners/auto-companies-and-contacts-creation-message-channel.listener';
 import { AutoCompaniesAndContactsCreationCalendarChannelListener } from 'src/modules/connected-account/auto-companies-and-contacts-creation/listeners/auto-companies-and-contacts-creation-calendar-channel.listener';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Module({
   imports: [
@@ -22,10 +21,9 @@ import { AutoCompaniesAndContactsCreationCalendarChannelListener } from 'src/mod
       PersonWorkspaceEntity,
       WorkspaceMemberWorkspaceEntity,
     ]),
-    MessagingCommonModule,
     WorkspaceDataSourceModule,
-    CalendarEventParticipantModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
   ],
   providers: [
     CreateCompanyAndContactService,

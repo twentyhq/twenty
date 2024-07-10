@@ -6,7 +6,7 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import { MessagingMessageChannelSyncStatusMonitoringCronJob } from 'src/modules/messaging/monitoring/crons/jobs/messaging-message-channel-sync-status-monitoring.cron';
 
 const MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN =
-  '0 * * * *';
+  '2/10 * * * *'; //Every 10 minutes, starting at 2 minutes past the hour
 
 @Command({
   name: 'cron:messaging:monitoring:message-channel-sync-status',
