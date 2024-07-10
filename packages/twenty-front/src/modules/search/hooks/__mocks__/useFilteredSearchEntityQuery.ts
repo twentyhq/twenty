@@ -78,7 +78,9 @@ export const query = gql`
               currencyCode
             }
             createdAt
-            address
+            address {
+              adressCity
+            }
             updatedAt
             name
             accountOwnerId

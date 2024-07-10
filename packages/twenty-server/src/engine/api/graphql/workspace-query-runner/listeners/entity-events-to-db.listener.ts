@@ -41,7 +41,7 @@ export class EntityEventsToDbListener {
   // ....
 
   private async handle(payload: ObjectRecordBaseEvent) {
-    if (!payload.objectMetadata.isAuditLogged) {
+    if (!payload.objectMetadata?.isAuditLogged) {
       return;
     }
 
