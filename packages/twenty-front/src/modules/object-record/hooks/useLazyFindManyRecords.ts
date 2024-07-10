@@ -1,7 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
@@ -37,8 +36,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
     recordGqlFields,
   });
-
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
@@ -86,10 +83,6 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const findManyRecordsLazy = useRecoilCallback(
     ({ set }) =>
       async () => {
-        if (!currentWorkspaceMember) {
-          return null;
-        }
-
         const result = await findManyRecords();
 
         const hasNextPage =
@@ -105,12 +98,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
         return result;
       },
-    [
-      queryIdentifier,
-      currentWorkspaceMember,
-      findManyRecords,
-      objectMetadataItem,
-    ],
+    [queryIdentifier, findManyRecords, objectMetadataItem],
   );
 
   return {

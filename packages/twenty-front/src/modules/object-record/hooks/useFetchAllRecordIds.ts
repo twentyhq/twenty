@@ -1,4 +1,5 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { UseFindManyRecordsParams } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useCallback } from 'react';
@@ -7,12 +8,13 @@ import { isDefined } from '~/utils/isDefined';
 type UseLazyFetchAllRecordIdsParams<T> = Omit<
   UseFindManyRecordsParams<T>,
   'skip'
->;
+> & { pageSize?: number };
 
 export const useFetchAllRecordIds = <T>({
   objectNameSingular,
   filter,
   orderBy,
+  pageSize = DEFAULT_QUERY_PAGE_SIZE,
 }: UseLazyFetchAllRecordIdsParams<T>) => {
   const { fetchMore, findManyRecords } = useLazyFindManyRecords({
     objectNameSingular,
@@ -45,7 +47,7 @@ export const useFetchAllRecordIds = <T>({
 
     const remainingCount = totalCount - recordsCount;
 
-    const remainingPages = Math.ceil(remainingCount / 30);
+    const remainingPages = Math.ceil(remainingCount / pageSize);
 
     let lastCursor = firstQueryResult?.pageInfo.endCursor ?? '';
 
@@ -68,7 +70,7 @@ export const useFetchAllRecordIds = <T>({
     const recordIds = Array.from(recordIdSet);
 
     return recordIds;
-  }, [fetchMore, findManyRecords, objectMetadataItem.namePlural]);
+  }, [fetchMore, findManyRecords, objectMetadataItem.namePlural, pageSize]);
 
   return {
     fetchAllRecordIds,
