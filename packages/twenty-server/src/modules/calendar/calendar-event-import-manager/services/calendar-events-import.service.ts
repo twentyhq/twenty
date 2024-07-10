@@ -137,7 +137,7 @@ export class CalendarEventsImportService {
       },
     );
 
-    await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
+    await this.calendarChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
       calendarChannel.id,
     );
   }
