@@ -24,6 +24,8 @@ export class CalendarEventImportErrorHandlerService {
     workspaceId: string,
   ): Promise<void> {
     switch (error.code) {
+      case 'NOT_FOUND':
+        break;
       case 'TEMPORARY_ERROR':
         await this.handleTemporaryError(
           'partial-calendar-event-list-fetch',
