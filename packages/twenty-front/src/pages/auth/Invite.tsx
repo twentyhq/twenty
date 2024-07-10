@@ -80,7 +80,7 @@ export const Invite = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Privacy policy
+              Privacy Policy
             </a>
             .
           </FooterNote>
