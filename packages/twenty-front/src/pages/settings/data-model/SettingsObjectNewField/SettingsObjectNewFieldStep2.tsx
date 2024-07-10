@@ -134,26 +134,17 @@ export const SettingsObjectNewFieldStep2 = () => {
             objectMetadataId: relationFormValues.objectMetadataId,
           },
         });
-
-        // TODO: fix optimistic update logic
-        // Forcing a refetch for now but it's not ideal
-        await apolloClient.refetchQueries({
-          include: ['FindManyViews', 'CombinedFindManyRecords'],
-        });
       } else {
         await createMetadataField({
           ...formValues,
           objectMetadataId: activeObjectMetadataItem.id,
         });
-
-        // TODO: fix optimistic update logic
-        // Forcing a refetch for now but it's not ideal
-        await apolloClient.refetchQueries({
-          include: ['FindManyViews', 'CombinedFindManyRecords'],
-        });
       }
 
       navigate(`/settings/objects/${objectSlug}`);
+      await apolloClient.refetchQueries({
+        include: ['FindManyViews', 'CombinedFindManyRecords'],
+      });
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
