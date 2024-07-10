@@ -7,6 +7,12 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-
 import { CalendarEventError } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-error.type';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
+export enum CalendarEventImportSyncStep {
+  FULL_CALENDAR_EVENT_LIST_FETCH = 'FULL_CALENDAR_EVENT_LIST_FETCH',
+  PARTIAL_CALENDAR_EVENT_LIST_FETCH = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH',
+  CALENDAR_EVENTS_IMPORT = 'CALENDAR_EVENTS_IMPORT',
+}
+
 @Injectable()
 export class CalendarEventImportErrorHandlerService {
   constructor(
@@ -17,6 +23,7 @@ export class CalendarEventImportErrorHandlerService {
 
   public async handleError(
     error: CalendarEventError,
+    syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<
       CalendarChannelWorkspaceEntity,
       'id' | 'throttleFailureCount'
@@ -25,13 +32,10 @@ export class CalendarEventImportErrorHandlerService {
   ): Promise<void> {
     switch (error.code) {
       case 'NOT_FOUND':
+        await this.handleNotFoundError(syncStep, calendarChannel, workspaceId);
         break;
       case 'TEMPORARY_ERROR':
-        await this.handleTemporaryError(
-          'partial-calendar-event-list-fetch',
-          calendarChannel,
-          workspaceId,
-        );
+        await this.handleTemporaryError(syncStep, calendarChannel, workspaceId);
         break;
       case 'INSUFFICIENT_PERMISSIONS':
         await this.handleInsufficientPermissionsError(
@@ -46,10 +50,7 @@ export class CalendarEventImportErrorHandlerService {
   }
 
   private async handleTemporaryError(
-    syncStep:
-      | 'full-calendar-event-list-fetch'
-      | 'partial-calendar-event-list-fetch'
-      | 'calendar-events-import',
+    syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<
       CalendarChannelWorkspaceEntity,
       'id' | 'throttleFailureCount'
@@ -76,19 +77,19 @@ export class CalendarEventImportErrorHandlerService {
     );
 
     switch (syncStep) {
-      case 'full-calendar-event-list-fetch':
+      case CalendarEventImportSyncStep.FULL_CALENDAR_EVENT_LIST_FETCH:
         await this.calendarChannelSyncStatusService.scheduleFullCalendarEventListFetch(
           calendarChannel.id,
         );
         break;
 
-      case 'partial-calendar-event-list-fetch':
+      case CalendarEventImportSyncStep.PARTIAL_CALENDAR_EVENT_LIST_FETCH:
         await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
           calendarChannel.id,
         );
         break;
 
-      case 'calendar-events-import':
+      case CalendarEventImportSyncStep.CALENDAR_EVENTS_IMPORT:
         await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
           calendarChannel.id,
         );
@@ -121,6 +122,23 @@ export class CalendarEventImportErrorHandlerService {
 
     throw new Error(
       `Unknown error occurred while importing calendar events for calendar channel ${calendarChannel.id} in workspace ${workspaceId}: ${error.message}`,
+    );
+  }
+
+  private async handleNotFoundError(
+    syncStep: CalendarEventImportSyncStep,
+    calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'id'>,
+    workspaceId: string,
+  ): Promise<void> {
+    if (
+      syncStep === CalendarEventImportSyncStep.FULL_CALENDAR_EVENT_LIST_FETCH
+    ) {
+      return;
+    }
+
+    await this.calendarChannelSyncStatusService.resetAndScheduleFullCalendarEventListFetch(
+      calendarChannel.id,
+      workspaceId,
     );
   }
 }
