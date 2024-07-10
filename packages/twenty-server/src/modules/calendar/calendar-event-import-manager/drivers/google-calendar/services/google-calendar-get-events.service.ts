@@ -1,22 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
-import { calendar_v3 as calendarV3 } from 'googleapis';
 import { GaxiosError } from 'gaxios';
+import { calendar_v3 as calendarV3 } from 'googleapis';
 
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { GoogleCalendarClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/providers/google-calendar.provider';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { formatGoogleCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/format-google-calendar-event.util';
+import { GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class GoogleCalendarGetEventsService {
   constructor(
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
-    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async getCalendarEvents(
@@ -37,6 +35,11 @@ export class GoogleCalendarGetEventsService {
 
     let hasMoreEvents = true;
 
+    const calendarChannelRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+        'calendarChannel',
+      );
+
     while (hasMoreEvents) {
       const googleCalendarEvents = await googleCalendarClient.events
         .list({
@@ -51,7 +54,7 @@ export class GoogleCalendarGetEventsService {
             throw error;
           }
 
-          await this.calendarChannelRepository.update(
+          await calendarChannelRepository.update(
             {
               connectedAccountId: connectedAccount.id,
             },
