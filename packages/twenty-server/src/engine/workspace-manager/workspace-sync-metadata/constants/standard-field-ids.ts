@@ -114,7 +114,8 @@ export const COMMENT_STANDARD_FIELD_IDS = {
 export const COMPANY_STANDARD_FIELD_IDS = {
   name: '20202020-4d99-4e2e-a84c-4a27837b1ece',
   domainName: '20202020-0c28-43d8-8ba5-3659924d3489',
-  address: '20202020-a82a-4ee2-96cc-a18a3259d953',
+  address_deprecated: '20202020-a82a-4ee2-96cc-a18a3259d953',
+  address: '20202020-c5ce-4adc-b7b6-9c0979fc55e7',
   employees: '20202020-8965-464a-8a75-74bafc152a0b',
   linkedinLink: '20202020-ebeb-4beb-b9ad-6848036fb451',
   xLink: '20202020-6f64-4fd9-9580-9c1991c7d8c3',
