@@ -12,8 +12,8 @@ import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-    BlocklistItemDeleteMessagesJob,
-    BlocklistItemDeleteMessagesJobData,
+  BlocklistItemDeleteMessagesJob,
+  BlocklistItemDeleteMessagesJobData,
 } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-item-delete-messages.job';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';

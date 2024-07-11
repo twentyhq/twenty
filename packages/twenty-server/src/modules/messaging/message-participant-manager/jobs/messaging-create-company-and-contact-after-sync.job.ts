@@ -14,8 +14,8 @@ import { CreateCompanyAndContactService } from 'src/modules/contact-creation-man
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
 import {
-    MessageChannelContactAutoCreationPolicy,
-    MessageChannelWorkspaceEntity,
+  MessageChannelContactAutoCreationPolicy,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 

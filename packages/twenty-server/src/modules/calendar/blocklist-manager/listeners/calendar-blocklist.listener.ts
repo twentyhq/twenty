@@ -9,12 +9,12 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import {
-    BlocklistItemDeleteCalendarEventsJob,
-    BlocklistItemDeleteCalendarEventsJobData,
+  BlocklistItemDeleteCalendarEventsJob,
+  BlocklistItemDeleteCalendarEventsJobData,
 } from 'src/modules/calendar/blocklist-manager/jobs/blocklist-item-delete-calendar-events.job';
 import {
-    BlocklistReimportCalendarEventsJob,
-    BlocklistReimportCalendarEventsJobData,
+  BlocklistReimportCalendarEventsJob,
+  BlocklistReimportCalendarEventsJobData,
 } from 'src/modules/calendar/blocklist-manager/jobs/blocklist-reimport-calendar-events.job';
 
 @Injectable()

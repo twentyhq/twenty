@@ -19,8 +19,8 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-    CreateCompanyAndContactJob,
-    CreateCompanyAndContactJobData,
+  CreateCompanyAndContactJob,
+  CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 
 @Injectable()

@@ -11,19 +11,19 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-    CreateCompanyAndContactJob,
-    CreateCompanyAndContactJobData,
+  CreateCompanyAndContactJob,
+  CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 import { MessagingMessageService } from 'src/modules/messaging/common/services/messaging-message.service';
 import {
-    MessageChannelContactAutoCreationPolicy,
-    MessageChannelWorkspaceEntity,
+  MessageChannelContactAutoCreationPolicy,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import {
-    GmailMessage,
-    Participant,
-    ParticipantWithMessageId,
+  GmailMessage,
+  Participant,
+  ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { isGroupEmail } from 'src/utils/is-group-email';
