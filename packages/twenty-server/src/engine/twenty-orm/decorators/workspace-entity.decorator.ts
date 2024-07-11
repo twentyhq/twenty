@@ -9,6 +9,7 @@ interface WorkspaceEntityOptions {
   labelPlural: string;
   description?: string;
   icon?: string;
+  labelIdentifierStandardId?: string;
 }
 
 export function WorkspaceEntity(
@@ -37,6 +38,7 @@ export function WorkspaceEntity(
       labelSingular: options.labelSingular,
       labelPlural: options.labelPlural,
       description: options.description,
+      labelIdentifierStandardId: options.labelIdentifierStandardId ?? null,
       icon: options.icon,
       isAuditLogged,
       isSystem,
