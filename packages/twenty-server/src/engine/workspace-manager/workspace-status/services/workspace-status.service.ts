@@ -12,10 +12,12 @@ import {
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
 export class WorkspaceStatusService {
   constructor(
+    private readonly environmentService: EnvironmentService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(BillingSubscription, 'core')
@@ -27,6 +29,11 @@ export class WorkspaceStatusService {
   async getActiveWorkspaceIds(): Promise<string[]> {
     const workspaces = await this.workspaceRepository.find();
     const workspaceIds = workspaces.map((workspace) => workspace.id);
+
+    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+      return workspaceIds;
+    }
+
     const billingSubscriptionForWorkspaces =
       await this.billingSubscriptionRepository.find({
         where: {

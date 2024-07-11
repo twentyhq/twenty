@@ -39,12 +39,13 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     options: RunWorkspaceMigrationsOptions,
   ): Promise<void> {
     // TODO: re-implement load index from workspaceService, this is breaking the logger
-    const workspaceIds = options.workspaceId ? [options.workspaceId] : [];
+    let workspaceIds = options.workspaceId ? [options.workspaceId] : [];
 
     if (isEmpty(workspaceIds)) {
       const activeWorkspaceIds =
         await this.workspaceStatusService.getActiveWorkspaceIds();
 
+      workspaceIds = activeWorkspaceIds;
       this.logger.log(
         `Attempting to sync ${activeWorkspaceIds.length} workspaces.`,
       );
@@ -71,7 +72,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
               'Please use `workspace:health` command to check issues and fix them before running this command.',
             );
 
-            return;
+            continue;
           }
 
           this.logger.warn(
