@@ -6,15 +6,10 @@ import isEmpty from 'lodash.isempty';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
+import { isWorkspaceActive } from 'src/database/commands/utils/is-workspace-active.utils';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import {
-  BillingSubscription,
-  SubscriptionStatus,
-} from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -81,7 +76,11 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
       const activeWorkspaceIds = (
         await Promise.all(
           workspaces.map(async (workspace) => {
-            const isActive = await this.workspaceIsActive(workspace);
+            const isActive = await isWorkspaceActive({
+              workspace: workspace,
+              billingSubscriptionRepository: this.billingSubscriptionRepository,
+              featureFlagRepository: this.featureFlagRepository,
+            });
 
             return { workspace, isActive };
           }),
@@ -197,34 +196,5 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
     }
 
     this.logger.log(chalk.green(`Command completed!`));
-  }
-
-  private async workspaceIsActive(workspace: Workspace): Promise<boolean> {
-    const billingSupscriptionForWorkspace =
-      await this.billingSubscriptionRepository.findOne({
-        where: { workspaceId: workspace.id },
-      });
-
-    if (
-      billingSupscriptionForWorkspace?.status &&
-      [
-        SubscriptionStatus.PastDue,
-        SubscriptionStatus.Active,
-        SubscriptionStatus.Trialing,
-      ].includes(billingSupscriptionForWorkspace.status as SubscriptionStatus)
-    ) {
-      return true;
-    }
-
-    const freeAccessEnabledFeatureFlagForWorkspace =
-      await this.featureFlagRepository.findOne({
-        where: {
-          workspaceId: workspace.id,
-          key: FeatureFlagKeys.IsFreeAccessEnabled,
-          value: true,
-        },
-      });
-
-    return !!freeAccessEnabledFeatureFlagForWorkspace;
   }
 }

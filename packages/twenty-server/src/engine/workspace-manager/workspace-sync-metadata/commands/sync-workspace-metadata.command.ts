@@ -1,19 +1,39 @@
 import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import isEmpty from 'lodash.isempty';
 import { Command, CommandRunner, Option } from 'nest-commander';
+import { Repository } from 'typeorm';
 
+import { isWorkspaceActive } from 'src/database/commands/utils/is-workspace-active.utils';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
+import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.service';
 
 // TODO: implement dry-run
-interface RunWorkspaceMigrationsOptions {
-  workspaceId?: string;
+interface BaseOptions {
   dryRun?: boolean;
   force?: boolean;
 }
+
+interface WorkspaceIdOption extends BaseOptions {
+  workspaceId: string;
+  syncAllActiveWorkspaces?: never;
+}
+
+interface SyncAllActiveWorkspacesOption extends BaseOptions {
+  workspaceId?: never;
+  syncAllActiveWorkspaces: boolean;
+}
+
+type RunWorkspaceMigrationsOptions =
+  | WorkspaceIdOption
+  | SyncAllActiveWorkspacesOption;
 
 @Command({
   name: 'workspace:sync-metadata',
@@ -27,6 +47,12 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     private readonly workspaceHealthService: WorkspaceHealthService,
     private readonly dataSourceService: DataSourceService,
     private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(BillingSubscription, 'core')
+    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {
     super();
   }
@@ -36,7 +62,32 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     options: RunWorkspaceMigrationsOptions,
   ): Promise<void> {
     // TODO: re-implement load index from workspaceService, this is breaking the logger
-    const workspaceIds = options.workspaceId ? [options.workspaceId] : [];
+    let workspaceIds = options.workspaceId ? [options.workspaceId] : [];
+
+    if (options.syncAllActiveWorkspaces && isEmpty(workspaceIds)) {
+      const workspaces = await this.workspaceRepository.find();
+
+      const activeWorkspaceIds = (
+        await Promise.all(
+          workspaces.map(async (workspace) => {
+            const isActive = await isWorkspaceActive({
+              workspace: workspace,
+              billingSubscriptionRepository: this.billingSubscriptionRepository,
+              featureFlagRepository: this.featureFlagRepository,
+            });
+
+            return { workspace, isActive };
+          }),
+        )
+      )
+        .filter((result) => result.isActive)
+        .map((result) => result.workspace.id);
+
+      workspaceIds = activeWorkspaceIds;
+      this.logger.log(
+        `Attempting to sync ${activeWorkspaceIds.length} workspaces.`,
+      );
+    }
 
     for (const workspaceId of workspaceIds) {
       try {
@@ -97,12 +148,18 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
         );
       }
     }
+
+    if (options.syncAllActiveWorkspaces) {
+      this.logger.log(
+        `Finished synchronizing all active workspaces (${workspaceIds.length} workspaces).`,
+      );
+    }
   }
 
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
     description: 'workspace id',
-    required: true,
+    required: false,
   })
   parseWorkspaceId(value: string): string {
     return value;
@@ -123,6 +180,15 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     required: false,
   })
   force(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '-s, --sync-all-active-workspaces',
+    description: 'Sync all active workspaces',
+    required: false,
+  })
+  syncAllActiveWorkspaces(): boolean {
     return true;
   }
 }
