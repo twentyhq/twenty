@@ -1,24 +1,32 @@
-import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { Repository } from 'typeorm';
-import { SendInviteLinkEmail } from 'twenty-emails';
 import { render } from '@react-email/render';
+import { SendInviteLinkEmail } from 'twenty-emails';
+import { Any, Repository } from 'typeorm';
 
-import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
+import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
+import {
+  BillingSubscription,
+  SubscriptionStatus,
+} from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -34,6 +42,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
+    @InjectRepository(BillingSubscription, 'core')
+    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {
     super(workspaceRepository);
   }
@@ -144,6 +156,47 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     await this.onboardingService.skipInviteTeamOnboardingStep(workspace.id);
 
     return { success: true };
+  }
+
+  async getActiveWorkspaceIds(): Promise<string[]> {
+    const workspaces = await this.workspaceRepository.find();
+    const workspaceIds = workspaces.map((workspace) => workspace.id);
+    const billingSubscriptionForWorkspaces =
+      await this.billingSubscriptionRepository.find({
+        where: {
+          workspaceId: Any(workspaceIds),
+          status: Any([
+            SubscriptionStatus.PastDue,
+            SubscriptionStatus.Active,
+            SubscriptionStatus.Trialing,
+          ]),
+        },
+      });
+
+    const workspaceIdsWithActiveSubscription =
+      billingSubscriptionForWorkspaces.map(
+        (billingSubscription) => billingSubscription.workspaceId,
+      );
+
+    const freeAccessEnabledFeatureFlagForWorkspace =
+      await this.featureFlagRepository.find({
+        where: {
+          workspaceId: Any(workspaceIds),
+          key: FeatureFlagKeys.IsFreeAccessEnabled,
+          value: true,
+        },
+      });
+
+    const workspaceIdsWithFreeAccessEnabled =
+      freeAccessEnabledFeatureFlagForWorkspace.map(
+        (featureFlag) => featureFlag.workspaceId,
+      );
+
+    return workspaceIds.filter(
+      (workspaceId) =>
+        workspaceIdsWithActiveSubscription.includes(workspaceId) ||
+        workspaceIdsWithFreeAccessEnabled.includes(workspaceId),
+    );
   }
 
   private async reassignOrRemoveUserDefaultWorkspace(

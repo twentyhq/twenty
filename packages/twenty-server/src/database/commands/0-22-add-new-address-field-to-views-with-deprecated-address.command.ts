@@ -6,11 +6,8 @@ import isEmpty from 'lodash.isempty';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import { isWorkspaceActive } from 'src/database/commands/utils/is-workspace-active.utils';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
@@ -31,18 +28,13 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
     AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand.name,
   );
   constructor(
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(BillingSubscription, 'core')
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly workspaceService: WorkspaceService,
   ) {
     super();
   }
@@ -71,23 +63,8 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
     if (options.workspaceId) {
       workspaceIds = [options.workspaceId];
     } else {
-      const workspaces = await this.workspaceRepository.find();
-
-      const activeWorkspaceIds = (
-        await Promise.all(
-          workspaces.map(async (workspace) => {
-            const isActive = await isWorkspaceActive({
-              workspace: workspace,
-              billingSubscriptionRepository: this.billingSubscriptionRepository,
-              featureFlagRepository: this.featureFlagRepository,
-            });
-
-            return { workspace, isActive };
-          }),
-        )
-      )
-        .filter((result) => result.isActive)
-        .map((result) => result.workspace.id);
+      const activeWorkspaceIds =
+        await this.workspaceService.getActiveWorkspaceIds();
 
       workspaceIds = activeWorkspaceIds;
     }
