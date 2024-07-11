@@ -24,6 +24,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
 @Module({
@@ -42,10 +43,10 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     WorkspaceModule,
     WorkspaceDataSourceModule,
     WorkspaceSyncMetadataModule,
+    WorkspaceStatusModule,
     ObjectMetadataModule,
     DataSeedDemoWorkspaceModule,
     WorkspaceCacheVersionModule,
-
     // Upgrades
     UpgradeTo0_22CommandModule,
   ],

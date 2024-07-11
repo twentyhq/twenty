@@ -5,6 +5,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
+import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.service';
@@ -28,7 +29,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     private readonly workspaceHealthService: WorkspaceHealthService,
     private readonly dataSourceService: DataSourceService,
     private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
-    // private readonly workspaceStatusService: WorkspaceStatusService,
+    private readonly workspaceStatusService: WorkspaceStatusService,
   ) {
     super();
   }
@@ -41,7 +42,8 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     const workspaceIds = options.workspaceId ? [options.workspaceId] : [];
 
     if (isEmpty(workspaceIds)) {
-      const activeWorkspaceIds = [];
+      const activeWorkspaceIds =
+        await this.workspaceStatusService.getActiveWorkspaceIds();
 
       this.logger.log(
         `Attempting to sync ${activeWorkspaceIds.length} workspaces.`,
