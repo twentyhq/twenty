@@ -5,6 +5,7 @@ import { EntityManager } from 'typeorm';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
@@ -50,25 +51,42 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
     for (const objectMetadata of originalObjectMetadataCollection) {
       const objectStandardId = objectMetadata.standardId;
 
-      objectMetadata.labelIdentifierFieldMetadataId =
-        objectMetadata.fields.find(
-          (field) =>
-            objectStandardId &&
-            field.standardId ===
-              standardObjectMetadataMap[objectStandardId]
-                ?.labelIdentifierStandardId,
-        )?.id ?? null;
+      const labelIdentifierFieldMetadata = objectMetadata.fields.find(
+        (field) =>
+          objectStandardId &&
+          field.standardId ===
+            standardObjectMetadataMap[objectStandardId]
+              ?.labelIdentifierStandardId,
+      );
 
-      objectMetadata.imageIdentifierFieldMetadataId =
-        objectMetadata.fields.find(
-          (field) =>
-            objectStandardId &&
-            field.standardId ===
-              standardObjectMetadataMap[objectStandardId]
-                ?.imageIdentifierStandardId,
-        )?.id ?? null;
+      if (
+        labelIdentifierFieldMetadata &&
+        labelIdentifierFieldMetadata.type !== FieldMetadataType.TEXT
+      ) {
+        throw new Error(
+          `Label identifier field for object ${objectMetadata.nameSingular} must be of type TEXT`,
+        );
+      }
 
-      await objectMetadataRepository.save(objectMetadata);
+      const imageIdentifierFieldMetadata = objectMetadata.fields.find(
+        (field) =>
+          objectStandardId &&
+          field.standardId ===
+            standardObjectMetadataMap[objectStandardId]
+              ?.imageIdentifierStandardId,
+      );
+
+      if (imageIdentifierFieldMetadata) {
+        throw new Error(
+          `Image identifier field for object ${objectMetadata.nameSingular} are not supported yet.`,
+        );
+      }
+
+      await objectMetadataRepository.save({
+        ...objectMetadata,
+        labelIdentifierFieldMetadataId:
+          labelIdentifierFieldMetadata?.id ?? null,
+      });
     }
   }
 }
