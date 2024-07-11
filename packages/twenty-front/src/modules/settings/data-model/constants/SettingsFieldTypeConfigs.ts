@@ -4,6 +4,7 @@ import {
   IconCheck,
   IconCoins,
   IconComponent,
+  IconFilePencil,
   IconJson,
   IconKey,
   IconLink,
@@ -16,7 +17,7 @@ import {
   IconTags,
   IconTextSize,
   IconTwentyStar,
-  IconUser,
+  IconUser
 } from 'twenty-ui';
 
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
@@ -134,6 +135,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.RawJson]: {
     label: 'JSON',
     Icon: IconJson,
+    defaultValue: { key: 'value' },
+  },
+  [FieldMetadataType.RichText]: {
+    label: 'Rich Text',
+    Icon: IconFilePencil,
     defaultValue: { key: 'value' },
   },
 } as const satisfies Record<

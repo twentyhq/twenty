@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
@@ -53,7 +53,7 @@ describe('useOpenCreateActivityDrawer', () => {
     expect(result.current.viewableRecordId).toBeNull();
     await act(async () => {
       result.current.openActivityRightDrawer({
-        type: 'Note',
+        type: 'NOTE',
         targetableObjects: [],
       });
     });

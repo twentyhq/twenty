@@ -63,7 +63,9 @@ type AssertFieldMetadataFunction = <
                                       ? FieldAddressMetadata
                                       : E extends 'RAW_JSON'
                                         ? FieldRawJsonMetadata
-                                        : never,
+                                        : E extends 'RICH_TEXT'
+                                          ? FieldTextMetadata
+                                          : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

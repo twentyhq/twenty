@@ -53,13 +53,13 @@ export const ShowPageAddButton = ({
           <DropdownMenu>
             <DropdownMenuItemsContainer>
               <MenuItem
-                onClick={() => handleSelect('Note')}
+                onClick={() => handleSelect('NOTE')}
                 accent="default"
                 LeftIcon={IconNotes}
                 text="Note"
               />
               <MenuItem
-                onClick={() => handleSelect('Task')}
+                onClick={() => handleSelect('TASK')}
                 accent="default"
                 LeftIcon={IconCheckbox}
                 text="Task"

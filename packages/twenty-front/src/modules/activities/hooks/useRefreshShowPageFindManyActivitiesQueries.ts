@@ -25,19 +25,19 @@ export const useRefreshShowPageFindManyActivitiesQueries = () => {
         targetableObject: objectShowPageTargetableObject,
         additionalFilter: {
           completedAt: { is: 'NULL' },
-          type: { eq: 'Task' },
+          type: { eq: 'TASK' },
         },
         shouldActivityBeExcluded: (activity: Activity) => {
-          return activity.type !== 'Task';
+          return activity.type !== 'TASK';
         },
       });
       prepareFindManyActivitiesQuery({
         targetableObject: objectShowPageTargetableObject,
         additionalFilter: {
-          type: { eq: 'Note' },
+          type: { eq: 'NOTE' },
         },
         shouldActivityBeExcluded: (activity: Activity) => {
-          return activity.type !== 'Note';
+          return activity.type !== 'NOTE';
         },
       });
     }

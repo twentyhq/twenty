@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import gql from 'graphql-tag';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
@@ -53,7 +53,7 @@ const mocks: MockedResponse[] = [
           updatedAt: '2024-03-15T07:33:14.212Z',
           body: 'Test',
           dueAt: '2024-03-15T07:33:14.212Z',
-          type: 'Task',
+          type: 'TASK',
           id: '123',
           assigneeId: '123',
         },

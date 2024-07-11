@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { DateTime } from 'luxon';
+import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserDueTaskCountState } from '@/activities/tasks/states/currentUserTaskCountState';
@@ -19,7 +19,7 @@ export const CurrentUserDueTaskCountEffect = () => {
   const { records: tasks } = useFindManyRecords<Activity>({
     objectNameSingular: CoreObjectNameSingular.Activity,
     filter: {
-      type: { eq: 'Task' },
+      type: { eq: 'TASK' },
       completedAt: { is: 'NULL' },
       assigneeId: { eq: currentWorkspaceMember?.id },
     },

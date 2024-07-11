@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
 import { gql, InMemoryCache } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
@@ -22,7 +22,7 @@ const activityNode = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   reminderAt: null,
   title: 'My very first note',
-  type: 'Note',
+  type: 'NOTE',
   body: '',
   dueAt: '2023-04-26T10:12:42.33625+00:00',
   completedAt: null,

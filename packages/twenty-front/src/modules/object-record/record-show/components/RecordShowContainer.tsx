@@ -1,6 +1,9 @@
 import groupBy from 'lodash.groupby';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
+import { ActivityBodyEffect } from '@/activities/components/ActivityBodyEffect';
+import { ActivityEditorEffect } from '@/activities/components/ActivityEditorEffect';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -16,6 +19,7 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
+import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
@@ -183,7 +187,7 @@ export const RecordShowContainer = ({
             {isPrefetchLoading ? (
               <PropertyBoxSkeletonLoader />
             ) : (
-              inlineFieldMetadataItems.map((fieldMetadataItem, index) => (
+              inlineFieldMetadataItems?.map((fieldMetadataItem, index) => (
                 <FieldContext.Provider
                   key={objectRecordId + fieldMetadataItem.id}
                   value={{
@@ -246,7 +250,7 @@ export const RecordShowContainer = ({
         <ShowPageLeftContainer forceMobile={isInRightDrawer}>
           {!isMobile && summary}
         </ShowPageLeftContainer>
-        {recordFromStore ? (
+        {recordFromStore && objectNameSingular !== 'activity' ? (
           <ShowPageRightContainer
             targetableObject={{
               id: objectRecordId,
@@ -260,6 +264,19 @@ export const RecordShowContainer = ({
             summary={summary}
             loading={isPrefetchLoading || loading || recordLoading}
           />
+        ) : (
+          <></>
+        )}
+        {recordFromStore && objectNameSingular === 'activity' ? (
+          <>
+            <RecordValueSetterEffect recordId={objectRecordId} />
+            <ActivityEditorEffect activityId={objectRecordId} />
+            <ActivityBodyEffect activityId={objectRecordId} />
+            <ActivityBodyEditor
+              activityId={objectRecordId}
+              fillTitleFromBody={false}
+            />
+          </>
         ) : (
           <></>
         )}

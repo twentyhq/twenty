@@ -8,7 +8,7 @@ export const PageAddTaskButton = () => {
 
   const handleClick = () => {
     openCreateActivity({
-      type: 'Task',
+      type: 'TASK',
       targetableObjects: [],
     });
   };

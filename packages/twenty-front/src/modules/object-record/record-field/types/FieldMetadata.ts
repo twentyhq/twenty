@@ -95,6 +95,11 @@ export type FieldRawJsonMetadata = {
   placeHolder: string;
 };
 
+export type FieldRichTextMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldDefinitionRelationType =
   | 'FROM_MANY_OBJECTS'
   | 'FROM_ONE_OBJECT'

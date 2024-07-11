@@ -44,7 +44,7 @@ export const TimelineActivityTitle = ({
   onCompletionChange,
 }: TimelineActivityTitleProps) => (
   <StyledTitleContainer>
-    {type === 'Task' && (
+    {type === 'TASK' && (
       <StyledCheckboxContainer
         onClick={(event) => {
           event.preventDefault();
@@ -55,7 +55,7 @@ export const TimelineActivityTitle = ({
         <Checkbox checked={completed ?? false} shape={CheckboxShape.Rounded} />
       </StyledCheckboxContainer>
     )}
-    <StyledTitleText completed={completed} hasCheckbox={type === 'Task'}>
+    <StyledTitleText completed={completed} hasCheckbox={type === 'TASK'}>
       <OverflowingTextWithTooltip text={title ? title : 'Task title'} />
     </StyledTitleText>
   </StyledTitleContainer>

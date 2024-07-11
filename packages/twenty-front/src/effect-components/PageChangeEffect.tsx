@@ -144,7 +144,7 @@ export const PageChangeEffect = () => {
         type: CommandType.Create,
         Icon: IconCheckbox,
         onCommandClick: () =>
-          openCreateActivity({ type: 'Task', targetableObjects: [] }),
+          openCreateActivity({ type: 'TASK', targetableObjects: [] }),
       },
     ]);
   }, [addToCommandMenu, setToInitialCommandMenu, openCreateActivity]);

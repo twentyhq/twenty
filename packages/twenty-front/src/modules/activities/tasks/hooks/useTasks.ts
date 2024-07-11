@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from 'react';
 import { DateTime } from 'luxon';
+import { useEffect, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
@@ -45,7 +45,7 @@ export const useTasks = ({
       ({
         filter: {
           completedAt: { is: 'NOT_NULL' },
-          type: { eq: 'Task' },
+          type: { eq: 'TASK' },
           ...assigneeIdFilter,
         },
         orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
@@ -58,7 +58,7 @@ export const useTasks = ({
       ({
         filter: {
           completedAt: { is: 'NULL' },
-          type: { eq: 'Task' },
+          type: { eq: 'TASK' },
           ...assigneeIdFilter,
         },
         orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,

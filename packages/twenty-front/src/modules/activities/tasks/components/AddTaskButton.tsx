@@ -24,7 +24,7 @@ export const AddTaskButton = ({
       title="Add task"
       onClick={() =>
         openCreateActivity({
-          type: 'Task',
+          type: 'TASK',
           targetableObjects: activityTargetableObjects,
         })
       }

@@ -88,7 +88,7 @@ export const ActivityEditorFields = ({
 
   return (
     <StyledPropertyBox>
-      {activity.type === 'Task' &&
+      {activity.type === 'TASK' &&
         ReminderAtFieldContextProvider &&
         DueAtFieldContextProvider &&
         AssigneeFieldContextProvider && (

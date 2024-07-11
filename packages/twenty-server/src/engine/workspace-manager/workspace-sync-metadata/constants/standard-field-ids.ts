@@ -14,6 +14,7 @@ export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
 };
 
 export const ACTIVITY_STANDARD_FIELD_IDS = {
+  position: '20202020-9b9e-428b-b420-271f88a84780',
   title: '20202020-24a1-4d94-a071-617f3eeed7b0',
   body: '20202020-209b-440a-b2a8-043fa36a7d37',
   type: '20202020-0f2b-4aab-8827-ee5d3f07d993',

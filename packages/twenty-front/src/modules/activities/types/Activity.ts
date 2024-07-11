@@ -2,7 +2,7 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
-export type ActivityType = 'Task' | 'Note';
+export type ActivityType = 'TASK' | 'NOTE';
 
 export type Activity = {
   __typename: 'Activity';

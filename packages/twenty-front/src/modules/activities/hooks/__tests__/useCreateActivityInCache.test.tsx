@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import gql from 'graphql-tag';
+import { ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useCreateActivityInCache } from '@/activities/hooks/useCreateActivityInCache';
@@ -91,7 +91,7 @@ describe('useCreateActivityInCache', () => {
 
     act(() => {
       const res = result.current.createActivityInCache({
-        type: 'Note',
+        type: 'NOTE',
         targetObject: {
           targetObjectNameSingular: 'person',
           id: '1234',

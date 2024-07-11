@@ -173,15 +173,15 @@ export const TimelineActivity = ({
             </StyledItemAuthorText>
             <StyledItemTitle>
               <StyledIconContainer>
-                {activityForTimeline.type === 'Note' && (
+                {activityForTimeline.type === 'NOTE' && (
                   <IconNotes size={theme.icon.size.sm} />
                 )}
-                {activityForTimeline.type === 'Task' && (
+                {activityForTimeline.type === 'TASK' && (
                   <IconCheckbox size={theme.icon.size.sm} />
                 )}
               </StyledIconContainer>
-              {(activityForTimeline.type === 'Note' ||
-                activityForTimeline.type === 'Task') && (
+              {(activityForTimeline.type === 'NOTE' ||
+                activityForTimeline.type === 'TASK') && (
                 <StyledActivityTitle
                   onClick={() =>
                     openActivityRightDrawer(activityForTimeline.id)

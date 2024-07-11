@@ -1,7 +1,7 @@
-import { useRef } from 'react';
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
@@ -175,7 +175,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
 
   return (
     <StyledContainer>
-      {activity.type === 'Task' && (
+      {activity.type === 'TASK' && (
         <Checkbox
           size={CheckboxSize.Large}
           shape={CheckboxShape.Rounded}

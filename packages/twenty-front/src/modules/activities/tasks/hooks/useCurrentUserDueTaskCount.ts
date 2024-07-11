@@ -12,7 +12,7 @@ export const useCurrentUserTaskCount = () => {
   const { records: tasks } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Activity,
     filter: {
-      type: { eq: 'Task' },
+      type: { eq: 'TASK' },
       completedAt: { is: 'NULL' },
       assigneeId: { eq: currentWorkspaceMember?.id },
     },

@@ -26,7 +26,7 @@ export const ActivityTypeDropdown = ({
     <Chip
       label={activityInStore?.type}
       leftComponent={
-        activityInStore?.type === 'Note' ? (
+        activityInStore?.type === 'NOTE' ? (
           <IconNotes size={theme.icon.size.md} />
         ) : (
           <IconCheckbox size={theme.icon.size.md} />

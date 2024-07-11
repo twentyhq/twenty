@@ -15,7 +15,7 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
     () =>
       ({
         filter: {
-          type: { eq: 'Note' },
+          type: { eq: 'NOTE' },
         },
         orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
       }) as RecordGqlOperationVariables,

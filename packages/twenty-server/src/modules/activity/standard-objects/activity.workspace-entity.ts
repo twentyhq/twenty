@@ -5,19 +5,19 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { ACTIVITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
-import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.activity,
@@ -27,8 +27,18 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
   description: 'An activity',
   icon: 'IconCheckbox',
 })
-@WorkspaceIsSystem()
 export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: ACTIVITY_STANDARD_FIELD_IDS.position,
+    type: FieldMetadataType.POSITION,
+    label: 'Position',
+    description: 'Activity record position',
+    icon: 'IconHierarchy2',
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  position: number | null;
+
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
@@ -40,20 +50,24 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.body,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.RICH_TEXT,
     label: 'Body',
     description: 'Activity body',
-    icon: 'IconList',
+    icon: 'IconFilePencil',
   })
   body: string;
 
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.type,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Type',
     description: 'Activity type',
-    icon: 'IconCheckbox',
-    defaultValue: "'Note'",
+    icon: 'IconProgressCheck',
+    defaultValue: "'NOTE'",
+    options: [
+      { value: 'NOTE', label: 'Note', position: 0, color: 'sky' },
+      { value: 'TASK', label: 'Task', position: 1, color: 'purple' },
+    ],
   })
   type: string;
 

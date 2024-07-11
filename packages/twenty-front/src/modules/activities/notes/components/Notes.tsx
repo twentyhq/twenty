@@ -60,7 +60,7 @@ export const Notes = ({
           variant="secondary"
           onClick={() =>
             openCreateActivity({
-              type: 'Note',
+              type: 'NOTE',
               targetableObjects: [targetableObject],
             })
           }
@@ -82,7 +82,7 @@ export const Notes = ({
             title="Add note"
             onClick={() =>
               openCreateActivity({
-                type: 'Note',
+                type: 'NOTE',
                 targetableObjects: [targetableObject],
               })
             }
