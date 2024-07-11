@@ -16,6 +16,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -44,6 +45,9 @@ export const MultiRecordSelect = ({
   const { objectRecordsIdsMultiSelectState, recordMultiSelectIsLoadingState } =
     useObjectRecordMultiSelectScopedStates(relationPickerScopedId);
 
+  const { handleResetSelectedPosition } = useSelectableList(
+    MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
+  );
   const recordMultiSelectIsLoading = useRecoilValue(
     recordMultiSelectIsLoadingState,
   );
@@ -72,8 +76,10 @@ export const MultiRecordSelect = ({
     () => {
       onSubmit?.();
       goBackToPreviousHotkeyScope();
+      handleResetSelectedPosition();
     },
     relationPickerScopedId,
+    [onSubmit, goBackToPreviousHotkeyScope, handleResetSelectedPosition],
   );
 
   const handleFilterChange = useCallback(

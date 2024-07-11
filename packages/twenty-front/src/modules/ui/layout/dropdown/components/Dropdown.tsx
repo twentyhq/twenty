@@ -9,7 +9,9 @@ import {
 } from '@floating-ui/react';
 import { Key } from 'ts-key-enum';
 
+import { SINGLE_ENTITY_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleEntitySelectBaseList';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -63,6 +65,10 @@ export const Dropdown = ({
 
   const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
     useDropdown(dropdownId);
+
+  const { handleResetSelectedPosition } = useSelectableList(
+    SINGLE_ENTITY_SELECT_BASE_LIST,
+  );
   const offsetMiddlewares = [];
 
   if (isDefined(dropdownOffset.x)) {
@@ -91,6 +97,7 @@ export const Dropdown = ({
 
       if (isDropdownOpen) {
         closeDropdown();
+        handleResetSelectedPosition();
       }
     },
   });
@@ -104,9 +111,10 @@ export const Dropdown = ({
     [Key.Escape],
     () => {
       closeDropdown();
+      handleResetSelectedPosition();
     },
     dropdownHotkeyScope.scope,
-    [closeDropdown],
+    [closeDropdown, handleResetSelectedPosition],
   );
 
   return (
