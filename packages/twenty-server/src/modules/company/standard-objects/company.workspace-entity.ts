@@ -97,18 +97,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   annualRecurringRevenue: CurrencyMetadata | null;
 
   @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
-    type: FieldMetadataType.TEXT,
-    label: 'Address (deprecated) ',
-    description:
-      "This standard field has been deprecated and migrated as a custom field. Please consider using the new 'address' field type.",
-    icon: 'IconMap',
-  })
-  @WorkspaceIsDeprecated()
-  @WorkspaceIsNullable()
-  address_old: string;
-
-  @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.address,
     type: FieldMetadataType.ADDRESS,
     label: 'Address',
@@ -231,4 +219,16 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
+    type: FieldMetadataType.TEXT,
+    label: 'Address (deprecated) ',
+    description:
+      'Address of the company - deprecated in favor of new address field',
+    icon: 'IconMap',
+  })
+  @WorkspaceIsDeprecated()
+  @WorkspaceIsNullable()
+  addressOld: string;
 }

@@ -251,7 +251,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   name: '20202020-8609-4f65-a2d9-44009eb422b5',
   amount: '20202020-583e-4642-8533-db761d5fa82f',
   closeDate: '20202020-527e-44d6-b1ac-c4158d307b97',
-  probability: '20202020-69d4-45f3-9703-690b09fafcf0',
+  probabilityDeprecated: '20202020-69d4-45f3-9703-690b09fafcf0',
   stage: '20202020-6f76-477d-8551-28cd65b2b4b9',
   position: '20202020-806d-493a-bbc6-6313e62958e2',
   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
