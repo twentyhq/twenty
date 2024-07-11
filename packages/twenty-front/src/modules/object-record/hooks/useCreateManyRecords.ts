@@ -18,6 +18,7 @@ type useCreateManyRecordsProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   skipPostOptmisticEffect?: boolean;
+  shouldMatchRootQueryFilter?: boolean;
 };
 
 export const useCreateManyRecords = <
@@ -26,6 +27,7 @@ export const useCreateManyRecords = <
   objectNameSingular,
   recordGqlFields,
   skipPostOptmisticEffect = false,
+  shouldMatchRootQueryFilter,
 }: useCreateManyRecordsProps) => {
   const apolloClient = useApolloClient();
 
@@ -88,6 +90,7 @@ export const useCreateManyRecords = <
         objectMetadataItem,
         recordsToCreate: recordsCreatedInCache,
         objectMetadataItems,
+        shouldMatchRootQueryFilter,
       });
     }
 
@@ -111,6 +114,7 @@ export const useCreateManyRecords = <
           objectMetadataItem,
           recordsToCreate: records,
           objectMetadataItems,
+          shouldMatchRootQueryFilter,
         });
       },
     });

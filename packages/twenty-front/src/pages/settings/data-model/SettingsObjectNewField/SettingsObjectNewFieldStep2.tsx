@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -109,8 +109,8 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const canSave =
-    formConfig.formState.isValid && !formConfig.formState.isSubmitting;
+  const { isValid, isSubmitting } = formConfig.formState;
+  const canSave = isValid && !isSubmitting;
 
   const handleSave = async (
     formValues: SettingsDataModelNewFieldFormValues,
@@ -134,26 +134,20 @@ export const SettingsObjectNewFieldStep2 = () => {
             objectMetadataId: relationFormValues.objectMetadataId,
           },
         });
-
-        // TODO: fix optimistic update logic
-        // Forcing a refetch for now but it's not ideal
-        await apolloClient.refetchQueries({
-          include: ['FindManyViews', 'CombinedFindManyRecords'],
-        });
       } else {
         await createMetadataField({
           ...formValues,
           objectMetadataId: activeObjectMetadataItem.id,
         });
-
-        // TODO: fix optimistic update logic
-        // Forcing a refetch for now but it's not ideal
-        await apolloClient.refetchQueries({
-          include: ['FindManyViews', 'CombinedFindManyRecords'],
-        });
       }
 
       navigate(`/settings/objects/${objectSlug}`);
+
+      // TODO: fix optimistic update logic
+      // Forcing a refetch for now but it's not ideal
+      await apolloClient.refetchQueries({
+        include: ['FindManyViews', 'CombinedFindManyRecords'],
+      });
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
@@ -193,6 +187,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               {!activeObjectMetadataItem.isRemote && (
                 <SaveAndCancelButtons
                   isSaveDisabled={!canSave}
+                  isCancelDisabled={isSubmitting}
                   onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
                   onSave={formConfig.handleSubmit(handleSave)}
                 />

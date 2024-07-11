@@ -1,6 +1,6 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { ANIMATION, BACKGROUND_LIGHT, GRAY_SCALE } from 'twenty-ui';
 
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/DesktopNavDrawerWidths';
@@ -18,7 +18,7 @@ const StyledItemsContainer = styled.div`
   gap: 32px;
   margin-bottom: auto;
   overflow-y: auto;
-  height: calc(100vh - 32px);
+  height: calc(100dvh - 32px);
   min-width: 216px;
   max-width: 216px;
 `;
