@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
@@ -59,10 +60,9 @@ export const RecordIndexBoardDataLoaderEffect = ({
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
   const navigate = useNavigate();
-
   const navigateToSelectSettings = useCallback(() => {
-    navigate(`/settings/objects/${objectMetadataItem.namePlural}`);
-  }, [navigate, objectMetadataItem.namePlural]);
+    navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
+  }, [navigate, objectMetadataItem]);
 
   const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
 

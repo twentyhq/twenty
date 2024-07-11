@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconSettings, useIcons } from 'twenty-ui';
 
+import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
@@ -57,7 +58,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
       )}
       <DropdownMenuItemsContainer>
         <StyledMenuItemLink
-          to={`/settings/objects/${objectMetadataItem.namePlural}`}
+          to={`/settings/objects/${getObjectSlug(objectMetadataItem)}`}
         >
           <MenuItem LeftIcon={IconSettings} text="Customize fields" />
         </StyledMenuItemLink>
