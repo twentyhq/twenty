@@ -10,7 +10,7 @@ describe('utils.handleQueryParams', () => {
   test('should format', () => {
     const inputData = {
       name: 'Company Name',
-      address: 'Company Address',
+      address: { addressCity: 'Paris' },
       domainName: 'Company Domain Name',
       linkedinUrl__url: '/linkedin_url',
       linkedinUrl__label: 'Test linkedinUrl',
@@ -23,7 +23,7 @@ describe('utils.handleQueryParams', () => {
     const result = handleQueryParams(inputData);
     const expectedResult =
       'name: "Company Name", ' +
-      'address: "Company Address", ' +
+      'address: { addressCity: "Paris" }, ' +
       'domainName: "Company Domain Name", ' +
       'linkedinUrl: {url: "/linkedin_url", label: "Test linkedinUrl"}, ' +
       'xUrl: {url: "/x_url", label: "Test xUrl"}, ' +

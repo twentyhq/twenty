@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { Avatar, AvatarType } from '@ui/display/avatar/components/Avatar';
+import { Avatar } from '@ui/display/avatar/components/Avatar';
+import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { Chip, ChipVariant } from '@ui/display/chip/components/Chip';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { Nullable } from '@ui/utilities/types/Nullable';

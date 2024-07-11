@@ -34,12 +34,16 @@ export const useCreateManyRecordsMutation = ({
   const createManyRecordsMutation = gql`
     mutation Create${capitalize(
       objectMetadataItem.namePlural,
-    )}($data: [${capitalize(objectMetadataItem.nameSingular)}CreateInput!]!)  {
-      ${mutationResponseField}(data: $data) ${mapObjectMetadataToGraphQLQuery({
-        objectMetadataItems,
-        objectMetadataItem,
-        recordGqlFields,
-      })}
+    )}($data: [${capitalize(
+      objectMetadataItem.nameSingular,
+    )}CreateInput!]!, $upsert: Boolean)  {
+      ${mutationResponseField}(data: $data, upsert: $upsert) ${mapObjectMetadataToGraphQLQuery(
+        {
+          objectMetadataItems,
+          objectMetadataItem,
+          recordGqlFields,
+        },
+      )}
   }`;
 
   return {

@@ -14,7 +14,10 @@ export class WorkspaceDatasourceFactory {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  public async create(entities: EntitySchema[], workspaceId: string) {
+  public async create(
+    entities: EntitySchema[],
+    workspaceId: string,
+  ): Promise<WorkspaceDataSource | null> {
     const storedWorkspaceDataSource =
       DataSourceStorage.getDataSource(workspaceId);
 
@@ -23,9 +26,13 @@ export class WorkspaceDatasourceFactory {
     }
 
     const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
         workspaceId,
       );
+
+    if (!dataSourceMetadata) {
+      return null;
+    }
 
     const workspaceDataSource = new WorkspaceDataSource({
       url:

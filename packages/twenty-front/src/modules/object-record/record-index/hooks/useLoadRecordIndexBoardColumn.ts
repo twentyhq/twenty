@@ -9,7 +9,7 @@ import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
-import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
 type UseLoadRecordIndexBoardProps = {
   objectNameSingular: string;
@@ -30,7 +30,7 @@ export const useLoadRecordIndexBoardColumn = ({
     objectNameSingular,
   });
   const { setRecordIdsForColumn } = useRecordBoard(recordBoardId);
-  const { setRecords: setRecordsInStore } = useSetRecordInStore();
+  const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);
@@ -75,8 +75,8 @@ export const useLoadRecordIndexBoardColumn = ({
   }, [records, setRecordIdsForColumn, columnId]);
 
   useEffect(() => {
-    setRecordsInStore(records);
-  }, [records, setRecordsInStore]);
+    upsertRecordsInStore(records);
+  }, [records, upsertRecordsInStore]);
 
   return {
     records,

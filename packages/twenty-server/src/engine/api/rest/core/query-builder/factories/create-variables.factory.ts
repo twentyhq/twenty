@@ -7,14 +7,8 @@ import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.t
 @Injectable()
 export class CreateVariablesFactory {
   create(request: Request): QueryVariables {
-    const data = Array.isArray(request.body)
-      ? request.body.map((recordData) => {
-          return { position: 'first', ...recordData };
-        })
-      : { position: 'first', ...request.body };
-
     return {
-      data,
+      data: request.body,
     };
   }
 }

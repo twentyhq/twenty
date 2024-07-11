@@ -38,4 +38,5 @@ export const mockedClientConfig: ClientConfig = {
     siteKey: 'MOCKED_SITE_KEY',
     __typename: 'Captcha',
   },
+  api: { mutationMaximumAffectedRecords: 100 },
 };

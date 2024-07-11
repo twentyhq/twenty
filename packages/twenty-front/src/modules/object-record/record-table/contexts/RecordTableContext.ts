@@ -27,6 +27,8 @@ export type RecordTableContextProps = {
   onContextMenu: (event: React.MouseEvent, recordId: string) => void;
   onCellMouseEnter: (args: HandleContainerMouseEnterArgs) => void;
   visibleTableColumns: ColumnDefinition<FieldMetadata>[];
+  recordTableId: string;
+  objectNameSingular: string;
 };
 
 export const RecordTableContext = createContext<RecordTableContextProps>(

@@ -20,10 +20,13 @@ describe('setColumn', () => {
     value: 'oldValue',
   };
 
-  it('should return a matchedSelect column if field type is "select"', () => {
+  it('should return a matchedSelectOptions column if field type is "select"', () => {
     const field = {
       ...defaultField,
-      fieldType: { type: 'select' },
+      fieldType: {
+        type: 'select',
+        options: [{ value: 'John' }, { value: 'Alice' }],
+      },
     } as Field<'Name'>;
 
     const data = [['John'], ['Alice']];
@@ -32,14 +35,16 @@ describe('setColumn', () => {
     expect(result).toEqual({
       index: 0,
       header: 'Name',
-      type: ColumnType.matchedSelect,
+      type: ColumnType.matchedSelectOptions,
       value: 'Name',
       matchedOptions: [
         {
           entry: 'John',
+          value: 'John',
         },
         {
           entry: 'Alice',
+          value: 'Alice',
         },
       ],
     });

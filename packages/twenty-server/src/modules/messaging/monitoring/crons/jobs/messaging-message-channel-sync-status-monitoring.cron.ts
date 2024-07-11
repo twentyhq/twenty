@@ -8,12 +8,12 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
+import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageChannelSyncStatusMonitoringCronJob {
@@ -28,7 +28,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly environmentService: EnvironmentService,
+    private readonly billingService: BillingService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
@@ -41,16 +41,8 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
       message: 'Starting message channel sync status monitoring',
     });
 
-    const workspaceIds = (
-      await this.workspaceRepository.find({
-        where: this.environmentService.get('IS_BILLING_ENABLED')
-          ? {
-              subscriptionStatus: In(['active', 'trialing', 'past_due']),
-            }
-          : {},
-        select: ['id'],
-      })
-    ).map((workspace) => workspace.id);
+    const workspaceIds =
+      await this.billingService.getActiveSubscriptionWorkspaceIds();
 
     const dataSources = await this.dataSourceRepository.find({
       where: {

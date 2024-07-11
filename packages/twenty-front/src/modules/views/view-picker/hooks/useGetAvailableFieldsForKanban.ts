@@ -5,16 +5,14 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
-import { useViewPickerStates } from '@/views/view-picker/hooks/useViewPickerStates';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useGetAvailableFieldsForKanban = () => {
   const { viewObjectMetadataIdState } = useViewStates();
-  const { viewPickerIsDirtyState } = useViewPickerStates();
 
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const setViewPickerIsDirty = useSetRecoilState(viewPickerIsDirtyState);
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
   );
@@ -32,15 +30,18 @@ export const useGetAvailableFieldsForKanban = () => {
   const navigate = useNavigate();
 
   const navigateToSelectSettings = useCallback(() => {
-    setViewPickerIsDirty(false);
-
     setNavigationMemorizedUrl(location.pathname + location.search);
 
-    navigate(`/settings/objects/${objectMetadataItem?.namePlural}`);
+    if (isDefined(objectMetadataItem?.namePlural)) {
+      navigate(
+        `/settings/objects/${objectMetadataItem?.namePlural}/new-field/step-2`,
+      );
+    } else {
+      navigate(`/settings/objects`);
+    }
   }, [
     navigate,
     objectMetadataItem?.namePlural,
-    setViewPickerIsDirty,
     setNavigationMemorizedUrl,
     location,
   ]);

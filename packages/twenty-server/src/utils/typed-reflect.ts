@@ -8,7 +8,7 @@ export interface ReflectMetadataTypeMap {
   ['workspace:is-system-metadata-args']: true;
   ['workspace:is-audit-logged-metadata-args']: false;
   ['workspace:is-primary-field-metadata-args']: true;
-  ['workspace:join-column']: true;
+  ['workspace:is-deprecated-field-metadata-args']: true;
 }
 
 export class TypedReflect {

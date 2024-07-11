@@ -22,11 +22,12 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
 import { SendInviteLinkInput } from 'src/engine/core-modules/workspace/dtos/send-invite-link.input';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 import { Workspace } from './workspace.entity';
 
@@ -38,8 +39,9 @@ export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly fileUploadService: FileUploadService,
-    private readonly billingService: BillingService,
+    private readonly billingWorkspaceService: BillingWorkspaceService,
   ) {}
 
   @Query(() => Workspace)
@@ -116,13 +118,18 @@ export class WorkspaceResolver {
     return this.workspaceCacheVersionService.getVersion(workspace.id);
   }
 
-  @ResolveField(() => BillingSubscription)
+  @ResolveField(() => BillingSubscription, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription | null> {
-    return this.billingService.getCurrentBillingSubscription({
+    return this.billingWorkspaceService.getCurrentBillingSubscription({
       workspaceId: workspace.id,
     });
+  }
+
+  @ResolveField(() => Number)
+  async workspaceMembersCount(): Promise<number | undefined> {
+    return await this.userWorkspaceService.getWorkspaceMemberCount();
   }
 
   @Mutation(() => SendInviteLink)

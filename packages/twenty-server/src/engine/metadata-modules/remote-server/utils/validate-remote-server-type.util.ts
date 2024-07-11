@@ -1,5 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
-
 import { Repository } from 'typeorm';
 
 import {
@@ -7,6 +5,10 @@ import {
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import {
+  RemoteServerException,
+  RemoteServerExceptionCode,
+} from 'src/engine/metadata-modules/remote-server/remote-server.exception';
 
 export const validateRemoteServerType = async (
   remoteServerType: RemoteServerType,
@@ -24,7 +26,10 @@ export const validateRemoteServerType = async (
   const featureFlagEnabled = featureFlag && featureFlag.value;
 
   if (!featureFlagEnabled) {
-    throw new BadRequestException(`Type ${remoteServerType} is not supported.`);
+    throw new RemoteServerException(
+      `Type ${remoteServerType} is not supported.`,
+      RemoteServerExceptionCode.INVALID_REMOTE_SERVER_INPUT,
+    );
   }
 };
 
@@ -35,8 +40,9 @@ const getFeatureFlagKey = (remoteServerType: RemoteServerType) => {
     case RemoteServerType.STRIPE_FDW:
       return FeatureFlagKeys.IsStripeIntegrationEnabled;
     default:
-      throw new BadRequestException(
+      throw new RemoteServerException(
         `Type ${remoteServerType} is not supported.`,
+        RemoteServerExceptionCode.INVALID_REMOTE_SERVER_INPUT,
       );
   }
 };

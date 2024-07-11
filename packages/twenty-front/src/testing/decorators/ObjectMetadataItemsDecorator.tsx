@@ -8,7 +8,7 @@ import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/Obje
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getRecordChipGeneratorPerObjectPerField } from '@/object-record/utils/getRecordChipGeneratorPerObjectPerField';
-import { mockedUsersData } from '~/testing/mock-data/users';
+import { mockedUserData } from '~/testing/mock-data/users';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
 export const ObjectMetadataItemsDecorator: Decorator = (Story) => {
@@ -20,7 +20,7 @@ export const ObjectMetadataItemsDecorator: Decorator = (Story) => {
 
   useEffect(() => {
     setCurrentWorkspaceMember(mockWorkspaceMembers[0]);
-    setCurrentUser(mockedUsersData[0]);
+    setCurrentUser(mockedUserData);
   }, [setCurrentUser, setCurrentWorkspaceMember]);
 
   const chipGeneratorPerObjectPerField = useMemo(() => {

@@ -17,6 +17,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.activity,
@@ -131,10 +132,12 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'authoredActivities',
     onDelete: RelationOnDeleteAction.SET_NULL,
-    joinColumn: 'authorId',
   })
   @WorkspaceIsNullable()
   author: Relation<WorkspaceMemberWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('author')
+  authorId: string | null;
 
   @WorkspaceRelation({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.assignee,
@@ -145,8 +148,10 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'assignedActivities',
     onDelete: RelationOnDeleteAction.SET_NULL,
-    joinColumn: 'assigneeId',
   })
   @WorkspaceIsNullable()
   assignee: Relation<WorkspaceMemberWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('assignee')
+  assigneeId: string | null;
 }

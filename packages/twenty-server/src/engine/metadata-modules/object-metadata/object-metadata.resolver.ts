@@ -12,6 +12,7 @@ import {
   UpdateOneObjectInput,
 } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
+import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => ObjectMetadataDTO)
@@ -22,11 +23,18 @@ export class ObjectMetadataResolver {
   ) {}
 
   @Mutation(() => ObjectMetadataDTO)
-  deleteOneObject(
+  async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.objectMetadataService.deleteOneObject(input, workspaceId);
+    try {
+      return await this.objectMetadataService.deleteOneObject(
+        input,
+        workspaceId,
+      );
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => ObjectMetadataDTO)
@@ -34,8 +42,15 @@ export class ObjectMetadataResolver {
     @Args('input') input: UpdateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    await this.beforeUpdateOneObject.run(input, workspaceId);
+    try {
+      await this.beforeUpdateOneObject.run(input, workspaceId);
 
-    return this.objectMetadataService.updateOneObject(input, workspaceId);
+      return await this.objectMetadataService.updateOneObject(
+        input,
+        workspaceId,
+      );
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+    }
   }
 }

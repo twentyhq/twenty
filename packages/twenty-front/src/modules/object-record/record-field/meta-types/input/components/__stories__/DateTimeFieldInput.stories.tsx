@@ -12,7 +12,7 @@ import {
   DateTimeFieldInputProps,
 } from '../DateTimeFieldInput';
 
-const formattedDate = new Date(2022, 1, 1);
+const formattedDate = new Date(2022, 0, 1, 2, 0, 0);
 
 const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
   const { setFieldValue } = useDateTimeField();
@@ -126,9 +126,9 @@ type Story = StoryObj<typeof DateFieldInputWithContext>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const div = await canvas.findByText('February');
+    const div = await canvas.findByText('January');
 
-    await expect(div.innerText).toContain('February');
+    await expect(div.innerText).toContain('January');
   },
 };
 
@@ -138,7 +138,7 @@ export const ClickOutside: Story = {
 
     await expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
 
-    await canvas.findByText('February');
+    await canvas.findByText('January');
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
     await userEvent.click(emptyDiv);
 
@@ -151,7 +151,7 @@ export const Escape: Story = {
     await expect(escapeJestFn).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
 
-    await canvas.findByText('February');
+    await canvas.findByText('January');
     await userEvent.keyboard('{escape}');
 
     await expect(escapeJestFn).toHaveBeenCalledTimes(1);
@@ -163,7 +163,7 @@ export const Enter: Story = {
     await expect(enterJestFn).toHaveBeenCalledTimes(0);
     const canvas = within(canvasElement);
 
-    await canvas.findByText('February');
+    await canvas.findByText('January');
     await userEvent.keyboard('{enter}');
 
     await expect(enterJestFn).toHaveBeenCalledTimes(1);
