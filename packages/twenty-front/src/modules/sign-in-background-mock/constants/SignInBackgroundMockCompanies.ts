@@ -415,7 +415,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '53f66647-0543-4cc2-9f96-95cc699960f2',
-            probability: '0.5',
             pointOfContactId: '93c72d2e-f517-42fd-80ae-14173b3b70ae',
             stage: 'NEW',
             amount: {
@@ -633,7 +632,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '81ab695d-2f89-406f-90ea-180f433b2445',
-            probability: '0.5',
             stage: 'NEW',
             pointOfContactId: '9b324a88-6784-4449-afdf-dc62cb8702f2',
             amount: {
@@ -653,7 +651,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '9b059852-35b1-4045-9cde-42f715148954',
-            probability: '0.5',
             stage: 'NEW',
             pointOfContactId: '98406e26-80f1-4dff-b570-a74942528de3',
             amount: {
@@ -1221,7 +1218,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '7c887ee3-be10-412b-a663-16bd3c2228e1',
-            probability: '0.5',
             stage: 'NEW',
             pointOfContactId: '86083141-1c0e-494c-a1b6-85b1c6fefaa5',
             amount: {
