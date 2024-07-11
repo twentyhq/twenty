@@ -5,7 +5,7 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import {
   BlocklistItem,
   BlocklistValidationService,
-} from 'src/modules/blocklist/services/blocklist-validation.service';
+} from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service';
 
 @WorkspaceQueryHook(`blocklist.createMany`)
 export class BlocklistCreateManyPreQueryHook
