@@ -15,4 +15,4 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   providers: [BlocklistValidationService],
   exports: [BlocklistValidationService],
 })
-export class BlocklistValidationModule {}
+export class BlocklistModule {}
