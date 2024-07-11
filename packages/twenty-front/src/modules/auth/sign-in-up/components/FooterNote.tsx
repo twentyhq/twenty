@@ -12,7 +12,11 @@ const StyledContainer = styled.div`
 
   & > a {
     color: ${({ theme }) => theme.font.color.tertiary};
-    text-decoration: underline;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `;
 

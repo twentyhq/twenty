@@ -258,7 +258,15 @@ export const SignInUpForm = () => {
       )}
       {signInUpStep === SignInUpStep.Init && (
         <FooterNote>
-          By using Twenty, you agree to the Terms of Service and{' '}
+          By using Twenty, you agree to the{' '}
+          <a
+            href="https://twenty.com/legal/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Terms of Service
+          </a>{' '}
+          and{' '}
           <a
             href="https://twenty.com/legal/privacy"
             target="_blank"
