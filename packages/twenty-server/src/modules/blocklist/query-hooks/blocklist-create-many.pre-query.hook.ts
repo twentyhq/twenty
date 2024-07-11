@@ -1,14 +1,14 @@
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
-import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import {
   BlocklistItem,
   BlocklistValidationService,
-} from 'src/modules/connected-account/services/blocklist/blocklist-validation.service';
+} from 'src/modules/blocklist/services/blocklist-validation.service';
 
-@WorkspaceQueryHook(`blocklist.updateOne`)
-export class BlocklistUpdateOnePreQueryHook
+@WorkspaceQueryHook(`blocklist.createMany`)
+export class BlocklistCreateManyPreQueryHook
   implements WorkspaceQueryHookInstance
 {
   constructor(
@@ -18,9 +18,9 @@ export class BlocklistUpdateOnePreQueryHook
   async execute(
     userId: string,
     workspaceId: string,
-    payload: UpdateOneResolverArgs<BlocklistItem>,
+    payload: CreateManyResolverArgs<BlocklistItem>,
   ): Promise<void> {
-    await this.blocklistValidationService.validateBlocklistForUpdateOne(
+    await this.blocklistValidationService.validateBlocklistForCreateMany(
       payload,
       userId,
       workspaceId,

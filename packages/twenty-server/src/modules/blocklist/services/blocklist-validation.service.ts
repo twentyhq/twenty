@@ -3,14 +3,14 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { z } from 'zod';
 
 import {
-  CreateManyResolverArgs,
-  UpdateOneResolverArgs,
+    CreateManyResolverArgs,
+    UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { isDomain } from 'src/engine/utils/is-domain';
+import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
-import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
