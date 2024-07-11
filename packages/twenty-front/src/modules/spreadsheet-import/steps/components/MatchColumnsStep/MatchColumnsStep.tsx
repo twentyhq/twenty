@@ -198,10 +198,9 @@ export const MatchColumnsStep = <T extends string>({
     },
     [columns, setColumns],
   );
-  const unmatchedRequiredFields = useMemo(
-    () => findUnmatchedRequiredFields(fields, columns),
-    [fields, columns],
-  );
+  const unmatchedRequiredFields = useMemo(() => {
+    findUnmatchedRequiredFields(fields, columns);
+  }, [fields, columns]);
 
   const handleAlertOnContinue = useCallback(async () => {
     setIsLoading(true);
@@ -258,7 +257,6 @@ export const MatchColumnsStep = <T extends string>({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return (
     <>
       <StyledContent>
