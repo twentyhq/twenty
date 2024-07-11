@@ -10,7 +10,6 @@ import { RecordTableBodyEffect } from '@/object-record/record-table/record-table
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { useRecoilValue } from 'recoil';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -19,7 +18,6 @@ const StyledTable = styled.table`
   table-layout: fixed;
 
   width: calc(100% - ${({ theme }) => theme.table.horizontalCellMargin} * 2);
-  margin-bottom: ${({ theme }) => useIsMobile() && theme.spacing(15)};
 `;
 
 type RecordTableProps = {
