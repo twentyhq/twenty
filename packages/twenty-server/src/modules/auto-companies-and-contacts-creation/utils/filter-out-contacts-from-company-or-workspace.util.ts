@@ -1,5 +1,5 @@
-import { Contact } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
-import { getDomainNameFromHandle } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-domain-name-from-handle.util';
+import { Contact } from 'src/modules/auto-companies-and-contacts-creation/types/contact.type';
+import { getDomainNameFromHandle } from 'src/modules/auto-companies-and-contacts-creation/utils/get-domain-name-from-handle.util';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 

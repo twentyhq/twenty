@@ -1,5 +1,5 @@
-import { Contact } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
-import { getUniqueContactsAndHandles } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-unique-contacts-and-handles.util';
+import { Contact } from 'src/modules/auto-companies-and-contacts-creation/types/contact.type';
+import { getUniqueContactsAndHandles } from 'src/modules/auto-companies-and-contacts-creation/utils/get-unique-contacts-and-handles.util';
 
 describe('getUniqueContactsAndHandles', () => {
   it('should return empty arrays when contacts is empty', () => {

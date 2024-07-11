@@ -1,0 +1,35 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { CreateCompanyModule } from 'src/modules/auto-companies-and-contacts-creation/create-company/create-company.module';
+import { CreateContactModule } from 'src/modules/auto-companies-and-contacts-creation/create-contact/create-contact.module';
+import { AutoCompaniesAndContactsCreationCalendarChannelListener } from 'src/modules/auto-companies-and-contacts-creation/listeners/auto-companies-and-contacts-creation-calendar-channel.listener';
+import { AutoCompaniesAndContactsCreationMessageChannelListener } from 'src/modules/auto-companies-and-contacts-creation/listeners/auto-companies-and-contacts-creation-message-channel.listener';
+import { CreateCompanyAndContactService } from 'src/modules/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+
+@Module({
+  imports: [
+    CreateContactModule,
+    CreateCompanyModule,
+    ObjectMetadataRepositoryModule.forFeature([
+      PersonWorkspaceEntity,
+      WorkspaceMemberWorkspaceEntity,
+    ]),
+    WorkspaceDataSourceModule,
+    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+  ],
+  providers: [
+    CreateCompanyAndContactService,
+    AutoCompaniesAndContactsCreationMessageChannelListener,
+    AutoCompaniesAndContactsCreationCalendarChannelListener,
+  ],
+  exports: [CreateCompanyAndContactService],
+})
+export class AutoCompaniesAndContactsCreationModule {}

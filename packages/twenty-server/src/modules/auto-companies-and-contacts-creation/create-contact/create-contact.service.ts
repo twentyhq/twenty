@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { PersonRepository } from 'src/modules/person/repositories/person.repository';
-import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/auto-companies-and-contacts-creation/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
+import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 type ContactToCreate = {
