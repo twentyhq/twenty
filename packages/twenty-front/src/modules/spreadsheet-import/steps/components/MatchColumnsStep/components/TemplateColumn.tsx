@@ -68,7 +68,8 @@ const getAccordionTitle = <T extends string>(
   )?.label;
 
   return `Match ${fieldLabel} (${
-    'matchedOptions' in column && column.matchedOptions.length
+    'matchedOptions' in column &&
+    column.matchedOptions.filter((option) => option.value === undefined).length
   } Unmatched)`;
 };
 
