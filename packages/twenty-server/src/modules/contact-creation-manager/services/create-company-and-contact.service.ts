@@ -12,8 +12,8 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
-import { CreateCompanyService } from 'src/modules/contact-creation-manager/create-company/create-company.service';
-import { CreateContactService } from 'src/modules/contact-creation-manager/create-contact/create-contact.service';
+import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
+import { CreateContactService } from 'src/modules/contact-creation-manager/services/create-contact.service';
 import { Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { filterOutSelfAndContactsFromCompanyOrWorkspace } from 'src/modules/contact-creation-manager/utils/filter-out-contacts-from-company-or-workspace.util';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';

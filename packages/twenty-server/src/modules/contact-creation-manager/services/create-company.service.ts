@@ -76,7 +76,7 @@ export class CreateCompanyService {
     return companiesObject;
   }
 
-  async createCompany(
+  private async createCompany(
     domainName: string,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -99,7 +99,7 @@ export class CreateCompanyService {
     return companyId;
   }
 
-  async getCompanyInfoFromDomainName(domainName: string): Promise<{
+  private async getCompanyInfoFromDomainName(domainName: string): Promise<{
     name: string;
     city: string;
   }> {

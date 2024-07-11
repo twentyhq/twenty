@@ -29,7 +29,7 @@ export class CreateContactService {
     private readonly personRepository: PersonRepository,
   ) {}
 
-  public formatContacts(
+  private formatContacts(
     contactsToCreate: ContactToCreate[],
   ): FormattedContactToCreate[] {
     return contactsToCreate.map((contact) => {
