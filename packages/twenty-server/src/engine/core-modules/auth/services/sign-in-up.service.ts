@@ -237,6 +237,7 @@ export class SignInUpService {
       filename: `${v4()}.${type?.ext}`,
       mimeType: type?.mime,
       fileFolder: FileFolder.ProfilePicture,
+      workspaceId: undefined,
     });
 
     return paths[0];

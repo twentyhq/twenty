@@ -85,6 +85,7 @@ export class WorkspaceResolver {
       filename,
       mimeType: mimetype,
       fileFolder,
+      workspaceId: id,
     });
 
     await this.workspaceService.updateOne(id, {

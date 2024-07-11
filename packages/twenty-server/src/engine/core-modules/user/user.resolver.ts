@@ -106,6 +106,7 @@ export class UserResolver {
       filename,
       mimeType: mimetype,
       fileFolder,
+      workspaceId: undefined,
     });
 
     return paths[0];

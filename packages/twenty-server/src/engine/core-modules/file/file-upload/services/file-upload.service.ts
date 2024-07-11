@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
+import DOMPurify from 'dompurify';
+import { JSDOM } from 'jsdom';
 import sharp from 'sharp';
 import { v4 as uuidV4 } from 'uuid';
-import { JSDOM } from 'jsdom';
-import DOMPurify from 'dompurify';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { getCropSize } from 'src/utils/image';
 import { settings } from 'src/engine/constants/settings';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { getCropSize } from 'src/utils/image';
 
 @Injectable()
 export class FileUploadService {
@@ -20,17 +20,23 @@ export class FileUploadService {
     filename,
     mimeType,
     fileFolder,
+    workspaceId,
   }: {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
+    workspaceId: string | undefined;
   }) {
+    const folder = workspaceId
+      ? `${fileFolder}/workspace-${workspaceId}`
+      : fileFolder;
+
     await this.fileStorage.write({
       file,
       name: filename,
       mimeType,
-      folder: fileFolder,
+      folder,
     });
   }
 
@@ -58,11 +64,13 @@ export class FileUploadService {
     filename,
     mimeType,
     fileFolder,
+    workspaceId,
   }: {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
+    workspaceId: string | undefined;
   }) {
     const ext = filename.split('.')?.[1];
     const id = uuidV4();
@@ -73,6 +81,7 @@ export class FileUploadService {
       filename: name,
       mimeType,
       fileFolder,
+      workspaceId,
     });
 
     return {
@@ -87,11 +96,13 @@ export class FileUploadService {
     filename,
     mimeType,
     fileFolder,
+    workspaceId,
   }: {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
+    workspaceId: string | undefined;
   }) {
     const ext = filename.split('.')?.[1];
     const id = uuidV4();
@@ -125,6 +136,7 @@ export class FileUploadService {
           filename: `${cropSizes[index]}/${name}`,
           mimeType,
           fileFolder,
+          workspaceId,
         });
       }),
     );
