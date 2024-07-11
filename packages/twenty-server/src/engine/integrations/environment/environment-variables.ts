@@ -19,6 +19,7 @@ import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.inte
 import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
 import { LLMChatModelDriver } from 'src/engine/integrations/llm-chat-model/interfaces/llm-chat-model.interface';
 import { LLMTracingDriver } from 'src/engine/integrations/llm-tracing/interfaces/llm-tracing.interface';
+import { CustomCodeEngineDriverType } from 'src/engine/integrations/custom-code-engine/interfaces/custom-code-engine.interface';
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/engine/integrations/environment/decorators/cast-to-string-array.decorator';
@@ -203,6 +204,11 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
+
+  @IsEnum(CustomCodeEngineDriverType)
+  @IsOptional()
+  CUSTOM_CODE_ENGINE_DRIVER_TYPE: CustomCodeEngineDriverType =
+    CustomCodeEngineDriverType.Local;
 
   // Storage
   @IsEnum(StorageDriverType)

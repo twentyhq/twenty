@@ -16,6 +16,10 @@ import { LLMChatModelModule } from 'src/engine/integrations/llm-chat-model/llm-c
 import { llmChatModelModuleFactory } from 'src/engine/integrations/llm-chat-model/llm-chat-model.module-factory';
 import { LLMTracingModule } from 'src/engine/integrations/llm-tracing/llm-tracing.module';
 import { llmTracingModuleFactory } from 'src/engine/integrations/llm-tracing/llm-tracing.module-factory';
+import { CustomCodeEngineModule } from 'src/engine/integrations/custom-code-engine/custom-code-engine.module';
+import { customCodeEngineModuleFactory } from 'src/engine/integrations/custom-code-engine/custom-code-engine.module-factory';
+import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
@@ -29,6 +33,10 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
     FileStorageModule.forRootAsync({
       useFactory: fileStorageModuleFactory,
       inject: [EnvironmentService],
+    }),
+    CustomCodeEngineModule.forRootAsync({
+      useFactory: customCodeEngineModuleFactory,
+      inject: [EnvironmentService, FileStorageService, FileUploadService],
     }),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,

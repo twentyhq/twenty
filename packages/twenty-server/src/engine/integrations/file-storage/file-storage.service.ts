@@ -22,14 +22,4 @@ export class FileStorageService implements StorageDriver {
   read(params: { folderPath: string; filename: string }): Promise<Readable> {
     return this.driver.read(params);
   }
-
-  async readContent(stream: Readable): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const chunks: Buffer[] = [];
-
-      stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-      stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-      stream.on('error', (err) => reject(err));
-    });
-  }
 }

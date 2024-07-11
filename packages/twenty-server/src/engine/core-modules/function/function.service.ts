@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { FileUpload } from 'graphql-upload';
 
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
-
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -14,14 +11,11 @@ import {
   FunctionWorkspaceEntity,
 } from 'src/modules/function/stadard-objects/function.workspace-entity';
 import { CustomCodeEngineService } from 'src/engine/integrations/custom-code-engine/custom-code-engine.service';
-import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
 @Injectable()
 export class FunctionService {
   constructor(
-    private readonly codeExecutorService: CustomCodeEngineService,
-    private readonly fileUploadService: FileUploadService,
-    private readonly fileStorageService: FileStorageService,
+    private readonly customCodeEngineService: CustomCodeEngineService,
     private readonly userService: UserService,
     @InjectWorkspaceRepository(FunctionWorkspaceEntity)
     private readonly functionRepository: WorkspaceRepository<FunctionWorkspaceEntity>,
@@ -37,38 +31,18 @@ export class FunctionService {
       },
     });
 
-    return this.codeExecutorService.execute(functionToExecute);
+    return this.customCodeEngineService.execute(functionToExecute);
   }
 
-  async upsertFunction(
-    user: User,
-    { createReadStream, filename, mimetype }: FileUpload,
-    name: string,
-  ) {
-    const typescriptCode =
-      await this.fileStorageService.readContent(createReadStream());
-
-    const javascriptCode =
-      this.codeExecutorService.compileTypeScript(typescriptCode);
-
-    const { path: sourceCodePath } = await this.fileUploadService.uploadFile({
-      file: typescriptCode,
-      filename,
-      mimeType: mimetype,
-      fileFolder: FileFolder.Function,
-    });
-
-    const { path: builtSourcePath } = await this.fileUploadService.uploadFile({
-      file: javascriptCode,
-      filename: '.js',
-      mimeType: mimetype,
-      fileFolder: FileFolder.Function,
-    });
+  async upsertFunction(user: User, file: FileUpload, name: string) {
+    const { sourceCodePath, builtSourcePath, lambdaName } =
+      await this.customCodeEngineService.upsert(file);
 
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     const createdFunction = await this.functionRepository.save({
       name,
+      lambdaName,
       author: workspaceMember,
       sourceCodePath,
       builtSourcePath,
