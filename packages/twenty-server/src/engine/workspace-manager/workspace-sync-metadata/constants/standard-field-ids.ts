@@ -25,7 +25,6 @@ export const ACTIVITY_STANDARD_FIELD_IDS = {
   comments: '20202020-6b2e-4d29-bbd1-ecddb330e71a',
   author: '20202020-455f-44f2-8e89-1b0ef01cb7fb',
   assignee: '20202020-4259-48e4-9e77-6b92991906d5',
-  subtitle: '20202020-4b3c-4b3b-8b3b-8b3b8b3b8b3b',
 };
 
 export const API_KEY_STANDARD_FIELD_IDS = {

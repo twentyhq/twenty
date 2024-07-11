@@ -59,6 +59,15 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
                 ?.labelIdentifierStandardId,
         )?.id ?? null;
 
+      objectMetadata.imageIdentifierFieldMetadataId =
+        objectMetadata.fields.find(
+          (field) =>
+            objectStandardId &&
+            field.standardId ===
+              standardObjectMetadataMap[objectStandardId]
+                ?.imageIdentifierStandardId,
+        )?.id ?? null;
+
       await objectMetadataRepository.save(objectMetadata);
     }
   }
