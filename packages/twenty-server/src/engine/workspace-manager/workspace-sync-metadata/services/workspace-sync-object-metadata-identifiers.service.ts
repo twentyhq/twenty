@@ -109,6 +109,7 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
         imageIdentifierFieldMetadata,
       );
 
+      // TODO: Add image identifier field metadata
       await objectMetadataRepository.save({
         ...objectMetadata,
         labelIdentifierFieldMetadataId:
