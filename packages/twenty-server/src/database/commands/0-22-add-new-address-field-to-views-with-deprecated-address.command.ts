@@ -8,12 +8,12 @@ import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import {
-  BillingSubscription,
-  SubscriptionStatus,
+    BillingSubscription,
+    SubscriptionStatus,
 } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
+    FeatureFlagEntity,
+    FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -65,6 +65,11 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
     _passedParam: string[],
     options: AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommandOptions,
   ): Promise<void> {
+    // This command can be generic-ified turning the below consts in options
+    const deprecatedFieldStandardId =
+      COMPANY_STANDARD_FIELD_IDS.address_deprecated;
+    const newFieldStandardId = COMPANY_STANDARD_FIELD_IDS.address;
+
     this.logger.log('running');
     let workspaceIds: string[] = [];
 
@@ -118,7 +123,7 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
           try {
             const newAddressField = await this.fieldMetadataRepository.findBy({
               workspaceId,
-              standardId: COMPANY_STANDARD_FIELD_IDS.address,
+              standardId: newFieldStandardId,
             });
 
             if (isEmpty(newAddressField)) {
@@ -131,7 +136,7 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
             const addressDeprecatedField =
               await this.fieldMetadataRepository.findOneBy({
                 workspaceId,
-                standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
+                standardId: deprecatedFieldStandardId,
               });
 
             if (isEmpty(addressDeprecatedField)) {
