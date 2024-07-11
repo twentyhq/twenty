@@ -1,31 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-import { isDefined } from 'class-validator';
 import { Any, EntityManager } from 'typeorm';
+import { isDefined } from 'class-validator';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { PersonRepository } from 'src/modules/person/repositories/person.repository';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant-manager/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/calendar-event-import-manager/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
-import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import {
   CalendarEventParticipant,
   CalendarEventParticipantWithCalendarEventId,
 } from 'src/modules/calendar/common/types/calendar-event';
-import { PersonRepository } from 'src/modules/person/repositories/person.repository';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant-manager/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 
 @Injectable()
 export class CalendarEventParticipantService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectWorkspaceRepository(CalendarEventParticipantWorkspaceEntity)
+    private readonly calendarEventParticipantRepository: WorkspaceRepository<CalendarEventParticipantWorkspaceEntity>,
     @InjectObjectMetadataRepository(PersonWorkspaceEntity)
     private readonly personRepository: PersonRepository,
     private readonly addPersonIdAndWorkspaceMemberIdService: AddPersonIdAndWorkspaceMemberIdService,
     private readonly eventEmitter: EventEmitter2,
-    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async updateCalendarEventParticipantsAfterPeopleCreation(
@@ -33,12 +35,7 @@ export class CalendarEventParticipantService {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<CalendarEventParticipantWorkspaceEntity[]> {
-    const calendarEventParticipantRepository =
-      await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
-        'calendarEventParticipant',
-      );
-
-    const participants = await calendarEventParticipantRepository.find({
+    const participants = await this.calendarEventParticipantRepository.find({
       where: {
         handle: Any(createdPeople.map((person) => person.email)),
       },
@@ -138,13 +135,8 @@ export class CalendarEventParticipantService {
     workspaceId: string,
     transactionManager?: any,
   ): Promise<CalendarEventParticipantWorkspaceEntity[]> {
-    const calendarEventParticipantRepository =
-      await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
-        'calendarEventParticipant',
-      );
-
     const existingCalendarEventParticipants =
-      await calendarEventParticipantRepository.find({
+      await this.calendarEventParticipantRepository.find({
         where: {
           calendarEventId: Any(
             participantsToUpdate
@@ -182,7 +174,7 @@ export class CalendarEventParticipantService {
         },
       );
 
-    await calendarEventParticipantRepository.delete({
+    await this.calendarEventParticipantRepository.delete({
       id: Any(
         calendarEventParticipantsToDelete.map(
           (calendarEventParticipant) => calendarEventParticipant.id,
@@ -190,7 +182,7 @@ export class CalendarEventParticipantService {
       ),
     });
 
-    await calendarEventParticipantRepository.save(participantsToUpdate);
+    await this.calendarEventParticipantRepository.save(participantsToUpdate);
 
     participantsToSave.push(...newCalendarEventParticipants);
 
@@ -207,13 +199,8 @@ export class CalendarEventParticipantService {
     personId?: string,
     workspaceMemberId?: string,
   ) {
-    const calendarEventParticipantRepository =
-      await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
-        'calendarEventParticipant',
-      );
-
     const calendarEventParticipantsToUpdate =
-      await calendarEventParticipantRepository.find({
+      await this.calendarEventParticipantRepository.find({
         where: {
           handle: email,
         },
@@ -223,7 +210,7 @@ export class CalendarEventParticipantService {
       calendarEventParticipantsToUpdate.map((participant) => participant.id);
 
     if (personId) {
-      await calendarEventParticipantRepository.update(
+      await this.calendarEventParticipantRepository.update(
         {
           id: Any(calendarEventParticipantIdsToUpdate),
         },
@@ -235,7 +222,7 @@ export class CalendarEventParticipantService {
       );
 
       const updatedCalendarEventParticipants =
-        await calendarEventParticipantRepository.find({
+        await this.calendarEventParticipantRepository.find({
           where: {
             id: Any(calendarEventParticipantIdsToUpdate),
           },
@@ -248,7 +235,7 @@ export class CalendarEventParticipantService {
       });
     }
     if (workspaceMemberId) {
-      await calendarEventParticipantRepository.update(
+      await this.calendarEventParticipantRepository.update(
         {
           id: Any(calendarEventParticipantIdsToUpdate),
         },
@@ -267,13 +254,8 @@ export class CalendarEventParticipantService {
     personId?: string,
     workspaceMemberId?: string,
   ) {
-    const calendarEventParticipantRepository =
-      await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
-        'calendarEventParticipant',
-      );
-
     if (personId) {
-      await calendarEventParticipantRepository.update(
+      await this.calendarEventParticipantRepository.update(
         {
           handle,
         },
@@ -283,7 +265,7 @@ export class CalendarEventParticipantService {
       );
     }
     if (workspaceMemberId) {
-      await calendarEventParticipantRepository.update(
+      await this.calendarEventParticipantRepository.update(
         {
           handle,
         },

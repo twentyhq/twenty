@@ -2,38 +2,38 @@ import { Injectable } from '@nestjs/common';
 
 import { Any, IsNull } from 'typeorm';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { deleteUsingPagination } from 'src/modules/messaging/message-cleaner/utils/delete-using-pagination.util';
+import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
 @Injectable()
 export class CalendarEventCleanerService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    @InjectWorkspaceRepository(CalendarEventWorkspaceEntity)
+    private readonly calendarEventRepository: WorkspaceRepository<CalendarEventWorkspaceEntity>,
+  ) {}
 
   public async cleanWorkspaceCalendarEvents(workspaceId: string) {
-    const calendarEventRepository =
-      await this.twentyORMManager.getRepository<CalendarEventWorkspaceEntity>(
-        'calendarEvent',
-      );
-
     await deleteUsingPagination(
       workspaceId,
       500,
       async (limit, offset) => {
-        const nonAssociatedCalendarEvents = await calendarEventRepository.find({
-          where: {
-            calendarChannelEventAssociations: {
-              id: IsNull(),
+        const nonAssociatedCalendarEvents =
+          await this.calendarEventRepository.find({
+            where: {
+              calendarChannelEventAssociations: {
+                id: IsNull(),
+              },
             },
-          },
-          take: limit,
-          skip: offset,
-        });
+            take: limit,
+            skip: offset,
+          });
 
         return nonAssociatedCalendarEvents.map(({ id }) => id);
       },
       async (ids) => {
-        await calendarEventRepository.delete({ id: Any(ids) });
+        await this.calendarEventRepository.delete({ id: Any(ids) });
       },
     );
   }

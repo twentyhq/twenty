@@ -2,26 +2,22 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { deleteUsingPagination } from 'src/modules/messaging/message-cleaner/utils/delete-using-pagination.util';
 
 @Injectable()
 export class MessagingMessageCleanerService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    @InjectWorkspaceRepository(MessageWorkspaceEntity)
+    private readonly messageRepository: WorkspaceRepository<MessageWorkspaceEntity>,
+    @InjectWorkspaceRepository(MessageThreadWorkspaceEntity)
+    private readonly messageThreadRepository: WorkspaceRepository<MessageThreadWorkspaceEntity>,
+  ) {}
 
   public async cleanWorkspaceThreads(workspaceId: string) {
-    const messageRepository =
-      await this.twentyORMManager.getRepository<MessageWorkspaceEntity>(
-        'message',
-      );
-
-    const messageThreadRepository =
-      await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
-        'messageThread',
-      );
-
     await deleteUsingPagination(
       workspaceId,
       500,
@@ -31,7 +27,7 @@ export class MessagingMessageCleanerService {
         workspaceId: string,
         transactionManager?: EntityManager,
       ) => {
-        const nonAssociatedMessages = await messageRepository.find(
+        const nonAssociatedMessages = await this.messageRepository.find(
           {
             where: {
               messageChannelMessageAssociations: [],
@@ -50,7 +46,7 @@ export class MessagingMessageCleanerService {
         workspaceId: string,
         transactionManager?: EntityManager,
       ) => {
-        await messageRepository.delete(ids, transactionManager);
+        await this.messageRepository.delete(ids, transactionManager);
       },
     );
 
@@ -63,7 +59,7 @@ export class MessagingMessageCleanerService {
         workspaceId: string,
         transactionManager?: EntityManager,
       ) => {
-        const orphanThreads = await messageThreadRepository.find(
+        const orphanThreads = await this.messageThreadRepository.find(
           {
             where: {
               messages: [],
@@ -81,7 +77,7 @@ export class MessagingMessageCleanerService {
         workspaceId: string,
         transactionManager?: EntityManager,
       ) => {
-        await messageThreadRepository.delete(ids, transactionManager);
+        await this.messageThreadRepository.delete(ids, transactionManager);
       },
     );
   }
