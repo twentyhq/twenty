@@ -467,23 +467,6 @@ export const getObjectMetadataItemsMock = () => {
           toRelationMetadata: null,
         },
         {
-          __typename: 'field',
-          id: '20202020-3b9c-4e58-a3d2-c617d3b596b1',
-          type: 'TEXT',
-          name: 'probability',
-          label: 'Probability',
-          description: 'Opportunity probability',
-          icon: 'IconProgressCheck',
-          isCustom: false,
-          isActive: true,
-          isSystem: false,
-          isNullable: true,
-          createdAt: '2023-11-30T11:13:15.308Z',
-          updatedAt: '2023-11-30T11:13:15.308Z',
-          fromRelationMetadata: null,
-          toRelationMetadata: null,
-        },
-        {
           __typename: 'fieldEdge',
           node: {
             __typename: 'field',
