@@ -1,9 +1,6 @@
 import groupBy from 'lodash.groupby';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
-import { ActivityBodyEffect } from '@/activities/components/ActivityBodyEffect';
-import { ActivityEditorEffect } from '@/activities/components/ActivityEditorEffect';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -19,13 +16,13 @@ import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/pr
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
-import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
+import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
@@ -268,15 +265,7 @@ export const RecordShowContainer = ({
           <></>
         )}
         {recordFromStore && objectNameSingular === 'activity' ? (
-          <>
-            <RecordValueSetterEffect recordId={objectRecordId} />
-            <ActivityEditorEffect activityId={objectRecordId} />
-            <ActivityBodyEffect activityId={objectRecordId} />
-            <ActivityBodyEditor
-              activityId={objectRecordId}
-              fillTitleFromBody={false}
-            />
-          </>
+          <ShowPageActivityContainer objectRecordId={objectRecordId} />
         ) : (
           <></>
         )}

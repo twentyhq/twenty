@@ -27,6 +27,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   description: 'An activity',
   icon: 'IconCheckbox',
 })
+@WorkspaceIsSystem()
 export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.position,
@@ -54,6 +55,7 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Body',
     description: 'Activity body',
     icon: 'IconFilePencil',
+    defaultValue: "''",
   })
   body: string;
 

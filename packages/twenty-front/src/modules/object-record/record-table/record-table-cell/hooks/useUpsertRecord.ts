@@ -1,5 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
+import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordFieldInputDraftValueComponentSelector } from '@/object-record/record-field/states/selectors/recordFieldInputDraftValueComponentSelector';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
@@ -17,6 +18,11 @@ export const useUpsertRecord = ({
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular,
   });
+
+  const { labelIdentifierFieldMetadataItem } =
+    useLabelIdentifierFieldMetadataItem({
+      objectNameSingular,
+    });
 
   const upsertRecord = useRecoilCallback(
     ({ snapshot }) =>
@@ -51,14 +57,14 @@ export const useUpsertRecord = ({
         if (isDefined(recordTablePendingRecordId) && isDefined(draftValue)) {
           createOneRecord({
             id: recordTablePendingRecordId,
-            name: draftValue,
+            [labelIdentifierFieldMetadataItem?.name ?? 'name']: draftValue,
             position: 'first',
           });
         } else if (!recordTablePendingRecordId) {
           persistField();
         }
       },
-    [createOneRecord],
+    [createOneRecord, labelIdentifierFieldMetadataItem],
   );
 
   return { upsertRecord };

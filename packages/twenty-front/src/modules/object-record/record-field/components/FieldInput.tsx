@@ -177,7 +177,7 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldRichText(fieldDefinition) ? (
-        <>Rich Text</>
+        <>Rich Edit</>
       ) : (
         <></>
       )}
