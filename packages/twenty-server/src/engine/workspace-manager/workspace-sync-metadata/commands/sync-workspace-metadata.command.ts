@@ -89,6 +89,8 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
       );
     }
 
+    const errorsDuringAllActiveWorkspaceSync: string[] = [];
+
     for (const workspaceId of workspaceIds) {
       try {
         const issues =
@@ -126,32 +128,50 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
         );
       }
 
-      const dataSourceMetadata =
-        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-          workspaceId,
-        );
-
-      const { storage, workspaceMigrations } =
-        await this.workspaceSyncMetadataService.synchronize(
-          {
+      try {
+        const dataSourceMetadata =
+          await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
             workspaceId,
-            dataSourceId: dataSourceMetadata.id,
-          },
-          { applyChanges: !options.dryRun },
-        );
+          );
 
-      if (options.dryRun) {
-        await this.syncWorkspaceLoggerService.saveLogs(
-          workspaceId,
-          storage,
-          workspaceMigrations,
-        );
+        const { storage, workspaceMigrations } =
+          await this.workspaceSyncMetadataService.synchronize(
+            {
+              workspaceId,
+              dataSourceId: dataSourceMetadata.id,
+            },
+            { applyChanges: !options.dryRun },
+          );
+
+        if (options.dryRun) {
+          await this.syncWorkspaceLoggerService.saveLogs(
+            workspaceId,
+            storage,
+            workspaceMigrations,
+          );
+        }
+      } catch (error) {
+        if (options.syncAllActiveWorkspaces) {
+          errorsDuringAllActiveWorkspaceSync.push(
+            `Failed to synchronize workspace ${workspaceId}: ${error.message}`,
+          );
+
+          continue;
+        }
+        throw error;
       }
     }
 
     if (options.syncAllActiveWorkspaces) {
       this.logger.log(
-        `Finished synchronizing all active workspaces (${workspaceIds.length} workspaces).`,
+        `Finished synchronizing all active workspaces (${
+          workspaceIds.length
+        } workspaces). ${
+          errorsDuringAllActiveWorkspaceSync.length > 0
+            ? 'Errors during sync:\n' +
+              errorsDuringAllActiveWorkspaceSync.join('.\n')
+            : ''
+        }`,
       );
     }
   }
