@@ -7,19 +7,11 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import {
-  BillingSubscription,
-  SubscriptionStatus,
-} from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { COMPANY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
@@ -36,18 +28,13 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
     AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand.name,
   );
   constructor(
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(BillingSubscription, 'core')
-    private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly workspaceStatusService: WorkspaceStatusService,
   ) {
     super();
   }
@@ -76,19 +63,8 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
     if (options.workspaceId) {
       workspaceIds = [options.workspaceId];
     } else {
-      const workspaces = await this.workspaceRepository.find();
-
-      const activeWorkspaceIds = (
-        await Promise.all(
-          workspaces.map(async (workspace) => {
-            const isActive = await this.workspaceIsActive(workspace);
-
-            return { workspace, isActive };
-          }),
-        )
-      )
-        .filter((result) => result.isActive)
-        .map((result) => result.workspace.id);
+      const activeWorkspaceIds =
+        await this.workspaceStatusService.getActiveWorkspaceIds();
 
       workspaceIds = activeWorkspaceIds;
     }
@@ -197,34 +173,5 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
     }
 
     this.logger.log(chalk.green(`Command completed!`));
-  }
-
-  private async workspaceIsActive(workspace: Workspace): Promise<boolean> {
-    const billingSupscriptionForWorkspace =
-      await this.billingSubscriptionRepository.findOne({
-        where: { workspaceId: workspace.id },
-      });
-
-    if (
-      billingSupscriptionForWorkspace?.status &&
-      [
-        SubscriptionStatus.PastDue,
-        SubscriptionStatus.Active,
-        SubscriptionStatus.Trialing,
-      ].includes(billingSupscriptionForWorkspace.status as SubscriptionStatus)
-    ) {
-      return true;
-    }
-
-    const freeAccessEnabledFeatureFlagForWorkspace =
-      await this.featureFlagRepository.findOne({
-        where: {
-          workspaceId: workspace.id,
-          key: FeatureFlagKeys.IsFreeAccessEnabled,
-          value: true,
-        },
-      });
-
-    return !!freeAccessEnabledFeatureFlagForWorkspace;
   }
 }
