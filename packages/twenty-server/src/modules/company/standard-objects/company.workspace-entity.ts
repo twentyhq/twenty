@@ -230,5 +230,5 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsDeprecated()
   @WorkspaceIsNullable()
-  address_old: string;
+  addressOld: string;
 }
