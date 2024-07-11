@@ -1,3 +1,5 @@
+import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
+
 import {
   CustomCodeEngineModuleOptions,
   CustomCodeEngineDriverType,
@@ -19,6 +21,31 @@ export const customCodeEngineModuleFactory = async (
       return {
         type: CustomCodeEngineDriverType.Local,
         options: { fileStorageService, fileUploadService },
+      };
+    }
+    case CustomCodeEngineDriverType.Lambda: {
+      const region = environmentService.get('LAMBDA_REGION');
+      const accessKeyId = environmentService.get('LAMBDA_ACCESS_KEY_ID');
+      const secretAccessKey = environmentService.get(
+        'LAMBDA_SECRET_ACCESS_KEY',
+      );
+      const role = environmentService.get('LAMBDA_ROLE');
+
+      return {
+        type: CustomCodeEngineDriverType.Lambda,
+        options: {
+          fileUploadService,
+          credentials: accessKeyId
+            ? {
+                accessKeyId,
+                secretAccessKey,
+              }
+            : fromNodeProviderChain({
+                clientConfig: { region },
+              }),
+          region: region ?? '',
+          role: role ?? '',
+        },
       };
     }
     default:

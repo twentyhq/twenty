@@ -1,7 +1,7 @@
 import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 
-import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { LocalDriverOptions } from 'src/engine/integrations/custom-code-engine/drivers/local.driver';
+import { LambdaDriverOptions } from 'src/engine/integrations/custom-code-engine/drivers/lambda.driver';
 
 export enum CustomCodeEngineDriverType {
   Lambda = 'lambda',
@@ -10,13 +10,17 @@ export enum CustomCodeEngineDriverType {
 
 export interface LocalDriverFactoryOptions {
   type: CustomCodeEngineDriverType.Local;
-  options: {
-    fileStorageService: FileStorageService;
-    fileUploadService: FileUploadService;
-  };
+  options: LocalDriverOptions;
 }
 
-export type CustomCodeEngineModuleOptions = LocalDriverFactoryOptions;
+export interface LambdaDriverFactoryOptions {
+  type: CustomCodeEngineDriverType.Lambda;
+  options: LambdaDriverOptions;
+}
+
+export type CustomCodeEngineModuleOptions =
+  | LocalDriverFactoryOptions
+  | LambdaDriverFactoryOptions;
 
 export type CustomCodeEngineModuleAsyncOptions = {
   useFactory: (

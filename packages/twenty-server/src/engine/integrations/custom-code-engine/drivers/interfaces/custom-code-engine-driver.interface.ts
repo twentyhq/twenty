@@ -11,8 +11,7 @@ export type CustomCodeEngineServiceUpsertType = {
 export interface CustomCodeEngineDriver {
   execute(
     functionToExecute: FunctionWorkspaceEntity,
-    event: object | undefined,
-    context: object | undefined,
+    payload: object | undefined,
   ): Promise<object>;
   upsert(file: FileUpload): Promise<CustomCodeEngineServiceUpsertType>;
 }

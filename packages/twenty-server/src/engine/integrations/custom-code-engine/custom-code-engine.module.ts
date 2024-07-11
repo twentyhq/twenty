@@ -1,10 +1,14 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
-import { CustomCodeEngineModuleAsyncOptions } from 'src/engine/integrations/custom-code-engine/interfaces/custom-code-engine.interface';
+import {
+  CustomCodeEngineDriverType,
+  CustomCodeEngineModuleAsyncOptions,
+} from 'src/engine/integrations/custom-code-engine/interfaces/custom-code-engine.interface';
 
 import { CustomCodeEngineService } from 'src/engine/integrations/custom-code-engine/custom-code-engine.service';
 import { CUSTOM_CODE_ENGINE_DRIVER } from 'src/engine/integrations/custom-code-engine/custom-code-engine.constants';
 import { LocalDriver } from 'src/engine/integrations/custom-code-engine/drivers/local.driver';
+import { LambdaDriver } from 'src/engine/integrations/custom-code-engine/drivers/lambda.driver';
 
 @Global()
 export class CustomCodeEngineModule {
@@ -16,12 +20,9 @@ export class CustomCodeEngineModule {
       useFactory: async (...args: any[]) => {
         const config = await options.useFactory(...args);
 
-        return config?.type === 'local'
-          ? new LocalDriver(
-              config.options.fileStorageService,
-              config.options.fileUploadService,
-            )
-          : undefined;
+        return config?.type === CustomCodeEngineDriverType.Local
+          ? new LocalDriver(config.options)
+          : new LambdaDriver(config.options);
       },
       inject: options.inject || [],
     };

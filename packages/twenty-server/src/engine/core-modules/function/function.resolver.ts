@@ -7,6 +7,7 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { FunctionService } from 'src/engine/core-modules/function/function.service';
+import { ExecuteFunctionInput } from 'src/engine/core-modules/function/dtos/execute-function.input';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => String)
@@ -26,10 +27,12 @@ export class FunctionResolver {
   @Mutation(() => String)
   async executeFunction(
     @AuthUser() user: User,
-    @Args('name', { type: () => String }) name: string,
+    @Args() executeFunctionInput: ExecuteFunctionInput,
   ) {
+    const { name, payload } = executeFunctionInput;
+
     return JSON.stringify(
-      await this.functionService.executeFunction(user, name),
+      await this.functionService.executeFunction(user, name, payload),
     );
   }
 }

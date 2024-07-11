@@ -205,10 +205,42 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 
+  // Custom Code Engine
   @IsEnum(CustomCodeEngineDriverType)
   @IsOptional()
   CUSTOM_CODE_ENGINE_DRIVER_TYPE: CustomCodeEngineDriverType =
     CustomCodeEngineDriverType.Local;
+
+  @ValidateIf(
+    (env) =>
+      env.CUSTOM_CODE_ENGINE_DRIVER_TYPE === CustomCodeEngineDriverType.Lambda,
+  )
+  @IsAWSRegion()
+  LAMBDA_REGION: AwsRegion;
+
+  @ValidateIf(
+    (env) =>
+      env.CUSTOM_CODE_ENGINE_DRIVER_TYPE === CustomCodeEngineDriverType.Lambda,
+  )
+  @IsString()
+  @IsOptional()
+  LAMBDA_ROLE: string;
+
+  @ValidateIf(
+    (env) =>
+      env.CUSTOM_CODE_ENGINE_DRIVER_TYPE === CustomCodeEngineDriverType.Lambda,
+  )
+  @IsString()
+  @IsOptional()
+  LAMBDA_ACCESS_KEY_ID: string;
+
+  @ValidateIf(
+    (env) =>
+      env.CUSTOM_CODE_ENGINE_DRIVER_TYPE === CustomCodeEngineDriverType.Lambda,
+  )
+  @IsString()
+  @IsOptional()
+  LAMBDA_SECRET_ACCESS_KEY: string;
 
   // Storage
   @IsEnum(StorageDriverType)

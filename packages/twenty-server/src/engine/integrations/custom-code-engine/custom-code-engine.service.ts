@@ -19,9 +19,8 @@ export class CustomCodeEngineService implements CustomCodeEngineDriver {
 
   async execute(
     functionToExecute: FunctionWorkspaceEntity,
-    event: object | undefined = undefined,
-    context: object | undefined = undefined,
+    payload: object | undefined = undefined,
   ) {
-    return this.driver.execute(functionToExecute, event, context);
+    return this.driver.execute(functionToExecute, payload);
   }
 }

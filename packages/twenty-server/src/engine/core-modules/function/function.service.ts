@@ -21,7 +21,11 @@ export class FunctionService {
     private readonly functionRepository: WorkspaceRepository<FunctionWorkspaceEntity>,
   ) {}
 
-  async executeFunction(user: User, name: string) {
+  async executeFunction(
+    user: User,
+    name: string,
+    payload: object | undefined = undefined,
+  ) {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     const functionToExecute = await this.functionRepository.findOneOrFail({
@@ -31,7 +35,7 @@ export class FunctionService {
       },
     });
 
-    return this.customCodeEngineService.execute(functionToExecute);
+    return this.customCodeEngineService.execute(functionToExecute, payload);
   }
 
   async upsertFunction(user: User, file: FileUpload, name: string) {

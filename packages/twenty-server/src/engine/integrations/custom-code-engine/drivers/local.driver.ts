@@ -15,11 +15,19 @@ import { FileUploadService } from 'src/engine/core-modules/file/file-upload/serv
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
 import { compileTypescript } from 'src/engine/integrations/custom-code-engine/utils/compile-typescript';
 
+export interface LocalDriverOptions {
+  fileStorageService: FileStorageService;
+  fileUploadService: FileUploadService;
+}
+
 export class LocalDriver implements CustomCodeEngineDriver {
-  constructor(
-    private readonly fileStorageService: FileStorageService,
-    private readonly fileUploadService: FileUploadService,
-  ) {}
+  private readonly fileStorageService: FileStorageService;
+  private readonly fileUploadService: FileUploadService;
+
+  constructor(options: LocalDriverOptions) {
+    this.fileStorageService = options.fileStorageService;
+    this.fileUploadService = options.fileUploadService;
+  }
 
   async upsert({ createReadStream, filename, mimetype }: FileUpload) {
     const typescriptCode = await readFileContent(createReadStream());
@@ -48,8 +56,7 @@ export class LocalDriver implements CustomCodeEngineDriver {
 
   async execute(
     functionToExecute: FunctionWorkspaceEntity,
-    event: object | undefined = undefined,
-    context: object | undefined = undefined,
+    payload: object | undefined = undefined,
   ): Promise<object> {
     const fileStream = await this.fileStorageService.read({
       folderPath: '',
@@ -93,7 +100,7 @@ export class LocalDriver implements CustomCodeEngineDriver {
         }
       });
 
-      child.send({ event, context });
+      child.send({ event: payload });
     });
   }
 }
