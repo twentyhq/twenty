@@ -6,12 +6,12 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { FunctionWorkspaceEntity } from 'src/modules/function/stadard-objects/function.workspace-entity';
-import { CodeExecutorModule } from 'src/engine/integrations/code-executor/code-executor.module';
+import { CustomCodeEngineModule } from 'src/engine/integrations/custom-code-engine/custom-code-engine.module';
 
 @Module({
   imports: [
     TwentyORMModule.forFeature([FunctionWorkspaceEntity]),
-    CodeExecutorModule,
+    CustomCodeEngineModule,
     FileUploadModule,
     UserModule,
   ],

@@ -12,7 +12,7 @@ import { FunctionWorkspaceEntity } from 'src/modules/function/stadard-objects/fu
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
 @Injectable()
-export class CodeExecutorService {
+export class CustomCodeEngineService {
   constructor(private readonly fileStorageService: FileStorageService) {}
 
   compileTypeScript(tsCode: string): string {

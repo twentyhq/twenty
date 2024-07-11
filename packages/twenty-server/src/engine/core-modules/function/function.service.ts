@@ -13,13 +13,13 @@ import {
   FunctionSyncStatus,
   FunctionWorkspaceEntity,
 } from 'src/modules/function/stadard-objects/function.workspace-entity';
-import { CodeExecutorService } from 'src/engine/integrations/code-executor/code-executor.service';
+import { CustomCodeEngineService } from 'src/engine/integrations/custom-code-engine/custom-code-engine.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
 @Injectable()
 export class FunctionService {
   constructor(
-    private readonly codeExecutorService: CodeExecutorService,
+    private readonly codeExecutorService: CustomCodeEngineService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileStorageService: FileStorageService,
     private readonly userService: UserService,
