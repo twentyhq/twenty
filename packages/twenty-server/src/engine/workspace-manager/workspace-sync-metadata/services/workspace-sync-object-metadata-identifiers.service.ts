@@ -1,11 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
@@ -30,63 +33,132 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
       manager.getRepository(ObjectMetadataEntity);
 
     const originalObjectMetadataCollection =
-      await objectMetadataRepository.find({
-        where: {
-          workspaceId: context.workspaceId,
-          isCustom: false,
-        },
-        relations: ['fields'],
-      });
+      await this.getOriginalObjectMetadataCollection(
+        context.workspaceId,
+        objectMetadataRepository,
+      );
 
+    const standardObjectMetadataMap = this.createStandardObjectMetadataMap(
+      context,
+      workspaceFeatureFlagsMap,
+    );
+
+    await this.processObjectMetadataCollection(
+      originalObjectMetadataCollection,
+      standardObjectMetadataMap,
+      objectMetadataRepository,
+    );
+  }
+
+  private async getOriginalObjectMetadataCollection(
+    workspaceId: string,
+    objectMetadataRepository: Repository<ObjectMetadataEntity>,
+  ): Promise<ObjectMetadataEntity[]> {
+    return await objectMetadataRepository.find({
+      where: { workspaceId, isCustom: false },
+      relations: ['fields'],
+    });
+  }
+
+  private createStandardObjectMetadataMap(
+    context: WorkspaceSyncContext,
+    workspaceFeatureFlagsMap: FeatureFlagMap,
+  ): Record<string, any> {
     const standardObjectMetadataCollection = this.standardObjectFactory.create(
       standardObjectMetadataDefinitions,
       context,
       workspaceFeatureFlagsMap,
     );
 
-    const standardObjectMetadataMap = mapObjectMetadataByUniqueIdentifier(
+    return mapObjectMetadataByUniqueIdentifier(
       standardObjectMetadataCollection,
     );
+  }
 
+  private async processObjectMetadataCollection(
+    originalObjectMetadataCollection: ObjectMetadataEntity[],
+    standardObjectMetadataMap: Record<string, any>,
+    objectMetadataRepository: Repository<ObjectMetadataEntity>,
+  ): Promise<void> {
     for (const objectMetadata of originalObjectMetadataCollection) {
       const objectStandardId = objectMetadata.standardId;
 
-      const labelIdentifierFieldMetadata = objectMetadata.fields.find(
-        (field) =>
-          objectStandardId &&
-          field.standardId ===
-            standardObjectMetadataMap[objectStandardId]
-              ?.labelIdentifierStandardId,
-      );
-
-      if (
-        labelIdentifierFieldMetadata &&
-        labelIdentifierFieldMetadata.type !== FieldMetadataType.TEXT
-      ) {
+      if (!objectStandardId) {
         throw new Error(
-          `Label identifier field for object ${objectMetadata.nameSingular} must be of type TEXT`,
+          `Object ${objectMetadata.nameSingular} is missing standardId`,
         );
       }
 
-      const imageIdentifierFieldMetadata = objectMetadata.fields.find(
-        (field) =>
-          objectStandardId &&
-          field.standardId ===
-            standardObjectMetadataMap[objectStandardId]
-              ?.imageIdentifierStandardId,
+      const labelIdentifierFieldMetadata = this.findIdentifierFieldMetadata(
+        objectMetadata,
+        objectStandardId,
+        standardObjectMetadataMap,
+        'labelIdentifierStandardId',
       );
 
-      if (imageIdentifierFieldMetadata) {
-        throw new Error(
-          `Image identifier field for object ${objectMetadata.nameSingular} are not supported yet.`,
-        );
-      }
+      const imageIdentifierFieldMetadata = this.findIdentifierFieldMetadata(
+        objectMetadata,
+        objectStandardId,
+        standardObjectMetadataMap,
+        'imageIdentifierStandardId',
+      );
+
+      this.validateFieldMetadata(
+        objectMetadata,
+        labelIdentifierFieldMetadata,
+        imageIdentifierFieldMetadata,
+      );
 
       await objectMetadataRepository.save({
         ...objectMetadata,
         labelIdentifierFieldMetadataId:
           labelIdentifierFieldMetadata?.id ?? null,
       });
+    }
+  }
+
+  private findIdentifierFieldMetadata(
+    objectMetadata: ObjectMetadataEntity,
+    objectStandardId: string,
+    standardObjectMetadataMap: Record<string, any>,
+    standardIdFieldName: string,
+  ): FieldMetadataEntity | undefined {
+    const identifierFieldMetadata = objectMetadata.fields.find(
+      (field) =>
+        field.standardId ===
+        standardObjectMetadataMap[objectStandardId][standardIdFieldName],
+    );
+
+    if (
+      !identifierFieldMetadata &&
+      standardObjectMetadataMap[objectStandardId][standardIdFieldName]
+    ) {
+      throw new Error(
+        `Identifier field for object ${objectMetadata.nameSingular} does not exist`,
+      );
+    }
+
+    return identifierFieldMetadata;
+  }
+
+  private validateFieldMetadata(
+    objectMetadata: ObjectMetadataEntity,
+    labelIdentifierFieldMetadata: FieldMetadataEntity | undefined,
+    imageIdentifierFieldMetadata: FieldMetadataEntity | undefined,
+  ): void {
+    if (
+      labelIdentifierFieldMetadata &&
+      labelIdentifierFieldMetadata.type !== FieldMetadataType.TEXT
+    ) {
+      throw new Error(
+        `Label identifier field for object ${objectMetadata.nameSingular} must be of type TEXT`,
+      );
+    }
+
+    if (imageIdentifierFieldMetadata) {
+      throw new Error(
+        `Image identifier field for object ${objectMetadata.nameSingular} are not supported yet.`,
+      );
     }
   }
 }
