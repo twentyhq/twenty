@@ -142,6 +142,9 @@ export const SettingsObjectNewFieldStep2 = () => {
       }
 
       navigate(`/settings/objects/${objectSlug}`);
+
+      // TODO: fix optimistic update logic
+      // Forcing a refetch for now but it's not ideal
       await apolloClient.refetchQueries({
         include: ['FindManyViews', 'CombinedFindManyRecords'],
       });
