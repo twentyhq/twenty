@@ -64,17 +64,6 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   closeDate: Date | null;
 
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probability_deprecated,
-    type: FieldMetadataType.TEXT,
-    label: 'Probability',
-    description: 'Opportunity probability',
-    icon: 'IconProgressCheck',
-    defaultValue: "'0'",
-  })
-  @WorkspaceIsDeprecated()
-  probability: string;
-
-  @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
     type: FieldMetadataType.SELECT,
     label: 'Stage',
@@ -187,4 +176,15 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,
+    type: FieldMetadataType.TEXT,
+    label: 'Probability',
+    description: 'Opportunity probability',
+    icon: 'IconProgressCheck',
+    defaultValue: "'0'",
+  })
+  @WorkspaceIsDeprecated()
+  probability: string;
 }
