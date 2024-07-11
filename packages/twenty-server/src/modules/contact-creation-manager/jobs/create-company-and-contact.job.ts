@@ -1,8 +1,8 @@
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { CreateCompanyAndContactService } from 'src/modules/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 
 export type CreateCompanyAndContactJobData = {
   workspaceId: string;

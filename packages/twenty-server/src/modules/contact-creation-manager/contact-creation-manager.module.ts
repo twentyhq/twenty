@@ -5,11 +5,11 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { CreateCompanyModule } from 'src/modules/auto-companies-and-contacts-creation/create-company/create-company.module';
-import { CreateContactModule } from 'src/modules/auto-companies-and-contacts-creation/create-contact/create-contact.module';
-import { AutoCompaniesAndContactsCreationCalendarChannelListener } from 'src/modules/auto-companies-and-contacts-creation/listeners/auto-companies-and-contacts-creation-calendar-channel.listener';
-import { AutoCompaniesAndContactsCreationMessageChannelListener } from 'src/modules/auto-companies-and-contacts-creation/listeners/auto-companies-and-contacts-creation-message-channel.listener';
-import { CreateCompanyAndContactService } from 'src/modules/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
+import { CreateCompanyModule } from 'src/modules/contact-creation-manager/create-company/create-company.module';
+import { CreateContactModule } from 'src/modules/contact-creation-manager/create-contact/create-contact.module';
+import { AutoCompaniesAndContactsCreationCalendarChannelListener } from 'src/modules/contact-creation-manager/listeners/auto-companies-and-contacts-creation-calendar-channel.listener';
+import { AutoCompaniesAndContactsCreationMessageChannelListener } from 'src/modules/contact-creation-manager/listeners/auto-companies-and-contacts-creation-message-channel.listener';
+import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 

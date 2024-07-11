@@ -7,9 +7,9 @@ import { Processor } from 'src/engine/integrations/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { CreateCompanyAndContactService } from 'src/modules/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 
 export type CalendarCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;

@@ -5,9 +5,9 @@ import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { getCompanyNameFromDomainName } from 'src/modules/auto-companies-and-contacts-creation/utils/get-company-name-from-domain-name.util';
 import { CompanyRepository } from 'src/modules/company/repositories/company.repository';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
 @Injectable()
 export class CreateCompanyService {
   private readonly httpService: AxiosInstance;

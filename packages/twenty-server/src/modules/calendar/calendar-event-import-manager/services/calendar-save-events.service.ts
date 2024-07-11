@@ -10,10 +10,6 @@ import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import {
-    CreateCompanyAndContactJob,
-    CreateCompanyAndContactJobData,
-} from 'src/modules/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -22,6 +18,10 @@ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/co
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import {
+    CreateCompanyAndContactJob,
+    CreateCompanyAndContactJobData,
+} from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
 
 @Injectable()
 export class CalendarSaveEventsService {
