@@ -7,11 +7,11 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { COMPANY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
@@ -34,7 +34,7 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly workspaceService: WorkspaceService,
+    private readonly workspaceStatusService: WorkspaceStatusService,
   ) {
     super();
   }
@@ -64,7 +64,7 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
       workspaceIds = [options.workspaceId];
     } else {
       const activeWorkspaceIds =
-        await this.workspaceService.getActiveWorkspaceIds();
+        await this.workspaceStatusService.getActiveWorkspaceIds();
 
       workspaceIds = activeWorkspaceIds;
     }

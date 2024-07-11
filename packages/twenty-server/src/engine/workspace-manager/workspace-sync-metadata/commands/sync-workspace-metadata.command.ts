@@ -1,11 +1,8 @@
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import isEmpty from 'lodash.isempty';
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
@@ -31,8 +28,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     private readonly workspaceHealthService: WorkspaceHealthService,
     private readonly dataSourceService: DataSourceService,
     private readonly syncWorkspaceLoggerService: SyncWorkspaceLoggerService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceService: WorkspaceService,
+    // private readonly workspaceStatusService: WorkspaceStatusService,
   ) {
     super();
   }
@@ -42,13 +38,11 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     options: RunWorkspaceMigrationsOptions,
   ): Promise<void> {
     // TODO: re-implement load index from workspaceService, this is breaking the logger
-    let workspaceIds = options.workspaceId ? [options.workspaceId] : [];
+    const workspaceIds = options.workspaceId ? [options.workspaceId] : [];
 
     if (isEmpty(workspaceIds)) {
-      const activeWorkspaceIds =
-        await this.workspaceService.getActiveWorkspaceIds();
+      const activeWorkspaceIds = [];
 
-      workspaceIds = activeWorkspaceIds;
       this.logger.log(
         `Attempting to sync ${activeWorkspaceIds.length} workspaces.`,
       );
