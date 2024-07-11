@@ -2,26 +2,23 @@ import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
 import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
-import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isNonEmptyString } from '@sniptt/guards';
 import { MouseEvent, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-export type RecordChipProps = {
+export type RecordIndexRecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
-  className?: string;
   variant?: AvatarChipVariant;
 };
 
-export const RecordChip = ({
+export const RecordIndexRecordChip = ({
   objectNameSingular,
   record,
-  className,
   variant,
-}: RecordChipProps) => {
-  const navigate = useNavigate();
+}: RecordIndexRecordChipProps) => {
+  const { onIdentifierChipClick } = useContext(RecordIndexEventContext);
+
   const { identifierChipGeneratorPerObject } = useContext(
     PreComputedChipGeneratorsContext,
   );
@@ -33,12 +30,8 @@ export const RecordChip = ({
   const recordChipData = generateRecordChipData(record);
 
   const handleAvatarChipClick = (event: MouseEvent) => {
-    const linkToShowPage = getLinkToShowPage(objectNameSingular, record);
-
-    if (isNonEmptyString(linkToShowPage)) {
-      event.stopPropagation();
-      navigate(linkToShowPage);
-    }
+    event.preventDefault();
+    onIdentifierChipClick(record.id);
   };
 
   return (
@@ -48,7 +41,6 @@ export const RecordChip = ({
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       onClick={handleAvatarChipClick}
-      className={className}
       variant={variant}
     />
   );

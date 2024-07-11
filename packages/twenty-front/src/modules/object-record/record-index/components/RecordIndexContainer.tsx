@@ -10,6 +10,7 @@ import { RecordIndexBoardDataLoaderEffect } from '@/object-record/record-index/c
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
+import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
 import { RecordIndexOptionsDropdown } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdown';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
@@ -108,6 +109,10 @@ export const RecordIndexContainer = ({
     [columnDefinitions, setTableColumns],
   );
 
+  const onIdentifierChipClick = (recordId: string) => {
+    console.log('onIndexIdentifierChipClick', recordId);
+  };
+
   return (
     <StyledContainer>
       <RecordFieldValueSelectorContextProvider>
@@ -153,41 +158,41 @@ export const RecordIndexContainer = ({
             />
           </StyledContainerWithPadding>
         </SpreadsheetImportProvider>
-
-        {recordIndexViewType === ViewType.Table && (
-          <>
-            <RecordIndexTableContainer
-              recordTableId={recordIndexId}
-              viewBarId={recordIndexId}
-              objectNameSingular={objectNameSingular}
-              createRecord={createRecord}
-            />
-            <RecordIndexTableContainerEffect
-              objectNameSingular={objectNameSingular}
-              recordTableId={recordIndexId}
-              viewBarId={recordIndexId}
-            />
-          </>
-        )}
-
-        {recordIndexViewType === ViewType.Kanban && (
-          <StyledContainerWithPadding>
-            <RecordIndexBoardContainer
-              recordBoardId={recordIndexId}
-              viewBarId={recordIndexId}
-              objectNameSingular={objectNameSingular}
-              createRecord={createRecord}
-            />
-            <RecordIndexBoardDataLoader
-              objectNameSingular={objectNameSingular}
-              recordBoardId={recordIndexId}
-            />
-            <RecordIndexBoardDataLoaderEffect
-              objectNameSingular={objectNameSingular}
-              recordBoardId={recordIndexId}
-            />
-          </StyledContainerWithPadding>
-        )}
+        <RecordIndexEventContext.Provider value={{ onIdentifierChipClick }}>
+          {recordIndexViewType === ViewType.Table && (
+            <>
+              <RecordIndexTableContainer
+                recordTableId={recordIndexId}
+                viewBarId={recordIndexId}
+                objectNameSingular={objectNameSingular}
+                createRecord={createRecord}
+              />
+              <RecordIndexTableContainerEffect
+                objectNameSingular={objectNameSingular}
+                recordTableId={recordIndexId}
+                viewBarId={recordIndexId}
+              />
+            </>
+          )}
+          {recordIndexViewType === ViewType.Kanban && (
+            <StyledContainerWithPadding>
+              <RecordIndexBoardContainer
+                recordBoardId={recordIndexId}
+                viewBarId={recordIndexId}
+                objectNameSingular={objectNameSingular}
+                createRecord={createRecord}
+              />
+              <RecordIndexBoardDataLoader
+                objectNameSingular={objectNameSingular}
+                recordBoardId={recordIndexId}
+              />
+              <RecordIndexBoardDataLoaderEffect
+                objectNameSingular={objectNameSingular}
+                recordBoardId={recordIndexId}
+              />
+            </StyledContainerWithPadding>
+          )}
+        </RecordIndexEventContext.Provider>
       </RecordFieldValueSelectorContextProvider>
     </StyledContainer>
   );

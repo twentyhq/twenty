@@ -1,25 +1,21 @@
-import { EntityChip } from 'twenty-ui';
-
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useChipFieldDisplay';
+import { RecordIndexRecordChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 
 export const ChipFieldDisplay = () => {
-  const { recordValue, generateRecordChipData, setRecordPosition } =
+  const { recordValue, objectNameSingular, isLabelIdentifier } =
     useChipFieldDisplay();
 
   if (!recordValue) {
     return null;
   }
 
-  const recordChipData = generateRecordChipData(recordValue);
-
-  return (
-    <EntityChip
-      entityId={recordValue.id}
-      name={recordChipData.name as any}
-      avatarType={recordChipData.avatarType}
-      avatarUrl={recordChipData.avatarUrl ?? ''}
-      linkToEntity={recordChipData.linkToShowPage}
-      onClick={setRecordPosition}
+  return isLabelIdentifier ? (
+    <RecordIndexRecordChip
+      objectNameSingular={objectNameSingular}
+      record={recordValue}
     />
+  ) : (
+    <RecordChip objectNameSingular={objectNameSingular} record={recordValue} />
   );
 };

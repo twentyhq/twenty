@@ -1,11 +1,18 @@
-import { EntityChip } from 'twenty-ui';
+import { AvatarChip } from 'twenty-ui';
 
+import { useHandleRecordChipClick } from '@/object-record/cache/hooks/useHandleRecordChipClick';
 import { useRelationToOneFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationToOneFieldDisplay';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const RelationToOneFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
     useRelationToOneFieldDisplay();
+
+  const { handleRecordChipClick } = useHandleRecordChipClick({
+    objectNameSingular:
+      fieldDefinition.metadata.relationObjectMetadataNameSingular,
+    recordId: fieldValue?.id ?? '',
+  });
 
   if (
     !fieldValue ||
@@ -17,12 +24,12 @@ export const RelationToOneFieldDisplay = () => {
   const recordChipData = generateRecordChipData(fieldValue);
 
   return (
-    <EntityChip
-      entityId={fieldValue.id}
+    <AvatarChip
+      placeholderColorSeed={recordChipData.recordId}
       name={recordChipData.name as any}
       avatarType={recordChipData.avatarType}
       avatarUrl={getImageAbsoluteURIOrBase64(recordChipData.avatarUrl) || ''}
-      linkToEntity={recordChipData.linkToShowPage}
+      onClick={handleRecordChipClick}
     />
   );
 };
