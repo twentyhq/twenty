@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import ts from 'typescript';
 import { FileUpload } from 'graphql-upload';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
@@ -15,12 +14,14 @@ import {
   FunctionWorkspaceEntity,
 } from 'src/modules/function/stadard-objects/function.workspace-entity';
 import { CodeExecutorService } from 'src/engine/code-executor/code-executor.service';
+import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
 @Injectable()
 export class FunctionService {
   constructor(
     private readonly codeExecutorService: CodeExecutorService,
     private readonly fileUploadService: FileUploadService,
+    private readonly fileStorageService: FileStorageService,
     private readonly userService: UserService,
     @InjectWorkspaceRepository(FunctionWorkspaceEntity)
     private readonly functionRepository: WorkspaceRepository<FunctionWorkspaceEntity>,
@@ -44,10 +45,11 @@ export class FunctionService {
     { createReadStream, filename, mimetype }: FileUpload,
     name: string,
   ) {
-    const fileContent = await this.readStreamToBuffer(createReadStream());
+    const typescriptCode =
+      await this.fileStorageService.readContent(createReadStream());
 
-    const typescriptCode = fileContent.toString('utf8');
-    const javascriptCode = this.compileTypeScript(typescriptCode);
+    const javascriptCode =
+      this.codeExecutorService.compileTypeScript(typescriptCode);
 
     const { path: sourceCodePath } = await this.fileUploadService.uploadFile({
       file: typescriptCode,
@@ -64,6 +66,7 @@ export class FunctionService {
     });
 
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
+
     const createdFunction = await this.functionRepository.save({
       name,
       author: workspaceMember,
@@ -73,35 +76,5 @@ export class FunctionService {
     });
 
     return createdFunction.sourceCodePath;
-  }
-
-  private async readStreamToBuffer(
-    stream: NodeJS.ReadableStream,
-  ): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-      const chunks: Buffer[] = [];
-
-      stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-      stream.on('end', () => resolve(Buffer.concat(chunks)));
-      stream.on('error', (err) => reject(err));
-    });
-  }
-
-  private compileTypeScript(tsCode: string): string {
-    const options: ts.CompilerOptions = {
-      module: ts.ModuleKind.CommonJS,
-      target: ts.ScriptTarget.ES2017,
-      moduleResolution: ts.ModuleResolutionKind.Node10,
-      esModuleInterop: true,
-      resolveJsonModule: true,
-      allowSyntheticDefaultImports: true,
-      types: ['node'],
-    };
-
-    const result = ts.transpileModule(tsCode, {
-      compilerOptions: options,
-    });
-
-    return result.outputText;
   }
 }

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { Readable } from 'stream';
 import { fork } from 'child_process';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { promises as fs } from 'fs';
 
 import { v4 } from 'uuid';
+import ts from 'typescript';
 
 import { FunctionWorkspaceEntity } from 'src/modules/function/stadard-objects/function.workspace-entity';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
@@ -15,14 +15,22 @@ import { FileStorageService } from 'src/engine/integrations/file-storage/file-st
 export class CodeExecutorService {
   constructor(private readonly fileStorageService: FileStorageService) {}
 
-  async streamToString(stream: Readable): Promise<string> {
-    const chunks: Buffer[] = [];
+  compileTypeScript(tsCode: string): string {
+    const options: ts.CompilerOptions = {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2017,
+      moduleResolution: ts.ModuleResolutionKind.Node10,
+      esModuleInterop: true,
+      resolveJsonModule: true,
+      allowSyntheticDefaultImports: true,
+      types: ['node'],
+    };
 
-    return new Promise((resolve, reject) => {
-      stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-      stream.on('error', (err) => reject(err));
-      stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    const result = ts.transpileModule(tsCode, {
+      compilerOptions: options,
     });
+
+    return result.outputText;
   }
 
   async execute(
@@ -30,12 +38,11 @@ export class CodeExecutorService {
     event: object | undefined = undefined,
     context: object | undefined = undefined,
   ): Promise<object> {
-    const fileContent = await this.streamToString(
-      await this.fileStorageService.read({
-        folderPath: '',
-        filename: functionToExecute.builtSourcePath,
-      }),
-    );
+    const fileStream = await this.fileStorageService.read({
+      folderPath: '',
+      filename: functionToExecute.builtSourcePath,
+    });
+    const fileContent = await this.fileStorageService.readContent(fileStream);
 
     const tmpFilePath = join(tmpdir(), `${v4()}.js`);
 
@@ -67,7 +74,7 @@ export class CodeExecutorService {
       });
 
       child.on('exit', (code) => {
-        if (code !== 0) {
+        if (code && code !== 0) {
           reject(new Error(`Child process exited with code ${code}`));
           fs.unlink(tmpFilePath);
         }
