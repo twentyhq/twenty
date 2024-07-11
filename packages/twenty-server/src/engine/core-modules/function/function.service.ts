@@ -13,7 +13,7 @@ import {
   FunctionSyncStatus,
   FunctionWorkspaceEntity,
 } from 'src/modules/function/stadard-objects/function.workspace-entity';
-import { CodeExecutorService } from 'src/engine/code-executor/code-executor.service';
+import { CodeExecutorService } from 'src/engine/integrations/code-executor/code-executor.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
 @Injectable()
