@@ -19,20 +19,18 @@ export class FileUploadService {
     file,
     filename,
     mimeType,
-    fileFolder,
-    workspaceId,
+    folder,
   }: {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
-    fileFolder: FileFolder;
-    workspaceId: string;
+    folder: string;
   }) {
     await this.fileStorage.write({
       file,
       name: filename,
       mimeType,
-      folder: `workspace-${workspaceId}/${fileFolder}`,
+      folder,
     });
   }
 
@@ -71,19 +69,19 @@ export class FileUploadService {
     const ext = filename.split('.')?.[1];
     const id = uuidV4();
     const name = `${id}${ext ? `.${ext}` : ''}`;
+    const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
     await this._uploadFile({
       file: this._sanitizeFile({ file, ext, mimeType }),
       filename: name,
       mimeType,
-      fileFolder,
-      workspaceId,
+      folder,
     });
 
     return {
       id,
       mimeType,
-      path: `${fileFolder}/${name}`,
+      path: `${folder}/${name}`,
     };
   }
 
@@ -124,15 +122,15 @@ export class FileUploadService {
     await Promise.all(
       images.map(async (image, index) => {
         const buffer = await image.toBuffer();
+        const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
-        paths.push(`${fileFolder}/${cropSizes[index]}/${name}`);
+        paths.push(`${folder}/${cropSizes[index]}/${name}`);
 
         return this._uploadFile({
           file: buffer,
           filename: `${cropSizes[index]}/${name}`,
           mimeType,
-          fileFolder,
-          workspaceId,
+          folder,
         });
       }),
     );
@@ -142,5 +140,9 @@ export class FileUploadService {
       mimeType,
       paths,
     };
+  }
+
+  private getWorkspaceFolderName(workspaceId: string, fileFolder: FileFolder) {
+    return `workspace-${workspaceId}/${fileFolder}`;
   }
 }

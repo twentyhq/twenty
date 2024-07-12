@@ -4,8 +4,8 @@ import { basename } from 'path';
 
 import { KebabCase } from 'type-fest';
 
-import { kebabCase } from 'src/utils/kebab-case';
 import { settings } from 'src/engine/constants/settings';
+import { kebabCase } from 'src/utils/kebab-case';
 
 import { FileFolder } from './interfaces/file-folder.interface';
 
@@ -17,7 +17,13 @@ export const checkFilePath = (filePath: string): string => {
   );
 
   const sanitizedFilePath = filePath.replace(/\0/g, '');
-  const [folder, size] = sanitizedFilePath.split('/');
+  const [workspaceFolder, folder, size] = sanitizedFilePath.split('/');
+
+  if (!workspaceFolder.startsWith('workspace-')) {
+    throw new BadRequestException(
+      `Not a workspace specific folder. Access not allowed.`,
+    );
+  }
 
   if (!allowedFolders.includes(folder as AllowedFolders)) {
     throw new BadRequestException(`Folder ${folder} is not allowed`);
