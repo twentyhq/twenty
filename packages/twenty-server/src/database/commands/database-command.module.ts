@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { UpdateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/0-20-update-message-channel-sync-status-enum.command';
 import { AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand } from 'src/database/commands/0-22-add-new-address-field-to-views-with-deprecated-address.command';
+import { UpdateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/0-22-update-message-channel-sync-status-enum.command';
 import { StartDataSeedDemoWorkspaceCronCommand } from 'src/database/commands/data-seed-demo-workspace/crons/start-data-seed-demo-workspace.cron.command';
 import { StopDataSeedDemoWorkspaceCronCommand } from 'src/database/commands/data-seed-demo-workspace/crons/stop-data-seed-demo-workspace.cron.command';
 import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace-command';
