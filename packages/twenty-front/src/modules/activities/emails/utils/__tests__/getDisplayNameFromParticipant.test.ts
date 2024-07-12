@@ -1,6 +1,7 @@
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import {
   WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberLocaleEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
@@ -43,7 +44,7 @@ describe('getDisplayNameFromParticipant', () => {
         firstName: 'Jane',
         lastName: 'Smith',
       },
-      locale: '',
+      locale: WorkspaceMemberLocaleEnum.EnUs,
       createdAt: '',
       updatedAt: '',
       userEmail: '',
