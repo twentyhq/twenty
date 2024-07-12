@@ -7,11 +7,21 @@ import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inje
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
-import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import {
+  CalendarEventImportErrorHandlerService,
+  CalendarEventImportSyncStep,
+} from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-error-handling.service';
+import {
+  CalendarGetCalendarEventsService,
+  GetCalendarEventsResponse,
+} from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import {
+  CalendarChannelSyncStage,
+  CalendarChannelWorkspaceEntity,
+} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -29,6 +39,7 @@ export class CalendarEventsImportService {
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarSaveEventsService: CalendarSaveEventsService,
+    private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
   ) {}
 
   public async processCalendarEventsImport(
@@ -36,15 +47,37 @@ export class CalendarEventsImportService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
+    const syncStep =
+      calendarChannel.syncStage ===
+      CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING
+        ? CalendarEventImportSyncStep.FULL_CALENDAR_EVENT_LIST_FETCH
+        : CalendarEventImportSyncStep.PARTIAL_CALENDAR_EVENT_LIST_FETCH;
+
     await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchOngoing(
       calendarChannel.id,
     );
+    let calendarEvents: GetCalendarEventsResponse['calendarEvents'] = [];
+    let nextSyncCursor: GetCalendarEventsResponse['nextSyncCursor'] = '';
 
-    const { calendarEvents, nextSyncCursor } =
-      await this.getCalendarEventsService.getCalendarEvents(
-        connectedAccount,
-        calendarChannel.syncCursor,
+    try {
+      const getCalendarEventsResponse =
+        await this.getCalendarEventsService.getCalendarEvents(
+          connectedAccount,
+          calendarChannel.syncCursor,
+        );
+
+      calendarEvents = getCalendarEventsResponse.calendarEvents;
+      nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
+    } catch (error) {
+      await this.calendarEventImportErrorHandlerService.handleError(
+        error,
+        syncStep,
+        calendarChannel,
+        workspaceId,
       );
+
+      return;
+    }
 
     if (!calendarEvents || calendarEvents?.length === 0) {
       await this.calendarChannelRepository.update(
@@ -104,7 +137,7 @@ export class CalendarEventsImportService {
       },
     );
 
-    await this.calendarChannelSyncStatusService.schedulePartialCalendarEventListFetch(
+    await this.calendarChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
       calendarChannel.id,
     );
   }
