@@ -1,12 +1,12 @@
-import { Outlet } from 'react-router-dom';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Outlet } from 'react-router-dom';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh;
   position: relative;
   scrollbar-width: 4px;
   width: 100%;

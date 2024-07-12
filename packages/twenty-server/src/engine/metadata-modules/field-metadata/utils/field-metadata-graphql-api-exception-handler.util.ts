@@ -1,14 +1,14 @@
 import {
+  ConflictError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import {
-  UserInputError,
-  ForbiddenError,
-  ConflictError,
-  InternalServerError,
-  NotFoundError,
-} from 'src/engine/utils/graphql-errors.util';
 
 export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof FieldMetadataException) {

@@ -143,14 +143,6 @@ export const mockedViewFieldsData = [
     size: 180,
   },
   {
-    id: 'e5a731bb-82b9-4abe-ad22-1ddea94722f9',
-    fieldMetadataId: 'probability',
-    viewId: mockedViewsData[2].id,
-    position: 1,
-    isVisible: true,
-    size: 150,
-  },
-  {
     id: '3159acd8-463f-458d-bf9a-af8ac6f57dc0',
     fieldMetadataId: 'closeDate',
     viewId: mockedViewsData[2].id,

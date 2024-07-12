@@ -3,12 +3,6 @@ import { v4 } from 'uuid';
 
 const tableName = 'opportunity';
 
-const getRandomProbability = () => {
-  const firstDigit = Math.floor(Math.random() * 9) + 1;
-
-  return firstDigit / 10;
-};
-
 const getRandomStage = () => {
   const stages = ['NEW', 'SCREENING', 'MEETING', 'PROPOSAL', 'CUSTOMER'];
 
@@ -28,7 +22,6 @@ const generateOpportunities = (companies) => {
     amountCurrencyCode: 'USD',
     closeDate: new Date(),
     stage: getRandomStage(),
-    probability: getRandomProbability(),
     pointOfContactId: company.personId,
     companyId: company.id,
   }));
@@ -56,7 +49,6 @@ export const opportunityPrefillDemoData = async (
       'amountCurrencyCode',
       'closeDate',
       'stage',
-      'probability',
       'pointOfContactId',
       'companyId',
       'position',
