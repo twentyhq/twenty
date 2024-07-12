@@ -40,9 +40,14 @@ export class LocalDriver implements CustomCodeEngineDriver {
       fileFolder: FileFolder.Function,
     });
 
+    const javascriptFileName = `${filename
+      .split('.')
+      .splice(0, filename.split('.').length - 1)
+      .join('.')}.js`;
+
     const { path: builtSourcePath } = await this.fileUploadService.uploadFile({
       file: javascriptCode,
-      filename: '.js',
+      filename: javascriptFileName,
       mimeType: mimetype,
       fileFolder: FileFolder.Function,
     });

@@ -4,7 +4,7 @@ import { FunctionWorkspaceEntity } from 'src/modules/function/standard-objects/f
 
 export type CustomCodeEngineServiceUpsertType = {
   sourceCodePath: string;
-  builtSourcePath: string;
+  builtSourcePath?: string;
   lambdaName?: string;
 };
 

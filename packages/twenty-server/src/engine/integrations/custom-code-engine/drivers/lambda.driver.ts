@@ -51,13 +51,6 @@ export class LambdaDriver implements CustomCodeEngineDriver {
       fileFolder: FileFolder.Function,
     });
 
-    const { path: builtSourcePath } = await this.fileUploadService.uploadFile({
-      file: javascriptCode,
-      filename: '.js',
-      mimeType: mimetype,
-      fileFolder: FileFolder.Function,
-    });
-
     const temporaryLambdaFolderManager = new TemporaryLambdaFolderManager();
 
     const {
@@ -93,7 +86,7 @@ export class LambdaDriver implements CustomCodeEngineDriver {
 
     return {
       sourceCodePath,
-      builtSourcePath,
+      builtSourcePath: undefined,
       lambdaName,
     };
   }
