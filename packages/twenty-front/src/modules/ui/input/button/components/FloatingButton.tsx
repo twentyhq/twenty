@@ -28,7 +28,6 @@ const StyledButton = styled.button<
     | 'applyBlur'
     | 'applyShadow'
     | 'position'
-    | 'to'
   >
 >`
   align-items: center;
