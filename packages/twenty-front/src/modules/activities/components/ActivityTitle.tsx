@@ -187,7 +187,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
         autoComplete="off"
         autoFocus
         ref={titleInputRef}
-        placeholder={`${activity.type} title`}
+        placeholder={`Title`}
         onChange={(event) => handleTitleChange(event.target.value)}
         value={activityTitle}
         completed={completed}

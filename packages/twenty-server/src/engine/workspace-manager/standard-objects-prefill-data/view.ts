@@ -2,6 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { viewActivityFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-activity-fields';
+import { viewActivityFilters } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-activity-filters';
 import { viewCompanyFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-company-fields';
 import { viewOpportunityFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-opportunity-fields';
 import { viewPersonFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-person-fields';
@@ -70,8 +71,26 @@ export const viewPrefillData = async (
         objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.activity].id,
         type: 'table',
         key: 'INDEX',
-        position: 0,
+        position: 1,
         icon: 'IconCheckbox',
+        kanbanFieldMetadataId: '',
+      },
+      {
+        name: 'All Tasks',
+        objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.activity].id,
+        type: 'table',
+        key: null,
+        position: 0,
+        icon: 'IconCheck',
+        kanbanFieldMetadataId: '',
+      },
+      {
+        name: 'All Notes',
+        objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.activity].id,
+        type: 'table',
+        key: null,
+        position: 0,
+        icon: 'IconNotes',
         kanbanFieldMetadataId: '',
       },
     ])
@@ -103,6 +122,20 @@ export const viewPrefillData = async (
       ),
       ...viewOpportunityFields(viewIdMap['By Stage'], objectMetadataMap),
       ...viewActivityFields(viewIdMap['All Activities'], objectMetadataMap),
+      ...viewActivityFields(viewIdMap['All Tasks'], objectMetadataMap),
     ])
+    .execute();
+
+  await entityManager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.viewFilter`, [
+      'fieldMetadataId',
+      'displayValue',
+      'operand',
+      'value',
+      'viewId',
+    ])
+    .values([...viewActivityFilters(viewIdMap['All Tasks'], objectMetadataMap)])
     .execute();
 };
