@@ -1,6 +1,10 @@
 import { renderHook } from '@testing-library/react';
 
 import { useTimelineActivities } from '@/activities/timelineActivities/hooks/useTimelineActivities';
+import {
+  WorkspaceMemberColorSchemeEnum,
+  WorkspaceMemberLocaleEnum,
+} from '~/generated/graphql';
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: jest.fn(),
@@ -18,7 +22,7 @@ describe('useTimelineActivities', () => {
         id: '166ec73f-26b1-4934-bb3b-c86c8513b99b',
         workspaceMember: {
           __typename: 'WorkspaceMember',
-          locale: 'en',
+          locale: WorkspaceMemberLocaleEnum.EnUs,
           avatarUrl: '',
           updatedAt: '2024-03-21T16:01:41.839Z',
           name: {
@@ -28,7 +32,7 @@ describe('useTimelineActivities', () => {
           },
           id: '20202020-0687-4c41-b707-ed1bfca972a7',
           userEmail: 'tim@apple.dev',
-          colorScheme: 'Light',
+          colorScheme: WorkspaceMemberColorSchemeEnum.Light,
           createdAt: '2024-03-21T16:01:41.839Z',
           userId: '20202020-9e3b-46d4-a556-88b9ddc2b034',
         },

@@ -28,6 +28,10 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import {
+  WorkspaceMemberLocaleEnum,
+  workspaceMemberLocaleOptions,
+} from 'src/modules/workspace-member/standard-objects/options/workspace-member-locale.options';
 
 export enum WorkspaceMemberColorSchemeEnum {
   LIGHT = 'LIGHT',
@@ -62,6 +66,11 @@ registerEnumType(WorkspaceMemberDateFormatEnum, {
   name: 'WorkspaceMemberDateFormatEnum',
   description:
     'Date format as Month first, Day first, Year first or system as default',
+});
+
+registerEnumType(WorkspaceMemberLocaleEnum, {
+  name: 'WorkspaceMemberLocaleEnum',
+  description: 'Language tag for the host environments current locale',
 });
 
 @WorkspaceEntity({
@@ -116,11 +125,12 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Language',
     description: 'Preferred language',
     icon: 'IconLanguage',
-    defaultValue: "'en'",
+    options: workspaceMemberLocaleOptions,
+    defaultValue: `'${WorkspaceMemberLocaleEnum.EN_US}'`,
   })
   locale: string;
 

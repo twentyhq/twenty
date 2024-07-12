@@ -7,6 +7,7 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   WorkspaceMemberColorSchemeEnum,
   WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberLocaleEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
@@ -28,7 +29,7 @@ const workspaceMember: Omit<
     firstName: 'firstName',
     lastName: 'lastName',
   },
-  locale: 'en',
+  locale: WorkspaceMemberLocaleEnum.EnUs,
   timeZone: 'system',
   dateFormat: WorkspaceMemberDateFormatEnum.System,
   timeFormat: WorkspaceMemberTimeFormatEnum.System,

@@ -3,6 +3,7 @@ import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import {
   WorkspaceMemberColorSchemeEnum,
   WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberLocaleEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
@@ -20,7 +21,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
       __typename: 'WorkspaceMember',
       id: '20202020-0687-4c41-b707-ed1bfca972a7',
       avatarUrl: '',
-      locale: 'en',
+      locale: WorkspaceMemberLocaleEnum.EnUs,
       name: {
         __typename: 'FullName',
         firstName: 'Tim',
@@ -48,7 +49,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
       __typename: 'WorkspaceMember',
       id: '20202020-0687-4c41-b707-ed1bfca972a7',
       avatarUrl: '',
-      locale: 'en',
+      locale: WorkspaceMemberLocaleEnum.EnUs,
       name: {
         __typename: 'FullName',
         firstName: 'Tim',
@@ -76,7 +77,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
       __typename: 'WorkspaceMember',
       id: '20202020-0687-4c41-b707-ed1bfca972a7',
       avatarUrl: '',
-      locale: 'en',
+      locale: WorkspaceMemberLocaleEnum.EnUs,
       name: {
         __typename: 'FullName',
         firstName: 'Tim',
@@ -111,7 +112,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
       __typename: 'WorkspaceMember',
       id: '20202020-1553-45c6-a028-5a9064cce07f',
       avatarUrl: '',
-      locale: 'en',
+      locale: WorkspaceMemberLocaleEnum.EnUs,
       name: {
         __typename: 'FullName',
         firstName: 'Jane',
@@ -140,7 +141,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
       __typename: 'WorkspaceMember',
       id: '20202020-0687-4c41-b707-ed1bfca972a7',
       avatarUrl: '',
-      locale: 'en',
+      locale: WorkspaceMemberLocaleEnum.EnUs,
       name: {
         __typename: 'FullName',
         firstName: 'Tim',

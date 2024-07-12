@@ -10,6 +10,7 @@ import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import {
   WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberLocaleEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
@@ -76,7 +77,7 @@ describe('useFilteredSearchEntityQuery', () => {
         setCurrentWorkspaceMember({
           id: '32219445-f587-4c40-b2b1-6d3205ed96da',
           name: { firstName: 'John', lastName: 'Connor' },
-          locale: 'en',
+          locale: WorkspaceMemberLocaleEnum.EnUs,
           timeZone: 'system',
           dateFormat: WorkspaceMemberDateFormatEnum.System,
           timeFormat: WorkspaceMemberTimeFormatEnum.System,

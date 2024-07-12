@@ -2,6 +2,7 @@ import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import {
   WorkspaceMemberColorSchemeEnum,
   WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberLocaleEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
@@ -12,7 +13,7 @@ export const mockWorkspaceMembers = [
       firstName: 'Jane',
       lastName: 'Doe',
     },
-    locale: 'en',
+    locale: WorkspaceMemberLocaleEnum.EnUs,
     avatarUrl: '',
     createdAt: '2023-12-18T09:51:19.645Z',
     updatedAt: '2023-12-18T09:51:19.645Z',
@@ -28,7 +29,7 @@ export const mockWorkspaceMembers = [
       firstName: 'John',
       lastName: 'Wick',
     },
-    locale: 'en',
+    locale: WorkspaceMemberLocaleEnum.EnUs,
     avatarUrl: '',
     createdAt: '2023-12-18T09:51:19.645Z',
     updatedAt: '2023-12-18T09:51:19.645Z',

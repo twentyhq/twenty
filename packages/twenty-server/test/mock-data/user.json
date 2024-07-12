@@ -3,7 +3,7 @@
   "firstName": "Tim",
   "lastName": "Apple",
   "email": "tim@apple.dev",
-  "locale": "en",
+  "locale": "EN-US",
   "passwordHash": "$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6",
   "avatarUrl": null
 }
