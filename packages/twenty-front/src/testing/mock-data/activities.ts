@@ -6,8 +6,9 @@ import { Person } from '@/people/types/Person';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import {
-  WorkspaceMemberDateFormat,
-  WorkspaceMemberTimeFormat,
+  WorkspaceMemberColorSchemeEnum,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
 type MockedActivity = Pick<
@@ -63,10 +64,10 @@ const workspaceMember: WorkspaceMember = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   userId: 'e2409670-1088-46b4-858e-f20a598d9d0f',
   userEmail: 'charles@test.com',
-  colorScheme: 'Light',
+  colorScheme: WorkspaceMemberColorSchemeEnum.Light,
   timeZone: detectTimeZone(),
-  dateFormat: WorkspaceMemberDateFormat.MonthFirst,
-  timeFormat: WorkspaceMemberTimeFormat.Hour_24,
+  dateFormat: WorkspaceMemberDateFormatEnum.MonthFirst,
+  timeFormat: WorkspaceMemberTimeFormatEnum.Hour_24,
 };
 
 export const mockedTasks: Array<MockedActivity> = [
@@ -168,9 +169,12 @@ export const mockedActivities: Array<MockedActivity> = [
     dueAt: '2029-08-26T10:12:42.33625+00:00',
     author: {
       ...workspaceMember,
-      colorScheme: 'Dark',
+      colorScheme: WorkspaceMemberColorSchemeEnum.Dark,
     },
-    assignee: { ...workspaceMember, colorScheme: 'Dark' },
+    assignee: {
+      ...workspaceMember,
+      colorScheme: WorkspaceMemberColorSchemeEnum.Dark,
+    },
     assigneeId: workspaceMember.id,
     authorId: workspaceMember.id,
     comments: [],

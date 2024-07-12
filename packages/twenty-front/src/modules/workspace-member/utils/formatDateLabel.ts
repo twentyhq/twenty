@@ -1,18 +1,18 @@
 import { DateFormat } from '@/workspace-member/constants/DateFormat';
 import { detectDateFormat } from '@/workspace-member/utils/detectDateFormat';
-import { WorkspaceMemberDateFormat } from '~/generated/graphql';
+import { WorkspaceMemberDateFormatEnum } from '~/generated/graphql';
 
 export const getDateFormatFromWorkspaceEnum = (
-  dateLabel: WorkspaceMemberDateFormat,
+  dateLabel: WorkspaceMemberDateFormatEnum,
 ) => {
   switch (dateLabel) {
-    case WorkspaceMemberDateFormat.System:
+    case WorkspaceMemberDateFormatEnum.System:
       return detectDateFormat();
-    case WorkspaceMemberDateFormat.MonthFirst:
+    case WorkspaceMemberDateFormatEnum.MonthFirst:
       return DateFormat.MONTH_FIRST;
-    case WorkspaceMemberDateFormat.DayFirst:
+    case WorkspaceMemberDateFormatEnum.DayFirst:
       return DateFormat.DAY_FIRST;
-    case WorkspaceMemberDateFormat.YearFirst:
+    case WorkspaceMemberDateFormatEnum.YearFirst:
       return DateFormat.YEAR_FIRST;
     default:
       return DateFormat.MONTH_FIRST;
@@ -22,14 +22,14 @@ export const getDateFormatFromWorkspaceEnum = (
 export const getWorkspaceEnumFromDateFormat = (dateLabel: DateFormat) => {
   switch (dateLabel) {
     case DateFormat.SYSTEM:
-      return WorkspaceMemberDateFormat.System;
+      return WorkspaceMemberDateFormatEnum.System;
     case DateFormat.MONTH_FIRST:
-      return WorkspaceMemberDateFormat.MonthFirst;
+      return WorkspaceMemberDateFormatEnum.MonthFirst;
     case DateFormat.DAY_FIRST:
-      return WorkspaceMemberDateFormat.DayFirst;
+      return WorkspaceMemberDateFormatEnum.DayFirst;
     case DateFormat.YEAR_FIRST:
-      return WorkspaceMemberDateFormat.YearFirst;
+      return WorkspaceMemberDateFormatEnum.YearFirst;
     default:
-      return WorkspaceMemberDateFormat.MonthFirst;
+      return WorkspaceMemberDateFormatEnum.MonthFirst;
   }
 };

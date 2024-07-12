@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { WorkspaceMemberColorSchemeEnum } from '~/generated/graphql';
 
 export const useColorScheme = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
@@ -15,10 +15,11 @@ export const useColorScheme = () => {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
-  const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
+  const colorScheme =
+    currentWorkspaceMember?.colorScheme ?? WorkspaceMemberColorSchemeEnum.System;
 
   const setColorScheme = useCallback(
-    async (value: ColorScheme) => {
+    async (value: WorkspaceMemberColorSchemeEnum) => {
       if (!currentWorkspaceMember) {
         return;
       }

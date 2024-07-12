@@ -22,7 +22,10 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { OnboardingStatus } from '~/generated/graphql';
+import {
+  OnboardingStatus,
+  WorkspaceMemberColorSchemeEnum,
+} from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`
@@ -98,7 +101,7 @@ export const CreateProfile = () => {
               firstName: data.firstName,
               lastName: data.lastName,
             },
-            colorScheme: 'System',
+            colorScheme: WorkspaceMemberColorSchemeEnum.System,
           },
         });
 
@@ -110,7 +113,7 @@ export const CreateProfile = () => {
                 firstName: data.firstName,
                 lastName: data.lastName,
               },
-              colorScheme: 'System',
+              colorScheme: WorkspaceMemberColorSchemeEnum.System,
             };
           }
           return current;

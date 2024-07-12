@@ -6,6 +6,7 @@ import {
 } from 'src/database/typeorm-seeds/core/workspaces';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
+import { WorkspaceMemberColorSchemeEnum } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const tableName = 'workspaceMember';
 
@@ -39,7 +40,7 @@ export const seedWorkspaceMember = async (
         nameFirstName: 'Tim',
         nameLastName: 'Apple',
         locale: 'en',
-        colorScheme: 'Light',
+        colorScheme:  WorkspaceMemberColorSchemeEnum.LIGHT,
         userEmail: 'tim@apple.dev',
         userId: DEV_SEED_USER_IDS.TIM,
       },
@@ -48,7 +49,7 @@ export const seedWorkspaceMember = async (
         nameFirstName: 'Jony',
         nameLastName: 'Ive',
         locale: 'en',
-        colorScheme: 'Light',
+        colorScheme: WorkspaceMemberColorSchemeEnum.LIGHT,
         userEmail: 'jony.ive@apple.dev',
         userId: DEV_SEED_USER_IDS.JONY,
       },
@@ -57,7 +58,7 @@ export const seedWorkspaceMember = async (
         nameFirstName: 'Phil',
         nameLastName: 'Shiler',
         locale: 'en',
-        colorScheme: 'Light',
+        colorScheme: WorkspaceMemberColorSchemeEnum.LIGHT,
         userEmail: 'phil.schiler@apple.dev',
         userId: DEV_SEED_USER_IDS.PHIL,
       },
@@ -71,7 +72,7 @@ export const seedWorkspaceMember = async (
         nameFirstName: 'Tim',
         nameLastName: 'Apple',
         locale: 'en',
-        colorScheme: 'Light',
+        colorScheme:  WorkspaceMemberColorSchemeEnum.LIGHT,
         userEmail: 'tim@apple.dev',
         userId: DEV_SEED_USER_IDS.TIM,
       },

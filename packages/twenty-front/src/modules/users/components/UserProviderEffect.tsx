@@ -7,11 +7,13 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { dateTimeFormatState } from '@/workspace-member/states/dateTimeFormatState';
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatDateLabel';
 import { getTimeFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatTimeLabel';
-import { useGetCurrentUserQuery } from '~/generated/graphql';
+import {
+  useGetCurrentUserQuery,
+  WorkspaceMemberColorSchemeEnum,
+} from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const UserProviderEffect = () => {
@@ -50,7 +52,9 @@ export const UserProviderEffect = () => {
     if (isDefined(workspaceMember)) {
       setCurrentWorkspaceMember({
         ...workspaceMember,
-        colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
+        colorScheme:
+          (workspaceMember.colorScheme as WorkspaceMemberColorSchemeEnum) ??
+          WorkspaceMemberColorSchemeEnum.Light,
       });
 
       setDateTimeFormat({

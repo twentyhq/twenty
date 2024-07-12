@@ -16,8 +16,8 @@ import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import { getWorkspaceEnumFromDateFormat } from '@/workspace-member/utils/formatDateLabel';
 import { getWorkspaceEnumFromTimeFormat } from '@/workspace-member/utils/formatTimeLabel';
 import {
-  WorkspaceMemberDateFormat,
-  WorkspaceMemberTimeFormat,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isEmptyObject } from '~/utils/isEmptyObject';
@@ -114,12 +114,12 @@ export const DateTimeSettings = () => {
       : dateTimeFormat.timeZone;
 
   const dateFormat =
-    currentWorkspaceMember.dateFormat === WorkspaceMemberDateFormat.System
+    currentWorkspaceMember.dateFormat === WorkspaceMemberDateFormatEnum.System
       ? DateFormat.SYSTEM
       : dateTimeFormat.dateFormat;
 
   const timeFormat =
-    currentWorkspaceMember.timeFormat === WorkspaceMemberTimeFormat.System
+    currentWorkspaceMember.timeFormat === WorkspaceMemberTimeFormatEnum.System
       ? TimeFormat.SYSTEM
       : dateTimeFormat.timeFormat;
 

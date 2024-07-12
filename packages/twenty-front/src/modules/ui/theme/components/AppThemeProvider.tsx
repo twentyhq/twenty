@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { ThemeProvider } from '@emotion/react';
 import { THEME_DARK, THEME_LIGHT, ThemeContextProvider } from 'twenty-ui';
 
+import { WorkspaceMemberColorSchemeEnum } from '~/generated/graphql';
+
 import { useColorScheme } from '../hooks/useColorScheme';
 import { useSystemColorScheme } from '../hooks/useSystemColorScheme';
 
@@ -15,9 +17,12 @@ export const AppThemeProvider = ({ children }: AppThemeProviderProps) => {
   const { colorScheme } = useColorScheme();
 
   const computedColorScheme =
-    colorScheme === 'System' ? systemColorScheme : colorScheme;
+    colorScheme === WorkspaceMemberColorSchemeEnum.System
+      ? systemColorScheme
+      : colorScheme;
 
-  const theme = computedColorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
+  const theme =
+    computedColorScheme.toLowerCase() === 'dark' ? THEME_DARK : THEME_LIGHT;
 
   useEffect(() => {
     document.documentElement.className =

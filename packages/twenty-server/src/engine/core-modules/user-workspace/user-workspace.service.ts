@@ -58,7 +58,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
         ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl")
-        VALUES ('${user.firstName}', '${user.lastName}', 'Light', '${
+        VALUES ('${user.firstName}', '${user.lastName}', 'LIGHT', '${
           user.id
         }', '${user.email}', '${user.defaultAvatarUrl ?? ''}')`,
     );
