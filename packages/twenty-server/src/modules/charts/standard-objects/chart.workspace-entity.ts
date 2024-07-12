@@ -12,7 +12,7 @@ import {
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { AnalyticsQueryWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query.workspace-entity';
+import { AnalyticsQueryWorkspaceEntity } from 'src/modules/charts/standard-objects/analytics-query.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.chart,

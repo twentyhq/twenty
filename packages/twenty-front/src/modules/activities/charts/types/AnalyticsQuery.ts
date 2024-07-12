@@ -1,5 +1,5 @@
-import { AnalyticsQueryFilter } from '@/activities/reports/types/AnalyticsQueryFilter';
-import { Chart } from '@/activities/reports/types/Chart';
+import { AnalyticsQueryFilter } from '@/activities/charts/types/AnalyticsQueryFilter';
+import { Chart } from '@/activities/charts/types/Chart';
 
 export interface AnalyticsQuery {
   id: string;

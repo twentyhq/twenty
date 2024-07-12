@@ -9,7 +9,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { AnalyticsQueryWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query.workspace-entity';
+import { AnalyticsQueryWorkspaceEntity } from 'src/modules/charts/standard-objects/analytics-query.workspace-entity';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 

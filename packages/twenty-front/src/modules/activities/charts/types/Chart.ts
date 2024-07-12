@@ -1,4 +1,4 @@
-import { AnalyticsQuery } from '@/activities/reports/types/AnalyticsQuery';
+import { AnalyticsQuery } from '@/activities/charts/types/AnalyticsQuery';
 
 export interface Chart {
   id: string;

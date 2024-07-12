@@ -12,8 +12,8 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { AnalyticsQueryFilterWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query-filter.workspace-entity';
-import { ChartWorkspaceEntity } from 'src/modules/reports/standard-objects/chart.workspace-entity';
+import { AnalyticsQueryFilterWorkspaceEntity } from 'src/modules/charts/standard-objects/analytics-query-filter.workspace-entity';
+import { ChartWorkspaceEntity } from 'src/modules/charts/standard-objects/chart.workspace-entity';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 

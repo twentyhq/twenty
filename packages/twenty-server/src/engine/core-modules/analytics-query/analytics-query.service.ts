@@ -5,7 +5,7 @@ import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-qu
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AnalyticsQueryResult } from 'src/engine/core-modules/analytics-query/dtos/analytics-query-result.dto';
-import { AnalyticsQueryWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query.workspace-entity';
+import { AnalyticsQueryWorkspaceEntity } from 'src/modules/charts/standard-objects/analytics-query.workspace-entity';
 
 @Injectable()
 export class AnalyticsQueryService {
