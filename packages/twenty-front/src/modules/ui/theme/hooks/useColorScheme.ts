@@ -16,7 +16,8 @@ export const useColorScheme = () => {
   });
 
   const colorScheme =
-    currentWorkspaceMember?.colorScheme ?? WorkspaceMemberColorSchemeEnum.System;
+    currentWorkspaceMember?.colorScheme ??
+    WorkspaceMemberColorSchemeEnum.System;
 
   const setColorScheme = useCallback(
     async (value: WorkspaceMemberColorSchemeEnum) => {
