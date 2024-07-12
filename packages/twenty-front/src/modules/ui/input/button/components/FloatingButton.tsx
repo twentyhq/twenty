@@ -94,7 +94,7 @@ const StyledButton = styled.button<
   &:focus {
     outline: none;
   }
-  text-decoration: ${({ to }) => to && 'none'};
+  text-decoration: none;
 `;
 
 export const FloatingButton = ({
