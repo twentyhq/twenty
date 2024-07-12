@@ -29,6 +29,7 @@ import { getDateFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatD
 import { getTimeFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatTimeLabel';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
+  WorkspaceMemberColorSchemeEnum,
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
   useSignUpMutation,
@@ -106,7 +107,7 @@ export const useAuth = () => {
       if (isDefined(user.workspaceMember)) {
         workspaceMember = {
           ...user.workspaceMember,
-          colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
+          colorScheme: user.workspaceMember?.colorScheme as WorkspaceMemberColorSchemeEnum,
         };
         setCurrentWorkspaceMember(workspaceMember);
         setDateTimeFormat({
