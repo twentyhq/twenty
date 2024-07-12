@@ -26,17 +26,13 @@ export class FileUploadService {
     filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
-    workspaceId: string | undefined;
+    workspaceId: string;
   }) {
-    const folder = workspaceId
-      ? `${fileFolder}/workspace-${workspaceId}`
-      : fileFolder;
-
     await this.fileStorage.write({
       file,
       name: filename,
       mimeType,
-      folder,
+      folder: `workspace-${workspaceId}/${fileFolder}`,
     });
   }
 
@@ -70,7 +66,7 @@ export class FileUploadService {
     filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
-    workspaceId: string | undefined;
+    workspaceId: string;
   }) {
     const ext = filename.split('.')?.[1];
     const id = uuidV4();
@@ -102,7 +98,7 @@ export class FileUploadService {
     filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder;
-    workspaceId: string | undefined;
+    workspaceId: string;
   }) {
     const ext = filename.split('.')?.[1];
     const id = uuidV4();

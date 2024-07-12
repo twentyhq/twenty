@@ -30,6 +30,8 @@ import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-mem
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -90,6 +92,7 @@ export class UserResolver {
   @Mutation(() => String)
   async uploadProfilePicture(
     @AuthUser() { id }: User,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<string> {
@@ -106,7 +109,7 @@ export class UserResolver {
       filename,
       mimeType: mimetype,
       fileFolder,
-      workspaceId: undefined,
+      workspaceId,
     });
 
     return paths[0];
