@@ -1,5 +1,5 @@
-import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { randomBytes } from 'crypto';
 
@@ -9,10 +9,10 @@ import {
   decryptText,
   encryptText,
 } from 'src/engine/core-modules/auth/auth.util';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
-import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
+import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PostgresCredentialsDTO } from 'src/engine/core-modules/postgres-credentials/dtos/postgres-credentials.dto';
+import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 export class PostgresCredentialsService {
   constructor(
