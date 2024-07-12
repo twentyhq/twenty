@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
 import { Link } from 'react-router-dom';
+import { IconComponent } from 'twenty-ui';
 
 export type FloatingButtonSize = 'small' | 'medium';
 export type FloatingButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -28,6 +28,7 @@ const StyledButton = styled.button<
     | 'applyBlur'
     | 'applyShadow'
     | 'position'
+    | 'to'
   >
 >`
   align-items: center;
