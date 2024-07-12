@@ -15,6 +15,7 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { AnalyticsQueryFilterWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query-filter.workspace-entity';
 import { ChartWorkspaceEntity } from 'src/modules/reports/standard-objects/chart.workspace-entity';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.analyticsQuery,
@@ -24,6 +25,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
   description: 'A query for analytics',
   icon: 'IconDatabaseSearch',
 })
+@WorkspaceIsSystem()
 export class AnalyticsQueryWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ANALYTICS_QUERY_STANDARD_FIELD_IDS.chart,

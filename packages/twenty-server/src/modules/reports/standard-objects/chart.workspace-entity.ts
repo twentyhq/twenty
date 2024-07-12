@@ -11,9 +11,7 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { ReportWorkspaceEntity } from 'src/modules/reports/standard-objects/report.workspace-entity';
 import { AnalyticsQueryWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query.workspace-entity';
 
 @WorkspaceEntity({
@@ -43,22 +41,6 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   description: string;
-
-  @WorkspaceRelation({
-    standardId: CHART_STANDARD_FIELD_IDS.report,
-    label: 'Report',
-    description: 'The report the chart belongs to',
-    icon: 'IconReportAnalytics',
-    type: RelationMetadataType.MANY_TO_ONE,
-    inverseSideTarget: () => ReportWorkspaceEntity,
-    inverseSideFieldKey: 'charts',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  report: Relation<ReportWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('report')
-  reportId: string;
 
   @WorkspaceRelation({
     standardId: CHART_STANDARD_FIELD_IDS.analyticsQueries,

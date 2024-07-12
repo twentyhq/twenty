@@ -51,9 +51,6 @@ import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
-import { ChartEditor } from '~/pages/reports/ChartEditor';
-import { Charts } from '~/pages/reports/Charts';
-import { Reports } from '~/pages/reports/Reports';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
 import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/SettingsAccountsCalendarsSettings';
@@ -155,9 +152,6 @@ const createRouter = (isBillingEnabled?: boolean) =>
           />
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
-          <Route path={AppPath.ReportsPage} element={<Reports />} />
-          <Route path={AppPath.ChartsPage} element={<Charts />} />
-          <Route path={AppPath.ChartEditorPage} element={<ChartEditor />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />

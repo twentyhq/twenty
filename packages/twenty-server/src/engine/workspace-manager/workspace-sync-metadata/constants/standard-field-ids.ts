@@ -77,7 +77,6 @@ export const BLOCKLIST_STANDARD_FIELD_IDS = {
 export const CHART_STANDARD_FIELD_IDS = {
   title: '20202020-e5aa-45b1-aec0-431420660570',
   description: '20202020-71b2-4df1-8cb3-120d55272b12',
-  report: '20202020-ed98-46de-a874-eb65660e3b13',
   analyticsQueries: '20202020-13c2-4d66-a631-605c85953648',
 };
 
@@ -302,11 +301,6 @@ export const PERSON_STANDARD_FIELD_IDS = {
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
   calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
-};
-
-export const REPORT_STANDARD_FIELD_IDS = {
-  title: '20202020-4eb0-4241-bbf8-2a20edb5658d',
-  charts: '20202020-af27-44f3-9826-5b3ac2266853',
 };
 
 export const VIEW_FIELD_STANDARD_FIELD_IDS = {

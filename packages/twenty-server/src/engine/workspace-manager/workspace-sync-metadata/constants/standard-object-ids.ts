@@ -31,7 +31,6 @@ export const STANDARD_OBJECT_IDS = {
   message: '20202020-3f6b-4425-80ab-e468899ab4b2',
   opportunity: '20202020-9549-49dd-b2b2-883999db8938',
   person: '20202020-e674-48e5-a542-72570eee7213',
-  report: '20202020-69ea-4d7b-b8a6-b1d57b361ebb',
   timelineActivity: '20202020-6736-4337-b5c4-8b39fae325a5',
   viewField: '20202020-4d19-4655-95bf-b2a04cf206d4',
   viewFilter: '20202020-6fb6-4631-aded-b7d67e952ec8',

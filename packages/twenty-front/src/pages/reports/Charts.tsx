@@ -3,14 +3,11 @@ import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui';
 
 import { Chart } from '@/activities/reports/components/Chart';
-import { ReportsLayout } from '@/activities/reports/components/ReportsLayout';
 import { AnalyticsQuery as AnalyticsQueryType } from '@/activities/reports/types/AnalyticsQuery';
 import { Chart as ChartType } from '@/activities/reports/types/Chart';
-import { Report } from '@/activities/reports/types/Report';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { Button } from '@/ui/input/button/components/Button';
 
 const StyledChartsContainer = styled.div`
@@ -33,11 +30,6 @@ export const Charts = () => {
 
   // TODO: Combine find queries into one graphql query?
 
-  const { record: report } = useFindOneRecord<Report>({
-    objectNameSingular: CoreObjectNameSingular.Report,
-    objectRecordId: reportId,
-  });
-
   const { records: charts } = useFindManyRecords<ChartType>({
     objectNameSingular: CoreObjectNameSingular.Chart,
   });
@@ -52,31 +44,29 @@ export const Charts = () => {
     });
 
   return (
-    <ReportsLayout hasBackButton>
-      <StyledChartsContainer>
-        <div>{report?.title}</div>
-        {charts.map((chart) => (
-          <StyledChartContainer
-            onClick={async () => {
-              await navigate(`/reports/${reportId}/charts/${chart.id}`);
-            }}
-          >
-            <Chart chart={chart} />
-          </StyledChartContainer>
-        ))}
-        <Button
-          Icon={IconPlus}
-          title="New chart"
-          variant={'secondary'}
+    <StyledChartsContainer>
+      <div>report?.title</div>
+      {charts.map((chart) => (
+        <StyledChartContainer
           onClick={async () => {
-            const chart = await createOneChart({ title: 'New Chart' });
-            await createOneAnalyticsQuery({
-              chartId: chart.id,
-            });
             await navigate(`/reports/${reportId}/charts/${chart.id}`);
           }}
-        />
-      </StyledChartsContainer>
-    </ReportsLayout>
+        >
+          <Chart chart={chart} />
+        </StyledChartContainer>
+      ))}
+      <Button
+        Icon={IconPlus}
+        title="New chart"
+        variant={'secondary'}
+        onClick={async () => {
+          const chart = await createOneChart({ title: 'New Chart' });
+          await createOneAnalyticsQuery({
+            chartId: chart.id,
+          });
+          await navigate(`/reports/${reportId}/charts/${chart.id}`);
+        }}
+      />
+    </StyledChartsContainer>
   );
 };

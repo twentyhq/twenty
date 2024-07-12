@@ -11,6 +11,7 @@ import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metad
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { AnalyticsQueryWorkspaceEntity } from 'src/modules/reports/standard-objects/analytics-query.workspace-entity';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.analyticsQueryFilter,
@@ -20,6 +21,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
   description: 'A filter for an analytics query',
   icon: 'IconFilter',
 })
+@WorkspaceIsSystem()
 export class AnalyticsQueryFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: ANALYTICS_QUERY_FILTER_STANDARD_FIELD_IDS.analyticsQuery,
