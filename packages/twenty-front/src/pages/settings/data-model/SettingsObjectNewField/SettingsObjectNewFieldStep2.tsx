@@ -59,7 +59,7 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(settingsFieldFormSchema),
+    resolver: zodResolver(settingsFieldFormSchema), 
   });
 
   useEffect(() => {
