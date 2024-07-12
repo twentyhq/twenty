@@ -8,13 +8,12 @@ import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 
 import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
 
+import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util';
+import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { shouldCaptureException } from 'src/engine/core-modules/graphql/utils/should-capture-exception.util';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
-import {
-  convertExceptionToGraphQLError,
-  shouldFilterException,
-} from 'src/engine/utils/global-exception-handler.util';
 
-export type ExceptionHandlerPluginOptions = {
+type GraphQLErrorHandlerHookOptions = {
   /**
    * The exception handler service to use.
    */
@@ -26,11 +25,10 @@ export type ExceptionHandlerPluginOptions = {
   eventIdKey?: string | null;
 };
 
-// This hook is deprecated.
-// We should either handle exception in the context of graphql, controller or command
-// @deprecated
-export const useExceptionHandler = <PluginContext extends GraphQLContext>(
-  options: ExceptionHandlerPluginOptions,
+export const useGraphQLErrorHandlerHook = <
+  PluginContext extends GraphQLContext,
+>(
+  options: GraphQLErrorHandlerHookOptions,
 ): Plugin<PluginContext> => {
   const eventIdKey = options.eventIdKey === null ? null : 'exceptionEventId';
 
@@ -66,29 +64,24 @@ export const useExceptionHandler = <PluginContext extends GraphQLContext>(
             setResult,
           }) => {
             if (result.errors && result.errors.length > 0) {
-              const exceptions = result.errors.reduce<{
-                filtered: any[];
-                unfiltered: any[];
-              }>(
-                (acc, err) => {
-                  // Filter out exceptions that we don't want to be captured by exception handler
-                  if (shouldFilterException(err?.originalError ?? err)) {
-                    acc.filtered.push(err);
-                  } else {
-                    acc.unfiltered.push(err);
+              const errorsToCapture = result.errors.reduce<BaseGraphQLError[]>(
+                (acc, error) => {
+                  if (!(error instanceof BaseGraphQLError)) {
+                    error = generateGraphQLErrorFromError(error);
+                  }
+
+                  if (shouldCaptureException(error)) {
+                    acc.push(error);
                   }
 
                   return acc;
                 },
-                {
-                  filtered: [],
-                  unfiltered: [],
-                },
+                [],
               );
 
-              if (exceptions.unfiltered.length > 0) {
+              if (errorsToCapture.length > 0) {
                 const eventIds = exceptionHandlerService.captureExceptions(
-                  exceptions.unfiltered,
+                  errorsToCapture,
                   {
                     operation: {
                       name: opName,
@@ -99,26 +92,16 @@ export const useExceptionHandler = <PluginContext extends GraphQLContext>(
                   },
                 );
 
-                exceptions.unfiltered.map((err, i) =>
-                  addEventId(err, eventIds?.[i]),
-                );
+                errorsToCapture.map((err, i) => addEventId(err, eventIds?.[i]));
               }
 
-              const concatenatedErrors = [
-                ...exceptions.filtered,
-                ...exceptions.unfiltered,
-              ];
-              const errors = concatenatedErrors.map((err) => {
-                if (!err.originalError) {
-                  return err;
-                }
-
-                return convertExceptionToGraphQLError(err.originalError);
-              });
+              const nonCapturedErrors = result.errors.filter(
+                (error) => !errorsToCapture.includes(error),
+              );
 
               setResult({
                 ...result,
-                errors,
+                errors: [...nonCapturedErrors, ...errorsToCapture],
               });
             }
           };

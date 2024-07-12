@@ -1,22 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
-import { calendar_v3 as calendarV3 } from 'googleapis';
 import { GaxiosError } from 'gaxios';
+import { calendar_v3 as calendarV3 } from 'googleapis';
 
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { GoogleCalendarClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/providers/google-calendar.provider';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import { GoogleCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/types/google-calendar-error.type';
 import { formatGoogleCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/format-google-calendar-event.util';
+import { parseGaxiosError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/parse-gaxios-error.util';
+import { parseGoogleCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/parse-google-calendar-error.util';
+import { GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class GoogleCalendarGetEventsService {
   constructor(
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
-    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
   ) {}
 
   public async getCalendarEvents(
@@ -47,18 +45,7 @@ export class GoogleCalendarGetEventsService {
           showDeleted: true,
         })
         .catch(async (error: GaxiosError) => {
-          if (error.response?.status !== 410) {
-            throw error;
-          }
-
-          await this.calendarChannelRepository.update(
-            {
-              connectedAccountId: connectedAccount.id,
-            },
-            {
-              syncCursor: '',
-            },
-          );
+          this.handleError(error);
 
           return {
             data: {
@@ -89,5 +76,35 @@ export class GoogleCalendarGetEventsService {
       calendarEvents: formatGoogleCalendarEvents(events),
       nextSyncCursor: nextSyncToken || '',
     };
+  }
+
+  private handleError(error: GaxiosError) {
+    if (
+      error.code &&
+      [
+        'ECONNRESET',
+        'ENOTFOUND',
+        'ECONNABORTED',
+        'ETIMEDOUT',
+        'ERR_NETWORK',
+      ].includes(error.code)
+    ) {
+      throw parseGaxiosError(error);
+    }
+    if (error.response?.status !== 410) {
+      const googleCalendarError: GoogleCalendarError = {
+        code: error.response?.status,
+        reason:
+          error.response?.data?.error?.errors?.[0].reason ||
+          error.response?.data?.error ||
+          '',
+        message:
+          error.response?.data?.error?.errors?.[0].message ||
+          error.response?.data?.error_description ||
+          '',
+      };
+
+      throw parseGoogleCalendarError(googleCalendarError);
+    }
   }
 }

@@ -1,17 +1,17 @@
-import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
-import chalk from 'chalk';
 import { v4 } from 'uuid';
 
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 interface UpdateMessageChannelSyncStatusEnumCommandOptions {
@@ -19,7 +19,7 @@ interface UpdateMessageChannelSyncStatusEnumCommandOptions {
 }
 
 @Command({
-  name: 'migrate-0.20:update-message-channel-sync-status-enum',
+  name: 'migrate-0.22:update-message-channel-sync-status-enum',
   description: 'Update messageChannel syncStatus',
 })
 export class UpdateMessageChannelSyncStatusEnumCommand extends CommandRunner {
@@ -94,9 +94,7 @@ export class UpdateMessageChannelSyncStatusEnumCommand extends CommandRunner {
               `ALTER TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStatus_enum" RENAME TO "messageChannel_syncStatus_enum_old"`,
             );
             await queryRunner.query(
-              `CREATE TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStatus_enum" AS ENUM ('PENDING',
-              'SUCCEEDED',
-              'FAILED',
+              `CREATE TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStatus_enum" AS ENUM (
               'ONGOING',
               'NOT_SYNCED',
               'COMPLETED',
@@ -166,27 +164,6 @@ export class UpdateMessageChannelSyncStatusEnumCommand extends CommandRunner {
       }
 
       const newOptions = [
-        {
-          id: v4(),
-          value: MessageChannelSyncStatus.PENDING,
-          label: 'Pending',
-          position: 0,
-          color: 'blue',
-        },
-        {
-          id: v4(),
-          value: MessageChannelSyncStatus.SUCCEEDED,
-          label: 'Succeeded',
-          position: 2,
-          color: 'green',
-        },
-        {
-          id: v4(),
-          value: MessageChannelSyncStatus.FAILED,
-          label: 'Failed',
-          position: 3,
-          color: 'red',
-        },
         {
           id: v4(),
           value: MessageChannelSyncStatus.ONGOING,
