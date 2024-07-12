@@ -6,11 +6,11 @@ import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
+import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
-import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
+import { RefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/services/refresh-access-token.service';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
@@ -38,7 +38,7 @@ export class MessagingGmailMessagesImportService {
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
-    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
+    private readonly refreshAccessTokenService: RefreshAccessTokenService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
@@ -82,7 +82,7 @@ export class MessagingGmailMessagesImportService {
 
     try {
       accessToken =
-        await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+        await this.refreshAccessTokenService.refreshAndSaveAccessToken(
           connectedAccount,
           workspaceId,
         );

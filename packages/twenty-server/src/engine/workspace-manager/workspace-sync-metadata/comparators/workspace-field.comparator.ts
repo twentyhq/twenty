@@ -8,11 +8,11 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
-import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 const commonFieldPropertiesToIgnore = [
   'id',
@@ -27,6 +27,12 @@ const commonFieldPropertiesToIgnore = [
 ];
 
 const fieldPropertiesToStringify = ['defaultValue'] as const;
+
+const shouldSkipFieldCreation = (
+  standardFieldMetadata: ComputedPartialFieldMetadata | undefined,
+) => {
+  return standardFieldMetadata?.isCustom;
+};
 
 @Injectable()
 export class WorkspaceFieldComparator {
@@ -108,10 +114,6 @@ export class WorkspaceFieldComparator {
       const findField = (
         field: ComputedPartialFieldMetadata | FieldMetadataEntity,
       ) => {
-        if (field.isCustom) {
-          return field.name === fieldName;
-        }
-
         return field.standardId === fieldName;
       };
       // Object shouldn't have thousands of fields, so we can use find here
@@ -122,6 +124,9 @@ export class WorkspaceFieldComparator {
 
       switch (difference.type) {
         case 'CREATE': {
+          if (shouldSkipFieldCreation(standardFieldMetadata)) {
+            break;
+          }
           if (!standardFieldMetadata) {
             throw new Error(
               `Field ${fieldName} not found in standardObjectMetadata`,

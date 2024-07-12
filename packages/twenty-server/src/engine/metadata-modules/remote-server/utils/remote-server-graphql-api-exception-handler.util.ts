@@ -1,14 +1,14 @@
 import {
+  ConflictError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
   RemoteServerException,
   RemoteServerExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-server.exception';
-import {
-  UserInputError,
-  ForbiddenError,
-  ConflictError,
-  InternalServerError,
-  NotFoundError,
-} from 'src/engine/utils/graphql-errors.util';
 
 export const remoteServerGraphqlApiExceptionHandler = (error: any) => {
   if (error instanceof RemoteServerException) {

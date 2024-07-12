@@ -11,17 +11,17 @@ const StyledTbody = styled.tbody<{
   overflow: hidden;
 
   &.first-columns-sticky {
-    td:nth-child(1) {
+    td:nth-of-type(1) {
       position: sticky;
       left: 0;
       z-index: 5;
     }
-    td:nth-child(2) {
+    td:nth-of-type(2) {
       position: sticky;
       left: 9px;
       z-index: 5;
     }
-    td:nth-child(3) {
+    td:nth-of-type(3) {
       position: sticky;
       left: 39px;
       z-index: 5;
