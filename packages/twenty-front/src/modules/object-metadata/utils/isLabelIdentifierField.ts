@@ -11,9 +11,19 @@ export const isLabelIdentifierField = ({
   fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'name'>;
   objectMetadataItem: Pick<
     ObjectMetadataItem,
-    'labelIdentifierFieldMetadataId'
+    'labelIdentifierFieldMetadataId' | 'nameSingular'
   >;
-}) =>
-  isDefined(objectMetadataItem.labelIdentifierFieldMetadataId)
+}) => {
+  // Temporary hack while waiting for Weiko's PR
+  // https://github.com/twentyhq/twenty/pull/6227
+  if (
+    objectMetadataItem.nameSingular === 'activity' &&
+    fieldMetadataItem.name === 'title'
+  ) {
+    return true;
+  }
+
+  return isDefined(objectMetadataItem.labelIdentifierFieldMetadataId)
     ? fieldMetadataItem.id === objectMetadataItem.labelIdentifierFieldMetadataId
     : fieldMetadataItem.name === DEFAULT_LABEL_IDENTIFIER_FIELD_NAME;
+};
