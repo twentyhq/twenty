@@ -4,7 +4,6 @@ import { GraphQLError } from 'graphql';
 
 import { ExceptionHandlerUser } from 'src/engine/integrations/exception-handler/interfaces/exception-handler-user.interface';
 
-import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import {
   AuthenticationError,
   BaseGraphQLError,
@@ -15,7 +14,8 @@ import {
   NotFoundError,
   TimeoutError,
   ValidationError,
-} from 'src/engine/utils/graphql-errors.util';
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 
 const graphQLPredefinedExceptions = {
   400: ValidationError,
