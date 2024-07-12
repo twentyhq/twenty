@@ -149,10 +149,14 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
   ): void {
     if (
       labelIdentifierFieldMetadata &&
-      labelIdentifierFieldMetadata.type !== FieldMetadataType.TEXT
+      ![
+        FieldMetadataType.UUID,
+        FieldMetadataType.TEXT,
+        FieldMetadataType.FULL_NAME,
+      ].includes(labelIdentifierFieldMetadata.type)
     ) {
       throw new Error(
-        `Label identifier field for object ${objectMetadata.nameSingular} must be of type TEXT`,
+        `Label identifier field for object ${objectMetadata.nameSingular} has invalid type ${labelIdentifierFieldMetadata.type}`,
       );
     }
 
