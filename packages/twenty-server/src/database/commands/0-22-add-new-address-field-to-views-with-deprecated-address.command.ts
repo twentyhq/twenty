@@ -80,23 +80,24 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
     }
 
     for (const workspaceId of workspaceIds) {
-      const viewFieldRepository =
-        await this.twentyORMManager.getRepositoryForWorkspace(
-          workspaceId,
-          ViewFieldWorkspaceEntity,
-        );
+      this.logger.log(`Running command for workspace ${workspaceId}`);
+      try {
+        const viewFieldRepository =
+          await this.twentyORMManager.getRepositoryForWorkspace(
+            workspaceId,
+            ViewFieldWorkspaceEntity,
+          );
 
-      const dataSourceMetadatas =
-        await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-          workspaceId,
-        );
+        const dataSourceMetadatas =
+          await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
+            workspaceId,
+          );
 
-      for (const dataSourceMetadata of dataSourceMetadatas) {
-        const workspaceDataSource =
-          await this.typeORMService.connectToDataSource(dataSourceMetadata);
+        for (const dataSourceMetadata of dataSourceMetadatas) {
+          const workspaceDataSource =
+            await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-        if (workspaceDataSource) {
-          try {
+          if (workspaceDataSource) {
             const newAddressField = await this.fieldMetadataRepository.findBy({
               workspaceId,
               standardId: newFieldStandardId,
@@ -156,22 +157,24 @@ export class AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand extends 
                 `New address field successfully added to view ${viewId} for workspace ${workspaceId}`,
               );
             }
-          } catch (error) {
-            this.logger.log(
-              chalk.red(`Running command on workspace ${workspaceId} failed`),
-            );
-            throw error;
           }
         }
+
+        await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+
+        this.logger.log(
+          chalk.green(`Running command on workspace ${workspaceId} done`),
+        );
+      } catch (error) {
+        this.logger.log(
+          chalk.red(
+            `Running command on workspace ${workspaceId} failed with error: ${error}`,
+          ),
+        );
+        continue;
       }
 
-      await this.workspaceCacheVersionService.incrementVersion(workspaceId);
-
-      this.logger.log(
-        chalk.green(`Running command on workspace ${workspaceId} done`),
-      );
+      this.logger.log(chalk.green(`Command completed!`));
     }
-
-    this.logger.log(chalk.green(`Command completed!`));
   }
 }
