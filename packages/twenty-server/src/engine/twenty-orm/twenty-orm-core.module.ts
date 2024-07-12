@@ -6,9 +6,7 @@ import {
   OnApplicationShutdown,
   Provider,
 } from '@nestjs/common';
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import {
   TwentyORMModuleAsyncOptions,
@@ -30,6 +28,13 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { CacheManager } from 'src/engine/twenty-orm/storage/cache-manager.storage';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+
+const workspaceDataSourceCacheInstance =
+  new CacheManager<WorkspaceDataSource>();
 
 @Global()
 @Module({
@@ -37,6 +42,7 @@ import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspa
     TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
     DataSourceModule,
     WorkspaceCacheVersionModule,
+    WorkspaceCacheStorageModule,
   ],
   providers: [
     ...entitySchemaFactories,
@@ -62,49 +68,9 @@ export class TwentyORMCoreModule
     const providers: Provider[] = [
       {
         provide: TWENTY_ORM_WORKSPACE_DATASOURCE,
-        useFactory: async (
-          objectMetadataRepository: Repository<ObjectMetadataEntity>,
-          entitySchemaFactory: EntitySchemaFactory,
-          scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-          workspaceDataSourceFactory: WorkspaceDatasourceFactory,
-        ) => {
-          const { workspaceId, cacheVersion } =
-            scopedWorkspaceContextFactory.create();
-
-          if (!workspaceId) {
-            return null;
-          }
-
-          const objectMetadataCollection = await objectMetadataRepository.find({
-            where: {
-              workspaceId,
-            },
-            relations: [
-              'fields',
-              'fields.object',
-              'fields.fromRelationMetadata',
-              'fields.toRelationMetadata',
-              'fields.fromRelationMetadata.toObjectMetadata',
-              'fields.toRelationMetadata.toObjectMetadata',
-            ],
-          });
-
-          const entities = await Promise.all(
-            objectMetadataCollection.map((objectMetadata) =>
-              entitySchemaFactory.create(objectMetadata),
-            ),
-          );
-
-          const workspaceDataSource = await workspaceDataSourceFactory.create(
-            entities,
-            workspaceId,
-            cacheVersion,
-          );
-
-          return workspaceDataSource;
-        },
+        useFactory: this.createWorkspaceDataSource,
         inject: [
-          getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+          WorkspaceCacheStorageService,
           EntitySchemaFactory,
           ScopedWorkspaceContextFactory,
           WorkspaceDatasourceFactory,
@@ -129,50 +95,9 @@ export class TwentyORMCoreModule
     const providers: Provider[] = [
       {
         provide: TWENTY_ORM_WORKSPACE_DATASOURCE,
-        useFactory: async (
-          objectMetadataRepository: Repository<ObjectMetadataEntity>,
-          entitySchemaFactory: EntitySchemaFactory,
-          scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
-          workspaceDataSourceFactory: WorkspaceDatasourceFactory,
-          options: TwentyORMOptions,
-        ) => {
-          const { workspaceId, cacheVersion } =
-            scopedWorkspaceContextFactory.create();
-
-          if (!workspaceId) {
-            return null;
-          }
-
-          const objectMetadataCollection = await objectMetadataRepository.find({
-            where: {
-              workspaceId,
-            },
-            relations: [
-              'fields',
-              'fields.object',
-              'fields.fromRelationMetadata',
-              'fields.toRelationMetadata',
-              'fields.fromRelationMetadata.toObjectMetadata',
-              'fields.toRelationMetadata.toObjectMetadata',
-            ],
-          });
-
-          const entities = await Promise.all(
-            objectMetadataCollection.map((objectMetadata) =>
-              entitySchemaFactory.create(objectMetadata),
-            ),
-          );
-
-          const workspaceDataSource = await workspaceDataSourceFactory.create(
-            entities,
-            workspaceId,
-            cacheVersion,
-          );
-
-          return workspaceDataSource;
-        },
+        useFactory: this.createWorkspaceDataSource,
         inject: [
-          getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+          WorkspaceCacheStorageService,
           EntitySchemaFactory,
           ScopedWorkspaceContextFactory,
           WorkspaceDatasourceFactory,
@@ -189,6 +114,49 @@ export class TwentyORMCoreModule
         TWENTY_ORM_WORKSPACE_DATASOURCE,
       ],
     };
+  }
+
+  static async createWorkspaceDataSource(
+    workspaceCacheStorageService: WorkspaceCacheStorageService,
+    entitySchemaFactory: EntitySchemaFactory,
+    scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    workspaceDataSourceFactory: WorkspaceDatasourceFactory,
+    options?: TwentyORMOptions,
+  ) {
+    const { workspaceId, cacheVersion } =
+      scopedWorkspaceContextFactory.create();
+
+    if (!workspaceId) {
+      return null;
+    }
+
+    return workspaceDataSourceCacheInstance.getOrCreate(
+      `${workspaceId}-${cacheVersion}`,
+      async () => {
+        const objectMetadataCollection =
+          await workspaceCacheStorageService.getObjectMetadataCollection(
+            workspaceId,
+          );
+
+        if (!objectMetadataCollection) {
+          throw new Error('Object metadata collection not found');
+        }
+
+        const entities = await Promise.all(
+          objectMetadataCollection.map((objectMetadata) =>
+            entitySchemaFactory.create(objectMetadata),
+          ),
+        );
+
+        const workspaceDataSource = await workspaceDataSourceFactory.create(
+          entities,
+          workspaceId,
+          cacheVersion,
+        );
+
+        return workspaceDataSource;
+      },
+    );
   }
 
   /**

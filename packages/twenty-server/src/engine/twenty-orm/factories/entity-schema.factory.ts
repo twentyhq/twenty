@@ -44,7 +44,7 @@ export class EntitySchemaFactory {
       objectMetadata.fields,
     );
 
-    const relations = this.entitySchemaRelationFactory.create(
+    const relations = await this.entitySchemaRelationFactory.create(
       objectMetadata.fields,
     );
 
@@ -75,6 +75,8 @@ export class EntitySchemaFactory {
         'fields.object',
         'fields.fromRelationMetadata',
         'fields.toRelationMetadata',
+        'fields.fromRelationMetadata.fromObjectMetadata',
+        'fields.toRelationMetadata.fromObjectMetadata',
         'fields.fromRelationMetadata.toObjectMetadata',
         'fields.toRelationMetadata.toObjectMetadata',
       ],

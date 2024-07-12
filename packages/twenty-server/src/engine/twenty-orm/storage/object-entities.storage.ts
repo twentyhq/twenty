@@ -2,6 +2,7 @@ import { EntitySchema } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
+// TODO: Doesn't going to work properly as ObjectMetadataEntity can differ based on workspaceId and cacheKey
 export class ObjectEntitiesStorage {
   private static readonly objects: Map<EntitySchema, ObjectMetadataEntity> =
     new Map();

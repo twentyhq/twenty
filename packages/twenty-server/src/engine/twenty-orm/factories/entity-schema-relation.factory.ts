@@ -1,12 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntitySchemaRelationOptions } from 'typeorm';
-import lowerFirst from 'lodash.lowerfirst';
 import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataEntity,
+  RelationMetadataType,
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { determineRelationDetails } from 'src/engine/twenty-orm/utils/determine-relation-details.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import {
+  deduceRelationDirection,
+  RelationDirection,
+} from 'src/engine/utils/deduce-relation-direction.util';
 
 type EntitySchemaRelationMap = {
   [key: string]: EntitySchemaRelationOptions;
@@ -14,9 +22,13 @@ type EntitySchemaRelationMap = {
 
 @Injectable()
 export class EntitySchemaRelationFactory {
-  create(
+  constructor(
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+  ) {}
+
+  async create(
     fieldMetadataCollection: FieldMetadataEntity[],
-  ): EntitySchemaRelationMap {
+  ): Promise<EntitySchemaRelationMap> {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
     for (const fieldMetadata of fieldMetadataCollection) {
@@ -33,28 +45,23 @@ export class EntitySchemaRelationFactory {
         );
       }
 
-      const relationType = this.getRelationType(relationMetadata.relationType);
+      const relationType = this.getRelationType(
+        fieldMetadata,
+        relationMetadata,
+      );
       // TODO: This will work for now but we need to handle this better in the future for custom names on the join column
-      const joinColumnKey = fieldMetadata.name + 'Id';
-      // Lower only first letter of the object name
-      const target = lowerFirst(fieldMetadata.object.nameSingular);
-      const inverseSide =
-        lowerFirst(relationMetadata.toObjectMetadata.nameSingular) ?? target;
-      const joinColumn = fieldMetadataCollection.find(
-        (field) => field.name === joinColumnKey,
-      )
-        ? joinColumnKey
-        : null;
+      const relationDetails = await determineRelationDetails(
+        relationType,
+        fieldMetadata,
+        relationMetadata,
+        this.workspaceCacheStorageService,
+      );
 
       entitySchemaRelationMap[fieldMetadata.name] = {
         type: relationType,
-        target,
-        inverseSide,
-        joinColumn: joinColumn
-          ? {
-              name: joinColumn,
-            }
-          : undefined,
+        target: relationDetails.target,
+        inverseSide: relationDetails.inverseSide,
+        joinColumn: relationDetails.joinColumn,
       };
     }
 
@@ -62,13 +69,20 @@ export class EntitySchemaRelationFactory {
   }
 
   private getRelationType(
-    relationMetadataType: RelationMetadataType,
+    fieldMetadata: FieldMetadataEntity,
+    relationMetadata: RelationMetadataEntity,
   ): RelationType {
-    switch (relationMetadataType) {
-      case RelationMetadataType.ONE_TO_MANY:
-        return 'one-to-many';
-      case RelationMetadataType.MANY_TO_ONE:
-        return 'many-to-one';
+    const relationDirection = deduceRelationDirection(
+      fieldMetadata,
+      relationMetadata,
+    );
+
+    switch (relationMetadata.relationType) {
+      case RelationMetadataType.ONE_TO_MANY: {
+        return relationDirection === RelationDirection.FROM
+          ? 'one-to-many'
+          : 'many-to-one';
+      }
       case RelationMetadataType.ONE_TO_ONE:
         return 'one-to-one';
       case RelationMetadataType.MANY_TO_MANY:
