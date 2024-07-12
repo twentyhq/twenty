@@ -16,7 +16,9 @@ const StyledContent = styled.div`
     word-wrap: break-word;
     max-width: 100%;
     line-height: 1.8;
-    color: black;
+    color: ${Theme.text.color.code};
+    background: ${Theme.background.transparent.light};
+    border: ${Theme.border.radius.md};
   }
 
   p {

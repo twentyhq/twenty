@@ -11,6 +11,7 @@ export const BACKGROUND_DARK = {
   tertiary: GRAY_SCALE.gray75,
   quaternary: GRAY_SCALE.gray70,
   danger: COLOR.red80,
+  codeBlock: COLOR.red,
   transparent: {
     primary: RGBA(GRAY_SCALE.gray85, 0.5),
     secondary: RGBA(GRAY_SCALE.gray80, 0.5),

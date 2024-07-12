@@ -11,6 +11,7 @@ export const secondaryColors = {
   gray30: '#b3b3b3',
   gray20: '#f1f1f1',
   gray10: '#fafafa',
+  red: '#f83e3e',
 };
 
 export const Color = {

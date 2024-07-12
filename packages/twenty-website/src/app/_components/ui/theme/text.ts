@@ -7,6 +7,7 @@ export const Text = {
     tertiary: Color.gray40,
     quarternary: Color.gray30,
     Inverted: Color.white,
+    code: Color.red,
   },
   lineHeight: {
     lg: 1.5,
