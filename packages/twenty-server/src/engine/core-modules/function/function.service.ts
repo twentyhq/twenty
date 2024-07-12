@@ -44,15 +44,29 @@ export class FunctionService {
 
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
-    const createdFunction = await this.functionRepository.save({
-      name,
-      lambdaName,
-      author: workspaceMember,
-      sourceCodePath,
-      builtSourcePath,
-      syncStatus: FunctionSyncStatus.READY,
+    const existingFunction = await this.functionRepository.findOne({
+      where: { name },
     });
 
-    return createdFunction.sourceCodePath;
+    if (!existingFunction) {
+      await this.functionRepository.save({
+        name,
+        lambdaName,
+        author: workspaceMember,
+        sourceCodePath,
+        builtSourcePath,
+        syncStatus: FunctionSyncStatus.READY,
+      });
+    } else {
+      await this.functionRepository.update(existingFunction.id, {
+        lambdaName,
+        author: workspaceMember,
+        sourceCodePath,
+        builtSourcePath,
+        syncStatus: FunctionSyncStatus.READY,
+      });
+    }
+
+    return sourceCodePath;
   }
 }
