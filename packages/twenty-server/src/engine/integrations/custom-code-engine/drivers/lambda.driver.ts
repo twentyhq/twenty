@@ -14,7 +14,7 @@ import { CustomCodeEngineDriver } from 'src/engine/integrations/custom-code-engi
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { FunctionWorkspaceEntity } from 'src/modules/function/stadard-objects/function.workspace-entity';
+import { FunctionWorkspaceEntity } from 'src/modules/function/standard-objects/function.workspace-entity';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
 import { compileTypescript } from 'src/engine/integrations/custom-code-engine/utils/compile-typescript';
 import { createZipFile } from 'src/engine/integrations/custom-code-engine/utils/create-zip-file';

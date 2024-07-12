@@ -1,6 +1,6 @@
 import { FileUpload } from 'graphql-upload';
 
-import { FunctionWorkspaceEntity } from 'src/modules/function/stadard-objects/function.workspace-entity';
+import { FunctionWorkspaceEntity } from 'src/modules/function/standard-objects/function.workspace-entity';
 
 export type CustomCodeEngineServiceUpsertType = {
   sourceCodePath: string;

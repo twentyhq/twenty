@@ -9,7 +9,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import {
   FunctionSyncStatus,
   FunctionWorkspaceEntity,
-} from 'src/modules/function/stadard-objects/function.workspace-entity';
+} from 'src/modules/function/standard-objects/function.workspace-entity';
 import { CustomCodeEngineService } from 'src/engine/integrations/custom-code-engine/custom-code-engine.service';
 
 @Injectable()

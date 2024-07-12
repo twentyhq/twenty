@@ -4,7 +4,7 @@ import { FunctionService } from 'src/engine/core-modules/function/function.servi
 import { FunctionResolver } from 'src/engine/core-modules/function/function.resolver';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
-import { FunctionWorkspaceEntity } from 'src/modules/function/stadard-objects/function.workspace-entity';
+import { FunctionWorkspaceEntity } from 'src/modules/function/standard-objects/function.workspace-entity';
 import { CustomCodeEngineModule } from 'src/engine/integrations/custom-code-engine/custom-code-engine.module';
 
 @Module({
