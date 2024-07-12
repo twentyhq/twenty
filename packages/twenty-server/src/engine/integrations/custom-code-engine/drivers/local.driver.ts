@@ -29,7 +29,11 @@ export class LocalDriver implements CustomCodeEngineDriver {
     this.fileUploadService = options.fileUploadService;
   }
 
-  async upsert({ createReadStream, filename, mimetype }: FileUpload) {
+  async generateExecutable({
+    createReadStream,
+    filename,
+    mimetype,
+  }: FileUpload) {
     const typescriptCode = await readFileContent(createReadStream());
     const javascriptCode = compileTypescript(typescriptCode);
 

@@ -13,8 +13,8 @@ export class CustomCodeEngineService implements CustomCodeEngineDriver {
     @Inject(CUSTOM_CODE_ENGINE_DRIVER) private driver: CustomCodeEngineDriver,
   ) {}
 
-  async upsert(file: FileUpload) {
-    return this.driver.upsert(file);
+  async generateExecutable(file: FileUpload) {
+    return this.driver.generateExecutable(file);
   }
 
   async execute(

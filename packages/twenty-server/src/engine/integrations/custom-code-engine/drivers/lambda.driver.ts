@@ -39,7 +39,7 @@ export class LambdaDriver implements CustomCodeEngineDriver {
     this.fileUploadService = options.fileUploadService;
   }
 
-  async upsert(file: FileUpload) {
+  async generateExecutable(file: FileUpload) {
     const { createReadStream, filename, mimetype } = file;
     const typescriptCode = await readFileContent(createReadStream());
     const javascriptCode = compileTypescript(typescriptCode);

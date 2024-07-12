@@ -13,5 +13,7 @@ export interface CustomCodeEngineDriver {
     functionToExecute: FunctionWorkspaceEntity,
     payload: object | undefined,
   ): Promise<object>;
-  upsert(file: FileUpload): Promise<CustomCodeEngineServiceUpsertType>;
+  generateExecutable(
+    file: FileUpload,
+  ): Promise<CustomCodeEngineServiceUpsertType>;
 }
