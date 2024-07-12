@@ -25,17 +25,17 @@ const StyledTableHead = styled.thead<{
   }
 
   &.first-columns-sticky {
-    th:nth-child(1) {
+    th:nth-of-type(1) {
       position: sticky;
       left: 0;
       z-index: 5;
     }
-    th:nth-child(2) {
+    th:nth-of-type(2) {
       position: sticky;
       left: 9px;
       z-index: 5;
     }
-    th:nth-child(3) {
+    th:nth-of-type(3) {
       position: sticky;
       left: 39px;
       z-index: 5;
@@ -55,9 +55,9 @@ const StyledTableHead = styled.thead<{
   }
 
   &.header-sticky.first-columns-sticky {
-    th:nth-child(1),
-    th:nth-child(2),
-    th:nth-child(3) {
+    th:nth-of-type(1),
+    th:nth-of-type(2),
+    th:nth-of-type(3) {
       z-index: 10;
     }
   }

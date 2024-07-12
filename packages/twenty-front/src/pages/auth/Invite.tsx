@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import styled from '@emotion/styled';
+import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { Logo } from '@/auth/components/Logo';
@@ -74,8 +74,23 @@ export const Invite = () => {
             />
           </StyledContentContainer>
           <FooterNote>
-            By using Twenty, you agree to the Terms of Service and Privacy
-            Policy.
+            By using Twenty, you agree to the{' '}
+            <a
+              href="https://twenty.com/legal/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Terms of Service
+            </a>{' '}
+            and{' '}
+            <a
+              href="https://twenty.com/legal/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Privacy Policy
+            </a>
+            .
           </FooterNote>
         </>
       ) : (

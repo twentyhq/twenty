@@ -1,13 +1,13 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@nestjs/common';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { Command, CommandRunner, Option } from 'nest-commander';
-import { Repository, IsNull, DataSource } from 'typeorm';
 import chalk from 'chalk';
+import { Command, CommandRunner, Option } from 'nest-commander';
+import { DataSource, IsNull, Repository } from 'typeorm';
 
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
@@ -20,7 +20,7 @@ interface UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommandOptions {
 }
 
 @Command({
-  name: 'migrate-0.22:update-boolean-field-null-default-values-and-null-values',
+  name: 'upgrade-0.22:update-boolean-field-null-default-values-and-null-values',
   description:
     'Update boolean fields null default values and null values to false',
 })
@@ -76,9 +76,10 @@ export class UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand extends Co
         );
 
       if (!dataSourceMetadata) {
-        throw new Error(
+        this.logger.log(
           `Could not find dataSourceMetadata for workspace ${workspaceId}`,
         );
+        continue;
       }
 
       const workspaceDataSource =
@@ -115,9 +116,10 @@ export class UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand extends Co
 
         for (const booleanField of booleanFieldsWithoutDefaultValue) {
           if (!booleanField.object) {
-            throw new Error(
+            this.logger.log(
               `Could not find objectMetadataItem for field ${booleanField.id}`,
             );
+            continue;
           }
 
           // Could be done via a batch update but it's safer in this context to run it sequentially with the ALTER TABLE
@@ -127,6 +129,10 @@ export class UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand extends Co
 
           const fieldName = booleanField.name;
           const tableName = computeObjectTargetTable(booleanField.object);
+
+          await workspaceQueryRunner.query(
+            `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${fieldName}" = 'false' WHERE "${fieldName}" IS NULL`,
+          );
 
           await workspaceQueryRunner.query(
             `ALTER TABLE "${dataSourceMetadata.schema}"."${tableName}" ALTER COLUMN "${fieldName}" SET DEFAULT false;`,

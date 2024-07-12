@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
-import { DEV_SEED_PERSON_IDS } from 'src/database/typeorm-seeds/workspace/people';
 import { DEV_SEED_COMPANY_IDS } from 'src/database/typeorm-seeds/workspace/companies';
+import { DEV_SEED_PERSON_IDS } from 'src/database/typeorm-seeds/workspace/people';
 
 const tableName = 'opportunity';
 
@@ -25,7 +25,6 @@ export const seedOpportunity = async (
       'amountAmountMicros',
       'amountCurrencyCode',
       'closeDate',
-      'probability',
       'stage',
       'position',
       'pointOfContactId',
@@ -39,7 +38,6 @@ export const seedOpportunity = async (
         amountAmountMicros: 100000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
-        probability: 0.5,
         stage: 'NEW',
         position: 1,
         pointOfContactId: DEV_SEED_PERSON_IDS.CHRISTOPH,
@@ -51,7 +49,6 @@ export const seedOpportunity = async (
         amountAmountMicros: 2000000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
-        probability: 0.5,
         stage: 'MEETING',
         position: 2,
         pointOfContactId: DEV_SEED_PERSON_IDS.CHRISTOPHER_G,
@@ -63,7 +60,6 @@ export const seedOpportunity = async (
         amountAmountMicros: 300000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
-        probability: 0.5,
         stage: 'PROPOSAL',
         position: 3,
         pointOfContactId: DEV_SEED_PERSON_IDS.NICHOLAS,
@@ -75,7 +71,6 @@ export const seedOpportunity = async (
         amountAmountMicros: 4000000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
-        probability: 0.5,
         stage: 'PROPOSAL',
         position: 4,
         pointOfContactId: DEV_SEED_PERSON_IDS.MATTHEW,

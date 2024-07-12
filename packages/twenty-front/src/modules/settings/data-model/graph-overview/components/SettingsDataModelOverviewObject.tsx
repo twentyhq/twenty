@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { IconChevronDown, useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ObjectFieldRow } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewField';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
@@ -111,7 +112,7 @@ export const SettingsDataModelOverviewObject = ({
     <StyledNode>
       <StyledHeader>
         <StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
-          <StyledObjectLink to={'/settings/objects/' + data.namePlural}>
+          <StyledObjectLink to={`/settings/objects/${getObjectSlug(data)}`}>
             {Icon && <Icon size={theme.icon.size.md} />}
             {capitalize(data.namePlural)}
           </StyledObjectLink>
