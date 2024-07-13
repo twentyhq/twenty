@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 type DropDownKeyboardNavigationProps = {
   isDropDownOpen: boolean;
 };
+
 export const useDropDownKeyboardNavigation = ({
   isDropDownOpen,
 }: DropDownKeyboardNavigationProps) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [activeElement, setActiveElement] = useState<HTMLElement | null>(null);
   const dropDownMenuId = 'dropDownMenu';
   const dropdownMenu = document?.querySelector(`#${dropDownMenuId}`);
 
@@ -25,7 +27,9 @@ export const useDropDownKeyboardNavigation = ({
     (dropdownMenu?.childNodes?.length || 0) -
     1 +
     (dropDownMenuItemContainerDiv?.childNodes[0].childNodes?.length || 0);
-  const theme = useTheme()
+
+  const theme = useTheme();
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
@@ -36,6 +40,12 @@ export const useDropDownKeyboardNavigation = ({
         setActiveIndex((prevIndex) =>
           prevIndex > 0 ? prevIndex - 1 : prevIndex,
         );
+      } else if (e.key === 'Enter') {
+        if (activeElement) {
+          activeElement.click();
+          // const clickEvent = new MouseEvent('click', { bubbles: true });
+          // activeElement.dispatchEvent(clickEvent);
+        }
       }
     };
 
@@ -47,12 +57,15 @@ export const useDropDownKeyboardNavigation = ({
     dropdownMenu?.childNodes,
     dropDownMenuItemContainerDiv?.childNodes,
     totalDropDownMenuItems,
+    activeElement
   ]);
+
   useEffect(() => {
     if (!isDropDownOpen) {
       setActiveIndex(0);
     }
   }, [isDropDownOpen]);
+
   useEffect(() => {
     const allDropDownMenuItems = [
       ...Array.from(dropdownMenu?.childNodes || []).filter(
@@ -62,40 +75,41 @@ export const useDropDownKeyboardNavigation = ({
         dropDownMenuItemContainerDiv?.childNodes[0].childNodes || [],
       ),
     ];
-  
+
     allDropDownMenuItems.forEach((element, index) => {
       const el = element as HTMLElement;
-  
+
       // Manage focus and background color based on activeIndex
       if (index === activeIndex) {
-        el.style.backgroundColor = theme.background.transparent.primary;
-  
+        setActiveElement(el);
+        el.style.backgroundColor = theme.background.transparent.light;
+
         if (el.tagName.toLowerCase() === 'input') {
           (el as HTMLInputElement).focus();
         }
       } else {
         el.style.backgroundColor = theme.background.primary; // Reset to default or transparent
       }
-  
+
       // Blur input elements when they are not focused
       if (el.tagName.toLowerCase() === 'input' && index !== activeIndex) {
         (el as HTMLInputElement).blur();
       }
-  
+
       // Handle hover effect
       el.addEventListener('mouseenter', () => {
         if (index !== activeIndex) {
-          el.style.backgroundColor = theme.background.transparent.primary; // Change to hover color
+          el.style.backgroundColor = theme.background.transparent.light; // Change to hover color
         }
       });
-  
+
       el.addEventListener('mouseleave', () => {
         if (index !== activeIndex) {
           el.style.backgroundColor = theme.background.primary; // Reset to default or transparent
         }
       });
     });
-  
+
     // Clean up event listeners when component unmounts or dependencies change
     return () => {
       allDropDownMenuItems.forEach((element) => {
@@ -110,7 +124,6 @@ export const useDropDownKeyboardNavigation = ({
     totalDropDownMenuItems,
     activeIndex,
   ]);
-  
 
   return { dropDownMenuId };
 };
