@@ -84,7 +84,7 @@ export const Dropdown = ({
     strategy: dropdownStrategy,
   });
   const { dropDownMenuId } = useDropDownKeyboardNavigation({
-    isDropDownOpen: isDropdownOpen
+    isDropDownOpen: isDropdownOpen,
   });
 
   const handleHotkeyTriggered = () => {

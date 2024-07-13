@@ -57,7 +57,7 @@ export const useDropDownKeyboardNavigation = ({
     dropdownMenu?.childNodes,
     dropDownMenuItemContainerDiv?.childNodes,
     totalDropDownMenuItems,
-    activeElement
+    activeElement,
   ]);
 
   useEffect(() => {
@@ -123,6 +123,8 @@ export const useDropDownKeyboardNavigation = ({
     dropDownMenuItemContainerDiv?.childNodes,
     totalDropDownMenuItems,
     activeIndex,
+    theme.background.primary,
+    theme.background.transparent.light,
   ]);
 
   return { dropDownMenuId };
