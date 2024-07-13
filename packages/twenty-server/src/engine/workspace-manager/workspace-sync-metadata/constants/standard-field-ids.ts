@@ -27,19 +27,8 @@ export const ACTIVITY_STANDARD_FIELD_IDS = {
   assignee: '20202020-4259-48e4-9e77-6b92991906d5',
 };
 
-export const ANALYTICS_QUERY_STANDARD_FIELD_IDS = {
-  chart: '20202020-9084-4c96-944c-3a359c3f6b03',
-  measure: '20202020-9573-4359-b500-f8a9895c848f',
-  sourceObjectNameSingular: '20202020-7acd-412f-af03-62b5630df552',
-  fieldPath: '20202020-ff88-41ba-9158-ce9711e50606',
-  analyticsQueryFilters: '20202020-2229-4c35-9f3b-9e1199ec3c7c',
-  groupBy: '20202020-4a7b-4021-b1d4-6e6f282cedee',
-  result: '20202020-4db0-4a48-b742-3da6cfbd146d',
-  resultCreatedAt: '20202020-c8fb-437d-9994-1720eac571ec',
-};
-
 export const ANALYTICS_QUERY_FILTER_STANDARD_FIELD_IDS = {
-  analyticsQuery: '20202020-7023-4c2c-ae1e-8bdaea1d6dbf',
+  chart: '20202020-9a7e-4ddb-9099-dba16a93aab6',
   field: '20202020-24f0-4f4d-a845-b7d80e5c661b',
   operator: '20202020-3994-49f3-a0c0-9bd77978879a',
   value: '20202020-2b74-47ea-8a9d-f5d97f3f95f3',
@@ -75,9 +64,16 @@ export const BLOCKLIST_STANDARD_FIELD_IDS = {
 };
 
 export const CHART_STANDARD_FIELD_IDS = {
-  title: '20202020-e5aa-45b1-aec0-431420660570',
+  name: '20202020-e5aa-45b1-aec0-431420660570',
   description: '20202020-71b2-4df1-8cb3-120d55272b12',
-  analyticsQueries: '20202020-13c2-4d66-a631-605c85953648',
+  measure: '20202020-be9f-4540-8c08-c4061e0c3257',
+  sourceObjectNameSingular: '20202020-843b-4858-9521-0345148e4aae',
+  fieldPath: '20202020-843b-4858-9521-0345148e4aae',
+  chartFilters: '20202020-9a7e-4ddb-9099-dba16a93aab6',
+  groupBy: '20202020-a345-4a3b-b806-404b692808eb',
+  result: '20202020-c200-462a-86b0-b6f7ba038135',
+  resultCreatedAt: '20202020-c385-410a-9fd7-c06570b71397',
+  position: '20202020-b014-4ead-b2f4-5cbb9c67cd05',
 };
 
 export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS = {

@@ -2,9 +2,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { IconPlus } from 'twenty-ui';
 
-import { Chart } from '@/activities/reports/components/Chart';
-import { AnalyticsQuery as AnalyticsQueryType } from '@/activities/reports/types/AnalyticsQuery';
-import { Chart as ChartType } from '@/activities/reports/types/Chart';
+import { Chart } from '@/activities/charts/components/Chart';
+import { AnalyticsQuery as AnalyticsQueryType } from '@/activities/charts/types/AnalyticsQuery';
+import { Chart as ChartType } from '@/activities/charts/types/Chart';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';

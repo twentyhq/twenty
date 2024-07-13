@@ -5,7 +5,7 @@ import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-qu
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AnalyticsQueryResult } from 'src/engine/core-modules/analytics-query/dtos/analytics-query-result.dto';
-import { AnalyticsQueryWorkspaceEntity } from 'src/modules/charts/standard-objects/analytics-query.workspace-entity';
+import { ChartWorkspaceEntity } from 'src/modules/charts/standard-objects/chart.workspace-entity';
 
 @Injectable()
 export class AnalyticsQueryService {
@@ -16,13 +16,10 @@ export class AnalyticsQueryService {
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
-  async run(analyticsqueryId: string): Promise<AnalyticsQueryResult> {
-    const repository = await this.twentyORMManager.getRepository(
-      AnalyticsQueryWorkspaceEntity,
-    );
-    const analyticsquery = await repository.findOneBy({ id: analyticsqueryId });
-
-    console.log('analyticsquery', analyticsquery);
+  async run(chartId: string): Promise<AnalyticsQueryResult> {
+    const repository =
+      await this.twentyORMManager.getRepository(ChartWorkspaceEntity);
+    const chart = await repository.findOneBy({ id: chartId });
 
     return { analyticsQueryResult: 'test' };
   }

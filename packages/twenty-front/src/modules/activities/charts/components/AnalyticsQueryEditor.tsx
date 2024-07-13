@@ -2,8 +2,8 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Button } from '@react-email/components';
 
-import { AnalyticsQueryFilters } from '@/activities/reports/components/AnalyticsQueryFilters';
-import { AnalyticsQuery } from '@/activities/reports/types/AnalyticsQuery';
+import { AnalyticsQueryFilters } from '@/activities/charts/components/AnalyticsQueryFilters';
+import { AnalyticsQuery } from '@/activities/charts/types/AnalyticsQuery';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { Select } from '@/ui/input/components/Select';
 import { useRunAnalyticsQueryMutation } from '~/generated/graphql';

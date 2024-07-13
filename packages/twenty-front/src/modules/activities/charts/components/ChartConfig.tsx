@@ -1,4 +1,4 @@
-import { Chart } from '@/activities/reports/types/Chart';
+import { Chart } from '@/activities/charts/types/Chart';
 import { Select } from '@/ui/input/components/Select';
 
 interface ChartConfigProps {

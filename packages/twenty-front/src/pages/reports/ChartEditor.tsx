@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { AnalyticsQueryEditor } from '@/activities/reports/components/AnalyticsQueryEditor';
-import { Chart } from '@/activities/reports/components/Chart';
-import { ChartConfig } from '@/activities/reports/components/ChartConfig';
-import { Chart as ChartType } from '@/activities/reports/types/Chart';
+import { AnalyticsQueryEditor } from '@/activities/charts/components/AnalyticsQueryEditor';
+import { Chart } from '@/activities/charts/components/Chart';
+import { ChartConfig } from '@/activities/charts/components/ChartConfig';
+import { Chart as ChartType } from '@/activities/charts/types/Chart';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 

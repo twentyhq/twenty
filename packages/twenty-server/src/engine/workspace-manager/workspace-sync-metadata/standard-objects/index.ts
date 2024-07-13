@@ -27,15 +27,13 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { AnalyticsQueryWorkspaceEntity } from 'src/modules/charts/standard-objects/analytics-query.workspace-entity';
-import { AnalyticsQueryFilterWorkspaceEntity } from 'src/modules/charts/standard-objects/analytics-query-filter.workspace-entity';
 import { ChartWorkspaceEntity } from 'src/modules/charts/standard-objects/chart.workspace-entity';
+import { ChartFilterWorkspaceEntity } from 'src/modules/charts/standard-objects/chart-filter.workspace-entity';
 
 export const standardObjectMetadataDefinitions = [
   ActivityTargetWorkspaceEntity,
   ActivityWorkspaceEntity,
-  AnalyticsQueryWorkspaceEntity,
-  AnalyticsQueryFilterWorkspaceEntity,
+  ChartFilterWorkspaceEntity,
   ApiKeyWorkspaceEntity,
   AuditLogWorkspaceEntity,
   AttachmentWorkspaceEntity,

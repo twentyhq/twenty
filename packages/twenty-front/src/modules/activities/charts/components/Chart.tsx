@@ -1,4 +1,4 @@
-import { Chart as ChartType } from '@/activities/reports/types/Chart';
+import { Chart as ChartType } from '@/activities/charts/types/Chart';
 
 interface ChartProps {
   chart: ChartType;

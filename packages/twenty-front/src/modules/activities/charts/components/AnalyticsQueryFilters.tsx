@@ -1,5 +1,5 @@
-import { AnalyticsQueryFilter } from '@/activities/reports/components/AnalyticsQueryFilter';
-import { AnalyticsQuery } from '@/activities/reports/types/AnalyticsQuery';
+import { AnalyticsQueryFilter } from '@/activities/charts/components/AnalyticsQueryFilter';
+import { AnalyticsQuery } from '@/activities/charts/types/AnalyticsQuery';
 
 interface AnalyticsQueryFiltersProps {
   analyticsQuery?: AnalyticsQuery;
