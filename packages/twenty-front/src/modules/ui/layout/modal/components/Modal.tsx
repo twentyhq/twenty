@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
 import {
@@ -7,11 +7,8 @@ import {
 } from '@/ui/layout/modal/components/ModalLayout';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  ClickOutsideMode,
-  useListenClickOutside,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { ModalHotkeyScope } from './types/ModalHotkeyScope';
 
 type ModalProps = ModalLayoutProps & {
@@ -68,10 +65,10 @@ export const Modal = ({
 
   const modalRef = useRef<HTMLDivElement>(null);
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [modalRef],
+    listenerId: 'MODAL_CLICK_OUTSIDE_LISTENER_ID',
     callback: () => onClose?.(),
-    mode: ClickOutsideMode.comparePixels,
   });
 
   return isOpen ? (
