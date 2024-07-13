@@ -23,6 +23,7 @@ import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScop
 
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
+import { useDropDownKeyboardNavigation } from '~/hooks/useDopDownKeyboardNavigation';
 
 type DropdownProps = {
   className?: string;
@@ -81,6 +82,9 @@ export const Dropdown = ({
     middleware: [flip(), ...offsetMiddlewares],
     whileElementsMounted: autoUpdate,
     strategy: dropdownStrategy,
+  });
+  const { dropDownMenuId } = useDropDownKeyboardNavigation({
+    isDropDownOpen: isDropdownOpen
   });
 
   const handleHotkeyTriggered = () => {
@@ -153,6 +157,7 @@ export const Dropdown = ({
             data-select-disable
             ref={refs.setFloating}
             style={floatingStyles}
+            id={dropDownMenuId}
           >
             {dropdownComponents}
           </DropdownMenu>
