@@ -1,6 +1,6 @@
-import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
+import ReactDatePicker from 'react-datepicker';
 import { Key } from 'ts-key-enum';
 import {
   IconCalendarX,
@@ -18,7 +18,6 @@ import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals
 import { isDefined } from '~/utils/isDefined';
 
 import 'react-datepicker/dist/react-datepicker.css';
-import { useState } from 'react';
 
 export const months = [
   { label: 'January', value: 0 },
@@ -299,7 +298,7 @@ const StyledCustomDatePickerHeader = styled.div`
 `;
 
 export type InternalDatePickerProps = {
-  date: Date;
+  date: Date | null;
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date | null) => void;
   clearable?: boolean;
@@ -308,11 +307,6 @@ export type InternalDatePickerProps = {
   onEscape?: (date: Date | null) => void;
   keyboardEventsDisabled?: boolean;
   onClear?: () => void;
-};
-type SelectedDate = {
-  month: number;
-  day: number;
-  year: number;
 };
 
 export const InternalDatePicker = ({
@@ -327,11 +321,6 @@ export const InternalDatePicker = ({
   onClear,
 }: InternalDatePickerProps) => {
   const internalDate = date ?? new Date();
-  const [selectedDate, setSelectedDate] = useState<SelectedDate>({
-    year: internalDate.getFullYear(),
-    month: internalDate.getMonth(), // Note: JavaScript months are 0-indexed
-    day: internalDate.getDate(),
-  });
 
   const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
   const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
@@ -383,25 +372,23 @@ export const InternalDatePicker = ({
   };
 
   const handleChangeMonth = (month: number) => {
-    const newDate = new Date(date);
+    const newDate = new Date(internalDate);
     newDate.setMonth(month);
-    setSelectedDate({ ...selectedDate, month: newDate.getMonth() });
     onChange?.(newDate);
   };
 
   const handleChangeYear = (year: number) => {
-    const newDate = new Date(date);
+    const newDate = new Date(internalDate);
     newDate.setFullYear(year);
-    setSelectedDate({ ...selectedDate, year: newDate.getFullYear() });
     onChange?.(newDate);
   };
 
-  const dateWithoutTime = DateTime.fromJSDate(date)
+  const dateWithoutTime = DateTime.fromJSDate(internalDate)
     .toLocal()
     .set({
-      day: date.getUTCDate(),
-      month: date.getUTCMonth() + 1,
-      year: date.getUTCFullYear(),
+      day: internalDate.getUTCDate(),
+      month: internalDate.getUTCMonth() + 1,
+      year: internalDate.getUTCFullYear(),
       hour: 0,
       minute: 0,
       second: 0,
@@ -416,9 +403,11 @@ export const InternalDatePicker = ({
         <ReactDatePicker
           open={true}
           selected={dateToUse}
-          openToDate={dateToUse}
+          openToDate={isDefined(dateToUse) ? dateToUse : undefined}
           disabledKeyboardNavigation
           onChange={(newDate) => {
+            newDate?.setHours(internalDate.getUTCHours());
+            newDate?.setUTCMinutes(internalDate.getUTCMinutes());
             onChange?.(newDate);
           }}
           customInput={
@@ -452,13 +441,13 @@ export const InternalDatePicker = ({
                   options={months}
                   disableBlur
                   onChange={handleChangeMonth}
-                  value={selectedDate.month}
+                  value={internalDate.getUTCMonth()}
                   fullWidth
                 />
                 <Select
                   dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
                   onChange={handleChangeYear}
-                  value={selectedDate.year}
+                  value={internalDate.getUTCFullYear()}
                   options={years}
                   disableBlur
                   fullWidth
