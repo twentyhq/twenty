@@ -60,7 +60,7 @@ export const RegenerateApiKey: Story = {
     const canvas = within(canvasElement);
     await canvas.findByText('Settings');
 
-    await userEvent.click(canvas.getByText('Regenerate Key'));
+    await userEvent.click(await canvas.findByText('Regenerate Key'));
 
     await canvas.findByText('Cancel');
     const confirmationInput = await canvas.findByPlaceholderText('yes');
@@ -85,7 +85,7 @@ export const DeleteApiKey: Story = {
     const canvas = within(canvasElement);
     await canvas.findByText('Settings');
 
-    await userEvent.click(canvas.getByText('Delete'));
+    await userEvent.click(await canvas.findByText('Delete'));
 
     await canvas.findByText('Cancel');
     const confirmationInput = await canvas.findByPlaceholderText('yes');
