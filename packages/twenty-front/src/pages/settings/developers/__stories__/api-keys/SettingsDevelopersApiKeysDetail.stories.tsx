@@ -72,10 +72,9 @@ export const RegenerateApiKey: Story = {
     const confirmButton = await canvas.findByTestId(
       'confirmation-modal-confirm-button',
     );
-    await userEvent.click(confirmButton);
 
     await step('Click on confirm button', async () => {
-      await sleep(200);
+      await sleep(1000);
       await userEvent.click(confirmButton);
     });
   },
@@ -98,10 +97,9 @@ export const DeleteApiKey: Story = {
     const confirmButton = await canvas.findByTestId(
       'confirmation-modal-confirm-button',
     );
-    await userEvent.click(confirmButton);
 
     await step('Click on confirm button', async () => {
-      await sleep(200);
+      await sleep(1000);
       await userEvent.click(confirmButton);
     });
   },
