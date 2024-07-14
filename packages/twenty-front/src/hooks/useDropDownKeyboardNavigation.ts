@@ -78,6 +78,16 @@ export const useDropDownKeyboardNavigation = ({
         dropDownMenuItemContainerDiv?.childNodes[0]?.childNodes || [],
       ),
     ];
+    const handleMouseEnter = (el: HTMLElement) => {
+      if (el !== activeElement && el.tagName.toLowerCase() !== 'input') {
+        el.style.backgroundColor = theme.background.transparent.light;
+      }
+    };
+    const handleMouseLeave = (el: HTMLElement) => {
+      if (el !== activeElement) {
+        el.style.backgroundColor = theme.background.primary;
+      }
+    };
 
     allDropDownMenuItems.forEach((element, index) => {
       const el = element as HTMLElement;
@@ -96,25 +106,17 @@ export const useDropDownKeyboardNavigation = ({
           el.style.backgroundColor = theme.background.primary;
         }
       }
-      el.addEventListener('mouseenter', () => {
-        if (index !== activeIndex && el.tagName.toLowerCase() !== 'input') {
-          el.style.backgroundColor = theme.background.transparent.light;
-        }
-      });
 
-      el.addEventListener('mouseleave', () => {
-        if (index !== activeIndex) {
-          el.style.backgroundColor = theme.background.primary;
-        }
-      });
+      el.addEventListener('mouseenter', () => handleMouseEnter(el));
+      el.addEventListener('mouseleave', () => handleMouseLeave(el));
     });
 
     // Clean up event listeners when component unmounts or dependencies change
     return () => {
       allDropDownMenuItems.forEach((element) => {
         const el = element as HTMLElement;
-        el.removeEventListener('mouseenter', () => {});
-        el.removeEventListener('mouseleave', () => {});
+        el.removeEventListener('mouseenter', () => handleMouseEnter(el));
+        el.removeEventListener('mouseleave', () => handleMouseLeave(el));
       });
     };
   }, [
@@ -124,6 +126,7 @@ export const useDropDownKeyboardNavigation = ({
     activeIndex,
     theme.background.primary,
     theme.background.transparent.light,
+    activeElement,
   ]);
 
   return { dropDownMenuId };
