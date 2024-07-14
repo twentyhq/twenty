@@ -66,13 +66,13 @@ export const BLOCKLIST_STANDARD_FIELD_IDS = {
 export const CHART_STANDARD_FIELD_IDS = {
   name: '20202020-e5aa-45b1-aec0-431420660570',
   description: '20202020-71b2-4df1-8cb3-120d55272b12',
-  measure: '20202020-be9f-4540-8c08-c4061e0c3257',
-  sourceObjectNameSingular: '20202020-843b-4858-9521-0345148e4aae',
-  fieldPath: '20202020-843b-4858-9521-0345148e4aae',
-  chartFilters: '20202020-9a7e-4ddb-9099-dba16a93aab6',
-  groupBy: '20202020-a345-4a3b-b806-404b692808eb',
-  result: '20202020-c200-462a-86b0-b6f7ba038135',
-  resultCreatedAt: '20202020-c385-410a-9fd7-c06570b71397',
+  measure: '20202020-4542-4187-ab4a-9688f2c625a0',
+  sourceObjectNameSingular: '20202020-1e61-41f2-b921-4b2b21b25002',
+  fieldPath: '20202020-b301-49fc-a26e-55f1a482a4c8',
+  chartFilters: '20202020-9703-4059-8b49-50a44cf3da26',
+  groupBy: '20202020-c5e7-4158-bd3e-3ab1283b52a3',
+  result: '20202020-4473-4124-a643-13d9ad9f68d2',
+  resultCreatedAt: '20202020-070d-490b-a974-f6677f77b909',
   position: '20202020-b014-4ead-b2f4-5cbb9c67cd05',
 };
 

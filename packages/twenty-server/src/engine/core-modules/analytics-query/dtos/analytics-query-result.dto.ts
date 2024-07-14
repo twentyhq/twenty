@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('AnalyticsQueryResult')
-export class AnalyticsQueryResult {
+@ObjectType('ChartResult')
+export class ChartResult {
   @Field(() => String)
-  analyticsQueryResult: string;
+  chartResult: string;
 }

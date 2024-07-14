@@ -30,11 +30,6 @@ export type Analytics = {
   success: Scalars['Boolean'];
 };
 
-export type AnalyticsQueryResult = {
-  __typename?: 'AnalyticsQueryResult';
-  analyticsQueryResult: Scalars['String'];
-};
-
 export type ApiConfig = {
   __typename?: 'ApiConfig';
   mutationMaximumAffectedRecords: Scalars['Float'];
@@ -143,6 +138,11 @@ export enum CaptchaDriverType {
   GoogleRecaptcha = 'GoogleRecaptcha',
   Turnstile = 'Turnstile'
 }
+
+export type ChartResult = {
+  __typename?: 'ChartResult';
+  chartResult: Scalars['String'];
+};
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
@@ -311,7 +311,7 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
-  runAnalyticsQuery: AnalyticsQueryResult;
+  runChartQuery: ChartResult;
   sendInviteLink: SendInviteLink;
   signUp: LoginToken;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
@@ -396,8 +396,8 @@ export type MutationRenewTokenArgs = {
 };
 
 
-export type MutationRunAnalyticsQueryArgs = {
-  analyticsQueryId: Scalars['String'];
+export type MutationRunChartQueryArgs = {
+  chartId: Scalars['String'];
 };
 
 
@@ -1111,12 +1111,12 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
-export type RunAnalyticsQueryMutationVariables = Exact<{
-  analyticsQueryId: Scalars['String'];
+export type RunChartQueryMutationVariables = Exact<{
+  chartId: Scalars['String'];
 }>;
 
 
-export type RunAnalyticsQueryMutation = { __typename?: 'Mutation', runAnalyticsQuery: { __typename?: 'AnalyticsQueryResult', analyticsQueryResult: string } };
+export type RunChartQueryMutation = { __typename?: 'Mutation', runChartQuery: { __typename?: 'ChartResult', chartResult: string } };
 
 export type TrackMutationVariables = Exact<{
   type: Scalars['String'];
@@ -1650,39 +1650,39 @@ export function useGetTimelineThreadsFromPersonIdLazyQuery(baseOptions?: Apollo.
 export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdQuery>;
 export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
 export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
-export const RunAnalyticsQueryDocument = gql`
-    mutation RunAnalyticsQuery($analyticsQueryId: String!) {
-  runAnalyticsQuery(analyticsQueryId: $analyticsQueryId) {
-    analyticsQueryResult
+export const RunChartQueryDocument = gql`
+    mutation RunChartQuery($chartId: String!) {
+  runChartQuery(chartId: $chartId) {
+    chartResult
   }
 }
     `;
-export type RunAnalyticsQueryMutationFn = Apollo.MutationFunction<RunAnalyticsQueryMutation, RunAnalyticsQueryMutationVariables>;
+export type RunChartQueryMutationFn = Apollo.MutationFunction<RunChartQueryMutation, RunChartQueryMutationVariables>;
 
 /**
- * __useRunAnalyticsQueryMutation__
+ * __useRunChartQueryMutation__
  *
- * To run a mutation, you first call `useRunAnalyticsQueryMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRunAnalyticsQueryMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useRunChartQueryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRunChartQueryMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [runAnalyticsQueryMutation, { data, loading, error }] = useRunAnalyticsQueryMutation({
+ * const [runChartQueryMutation, { data, loading, error }] = useRunChartQueryMutation({
  *   variables: {
- *      analyticsQueryId: // value for 'analyticsQueryId'
+ *      chartId: // value for 'chartId'
  *   },
  * });
  */
-export function useRunAnalyticsQueryMutation(baseOptions?: Apollo.MutationHookOptions<RunAnalyticsQueryMutation, RunAnalyticsQueryMutationVariables>) {
+export function useRunChartQueryMutation(baseOptions?: Apollo.MutationHookOptions<RunChartQueryMutation, RunChartQueryMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RunAnalyticsQueryMutation, RunAnalyticsQueryMutationVariables>(RunAnalyticsQueryDocument, options);
+        return Apollo.useMutation<RunChartQueryMutation, RunChartQueryMutationVariables>(RunChartQueryDocument, options);
       }
-export type RunAnalyticsQueryMutationHookResult = ReturnType<typeof useRunAnalyticsQueryMutation>;
-export type RunAnalyticsQueryMutationResult = Apollo.MutationResult<RunAnalyticsQueryMutation>;
-export type RunAnalyticsQueryMutationOptions = Apollo.BaseMutationOptions<RunAnalyticsQueryMutation, RunAnalyticsQueryMutationVariables>;
+export type RunChartQueryMutationHookResult = ReturnType<typeof useRunChartQueryMutation>;
+export type RunChartQueryMutationResult = Apollo.MutationResult<RunChartQueryMutation>;
+export type RunChartQueryMutationOptions = Apollo.BaseMutationOptions<RunChartQueryMutation, RunChartQueryMutationVariables>;
 export const TrackDocument = gql`
     mutation Track($type: String!, $data: JSON!) {
   track(type: $type, data: $data) {

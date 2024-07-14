@@ -4,6 +4,7 @@ import { Chart as ChartType } from '@/activities/charts/types/Chart';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useRunChartQueryMutation } from '~/generated/graphql';
 
 const StyledChartContainer = styled.div`
   display: flex;
@@ -22,13 +23,26 @@ export const Chart = (props: ChartProps) => {
     objectNameSingular: props.targetableObject.targetObjectNameSingular,
   });
 
+  const [runChartQuery] = useRunChartQueryMutation({
+    variables: {
+      chartId: props.targetableObject.id,
+    },
+  });
+
   if (loading) return <SkeletonLoader />;
 
   if (!chart) throw new Error('Could not load chart');
 
   return (
     <StyledChartContainer>
-      <h2>{chart.name}</h2>
+      <button
+        onClick={async () => {
+          await runChartQuery();
+        }}
+      >
+        Run query
+      </button>
+      <p>{chart.result}</p>
       {/* TODO: Nivo charts */}
     </StyledChartContainer>
   );
