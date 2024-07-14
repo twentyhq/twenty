@@ -30,7 +30,7 @@ export const useDropDownKeyboardNavigation = ({
     setTotalDropDownMenuItems(
       (dropdownMenu?.childNodes?.length || 0) -
         1 +
-        (dropDownMenuItemContainerDiv?.childNodes[0].childNodes?.length || 0),
+        (dropDownMenuItemContainerDiv?.childNodes[0]?.childNodes?.length || 0),
     );
   }, [
     dropDownMenuItemContainerDiv?.childNodes,
@@ -48,9 +48,7 @@ export const useDropDownKeyboardNavigation = ({
           prevIndex > 0 ? prevIndex - 1 : prevIndex,
         );
       } else if (e.key === 'Enter') {
-        if (activeElement) {
-          activeElement.click();
-        }
+        activeElement?.click();
       }
     };
 
@@ -77,7 +75,7 @@ export const useDropDownKeyboardNavigation = ({
         (el) => !isDropDownMenuItemContainerDiv(el),
       ),
       ...Array.from(
-        dropDownMenuItemContainerDiv?.childNodes[0].childNodes || [],
+        dropDownMenuItemContainerDiv?.childNodes[0]?.childNodes || [],
       ),
     ];
 
@@ -100,13 +98,13 @@ export const useDropDownKeyboardNavigation = ({
       }
       el.addEventListener('mouseenter', () => {
         if (index !== activeIndex && el.tagName.toLowerCase() !== 'input') {
-          el.style.backgroundColor = theme.background.transparent.light; 
+          el.style.backgroundColor = theme.background.transparent.light;
         }
       });
 
       el.addEventListener('mouseleave', () => {
         if (index !== activeIndex) {
-          el.style.backgroundColor = theme.background.primary; 
+          el.style.backgroundColor = theme.background.primary;
         }
       });
     });
