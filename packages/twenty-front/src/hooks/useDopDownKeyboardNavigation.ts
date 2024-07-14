@@ -8,27 +8,35 @@ type DropDownKeyboardNavigationProps = {
 export const useDropDownKeyboardNavigation = ({
   isDropDownOpen,
 }: DropDownKeyboardNavigationProps) => {
+  const theme = useTheme();
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [totalDropDownMenuItems, setTotalDropDownMenuItems] =
+    useState<number>(0);
   const [activeElement, setActiveElement] = useState<HTMLElement | null>(null);
   const dropDownMenuId = 'dropDownMenu';
   const dropdownMenu = document?.querySelector(`#${dropDownMenuId}`);
 
-  // Function to determine if an element is a container div
-  const isDropDownMenuItemContainerDiv = (el: ChildNode) =>
-    el?.childNodes[0]?.childNodes?.length > 1;
+  const isDropDownMenuItemContainerDiv = (el: ChildNode) =>{
+    const element = el as HTMLElement;
+    return element.tagName?.toLowerCase() ==='div'
+  }
 
-  // Find the container div element
   const dropDownMenuItemContainerDiv = Array.from(
     dropdownMenu?.childNodes || [],
   ).find((el) => isDropDownMenuItemContainerDiv(el));
 
   // Calculate total number of items
-  const totalDropDownMenuItems =
-    (dropdownMenu?.childNodes?.length || 0) -
-    1 +
-    (dropDownMenuItemContainerDiv?.childNodes[0].childNodes?.length || 0);
+  useEffect(() => {
+    setTotalDropDownMenuItems(
+      (dropdownMenu?.childNodes?.length || 0) -
+        1 +
+        (dropDownMenuItemContainerDiv?.childNodes[0].childNodes?.length || 0),
+    );
+  }, [
+    dropDownMenuItemContainerDiv?.childNodes,
+    dropdownMenu?.childNodes?.length,
+  ]);
 
-  const theme = useTheme();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -75,26 +83,31 @@ export const useDropDownKeyboardNavigation = ({
         dropDownMenuItemContainerDiv?.childNodes[0].childNodes || [],
       ),
     ];
+    console.log(allDropDownMenuItems, 'all',dropdownMenu)
 
     allDropDownMenuItems.forEach((element, index) => {
       const el = element as HTMLElement;
-
       // Manage focus and background color based on activeIndex
       if (index === activeIndex) {
-        setActiveElement(el);
-        el.style.backgroundColor = theme.background.transparent.light;
-
+        setActiveElement(el)
         if (el.tagName.toLowerCase() === 'input') {
           (el as HTMLInputElement).focus();
+        }else{
+          el.style.backgroundColor = theme.background.transparent.light;
         }
       } else {
-        el.style.backgroundColor = theme.background.primary; // Reset to default or transparent
+        if (el.tagName?.toLowerCase() === 'input' ) {
+          (el as HTMLInputElement).blur();
+        }else{
+          el.style.backgroundColor = theme.background.primary; 
+        }
+ 
+         
+
       }
 
       // Blur input elements when they are not focused
-      if (el.tagName.toLowerCase() === 'input' && index !== activeIndex) {
-        (el as HTMLInputElement).blur();
-      }
+     
 
       // Handle hover effect
       el.addEventListener('mouseenter', () => {
