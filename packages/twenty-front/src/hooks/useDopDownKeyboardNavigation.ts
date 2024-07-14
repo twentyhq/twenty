@@ -101,17 +101,9 @@ export const useDropDownKeyboardNavigation = ({
         }else{
           el.style.backgroundColor = theme.background.primary; 
         }
- 
-         
-
       }
-
-      // Blur input elements when they are not focused
-     
-
-      // Handle hover effect
       el.addEventListener('mouseenter', () => {
-        if (index !== activeIndex) {
+        if (index !== activeIndex && el.tagName.toLowerCase() !== 'input'){
           el.style.backgroundColor = theme.background.transparent.light; // Change to hover color
         }
       });
