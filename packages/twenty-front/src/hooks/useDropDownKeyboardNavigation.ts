@@ -16,10 +16,10 @@ export const useDropDownKeyboardNavigation = ({
   const dropDownMenuId = 'dropDownMenu';
   const dropdownMenu = document?.querySelector(`#${dropDownMenuId}`);
 
-  const isDropDownMenuItemContainerDiv = (el: ChildNode) =>{
+  const isDropDownMenuItemContainerDiv = (el: ChildNode) => {
     const element = el as HTMLElement;
-    return element.tagName?.toLowerCase() ==='div'
-  }
+    return element.tagName?.toLowerCase() === 'div';
+  };
 
   const dropDownMenuItemContainerDiv = Array.from(
     dropdownMenu?.childNodes || [],
@@ -37,7 +37,6 @@ export const useDropDownKeyboardNavigation = ({
     dropdownMenu?.childNodes?.length,
   ]);
 
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
@@ -51,8 +50,6 @@ export const useDropDownKeyboardNavigation = ({
       } else if (e.key === 'Enter') {
         if (activeElement) {
           activeElement.click();
-          // const clickEvent = new MouseEvent('click', { bubbles: true });
-          // activeElement.dispatchEvent(clickEvent);
         }
       }
     };
@@ -83,34 +80,33 @@ export const useDropDownKeyboardNavigation = ({
         dropDownMenuItemContainerDiv?.childNodes[0].childNodes || [],
       ),
     ];
-    console.log(allDropDownMenuItems, 'all',dropdownMenu)
 
     allDropDownMenuItems.forEach((element, index) => {
       const el = element as HTMLElement;
       // Manage focus and background color based on activeIndex
       if (index === activeIndex) {
-        setActiveElement(el)
+        setActiveElement(el);
         if (el.tagName.toLowerCase() === 'input') {
           (el as HTMLInputElement).focus();
-        }else{
+        } else {
           el.style.backgroundColor = theme.background.transparent.light;
         }
       } else {
-        if (el.tagName?.toLowerCase() === 'input' ) {
+        if (el.tagName?.toLowerCase() === 'input') {
           (el as HTMLInputElement).blur();
-        }else{
-          el.style.backgroundColor = theme.background.primary; 
+        } else {
+          el.style.backgroundColor = theme.background.primary;
         }
       }
       el.addEventListener('mouseenter', () => {
-        if (index !== activeIndex && el.tagName.toLowerCase() !== 'input'){
-          el.style.backgroundColor = theme.background.transparent.light; // Change to hover color
+        if (index !== activeIndex && el.tagName.toLowerCase() !== 'input') {
+          el.style.backgroundColor = theme.background.transparent.light; 
         }
       });
 
       el.addEventListener('mouseleave', () => {
         if (index !== activeIndex) {
-          el.style.backgroundColor = theme.background.primary; // Reset to default or transparent
+          el.style.backgroundColor = theme.background.primary; 
         }
       });
     });

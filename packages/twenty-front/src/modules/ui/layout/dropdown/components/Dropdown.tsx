@@ -23,7 +23,7 @@ import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScop
 
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
-import { useDropDownKeyboardNavigation } from '~/hooks/useDopDownKeyboardNavigation';
+import { useDropDownKeyboardNavigation } from '~/hooks/useDropDownKeyboardNavigation';
 
 type DropdownProps = {
   className?: string;
@@ -145,6 +145,7 @@ export const Dropdown = ({
               data-select-disable
               ref={refs.setFloating}
               style={floatingStyles}
+              id={dropDownMenuId}
             >
               {dropdownComponents}
             </DropdownMenu>
