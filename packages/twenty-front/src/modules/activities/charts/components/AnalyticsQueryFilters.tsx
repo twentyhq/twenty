@@ -1,11 +1,11 @@
-import { AnalyticsQueryFilter } from '@/activities/charts/components/AnalyticsQueryFilter';
-import { AnalyticsQuery } from '@/activities/charts/types/AnalyticsQuery';
+import { ChartFilter } from '@/activities/charts/components/AnalyticsQueryFilter';
+import { Chart } from '@/activities/charts/types/Chart';
 
 interface AnalyticsQueryFiltersProps {
-  analyticsQuery?: AnalyticsQuery;
+  chart?: Chart;
 }
 
 export const AnalyticsQueryFilters = (props: AnalyticsQueryFiltersProps) =>
-  props.analyticsQuery?.analyticsQueryFilters?.map((analytcsQueryFilter) => (
-    <AnalyticsQueryFilter analyticsQueryFilter={analytcsQueryFilter} />
+  props.chart?.chartFilters?.map((chartFilter) => (
+    <ChartFilter chartFilter={chartFilter} />
   ));

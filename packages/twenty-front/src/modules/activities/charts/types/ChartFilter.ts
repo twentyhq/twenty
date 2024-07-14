@@ -1,11 +1,11 @@
 import { AnalyticsQuery } from '@/activities/charts/types/AnalyticsQuery';
 
-export interface AnalyticsQueryFilter {
+export interface ChartFilter {
   id: string;
   analyticsQuery: AnalyticsQuery;
   analyticsQueryId: string;
   field: string;
-  operator: AnalyticsQueryFilterOperator;
+  operator: ChartFilterOperator;
   value: string;
   __typename: string;
 }
@@ -28,4 +28,4 @@ type StringOperator =
   | 'empty'
   | 'not empty';
 
-export type AnalyticsQueryFilterOperator = NumberOperator | StringOperator;
+export type ChartFilterOperator = NumberOperator | StringOperator;

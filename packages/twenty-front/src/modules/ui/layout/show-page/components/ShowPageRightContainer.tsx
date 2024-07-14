@@ -11,6 +11,7 @@ import {
 } from 'twenty-ui';
 
 import { Calendar } from '@/activities/calendar/components/Calendar';
+import { Chart } from '@/activities/charts/components/Chart';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
@@ -51,6 +52,7 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
+  charts?: boolean;
   summary?: JSX.Element;
   isRightDrawer?: boolean;
   loading: boolean;
@@ -62,6 +64,7 @@ export const ShowPageRightContainer = ({
   tasks,
   notes,
   emails,
+  charts,
   loading,
   summary,
   isRightDrawer = false,
@@ -79,6 +82,8 @@ export const ShowPageRightContainer = ({
     CoreObjectNameSingular.Person,
   ].includes(targetObjectNameSingular);
 
+  const isChart = targetObjectNameSingular === CoreObjectNameSingular.Chart;
+
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
@@ -95,22 +100,38 @@ export const ShowPageRightContainer = ({
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline || isRightDrawer,
+      hide: !timeline || isRightDrawer || isChart,
     },
-    { id: 'tasks', title: 'Tasks', Icon: IconCheckbox, hide: !tasks },
-    { id: 'notes', title: 'Notes', Icon: IconNotes, hide: !notes },
-    { id: 'files', title: 'Files', Icon: IconPaperclip, hide: !notes },
+    {
+      id: 'tasks',
+      title: 'Tasks',
+      Icon: IconCheckbox,
+      hide: !tasks || isChart,
+    },
+    { id: 'notes', title: 'Notes', Icon: IconNotes, hide: !notes || isChart },
+    {
+      id: 'files',
+      title: 'Files',
+      Icon: IconPaperclip,
+      hide: !notes || isChart,
+    },
     {
       id: 'emails',
       title: 'Emails',
       Icon: IconMail,
-      hide: !shouldDisplayEmailsTab,
+      hide: !shouldDisplayEmailsTab || isChart,
     },
     {
       id: 'calendar',
       title: 'Calendar',
       Icon: IconCalendarEvent,
-      hide: !shouldDisplayCalendarTab,
+      hide: !shouldDisplayCalendarTab || isChart,
+    },
+    {
+      id: 'chart',
+      title: 'Chart',
+      Icon: IconCalendarEvent,
+      hide: !isChart,
     },
   ];
 
@@ -137,6 +158,8 @@ export const ShowPageRightContainer = ({
         return <EmailThreads targetableObject={targetableObject} />;
       case 'calendar':
         return <Calendar targetableObject={targetableObject} />;
+      case 'chart':
+        return <Chart targetableObject={targetableObject} />;
       default:
         return <></>;
     }

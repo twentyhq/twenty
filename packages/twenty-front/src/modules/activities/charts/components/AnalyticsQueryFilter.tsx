@@ -1,18 +1,18 @@
 import styled from '@emotion/styled';
 
-import { AnalyticsQueryFilter as AnalyticsQueryFilterType } from '@/activities/charts/types/AnalyticsQueryFilter';
+import { ChartFilter as ChartFilterType } from '@/activities/charts/types/ChartFilter';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 
-interface AnalyticsQueryFilterProps {
-  analyticsQueryFilter?: AnalyticsQueryFilterType;
+interface ChartFilterProps {
+  chartFilter?: ChartFilterType;
 }
 
 const StyledContainer = styled.div`
   display: flex;
 `;
 
-export const AnalyticsQueryFilter = (props: AnalyticsQueryFilterProps) => {
+export const ChartFilter = (props: ChartFilterProps) => {
   return (
     <StyledContainer>
       <Select

@@ -1,9 +1,17 @@
-import { AnalyticsQuery } from '@/activities/charts/types/AnalyticsQuery';
+import { ChartFilter } from '@/activities/charts/types/ChartFilter';
 
 export interface Chart {
   id: string;
-  title: string;
+  name: string;
   description: string;
-  analyticsQueries: AnalyticsQuery[];
+  measure: ChartMeasure;
+  sourceObjectNameSingular: string;
+  fieldPath: string;
+  chartFilters: ChartFilter[];
+  groupBy: string;
+  result: any; // TODO
+  resultCreatedAt: string;
   __typename: string;
 }
+
+export type ChartMeasure = 'average' | 'sum' | 'min' | 'max' | 'count';

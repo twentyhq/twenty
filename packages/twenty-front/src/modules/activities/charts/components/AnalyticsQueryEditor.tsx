@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Button } from '@react-email/components';
 
 import { AnalyticsQueryFilters } from '@/activities/charts/components/AnalyticsQueryFilters';
-import { AnalyticsQuery } from '@/activities/charts/types/AnalyticsQuery';
+import { Chart } from '@/activities/charts/types/Chart';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { Select } from '@/ui/input/components/Select';
 import { useRunAnalyticsQueryMutation } from '~/generated/graphql';
@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
 `;
 
 interface AnalyticsQueryEditorProps {
-  analyticsQuery?: AnalyticsQuery;
+  chart?: Chart;
 }
 
 export const AnalyticsQueryEditor = (props: AnalyticsQueryEditorProps) => {
@@ -44,7 +44,7 @@ export const AnalyticsQueryEditor = (props: AnalyticsQueryEditorProps) => {
         options={sourceObjectSelectOptions}
         value={
           sourceObjectNameSingular ??
-          props.analyticsQuery?.sourceObjectNameSingular ??
+          props.chart?.sourceObjectNameSingular ??
           sourceObjectSelectOptions?.[0].value
         }
         onChange={async (value) => {
@@ -52,7 +52,7 @@ export const AnalyticsQueryEditor = (props: AnalyticsQueryEditorProps) => {
           // TODO: mutation
         }}
       />
-      <AnalyticsQueryFilters analyticsQuery={props.analyticsQuery} />
+      <AnalyticsQueryFilters chart={props.chart} />
 
       <Select
         label="Field"
@@ -75,14 +75,14 @@ export const AnalyticsQueryEditor = (props: AnalyticsQueryEditorProps) => {
         options={measureOptions}
       />
 
-      {props.analyticsQuery && props.analyticsQuery.id && (
+      {props.chart && props.chart.id && (
         <Button
           onClick={async () => {
-            if (!props.analyticsQuery) throw new Error();
+            if (!props.chart) throw new Error();
 
             await runAnalyticsQuery({
               variables: {
-                analyticsQueryId: props.analyticsQuery.id,
+                analyticsQueryId: props.chart.id,
               },
             });
           }}
