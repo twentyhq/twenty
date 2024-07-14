@@ -96,25 +96,26 @@ export const useDropDownKeyboardNavigation = ({
           el.style.backgroundColor = theme.background.primary;
         }
       }
-      el.addEventListener('mouseenter', () => {
+      const handleMouseEnter = () => {
         if (index !== activeIndex && el.tagName.toLowerCase() !== 'input') {
           el.style.backgroundColor = theme.background.transparent.light;
         }
-      });
-
-      el.addEventListener('mouseleave', () => {
+      }
+      const handleMouseLeave =  () => {
         if (index !== activeIndex) {
           el.style.backgroundColor = theme.background.primary;
         }
-      });
+      }
+      el.addEventListener('mouseenter', handleMouseEnter);
+      el.addEventListener('mouseleave', handleMouseLeave);
     });
 
     // Clean up event listeners when component unmounts or dependencies change
     return () => {
       allDropDownMenuItems.forEach((element) => {
         const el = element as HTMLElement;
-        el.removeEventListener('mouseenter', () => {});
-        el.removeEventListener('mouseleave', () => {});
+        el.removeEventListener('mouseenter', handleMouseEnter );
+        el.removeEventListener('mouseleave', handleMouseLeave);
       });
     };
   }, [
