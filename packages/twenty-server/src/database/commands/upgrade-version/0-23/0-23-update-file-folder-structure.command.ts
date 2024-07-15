@@ -177,7 +177,7 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
             id: workspaceId,
           },
           {
-            logo: `workspace-${workspaceId}/${FileFolder.WorkspaceLogo}/${workspacePictureToMove.id}`,
+            logo: `workspace-${workspaceId}/${workspacePictureToMove.logo}`,
           },
         );
 
