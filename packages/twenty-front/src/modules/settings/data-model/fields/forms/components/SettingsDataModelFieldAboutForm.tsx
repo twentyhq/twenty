@@ -1,14 +1,17 @@
-import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
+import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 
-export const settingsDataModelFieldAboutFormSchema = (existingLabels?: string[]) => {
+export const settingsDataModelFieldAboutFormSchema = (
+  existingLabels?: string[],
+) => {
   return fieldMetadataItemSchema(existingLabels || []).pick({
     description: true,
     icon: true,
@@ -34,15 +37,18 @@ const StyledInputsContainer = styled.div`
   width: 100%;
 `;
 
+const LABEL = 'label';
+
 export const SettingsDataModelFieldAboutForm = ({
   disabled,
   fieldMetadataItem,
   maxLength,
 }: SettingsDataModelFieldAboutFormProps) => {
-  const { control, trigger, formState: {errors} } = useFormContext<SettingsDataModelFieldAboutFormValues>();
-  const validateLabel = () => {
-    trigger('label')
-  }
+  const {
+    control,
+    trigger,
+    formState: { errors },
+  } = useFormContext<SettingsDataModelFieldAboutFormValues>();
   return (
     <>
       <StyledInputsContainer>
@@ -60,7 +66,7 @@ export const SettingsDataModelFieldAboutForm = ({
           )}
         />
         <Controller
-          name="label"
+          name={LABEL}
           control={control}
           defaultValue={fieldMetadataItem?.label}
           render={({ field: { onChange, value } }) => (
@@ -68,10 +74,10 @@ export const SettingsDataModelFieldAboutForm = ({
               placeholder="Employees"
               value={value}
               onChange={(e) => {
-                onChange(e)
-                validateLabel()
+                onChange(e);
+                trigger(LABEL);
               }}
-              error={errors.label?.message=='Label must be unique' ? "This name is already taken": undefined}
+              error={getErrorMessageFromError(errors.label?.message)}
               disabled={disabled}
               maxLength={maxLength}
               fullWidth

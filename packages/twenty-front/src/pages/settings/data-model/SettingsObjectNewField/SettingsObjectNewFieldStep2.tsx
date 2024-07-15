@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -35,7 +35,9 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-type SettingsDataModelNewFieldFormValues = z.infer<ReturnType<typeof settingsFieldFormSchema>>;
+type SettingsDataModelNewFieldFormValues = z.infer<
+  ReturnType<typeof settingsFieldFormSchema>
+>;
 
 const StyledSettingsObjectFieldTypeSelect = styled(
   SettingsDataModelFieldTypeSelect,
@@ -57,9 +59,13 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(settingsFieldFormSchema(activeObjectMetadataItem?.fields.map((value) => value.name))),
+    resolver: zodResolver(
+      settingsFieldFormSchema(
+        activeObjectMetadataItem?.fields.map((value) => value.name),
+      ),
+    ),
   });
-  
+
   useEffect(() => {
     if (!activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
@@ -118,7 +124,7 @@ export const SettingsObjectNewFieldStep2 = () => {
         'relation' in formValues
       ) {
         const { relation: relationFormValues, ...fieldFormValues } = formValues;
-        
+
         await createOneRelationMetadata({
           relationType: relationFormValues.type,
           field: pick(fieldFormValues, ['icon', 'label', 'description']),

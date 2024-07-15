@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconArchive, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
