@@ -1,16 +1,16 @@
 import { Logger } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { DataSource, Like, Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 
 interface UpdateFileFolderStructureCommandOptions {
   workspaceId?: string;
@@ -27,9 +27,7 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
-    @InjectDataSource('metadata')
-    private readonly metadataDataSource: DataSource,
+    private readonly fileStorageService: FileStorageService,
   ) {
     super();
   }
@@ -92,12 +90,12 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
       )) as { id: string; fullPath: string }[];
 
       const workspaceMemberAvatarsToMove = (await workspaceQueryRunner.query(
-        `SELECT id, "avatarUrl" FROM "${dataSourceMetadata.schema}"."workspaceMember" WHERE "avatarUrl" LIKE '${FileFolder.ProfilePicture}/%'`,
-      )) as { id: string; avatarUrl: string }[];
+        `SELECT id, "avatarUrl" as "fullPath" FROM "${dataSourceMetadata.schema}"."workspaceMember" WHERE "avatarUrl" LIKE '${FileFolder.ProfilePicture}/%'`,
+      )) as { id: string; fullPath: string }[];
 
       const personAvatarsToMove = (await workspaceQueryRunner.query(
-        `SELECT id, "avatarUrl" FROM "${dataSourceMetadata.schema}"."person" WHERE "avatarUrl" LIKE '${FileFolder.PersonPicture}/%'`,
-      )) as { id: string; avatarUrl: string }[];
+        `SELECT id, "avatarUrl" as "fullPath" FROM "${dataSourceMetadata.schema}"."person" WHERE "avatarUrl" LIKE '${FileFolder.PersonPicture}/%'`,
+      )) as { id: string; fullPath: string }[];
 
       const workspacePictureToMove = await this.workspaceRepository.findOneBy({
         id: workspaceId,
@@ -111,7 +109,83 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
         personAvatarsToMove,
       });
 
-      // TODO: move files and update paths
+      try {
+        const updatedAttachments = await this.moveFiles(
+          workspaceId,
+          attachmentsToMove,
+        );
+
+        await workspaceQueryRunner.query(
+          `UPDATE "${dataSourceMetadata.schema}"."attachment" SET "fullPath" = REPLACE("fullPath", '${FileFolder.Attachment}', 'workspace-${workspaceId}/${FileFolder.Attachment}')`,
+        );
+
+        this.logger.log(
+          chalk.green(
+            `Updated ${updatedAttachments.length} attachments in workspace ${workspaceId}`,
+          ),
+        );
+      } catch (e) {
+        this.logger.error(e);
+      }
+
+      try {
+        const updatedWorkspaceMemberAvatars = await this.moveFiles(
+          workspaceId,
+          workspaceMemberAvatarsToMove,
+        );
+
+        await workspaceQueryRunner.query(
+          `UPDATE "${dataSourceMetadata.schema}"."workspaceMember" SET "avatarUrl" = REPLACE("avatarUrl", '${FileFolder.ProfilePicture}', 'workspace-${workspaceId}/${FileFolder.ProfilePicture}')`,
+        );
+
+        this.logger.log(
+          chalk.green(
+            `Updated ${updatedWorkspaceMemberAvatars.length} workspaceMemberAvatars in workspace ${workspaceId}`,
+          ),
+        );
+      } catch (e) {
+        this.logger.error(e);
+      }
+
+      try {
+        const updatedPersonAvatars = await this.moveFiles(
+          workspaceId,
+          personAvatarsToMove,
+        );
+
+        await workspaceQueryRunner.query(
+          `UPDATE "${dataSourceMetadata.schema}"."person" SET "avatarUrl" = REPLACE("avatarUrl", '${FileFolder.PersonPicture}', 'workspace-${workspaceId}/${FileFolder.PersonPicture}')`,
+        );
+
+        this.logger.log(
+          chalk.green(
+            `Updated ${updatedPersonAvatars.length} personAvatars in workspace ${workspaceId}`,
+          ),
+        );
+      } catch (e) {
+        this.logger.error(e);
+      }
+
+      if (workspacePictureToMove?.logo) {
+        await this.moveFiles(workspaceId, [
+          {
+            id: workspacePictureToMove.id,
+            fullPath: workspacePictureToMove.logo,
+          },
+        ]);
+        await this.workspaceRepository.update(
+          {
+            id: workspaceId,
+          },
+          {
+            logo: `workspace-${workspaceId}/${FileFolder.WorkspaceLogo}/${workspacePictureToMove.id}`,
+          },
+        );
+
+        this.logger.log(
+          chalk.green(`Updated workspacePicture in workspace ${workspaceId}`),
+        );
+      }
 
       this.logger.log(
         chalk.green(`Running command on workspace ${workspaceId} done`),
@@ -119,5 +193,40 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
     }
 
     this.logger.log(chalk.green(`Command completed!`));
+  }
+
+  private async moveFiles(
+    workspaceId: string,
+    filesToMove: { id: string; fullPath: string }[],
+  ) {
+    return await Promise.all(
+      filesToMove.map(async (file) => {
+        const { id, fullPath } = file;
+        const pathParts = fullPath.split('/');
+        const filename = pathParts.pop();
+        const originalFolderPath = pathParts.join('/');
+        const updatedFolderPath = `workspace-${workspaceId}/${originalFolderPath}`;
+
+        if (!filename) {
+          throw new Error(`Filename is empty`);
+        }
+
+        await this.fileStorageService.move({
+          from: {
+            folderPath: originalFolderPath,
+            filename: filename,
+          },
+          to: {
+            folderPath: updatedFolderPath,
+            filename: filename,
+          },
+        });
+
+        return {
+          id,
+          updatedFolderPath,
+        };
+      }),
+    );
   }
 }

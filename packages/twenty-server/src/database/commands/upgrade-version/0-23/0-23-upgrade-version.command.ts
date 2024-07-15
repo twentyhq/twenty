@@ -1,8 +1,6 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
+
 import { UpdateFileFolderStructureCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-file-folder-structure.command';
-
-
-
 
 interface UpdateTo0_23CommandOptions {
   workspaceId?: string;
@@ -32,6 +30,9 @@ export class UpgradeTo0_23Command extends CommandRunner {
     _passedParam: string[],
     options: UpdateTo0_23CommandOptions,
   ): Promise<void> {
-    await this.updateFileFolderStructureCommandOptions.run(_passedParam, options);
+    await this.updateFileFolderStructureCommandOptions.run(
+      _passedParam,
+      options,
+    );
   }
 }
