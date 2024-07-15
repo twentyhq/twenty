@@ -96,7 +96,7 @@ export const RecordBoardColumnHeader = () => {
         {!isHeaderHovered && (
           <StyledNumChildren>{recordCount}</StyledNumChildren>
         )}
-        {isHeaderHovered && (
+        {isHeaderHovered && columnDefinition.actions.length && (
           <StyledHeaderActions>
             <LightIconButton
               accent="tertiary"
@@ -106,7 +106,7 @@ export const RecordBoardColumnHeader = () => {
           </StyledHeaderActions>
         )}
       </StyledHeader>
-      {isBoardColumnMenuOpen && (
+      {isBoardColumnMenuOpen && columnDefinition.actions.length && (
         <RecordBoardColumnDropdownMenu
           onClose={handleBoardColumnMenuClose}
           stageId={columnDefinition.id}
