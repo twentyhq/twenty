@@ -10,6 +10,8 @@ import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/work
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { ObjectEntitiesStorage } from 'src/engine/twenty-orm/storage/object-entities.storage';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
+import { workspaceDataSourceCacheInstance } from 'src/engine/twenty-orm/twenty-orm-core.module';
+import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 
 @Injectable()
 export class TwentyORMManager {
@@ -19,6 +21,7 @@ export class TwentyORMManager {
     private readonly workspaceDataSource: WorkspaceDataSource | null,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly entitySchemaFactory: EntitySchemaFactory,
   ) {}
 
   async getRepository<T extends ObjectLiteral>(
@@ -42,12 +45,14 @@ export class TwentyORMManager {
       );
     }
 
-    const entitySchema =
-      ObjectEntitiesStorage.getEntityByObjectMetadataName(objectMetadataName);
-
     if (!this.workspaceDataSource) {
       throw new Error('Workspace data source not found');
     }
+
+    const entitySchema = await this.entitySchemaFactory.create(
+      this.workspaceDataSource.internalContext.workspaceId,
+      objectMetadataName,
+    );
 
     if (!entitySchema) {
       throw new Error('Entity schema not found');
@@ -85,13 +90,19 @@ export class TwentyORMManager {
       );
     }
 
-    const entities = ObjectEntitiesStorage.getAllEntitySchemas();
-    const entitySchema =
-      ObjectEntitiesStorage.getEntityByObjectMetadataName(objectMetadataName);
-    const workspaceDataSource = await this.workspaceDataSourceFactory.create(
-      entities,
+    const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
+      `${workspaceId}-${cacheVersion}`,
+      async () => {
+        const entities = ObjectEntitiesStorage.getAllEntitySchemas();
+
+        return this.workspaceDataSourceFactory.create(entities, workspaceId);
+      },
+      (dataSource) => dataSource.destroy(),
+    );
+
+    const entitySchema = await this.entitySchemaFactory.create(
       workspaceId,
-      cacheVersion,
+      objectMetadataName,
     );
 
     if (!workspaceDataSource) {

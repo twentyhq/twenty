@@ -18,7 +18,6 @@ import { TWENTY_ORM_WORKSPACE_DATASOURCE } from 'src/engine/twenty-orm/twenty-or
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { DataSourceStorage } from 'src/engine/twenty-orm/storage/data-source.storage';
 import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN,
@@ -33,7 +32,7 @@ import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
-const workspaceDataSourceCacheInstance =
+export const workspaceDataSourceCacheInstance =
   new CacheManager<WorkspaceDataSource>();
 
 @Global()
@@ -130,7 +129,7 @@ export class TwentyORMCoreModule
       return null;
     }
 
-    return workspaceDataSourceCacheInstance.getOrCreate(
+    return workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${cacheVersion}`,
       async () => {
         const objectMetadataCollection =
@@ -144,18 +143,18 @@ export class TwentyORMCoreModule
 
         const entities = await Promise.all(
           objectMetadataCollection.map((objectMetadata) =>
-            entitySchemaFactory.create(objectMetadata),
+            entitySchemaFactory.create(workspaceId, objectMetadata),
           ),
         );
 
         const workspaceDataSource = await workspaceDataSourceFactory.create(
           entities,
           workspaceId,
-          cacheVersion,
         );
 
         return workspaceDataSource;
       },
+      (dataSource) => dataSource.destroy(),
     );
   }
 
@@ -163,16 +162,8 @@ export class TwentyORMCoreModule
    * Destroys all data sources on application shutdown
    */
   async onApplicationShutdown() {
-    const dataSources = DataSourceStorage.getAllDataSources();
-
-    for (const dataSource of dataSources) {
-      try {
-        if (dataSource && dataSource.isInitialized) {
-          await dataSource.destroy();
-        }
-      } catch (e) {
-        this.logger.error(e?.message);
-      }
-    }
+    workspaceDataSourceCacheInstance.clear((dataSource) =>
+      dataSource.destroy(),
+    );
   }
 }

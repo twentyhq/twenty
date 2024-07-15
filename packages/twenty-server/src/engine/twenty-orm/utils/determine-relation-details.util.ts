@@ -4,68 +4,57 @@ import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
 
 interface RelationDetails {
+  relationType: RelationType;
   target: string;
   inverseSide: string;
   joinColumn: { name: string } | undefined;
 }
 
-// relations: [
-//   'fields.object',
-//   'fields',
-//   'fields.fromRelationMetadata',
-//   'fields.toRelationMetadata',
-//   'fields.fromRelationMetadata.toObjectMetadata',
-// ],
-
 export async function determineRelationDetails(
-  relationType: RelationType,
+  workspaceId: string,
   fieldMetadata: FieldMetadataEntity,
   relationMetadata: RelationMetadataEntity,
   workspaceCacheStorageService: WorkspaceCacheStorageService,
 ): Promise<RelationDetails> {
-  let target: string;
-  let inverseSide: string;
-  let joinColumn: { name: string } | undefined;
+  const relationType = computeRelationType(fieldMetadata, relationMetadata);
+  let fromObjectMetadata: ObjectMetadataEntity | undefined =
+    fieldMetadata.object;
+  let toObjectMetadata: ObjectMetadataEntity | undefined =
+    relationMetadata.toObjectMetadata;
 
-  switch (relationType) {
-    case 'one-to-many':
-      target = lowerFirst(relationMetadata.toObjectMetadata.nameSingular);
-      inverseSide = fieldMetadata.name;
-      break;
-
-    case 'many-to-one': {
-      const objectMetadata =
-        await workspaceCacheStorageService.getObjectMetadata(
-          relationMetadata.toObjectMetadataId,
-        );
-
-      target = lowerFirst(relationMetadata.fromObjectMetadata.nameSingular);
-      inverseSide = relationMetadata.fromFieldMetadata.name;
-      joinColumn = { name: fieldMetadata.name + 'Id' };
-      break;
-    }
-
-    case 'one-to-one':
-      if (relationMetadata.fromFieldMetadataId === fieldMetadata.id) {
-        target = lowerFirst(relationMetadata.toObjectMetadata.nameSingular);
-        inverseSide = fieldMetadata.name;
-      } else {
-        target = lowerFirst(relationMetadata.fromObjectMetadata.nameSingular);
-        inverseSide = relationMetadata.fromFieldMetadata.name;
-        joinColumn = { name: fieldMetadata.name + 'Id' };
-      }
-      break;
-
-    case 'many-to-many':
-      target = lowerFirst(relationMetadata.toObjectMetadata.nameSingular);
-      inverseSide = fieldMetadata.name;
-      break;
-
-    default:
-      throw new Error('Invalid relation type');
+  // RelationMetadata alaways store the relation from the perspective of the `from` object, MANY_TO_ONE relations are not stored yet
+  if (relationType === 'many-to-one') {
+    fromObjectMetadata = fieldMetadata.object;
+    toObjectMetadata = await workspaceCacheStorageService.getObjectMetadata(
+      workspaceId,
+      (objectMetadata) =>
+        objectMetadata.id === relationMetadata.toObjectMetadataId,
+    );
   }
 
-  return { target, inverseSide, joinColumn };
+  if (!fromObjectMetadata || !toObjectMetadata) {
+    throw new Error('Object metadata not found');
+  }
+
+  // TODO: Support many to many relations
+  if (relationType === 'many-to-many') {
+    throw new Error('Many to many relations are not supported yet');
+  }
+
+  return {
+    relationType,
+    target: lowerFirst(toObjectMetadata.nameSingular),
+    inverseSide: lowerFirst(fromObjectMetadata.nameSingular),
+    joinColumn:
+      // TODO: This will work for now but we need to handle this better in the future for custom names on the join column
+      relationType === 'many-to-one' ||
+      (relationType === 'one-to-one' &&
+        relationMetadata.toObjectMetadataId === fieldMetadata.objectMetadataId)
+        ? { name: `${fieldMetadata.name}` + 'Id' }
+        : undefined,
+  };
 }

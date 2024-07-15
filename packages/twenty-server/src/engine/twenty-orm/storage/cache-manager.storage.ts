@@ -1,12 +1,14 @@
+type CacheKey = `${string}-${string}`;
+
 type AsyncFactoryCallback<T> = () => Promise<T | null>;
 
 export class CacheManager<T> {
-  private cache = new Map<string, T>();
-  private maxCacheSize = 1000;
+  private cache = new Map<CacheKey, T>();
 
-  async getOrCreate(
-    cacheKey: `${string}-${string}`,
+  async execute(
+    cacheKey: CacheKey,
     factory: AsyncFactoryCallback<T>,
+    onDelete?: (value: T) => Promise<void> | void,
   ): Promise<T | null> {
     const [workspaceId] = cacheKey.split('-');
 
@@ -18,6 +20,7 @@ export class CacheManager<T> {
     // Remove old entries with the same workspaceId
     for (const key of this.cache.keys()) {
       if (key.startsWith(`${workspaceId}-`)) {
+        await onDelete?.(this.cache.get(key)!);
         this.cache.delete(key);
       }
     }
@@ -31,15 +34,14 @@ export class CacheManager<T> {
 
     this.cache.set(cacheKey, value);
 
-    // Ensure the cache doesn't exceed the maximum size
-    if (this.cache.size > this.maxCacheSize) {
-      const oldestKey = this.cache.keys().next().value;
-
-      if (oldestKey) {
-        this.cache.delete(oldestKey);
-      }
-    }
-
     return value;
+  }
+
+  async clear(onDelete?: (value: T) => Promise<void> | void): Promise<void> {
+    for (const value of this.cache.values()) {
+      await onDelete?.(value);
+      this.cache.delete(value as any);
+    }
+    this.cache.clear();
   }
 }

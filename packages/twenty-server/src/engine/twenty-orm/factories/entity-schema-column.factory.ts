@@ -21,6 +21,7 @@ type EntitySchemaColumnMap = {
 @Injectable()
 export class EntitySchemaColumnFactory {
   create(
+    workspaceId: string,
     fieldMetadataCollection: FieldMetadataEntity[],
   ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};

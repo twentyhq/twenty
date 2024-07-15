@@ -2,12 +2,14 @@ import {
   DeepPartial,
   DeleteResult,
   EntityManager,
+  EntityTarget,
   FindManyOptions,
   FindOneOptions,
   FindOptionsWhere,
   InsertResult,
   ObjectId,
   ObjectLiteral,
+  QueryRunner,
   RemoveOptions,
   Repository,
   SaveOptions,
@@ -16,6 +18,8 @@ import {
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { PickKeysByType } from 'typeorm/common/PickKeysByType';
+
+import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { ObjectEntitiesStorage } from 'src/engine/twenty-orm/storage/object-entities.storage';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -27,6 +31,23 @@ import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-
 export class WorkspaceRepository<
   Entity extends ObjectLiteral,
 > extends Repository<Entity> {
+  private readonly internalContext: WorkspaceInternalContext;
+
+  constructor(
+    internalContext: WorkspaceInternalContext,
+    target: EntityTarget<Entity>,
+    manager: EntityManager,
+    queryRunner?: QueryRunner,
+  ) {
+    super(target, manager, queryRunner);
+    this.internalContext = internalContext;
+    console.log(
+      'WorkspaceRepository constructor: ',
+      internalContext,
+      this.internalContext,
+    );
+  }
+
   /**
    * FIND METHODS
    */
@@ -37,7 +58,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = this.transformOptions(options);
     const result = await manager.find(this.target, computedOptions);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -49,7 +70,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = this.transformOptions({ where });
     const result = await manager.findBy(this.target, computedOptions.where);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -61,7 +82,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = this.transformOptions(options);
     const result = await manager.findAndCount(this.target, computedOptions);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -76,7 +97,7 @@ export class WorkspaceRepository<
       this.target,
       computedOptions.where,
     );
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -88,7 +109,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = this.transformOptions(options);
     const result = await manager.findOne(this.target, computedOptions);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -100,7 +121,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = this.transformOptions({ where });
     const result = await manager.findOneBy(this.target, computedOptions.where);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -112,7 +133,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = this.transformOptions(options);
     const result = await manager.findOneOrFail(this.target, computedOptions);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -127,7 +148,7 @@ export class WorkspaceRepository<
       this.target,
       computedOptions.where,
     );
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -172,7 +193,7 @@ export class WorkspaceRepository<
       options,
     );
 
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -204,7 +225,7 @@ export class WorkspaceRepository<
       formattedEntityOrEntities,
       options,
     );
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -267,7 +288,7 @@ export class WorkspaceRepository<
       formattedEntityOrEntities as any,
       options,
     );
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -333,7 +354,7 @@ export class WorkspaceRepository<
       formattedEntityOrEntities as any,
       options,
     );
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -370,7 +391,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const formatedEntity = this.formatData(entity);
     const result = await manager.insert(this.target, formatedEntity);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -632,18 +653,21 @@ export class WorkspaceRepository<
     return newData as T;
   }
 
-  private formatResult<T>(
+  private async formatResult<T>(
     data: T,
     objectMetadata = ObjectEntitiesStorage.getObjectMetadataEntity(
       this.target as any,
     ),
-  ): T {
+  ): Promise<T> {
     if (!data) {
       return data;
     }
 
     if (Array.isArray(data)) {
-      return data.map((item) => this.formatResult(item, objectMetadata)) as T;
+      // If the data is an array, map each item in the array, format result is a promise
+      return Promise.all(
+        data.map((item) => this.formatResult(item, objectMetadata)),
+      ) as Promise<T>;
     }
 
     if (!isPlainObject(data)) {
@@ -689,7 +713,7 @@ export class WorkspaceRepository<
 
       if (!compositePropertyArgs && !relationMetadata) {
         if (isPlainObject(value)) {
-          newData[key] = this.formatResult(value);
+          newData[key] = await this.formatResult(value);
         } else {
           newData[key] = value;
         }
@@ -700,8 +724,10 @@ export class WorkspaceRepository<
         const inverseSideObjectName =
           relationMetadata.toObjectMetadata.nameSingular;
         const objectMetadata =
-          ObjectEntitiesStorage.getObjectMetadataByObjectMetadataName(
-            inverseSideObjectName,
+          await this.internalContext.workspaceCacheStorage.getObjectMetadata(
+            this.internalContext.workspaceId,
+            (objectMetadata) =>
+              objectMetadata.nameSingular === inverseSideObjectName,
           );
 
         if (!objectMetadata) {
@@ -710,7 +736,7 @@ export class WorkspaceRepository<
           );
         }
 
-        newData[key] = this.formatResult(value, objectMetadata);
+        newData[key] = await this.formatResult(value, objectMetadata);
         continue;
       }
 

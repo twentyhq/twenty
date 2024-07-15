@@ -6,7 +6,6 @@ import { TWENTY_ORM_WORKSPACE_DATASOURCE } from 'src/engine/twenty-orm/twenty-or
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
-import { ObjectEntitiesStorage } from 'src/engine/twenty-orm/storage/object-entities.storage';
 
 /**
  * Create providers for the given entities.
@@ -16,16 +15,22 @@ export function createTwentyORMProviders(
 ): Provider[] {
   return (objects || []).map((object) => ({
     provide: getWorkspaceRepositoryToken(object),
-    useFactory: async (dataSource: WorkspaceDataSource | null) => {
+    useFactory: async (
+      dataSource: WorkspaceDataSource | null,
+      entitySchemaFactory: EntitySchemaFactory,
+    ) => {
       const objectMetadataName = convertClassNameToObjectMetadataName(
         (object as Type).name,
       );
-      const entitySchema =
-        ObjectEntitiesStorage.getEntityByObjectMetadataName(objectMetadataName);
 
       if (!dataSource) {
         return null;
       }
+
+      const entitySchema = await entitySchemaFactory.create(
+        dataSource.internalContext.workspaceId,
+        objectMetadataName,
+      );
 
       if (!entitySchema) {
         throw new Error('Entity schema not found');

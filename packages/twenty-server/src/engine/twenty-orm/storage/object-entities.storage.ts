@@ -28,28 +28,6 @@ export class ObjectEntitiesStorage {
     return Array.from(this.objects.keys());
   }
 
-  public static getEntityByObjectMetadataName(
-    objectMetadataName: string,
-  ): EntitySchema | null {
-    return (
-      Array.from(this.objects.entries()).find(
-        ([, objectMetadata]) =>
-          objectMetadata.nameSingular === objectMetadataName,
-      )?.[0] ?? null
-    );
-  }
-
-  public static getObjectMetadataByObjectMetadataName(
-    objectMetadataName: string,
-  ): ObjectMetadataEntity | null {
-    return (
-      Array.from(this.objects.entries()).find(
-        ([, objectMetadata]) =>
-          objectMetadata.nameSingular === objectMetadataName,
-      )?.[1] ?? null
-    );
-  }
-
   public static clear(): void {
     this.objects.clear();
   }

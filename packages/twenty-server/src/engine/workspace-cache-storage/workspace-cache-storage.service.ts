@@ -59,7 +59,7 @@ export class WorkspaceCacheStorageService {
 
   async getObjectMetadata(
     workspaceId: string,
-    objectMetadataName: string,
+    predicate: (objectMetadata: ObjectMetadataEntity) => boolean,
   ): Promise<ObjectMetadataEntity | undefined> {
     const objectMetadataCollection = await this.workspaceSchemaCache.get<
       ObjectMetadataEntity[]
@@ -69,9 +69,7 @@ export class WorkspaceCacheStorageService {
       return;
     }
 
-    return objectMetadataCollection.find(
-      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
-    );
+    return objectMetadataCollection.find(predicate);
   }
 
   setTypeDefs(workspaceId: string, typeDefs: string): Promise<void> {
