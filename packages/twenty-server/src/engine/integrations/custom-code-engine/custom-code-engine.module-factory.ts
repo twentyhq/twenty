@@ -14,7 +14,7 @@ export const customCodeEngineModuleFactory = async (
   fileStorageService: FileStorageService,
   fileUploadService: FileUploadService,
 ): Promise<CustomCodeEngineModuleOptions> => {
-  const driverType = environmentService.get('CUSTOM_CODE_ENGINE_DRIVER_TYPE');
+  const driverType = environmentService.get('CODE_EXECUTOR_TYPE');
 
   switch (driverType) {
     case CustomCodeEngineDriverType.Local: {
@@ -24,12 +24,14 @@ export const customCodeEngineModuleFactory = async (
       };
     }
     case CustomCodeEngineDriverType.Lambda: {
-      const region = environmentService.get('LAMBDA_REGION');
-      const accessKeyId = environmentService.get('LAMBDA_ACCESS_KEY_ID');
-      const secretAccessKey = environmentService.get(
-        'LAMBDA_SECRET_ACCESS_KEY',
+      const region = environmentService.get('CODE_EXECUTOR_LAMBDA_REGION');
+      const accessKeyId = environmentService.get(
+        'CODE_EXECUTOR_LAMBDA_ACCESS_KEY_ID',
       );
-      const role = environmentService.get('LAMBDA_ROLE');
+      const secretAccessKey = environmentService.get(
+        'CODE_EXECUTOR_LAMBDA_SECRET_ACCESS_KEY',
+      );
+      const role = environmentService.get('CODE_EXECUTOR_LAMBDA_ROLE');
 
       return {
         type: CustomCodeEngineDriverType.Lambda,

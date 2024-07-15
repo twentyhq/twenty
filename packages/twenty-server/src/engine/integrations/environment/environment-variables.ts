@@ -208,39 +208,35 @@ export class EnvironmentVariables {
   // Custom Code Engine
   @IsEnum(CustomCodeEngineDriverType)
   @IsOptional()
-  CUSTOM_CODE_ENGINE_DRIVER_TYPE: CustomCodeEngineDriverType =
+  CODE_EXECUTOR_TYPE: CustomCodeEngineDriverType =
     CustomCodeEngineDriverType.Local;
 
   @ValidateIf(
-    (env) =>
-      env.CUSTOM_CODE_ENGINE_DRIVER_TYPE === CustomCodeEngineDriverType.Lambda,
+    (env) => env.CODE_EXECUTOR_TYPE === CustomCodeEngineDriverType.Lambda,
   )
   @IsAWSRegion()
-  LAMBDA_REGION: AwsRegion;
+  CODE_EXECUTOR_LAMBDA_REGION: AwsRegion;
 
   @ValidateIf(
-    (env) =>
-      env.CUSTOM_CODE_ENGINE_DRIVER_TYPE === CustomCodeEngineDriverType.Lambda,
+    (env) => env.CODE_EXECUTOR_TYPE === CustomCodeEngineDriverType.Lambda,
   )
   @IsString()
   @IsOptional()
-  LAMBDA_ROLE: string;
+  CODE_EXECUTOR_LAMBDA_ROLE: string;
 
   @ValidateIf(
-    (env) =>
-      env.CUSTOM_CODE_ENGINE_DRIVER_TYPE === CustomCodeEngineDriverType.Lambda,
+    (env) => env.CODE_EXECUTOR_TYPE === CustomCodeEngineDriverType.Lambda,
   )
   @IsString()
   @IsOptional()
-  LAMBDA_ACCESS_KEY_ID: string;
+  CODE_EXECUTOR_LAMBDA_ACCESS_KEY_ID: string;
 
   @ValidateIf(
-    (env) =>
-      env.CUSTOM_CODE_ENGINE_DRIVER_TYPE === CustomCodeEngineDriverType.Lambda,
+    (env) => env.CODE_EXECUTOR_TYPE === CustomCodeEngineDriverType.Lambda,
   )
   @IsString()
   @IsOptional()
-  LAMBDA_SECRET_ACCESS_KEY: string;
+  CODE_EXECUTOR_LAMBDA_SECRET_ACCESS_KEY: string;
 
   // Storage
   @IsEnum(StorageDriverType)

@@ -150,11 +150,11 @@ yarn command:prod cron:calendar:google-calendar-sync
 ### Custom Code Execution
 
 <ArticleTable options={[
-  ['CUSTOM_CODE_ENGINE_DRIVER_TYPE', 'local', "Custom code engine driver: 'local' or 'lambda'"],
-  ['LAMBDA_REGION', '', 'Lambda Region'],
-  ['LAMBDA_ROLE', '', 'Lambda Role'],
-  ['LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
-  ['LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
+  ['CODE_EXECUTOR_TYPE', 'local', "Custom code engine driver: 'local' or 'lambda'"],
+  ['CODE_EXECUTOR_LAMBDA_REGION', '', 'Lambda Region'],
+  ['CODE_EXECUTOR_LAMBDA_ROLE', '', 'Lambda Role'],
+  ['CODE_EXECUTOR_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
+  ['CODE_EXECUTOR_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
 ]}></ArticleTable>
 
 ### Message Queue
