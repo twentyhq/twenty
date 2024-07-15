@@ -63,6 +63,7 @@ const StyledIconContainer = styled.div`
 `;
 
 type TagWeight = 'regular' | 'medium';
+type TagVariant = 'solid' | 'outline';
 type TagColor = ThemeColor | 'transparent';
 
 type TagProps = {
@@ -72,6 +73,7 @@ type TagProps = {
   Icon?: IconComponent;
   onClick?: () => void;
   weight?: TagWeight;
+  variant?: TagVariant;
   preventShrink?: boolean;
 };
 
