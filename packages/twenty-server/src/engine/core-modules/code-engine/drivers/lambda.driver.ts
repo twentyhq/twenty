@@ -13,7 +13,7 @@ import { CodeEngineDriver } from 'src/engine/core-modules/code-engine/drivers/in
 
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { createZipFile } from 'src/engine/core-modules/code-engine/utils/create-zip-file';
-import { TemporaryLambdaFolderManager } from 'src/engine/core-modules/code-engine/utils/temporary-lambda-folder-manager';
+import { BuildDirectoryManager } from 'src/engine/core-modules/code-engine/utils/build-directory-manager';
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
 import { CommonDriver } from 'src/engine/core-modules/code-engine/drivers/common.driver';
 
@@ -47,14 +47,14 @@ export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
     const { sourceCodePath, buildSourcePath, javascriptCode } =
       await this.generateAndSaveExecutableFiles(name, workspaceId, file);
 
-    const temporaryLambdaFolderManager = new TemporaryLambdaFolderManager();
+    const buildDirectoryManager = new BuildDirectoryManager();
 
     const {
       sourceTemporaryDir,
       lambdaZipPath,
       javascriptFilePath,
       lambdaHandler,
-    } = await temporaryLambdaFolderManager.init();
+    } = await buildDirectoryManager.init();
 
     fs.writeFileSync(javascriptFilePath, javascriptCode);
 
@@ -76,7 +76,7 @@ export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
 
     await this.lambdaClient.send(command);
 
-    await temporaryLambdaFolderManager.clean();
+    await buildDirectoryManager.clean();
 
     return {
       sourceCodePath,

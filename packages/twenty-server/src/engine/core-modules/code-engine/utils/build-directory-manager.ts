@@ -10,7 +10,7 @@ const TEMPORARY_LAMBDA_SOURCE_FOLDER = 'src';
 const LAMBDA_ZIP_FILE_NAME = 'lambda.zip';
 const LAMBDA_ENTRY_FILE_NAME = 'index.js';
 
-export class TemporaryLambdaFolderManager {
+export class BuildDirectoryManager {
   private temporaryDir = join(tmpdir(), `${TEMPORARY_LAMBDA_FOLDER}_${v4()}`);
   private lambdaHandler = `${LAMBDA_ENTRY_FILE_NAME.split('.')[0]}.handler`;
 
