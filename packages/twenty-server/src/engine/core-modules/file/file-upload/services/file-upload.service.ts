@@ -58,15 +58,17 @@ export class FileUploadService {
     filename,
     mimeType,
     fileFolder,
+    forceName = false,
   }: {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
     fileFolder: FileFolder | string;
+    forceName?: boolean;
   }) {
     const ext = filename.split('.')?.[1];
     const id = uuidV4();
-    const name = `${id}${ext ? `.${ext}` : ''}`;
+    const name = forceName ? filename : `${id}${ext ? `.${ext}` : ''}`;
 
     await this._uploadFile({
       file: this._sanitizeFile({ file, ext, mimeType }),

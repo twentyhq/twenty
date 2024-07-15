@@ -21,12 +21,6 @@ export class FunctionMetadataEntity {
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: false })
-  sourceCodePath: string;
-
-  @Column({ nullable: false })
-  buildSourcePath: string;
-
   @Column({
     nullable: false,
     default: FunctionSyncStatus.NOT_READY,

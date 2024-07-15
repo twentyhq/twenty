@@ -36,7 +36,7 @@ export const codeEngineModuleFactory = async (
       return {
         type: CodeEngineDriverType.Lambda,
         options: {
-          fileUploadService,
+          fileStorageService,
           credentials: accessKeyId
             ? {
                 accessKeyId,

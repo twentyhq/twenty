@@ -10,7 +10,7 @@ export class CreateFunctionMetadataTable1721040829256
       `CREATE TYPE "metadata"."functionMetadata_syncstatus_enum" AS ENUM('NOT_READY', 'READY')`,
     );
     await queryRunner.query(
-      `CREATE TABLE "metadata"."functionMetadata" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "sourceCodePath" character varying NOT NULL, "buildSourcePath" character varying NOT NULL, "syncStatus" "metadata"."functionMetadata_syncstatus_enum" NOT NULL DEFAULT 'NOT_READY', "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "IndexOnNameAndWorkspaceIdUnique" UNIQUE ("name", "workspaceId"), CONSTRAINT "PK_254107a6a35ecdf6f392dc63d72" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "metadata"."functionMetadata" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "syncStatus" "metadata"."functionMetadata_syncstatus_enum" NOT NULL DEFAULT 'NOT_READY', "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "IndexOnNameAndWorkspaceIdUnique" UNIQUE ("name", "workspaceId"), CONSTRAINT "PK_254107a6a35ecdf6f392dc63d72" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `ALTER TABLE "metadata"."workspaceMigration" ALTER COLUMN "name" SET NOT NULL`,

@@ -1,6 +1,6 @@
 import fs from 'fs';
+import { join } from 'path';
 
-import { FileUpload } from 'graphql-upload';
 import {
   CreateFunctionCommand,
   Lambda,
@@ -10,42 +10,47 @@ import {
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 
 import { CodeEngineDriver } from 'src/engine/core-modules/code-engine/drivers/interfaces/code-engine-driver.interface';
+import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { createZipFile } from 'src/engine/core-modules/code-engine/utils/create-zip-file';
 import { BuildDirectoryManager } from 'src/engine/core-modules/code-engine/utils/build-directory-manager';
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
-import { CommonDriver } from 'src/engine/core-modules/code-engine/drivers/common.driver';
+import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
+import { compileTypescript } from 'src/engine/core-modules/code-engine/utils/compile-typescript';
+import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { SOURCE_FILE_NAME } from 'src/engine/core-modules/code-engine/drivers/constants/source-file-name';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
-  fileUploadService: FileUploadService;
+  fileStorageService: FileStorageService;
   region: string;
   role: string;
 }
 
-export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
+export class LambdaDriver implements CodeEngineDriver {
   private readonly lambdaClient: Lambda;
   private readonly lambdaRole: string;
+  private readonly fileStorageService: FileStorageService;
 
   constructor(options: LambdaDriverOptions) {
-    super(options.fileUploadService);
     const { region, role, ...lambdaOptions } = options;
 
     this.lambdaClient = new Lambda({ ...lambdaOptions, region });
     this.lambdaRole = role;
+    this.fileStorageService = options.fileStorageService;
   }
 
-  private _getLambdaName(name: string, workspaceId: string): string {
-    return `${workspaceId}_${name}`;
-  }
-
-  async generateExecutable(
-    name: string,
-    workspaceId: string,
-    file: FileUpload,
-  ) {
-    const { sourceCodePath, buildSourcePath, javascriptCode } =
-      await this.generateAndSaveExecutableFiles(name, workspaceId, file);
+  async build(functionMetadata: FunctionMetadataEntity) {
+    const folderPath = join(
+      FileFolder.Function,
+      functionMetadata.workspaceId,
+      functionMetadata.id,
+    );
+    const fileStream = await this.fileStorageService.read({
+      folderPath,
+      filename: SOURCE_FILE_NAME,
+    });
+    const typescriptCode = await readFileContent(fileStream);
+    const javascriptCode = compileTypescript(typescriptCode);
 
     const buildDirectoryManager = new BuildDirectoryManager();
 
@@ -64,7 +69,7 @@ export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
       Code: {
         ZipFile: fs.readFileSync(lambdaZipPath),
       },
-      FunctionName: this._getLambdaName(name, workspaceId),
+      FunctionName: functionMetadata.id,
       Handler: lambdaHandler,
       Role: this.lambdaRole,
       Runtime: 'nodejs18.x',
@@ -77,11 +82,6 @@ export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
     await this.lambdaClient.send(command);
 
     await buildDirectoryManager.clean();
-
-    return {
-      sourceCodePath,
-      buildSourcePath,
-    };
   }
 
   async execute(
@@ -89,10 +89,7 @@ export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
     payload: object | undefined = undefined,
   ): Promise<object> {
     const params = {
-      FunctionName: this._getLambdaName(
-        functionToExecute.name,
-        functionToExecute.workspaceId,
-      ),
+      FunctionName: functionToExecute.id,
       Payload: JSON.stringify(payload),
     };
 

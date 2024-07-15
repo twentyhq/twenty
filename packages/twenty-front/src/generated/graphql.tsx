@@ -277,6 +277,18 @@ export type FunctionConnection = {
   pageInfo: PageInfo;
 };
 
+export type FunctionExecutionResult = {
+  __typename?: 'FunctionExecutionResult';
+  /** Execution result in JSON format */
+  result: Scalars['JSON'];
+};
+
+/** SyncStatus of the function */
+export enum FunctionSyncStatus {
+  NotReady = 'NOT_READY',
+  Ready = 'READY'
+}
+
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
@@ -1019,11 +1031,10 @@ export type FieldFilter = {
 
 export type Function = {
   __typename?: 'function';
-  buildSourcePath: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
   name: Scalars['String'];
-  sourceCodePath: Scalars['String'];
+  syncStatus: FunctionSyncStatus;
   updatedAt: Scalars['DateTime'];
 };
 

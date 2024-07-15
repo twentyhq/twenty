@@ -38,7 +38,7 @@ export class FunctionMetadataResolver {
   }
 
   @Mutation(() => FunctionExecutionResultDTO)
-  async executeFunction(
+  async executeOneFunction(
     @Args() executeFunctionInput: ExecuteFunctionInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
@@ -46,7 +46,7 @@ export class FunctionMetadataResolver {
       const { name, payload } = executeFunctionInput;
 
       return {
-        result: await this.functionMetadataService.executeFunction(
+        result: await this.functionMetadataService.executeOne(
           name,
           workspaceId,
           payload,

@@ -47,16 +47,6 @@ export class FunctionMetadataDTO {
   @Field()
   name: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Field()
-  sourceCodePath: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Field()
-  buildSourcePath: string;
-
   @IsEnum(FunctionSyncStatus)
   @IsNotEmpty()
   @Field(() => FunctionSyncStatus)
