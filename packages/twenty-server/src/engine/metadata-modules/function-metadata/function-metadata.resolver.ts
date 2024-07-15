@@ -10,6 +10,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FunctionMetadataDTO } from 'src/engine/metadata-modules/function-metadata/dtos/function-metadata.dto';
 import { FunctionExecutionResultDTO } from 'src/engine/metadata-modules/function-metadata/dtos/function-execution-result.dto';
+import { functionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/function-metadata/utils/function-graphql-api-exception-handler.utils';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
@@ -25,19 +26,34 @@ export class FunctionMetadataResolver {
     @Args('name', { type: () => String }) name: string,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return await this.functionMetadataService.createOne(
-      name,
-      workspaceId,
-      file,
-    );
+    try {
+      return await this.functionMetadataService.createOne(
+        name,
+        workspaceId,
+        file,
+      );
+    } catch (error) {
+      functionGraphQLApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => FunctionExecutionResultDTO)
-  async executeFunction(@Args() executeFunctionInput: ExecuteFunctionInput) {
-    const { name, payload } = executeFunctionInput;
+  async executeFunction(
+    @Args() executeFunctionInput: ExecuteFunctionInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    try {
+      const { name, payload } = executeFunctionInput;
 
-    return {
-      result: await this.functionMetadataService.executeFunction(name, payload),
-    };
+      return {
+        result: await this.functionMetadataService.executeFunction(
+          name,
+          workspaceId,
+          payload,
+        ),
+      };
+    } catch (error) {
+      functionGraphQLApiExceptionHandler(error);
+    }
   }
 }
