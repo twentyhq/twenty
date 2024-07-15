@@ -1,25 +1,30 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 export type UpdateSubscriptionJobData = { workspaceId: string };
-@Injectable()
-export class UpdateSubscriptionJob
-  implements MessageQueueJob<UpdateSubscriptionJobData>
-{
+
+@Processor({
+  queueName: MessageQueue.billingQueue,
+  scope: Scope.REQUEST,
+})
+export class UpdateSubscriptionJob {
   protected readonly logger = new Logger(UpdateSubscriptionJob.name);
+
   constructor(
-    private readonly billingService: BillingService,
+    private readonly billingWorkspaceService: BillingWorkspaceService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly stripeService: StripeService,
   ) {}
 
+  @Process(UpdateSubscriptionJob.name)
   async handle(data: UpdateSubscriptionJobData): Promise<void> {
     const workspaceMembersCount =
-      await this.userWorkspaceService.getWorkspaceMemberCount(data.workspaceId);
+      await this.userWorkspaceService.getWorkspaceMemberCount();
 
     if (!workspaceMembersCount || workspaceMembersCount <= 0) {
       return;
@@ -27,7 +32,9 @@ export class UpdateSubscriptionJob
 
     try {
       const billingSubscriptionItem =
-        await this.billingService.getBillingSubscriptionItem(data.workspaceId);
+        await this.billingWorkspaceService.getBillingSubscriptionItem(
+          data.workspaceId,
+        );
 
       await this.stripeService.updateSubscriptionItem(
         billingSubscriptionItem.stripeSubscriptionItemId,

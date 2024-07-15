@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
+import { Key } from 'ts-key-enum';
 import { IconPlus } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -19,6 +21,8 @@ import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
@@ -78,6 +82,7 @@ const StyledButton = styled(LightButton)`
 export const SettingsDataModelFieldSelectForm = ({
   fieldMetadataItem,
 }: SettingsDataModelFieldSelectFormProps) => {
+  const [focusedOptionId, setFocusedOptionId] = useState('');
   const { initialDefaultValue, initialOptions } =
     useSelectSettingsFormInitialValues({ fieldMetadataItem });
 
@@ -167,6 +172,37 @@ export const SettingsDataModelFieldSelectForm = ({
     }
   };
 
+  const getOptionsWithNewOption = () => {
+    const currentOptions = getValues('options');
+
+    const newOptions = [
+      ...currentOptions,
+      generateNewSelectOption(currentOptions),
+    ];
+
+    return newOptions;
+  };
+
+  const handleAddOption = () => {
+    const newOptions = getOptionsWithNewOption();
+
+    setFormValue('options', newOptions);
+  };
+
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      const newOptions = getOptionsWithNewOption();
+
+      setFormValue('options', newOptions);
+
+      const lastOptionId = newOptions[newOptions.length - 1].id;
+
+      setFocusedOptionId(lastOptionId);
+    },
+    AppHotkeyScope.App,
+  );
+
   return (
     <>
       <Controller
@@ -197,6 +233,7 @@ export const SettingsDataModelFieldSelectForm = ({
                           <SettingsDataModelFieldSelectFormOptionRow
                             key={option.id}
                             option={option}
+                            focused={focusedOptionId === option.id}
                             onChange={(nextOption) => {
                               const nextOptions = toSpliced(
                                 options,
@@ -245,9 +282,7 @@ export const SettingsDataModelFieldSelectForm = ({
               <StyledButton
                 title="Add option"
                 Icon={IconPlus}
-                onClick={() =>
-                  onChange([...options, generateNewSelectOption(options)])
-                }
+                onClick={handleAddOption}
               />
             </StyledFooter>
           </>

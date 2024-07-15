@@ -33,6 +33,7 @@ export type DateInputProps = {
   onChange?: (newDate: Nullable<Date>) => void;
   isDateTimeInput?: boolean;
   onClear?: () => void;
+  onSubmit?: (newDate: Nullable<Date>) => void;
 };
 
 export const DateInput = ({
@@ -44,6 +45,7 @@ export const DateInput = ({
   onChange,
   isDateTimeInput,
   onClear,
+  onSubmit,
 }: DateInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
@@ -57,6 +59,11 @@ export const DateInput = ({
   const handleClear = () => {
     setInternalValue(null);
     onClear?.();
+  };
+
+  const handleMouseSelect = (newDate: Date | null) => {
+    setInternalValue(newDate);
+    onSubmit?.(newDate);
   };
 
   const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
@@ -86,9 +93,7 @@ export const DateInput = ({
         <InternalDatePicker
           date={internalValue ?? new Date()}
           onChange={handleChange}
-          onMouseSelect={(newDate: Date | null) => {
-            onEnter(newDate);
-          }}
+          onMouseSelect={handleMouseSelect}
           clearable={clearable ? clearable : false}
           isDateTimeInput={isDateTimeInput}
           onEnter={onEnter}

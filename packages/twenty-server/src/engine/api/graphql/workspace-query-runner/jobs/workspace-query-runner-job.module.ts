@@ -15,19 +15,6 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     RecordPositionBackfillModule,
     HttpModule,
   ],
-  providers: [
-    {
-      provide: CallWebhookJobsJob.name,
-      useClass: CallWebhookJobsJob,
-    },
-    {
-      provide: CallWebhookJob.name,
-      useClass: CallWebhookJob,
-    },
-    {
-      provide: RecordPositionBackfillJob.name,
-      useClass: RecordPositionBackfillJob,
-    },
-  ],
+  providers: [CallWebhookJobsJob, CallWebhookJob, RecordPositionBackfillJob],
 })
 export class WorkspaceQueryRunnerJobModule {}

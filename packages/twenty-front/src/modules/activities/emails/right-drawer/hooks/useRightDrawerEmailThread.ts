@@ -8,11 +8,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
 export const useRightDrawerEmailThread = () => {
   const viewableRecordId = useRecoilValue(viewableRecordIdState);
-  const { setRecords } = useSetRecordInStore();
+  const { upsertRecords } = useUpsertRecordsInStore();
 
   const { record: thread } = useFindOneRecord<EmailThread>({
     objectNameSingular: CoreObjectNameSingular.MessageThread,
@@ -20,7 +20,7 @@ export const useRightDrawerEmailThread = () => {
     recordGqlFields: {
       id: true,
     },
-    onCompleted: (record) => setRecords([record]),
+    onCompleted: (record) => upsertRecords([record]),
   });
 
   const FETCH_ALL_MESSAGES_OPERATION_SIGNATURE =

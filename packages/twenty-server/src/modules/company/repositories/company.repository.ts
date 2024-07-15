@@ -67,7 +67,7 @@ export class CompanyRepository {
     );
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}.company (id, "domainName", name, address, position)
+      `INSERT INTO ${dataSourceSchema}.company (id, "domainName", name, "addressAddressCity", position)
       VALUES ($1, $2, $3, $4, $5)`,
       [
         companyToCreate.id,

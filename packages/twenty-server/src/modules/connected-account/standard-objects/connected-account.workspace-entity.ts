@@ -5,18 +5,19 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { CONNECTED_ACCOUNT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { CONNECTED_ACCOUNT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export enum ConnectedAccountProvider {
   GOOGLE = 'google',
@@ -86,7 +87,16 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconX',
   })
   @WorkspaceIsNullable()
-  authFailedAt: Date;
+  authFailedAt: Date | null;
+
+  @WorkspaceField({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handleAliases,
+    type: FieldMetadataType.TEXT,
+    label: 'Handle Aliases',
+    description: 'Handle Aliases',
+    icon: 'IconMail',
+  })
+  handleAliases: string;
 
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
@@ -94,11 +104,13 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Account Owner',
     description: 'Account Owner',
     icon: 'IconUserCircle',
-    joinColumn: 'accountOwnerId',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'connectedAccounts',
   })
   accountOwner: Relation<WorkspaceMemberWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('accountOwner')
+  accountOwnerId: string;
 
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.messageChannels,

@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 export const PostImage = ({
   sources,
   style,
@@ -7,5 +5,5 @@ export const PostImage = ({
   sources: { light: string; dark: string };
   style?: React.CSSProperties;
 }) => {
-  return <Image src={sources.light} style={style} alt={sources.light} />;
+  return <img src={sources.light} style={style} alt={sources.light} />;
 };

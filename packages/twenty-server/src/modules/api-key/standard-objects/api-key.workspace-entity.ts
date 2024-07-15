@@ -45,5 +45,5 @@ export class ApiKeyWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalendar',
   })
   @WorkspaceIsNullable()
-  revokedAt?: Date;
+  revokedAt?: Date | null;
 }

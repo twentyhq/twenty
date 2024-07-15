@@ -3022,7 +3022,7 @@ export const getObjectMetadataItemsMock = () => {
         {
           __typename: 'field',
           id: '20202020-ad10-4117-a039-3f04b7a5f939',
-          type: 'TEXT',
+          type: 'ADDRESS',
           name: 'address',
           label: 'Address',
           description: 'The company address',
@@ -3137,6 +3137,14 @@ export const getObjectMetadataItemsMock = () => {
               namePlural: 'people',
             },
             toFieldMetadataId: '20202020-64e1-4080-b6ad-db03c3809885',
+          },
+          relationDefinition: {
+            targetObjectMetadata: {
+              nameSingular: 'person',
+            },
+            targetFieldMetadata: {
+              name: 'company',
+            },
           },
           toRelationMetadata: null,
         },

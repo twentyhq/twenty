@@ -18,6 +18,10 @@ export const getOperandLabel = (
       return 'Is not';
     case ViewFilterOperand.IsNotNull:
       return 'Is not null';
+    case ViewFilterOperand.IsEmpty:
+      return 'Is empty';
+    case ViewFilterOperand.IsNotEmpty:
+      return 'Is not empty';
     default:
       return '';
   }
@@ -35,6 +39,10 @@ export const getOperandLabelShort = (
       return ': Not';
     case ViewFilterOperand.IsNotNull:
       return ': NotNull';
+    case ViewFilterOperand.IsNotEmpty:
+      return ': NotEmpty';
+    case ViewFilterOperand.IsEmpty:
+      return ': Empty';
     case ViewFilterOperand.GreaterThan:
       return '\u00A0> ';
     case ViewFilterOperand.LessThan:

@@ -1,23 +1,12 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import {
-  GoogleCalendarSyncJobData,
-  GoogleCalendarSyncJob,
-} from 'src/modules/calendar/jobs/google-calendar-sync.job';
-import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
-import {
-  CalendarChannelWorkspaceEntity,
-  CalendarChannelVisibility,
-} from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import {
   ConnectedAccountWorkspaceEntity,
@@ -34,23 +23,36 @@ import {
   MessagingMessageListFetchJob,
   MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
+import {
+  CalendarChannelWorkspaceEntity,
+  CalendarChannelVisibility,
+} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import {
+  CalendarEventsImportJobData,
+  CalendarEventListFetchJob,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 
 @Injectable()
 export class GoogleAPIsService {
   constructor(
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
-    @Inject(MessageQueue.messagingQueue)
+    @InjectWorkspaceDatasource()
+    private readonly workspaceDataSource: WorkspaceDataSource,
+    @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    @Inject(MessageQueue.calendarQueue)
+    @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
     private readonly environmentService: EnvironmentService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    @InjectObjectMetadataRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelRepository: CalendarChannelRepository,
+    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
+    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
   ) {}
 
   async refreshGoogleRefreshToken(input: {
@@ -70,14 +72,6 @@ export class GoogleAPIsService {
       messageVisibility,
     } = input;
 
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        workspaceId,
-      );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
     const isCalendarEnabled = this.environmentService.get(
       'CALENDAR_PROVIDER_GOOGLE_ENABLED',
     );
@@ -92,65 +86,67 @@ export class GoogleAPIsService {
     const existingAccountId = connectedAccounts?.[0]?.id;
     const newOrExistingConnectedAccountId = existingAccountId ?? v4();
 
-    await workspaceDataSource?.transaction(async (manager: EntityManager) => {
-      if (!existingAccountId) {
-        await this.connectedAccountRepository.create(
-          {
-            id: newOrExistingConnectedAccountId,
-            handle,
-            provider: ConnectedAccountProvider.GOOGLE,
-            accessToken: input.accessToken,
-            refreshToken: input.refreshToken,
-            accountOwnerId: workspaceMemberId,
-          },
-          workspaceId,
-          manager,
-        );
-
-        await this.messageChannelRepository.create(
-          {
-            id: v4(),
-            connectedAccountId: newOrExistingConnectedAccountId,
-            type: MessageChannelType.EMAIL,
-            handle,
-            visibility:
-              messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
-            syncStatus: MessageChannelSyncStatus.ONGOING,
-          },
-          workspaceId,
-          manager,
-        );
-
-        if (isCalendarEnabled) {
-          await this.calendarChannelRepository.create(
+    await this.workspaceDataSource.transaction(
+      async (manager: EntityManager) => {
+        if (!existingAccountId) {
+          await this.connectedAccountRepository.create(
             {
-              id: v4(),
-              connectedAccountId: newOrExistingConnectedAccountId,
+              id: newOrExistingConnectedAccountId,
               handle,
-              visibility:
-                calendarVisibility ||
-                CalendarChannelVisibility.SHARE_EVERYTHING,
+              provider: ConnectedAccountProvider.GOOGLE,
+              accessToken: input.accessToken,
+              refreshToken: input.refreshToken,
+              accountOwnerId: workspaceMemberId,
             },
             workspaceId,
             manager,
           );
-        }
-      } else {
-        await this.connectedAccountRepository.updateAccessTokenAndRefreshToken(
-          input.accessToken,
-          input.refreshToken,
-          newOrExistingConnectedAccountId,
-          workspaceId,
-          manager,
-        );
 
-        await this.messageChannelRepository.resetSync(
-          newOrExistingConnectedAccountId,
-          workspaceId,
-          manager,
-        );
-      }
-    });
+          await this.messageChannelRepository.create(
+            {
+              id: v4(),
+              connectedAccountId: newOrExistingConnectedAccountId,
+              type: MessageChannelType.EMAIL,
+              handle,
+              visibility:
+                messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
+              syncStatus: MessageChannelSyncStatus.ONGOING,
+            },
+            workspaceId,
+            manager,
+          );
+
+          if (isCalendarEnabled) {
+            await this.calendarChannelRepository.save(
+              {
+                id: v4(),
+                connectedAccountId: newOrExistingConnectedAccountId,
+                handle,
+                visibility:
+                  calendarVisibility ||
+                  CalendarChannelVisibility.SHARE_EVERYTHING,
+              },
+              {},
+              manager,
+            );
+          }
+        } else {
+          await this.connectedAccountRepository.updateAccessTokenAndRefreshToken(
+            input.accessToken,
+            input.refreshToken,
+            newOrExistingConnectedAccountId,
+            workspaceId,
+            manager,
+          );
+
+          await this.messageChannelRepository.resetSync(
+            newOrExistingConnectedAccountId,
+            workspaceId,
+            manager,
+          );
+        }
+      },
+    );
 
     if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
       const messageChannels =
@@ -170,20 +166,22 @@ export class GoogleAPIsService {
       }
     }
 
-    if (
-      this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
-      isCalendarEnabled
-    ) {
-      await this.calendarQueueService.add<GoogleCalendarSyncJobData>(
-        GoogleCalendarSyncJob.name,
-        {
-          workspaceId,
+    if (isCalendarEnabled) {
+      const calendarChannels = await this.calendarChannelRepository.find({
+        where: {
           connectedAccountId: newOrExistingConnectedAccountId,
         },
-        {
-          retryLimit: 2,
-        },
-      );
+      });
+
+      for (const calendarChannel of calendarChannels) {
+        await this.calendarQueueService.add<CalendarEventsImportJobData>(
+          CalendarEventListFetchJob.name,
+          {
+            calendarChannelId: calendarChannel.id,
+            workspaceId,
+          },
+        );
+      }
     }
   }
 }

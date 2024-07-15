@@ -1,9 +1,9 @@
+import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
 import styled from '@emotion/styled';
 
-import { SettingsAccountsVisibilitySettingCardMedia } from '@/settings/accounts/components/SettingsAccountsVisibilitySettingCardMedia';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
-const StyledCardMedia = styled(SettingsAccountsVisibilitySettingCardMedia)`
+const StyledCardMedia = styled(SettingsAccountsVisibilityIcon)`
   width: ${({ theme }) => theme.spacing(10)};
 `;
 

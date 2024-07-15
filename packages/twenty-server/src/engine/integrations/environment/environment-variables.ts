@@ -17,6 +17,8 @@ import {
 
 import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.interface';
 import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
+import { LLMChatModelDriver } from 'src/engine/integrations/llm-chat-model/interfaces/llm-chat-model.interface';
+import { LLMTracingDriver } from 'src/engine/integrations/llm-tracing/interfaces/llm-tracing.interface';
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/engine/integrations/environment/decorators/cast-to-string-array.decorator';
@@ -220,6 +222,16 @@ export class EnvironmentVariables {
   @IsOptional()
   STORAGE_S3_ENDPOINT: string;
 
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  @IsOptional()
+  STORAGE_S3_ACCESS_KEY_ID: string;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  @IsOptional()
+  STORAGE_S3_SECRET_ACCESS_KEY: string;
+
   @IsString()
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
   STORAGE_LOCAL_PATH = '.local-storage';
@@ -324,7 +336,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
-  MUTATION_MAXIMUM_RECORD_AFFECTED = 100;
+  MUTATION_MAXIMUM_AFFECTED_RECORDS = 100;
 
   REDIS_HOST = '127.0.0.1';
 
@@ -358,6 +370,16 @@ export class EnvironmentVariables {
   EMAIL_SMTP_PASSWORD: string;
 
   OPENROUTER_API_KEY: string;
+
+  LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver;
+
+  OPENAI_API_KEY: string;
+
+  LANGFUSE_SECRET_KEY: string;
+
+  LANGFUSE_PUBLIC_KEY: string;
+
+  LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.Console;
 
   @CastToPositiveNumber()
   API_RATE_LIMITING_TTL = 100;

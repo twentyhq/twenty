@@ -217,10 +217,9 @@ export const computeSchemaComponents = (
   );
 };
 
-export const computeParameterComponents = (): Record<
-  string,
-  OpenAPIV3_1.ParameterObject
-> => {
+export const computeParameterComponents = (
+  fromMetadata = false,
+): Record<string, OpenAPIV3_1.ParameterObject> => {
   return {
     idPath: computeIdPathParameter(),
     startingAfter: computeStartingAfterParameters(),
@@ -228,7 +227,7 @@ export const computeParameterComponents = (): Record<
     filter: computeFilterParameters(),
     depth: computeDepthParameters(),
     orderBy: computeOrderByParameters(),
-    limit: computeLimitParameters(),
+    limit: computeLimitParameters(fromMetadata),
   };
 };
 

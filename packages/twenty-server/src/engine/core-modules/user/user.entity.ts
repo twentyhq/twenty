@@ -18,11 +18,11 @@ import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-mem
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { OnboardingStep } from 'src/engine/core-modules/onboarding/enums/onboarding-step.enum';
+import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 
-registerEnumType(OnboardingStep, {
-  name: 'OnboardingStep',
-  description: 'Onboarding step',
+registerEnumType(OnboardingStatus, {
+  name: 'OnboardingStatus',
+  description: 'Onboarding status',
 });
 
 @Entity({ name: 'user', schema: 'core' })
@@ -119,6 +119,6 @@ export class User {
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
   workspaces: Relation<UserWorkspace[]>;
 
-  @Field(() => OnboardingStep, { nullable: true })
-  onboardingStep: OnboardingStep;
+  @Field(() => OnboardingStatus, { nullable: true })
+  onboardingStatus: OnboardingStatus;
 }

@@ -10,9 +10,22 @@ import { TimelineActivity } from '@/activities/timelineActivities/types/Timeline
 import { getTimelineActivityAuthorFullName } from '@/activities/timelineActivities/utils/getTimelineActivityAuthorFullName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+
+const StyledTimelineItemContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(4)};
+  height: 'auto';
+  justify-content: space-between;
+  overflow: hidden;
+  white-space: nowrap;
+`;
+
+const StyledLeftContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 const StyledIconContainer = styled.div`
   display: flex;
@@ -25,62 +38,50 @@ const StyledIconContainer = styled.div`
   user-select: none;
   text-decoration-line: underline;
   z-index: 2;
-  align-self: normal;
-`;
-
-const StyledItemContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-  flex: 1;
-  overflow: hidden;
-`;
-
-const StyledItemTitleDate = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: flex-end;
-  margin-left: auto;
-  align-self: baseline;
 `;
 
 const StyledVerticalLineContainer = styled.div`
-  align-items: center;
-  align-self: stretch;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  flex-shrink: 0;
   justify-content: center;
-  width: 26px;
   z-index: 2;
+  height: 100%;
 `;
 
 const StyledVerticalLine = styled.div`
-  align-self: stretch;
   background: ${({ theme }) => theme.border.color.light};
-  flex-shrink: 0;
   width: 2px;
-`;
-
-const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.spacing(4)};
-  height: ${({ isGap, theme }) =>
-    isGap ? (useIsMobile() ? theme.spacing(6) : theme.spacing(3)) : 'auto'};
-  overflow: hidden;
-  white-space: nowrap;
+  height: 100%;
 `;
 
 const StyledSummary = styled.summary`
+  align-items: center;
   display: flex;
   flex: 1;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  align-items: center;
+`;
+
+const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
+  align-items: flex-start;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
   overflow: hidden;
+  margin-bottom: ${({ isMarginBottom, theme }) =>
+    isMarginBottom ? theme.spacing(3) : 0};
+  min-height: 26px;
+`;
+
+const StyledItemTitleDate = styled.div`
+  align-items: flex-start;
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: flex-end;
+  margin-left: auto;
 `;
 
 type EventRowProps = {
@@ -118,13 +119,20 @@ export const EventRow = ({
   return (
     <>
       <StyledTimelineItemContainer>
-        <StyledIconContainer>
-          <EventIconDynamicComponent
-            event={event}
-            linkedObjectMetadataItem={linkedObjectMetadataItem}
-          />
-        </StyledIconContainer>
-        <StyledItemContainer>
+        <StyledLeftContainer>
+          <StyledIconContainer>
+            <EventIconDynamicComponent
+              event={event}
+              linkedObjectMetadataItem={linkedObjectMetadataItem}
+            />
+          </StyledIconContainer>
+          {!isLastEvent && (
+            <StyledVerticalLineContainer>
+              <StyledVerticalLine />
+            </StyledVerticalLineContainer>
+          )}
+        </StyledLeftContainer>
+        <StyledItemContainer isMarginBottom={!isLastEvent}>
           <StyledSummary>
             <EventRowDynamicComponent
               authorFullName={authorFullName}
@@ -134,18 +142,11 @@ export const EventRow = ({
               linkedObjectMetadataItem={linkedObjectMetadataItem}
             />
           </StyledSummary>
-          <StyledItemTitleDate id={`id-${event.id}`}>
-            {beautifiedCreatedAt}
-          </StyledItemTitleDate>
         </StyledItemContainer>
+        <StyledItemTitleDate id={`id-${event.id}`}>
+          {beautifiedCreatedAt}
+        </StyledItemTitleDate>
       </StyledTimelineItemContainer>
-      {!isLastEvent && (
-        <StyledTimelineItemContainer isGap>
-          <StyledVerticalLineContainer>
-            <StyledVerticalLine />
-          </StyledVerticalLineContainer>
-        </StyledTimelineItemContainer>
-      )}
     </>
   );
 };

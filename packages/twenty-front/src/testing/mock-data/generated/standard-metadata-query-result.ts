@@ -1,10 +1,6 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
-  FieldMetadataType,
-  ObjectEdge,
-  ObjectMetadataItemsQuery,
+	ObjectMetadataItemsQuery
 } from '~/generated-metadata/graphql';
-import { CalendarChannelVisibility, MessageChannelVisibility } from "~/generated/graphql";
 
 // This file is not designed to be manually edited.
 // It's an extract from the dev seeded environment metadata call
@@ -2224,6 +2220,60 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
 								"updatedAt": "2024-06-07T09:05:12.599Z",
 								"defaultValue": "uuid",
 								"options": null,
+								"relationDefinition": null,
+								"fromRelationMetadata": null,
+								"toRelationMetadata": null
+							}
+						},
+						{
+							"__typename": "fieldEdge",
+							"node": {
+								"__typename": "field",
+								"id": "3715c0ac-c16f-4db3-b9be-e908b787929e",
+								"type": "RATING",
+								"name": "testRating",
+								"label": "Test rating",
+								"description": null,
+								"icon": "IconUsers",
+								"isCustom": true,
+								"isActive": true,
+								"isSystem": false,
+								"isNullable": true,
+								"createdAt": "2024-06-17T13:03:52.175Z",
+								"updatedAt": "2024-06-17T13:03:52.175Z",
+								"defaultValue": null,
+								"options": [
+										{
+												"id": "9876aaeb-91ac-4e02-b521-356ff0c0a6f9",
+												"label": "1",
+												"value": "RATING_1",
+												"position": 0
+										},
+										{
+												"id": "4651d042-0804-465b-8265-5fae554de3a8",
+												"label": "2",
+												"value": "RATING_2",
+												"position": 1
+										},
+										{
+												"id": "a6942bdd-a8c8-44f9-87fc-b9a7f64ee5dd",
+												"label": "3",
+												"value": "RATING_3",
+												"position": 2
+										},
+										{
+												"id": "a838666f-cd2f-4feb-a72f-d3447b23ad42",
+												"label": "4",
+												"value": "RATING_4",
+												"position": 3
+										},
+										{
+												"id": "428f765e-4792-4cea-8270-9dba60f45fd9",
+												"label": "5",
+												"value": "RATING_5",
+												"position": 4
+										}
+								],
 								"relationDefinition": null,
 								"fromRelationMetadata": null,
 								"toRelationMetadata": null

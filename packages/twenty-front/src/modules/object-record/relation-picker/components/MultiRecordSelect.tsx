@@ -1,12 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/relation-picker/components/MultipleObjectRecordOnClickOutsideEffect';
 import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/components/MultipleObjectRecordSelectItem';
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
-import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
+import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
+import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,7 +17,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { isDefined } from '~/utils/isDefined';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -24,134 +26,80 @@ export const StyledSelectableItem = styled(SelectableItem)`
 export const MultiRecordSelect = ({
   onChange,
   onSubmit,
-  selectedObjectRecords,
-  allRecords,
-  loading,
-  searchFilter,
-  setSearchFilter,
 }: {
-  onChange?: (
-    changedRecordForSelect: ObjectRecordForSelect,
-    newSelectedValue: boolean,
-  ) => void;
-  onSubmit?: (objectRecordsForSelect: ObjectRecordForSelect[]) => void;
-  selectedObjectRecords: ObjectRecordForSelect[];
-  allRecords: ObjectRecordForSelect[];
-  loading: boolean;
-  searchFilter: string;
-  setSearchFilter: (searchFilter: string) => void;
+  onChange?: (changedRecordForSelectId: string) => void;
+  onSubmit?: () => void;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [internalSelectedRecords, setInternalSelectedRecords] = useState<
-    ObjectRecordForSelect[]
-  >([]);
+  const relationPickerScopedId = useAvailableScopeIdOrThrow(
+    RelationPickerScopeInternalContext,
+  );
 
-  useEffect(() => {
-    if (!loading) {
-      setInternalSelectedRecords(selectedObjectRecords);
-    }
-  }, [selectedObjectRecords, loading]);
+  const { objectRecordsIdsMultiSelectState, recordMultiSelectIsLoadingState } =
+    useObjectRecordMultiSelectScopedStates(relationPickerScopedId);
 
+  const recordMultiSelectIsLoading = useRecoilValue(
+    recordMultiSelectIsLoadingState,
+  );
+  const objectRecordsIdsMultiSelect = useRecoilValue(
+    objectRecordsIdsMultiSelectState,
+  );
+
+  const { relationPickerSearchFilterState } = useRelationPickerScopedStates({
+    relationPickerScopedId,
+  });
+
+  const setSearchFilter = useSetRecoilState(relationPickerSearchFilterState);
+  const relationPickerSearchFilter = useRecoilValue(
+    relationPickerSearchFilterState,
+  );
   const debouncedSetSearchFilter = useDebouncedCallback(setSearchFilter, 100, {
     leading: true,
   });
 
-  const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    debouncedSetSearchFilter(event.currentTarget.value);
-  };
-
-  const handleSelectChange = (
-    changedRecordForSelect: ObjectRecordForSelect,
-    newSelectedValue: boolean,
-  ) => {
-    const newSelectedRecords = newSelectedValue
-      ? [...internalSelectedRecords, changedRecordForSelect]
-      : internalSelectedRecords.filter(
-          (selectedRecord) =>
-            selectedRecord.record.id !== changedRecordForSelect.record.id,
-        );
-
-    setInternalSelectedRecords(newSelectedRecords);
-
-    onChange?.(changedRecordForSelect, newSelectedValue);
-  };
-
-  const entitiesInDropdown = useMemo(
-    () =>
-      [...(allRecords ?? [])].filter((entity) =>
-        isNonEmptyString(entity.recordIdentifier.id),
-      ),
-    [allRecords],
+  const handleFilterChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      debouncedSetSearchFilter(event.currentTarget.value);
+    },
+    [debouncedSetSearchFilter],
   );
-
-  const selectableItemIds = entitiesInDropdown.map(
-    (entity) => entity.record.id,
-  );
-
   return (
     <>
       <MultipleObjectRecordOnClickOutsideEffect
         containerRef={containerRef}
         onClickOutside={() => {
-          onSubmit?.(internalSelectedRecords);
+          onSubmit?.();
         }}
       />
       <DropdownMenu ref={containerRef} data-select-disable>
         <DropdownMenuSearchInput
-          value={searchFilter}
+          value={relationPickerSearchFilter}
           onChange={handleFilterChange}
           autoFocus
         />
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer hasMaxHeight>
-          {loading ? (
+          {recordMultiSelectIsLoading ? (
             <MenuItem text="Loading..." />
           ) : (
             <>
               <SelectableList
                 selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
-                selectableItemIdArray={selectableItemIds}
+                selectableItemIdArray={objectRecordsIdsMultiSelect}
                 hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-                onEnter={(recordId) => {
-                  const recordIsSelected = internalSelectedRecords?.some(
-                    (selectedRecord) => selectedRecord.record.id === recordId,
-                  );
-
-                  const correspondingRecordForSelect = entitiesInDropdown?.find(
-                    (entity) => entity.record.id === recordId,
-                  );
-
-                  if (isDefined(correspondingRecordForSelect)) {
-                    handleSelectChange(
-                      correspondingRecordForSelect,
-                      !recordIsSelected,
-                    );
-                  }
-                }}
               >
-                {entitiesInDropdown?.map((objectRecordForSelect) => (
-                  <MultipleObjectRecordSelectItem
-                    key={objectRecordForSelect.record.id}
-                    objectRecordForSelect={objectRecordForSelect}
-                    onSelectedChange={(newSelectedValue) =>
-                      handleSelectChange(
-                        objectRecordForSelect,
-                        newSelectedValue,
-                      )
-                    }
-                    selected={internalSelectedRecords?.some(
-                      (selectedRecord) => {
-                        return (
-                          selectedRecord.record.id ===
-                          objectRecordForSelect.record.id
-                        );
-                      },
-                    )}
-                  />
-                ))}
+                {objectRecordsIdsMultiSelect?.map((recordId) => {
+                  return (
+                    <MultipleObjectRecordSelectItem
+                      key={recordId}
+                      objectRecordId={recordId}
+                      onChange={onChange}
+                    />
+                  );
+                })}
               </SelectableList>
-              {entitiesInDropdown?.length === 0 && (
+              {objectRecordsIdsMultiSelect?.length === 0 && (
                 <MenuItem text="No result" />
               )}
             </>

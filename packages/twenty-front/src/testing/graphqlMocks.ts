@@ -15,7 +15,7 @@ import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedObjectMetadataItemsQueryResult } from '~/testing/mock-data/metadata';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
-import { mockedUsersData } from '~/testing/mock-data/users';
+import { mockedUserData } from '~/testing/mock-data/users';
 import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
@@ -35,7 +35,7 @@ export const graphqlMocks = {
     graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
       return HttpResponse.json({
         data: {
-          currentUser: mockedUsersData[0],
+          currentUser: mockedUserData,
         },
       });
     }),
@@ -110,6 +110,57 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query('CombinedFindManyRecords', () => {
+      return HttpResponse.json({
+        data: {
+          views: {
+            edges: mockedViewsData.map((view) => ({
+              node: {
+                ...view,
+                viewFilters: {
+                  edges: [],
+                  totalCount: 0,
+                },
+                viewSorts: {
+                  edges: [],
+                  totalCount: 0,
+                },
+                viewFields: {
+                  edges: mockedViewFieldsData
+                    .filter((viewField) => viewField.viewId === view.id)
+                    .map((viewField) => ({
+                      node: viewField,
+                      cursor: null,
+                    })),
+                  totalCount: mockedViewFieldsData.filter(
+                    (viewField) => viewField.viewId === view.id,
+                  ).length,
+                },
+              },
+              cursor: null,
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+              totalCount: mockedViewsData.length,
+            },
+            totalCount: mockedViewsData.length,
+          },
+        },
+        favorites: {
+          edges: [],
+          totalCount: 0,
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
+          },
+        },
+      });
+    }),
     graphql.query('FindManyCompanies', ({ variables }) => {
       const mockedData = variables.limit
         ? companiesMock.slice(0, variables.limit)
@@ -157,43 +208,44 @@ export const graphqlMocks = {
     graphql.query('FindDuplicateCompany', () => {
       return HttpResponse.json({
         data: {
-          companyDuplicates: {
-            edges: [
-              {
-                node: {
-                  ...duplicateCompanyMock,
-                  favorites: {
-                    edges: [],
-                    __typename: 'FavoriteConnection',
+          companyDuplicates: [
+            {
+              edges: [
+                {
+                  node: {
+                    ...duplicateCompanyMock,
+                    favorites: {
+                      edges: [],
+                      __typename: 'FavoriteConnection',
+                    },
+                    attachments: {
+                      edges: [],
+                      __typename: 'AttachmentConnection',
+                    },
+                    people: {
+                      edges: [],
+                      __typename: 'PersonConnection',
+                    },
+                    opportunities: {
+                      edges: [],
+                      __typename: 'OpportunityConnection',
+                    },
+                    activityTargets: {
+                      edges: [],
+                      __typename: 'ActivityTargetConnection',
+                    },
                   },
-                  attachments: {
-                    edges: [],
-                    __typename: 'AttachmentConnection',
-                  },
-                  people: {
-                    edges: [],
-                    __typename: 'PersonConnection',
-                  },
-                  opportunities: {
-                    edges: [],
-                    __typename: 'OpportunityConnection',
-                  },
-                  activityTargets: {
-                    edges: [],
-                    __typename: 'ActivityTargetConnection',
-                  },
+                  cursor: null,
                 },
-                cursor: null,
+              ],
+              pageInfo: {
+                hasNextPage: false,
+                hasPreviousPage: false,
+                startCursor: null,
+                endCursor: null,
               },
-            ],
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: null,
-              endCursor: null,
             },
-            totalCount: 1,
-          },
+          ],
         },
       });
     }),

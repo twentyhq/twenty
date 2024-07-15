@@ -3,6 +3,7 @@ import { capitalize } from 'src/utils/capitalize';
 
 export const getFindManyResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+  fromMetadata = false,
 ) => {
   return {
     description: 'Successful operation',
@@ -19,7 +20,7 @@ export const getFindManyResponse200 = (
                   items: {
                     $ref: `#/components/schemas/${capitalize(
                       item.nameSingular,
-                    )} with Relations`,
+                    )}${!fromMetadata ? ' with Relations' : ''}`,
                   },
                 },
               },
@@ -32,9 +33,11 @@ export const getFindManyResponse200 = (
                 endCursor: { type: 'string' },
               },
             },
-            totalCount: {
-              type: 'integer',
-            },
+            ...(!fromMetadata && {
+              totalCount: {
+                type: 'integer',
+              },
+            }),
           },
           example: {
             data: {
@@ -59,6 +62,7 @@ export const getFindManyResponse200 = (
 
 export const getFindOneResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  fromMetadata = false,
 ) => {
   return {
     description: 'Successful operation',
@@ -71,9 +75,9 @@ export const getFindOneResponse200 = (
               type: 'object',
               properties: {
                 [item.nameSingular]: {
-                  $ref: `#/components/schemas/${capitalize(
-                    item.nameSingular,
-                  )} with Relations`,
+                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}${
+                    !fromMetadata ? ' with Relations' : ''
+                  }`,
                 },
               },
             },

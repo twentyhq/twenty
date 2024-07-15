@@ -107,17 +107,19 @@ export const useTasks = ({
     setCurrentIncompleteTaskQueryVariables,
   ]);
 
-  const { activities: completeTasksData } = useActivities({
-    targetableObjects,
-    activitiesFilters: completedQueryVariables.filter ?? {},
-    activitiesOrderByVariables: completedQueryVariables.orderBy ?? [{}],
-  });
+  const { activities: completeTasksData, loading: completeTasksLoading } =
+    useActivities({
+      targetableObjects,
+      activitiesFilters: completedQueryVariables.filter ?? {},
+      activitiesOrderByVariables: completedQueryVariables.orderBy ?? [{}],
+    });
 
-  const { activities: incompleteTaskData } = useActivities({
-    targetableObjects,
-    activitiesFilters: incompleteQueryVariables.filter ?? {},
-    activitiesOrderByVariables: incompleteQueryVariables.orderBy ?? [{}],
-  });
+  const { activities: incompleteTaskData, loading: incompleteTasksLoading } =
+    useActivities({
+      targetableObjects,
+      activitiesFilters: incompleteQueryVariables.filter ?? {},
+      activitiesOrderByVariables: incompleteQueryVariables.orderBy ?? [{}],
+    });
 
   const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {
     if (!task.dueAt) {
@@ -148,5 +150,7 @@ export const useTasks = ({
     upcomingTasks: (upcomingTasks ?? []) as Activity[],
     unscheduledTasks: (unscheduledTasks ?? []) as Activity[],
     completedTasks: (completedTasks ?? []) as Activity[],
+    completeTasksLoading,
+    incompleteTasksLoading,
   };
 };

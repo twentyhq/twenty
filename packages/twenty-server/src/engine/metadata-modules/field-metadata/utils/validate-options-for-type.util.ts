@@ -8,6 +8,10 @@ import {
   FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 
 import { isEnumFieldMetadataType } from './is-enum-field-metadata-type.util';
 
@@ -24,7 +28,10 @@ export const validateOptionsForType = (
   if (options === null) return true;
 
   if (!Array.isArray(options)) {
-    throw new Error('Options must be an array');
+    throw new FieldMetadataException(
+      'Options must be an array',
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    );
   }
 
   if (!isEnumFieldMetadataType(type)) {
@@ -39,7 +46,10 @@ export const validateOptionsForType = (
 
   // Check if all options are unique
   if (new Set(values).size !== options.length) {
-    throw new Error('Options must be unique');
+    throw new FieldMetadataException(
+      'Options must be unique',
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+    );
   }
 
   const validators = optionsValidatorsMap[type];

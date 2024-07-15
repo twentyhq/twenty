@@ -4,12 +4,17 @@ import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/works
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 
 export class WorkspaceSyncStorage {
   // Object metadata
-  private readonly _objectMetadataCreateCollection: ComputedPartialWorkspaceEntity[] =
-    [];
-  private readonly _objectMetadataUpdateCollection: (Partial<ComputedPartialWorkspaceEntity> & {
+  private readonly _objectMetadataCreateCollection: Omit<
+    ComputedPartialWorkspaceEntity,
+    'fields'
+  >[] = [];
+  private readonly _objectMetadataUpdateCollection: (Partial<
+    Omit<ComputedPartialWorkspaceEntity, 'fields'>
+  > & {
     id: string;
   })[] = [];
   private readonly _objectMetadataDeleteCollection: ObjectMetadataEntity[] = [];
@@ -25,10 +30,17 @@ export class WorkspaceSyncStorage {
   // Relation metadata
   private readonly _relationMetadataCreateCollection: Partial<RelationMetadataEntity>[] =
     [];
-  private readonly _relationMetadataDeleteCollection: RelationMetadataEntity[] =
-    [];
   private readonly _relationMetadataUpdateCollection: Partial<RelationMetadataEntity>[] =
     [];
+  private readonly _relationMetadataDeleteCollection: RelationMetadataEntity[] =
+    [];
+
+  // Index metadata
+  private readonly _indexMetadataCreateCollection: Partial<IndexMetadataEntity>[] =
+    [];
+  private readonly _indexMetadataUpdateCollection: Partial<IndexMetadataEntity>[] =
+    [];
+  private readonly _indexMetadataDeleteCollection: IndexMetadataEntity[] = [];
 
   constructor() {}
 
@@ -68,7 +80,21 @@ export class WorkspaceSyncStorage {
     return this._relationMetadataDeleteCollection;
   }
 
-  addCreateObjectMetadata(object: ComputedPartialWorkspaceEntity) {
+  get indexMetadataCreateCollection() {
+    return this._indexMetadataCreateCollection;
+  }
+
+  get indexMetadataUpdateCollection() {
+    return this._indexMetadataUpdateCollection;
+  }
+
+  get indexMetadataDeleteCollection() {
+    return this._indexMetadataDeleteCollection;
+  }
+
+  addCreateObjectMetadata(
+    object: Omit<ComputedPartialWorkspaceEntity, 'fields'>,
+  ) {
     this._objectMetadataCreateCollection.push(object);
   }
 
@@ -106,5 +132,17 @@ export class WorkspaceSyncStorage {
 
   addDeleteRelationMetadata(relation: RelationMetadataEntity) {
     this._relationMetadataDeleteCollection.push(relation);
+  }
+
+  addCreateIndexMetadata(index: Partial<IndexMetadataEntity>) {
+    this._indexMetadataCreateCollection.push(index);
+  }
+
+  addUpdateIndexMetadata(index: Partial<IndexMetadataEntity>) {
+    this._indexMetadataUpdateCollection.push(index);
+  }
+
+  addDeleteIndexMetadata(index: IndexMetadataEntity) {
+    this._indexMetadataDeleteCollection.push(index);
   }
 }

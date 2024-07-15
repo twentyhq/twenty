@@ -14,7 +14,10 @@ export class WorkspaceDatasourceFactory {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  public async create(entities: EntitySchema[], workspaceId: string) {
+  public async create(
+    entities: EntitySchema[],
+    workspaceId: string,
+  ): Promise<WorkspaceDataSource | null> {
     const storedWorkspaceDataSource =
       DataSourceStorage.getDataSource(workspaceId);
 
@@ -23,19 +26,22 @@ export class WorkspaceDatasourceFactory {
     }
 
     const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
         workspaceId,
       );
+
+    if (!dataSourceMetadata) {
+      return null;
+    }
 
     const workspaceDataSource = new WorkspaceDataSource({
       url:
         dataSourceMetadata.url ??
         this.environmentService.get('PG_DATABASE_URL'),
       type: 'postgres',
-      // logging: this.environmentService.get('DEBUG_MODE')
-      //   ? ['query', 'error']
-      //   : ['error'],
-      logging: 'all',
+      logging: this.environmentService.get('DEBUG_MODE')
+        ? ['query', 'error']
+        : ['error'],
       schema: dataSourceMetadata.schema,
       entities,
       ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
