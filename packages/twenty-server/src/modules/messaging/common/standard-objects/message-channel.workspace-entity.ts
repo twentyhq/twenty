@@ -19,12 +19,6 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 
 export enum MessageChannelSyncStatus {
-  // TO BE DEPRECATED
-  PENDING = 'PENDING',
-  SUCCEEDED = 'SUCCEEDED',
-  FAILED = 'FAILED',
-
-  // NEW STATUSES
   NOT_SYNCED = 'NOT_SYNCED',
   ONGOING = 'ONGOING',
   COMPLETED = 'COMPLETED',
@@ -231,26 +225,6 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Sync status',
     icon: 'IconStatusChange',
     options: [
-      // TO BE DEPRECATED: PENDING, SUCCEEDED, FAILED
-      {
-        value: MessageChannelSyncStatus.PENDING,
-        label: 'Pending',
-        position: 0,
-        color: 'blue',
-      },
-      {
-        value: MessageChannelSyncStatus.SUCCEEDED,
-        label: 'Succeeded',
-        position: 2,
-        color: 'green',
-      },
-      {
-        value: MessageChannelSyncStatus.FAILED,
-        label: 'Failed',
-        position: 3,
-        color: 'red',
-      },
-      // NEW STATUSES
       {
         value: MessageChannelSyncStatus.ONGOING,
         label: 'Ongoing',

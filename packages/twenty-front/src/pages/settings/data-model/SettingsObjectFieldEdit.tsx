@@ -213,6 +213,7 @@ export const SettingsObjectFieldEdit = () => {
               <StyledSettingsObjectFieldTypeSelect
                 disabled
                 fieldMetadataItem={activeMetadataField}
+                excludedFieldTypes={[FieldMetadataType.Link]}
               />
               <SettingsDataModelFieldSettingsFormCard
                 disableCurrencyForm

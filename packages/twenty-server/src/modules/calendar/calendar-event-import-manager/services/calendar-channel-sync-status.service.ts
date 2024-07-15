@@ -6,9 +6,9 @@ import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/typ
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
-  CalendarChannelWorkspaceEntity,
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
+  CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 @Injectable()
@@ -74,11 +74,18 @@ export class CalendarChannelSyncStatusService {
     });
   }
 
-  public async markAsCalendarEventsImportCompleted(calendarChannelId: string) {
+  public async markAsCompletedAndSchedulePartialMessageListFetch(
+    calendarChannelId: string,
+  ) {
     await this.calendarChannelRepository.update(calendarChannelId, {
-      syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+      syncStage:
+        CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING,
       syncStatus: CalendarChannelSyncStatus.ACTIVE,
+      throttleFailureCount: 0,
+      syncStageStartedAt: null,
     });
+
+    await this.schedulePartialCalendarEventListFetch(calendarChannelId);
   }
 
   public async markAsFailedUnknownAndFlushCalendarEventsToImport(
