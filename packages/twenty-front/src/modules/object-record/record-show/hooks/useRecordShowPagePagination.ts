@@ -3,7 +3,6 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { formatFieldMetadataItemsAsFilterDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
@@ -18,7 +17,7 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-import { isDefined } from '~/utils/isDefined';
+import { isDefined } from 'twenty-ui';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
@@ -53,11 +52,6 @@ export const useRecordShowPagePagination = (
   }
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
-
-  const { objectNamePlural } = useObjectNamePluralFromSingular({
-    objectNameSingular,
-  });
-
   const { records: views } = usePrefetchedData(PrefetchKey.AllViews);
 
   const view = useMemo(() => {
@@ -108,6 +102,7 @@ export const useRecordShowPagePagination = (
     filter,
     orderBy,
     skip: isLoadedRecords,
+    limit: 2,
     objectNameSingular,
     recordGqlFields: generateDepthOneRecordGqlFields({
       objectMetadataItem,
@@ -202,7 +197,7 @@ export const useRecordShowPagePagination = (
   };
 
   const navigateToIndexView = () => {
-    const indexPath = `/objects/${objectNamePlural}${
+    const indexPath = `/objects/${objectMetadataItem.namePlural}${
       viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
     }`;
 
@@ -212,7 +207,7 @@ export const useRecordShowPagePagination = (
   };
 
   const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({
-    objectNamePlural,
+    objectNamePlural: objectMetadataItem.namePlural,
     fieldVariables: {
       filter,
       orderBy,
