@@ -16,7 +16,7 @@ const StyledRatingIconContainer = styled.div<{
 }>`
   color: ${({ color }) => color};
   display: inline-flex;
-`;
+`;  
 
 type RatingInputProps = {
   onChange?: (newValue: FieldRatingValue) => void;
@@ -41,7 +41,7 @@ export const RatingInput = ({
 
   const currentValue = hoveredValue ?? value;
 
-  const selectedIndex = currentValue ? RATING_VALUES.indexOf(currentValue) : -1;
+  const selectedIndex = currentValue !== null ? RATING_VALUES.indexOf(currentValue) : -1;
 
   const previousRating = useRef<FieldRatingValue>(null);
 
