@@ -1,6 +1,6 @@
 import { FileUpload } from 'graphql-upload';
 
-import { FunctionWorkspaceEntity } from 'src/modules/function/standard-objects/function.workspace-entity';
+import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
 
 export type CustomCodeEngineServiceUpsertType = {
   sourceCodePath: string;
@@ -9,7 +9,7 @@ export type CustomCodeEngineServiceUpsertType = {
 
 export interface CustomCodeEngineDriver {
   execute(
-    functionToExecute: FunctionWorkspaceEntity,
+    functionToExecute: FunctionMetadataEntity,
     payload: object | undefined,
   ): Promise<object>;
   generateExecutable(

@@ -9,11 +9,11 @@ import { FileUpload } from 'graphql-upload';
 import { CustomCodeEngineDriver } from 'src/engine/integrations/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { FunctionWorkspaceEntity } from 'src/modules/function/standard-objects/function.workspace-entity';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
 import { compileTypescript } from 'src/engine/integrations/custom-code-engine/utils/compile-typescript';
+import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -59,7 +59,7 @@ export class LocalDriver implements CustomCodeEngineDriver {
   }
 
   async execute(
-    functionToExecute: FunctionWorkspaceEntity,
+    functionToExecute: FunctionMetadataEntity,
     payload: object | undefined = undefined,
   ): Promise<object> {
     const fileStream = await this.fileStorageService.read({

@@ -4,8 +4,8 @@ import { FileUpload } from 'graphql-upload';
 
 import { CustomCodeEngineDriver } from 'src/engine/integrations/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
 
-import { FunctionWorkspaceEntity } from 'src/modules/function/standard-objects/function.workspace-entity';
 import { CUSTOM_CODE_ENGINE_DRIVER } from 'src/engine/integrations/custom-code-engine/custom-code-engine.constants';
+import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
 
 @Injectable()
 export class CustomCodeEngineService implements CustomCodeEngineDriver {
@@ -22,7 +22,7 @@ export class CustomCodeEngineService implements CustomCodeEngineDriver {
   }
 
   async execute(
-    functionToExecute: FunctionWorkspaceEntity,
+    functionToExecute: FunctionMetadataEntity,
     payload: object | undefined = undefined,
   ) {
     return this.driver.execute(functionToExecute, payload);

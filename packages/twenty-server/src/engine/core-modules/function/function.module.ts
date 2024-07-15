@@ -1,17 +1,15 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FunctionService } from 'src/engine/core-modules/function/function.service';
 import { FunctionResolver } from 'src/engine/core-modules/function/function.resolver';
-import { UserModule } from 'src/engine/core-modules/user/user.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
-import { FunctionWorkspaceEntity } from 'src/modules/function/standard-objects/function.workspace-entity';
 import { CustomCodeEngineModule } from 'src/engine/integrations/custom-code-engine/custom-code-engine.module';
+import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
 
 @Module({
   imports: [
-    TwentyORMModule.forFeature([FunctionWorkspaceEntity]),
+    TypeOrmModule.forFeature([FunctionMetadataEntity], 'metadata'),
     CustomCodeEngineModule,
-    UserModule,
   ],
   providers: [FunctionService, FunctionResolver],
 })
