@@ -114,7 +114,8 @@ export const COMMENT_STANDARD_FIELD_IDS = {
 export const COMPANY_STANDARD_FIELD_IDS = {
   name: '20202020-4d99-4e2e-a84c-4a27837b1ece',
   domainName: '20202020-0c28-43d8-8ba5-3659924d3489',
-  address: '20202020-a82a-4ee2-96cc-a18a3259d953',
+  address_deprecated: '20202020-a82a-4ee2-96cc-a18a3259d953',
+  address: '20202020-c5ce-4adc-b7b6-9c0979fc55e7',
   employees: '20202020-8965-464a-8a75-74bafc152a0b',
   linkedinLink: '20202020-ebeb-4beb-b9ad-6848036fb451',
   xLink: '20202020-6f64-4fd9-9580-9c1991c7d8c3',
@@ -140,7 +141,7 @@ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   authFailedAt: '20202020-d268-4c6b-baff-400d402b430a',
   messageChannels: '20202020-24f7-4362-8468-042204d1e445',
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
-  emailAliases: '20202020-8a3d-46be-814f-6228af16c47b',
+  handleAliases: '20202020-8a3d-46be-814f-6228af16c47b',
 };
 
 export const EVENT_STANDARD_FIELD_IDS = {
@@ -157,6 +158,7 @@ export const AUDIT_LOGS_STANDARD_FIELD_IDS = {
   properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
   context: '20202020-b9d1-4058-9a75-7469cab5ca8c',
   objectName: '20202020-76ba-4c47-b7e5-96034005d00a',
+  objectMetadataId: '20202020-127b-409d-9864-0ec44aa9ed98',
   recordId: '20202020-c578-4acf-bf94-eb53b035cea2',
   workspaceMember: '20202020-6e96-4300-b3f5-67a707147385',
 };
@@ -249,7 +251,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   name: '20202020-8609-4f65-a2d9-44009eb422b5',
   amount: '20202020-583e-4642-8533-db761d5fa82f',
   closeDate: '20202020-527e-44d6-b1ac-c4158d307b97',
-  probability: '20202020-69d4-45f3-9703-690b09fafcf0',
+  probabilityDeprecated: '20202020-69d4-45f3-9703-690b09fafcf0',
   stage: '20202020-6f76-477d-8551-28cd65b2b4b9',
   position: '20202020-806d-493a-bbc6-6313e62958e2',
   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',

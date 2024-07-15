@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 12px;
-  height: 100vh;
+  height: 100dvh;
   min-width: ${DESKTOP_NAV_DRAWER_WIDTHS.menu}px;
   width: 100%;
   padding: 12px 8px 12px;

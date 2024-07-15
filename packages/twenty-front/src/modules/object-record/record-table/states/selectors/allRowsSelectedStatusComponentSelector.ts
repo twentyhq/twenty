@@ -1,5 +1,5 @@
-import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
+import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
 import { createComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/createComponentReadOnlySelector';
 
 import { AllRowsSelectedStatus } from '../../types/AllRowSelectedStatus';
@@ -10,7 +10,7 @@ export const allRowsSelectedStatusComponentSelector =
     get:
       ({ scopeId }) =>
       ({ get }) => {
-        const numberOfRows = get(numberOfTableRowsComponentState({ scopeId }));
+        const tableRowIds = get(tableRowIdsComponentState({ scopeId }));
 
         const selectedRowIds = get(
           selectedRowIdsComponentSelector({ scopeId }),
@@ -21,7 +21,7 @@ export const allRowsSelectedStatusComponentSelector =
         const allRowsSelectedStatus =
           numberOfSelectedRows === 0
             ? 'none'
-            : numberOfRows === numberOfSelectedRows
+            : selectedRowIds.length === tableRowIds.length
               ? 'all'
               : 'some';
 

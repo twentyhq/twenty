@@ -124,6 +124,7 @@ export const SettingsObjectEdit = () => {
             {activeObjectMetadataItem.isCustom && (
               <SaveAndCancelButtons
                 isSaveDisabled={!canSave}
+                isCancelDisabled={isSubmitting}
                 onCancel={() =>
                   navigate(`${settingsObjectsPagePath}/${objectSlug}`)
                 }

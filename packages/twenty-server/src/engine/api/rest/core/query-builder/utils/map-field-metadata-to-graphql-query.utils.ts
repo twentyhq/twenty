@@ -9,7 +9,7 @@ export const mapFieldMetadataToGraphqlQuery = (
   field,
   maxDepthForRelations = DEFAULT_DEPTH_VALUE,
 ): string | undefined => {
-  if (maxDepthForRelations <= 0) {
+  if (maxDepthForRelations < 0) {
     return '';
   }
 
@@ -32,6 +32,7 @@ export const mapFieldMetadataToGraphqlQuery = (
   if (fieldIsSimpleValue) {
     return field.name;
   } else if (
+    maxDepthForRelations > 0 &&
     fieldType === FieldMetadataType.RELATION &&
     field.toRelationMetadata?.relationType === RelationMetadataType.ONE_TO_MANY
   ) {
@@ -45,7 +46,6 @@ export const mapFieldMetadataToGraphqlQuery = (
     {
       id
       ${(relationMetadataItem?.fields ?? [])
-        .filter((field) => field.type !== FieldMetadataType.RELATION)
         .map((field) =>
           mapFieldMetadataToGraphqlQuery(
             objectMetadataItems,
@@ -56,6 +56,7 @@ export const mapFieldMetadataToGraphqlQuery = (
         .join('\n')}
     }`;
   } else if (
+    maxDepthForRelations > 0 &&
     fieldType === FieldMetadataType.RELATION &&
     field.fromRelationMetadata?.relationType ===
       RelationMetadataType.ONE_TO_MANY
@@ -72,7 +73,6 @@ export const mapFieldMetadataToGraphqlQuery = (
           node {
             id
             ${(relationMetadataItem?.fields ?? [])
-              .filter((field) => field.type !== FieldMetadataType.RELATION)
               .map((field) =>
                 mapFieldMetadataToGraphqlQuery(
                   objectMetadataItems,
