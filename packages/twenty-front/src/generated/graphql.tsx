@@ -257,6 +257,7 @@ export enum FieldMetadataType {
 
 export enum FileFolder {
   Attachment = 'Attachment',
+  Function = 'Function',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
   WorkspaceLogo = 'WorkspaceLogo'
@@ -266,6 +267,14 @@ export type FullName = {
   __typename?: 'FullName';
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+};
+
+export type FunctionConnection = {
+  __typename?: 'FunctionConnection';
+  /** Array of edges. */
+  edges: Array<FunctionEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
 };
 
 export type InvalidatePassword = {
@@ -1006,6 +1015,24 @@ export type FieldFilter = {
   isCustom?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<FieldFilter>>;
+};
+
+export type Function = {
+  __typename?: 'function';
+  buildSourcePath: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  sourceCodePath: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type FunctionEdge = {
+  __typename?: 'functionEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the function */
+  node: Function;
 };
 
 export type Object = {

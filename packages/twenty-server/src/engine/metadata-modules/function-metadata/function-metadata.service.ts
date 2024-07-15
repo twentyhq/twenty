@@ -11,7 +11,7 @@ import {
 } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
 
 @Injectable()
-export class FunctionService {
+export class FunctionMetadataService {
   constructor(
     private readonly customCodeEngineService: CustomCodeEngineService,
     @InjectRepository(FunctionMetadataEntity, 'metadata')
@@ -29,7 +29,7 @@ export class FunctionService {
     return this.customCodeEngineService.execute(functionToExecute, payload);
   }
 
-  async upsertFunction(workspaceId: string, file: FileUpload, name: string) {
+  async createOne(name: string, workspaceId: string, file: FileUpload) {
     const { sourceCodePath, buildSourcePath } =
       await this.customCodeEngineService.generateExecutable(
         name,
@@ -37,17 +37,12 @@ export class FunctionService {
         file,
       );
 
-    await this.functionMetadataRepository.upsert(
-      {
-        name,
-        workspaceId,
-        sourceCodePath,
-        buildSourcePath,
-        syncStatus: FunctionSyncStatus.READY,
-      },
-      ['workspaceId', 'name'],
-    );
-
-    return sourceCodePath;
+    return await this.functionMetadataRepository.save({
+      name,
+      workspaceId,
+      sourceCodePath,
+      buildSourcePath,
+      syncStatus: FunctionSyncStatus.READY,
+    });
   }
 }
