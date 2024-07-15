@@ -37,29 +37,27 @@ export const RatingInput = ({
   const activeColor = theme.font.color.secondary;
   const inactiveColor = theme.background.quaternary;
 
-  const [hoveredValue, setHoveredValue] = useState<FieldRatingValue>(
-    null,
-  );
-  
+  const [hoveredValue, setHoveredValue] = useState<FieldRatingValue>(null);
+
   const currentValue = hoveredValue ?? value;
-  
+
   const selectedIndex = currentValue ? RATING_VALUES.indexOf(currentValue) : -1;
-  
+
   const previousRating = useRef<FieldRatingValue>(null);
 
   const handleClick = (value: FieldRatingValue) => {
-    if(readonly) return undefined;
-    if(previousRating.current === currentValue) {
+    if (readonly) return undefined;
+    if (previousRating.current === currentValue) {
       setHoveredValue(null);
       clearField();
     } else {
-      onChange?.(value)
+      onChange?.(value);
     }
-  }
+  };
 
-   useEffect(() => {
-      previousRating.current = value;
-   },[value])
+  useEffect(() => {
+    previousRating.current = value;
+  }, [value]);
 
   return (
     <StyledContainer
