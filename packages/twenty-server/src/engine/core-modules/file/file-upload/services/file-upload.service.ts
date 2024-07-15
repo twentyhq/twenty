@@ -24,7 +24,7 @@ export class FileUploadService {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
-    fileFolder: FileFolder;
+    fileFolder: FileFolder | string;
   }) {
     await this.fileStorage.write({
       file,
@@ -62,7 +62,7 @@ export class FileUploadService {
     file: Buffer | Uint8Array | string;
     filename: string;
     mimeType: string | undefined;
-    fileFolder: FileFolder;
+    fileFolder: FileFolder | string;
   }) {
     const ext = filename.split('.')?.[1];
     const id = uuidV4();

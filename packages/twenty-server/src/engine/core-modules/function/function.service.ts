@@ -23,6 +23,7 @@ export class FunctionService {
 
   async executeFunction(
     user: User,
+    workspaceId: string,
     name: string,
     payload: object | undefined = undefined,
   ) {
@@ -38,9 +39,18 @@ export class FunctionService {
     return this.customCodeEngineService.execute(functionToExecute, payload);
   }
 
-  async upsertFunction(user: User, file: FileUpload, name: string) {
-    const { sourceCodePath, buildSourcePath, lambdaName } =
-      await this.customCodeEngineService.generateExecutable(file);
+  async upsertFunction(
+    user: User,
+    workspaceId: string,
+    file: FileUpload,
+    name: string,
+  ) {
+    const { sourceCodePath, buildSourcePath } =
+      await this.customCodeEngineService.generateExecutable(
+        name,
+        workspaceId,
+        file,
+      );
 
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
@@ -51,7 +61,6 @@ export class FunctionService {
     if (!existingFunction) {
       await this.functionRepository.save({
         name,
-        lambdaName,
         author: workspaceMember,
         sourceCodePath,
         buildSourcePath,
@@ -59,7 +68,7 @@ export class FunctionService {
       });
     } else {
       await this.functionRepository.update(existingFunction.id, {
-        lambdaName,
+        name,
         author: workspaceMember,
         sourceCodePath,
         buildSourcePath,

@@ -8,6 +8,8 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { FunctionService } from 'src/engine/core-modules/function/function.service';
 import { ExecuteFunctionInput } from 'src/engine/core-modules/function/dtos/execute-function.input';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => String)
@@ -17,22 +19,34 @@ export class FunctionResolver {
   @Mutation(() => String)
   async upsertFunction(
     @AuthUser() user: User,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     file: FileUpload,
     @Args('name', { type: () => String }) name: string,
   ) {
-    return await this.functionService.upsertFunction(user, file, name);
+    return await this.functionService.upsertFunction(
+      user,
+      workspaceId,
+      file,
+      name,
+    );
   }
 
   @Mutation(() => String)
   async executeFunction(
     @AuthUser() user: User,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args() executeFunctionInput: ExecuteFunctionInput,
   ) {
     const { name, payload } = executeFunctionInput;
 
     return JSON.stringify(
-      await this.functionService.executeFunction(user, name, payload),
+      await this.functionService.executeFunction(
+        user,
+        workspaceId,
+        name,
+        payload,
+      ),
     );
   }
 }

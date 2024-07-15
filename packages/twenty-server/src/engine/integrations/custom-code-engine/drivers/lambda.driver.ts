@@ -1,7 +1,7 @@
 import fs from 'fs';
+import { join } from 'path';
 
 import { FileUpload } from 'graphql-upload';
-import { v4 } from 'uuid';
 import {
   CreateFunctionCommand,
   Lambda,
@@ -39,16 +39,31 @@ export class LambdaDriver implements CustomCodeEngineDriver {
     this.fileUploadService = options.fileUploadService;
   }
 
-  async generateExecutable(file: FileUpload) {
-    const { createReadStream, filename, mimetype } = file;
+  private _getLambdaName(name: string, workspaceId: string): string {
+    return `${workspaceId}_${name}`;
+  }
+
+  async generateExecutable(
+    name: string,
+    workspaceId: string,
+    { createReadStream, mimetype }: FileUpload,
+  ) {
     const typescriptCode = await readFileContent(createReadStream());
     const javascriptCode = compileTypescript(typescriptCode);
+    const fileFolder = join(FileFolder.Function, workspaceId);
 
     const { path: sourceCodePath } = await this.fileUploadService.uploadFile({
       file: typescriptCode,
-      filename,
+      filename: `${name}.ts`,
       mimeType: mimetype,
-      fileFolder: FileFolder.Function,
+      fileFolder,
+    });
+
+    const { path: buildSourcePath } = await this.fileUploadService.uploadFile({
+      file: javascriptCode,
+      filename: `${name}.js`,
+      mimeType: mimetype,
+      fileFolder,
     });
 
     const temporaryLambdaFolderManager = new TemporaryLambdaFolderManager();
@@ -64,13 +79,11 @@ export class LambdaDriver implements CustomCodeEngineDriver {
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    const lambdaName = v4();
-
     const params: CreateFunctionCommandInput = {
       Code: {
         ZipFile: fs.readFileSync(lambdaZipPath),
       },
-      FunctionName: lambdaName,
+      FunctionName: this._getLambdaName(name, workspaceId),
       Handler: lambdaHandler,
       Role: this.lambdaRole,
       Runtime: 'nodejs18.x',
@@ -86,8 +99,7 @@ export class LambdaDriver implements CustomCodeEngineDriver {
 
     return {
       sourceCodePath,
-      buildSourcePath: undefined,
-      lambdaName,
+      buildSourcePath,
     };
   }
 
@@ -96,7 +108,10 @@ export class LambdaDriver implements CustomCodeEngineDriver {
     payload: object | undefined = undefined,
   ): Promise<object> {
     const params = {
-      FunctionName: functionToExecute.lambdaName,
+      FunctionName: this._getLambdaName(
+        functionToExecute.name,
+        functionToExecute.workspaceId,
+      ),
       Payload: JSON.stringify(payload),
     };
 

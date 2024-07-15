@@ -4,8 +4,7 @@ import { FunctionWorkspaceEntity } from 'src/modules/function/standard-objects/f
 
 export type CustomCodeEngineServiceUpsertType = {
   sourceCodePath: string;
-  buildSourcePath?: string;
-  lambdaName?: string;
+  buildSourcePath: string;
 };
 
 export interface CustomCodeEngineDriver {
@@ -14,6 +13,8 @@ export interface CustomCodeEngineDriver {
     payload: object | undefined,
   ): Promise<object>;
   generateExecutable(
+    name: string,
+    workspaceId: string,
     file: FileUpload,
   ): Promise<CustomCodeEngineServiceUpsertType>;
 }

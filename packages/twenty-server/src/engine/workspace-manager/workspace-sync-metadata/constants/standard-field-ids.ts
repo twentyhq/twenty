@@ -198,9 +198,9 @@ export const FUNCTION_STANDARD_FIELD_IDS = {
   syncStatus: '20202020-dd26-42c6-8c3c-2727e2d4e17b',
   rawSourcePath: '20202020-dd26-42c6-8c3c-89fce9e35713',
   buildSourcePath: '20202020-dd26-42c6-8c3c-413b84dea9ef',
-  lambdaName: '20202020-dd26-42c6-8c3c-65d073cad03f',
   name: '20202020-dd26-42c6-8c3c-d19b06d6ec8e',
   author: '20202020-dd26-42c6-8c3c-d19b06d6ec8f',
+  workspaceId: '20202020-dd26-42c6-8c3c-d19b06d6ec8a',
 };
 
 export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS = {

@@ -35,6 +35,14 @@ export class FunctionWorkspaceEntity extends BaseWorkspaceEntity {
   })
   name: string;
 
+  @WorkspaceField({
+    standardId: FUNCTION_STANDARD_FIELD_IDS.workspaceId,
+    type: FieldMetadataType.TEXT,
+    label: 'Workspace Id',
+    description: 'Workspace Id of the function',
+  })
+  workspaceId: string;
+
   @WorkspaceRelation({
     standardId: FUNCTION_STANDARD_FIELD_IDS.author,
     type: RelationMetadataType.MANY_TO_ONE,
@@ -64,15 +72,6 @@ export class FunctionWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Path of the built source to execute',
   })
   buildSourcePath: string;
-
-  @WorkspaceField({
-    standardId: FUNCTION_STANDARD_FIELD_IDS.lambdaName,
-    type: FieldMetadataType.TEXT,
-    label: 'Lambda name',
-    description: 'Lambda name',
-  })
-  @WorkspaceIsNullable()
-  lambdaName: string;
 
   @WorkspaceField({
     standardId: FUNCTION_STANDARD_FIELD_IDS.syncStatus,

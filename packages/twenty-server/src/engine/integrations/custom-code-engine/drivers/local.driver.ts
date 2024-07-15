@@ -29,37 +29,32 @@ export class LocalDriver implements CustomCodeEngineDriver {
     this.fileUploadService = options.fileUploadService;
   }
 
-  async generateExecutable({
-    createReadStream,
-    filename,
-    mimetype,
-  }: FileUpload) {
+  async generateExecutable(
+    name: string,
+    workspaceId: string,
+    { createReadStream, mimetype }: FileUpload,
+  ) {
     const typescriptCode = await readFileContent(createReadStream());
     const javascriptCode = compileTypescript(typescriptCode);
+    const fileFolder = join(FileFolder.Function, workspaceId);
 
     const { path: sourceCodePath } = await this.fileUploadService.uploadFile({
       file: typescriptCode,
-      filename,
+      filename: `${name}.ts`,
       mimeType: mimetype,
-      fileFolder: FileFolder.Function,
+      fileFolder,
     });
-
-    const javascriptFileName = `${filename
-      .split('.')
-      .splice(0, filename.split('.').length - 1)
-      .join('.')}.js`;
 
     const { path: buildSourcePath } = await this.fileUploadService.uploadFile({
       file: javascriptCode,
-      filename: javascriptFileName,
+      filename: `${name}.js`,
       mimeType: mimetype,
-      fileFolder: FileFolder.Function,
+      fileFolder,
     });
 
     return {
       sourceCodePath,
       buildSourcePath,
-      lambdaName: undefined,
     };
   }
 
