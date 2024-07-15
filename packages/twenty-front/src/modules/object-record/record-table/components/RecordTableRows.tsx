@@ -8,17 +8,9 @@ export const RecordTableRows = () => {
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
-  return (
-    <>
-      {tableRowIds.map((recordId, rowIndex) => {
-        return (
-          <RecordTableRow
-            key={recordId}
-            recordId={recordId}
-            rowIndex={rowIndex}
-          />
-        );
-      })}
-    </>
-  );
+  return tableRowIds.map((recordId, rowIndex) => {
+    return (
+      <RecordTableRow key={recordId} recordId={recordId} rowIndex={rowIndex} />
+    );
+  });
 };
