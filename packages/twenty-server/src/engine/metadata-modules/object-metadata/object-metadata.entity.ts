@@ -69,10 +69,10 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: true })
   isAuditLogged: boolean;
 
-  @Column({ nullable: true, type: 'text' })
+  @Column({ nullable: true, type: 'uuid' })
   labelIdentifierFieldMetadataId?: string | null;
 
-  @Column({ nullable: true, type: 'text' })
+  @Column({ nullable: true, type: 'uuid' })
   imageIdentifierFieldMetadataId?: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
