@@ -19,6 +19,7 @@ export class WorkspaceSyncFunctionMetadataService {
   constructor(private readonly codeEngineService: CodeEngineService) {}
 
   async synchronize(context: WorkspaceSyncContext, manager: EntityManager) {
+    this.logger.log('Building functions metadata');
     const functionMetadataRepository = manager.getRepository(
       FunctionMetadataEntity,
     );
@@ -30,14 +31,13 @@ export class WorkspaceSyncFunctionMetadataService {
         },
       });
 
-    functionToSynchronizeCollection.map(async (functionToSynchronize) => {
-      await this.codeEngineService.build(functionToSynchronize);
-      await functionMetadataRepository.update(functionToSynchronize.id, {
-        syncStatus: FunctionSyncStatus.READY,
-      });
-      this.logger.log(
-        `Function '${functionToSynchronize.name}' built successfully.`,
-      );
-    });
+    await Promise.all(
+      functionToSynchronizeCollection.map(async (functionToSynchronize) => {
+        await this.codeEngineService.build(functionToSynchronize);
+        await functionMetadataRepository.update(functionToSynchronize.id, {
+          syncStatus: FunctionSyncStatus.READY,
+        });
+      }),
+    );
   }
 }
