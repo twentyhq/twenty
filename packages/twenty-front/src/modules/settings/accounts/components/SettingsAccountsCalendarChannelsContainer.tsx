@@ -55,10 +55,12 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
 
   return (
     <>
+    {tabs.length > 1 && (
       <TabList
         tabListId={SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID}
         tabs={tabs}
       />
+    )}     
       {calendarChannels.map((calendarChannel) => (
         <React.Fragment key={calendarChannel.id}>
           {calendarChannel.id === activeTabId && (
