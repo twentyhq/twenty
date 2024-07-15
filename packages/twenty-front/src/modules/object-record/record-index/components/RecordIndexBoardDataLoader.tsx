@@ -45,6 +45,13 @@ export const RecordIndexBoardDataLoader = ({
           columnId={columnIds[index]}
         />
       ))}
+      <RecordIndexBoardColumnLoaderEffect
+        objectNameSingular={objectNameSingular}
+        boardFieldMetadataId={recordIndexKanbanFieldMetadataId}
+        boardFieldSelectValue={null}
+        recordBoardId={recordBoardId}
+        columnId={'no-value'}
+      />
     </>
   );
 };

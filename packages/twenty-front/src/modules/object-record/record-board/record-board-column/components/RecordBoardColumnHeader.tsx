@@ -80,6 +80,11 @@ export const RecordBoardColumnHeader = () => {
       >
         <Tag
           onClick={handleBoardColumnMenuOpen}
+          variant={
+            columnDefinition.type === RecordBoardColumnDefinitionType.Value
+              ? 'solid'
+              : 'outline'
+          }
           color={
             columnDefinition.type === RecordBoardColumnDefinitionType.Value
               ? columnDefinition.color
