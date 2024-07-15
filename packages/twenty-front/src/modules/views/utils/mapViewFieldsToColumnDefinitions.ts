@@ -16,6 +16,9 @@ export const mapViewFieldsToColumnDefinitions = ({
 }): ColumnDefinition<FieldMetadata>[] => {
   let labelIdentifierFieldMetadataId = '';
 
+  console.log(columnDefinitions);
+  console.log(viewFields);
+
   const columnDefinitionsByFieldMetadataId = mapArrayToObject(
     columnDefinitions,
     ({ fieldMetadataId }) => fieldMetadataId,
