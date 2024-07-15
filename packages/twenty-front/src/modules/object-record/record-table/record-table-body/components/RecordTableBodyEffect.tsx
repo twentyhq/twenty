@@ -1,7 +1,8 @@
-import { useContext, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useContext, useEffect, useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
@@ -11,10 +12,14 @@ import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetch
 import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
+import { useScrollToPosition } from '~/hooks/useScrollToPosition';
 
 export const RecordTableBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
+
+  const [hasInitializedScroll, setHasInitiazedScroll] = useState(false);
 
   const {
     fetchMoreRecords: fetchMoreObjects,
@@ -78,6 +83,53 @@ export const RecordTableBodyEffect = () => {
 
   const rowHeight = 32;
   const viewportHeight = records.length * rowHeight;
+
+  const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilState(
+    lastShowPageRecordIdState,
+  );
+
+  console.log({
+    lastShowPageRecordId,
+  });
+
+  const { scrollToPosition } = useScrollToPosition();
+
+  useEffect(() => {
+    if (isNonEmptyString(lastShowPageRecordId) && !hasInitializedScroll) {
+      const isRecordAlreadyFetched = records.some(
+        (record) => record.id === lastShowPageRecordId,
+      );
+
+      if (isRecordAlreadyFetched) {
+        const recordPosition = records.findIndex(
+          (record) => record.id === lastShowPageRecordId,
+        );
+
+        const positionInPx = recordPosition * 32;
+
+        scrollToPosition(positionInPx);
+
+        console.log({
+          loading,
+          isFetchingMoreObjects,
+        });
+
+        setHasInitiazedScroll(true);
+        setLastShowPageRecordId(null);
+      } else {
+        fetchMoreObjects();
+      }
+    }
+  }, [
+    loading,
+    isFetchingMoreObjects,
+    lastShowPageRecordId,
+    fetchMoreObjects,
+    records,
+    scrollToPosition,
+    hasInitializedScroll,
+    setLastShowPageRecordId,
+  ]);
 
   useScrollRestoration(viewportHeight);
 

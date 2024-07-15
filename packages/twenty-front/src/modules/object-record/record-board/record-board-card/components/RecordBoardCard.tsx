@@ -4,7 +4,6 @@ import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { AvatarChipVariant, IconEye } from 'twenty-ui';
 
-import { RecordChip } from '@/object-record/components/RecordChip';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -14,6 +13,7 @@ import {
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
+import { RecordIndexRecordChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
@@ -222,7 +222,7 @@ export const RecordBoardCard = () => {
         }}
       >
         <StyledBoardCardHeader showCompactView={isCompactModeActive}>
-          <RecordChip
+          <RecordIndexRecordChip
             objectNameSingular={objectMetadataItem.nameSingular}
             record={record}
             variant={AvatarChipVariant.Transparent}

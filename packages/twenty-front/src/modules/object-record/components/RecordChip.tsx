@@ -1,11 +1,10 @@
 import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
 
-import { PreComputedChipGeneratorsContext } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
-import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isNonEmptyString } from '@sniptt/guards';
-import { MouseEvent, useContext } from 'react';
+import { MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export type RecordChipProps = {
@@ -22,15 +21,11 @@ export const RecordChip = ({
   variant,
 }: RecordChipProps) => {
   const navigate = useNavigate();
-  const { identifierChipGeneratorPerObject } = useContext(
-    PreComputedChipGeneratorsContext,
-  );
 
-  const generateRecordChipData =
-    identifierChipGeneratorPerObject[objectNameSingular] ??
-    generateDefaultRecordChipData;
-
-  const recordChipData = generateRecordChipData(record);
+  const { recordChipData } = useRecordChipData({
+    objectNameSingular,
+    record,
+  });
 
   const handleAvatarChipClick = (event: MouseEvent) => {
     const linkToShowPage = getLinkToShowPage(objectNameSingular, record);

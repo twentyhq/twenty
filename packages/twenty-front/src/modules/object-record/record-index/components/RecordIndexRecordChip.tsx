@@ -1,7 +1,6 @@
 import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
 
-import { PreComputedChipGeneratorsContext } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
-import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
+import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { MouseEvent, useContext } from 'react';
@@ -17,21 +16,17 @@ export const RecordIndexRecordChip = ({
   record,
   variant,
 }: RecordIndexRecordChipProps) => {
-  const { onIdentifierChipClick } = useContext(RecordIndexEventContext);
+  const { onIndexIdentifierClick } = useContext(RecordIndexEventContext);
 
-  const { identifierChipGeneratorPerObject } = useContext(
-    PreComputedChipGeneratorsContext,
-  );
-
-  const generateRecordChipData =
-    identifierChipGeneratorPerObject[objectNameSingular] ??
-    generateDefaultRecordChipData;
-
-  const recordChipData = generateRecordChipData(record);
+  const { recordChipData } = useRecordChipData({
+    objectNameSingular,
+    record,
+  });
 
   const handleAvatarChipClick = (event: MouseEvent) => {
     event.preventDefault();
-    onIdentifierChipClick(record.id);
+    event.stopPropagation();
+    onIndexIdentifierClick(record.id);
   };
 
   return (

@@ -22,11 +22,13 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { ViewBar } from '@/views/components/ViewBar';
+import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { useNavigate } from 'react-router-dom';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`
@@ -109,9 +111,34 @@ export const RecordIndexContainer = ({
     [columnDefinitions, setTableColumns],
   );
 
-  const onIdentifierChipClick = (recordId: string) => {
-    console.log('onIndexIdentifierChipClick', recordId);
-  };
+  const navigate = useNavigate();
+
+  const onIndexIdentifierClick = useRecoilCallback(
+    ({ snapshot }) =>
+      (recordId: string) => {
+        const currentViewId = snapshot
+          .getLoadable(
+            currentViewIdComponentState({
+              scopeId: recordIndexId,
+            }),
+          )
+          .getValue();
+
+        console.log({ currentViewId, recordIndexId });
+
+        // TODO: use URL builder
+        navigate(
+          `/object/${objectNameSingular}/${recordId}?view=${currentViewId}`,
+          {
+            state: {
+              recordId,
+            },
+          },
+        );
+        console.log('onIndexIdentifierClick', recordId);
+      },
+    [navigate, objectNameSingular, recordIndexId],
+  );
 
   return (
     <StyledContainer>
@@ -158,7 +185,7 @@ export const RecordIndexContainer = ({
             />
           </StyledContainerWithPadding>
         </SpreadsheetImportProvider>
-        <RecordIndexEventContext.Provider value={{ onIdentifierChipClick }}>
+        <RecordIndexEventContext.Provider value={{ onIndexIdentifierClick }}>
           {recordIndexViewType === ViewType.Table && (
             <>
               <RecordIndexTableContainer

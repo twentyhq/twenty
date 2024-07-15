@@ -1,7 +1,7 @@
 import { createEventContext } from '~/utils/createEventContext';
 
 export type RecordIndexEventContextProps = {
-  onIdentifierChipClick: (recordId: string) => void;
+  onIndexIdentifierClick: (recordId: string) => void;
 };
 
 export const RecordIndexEventContext =

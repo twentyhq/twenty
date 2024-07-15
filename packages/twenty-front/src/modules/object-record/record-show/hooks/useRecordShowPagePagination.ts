@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -9,8 +9,9 @@ import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/uti
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { recordPositionInternalState } from '@/object-record/record-field/states/recordPositionInternalState';
+import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
+import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useReasd';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
@@ -31,7 +32,7 @@ export const useRecordShowPagePagination = (
   const [searchParams] = useSearchParams();
   const viewIdQueryParam = searchParams.get('view');
 
-  const recordPositionInternal = useRecoilValue(recordPositionInternalState);
+  const setLastShowPageRecordId = useSetRecoilState(lastShowPageRecordIdState);
 
   const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
   const [hasPreviousRecord, setHasPreviousRecord] = useState(false);
@@ -204,16 +205,31 @@ export const useRecordShowPagePagination = (
     const indexPath = `/objects/${objectNamePlural}${
       viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
     }`;
+
+    setLastShowPageRecordId(objectRecordId);
+
     navigate(indexPath);
   };
 
-  const currentViewName =
-    recordPositionInternal !== null
-      ? `${recordPositionInternal + 1} of ${totalRecords} in ${viewName}`
+  const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({
+    objectNamePlural,
+    fieldVariables: {
+      filter,
+      orderBy,
+    },
+  });
+
+  const recordPositionInQueryCache = recordIdsInCache.findIndex(
+    (id) => id === objectRecordId,
+  );
+
+  const viewNameWithCount =
+    recordPositionInQueryCache > -1
+      ? `${recordPositionInQueryCache + 1} of ${totalRecords} in ${viewName}`
       : `${viewName} (${totalRecords})`;
 
   return {
-    viewName: currentViewName,
+    viewName: viewNameWithCount,
     hasPreviousRecord,
     isLoadingPagination,
     hasNextRecord,
