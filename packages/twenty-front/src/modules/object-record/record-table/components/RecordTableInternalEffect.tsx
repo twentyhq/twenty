@@ -5,7 +5,10 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import {
+  ClickOutsideMode,
+  useListenClickOutsideByClassName,
+} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 type RecordTableInternalEffectProps = {
   recordTableId: string;
@@ -30,6 +33,7 @@ export const RecordTableInternalEffect = ({
     callback: () => {
       leaveTableFocus();
     },
+    mode: ClickOutsideMode.comparePixels,
   });
 
   useScopedHotkeys(

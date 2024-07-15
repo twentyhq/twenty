@@ -1,15 +1,17 @@
-import { useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
+import { useEffect, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import SharedNavigationModal from '@/ui/navigation/shared/components/NavigationModal';
 
+import { isDefined } from '~/utils/isDefined';
 import { ActionBarItem } from './ActionBarItem';
 
 type ActionBarProps = {
   selectedIds?: string[];
+  totalNumberOfSelectedRecords?: number;
 };
 
 const StyledContainerActionBar = styled.div`
@@ -40,7 +42,10 @@ const StyledLabel = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ActionBar = ({ selectedIds = [] }: ActionBarProps) => {
+export const ActionBar = ({
+  selectedIds = [],
+  totalNumberOfSelectedRecords,
+}: ActionBarProps) => {
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
 
   useEffect(() => {
@@ -57,6 +62,12 @@ export const ActionBar = ({ selectedIds = [] }: ActionBarProps) => {
     return null;
   }
 
+  const selectedNumberLabel =
+    totalNumberOfSelectedRecords ?? selectedIds?.length;
+
+  const showSelectedNumberLabel =
+    isDefined(totalNumberOfSelectedRecords) || Array.isArray(selectedIds);
+
   return (
     <>
       <StyledContainerActionBar
@@ -64,8 +75,8 @@ export const ActionBar = ({ selectedIds = [] }: ActionBarProps) => {
         className="action-bar"
         ref={wrapperRef}
       >
-        {selectedIds && (
-          <StyledLabel>{selectedIds.length} selected:</StyledLabel>
+        {showSelectedNumberLabel && (
+          <StyledLabel>{selectedNumberLabel} selected:</StyledLabel>
         )}
         {actionBarEntries.map((item, index) => (
           <ActionBarItem key={index} item={item} />

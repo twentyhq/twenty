@@ -19,7 +19,7 @@ export const useSetRecordTableData = ({
     tableRowIdsState,
     numberOfTableRowsState,
     isRowSelectedFamilyState,
-    hasUserSelectedAllRowState,
+    hasUserSelectedAllRowsState,
   } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
@@ -39,7 +39,7 @@ export const useSetRecordTableData = ({
 
         const hasUserSelectedAllRows = getSnapshotValue(
           snapshot,
-          hasUserSelectedAllRowState,
+          hasUserSelectedAllRowsState,
         );
 
         const entityIds = newEntityArray.map((entity) => entity.id);
@@ -62,7 +62,7 @@ export const useSetRecordTableData = ({
       tableRowIdsState,
       onEntityCountChange,
       isRowSelectedFamilyState,
-      hasUserSelectedAllRowState,
+      hasUserSelectedAllRowsState,
     ],
   );
 };

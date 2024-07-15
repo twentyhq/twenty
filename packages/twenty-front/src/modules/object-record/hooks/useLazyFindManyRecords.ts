@@ -1,44 +1,37 @@
-import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
-import { useRecoilValue } from 'recoil';
+import { useLazyQuery } from '@apollo/client';
+import { useRecoilCallback } from 'recoil';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
-import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { useFetchMoreRecordsWithPagination } from '@/object-record/hooks/useFetchMoreRecordsWithPagination';
+import { UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { useHandleFindManyRecordsCompleted } from '@/object-record/hooks/useHandleFindManyRecordsCompleted';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
+import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
+import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
-export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
-  RecordGqlOperationVariables & {
-    onError?: (error?: Error) => void;
-    onCompleted?: OnFindManyRecordsCompleted<T>;
-    skip?: boolean;
-    recordGqlFields?: RecordGqlOperationGqlRecordFields;
-    fetchPolicy?: WatchQueryFetchPolicy;
-  };
+type UseLazyFindManyRecordsParams<T> = Omit<
+  UseFindManyRecordsParams<T>,
+  'skip'
+>;
 
-export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
+export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   filter,
   orderBy,
   limit,
-  skip,
   recordGqlFields,
   fetchPolicy,
-  onError,
   onCompleted,
-}: UseFindManyRecordsParams<T>) => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  onError,
+}: UseLazyFindManyRecordsParams<T>) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,
     recordGqlFields,
@@ -62,9 +55,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     onCompleted,
   });
 
-  const { data, loading, error, fetchMore } =
-    useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
-      skip: skip || !objectMetadataItem || !currentWorkspaceMember,
+  const [findManyRecords, { data, loading, error, fetchMore }] =
+    useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       variables: {
         filter,
         limit,
@@ -75,17 +67,39 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       onError: handleFindManyRecordsError,
     });
 
-  const { fetchMoreRecords, totalCount, records, hasNextPage } =
+  const { fetchMoreRecords, totalCount, records } =
     useFetchMoreRecordsWithPagination<T>({
       objectNameSingular,
       filter,
       orderBy,
       limit,
+      onCompleted,
       fetchMore,
       data,
       error,
       objectMetadataItem,
     });
+
+  const findManyRecordsLazy = useRecoilCallback(
+    ({ set }) =>
+      async () => {
+        const result = await findManyRecords();
+
+        const hasNextPage =
+          result?.data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ??
+          false;
+
+        const lastCursor =
+          result?.data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ??
+          '';
+
+        set(hasNextPageFamilyState(queryIdentifier), hasNextPage);
+        set(cursorFamilyState(queryIdentifier), lastCursor);
+
+        return result;
+      },
+    [queryIdentifier, findManyRecords, objectMetadataItem],
+  );
 
   return {
     objectMetadataItem,
@@ -93,8 +107,9 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     totalCount,
     loading,
     error,
-    fetchMoreRecords,
+    fetchMore,
+    fetchMoreRecordsWithPagination: fetchMoreRecords,
     queryStateIdentifier: queryIdentifier,
-    hasNextPage,
+    findManyRecords: findManyRecordsLazy,
   };
 };

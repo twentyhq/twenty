@@ -6,7 +6,9 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 
 type RecordIndexTableContainerEffectProps = {
@@ -45,12 +47,31 @@ export const RecordIndexTableContainerEffect = ({
     setAvailableTableColumns(columnDefinitions);
   }, [columnDefinitions, setAvailableTableColumns]);
 
+  const { tableRowIdsState, hasUserSelectedAllRowsState } =
+    useRecordTableStates(recordTableId);
+
+  const { entityCountInCurrentViewState } = useViewStates(recordTableId);
+  const entityCountInCurrentView = useRecoilValue(
+    entityCountInCurrentViewState,
+  );
+  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
+  const tableRowIds = useRecoilValue(tableRowIdsState);
+
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
+
+  const numSelected =
+    hasUserSelectedAllRows && entityCountInCurrentView
+      ? selectedRowIds.length === tableRowIds.length
+        ? entityCountInCurrentView
+        : entityCountInCurrentView -
+          (tableRowIds.length - selectedRowIds.length) // unselected row Ids
+      : selectedRowIds.length;
 
   const { setActionBarEntries, setContextMenuEntries } = useRecordActionBar({
     objectMetadataItem,
     selectedRecordIds: selectedRowIds,
     callback: resetTableRowSelection,
+    totalNumberOfRecordsSelected: numSelected,
   });
 
   const handleToggleColumnFilter = useHandleToggleColumnFilter({
