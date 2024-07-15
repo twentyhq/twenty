@@ -1,7 +1,9 @@
 import { Readable } from 'stream';
 
 import {
+  CopyObjectCommand,
   CreateBucketCommandInput,
+  DeleteObjectCommand,
   GetObjectCommand,
   HeadBucketCommandInput,
   NotFound,
@@ -68,6 +70,31 @@ export class S3Driver implements StorageDriver {
     }
 
     return Readable.from(file.Body);
+  }
+
+  async move(params: {
+    from: { folderPath: string; filename: string };
+    to: { folderPath: string; filename: string };
+  }): Promise<void> {
+    const fromKey = `${params.from.folderPath}/${params.from.filename}`;
+    const toKey = `${params.to.folderPath}/${params.to.filename}`;
+
+    // Copy the object to the new location
+    await this.s3Client.send(
+      new CopyObjectCommand({
+        CopySource: `${this.bucketName}/${fromKey}`,
+        Bucket: this.bucketName,
+        Key: toKey,
+      }),
+    );
+
+    // Delete the original object
+    await this.s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: this.bucketName,
+        Key: fromKey,
+      }),
+    );
   }
 
   async checkBucketExists(args: HeadBucketCommandInput) {

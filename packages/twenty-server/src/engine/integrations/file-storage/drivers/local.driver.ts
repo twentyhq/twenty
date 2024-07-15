@@ -1,6 +1,6 @@
-import * as fs from 'fs/promises';
 import { createReadStream, existsSync } from 'fs';
-import { join, dirname } from 'path';
+import * as fs from 'fs/promises';
+import { dirname, join } from 'path';
 import { Readable } from 'stream';
 
 import { StorageDriver } from './interfaces/storage-driver.interface';
@@ -53,5 +53,26 @@ export class LocalDriver implements StorageDriver {
     );
 
     return createReadStream(filePath);
+  }
+
+  async move(params: {
+    from: { folderPath: string; filename: string };
+    to: { folderPath: string; filename: string };
+  }): Promise<void> {
+    const fromPath = join(
+      `${this.options.storagePath}/`,
+      params.from.folderPath,
+      params.from.filename,
+    );
+
+    const toPath = join(
+      `${this.options.storagePath}/`,
+      params.to.folderPath,
+      params.to.filename,
+    );
+
+    await this.createFolder(dirname(toPath));
+
+    await fs.rename(fromPath, toPath);
   }
 }
