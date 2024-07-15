@@ -141,6 +141,7 @@ export const RecordIndexContainer = ({
   const handleIndexRecordsLoaded = useRecoilCallback(
     ({ set }) =>
       () => {
+        // TODO: find a better way to reset this state ?
         set(lastShowPageRecordIdState, null);
       },
     [],
