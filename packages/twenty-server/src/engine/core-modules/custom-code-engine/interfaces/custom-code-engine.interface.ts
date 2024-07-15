@@ -1,7 +1,7 @@
 import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 
-import { LocalDriverOptions } from 'src/engine/integrations/custom-code-engine/drivers/local.driver';
-import { LambdaDriverOptions } from 'src/engine/integrations/custom-code-engine/drivers/lambda.driver';
+import { LocalDriverOptions } from 'src/engine/core-modules/custom-code-engine/drivers/local.driver';
+import { LambdaDriverOptions } from 'src/engine/core-modules/custom-code-engine/drivers/lambda.driver';
 
 export enum CustomCodeEngineDriverType {
   Lambda = 'lambda',

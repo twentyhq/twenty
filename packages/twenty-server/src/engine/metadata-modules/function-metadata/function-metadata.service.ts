@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
-import { CustomCodeEngineService } from 'src/engine/integrations/custom-code-engine/custom-code-engine.service';
+import { CustomCodeEngineService } from 'src/engine/core-modules/custom-code-engine/custom-code-engine.service';
 import {
   FunctionMetadataEntity,
   FunctionSyncStatus,

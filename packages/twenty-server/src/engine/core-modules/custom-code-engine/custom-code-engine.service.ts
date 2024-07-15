@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { FileUpload } from 'graphql-upload';
 
-import { CustomCodeEngineDriver } from 'src/engine/integrations/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
+import { CustomCodeEngineDriver } from 'src/engine/core-modules/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
 
-import { CUSTOM_CODE_ENGINE_DRIVER } from 'src/engine/integrations/custom-code-engine/custom-code-engine.constants';
+import { CUSTOM_CODE_ENGINE_DRIVER } from 'src/engine/core-modules/custom-code-engine/custom-code-engine.constants';
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
 
 @Injectable()

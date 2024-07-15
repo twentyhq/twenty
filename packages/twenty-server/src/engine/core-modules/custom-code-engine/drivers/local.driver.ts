@@ -6,13 +6,13 @@ import { fork } from 'child_process';
 import { v4 } from 'uuid';
 import { FileUpload } from 'graphql-upload';
 
-import { CustomCodeEngineDriver } from 'src/engine/integrations/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
+import { CustomCodeEngineDriver } from 'src/engine/core-modules/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
-import { CommonDriver } from 'src/engine/integrations/custom-code-engine/drivers/common.driver';
+import { CommonDriver } from 'src/engine/core-modules/custom-code-engine/drivers/common.driver';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;

@@ -3,7 +3,7 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import {
   CustomCodeEngineModuleOptions,
   CustomCodeEngineDriverType,
-} from 'src/engine/integrations/custom-code-engine/interfaces/custom-code-engine.interface';
+} from 'src/engine/core-modules/custom-code-engine/interfaces/custom-code-engine.interface';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';

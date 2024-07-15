@@ -3,12 +3,12 @@ import { DynamicModule, Global } from '@nestjs/common';
 import {
   CustomCodeEngineDriverType,
   CustomCodeEngineModuleAsyncOptions,
-} from 'src/engine/integrations/custom-code-engine/interfaces/custom-code-engine.interface';
+} from 'src/engine/core-modules/custom-code-engine/interfaces/custom-code-engine.interface';
 
-import { CustomCodeEngineService } from 'src/engine/integrations/custom-code-engine/custom-code-engine.service';
-import { CUSTOM_CODE_ENGINE_DRIVER } from 'src/engine/integrations/custom-code-engine/custom-code-engine.constants';
-import { LocalDriver } from 'src/engine/integrations/custom-code-engine/drivers/local.driver';
-import { LambdaDriver } from 'src/engine/integrations/custom-code-engine/drivers/lambda.driver';
+import { CustomCodeEngineService } from 'src/engine/core-modules/custom-code-engine/custom-code-engine.service';
+import { CUSTOM_CODE_ENGINE_DRIVER } from 'src/engine/core-modules/custom-code-engine/custom-code-engine.constants';
+import { LocalDriver } from 'src/engine/core-modules/custom-code-engine/drivers/local.driver';
+import { LambdaDriver } from 'src/engine/core-modules/custom-code-engine/drivers/lambda.driver';
 
 @Global()
 export class CustomCodeEngineModule {

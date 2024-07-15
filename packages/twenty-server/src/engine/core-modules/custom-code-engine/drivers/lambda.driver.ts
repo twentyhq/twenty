@@ -9,13 +9,13 @@ import {
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 
-import { CustomCodeEngineDriver } from 'src/engine/integrations/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
+import { CustomCodeEngineDriver } from 'src/engine/core-modules/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
 
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { createZipFile } from 'src/engine/integrations/custom-code-engine/utils/create-zip-file';
-import { TemporaryLambdaFolderManager } from 'src/engine/integrations/custom-code-engine/utils/temporary-lambda-folder-manager';
+import { createZipFile } from 'src/engine/core-modules/custom-code-engine/utils/create-zip-file';
+import { TemporaryLambdaFolderManager } from 'src/engine/core-modules/custom-code-engine/utils/temporary-lambda-folder-manager';
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
-import { CommonDriver } from 'src/engine/integrations/custom-code-engine/drivers/common.driver';
+import { CommonDriver } from 'src/engine/core-modules/custom-code-engine/drivers/common.driver';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileUploadService: FileUploadService;
