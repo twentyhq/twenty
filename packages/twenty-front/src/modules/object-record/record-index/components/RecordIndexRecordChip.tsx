@@ -3,7 +3,7 @@ import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { MouseEvent, useContext } from 'react';
+import { useContext } from 'react';
 
 export type RecordIndexRecordChipProps = {
   objectNameSingular: string;
@@ -23,9 +23,7 @@ export const RecordIndexRecordChip = ({
     record,
   });
 
-  const handleAvatarChipClick = (event: MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const handleAvatarChipClick = () => {
     onIndexIdentifierClick(record.id);
   };
 

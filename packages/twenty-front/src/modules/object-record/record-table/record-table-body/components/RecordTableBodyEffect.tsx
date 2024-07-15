@@ -88,10 +88,6 @@ export const RecordTableBodyEffect = () => {
     lastShowPageRecordIdState,
   );
 
-  console.log({
-    lastShowPageRecordId,
-  });
-
   const { scrollToPosition } = useScrollToPosition();
 
   useEffect(() => {
@@ -109,14 +105,7 @@ export const RecordTableBodyEffect = () => {
 
         scrollToPosition(positionInPx);
 
-        console.log({
-          loading,
-          isFetchingMoreObjects,
-          records,
-        });
-
         setHasInitiazedScroll(true);
-        setLastShowPageRecordId(null);
       } else {
         fetchMoreObjects();
       }

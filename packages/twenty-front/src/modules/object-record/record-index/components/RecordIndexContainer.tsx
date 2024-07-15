@@ -4,6 +4,7 @@ import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { RecordIndexBoardContainer } from '@/object-record/record-index/components/RecordIndexBoardContainer';
 import { RecordIndexBoardDataLoader } from '@/object-record/record-index/components/RecordIndexBoardDataLoader';
 import { RecordIndexBoardDataLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardDataLoaderEffect';
@@ -113,7 +114,7 @@ export const RecordIndexContainer = ({
 
   const navigate = useNavigate();
 
-  const onIndexIdentifierClick = useRecoilCallback(
+  const handleIndexIdentifierClick = useRecoilCallback(
     ({ snapshot }) =>
       (recordId: string) => {
         const currentViewId = snapshot
@@ -124,8 +125,6 @@ export const RecordIndexContainer = ({
           )
           .getValue();
 
-        console.log({ currentViewId, recordIndexId });
-
         // TODO: use URL builder
         navigate(
           `/object/${objectNameSingular}/${recordId}?view=${currentViewId}`,
@@ -135,9 +134,16 @@ export const RecordIndexContainer = ({
             },
           },
         );
-        console.log('onIndexIdentifierClick', recordId);
       },
     [navigate, objectNameSingular, recordIndexId],
+  );
+
+  const handleIndexRecordsLoaded = useRecoilCallback(
+    ({ set }) =>
+      () => {
+        set(lastShowPageRecordIdState, null);
+      },
+    [],
   );
 
   return (
@@ -185,7 +191,12 @@ export const RecordIndexContainer = ({
             />
           </StyledContainerWithPadding>
         </SpreadsheetImportProvider>
-        <RecordIndexEventContext.Provider value={{ onIndexIdentifierClick }}>
+        <RecordIndexEventContext.Provider
+          value={{
+            onIndexIdentifierClick: handleIndexIdentifierClick,
+            onIndexRecordsLoaded: handleIndexRecordsLoaded,
+          }}
+        >
           {recordIndexViewType === ViewType.Table && (
             <>
               <RecordIndexTableContainer
