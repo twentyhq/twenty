@@ -2,10 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   Relation,
   Unique,
@@ -71,34 +69,14 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: true })
   isAuditLogged: boolean;
 
-  @Column({ nullable: true, type: 'uuid' })
+  @Column({ nullable: true, type: 'text' })
   labelIdentifierFieldMetadataId?: string | null;
 
-  @Column({ nullable: true, type: 'uuid' })
+  @Column({ nullable: true, type: 'text' })
   imageIdentifierFieldMetadataId?: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
-
-  @OneToOne(
-    () => FieldMetadataEntity,
-    (field: FieldMetadataEntity) => field.objectFromLabelIdentifier,
-    {
-      onDelete: 'SET NULL',
-    },
-  )
-  @JoinColumn()
-  labelIdentifierFieldMetadata?: Relation<FieldMetadataEntity>;
-
-  @OneToOne(
-    () => FieldMetadataEntity,
-    (field: FieldMetadataEntity) => field.objectFromImageIdentifier,
-    {
-      onDelete: 'SET NULL',
-    },
-  )
-  @JoinColumn()
-  imageIdentifierFieldMetadata?: Relation<FieldMetadataEntity>;
 
   @OneToMany(() => FieldMetadataEntity, (field) => field.object, {
     cascade: true,
