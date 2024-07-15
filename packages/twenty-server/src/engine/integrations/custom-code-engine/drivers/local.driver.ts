@@ -7,55 +7,35 @@ import { v4 } from 'uuid';
 import { FileUpload } from 'graphql-upload';
 
 import { CustomCodeEngineDriver } from 'src/engine/integrations/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { compileTypescript } from 'src/engine/integrations/custom-code-engine/utils/compile-typescript';
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
+import { CommonDriver } from 'src/engine/integrations/custom-code-engine/drivers/common.driver';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
   fileUploadService: FileUploadService;
 }
 
-export class LocalDriver implements CustomCodeEngineDriver {
+export class LocalDriver
+  extends CommonDriver
+  implements CustomCodeEngineDriver
+{
   private readonly fileStorageService: FileStorageService;
-  private readonly fileUploadService: FileUploadService;
 
   constructor(options: LocalDriverOptions) {
+    super(options.fileUploadService);
     this.fileStorageService = options.fileStorageService;
-    this.fileUploadService = options.fileUploadService;
   }
 
   async generateExecutable(
     name: string,
     workspaceId: string,
-    { createReadStream, mimetype }: FileUpload,
+    file: FileUpload,
   ) {
-    const typescriptCode = await readFileContent(createReadStream());
-    const javascriptCode = compileTypescript(typescriptCode);
-    const fileFolder = join(FileFolder.Function, workspaceId);
-
-    const { path: sourceCodePath } = await this.fileUploadService.uploadFile({
-      file: typescriptCode,
-      filename: `${name}.ts`,
-      mimeType: mimetype,
-      fileFolder,
-    });
-
-    const { path: buildSourcePath } = await this.fileUploadService.uploadFile({
-      file: javascriptCode,
-      filename: `${name}.js`,
-      mimeType: mimetype,
-      fileFolder,
-    });
-
-    return {
-      sourceCodePath,
-      buildSourcePath,
-    };
+    return await this.generateAndSaveExecutableFiles(name, workspaceId, file);
   }
 
   async execute(

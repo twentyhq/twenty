@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { join } from 'path';
 
 import { FileUpload } from 'graphql-upload';
 import {
@@ -11,14 +10,12 @@ import {
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 
 import { CustomCodeEngineDriver } from 'src/engine/integrations/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { compileTypescript } from 'src/engine/integrations/custom-code-engine/utils/compile-typescript';
 import { createZipFile } from 'src/engine/integrations/custom-code-engine/utils/create-zip-file';
 import { TemporaryLambdaFolderManager } from 'src/engine/integrations/custom-code-engine/utils/temporary-lambda-folder-manager';
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
+import { CommonDriver } from 'src/engine/integrations/custom-code-engine/drivers/common.driver';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileUploadService: FileUploadService;
@@ -26,17 +23,19 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   role: string;
 }
 
-export class LambdaDriver implements CustomCodeEngineDriver {
+export class LambdaDriver
+  extends CommonDriver
+  implements CustomCodeEngineDriver
+{
   private readonly lambdaClient: Lambda;
   private readonly lambdaRole: string;
-  private readonly fileUploadService: FileUploadService;
 
   constructor(options: LambdaDriverOptions) {
+    super(options.fileUploadService);
     const { region, role, ...lambdaOptions } = options;
 
     this.lambdaClient = new Lambda({ ...lambdaOptions, region });
     this.lambdaRole = role;
-    this.fileUploadService = options.fileUploadService;
   }
 
   private _getLambdaName(name: string, workspaceId: string): string {
@@ -46,25 +45,10 @@ export class LambdaDriver implements CustomCodeEngineDriver {
   async generateExecutable(
     name: string,
     workspaceId: string,
-    { createReadStream, mimetype }: FileUpload,
+    file: FileUpload,
   ) {
-    const typescriptCode = await readFileContent(createReadStream());
-    const javascriptCode = compileTypescript(typescriptCode);
-    const fileFolder = join(FileFolder.Function, workspaceId);
-
-    const { path: sourceCodePath } = await this.fileUploadService.uploadFile({
-      file: typescriptCode,
-      filename: `${name}.ts`,
-      mimeType: mimetype,
-      fileFolder,
-    });
-
-    const { path: buildSourcePath } = await this.fileUploadService.uploadFile({
-      file: javascriptCode,
-      filename: `${name}.js`,
-      mimeType: mimetype,
-      fileFolder,
-    });
+    const { sourceCodePath, buildSourcePath, javascriptCode } =
+      await this.generateAndSaveExecutableFiles(name, workspaceId, file);
 
     const temporaryLambdaFolderManager = new TemporaryLambdaFolderManager();
 
