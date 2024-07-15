@@ -6,6 +6,9 @@ import {
 export const assertDoesNotNullifyDefaultValueForNonNullableField = ({
   isNullable,
   defaultValueFromUpdate,
+}: {
+  isNullable: boolean;
+  defaultValueFromUpdate?: any;
 }) => {
   if (!isNullable && defaultValueFromUpdate === null) {
     throw new FieldMetadataException(
