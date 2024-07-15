@@ -17,9 +17,9 @@ export const checkFilePath = (filePath: string): string => {
   );
 
   const sanitizedFilePath = filePath.replace(/\0/g, '');
-  const [workspaceFolder, folder, size] = sanitizedFilePath.split('/');
+  const { folder, size, workspaceFolder } = getFilePathParts(sanitizedFilePath);
 
-  if (!workspaceFolder.startsWith('workspace-')) {
+  if (workspaceFolder && !workspaceFolder.startsWith('workspace-')) {
     throw new BadRequestException(
       `Not a workspace specific folder. Access not allowed.`,
     );
@@ -49,4 +49,25 @@ export const checkFilename = (filename: string) => {
   }
 
   return basename(sanitizedFilename);
+};
+
+const getFilePathParts = (sanitizedFilePath: string) => {
+  const pathParts = sanitizedFilePath.split('/');
+
+  if (pathParts.length === 3) {
+    const [workspaceFolder, folder, size] = pathParts;
+
+    return {
+      workspaceFolder,
+      folder,
+      size,
+    };
+  }
+
+  const [folder, size] = sanitizedFilePath.split('/');
+
+  return {
+    folder,
+    size,
+  };
 };
