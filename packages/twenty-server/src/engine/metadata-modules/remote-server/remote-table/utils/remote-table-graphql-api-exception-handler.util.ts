@@ -1,13 +1,13 @@
 import {
-  RemoteTableException,
-  RemoteTableExceptionCode,
-} from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.exception';
-import {
-  UserInputError,
   ConflictError,
   InternalServerError,
   NotFoundError,
-} from 'src/engine/utils/graphql-errors.util';
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  RemoteTableException,
+  RemoteTableExceptionCode,
+} from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.exception';
 
 export const remoteTableGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof RemoteTableException) {
