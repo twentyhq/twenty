@@ -1,7 +1,8 @@
-import { useContext, useState } from 'react';
 import { styled } from '@linaria/react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { IconTwentyStarFilled, THEME_COMMON, ThemeContext } from 'twenty-ui';
 
+import { useClearField } from '@/object-record/record-field/hooks/useClearField';
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
 
@@ -31,16 +32,34 @@ export const RatingInput = ({
   readonly,
 }: RatingInputProps) => {
   const { theme } = useContext(ThemeContext);
+  const clearField = useClearField();
 
   const activeColor = theme.font.color.secondary;
   const inactiveColor = theme.background.quaternary;
 
-  const [hoveredValue, setHoveredValue] = useState<FieldRatingValue | null>(
+  const [hoveredValue, setHoveredValue] = useState<FieldRatingValue>(
     null,
   );
+  
   const currentValue = hoveredValue ?? value;
-
+  
   const selectedIndex = RATING_VALUES.indexOf(currentValue);
+  
+  const previousRating = useRef<FieldRatingValue>(null);
+
+  const handleClick = (value: FieldRatingValue) => {
+    if(readonly) return undefined;
+    if(previousRating.current === currentValue) {
+      setHoveredValue(null);
+      clearField();
+    } else {
+      onChange?.(value)
+    }
+  }
+
+   useEffect(() => {
+      previousRating.current = value;
+   },[value])
 
   return (
     <StyledContainer
@@ -58,7 +77,7 @@ export const RatingInput = ({
           <StyledRatingIconContainer
             key={index}
             color={isActive ? activeColor : inactiveColor}
-            onClick={readonly ? undefined : () => onChange?.(value)}
+            onClick={() => handleClick(value)}
             onMouseEnter={readonly ? undefined : () => setHoveredValue(value)}
             onMouseLeave={readonly ? undefined : () => setHoveredValue(null)}
           >
