@@ -43,7 +43,7 @@ export const RatingInput = ({
   
   const currentValue = hoveredValue ?? value;
   
-  const selectedIndex = RATING_VALUES.indexOf(currentValue);
+  const selectedIndex = currentValue ? RATING_VALUES.indexOf(currentValue) : -1;
   
   const previousRating = useRef<FieldRatingValue>(null);
 
@@ -67,7 +67,7 @@ export const RatingInput = ({
       aria-label="Rating"
       aria-valuemax={RATING_VALUES.length}
       aria-valuemin={1}
-      aria-valuenow={RATING_VALUES.indexOf(currentValue) + 1}
+      aria-valuenow={selectedIndex + 1}
       tabIndex={0}
     >
       {RATING_VALUES.map((value, index) => {
