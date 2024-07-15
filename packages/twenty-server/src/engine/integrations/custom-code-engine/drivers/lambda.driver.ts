@@ -86,7 +86,7 @@ export class LambdaDriver implements CustomCodeEngineDriver {
 
     return {
       sourceCodePath,
-      builtSourcePath: undefined,
+      buildSourcePath: undefined,
       lambdaName,
     };
   }

@@ -49,7 +49,7 @@ export class LocalDriver implements CustomCodeEngineDriver {
       .splice(0, filename.split('.').length - 1)
       .join('.')}.js`;
 
-    const { path: builtSourcePath } = await this.fileUploadService.uploadFile({
+    const { path: buildSourcePath } = await this.fileUploadService.uploadFile({
       file: javascriptCode,
       filename: javascriptFileName,
       mimeType: mimetype,
@@ -58,7 +58,7 @@ export class LocalDriver implements CustomCodeEngineDriver {
 
     return {
       sourceCodePath,
-      builtSourcePath,
+      buildSourcePath,
       lambdaName: undefined,
     };
   }
@@ -69,7 +69,7 @@ export class LocalDriver implements CustomCodeEngineDriver {
   ): Promise<object> {
     const fileStream = await this.fileStorageService.read({
       folderPath: '',
-      filename: functionToExecute.builtSourcePath,
+      filename: functionToExecute.buildSourcePath,
     });
     const fileContent = await readFileContent(fileStream);
 

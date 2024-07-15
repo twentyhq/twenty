@@ -39,7 +39,7 @@ export class FunctionService {
   }
 
   async upsertFunction(user: User, file: FileUpload, name: string) {
-    const { sourceCodePath, builtSourcePath, lambdaName } =
+    const { sourceCodePath, buildSourcePath, lambdaName } =
       await this.customCodeEngineService.generateExecutable(file);
 
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
@@ -54,7 +54,7 @@ export class FunctionService {
         lambdaName,
         author: workspaceMember,
         sourceCodePath,
-        builtSourcePath,
+        buildSourcePath,
         syncStatus: FunctionSyncStatus.READY,
       });
     } else {
@@ -62,7 +62,7 @@ export class FunctionService {
         lambdaName,
         author: workspaceMember,
         sourceCodePath,
-        builtSourcePath,
+        buildSourcePath,
         syncStatus: FunctionSyncStatus.READY,
       });
     }

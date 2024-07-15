@@ -58,12 +58,12 @@ export class FunctionWorkspaceEntity extends BaseWorkspaceEntity {
   sourceCodePath: string;
 
   @WorkspaceField({
-    standardId: FUNCTION_STANDARD_FIELD_IDS.builtSourcePath,
+    standardId: FUNCTION_STANDARD_FIELD_IDS.buildSourcePath,
     type: FieldMetadataType.TEXT,
     label: 'Built Source Path',
     description: 'Path of the built source to execute',
   })
-  builtSourcePath: string;
+  buildSourcePath: string;
 
   @WorkspaceField({
     standardId: FUNCTION_STANDARD_FIELD_IDS.lambdaName,
