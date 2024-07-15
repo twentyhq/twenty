@@ -112,6 +112,7 @@ export const RecordTableBodyEffect = () => {
         console.log({
           loading,
           isFetchingMoreObjects,
+          records,
         });
 
         setHasInitiazedScroll(true);

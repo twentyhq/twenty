@@ -37,7 +37,7 @@ export const useFetchAllRecordIds = <T>({
     const firstQueryResult =
       findManyRecordsDataResult?.data?.[objectMetadataItem.namePlural];
 
-    const totalCount = firstQueryResult?.totalCount ?? 1;
+    const totalCount = firstQueryResult?.totalCount ?? 0;
 
     const recordsCount = firstQueryResult?.edges.length ?? 0;
 
@@ -51,7 +51,7 @@ export const useFetchAllRecordIds = <T>({
 
     let lastCursor = firstQueryResult?.pageInfo.endCursor ?? '';
 
-    for (let i = 0; i < remainingPages; i++) {
+    for (let pageIndex = 0; pageIndex < remainingPages; pageIndex++) {
       const rawResult = await fetchMore?.({
         variables: {
           lastCursor: lastCursor,
