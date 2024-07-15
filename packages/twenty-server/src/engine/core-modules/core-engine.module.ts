@@ -12,8 +12,8 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { AISQLQueryModule } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
-import { CustomCodeEngineModule } from 'src/engine/core-modules/custom-code-engine/custom-code-engine.module';
-import { customCodeEngineModuleFactory } from 'src/engine/core-modules/custom-code-engine/custom-code-engine.module-factory';
+import { CodeEngineModule } from 'src/engine/core-modules/code-engine/code-engine.module';
+import { codeEngineModuleFactory } from 'src/engine/core-modules/code-engine/code-engine-module.factory';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
@@ -29,8 +29,8 @@ import { AnalyticsModule } from './analytics/analytics.module';
     AuthModule,
     BillingModule,
     ClientConfigModule,
-    CustomCodeEngineModule.forRootAsync({
-      useFactory: customCodeEngineModuleFactory,
+    CodeEngineModule.forRootAsync({
+      useFactory: codeEngineModuleFactory,
       inject: [EnvironmentService, FileStorageService, FileUploadService],
     }),
     FeatureFlagModule,
@@ -47,7 +47,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
   exports: [
     AnalyticsModule,
     AuthModule,
-    CustomCodeEngineModule,
+    CodeEngineModule,
     FeatureFlagModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,

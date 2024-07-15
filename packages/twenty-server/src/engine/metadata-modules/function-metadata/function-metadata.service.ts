@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
-import { CustomCodeEngineService } from 'src/engine/core-modules/custom-code-engine/custom-code-engine.service';
+import { CodeEngineService } from 'src/engine/core-modules/code-engine/code-engine.service';
 import {
   FunctionMetadataEntity,
   FunctionSyncStatus,
@@ -17,7 +17,7 @@ import {
 @Injectable()
 export class FunctionMetadataService {
   constructor(
-    private readonly customCodeEngineService: CustomCodeEngineService,
+    private readonly codeEngineService: CodeEngineService,
     @InjectRepository(FunctionMetadataEntity, 'metadata')
     private readonly functionMetadataRepository: Repository<FunctionMetadataEntity>,
   ) {}
@@ -41,7 +41,7 @@ export class FunctionMetadataService {
       );
     }
 
-    return this.customCodeEngineService.execute(functionToExecute, payload);
+    return this.codeEngineService.execute(functionToExecute, payload);
   }
 
   async createOne(name: string, workspaceId: string, file: FileUpload) {
@@ -57,11 +57,7 @@ export class FunctionMetadataService {
     }
 
     const { sourceCodePath, buildSourcePath } =
-      await this.customCodeEngineService.generateExecutable(
-        name,
-        workspaceId,
-        file,
-      );
+      await this.codeEngineService.generateExecutable(name, workspaceId, file);
 
     return await this.functionMetadataRepository.save({
       name,

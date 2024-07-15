@@ -19,7 +19,7 @@ import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.inte
 import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
 import { LLMChatModelDriver } from 'src/engine/integrations/llm-chat-model/interfaces/llm-chat-model.interface';
 import { LLMTracingDriver } from 'src/engine/integrations/llm-tracing/interfaces/llm-tracing.interface';
-import { CustomCodeEngineDriverType } from 'src/engine/core-modules/custom-code-engine/interfaces/custom-code-engine.interface';
+import { CodeEngineDriverType } from 'src/engine/core-modules/code-engine/interfaces/code-engine.interface';
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/engine/integrations/environment/decorators/cast-to-string-array.decorator';
@@ -206,34 +206,25 @@ export class EnvironmentVariables {
   AUTH_GOOGLE_CALLBACK_URL: string;
 
   // Custom Code Engine
-  @IsEnum(CustomCodeEngineDriverType)
+  @IsEnum(CodeEngineDriverType)
   @IsOptional()
-  CODE_EXECUTOR_TYPE: CustomCodeEngineDriverType =
-    CustomCodeEngineDriverType.Local;
+  CODE_EXECUTOR_TYPE: CodeEngineDriverType = CodeEngineDriverType.Local;
 
-  @ValidateIf(
-    (env) => env.CODE_EXECUTOR_TYPE === CustomCodeEngineDriverType.Lambda,
-  )
+  @ValidateIf((env) => env.CODE_EXECUTOR_TYPE === CodeEngineDriverType.Lambda)
   @IsAWSRegion()
   CODE_EXECUTOR_LAMBDA_REGION: AwsRegion;
 
-  @ValidateIf(
-    (env) => env.CODE_EXECUTOR_TYPE === CustomCodeEngineDriverType.Lambda,
-  )
+  @ValidateIf((env) => env.CODE_EXECUTOR_TYPE === CodeEngineDriverType.Lambda)
   @IsString()
   @IsOptional()
   CODE_EXECUTOR_LAMBDA_ROLE: string;
 
-  @ValidateIf(
-    (env) => env.CODE_EXECUTOR_TYPE === CustomCodeEngineDriverType.Lambda,
-  )
+  @ValidateIf((env) => env.CODE_EXECUTOR_TYPE === CodeEngineDriverType.Lambda)
   @IsString()
   @IsOptional()
   CODE_EXECUTOR_LAMBDA_ACCESS_KEY_ID: string;
 
-  @ValidateIf(
-    (env) => env.CODE_EXECUTOR_TYPE === CustomCodeEngineDriverType.Lambda,
-  )
+  @ValidateIf((env) => env.CODE_EXECUTOR_TYPE === CodeEngineDriverType.Lambda)
   @IsString()
   @IsOptional()
   CODE_EXECUTOR_LAMBDA_SECRET_ACCESS_KEY: string;

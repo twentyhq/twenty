@@ -2,16 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { FileUpload } from 'graphql-upload';
 
-import { CustomCodeEngineDriver } from 'src/engine/core-modules/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
+import { CodeEngineDriver } from 'src/engine/core-modules/code-engine/drivers/interfaces/code-engine-driver.interface';
 
-import { CUSTOM_CODE_ENGINE_DRIVER } from 'src/engine/core-modules/custom-code-engine/custom-code-engine.constants';
+import { CODE_ENGINE_DRIVER } from 'src/engine/core-modules/code-engine/code-engine.constants';
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
 
 @Injectable()
-export class CustomCodeEngineService implements CustomCodeEngineDriver {
-  constructor(
-    @Inject(CUSTOM_CODE_ENGINE_DRIVER) private driver: CustomCodeEngineDriver,
-  ) {}
+export class CodeEngineService implements CodeEngineDriver {
+  constructor(@Inject(CODE_ENGINE_DRIVER) private driver: CodeEngineDriver) {}
 
   async generateExecutable(
     name: string,

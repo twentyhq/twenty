@@ -1,29 +1,29 @@
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
 import {
-  CustomCodeEngineModuleOptions,
-  CustomCodeEngineDriverType,
-} from 'src/engine/core-modules/custom-code-engine/interfaces/custom-code-engine.interface';
+  CodeEngineModuleOptions,
+  CodeEngineDriverType,
+} from 'src/engine/core-modules/code-engine/interfaces/code-engine.interface';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 
-export const customCodeEngineModuleFactory = async (
+export const codeEngineModuleFactory = async (
   environmentService: EnvironmentService,
   fileStorageService: FileStorageService,
   fileUploadService: FileUploadService,
-): Promise<CustomCodeEngineModuleOptions> => {
+): Promise<CodeEngineModuleOptions> => {
   const driverType = environmentService.get('CODE_EXECUTOR_TYPE');
 
   switch (driverType) {
-    case CustomCodeEngineDriverType.Local: {
+    case CodeEngineDriverType.Local: {
       return {
-        type: CustomCodeEngineDriverType.Local,
+        type: CodeEngineDriverType.Local,
         options: { fileStorageService, fileUploadService },
       };
     }
-    case CustomCodeEngineDriverType.Lambda: {
+    case CodeEngineDriverType.Lambda: {
       const region = environmentService.get('CODE_EXECUTOR_LAMBDA_REGION');
       const accessKeyId = environmentService.get(
         'CODE_EXECUTOR_LAMBDA_ACCESS_KEY_ID',
@@ -34,7 +34,7 @@ export const customCodeEngineModuleFactory = async (
       const role = environmentService.get('CODE_EXECUTOR_LAMBDA_ROLE');
 
       return {
-        type: CustomCodeEngineDriverType.Lambda,
+        type: CodeEngineDriverType.Lambda,
         options: {
           fileUploadService,
           credentials: accessKeyId

@@ -6,7 +6,7 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { compileTypescript } from 'src/engine/core-modules/custom-code-engine/utils/compile-typescript';
+import { compileTypescript } from 'src/engine/core-modules/code-engine/utils/compile-typescript';
 
 export class CommonDriver {
   private readonly fileUploadService: FileUploadService;

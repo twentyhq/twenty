@@ -9,13 +9,13 @@ import {
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 
-import { CustomCodeEngineDriver } from 'src/engine/core-modules/custom-code-engine/drivers/interfaces/custom-code-engine-driver.interface';
+import { CodeEngineDriver } from 'src/engine/core-modules/code-engine/drivers/interfaces/code-engine-driver.interface';
 
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { createZipFile } from 'src/engine/core-modules/custom-code-engine/utils/create-zip-file';
-import { TemporaryLambdaFolderManager } from 'src/engine/core-modules/custom-code-engine/utils/temporary-lambda-folder-manager';
+import { createZipFile } from 'src/engine/core-modules/code-engine/utils/create-zip-file';
+import { TemporaryLambdaFolderManager } from 'src/engine/core-modules/code-engine/utils/temporary-lambda-folder-manager';
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
-import { CommonDriver } from 'src/engine/core-modules/custom-code-engine/drivers/common.driver';
+import { CommonDriver } from 'src/engine/core-modules/code-engine/drivers/common.driver';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileUploadService: FileUploadService;
@@ -23,10 +23,7 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   role: string;
 }
 
-export class LambdaDriver
-  extends CommonDriver
-  implements CustomCodeEngineDriver
-{
+export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
   private readonly lambdaClient: Lambda;
   private readonly lambdaRole: string;
 

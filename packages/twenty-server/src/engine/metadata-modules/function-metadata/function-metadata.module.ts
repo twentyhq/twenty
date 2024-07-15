@@ -8,7 +8,7 @@ import { SortDirection } from '@ptc-org/nestjs-query-core';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
-import { CustomCodeEngineModule } from 'src/engine/core-modules/custom-code-engine/custom-code-engine.module';
+import { CodeEngineModule } from 'src/engine/core-modules/code-engine/code-engine.module';
 import { FunctionMetadataService } from 'src/engine/metadata-modules/function-metadata/function-metadata.service';
 import { FunctionMetadataResolver } from 'src/engine/metadata-modules/function-metadata/function-metadata.resolver';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
@@ -48,7 +48,7 @@ import { FunctionMetadataDTO } from 'src/engine/metadata-modules/function-metada
         },
       ],
     }),
-    CustomCodeEngineModule,
+    CodeEngineModule,
   ],
   providers: [FunctionMetadataService, FunctionMetadataResolver],
   exports: [FunctionMetadataService],
