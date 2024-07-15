@@ -19,6 +19,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -309,6 +310,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       }
 
       assertMutationNotOnRemoteObject(objectMetadata);
+
+      assertDoesNotNullifyDefaultValueForNonNullableField({
+        isNullable: existingFieldMetadata.isNullable,
+        defaultValueFromUpdate: fieldMetadataInput.defaultValue,
+      });
 
       if (
         objectMetadata.labelIdentifierFieldMetadataId ===
