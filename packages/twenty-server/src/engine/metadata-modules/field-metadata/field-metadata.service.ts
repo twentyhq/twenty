@@ -647,19 +647,4 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     return fieldMetadataInput;
   }
-
-  private nullifiesDefaultValueForNonNullableField(
-    fieldMetadataInput: UpdateFieldInput,
-  ) {
-    if (!fieldMetadataInput.isNullable) {
-      if (fieldMetadataInput.defaultValue) {
-        throw new FieldMetadataException(
-          'Default value cannot be set for non-nullable fields',
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
-    }
-
-    return fieldMetadataInput;
-  }
 }
