@@ -1,3 +1,5 @@
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
   ChangeEvent,
   FocusEventHandler,
@@ -7,8 +9,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { IconAlertCircle, IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
 
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';

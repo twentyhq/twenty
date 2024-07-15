@@ -8,7 +8,7 @@ export const metadataLabelSchema = (existingLabels?: string[]) => {
     .string()
     .trim()
     .min(1, errors.LabelEmpty)
-    .regex(METADATA_LABEL_VALID_PATTERN)
+    .regex(METADATA_LABEL_VALID_PATTERN, errors.LabelNotFormattable)
     .refine(
       (label) => {
         try {
