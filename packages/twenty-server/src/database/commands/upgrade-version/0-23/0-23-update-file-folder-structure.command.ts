@@ -102,13 +102,6 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
         logo: Like(`${FileFolder.WorkspaceLogo}/%`),
       });
 
-      this.logger.log({
-        workspacePictureToMove,
-        attachmentsToMove,
-        workspaceMemberAvatarsToMove,
-        personAvatarsToMove,
-      });
-
       try {
         const updatedAttachments = await this.moveFiles(
           workspaceId,
@@ -116,7 +109,9 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
         );
 
         await workspaceQueryRunner.query(
-          `UPDATE "${dataSourceMetadata.schema}"."attachment" SET "fullPath" = REPLACE("fullPath", '${FileFolder.Attachment}', 'workspace-${workspaceId}/${FileFolder.Attachment}')`,
+          `UPDATE "${dataSourceMetadata.schema}"."attachment"
+          SET "fullPath" = REPLACE("fullPath", '${FileFolder.Attachment}', 'workspace-${workspaceId}/${FileFolder.Attachment}')
+          WHERE "fullPath" LIKE '${FileFolder.Attachment}%'`,
         );
 
         this.logger.log(
@@ -135,7 +130,9 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
         );
 
         await workspaceQueryRunner.query(
-          `UPDATE "${dataSourceMetadata.schema}"."workspaceMember" SET "avatarUrl" = REPLACE("avatarUrl", '${FileFolder.ProfilePicture}', 'workspace-${workspaceId}/${FileFolder.ProfilePicture}')`,
+          `UPDATE "${dataSourceMetadata.schema}"."workspaceMember"
+          SET "avatarUrl" = REPLACE("avatarUrl", '${FileFolder.ProfilePicture}', 'workspace-${workspaceId}/${FileFolder.ProfilePicture}')
+          WHERE "avatarUrl" LIKE '${FileFolder.ProfilePicture}%'`,
         );
 
         this.logger.log(
@@ -154,7 +151,9 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
         );
 
         await workspaceQueryRunner.query(
-          `UPDATE "${dataSourceMetadata.schema}"."person" SET "avatarUrl" = REPLACE("avatarUrl", '${FileFolder.PersonPicture}', 'workspace-${workspaceId}/${FileFolder.PersonPicture}')`,
+          `UPDATE "${dataSourceMetadata.schema}"."person" 
+          SET "avatarUrl" = REPLACE("avatarUrl", '${FileFolder.PersonPicture}', 'workspace-${workspaceId}/${FileFolder.PersonPicture}')
+          WHERE "avatarUrl" LIKE '${FileFolder.PersonPicture}%'`,
         );
 
         this.logger.log(
