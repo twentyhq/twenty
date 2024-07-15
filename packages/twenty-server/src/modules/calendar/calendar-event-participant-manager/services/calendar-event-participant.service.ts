@@ -85,14 +85,14 @@ export class CalendarEventParticipantService {
       transactionManager,
     );
 
-    for (const participantToUpdate of participantsToUpdate) {
+    for (const calendarEventParticipantToUpdate of calendarEventParticipantsToUpdate) {
       await this.calendarEventParticipantRepository.update(
         {
-          calendarEventId: participantToUpdate.calendarEventId,
-          handle: participantToUpdate.handle,
+          calendarEventId: calendarEventParticipantToUpdate.calendarEventId,
+          handle: calendarEventParticipantToUpdate.handle,
         },
         {
-          ...participantToUpdate,
+          ...calendarEventParticipantToUpdate,
         },
         transactionManager,
       );
