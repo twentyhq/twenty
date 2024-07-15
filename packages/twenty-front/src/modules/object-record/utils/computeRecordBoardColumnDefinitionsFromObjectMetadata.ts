@@ -63,5 +63,9 @@ export const computeRecordBoardColumnDefinitionsFromObjectMetadata = (
         .reduce((a, b) => Math.max(a, b), 0) + 1,
   } satisfies RecordBoardColumnDefinitionNoValue;
 
-  return [...valueColumns, noValueColumn];
+  if (selectFieldMetadataItem.isNullable === true) {
+    return [...valueColumns, noValueColumn];
+  }
+
+  return valueColumns;
 };
