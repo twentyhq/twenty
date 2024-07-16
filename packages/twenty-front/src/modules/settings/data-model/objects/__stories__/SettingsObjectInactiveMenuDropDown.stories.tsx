@@ -35,8 +35,8 @@ type Story = StoryObj<typeof SettingsObjectInactiveMenuDropDown>;
 export const Default: Story = {};
 
 export const Open: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const dropdownButton = await canvas.getByRole('button');
 
@@ -45,8 +45,8 @@ export const Open: Story = {
 };
 
 export const WithActivate: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const dropdownButton = await canvas.getByRole('button');
 
@@ -66,8 +66,8 @@ export const WithActivate: Story = {
 
 export const WithDelete: Story = {
   args: { isCustomObject: true },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const dropdownButton = await canvas.getByRole('button');
 

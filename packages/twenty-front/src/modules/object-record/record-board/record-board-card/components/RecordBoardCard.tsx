@@ -117,6 +117,7 @@ const StyledFieldContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: fit-content;
+  max-width: 100%;
 `;
 
 const StyledCompactIconContainer = styled.div`
@@ -262,7 +263,7 @@ export const RecordBoardCard = () => {
                     recoilScopeId: recordId + fieldDefinition.fieldMetadataId,
                     isLabelIdentifier: false,
                     fieldDefinition: {
-                      disableTooltip: true,
+                      disableTooltip: false,
                       fieldMetadataId: fieldDefinition.fieldMetadataId,
                       label: fieldDefinition.label,
                       iconName: fieldDefinition.iconName,

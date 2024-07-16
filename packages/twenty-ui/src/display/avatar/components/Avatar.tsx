@@ -1,15 +1,49 @@
+import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
-import clsx from 'clsx';
 import { useRecoilState } from 'recoil';
 
 import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
+import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
+import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
+import { AvatarType } from '@ui/display/avatar/types/AvatarType';
+import { ThemeContext } from '@ui/theme';
 import { Nullable, stringToHslColor } from '@ui/utilities';
 
-import styles from './Avatar.module.css';
+const StyledAvatar = styled.div<{
+  size: AvatarSize;
+  rounded?: boolean;
+  clickable?: boolean;
+  color: string;
+  backgroundColor: string;
+  backgroundTransparentLight: string;
+}>`
+  align-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  user-select: none;
 
-export type AvatarType = 'squared' | 'rounded';
+  border-radius: ${({ rounded }) => (rounded ? '50%' : '2px')};
+  display: flex;
+  font-size: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].fontSize};
+  height: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].width};
+  justify-content: center;
 
-export type AvatarSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
+  width: ${({ size }) => AVATAR_PROPERTIES_BY_SIZE[size].width};
+
+  color: ${({ color }) => color};
+  background: ${({ backgroundColor }) => backgroundColor};
+
+  &:hover {
+    box-shadow: ${({ clickable, backgroundTransparentLight }) =>
+      clickable ? `0 0 0 4px ${backgroundTransparentLight}` : 'none'};
+  }
+`;
+const StyledImage = styled.img`
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+`;
 
 export type AvatarProps = {
   avatarUrl?: string | null;
@@ -23,29 +57,7 @@ export type AvatarProps = {
   onClick?: () => void;
 };
 
-const propertiesBySize = {
-  xl: {
-    fontSize: '16px',
-    width: '40px',
-  },
-  lg: {
-    fontSize: '13px',
-    width: '24px',
-  },
-  md: {
-    fontSize: '12px',
-    width: '16px',
-  },
-  sm: {
-    fontSize: '10px',
-    width: '14px',
-  },
-  xs: {
-    fontSize: '8px',
-    width: '12px',
-  },
-};
-
+// TODO: Remove recoil because we don't want it into twenty-ui and find a solution for invalid avatar urls
 export const Avatar = ({
   avatarUrl,
   size = 'md',
@@ -56,6 +68,7 @@ export const Avatar = ({
   color,
   backgroundColor,
 }: AvatarProps) => {
+  const { theme } = useContext(ThemeContext);
   const [invalidAvatarUrls, setInvalidAvatarUrls] = useRecoilState(
     invalidAvatarUrlsState,
   );
@@ -79,31 +92,20 @@ export const Avatar = ({
   const showBackgroundColor = showPlaceholder;
 
   return (
-    <div
-      className={clsx({
-        [styles.avatar]: true,
-        [styles.rounded]: type === 'rounded',
-        [styles.avatarOnClick]: !isUndefined(onClick),
-      })}
+    <StyledAvatar
+      size={size}
+      backgroundColor={showBackgroundColor ? fixedBackgroundColor : 'none'}
+      color={fixedColor}
+      clickable={!isUndefined(onClick)}
+      rounded={type === 'rounded'}
       onClick={onClick}
-      style={{
-        color: fixedColor,
-        backgroundColor: showBackgroundColor ? fixedBackgroundColor : 'none',
-        width: propertiesBySize[size].width,
-        height: propertiesBySize[size].width,
-        fontSize: propertiesBySize[size].fontSize,
-      }}
+      backgroundTransparentLight={theme.background.transparent.light}
     >
       {showPlaceholder ? (
         placeholderChar
       ) : (
-        <img
-          src={avatarUrl}
-          className={styles.avatarImage}
-          onError={handleImageError}
-          alt=""
-        />
+        <StyledImage src={avatarUrl} onError={handleImageError} alt="" />
       )}
-    </div>
+    </StyledAvatar>
   );
 };

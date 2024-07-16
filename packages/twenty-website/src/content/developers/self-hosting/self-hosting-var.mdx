@@ -13,6 +13,7 @@ Twenty offers integrations with Gmail and Google Calendar. To enable these featu
 # from your worker container
 yarn command:prod cron:messaging:messages-import
 yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
 ```
 
 # Setup Environment Variables
@@ -141,6 +142,8 @@ yarn command:prod cron:messaging:message-list-fetch
     ['STORAGE_S3_REGION', '', 'Storage Region'],
     ['STORAGE_S3_NAME', '', 'Bucket Name'],
     ['STORAGE_S3_ENDPOINT', '', 'Use if a different Endpoint is needed (for example Google)'],
+    ['STORAGE_S3_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
+    ['STORAGE_S3_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
     ['STORAGE_LOCAL_PATH', '.local-storage', 'data path (local storage)'],
     ]}></ArticleTable>
 
@@ -153,7 +156,7 @@ yarn command:prod cron:messaging:message-list-fetch
 ### Logging
 
 <ArticleTable options={[
-    ['LOGGER_DRIVER', 'console', "The logging driver can be: 'console' or 'sentry'"],
+    ['LOGGER_DRIVER', 'console', "Currently, only supports 'console'"],
     ['LOGGER_IS_BUFFER_ENABLED', 'true', 'Buffer the logs before sending them to the logging driver'],
     ['LOG_LEVELS', 'error,warn', "The loglevels which are logged to the logging driver. Can include: 'log', 'warn', 'error'"],
     ['EXCEPTION_HANDLER_DRIVER', 'sentry', "The exception handler driver can be: 'console' or 'sentry'"],
@@ -167,8 +170,13 @@ yarn command:prod cron:messaging:message-list-fetch
 ### Data enrichment and AI
 
 <ArticleTable options={[
-    ['OPENROUTER_API_KEY', '', "The API key for openrouter.ai, an abstraction layer over models from Mistral, OpenAI and more"]
-    ]}></ArticleTable>
+    ['OPENROUTER_API_KEY', '', "The API key for openrouter.ai, an abstraction layer over models from Mistral, OpenAI and more"],
+    ['OPENAI_API_KEY', 'sk-proj-abcdabcd...', "OpenAI API key"],
+    ['LLM_CHAT_MODEL_DRIVER', 'openai', "LLM provider"],
+    ['LLM_TRACING_DRIVER', 'langfuse', "Where to output LangChain logs. 'langfuse' or 'console'."],
+    ['LANGFUSE_SECRET_KEY', 'sk-lf-abcdabcd-abcd...', "Langfuse secret key"],
+    ['LANGFUSE_PUBLIC_KEY', 'pk-lf-abcdabcd-abcd...', "Langfuse public key"],
+]}></ArticleTable>
 
 
 ### Support Chat

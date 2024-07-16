@@ -15,6 +15,7 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 
 @Entity('objectMetadata')
 @Unique('IndexOnNameSingularAndWorkspaceIdUnique', [
@@ -81,6 +82,11 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
     cascade: true,
   })
   fields: Relation<FieldMetadataEntity[]>;
+
+  @OneToMany(() => FieldMetadataEntity, (field) => field.object, {
+    cascade: true,
+  })
+  indexes: Relation<IndexMetadataEntity[]>;
 
   @OneToMany(
     () => RelationMetadataEntity,

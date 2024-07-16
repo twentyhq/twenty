@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import snakeCase from 'lodash.snakecase';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
@@ -36,7 +35,7 @@ export class MessagingErrorHandlingService {
   public async handleGmailError(
     error: GmailError,
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     const { code, reason } = error;
@@ -45,6 +44,21 @@ export class MessagingErrorHandlingService {
       case 400:
         if (reason === 'invalid_grant') {
           await this.handleInsufficientPermissions(
+            error,
+            syncStep,
+            messageChannel,
+            workspaceId,
+          );
+        }
+        if (reason === 'failedPrecondition') {
+          await this.handleFailedPrecondition(
+            error,
+            syncStep,
+            messageChannel,
+            workspaceId,
+          );
+        } else {
+          await this.handleUnknownError(
             error,
             syncStep,
             messageChannel,
@@ -141,7 +155,7 @@ export class MessagingErrorHandlingService {
   private async handleRateLimitExceeded(
     error: GmailError,
     syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     await this.messagingTelemetryService.track({
@@ -152,6 +166,86 @@ export class MessagingErrorHandlingService {
       message: `${error.code}: ${error.reason}`,
     });
 
+    await this.handleThrottle(syncStep, messageChannel, workspaceId);
+  }
+
+  private async handleFailedPrecondition(
+    error: GmailError,
+    syncStep: SyncStep,
+    messageChannel: MessageChannelWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.messagingTelemetryService.track({
+      eventName: `${snakeCase(syncStep)}.error.failed_precondition`,
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+      message: `${error.code}: ${error.reason}`,
+    });
+
+    await this.handleThrottle(syncStep, messageChannel, workspaceId);
+  }
+
+  private async handleInsufficientPermissions(
+    error: GmailError,
+    syncStep: SyncStep,
+    messageChannel: MessageChannelWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.messagingTelemetryService.track({
+      eventName: `${snakeCase(syncStep)}.error.insufficient_permissions`,
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+      message: `${error.code}: ${error.reason}`,
+    });
+
+    await this.messagingChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
+      messageChannel.id,
+      workspaceId,
+    );
+
+    if (!messageChannel.connectedAccountId) {
+      throw new Error(
+        `Connected account ID is not defined for message channel ${messageChannel.id} in workspace ${workspaceId}`,
+      );
+    }
+
+    await this.connectedAccountRepository.updateAuthFailedAt(
+      messageChannel.connectedAccountId,
+      workspaceId,
+    );
+  }
+
+  private async handleNotFound(
+    error: GmailError,
+    syncStep: SyncStep,
+    messageChannel: MessageChannelWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<void> {
+    if (syncStep === 'messages-import') {
+      return;
+    }
+
+    await this.messagingTelemetryService.track({
+      eventName: `${snakeCase(syncStep)}.error.not_found`,
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+      message: `404: ${error.reason}`,
+    });
+
+    await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+      messageChannel.id,
+      workspaceId,
+    );
+  }
+
+  private async handleThrottle(
+    syncStep: SyncStep,
+    messageChannel: MessageChannelWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<void> {
     if (
       messageChannel.throttleFailureCount >= MESSAGING_THROTTLE_MAX_ATTEMPTS
     ) {
@@ -192,57 +286,8 @@ export class MessagingErrorHandlingService {
     }
   }
 
-  private async handleInsufficientPermissions(
-    error: GmailError,
-    syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
-    workspaceId: string,
-  ): Promise<void> {
-    await this.messagingTelemetryService.track({
-      eventName: `${snakeCase(syncStep)}.error.insufficient_permissions`,
-      workspaceId,
-      connectedAccountId: messageChannel.connectedAccountId,
-      messageChannelId: messageChannel.id,
-      message: `${error.code}: ${error.reason}`,
-    });
-
-    await this.messagingChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
-      messageChannel.id,
-      workspaceId,
-    );
-
-    await this.connectedAccountRepository.updateAuthFailedAt(
-      messageChannel.connectedAccountId,
-      workspaceId,
-    );
-  }
-
-  private async handleNotFound(
-    error: GmailError,
-    syncStep: SyncStep,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
-    workspaceId: string,
-  ): Promise<void> {
-    if (syncStep === 'messages-import') {
-      return;
-    }
-
-    await this.messagingTelemetryService.track({
-      eventName: `${snakeCase(syncStep)}.error.not_found`,
-      workspaceId,
-      connectedAccountId: messageChannel.connectedAccountId,
-      messageChannelId: messageChannel.id,
-      message: `404: ${error.reason}`,
-    });
-
-    await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
-      messageChannel.id,
-      workspaceId,
-    );
-  }
-
   private async throttle(
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     await this.messageChannelRepository.incrementThrottleFailureCount(
@@ -257,5 +302,29 @@ export class MessagingErrorHandlingService {
       messageChannelId: messageChannel.id,
       message: `Increment throttle failure count to ${messageChannel.throttleFailureCount}`,
     });
+  }
+
+  private async handleUnknownError(
+    error: GmailError,
+    syncStep: SyncStep,
+    messageChannel: MessageChannelWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.messagingTelemetryService.track({
+      eventName: `${snakeCase(syncStep)}.error.unknown`,
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+      message: `${error.code}: ${error.reason}`,
+    });
+
+    await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+      messageChannel.id,
+      workspaceId,
+    );
+
+    throw new Error(
+      `Unhandled Gmail error code ${error.code} with reason ${error.reason}`,
+    );
   }
 }

@@ -59,6 +59,60 @@ export const fieldValue = [
   },
 ];
 
+export const otherPersonMock = {
+  entityValue: {
+    __typename: 'Person',
+    asd: '',
+    city: 'Paris',
+    jobTitle: '',
+    name: 'John Doe',
+    createdAt: '2024-05-01T13:16:29.046Z',
+    company: {
+      __typename: 'Company',
+      domainName: 'google.com',
+      xLink: {
+        __typename: 'Link',
+        label: '',
+        url: '',
+      },
+      name: 'Google',
+      annualRecurringRevenue: {
+        __typename: 'Currency',
+        amountMicros: null,
+        currencyCode: '',
+      },
+      employees: null,
+      accountOwnerId: null,
+      address: '',
+      idealCustomerProfile: false,
+      createdAt: '2024-05-01T13:16:29.046Z',
+      id: '20202020-c21e-4ec2-873b-de4264d89025',
+      position: 6,
+      updatedAt: '2024-05-01T13:16:29.046Z',
+      linkedinLink: {
+        __typename: 'Link',
+        label: '',
+        url: '',
+      },
+    },
+    id: 'd3e70589-c449-4e64-8268-065640fdaff0',
+    email: 'john.doe@google.com',
+    phone: '+33744332211',
+    linkedinLink: {
+      __typename: 'Link',
+      label: '',
+      url: '',
+    },
+    xLink: {
+      __typename: 'Link',
+      label: '',
+      url: '',
+    },
+    tEst: '',
+    position: 14,
+  },
+};
+
 export const relationFromManyFieldDisplayMock = {
   entityId: '20202020-2d40-4e49-8df4-9c6a049191df',
   relationEntityId: '20202020-c21e-4ec2-873b-de4264d89025',
@@ -67,11 +121,7 @@ export const relationFromManyFieldDisplayMock = {
     asd: '',
     city: 'Seattle',
     jobTitle: '',
-    name: {
-      __typename: 'FullName',
-      firstName: 'Lorie',
-      lastName: 'Vladim',
-    },
+    name: 'Lorie Vladim',
     createdAt: '2024-05-01T13:16:29.046Z',
     company: {
       __typename: 'Company',

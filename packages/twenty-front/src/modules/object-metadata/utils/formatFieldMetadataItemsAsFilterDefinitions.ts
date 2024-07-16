@@ -1,6 +1,8 @@
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
@@ -10,6 +12,15 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
   fields: Array<ObjectMetadataItem['fields'][0]>;
 }): FilterDefinition[] =>
   fields.reduce((acc, field) => {
+    if (
+      field.type === FieldMetadataType.Relation &&
+      field.relationDefinition?.direction !==
+        RelationDefinitionType.ManyToOne &&
+      field.relationDefinition?.direction !== RelationDefinitionType.OneToOne
+    ) {
+      return acc;
+    }
+
     if (
       ![
         FieldMetadataType.DateTime,
@@ -22,22 +33,10 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Address,
         FieldMetadataType.Relation,
         FieldMetadataType.Select,
-        FieldMetadataType.MultiSelect,
         FieldMetadataType.Currency,
       ].includes(field.type)
     ) {
       return acc;
-    }
-
-    // Todo: remove once Rating fieldtype is implemented
-    if (field.name === 'probability') {
-      return acc;
-    }
-
-    if (field.type === FieldMetadataType.Relation) {
-      if (isDefined(field.fromRelationMetadata)) {
-        return acc;
-      }
     }
 
     return [...acc, formatFieldMetadataItemAsFilterDefinition({ field })];
@@ -52,9 +51,9 @@ export const formatFieldMetadataItemAsFilterDefinition = ({
   label: field.label,
   iconName: field.icon ?? 'Icon123',
   relationObjectMetadataNamePlural:
-    field.toRelationMetadata?.fromObjectMetadata.namePlural,
+    field.relationDefinition?.targetObjectMetadata.namePlural,
   relationObjectMetadataNameSingular:
-    field.toRelationMetadata?.fromObjectMetadata.nameSingular,
+    field.relationDefinition?.targetObjectMetadata.nameSingular,
   type: getFilterTypeFromFieldType(field.type),
 });
 

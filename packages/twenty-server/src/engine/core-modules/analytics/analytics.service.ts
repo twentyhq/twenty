@@ -19,8 +19,8 @@ export class AnalyticsService {
 
   async create(
     createEventInput: CreateEventInput,
-    userId: string | undefined,
-    workspaceId: string | undefined,
+    userId: string | null | undefined,
+    workspaceId: string | null | undefined,
     workspaceDisplayName: string | undefined,
     workspaceDomainName: string | undefined,
     hostName: string | undefined,

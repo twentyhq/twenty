@@ -1,7 +1,24 @@
 import { Ref } from 'react';
-import clsx from 'clsx';
+import { styled } from '@linaria/react';
 
-import styles from './RecordTableCellDisplayContainer.module.css';
+const StyledOuterContainer = styled.div<{
+  hasSoftFocus?: boolean;
+}>`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  padding-left: 6px;
+  width: 100%;
+`;
+
+const StyledInnerContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+`;
 
 export type EditableCellDisplayContainerProps = {
   softFocus?: boolean;
@@ -16,17 +33,14 @@ export const RecordTableCellDisplayContainer = ({
   onClick,
   scrollRef,
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
-  <div
+  <StyledOuterContainer
     data-testid={
       softFocus ? 'editable-cell-soft-focus-mode' : 'editable-cell-display-mode'
     }
     onClick={onClick}
-    className={clsx({
-      [styles.cellDisplayOuterContainer]: true,
-      [styles.cellDisplayOuterContainerSoftFocus]: softFocus,
-    })}
     ref={scrollRef}
+    hasSoftFocus={softFocus}
   >
-    <div className={clsx(styles.cellDisplayInnerContainer)}>{children}</div>
-  </div>
+    <StyledInnerContainer>{children}</StyledInnerContainer>
+  </StyledOuterContainer>
 );

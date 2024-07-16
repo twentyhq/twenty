@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
@@ -14,14 +14,17 @@ import {
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingGmailFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-full-message-list-fetch.service';
 import { MessagingGmailPartialMessageListFetchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-partial-message-list-fetch.service';
-import { isThrottled } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-throttled';
+import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 
 export type MessagingMessageListFetchJobData = {
   messageChannelId: string;
   workspaceId: string;
 };
 
-@Processor(MessageQueue.messagingQueue)
+@Processor({
+  queueName: MessageQueue.messagingQueue,
+  scope: Scope.REQUEST,
+})
 export class MessagingMessageListFetchJob {
   private readonly logger = new Logger(MessagingMessageListFetchJob.name);
 

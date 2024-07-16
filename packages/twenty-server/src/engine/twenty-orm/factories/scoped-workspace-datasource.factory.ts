@@ -1,4 +1,4 @@
-import { Inject, Injectable, Scope } from '@nestjs/common';
+import { Inject, Injectable, Optional, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 
 import { EntitySchema } from 'typeorm';
@@ -8,13 +8,15 @@ import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/work
 @Injectable({ scope: Scope.REQUEST })
 export class ScopedWorkspaceDatasourceFactory {
   constructor(
-    @Inject(REQUEST) private readonly request: Request,
+    @Optional()
+    @Inject(REQUEST)
+    private readonly request: Request | null,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
   ) {}
 
   public async create(entities: EntitySchema[]) {
     const workspaceId: string | undefined =
-      this.request['req']?.['workspaceId'];
+      this.request?.['req']?.['workspaceId'];
 
     if (!workspaceId) {
       return null;

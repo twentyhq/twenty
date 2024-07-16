@@ -9,11 +9,11 @@ import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
+import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -22,6 +22,8 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { OnboardingStatus } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -55,11 +57,11 @@ type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
   const onboardingStatus = useOnboardingStatus();
+  const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const { enqueueSnackBar } = useSnackBar();
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
-
   const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
@@ -100,17 +102,20 @@ export const CreateProfile = () => {
           },
         });
 
-        setCurrentWorkspaceMember(
-          (current) =>
-            ({
+        setCurrentWorkspaceMember((current) => {
+          if (isDefined(current)) {
+            return {
               ...current,
               name: {
                 firstName: data.firstName,
                 lastName: data.lastName,
               },
               colorScheme: 'System',
-            }) as any,
-        );
+            };
+          }
+          return current;
+        });
+        setNextOnboardingStatus();
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: SnackBarVariant.Error,
@@ -119,6 +124,7 @@ export const CreateProfile = () => {
     },
     [
       currentWorkspaceMember?.id,
+      setNextOnboardingStatus,
       enqueueSnackBar,
       setCurrentWorkspaceMember,
       updateOneRecord,
@@ -137,7 +143,7 @@ export const CreateProfile = () => {
     PageHotkeyScope.CreateProfile,
   );
 
-  if (onboardingStatus !== OnboardingStatus.OngoingProfileCreation) {
+  if (onboardingStatus !== OnboardingStatus.ProfileCreation) {
     return null;
   }
 

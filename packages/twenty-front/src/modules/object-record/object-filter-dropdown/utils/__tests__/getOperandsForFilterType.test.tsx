@@ -4,20 +4,34 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { getOperandsForFilterType } from '../getOperandsForFilterType';
 
 describe('getOperandsForFilterType', () => {
+  const emptyOperands = [
+    ViewFilterOperand.IsEmpty,
+    ViewFilterOperand.IsNotEmpty,
+  ];
+
+  const containsOperands = [
+    ViewFilterOperand.Contains,
+    ViewFilterOperand.DoesNotContain,
+  ];
+
+  const numberOperands = [
+    ViewFilterOperand.GreaterThan,
+    ViewFilterOperand.LessThan,
+  ];
+
+  const relationOperand = [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
+
   const testCases = [
-    ['TEXT', [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain]],
-    ['EMAIL', [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain]],
-    [
-      'FULL_NAME',
-      [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain],
-    ],
-    ['ADDRESS', [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain]],
-    ['LINK', [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain]],
-    ['LINKS', [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain]],
-    ['CURRENCY', [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan]],
-    ['NUMBER', [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan]],
-    ['DATE_TIME', [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan]],
-    ['RELATION', [ViewFilterOperand.Is, ViewFilterOperand.IsNot]],
+    ['TEXT', [...containsOperands, ...emptyOperands]],
+    ['EMAIL', [...containsOperands, ...emptyOperands]],
+    ['FULL_NAME', [...containsOperands, ...emptyOperands]],
+    ['ADDRESS', [...containsOperands, ...emptyOperands]],
+    ['LINK', [...containsOperands, ...emptyOperands]],
+    ['LINKS', [...containsOperands, ...emptyOperands]],
+    ['CURRENCY', [...numberOperands, ...emptyOperands]],
+    ['NUMBER', [...numberOperands, ...emptyOperands]],
+    ['DATE_TIME', [...numberOperands, ...emptyOperands]],
+    ['RELATION', [...relationOperand, ...emptyOperands]],
     [undefined, []],
     [null, []],
     ['UNKNOWN_TYPE', []],

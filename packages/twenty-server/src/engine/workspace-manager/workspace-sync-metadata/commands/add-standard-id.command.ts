@@ -4,13 +4,13 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
-import { computeStandardObject } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-object.util';
-import { StandardFieldFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field.factory';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
+import { StandardFieldFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field.factory';
+import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
+import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
+import { computeStandardFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-fields.util';
 
 interface RunCommandOptions {
   workspaceId?: string;
@@ -58,7 +58,10 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_AIRTABLE_INTEGRATION_ENABLED: true,
             IS_POSTGRESQL_INTEGRATION_ENABLED: true,
             IS_STRIPE_INTEGRATION_ENABLED: false,
-            IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED: true,
+            IS_COPILOT_ENABLED: false,
+            IS_MESSAGING_ALIAS_FETCHING_ENABLED: true,
+            IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED: true,
+            IS_FREE_ACCESS_ENABLED: false,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
@@ -73,7 +76,10 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_AIRTABLE_INTEGRATION_ENABLED: true,
           IS_POSTGRESQL_INTEGRATION_ENABLED: true,
           IS_STRIPE_INTEGRATION_ENABLED: false,
-          IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED: true,
+          IS_COPILOT_ENABLED: false,
+          IS_MESSAGING_ALIAS_FETCHING_ENABLED: true,
+          IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED: true,
+          IS_FREE_ACCESS_ENABLED: false,
         },
       );
 
@@ -117,11 +123,8 @@ export class AddStandardIdCommand extends CommandRunner {
           continue;
         }
 
-        const computedStandardObjectMetadata = computeStandardObject(
-          standardObjectMetadata ?? {
-            ...originalObjectMetadata,
-            fields: standardFieldMetadataCollection,
-          },
+        const computedStandardFieldMetadataCollection = computeStandardFields(
+          standardFieldMetadataCollection,
           originalObjectMetadata,
           customObjectMetadataCollection,
         );
@@ -129,13 +132,13 @@ export class AddStandardIdCommand extends CommandRunner {
         if (!originalObjectMetadata.isCustom) {
           updateObjectMetadataCollection.push({
             id: originalObjectMetadata.id,
-            standardId: computedStandardObjectMetadata.standardId,
+            standardId: originalObjectMetadata.standardId,
           });
         }
 
         for (const fieldMetadata of originalObjectMetadata.fields) {
           const standardFieldMetadata =
-            computedStandardObjectMetadata.fields.find(
+            computedStandardFieldMetadataCollection.find(
               (field) => field.name === fieldMetadata.name && !field.isCustom,
             );
 

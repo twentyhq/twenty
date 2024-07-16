@@ -36,7 +36,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  position: number;
+  position: number | null;
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.activityTargets,

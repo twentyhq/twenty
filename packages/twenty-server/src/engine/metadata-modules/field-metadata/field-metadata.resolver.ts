@@ -23,6 +23,7 @@ import { RelationDefinitionDTO } from 'src/engine/metadata-modules/field-metadat
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => FieldMetadataDTO)
@@ -30,25 +31,33 @@ export class FieldMetadataResolver {
   constructor(private readonly fieldMetadataService: FieldMetadataService) {}
 
   @Mutation(() => FieldMetadataDTO)
-  createOneField(
+  async createOneField(
     @Args('input') input: CreateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.fieldMetadataService.createOne({
-      ...input.field,
-      workspaceId,
-    });
+    try {
+      return await this.fieldMetadataService.createOne({
+        ...input.field,
+        workspaceId,
+      });
+    } catch (error) {
+      fieldMetadataGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => FieldMetadataDTO)
-  updateOneField(
+  async updateOneField(
     @Args('input') input: UpdateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.fieldMetadataService.updateOne(input.id, {
-      ...input.update,
-      workspaceId,
-    });
+    try {
+      return await this.fieldMetadataService.updateOne(input.id, {
+        ...input.update,
+        workspaceId,
+      });
+    } catch (error) {
+      fieldMetadataGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => FieldMetadataDTO)
@@ -85,27 +94,32 @@ export class FieldMetadataResolver {
       );
     }
 
-    return this.fieldMetadataService.deleteOneField(input, workspaceId);
+    try {
+      return await this.fieldMetadataService.deleteOneField(input, workspaceId);
+    } catch (error) {
+      fieldMetadataGraphqlApiExceptionHandler(error);
+    }
   }
 
   @ResolveField(() => RelationDefinitionDTO, { nullable: true })
   async relationDefinition(
     @Parent() fieldMetadata: FieldMetadataDTO,
     @Context() context: { loaders: IDataloaders },
-  ): Promise<RelationDefinitionDTO | null> {
+  ): Promise<RelationDefinitionDTO | null | undefined> {
     if (fieldMetadata.type !== FieldMetadataType.RELATION) {
       return null;
     }
 
-    const relationMetadataItem =
-      await context.loaders.relationMetadataLoader.load(fieldMetadata.id);
+    try {
+      const relationMetadataItem =
+        await context.loaders.relationMetadataLoader.load(fieldMetadata.id);
 
-    const relationDefinition =
-      await this.fieldMetadataService.getRelationDefinitionFromRelationMetadata(
+      return await this.fieldMetadataService.getRelationDefinitionFromRelationMetadata(
         fieldMetadata,
         relationMetadataItem,
       );
-
-    return relationDefinition;
+    } catch (error) {
+      fieldMetadataGraphqlApiExceptionHandler(error);
+    }
   }
 }
