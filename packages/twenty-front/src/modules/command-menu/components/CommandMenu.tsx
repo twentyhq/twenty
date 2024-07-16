@@ -1,10 +1,12 @@
-import { useMemo, useRef } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useMemo, useRef } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Avatar, IconNotes } from 'twenty-ui';
+import { Avatar, IconNotes, IconSparkles } from 'twenty-ui';
 
+import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
+import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -21,6 +23,7 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
@@ -35,19 +38,16 @@ import { CommandMenuItem } from './CommandMenuItem';
 
 export const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
+  border-left: 1px solid ${({ theme }) => theme.border.color.medium};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   font-family: ${({ theme }) => theme.font.family};
-  left: 50%;
-  max-width: 640px;
+  height: 100%;
   overflow: hidden;
   padding: 0;
   position: fixed;
-  top: 30%;
-  transform: ${() =>
-    useIsMobile() ? 'translateX(-49.5%)' : 'translateX(-50%)'};
-  width: ${() => (useIsMobile() ? 'calc(100% - 40px)' : '100%')};
+  right: 0%;
+  top: 0%;
+  width: ${() => (useIsMobile() ? '100%' : '500px')};
   z-index: 1000;
 `;
 
@@ -60,7 +60,8 @@ export const StyledInput = styled.input`
   font-size: ${({ theme }) => theme.font.size.lg};
   margin: 0;
   outline: none;
-  padding: ${({ theme }) => theme.spacing(5)};
+  height: 24px;
+  padding: ${({ theme }) => theme.spacing(4)};
   width: ${({ theme }) => `calc(100% - ${theme.spacing(10)})`};
 
   &::placeholder {
@@ -80,8 +81,6 @@ const StyledCancelText = styled.span`
 
 export const StyledList = styled.div`
   background: ${({ theme }) => theme.background.secondary};
-  height: 400px;
-  max-height: 400px;
   overscroll-behavior: contain;
   transition: 100ms ease;
   transition-property: height;
@@ -118,6 +117,8 @@ export const CommandMenu = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCommandMenuSearch(event.target.value);
   };
+
+  const isMobile = useIsMobile();
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
@@ -250,8 +251,27 @@ export const CommandMenu = () => {
     callback: closeCommandMenu,
   });
 
-  const selectableItemIds = matchingCreateCommand
+  const isCopilotEnabled = useIsFeatureEnabled('IS_COPILOT_ENABLED');
+  const setCopilotQuery = useSetRecoilState(copilotQueryState);
+  const openCopilotRightDrawer = useOpenCopilotRightDrawer();
+
+  const copilotCommand: Command = {
+    id: 'copilot',
+    to: '', // TODO
+    Icon: IconSparkles,
+    label: 'Open Copilot',
+    type: CommandType.Navigate,
+    onCommandClick: () => {
+      setCopilotQuery(commandMenuSearch);
+      openCopilotRightDrawer();
+    },
+  };
+
+  const copilotCommands: Command[] = isCopilotEnabled ? [copilotCommand] : [];
+
+  const selectableItemIds = copilotCommands
     .map((cmd) => cmd.id)
+    .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people.map((person) => person.id))
     .concat(companies.map((company) => company.id))
@@ -267,7 +287,7 @@ export const CommandMenu = () => {
             placeholder="Search"
             onChange={handleSearchChange}
           />
-          <StyledCancelText>Esc to cancel</StyledCancelText>
+          {!isMobile && <StyledCancelText>Esc to cancel</StyledCancelText>}
           <StyledList>
             <ScrollWrapper>
               <StyledInnerList>
@@ -277,6 +297,7 @@ export const CommandMenu = () => {
                   hotkeyScope={AppHotkeyScope.CommandMenu}
                   onEnter={(itemId) => {
                     const command = [
+                      ...copilotCommands,
                       ...commandMenuCommands,
                       ...otherCommands,
                     ].find((cmd) => cmd.id === itemId);
@@ -294,6 +315,22 @@ export const CommandMenu = () => {
                     !activities.length && (
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
+                  {isCopilotEnabled && (
+                    <CommandGroup heading="Copilot">
+                      <SelectableItem itemId={copilotCommand.id}>
+                        <CommandMenuItem
+                          id={copilotCommand.id}
+                          Icon={copilotCommand.Icon}
+                          label={`${copilotCommand.label} ${
+                            commandMenuSearch.length > 2
+                              ? `"${commandMenuSearch}"`
+                              : ''
+                          }`}
+                          onClick={copilotCommand.onCommandClick}
+                        />
+                      </SelectableItem>
+                    </CommandGroup>
+                  )}
                   <CommandGroup heading="Create">
                     {matchingCreateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>
@@ -340,7 +377,7 @@ export const CommandMenu = () => {
                             <Avatar
                               type="rounded"
                               avatarUrl={null}
-                              entityId={person.id}
+                              placeholderColorSeed={person.id}
                               placeholder={
                                 person.name.firstName +
                                 ' ' +
@@ -362,7 +399,7 @@ export const CommandMenu = () => {
                           to={`object/company/${company.id}`}
                           Icon={() => (
                             <Avatar
-                              entityId={company.id}
+                              placeholderColorSeed={company.id}
                               placeholder={company.name}
                               avatarUrl={getLogoUrlFromDomainName(
                                 company.domainName,

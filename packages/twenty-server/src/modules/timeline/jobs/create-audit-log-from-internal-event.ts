@@ -1,25 +1,23 @@
-import { Injectable } from '@nestjs/common';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
 import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { AuditLogRepository } from 'src/modules/timeline/repositiories/audit-log.repository';
-import { AuditLogObjectMetadata } from 'src/modules/timeline/standard-objects/audit-log.object-metadata';
+import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
-@Injectable()
-export class CreateAuditLogFromInternalEvent
-  implements MessageQueueJob<ObjectRecordBaseEvent>
-{
+@Processor(MessageQueue.entityEventsToDbQueue)
+export class CreateAuditLogFromInternalEvent {
   constructor(
-    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
+    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
-    @InjectObjectMetadataRepository(AuditLogObjectMetadata)
+    @InjectObjectMetadataRepository(AuditLogWorkspaceEntity)
     private readonly auditLogRepository: AuditLogRepository,
   ) {}
 
+  @Process(CreateAuditLogFromInternalEvent.name)
   async handle(data: ObjectRecordBaseEvent): Promise<void> {
     let workspaceMemberId: string | null = null;
 

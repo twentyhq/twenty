@@ -1,17 +1,17 @@
-import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 import {
-  getDocumentString,
-  handleStreamOrSingleExecutionResult,
   OnExecuteDoneHookResultOnNextHook,
   Plugin,
+  getDocumentString,
+  handleStreamOrSingleExecutionResult,
 } from '@envelop/core';
+import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 
 import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
 
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import {
   convertExceptionToGraphQLError,
-  filterException,
+  shouldFilterException,
 } from 'src/engine/utils/global-exception-handler.util';
 
 export type ExceptionHandlerPluginOptions = {
@@ -26,6 +26,9 @@ export type ExceptionHandlerPluginOptions = {
   eventIdKey?: string | null;
 };
 
+// This hook is deprecated.
+// We should either handle exception in the context of graphql, controller or command
+// @deprecated
 export const useExceptionHandler = <PluginContext extends GraphQLContext>(
   options: ExceptionHandlerPluginOptions,
 ): Plugin<PluginContext> => {
@@ -69,7 +72,7 @@ export const useExceptionHandler = <PluginContext extends GraphQLContext>(
               }>(
                 (acc, err) => {
                   // Filter out exceptions that we don't want to be captured by exception handler
-                  if (filterException(err?.originalError ?? err)) {
+                  if (shouldFilterException(err?.originalError ?? err)) {
                     acc.filtered.push(err);
                   } else {
                     acc.unfiltered.push(err);

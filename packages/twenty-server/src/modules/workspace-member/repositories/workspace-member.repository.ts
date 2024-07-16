@@ -3,8 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class WorkspaceMemberRepository {
@@ -12,26 +11,24 @@ export class WorkspaceMemberRepository {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async getByIds(
-    userIds: string[],
-    workspaceId: string,
-  ): Promise<ObjectRecord<WorkspaceMemberObjectMetadata>[]> {
+  public async find(workspaceMemberId: string, workspaceId: string) {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const result = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "userId" = ANY($1)`,
-      [userIds],
-      workspaceId,
-    );
+    const workspaceMembers =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "id" = $1`,
+        [workspaceMemberId],
+        workspaceId,
+      );
 
-    return result;
+    return workspaceMembers?.[0];
   }
 
   public async getByIdOrFail(
     userId: string,
     workspaceId: string,
-  ): Promise<ObjectRecord<WorkspaceMemberObjectMetadata>> {
+  ): Promise<WorkspaceMemberWorkspaceEntity> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -54,7 +51,7 @@ export class WorkspaceMemberRepository {
   public async getAllByWorkspaceId(
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<WorkspaceMemberObjectMetadata>[]> {
+  ): Promise<WorkspaceMemberWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

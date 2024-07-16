@@ -1,15 +1,18 @@
-import { useNavigate } from 'react-router-dom';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/SoftFocusClickOutsideListenerId';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { useMoveEditModeToTableCellPosition } from '@/object-record/record-table/hooks/internal/useMoveEditModeToCellPosition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -17,6 +20,8 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from '~/utils/isDefined';
 
+import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
+import { useContext } from 'react';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -28,19 +33,21 @@ export type OpenTableCellArgs = {
   cellPosition: TableCellPosition;
   isReadOnly: boolean;
   pathToShowPage: string;
+  objectNameSingular: string;
   customCellHotkeyScope: HotkeyScope | null;
   fieldDefinition: FieldDefinition<FieldMetadata>;
   entityId: string;
+  isActionButtonClick: boolean;
 };
 
 export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
+  const { onIndexIdentifierClick } = useContext(RecordIndexEventContext);
   const moveEditModeToTableCellPosition =
     useMoveEditModeToTableCellPosition(tableScopeId);
 
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
 
-  const navigate = useNavigate();
   const leaveTableFocus = useLeaveTableFocus(tableScopeId);
   const { toggleClickOutsideListener } = useClickOutsideListener(
     SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID,
@@ -48,16 +55,23 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
   const initDraftValue = useInitDraftValueV2();
 
+  const { openRightDrawer } = useRightDrawer();
+  const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
+  const setViewableRecordNameSingular = useSetRecoilState(
+    viewableRecordNameSingularState,
+  );
+
   const openTableCell = useRecoilCallback(
     ({ snapshot }) =>
       ({
         initialValue,
         cellPosition,
         isReadOnly,
-        pathToShowPage,
+        objectNameSingular,
         customCellHotkeyScope,
         fieldDefinition,
         entityId,
+        isActionButtonClick,
       }: OpenTableCellArgs) => {
         if (isReadOnly) {
           return;
@@ -78,9 +92,20 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           fieldValue,
         });
 
-        if (isFirstColumnCell && !isEmpty) {
+        if (isFirstColumnCell && !isEmpty && !isActionButtonClick) {
           leaveTableFocus();
-          navigate(pathToShowPage);
+
+          onIndexIdentifierClick(entityId);
+
+          return;
+        }
+
+        if (isFirstColumnCell && !isEmpty && isActionButtonClick) {
+          leaveTableFocus();
+          setViewableRecordId(entityId);
+          setViewableRecordNameSingular(objectNameSingular);
+          openRightDrawer(RightDrawerPages.ViewRecord);
+
           return;
         }
 
@@ -112,10 +137,13 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       setDragSelectionStartEnabled,
       toggleClickOutsideListener,
       leaveTableFocus,
-      navigate,
       setHotkeyScope,
       initDraftValue,
       moveEditModeToTableCellPosition,
+      openRightDrawer,
+      setViewableRecordId,
+      setViewableRecordNameSingular,
+      onIndexIdentifierClick,
     ],
   );
 

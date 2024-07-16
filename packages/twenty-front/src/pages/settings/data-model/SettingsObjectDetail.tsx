@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { IconPlus, IconSettings } from 'twenty-ui';
+import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -24,7 +24,6 @@ import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIden
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -32,6 +31,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -156,6 +156,7 @@ export const SettingsObjectDetail = () => {
                       }
                       fieldMetadataItem={activeMetadataField}
                       isRemoteObjectField={activeObjectMetadataItem.isRemote}
+                      // to={`./${getFieldSlug(activeMetadataField)}`}
                       ActionIcon={
                         <SettingsObjectFieldActiveActionDropdown
                           isCustomField={!!activeMetadataField.isCustom}
@@ -214,19 +215,20 @@ export const SettingsObjectDetail = () => {
           </Table>
           {shouldDisplayAddFieldButton && (
             <StyledDiv>
-              <Button
-                Icon={IconPlus}
-                title="Add Field"
-                size="small"
-                variant="secondary"
-                onClick={() =>
-                  navigate(
-                    deactivatedMetadataFields.length
-                      ? './new-field/step-1'
-                      : './new-field/step-2',
-                  )
+              <UndecoratedLink
+                to={
+                  deactivatedMetadataFields.length
+                    ? './new-field/step-1'
+                    : './new-field/step-2'
                 }
-              />
+              >
+                <Button
+                  Icon={IconPlus}
+                  title="Add Field"
+                  size="small"
+                  variant="secondary"
+                />
+              </UndecoratedLink>
             </StyledDiv>
           )}
         </Section>

@@ -13,7 +13,8 @@ import {
   FieldNumberValue,
   FieldPhoneValue,
   FieldRatingValue,
-  FieldRelationValue,
+  FieldRelationFromManyValue,
+  FieldRelationToOneValue,
   FieldSelectValue,
   FieldTextValue,
   FieldUUidValue,
@@ -27,6 +28,7 @@ export type FieldEmailDraftValue = string;
 export type FieldSelectDraftValue = string;
 export type FieldMultiSelectDraftValue = string[];
 export type FieldRelationDraftValue = string;
+export type FieldRelationManyDraftValue = string[];
 export type FieldLinkDraftValue = { url: string; label: string };
 export type FieldLinksDraftValue = {
   primaryLinkLabel: string;
@@ -78,10 +80,12 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                           ? FieldSelectDraftValue
                           : FieldValue extends FieldMultiSelectValue
                             ? FieldMultiSelectDraftValue
-                            : FieldValue extends FieldRelationValue
+                            : FieldValue extends FieldRelationToOneValue
                               ? FieldRelationDraftValue
-                              : FieldValue extends FieldAddressValue
-                                ? FieldAddressDraftValue
-                                : FieldValue extends FieldJsonValue
-                                  ? FieldJsonDraftValue
-                                  : never;
+                              : FieldValue extends FieldRelationFromManyValue
+                                ? FieldRelationManyDraftValue
+                                : FieldValue extends FieldAddressValue
+                                  ? FieldAddressDraftValue
+                                  : FieldValue extends FieldJsonValue
+                                    ? FieldJsonDraftValue
+                                    : never;

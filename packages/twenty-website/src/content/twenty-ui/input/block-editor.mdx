@@ -1,0 +1,31 @@
+---
+title: Block Editor
+icon: TbTemplate
+image: /images/user-guide/api/api.png
+---
+
+Uses a block-based rich text editor from [BlockNote](https://www.blocknotejs.org/) to allow users to edit and view blocks of content. 
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { useBlockNote } from "@blocknote/react";
+import { BlockEditor } from "@/ui/input/editor/components/BlockEditor";
+
+export const MyComponent = () => {
+  const BlockNoteEditor = useBlockNote();
+
+  return <BlockEditor editor={BlockNoteEditor} />;
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['editor', '`BlockNoteEditor`', 'The block editor instance or configuration']
+]} />
+
+</ArticleTab>
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>

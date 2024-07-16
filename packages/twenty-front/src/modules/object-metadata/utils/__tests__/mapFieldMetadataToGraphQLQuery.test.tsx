@@ -66,6 +66,16 @@ annualRecurringRevenue
 }
 createdAt
 address
+{
+  addressStreet1
+  addressStreet2
+  addressCity
+  addressState
+  addressCountry
+  addressPostcode
+  addressLat
+  addressLng
+}
 updatedAt
 name
 accountOwnerId
@@ -86,7 +96,7 @@ idealCustomerProfile
         domainName: true,
         annualRecurringRevenue: true,
         createdAt: true,
-        address: true,
+        address: { addressStreet1: true },
         updatedAt: true,
         name: true,
         accountOwnerId: true,
@@ -129,6 +139,16 @@ annualRecurringRevenue
 }
 createdAt
 address
+{
+  addressStreet1
+  addressStreet2
+  addressCity
+  addressState
+  addressCountry
+  addressPostcode
+  addressLat
+  addressLng
+}
 updatedAt
 people
 {

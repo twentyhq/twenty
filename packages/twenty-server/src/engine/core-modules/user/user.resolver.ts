@@ -1,10 +1,10 @@
 import {
-  Resolver,
-  Query,
   Args,
-  Parent,
-  ResolveField,
   Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,6 +17,7 @@ import { Repository } from 'typeorm';
 import { SupportDriver } from 'src/engine/integrations/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -26,8 +27,9 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-
-import { UserService } from './services/user.service';
+import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -46,6 +48,8 @@ export class UserResolver {
     private readonly userService: UserService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
+    private readonly onboardingService: OnboardingService,
+    private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
   ) {}
 
   @Query(() => User)
@@ -112,5 +116,15 @@ export class UserResolver {
   async deleteUser(@AuthUser() { id: userId }: User) {
     // Proceed with user deletion
     return this.userService.deleteUser(userId);
+  }
+
+  @ResolveField(() => OnboardingStatus)
+  async onboardingStatus(@Parent() user: User): Promise<OnboardingStatus> {
+    const contextInstance = await this.loadServiceWithWorkspaceContext.load(
+      this.onboardingService,
+      user.defaultWorkspaceId,
+    );
+
+    return contextInstance.getOnboardingStatus(user);
   }
 }

@@ -7,26 +7,50 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import {
+  UpdateObjectPayload,
+  UpdateOneObjectInput,
+} from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
+import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => ObjectMetadataDTO)
 export class ObjectMetadataResolver {
-  constructor(private readonly objectMetadataService: ObjectMetadataService) {}
+  constructor(
+    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly beforeUpdateOneObject: BeforeUpdateOneObject<UpdateObjectPayload>,
+  ) {}
 
   @Mutation(() => ObjectMetadataDTO)
-  deleteOneObject(
+  async deleteOneObject(
     @Args('input') input: DeleteOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.objectMetadataService.deleteOneObject(input, workspaceId);
+    try {
+      return await this.objectMetadataService.deleteOneObject(
+        input,
+        workspaceId,
+      );
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => ObjectMetadataDTO)
-  updateOneObject(
+  async updateOneObject(
     @Args('input') input: UpdateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.objectMetadataService.updateOneObject(input, workspaceId);
+    try {
+      await this.beforeUpdateOneObject.run(input, workspaceId);
+
+      return await this.objectMetadataService.updateOneObject(
+        input,
+        workspaceId,
+      );
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+    }
   }
 }

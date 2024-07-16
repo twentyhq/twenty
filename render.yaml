@@ -1,29 +1,58 @@
 services:
 - type: web
-  name: front
-  runtime: image
-  plan: free
-  image:
-    url: twentycrm/twenty-front:latest
-  autoDeploy: false
-  envVars:
-    - key: REACT_APP_SERVER_BASE_URL
-      fromService:
-        name: server
-        type: web
-        envVarKey: RENDER_EXTERNAL_URL
-- type: web
   name: server
   runtime: image
   image:
-    url: twentycrm/twenty-server:latest
+    url: twentycrm/twenty:latest
   dockerCommand: "sh -c ./scripts/render-run.sh"
   autoDeploy: false
   plan: standard
   envVars:
     - key: FRONT_BASE_URL
       fromService:
-        name: front
+        name: server
+        type: web
+        envVarKey: RENDER_EXTERNAL_URL
+    - key: SERVER_URL
+      fromService:
+        name: server
+        type: web
+        envVarKey: RENDER_EXTERNAL_URL
+    - key: ACCESS_TOKEN_SECRET
+      generateValue: true
+    - key: LOGIN_TOKEN_SECRET
+      generateValue: true
+    - key: REFRESH_TOKEN_SECRET
+      generateValue: true
+    - key: FILE_TOKEN_SECRET
+      generateValue: true
+    - key: PG_DATABASE_HOST
+      fromService:
+        name: twenty_postgres
+        type: pserv
+        property: host
+    - key: PG_DATABASE_PORT
+      fromService:
+        name: twenty_postgres
+        type: pserv
+        property: port
+- type: worker
+  name: worker
+  runtime: image
+  image:
+    url: twentycrm/twenty:latest
+  dockerCommand: "sh -c ./scripts/render-worker.sh"
+  autoDeploy: false
+  plan: standard
+  envVars:
+    - key: FRONT_BASE_URL
+      fromService:
+        name: server
+        type: web
+        envVarKey: RENDER_EXTERNAL_URL
+    - key: SERVER_URL
+      fromService:
+        name: server
         type: web
         envVarKey: RENDER_EXTERNAL_URL
     - key: ACCESS_TOKEN_SECRET

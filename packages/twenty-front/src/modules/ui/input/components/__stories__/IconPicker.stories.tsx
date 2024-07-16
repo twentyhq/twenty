@@ -4,7 +4,7 @@ import { expect, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
-import { sleep } from '~/testing/sleep';
+import { sleep } from '~/utils/sleep';
 
 import { IconPicker, IconPickerProps } from '../IconPicker';
 
@@ -37,8 +37,8 @@ type Story = StoryObj<typeof IconPicker>;
 export const Default: Story = {};
 
 export const WithOpen: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const iconPickerButton = await canvas.findByRole('button', {
       name: 'Click to select icon (no icon selected)',
@@ -54,8 +54,8 @@ export const WithSelectedIcon: Story = {
 
 export const WithOpenAndSelectedIcon: Story = {
   ...WithSelectedIcon,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const iconPickerButton = await canvas.findByRole('button', {
       name: 'Click to select icon (selected: IconCalendarEvent)',
@@ -67,8 +67,8 @@ export const WithOpenAndSelectedIcon: Story = {
 
 export const WithSearch: Story = {
   ...WithSelectedIcon,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const iconPickerButton = await canvas.findByRole('button', {
       name: 'Click to select icon (selected: IconCalendarEvent)',
@@ -92,8 +92,8 @@ export const WithSearch: Story = {
 
 export const WithSearchAndClose: Story = {
   ...WithSelectedIcon,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     let iconPickerButton = await canvas.findByRole('button', {
       name: 'Click to select icon (selected: IconCalendarEvent)',

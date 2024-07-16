@@ -4,13 +4,18 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '04b2e9f5-0713-40a5-8216-82802401d33e',
     domainName: 'qonto.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 1400,
     name: 'Qonto',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: 'OLINDA SAS',
+      addressStreet2: '18 rue de Navarin',
+      addressCity: 'Paris',
+      addressPostcode: '75009',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -56,8 +61,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'qonto',
+      url: 'https://www.linkedin.com/company/qonto',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -109,13 +114,18 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '0d940997-c21e-4ec2-873b-de4264d89025',
     domainName: 'google.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 72_000,
     name: 'Google',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '1600 Amphitheatre Pkwy',
+      addressStreet2: 'Mountain View',
+      addressState: 'CA',
+      addressPostcode: '94043',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -280,8 +290,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'google',
+      url: 'https://www.linkedin.com/company/google',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -308,13 +318,18 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '118995f3-5d81-46d6-bf83-f7fd33ea6102',
     domainName: 'facebook.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 87_000,
     name: 'Facebook',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '1 Hacker Way',
+      addressStreet2: 'Menlo Park',
+      addressState: 'CA',
+      addressPostcode: '94025',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -389,8 +404,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'facebook',
+      url: 'https://www.linkedin.com/company/facebook',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -400,7 +415,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '53f66647-0543-4cc2-9f96-95cc699960f2',
-            probability: '0.5',
             pointOfContactId: '93c72d2e-f517-42fd-80ae-14173b3b70ae',
             stage: 'NEW',
             amount: {
@@ -438,13 +452,18 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '1d3a1c6e-707e-44dc-a1d2-30030bf1a944',
     domainName: 'netflix.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 3_000,
     name: 'Netflix',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '121 Albright Way',
+      addressStreet2: 'Los Gatos',
+      addressState: 'CA',
+      addressPostcode: '95032',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -458,8 +477,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'netflix',
+      url: 'https://www.linkedin.com/company/netflix',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -486,13 +505,18 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '460b6fb1-ed89-413a-b31a-962986e67bb4',
     domainName: 'microsoft.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 221_000,
     name: 'Microsoft',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '1 Microsoft Way',
+      addressStreet2: 'Redmond',
+      addressState: 'WA',
+      addressPostcode: '98052',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -597,8 +621,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'microsoft',
+      url: 'https://www.linkedin.com/company/microsoft',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -608,7 +632,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '81ab695d-2f89-406f-90ea-180f433b2445',
-            probability: '0.5',
             stage: 'NEW',
             pointOfContactId: '9b324a88-6784-4449-afdf-dc62cb8702f2',
             amount: {
@@ -628,7 +651,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '9b059852-35b1-4045-9cde-42f715148954',
-            probability: '0.5',
             stage: 'NEW',
             pointOfContactId: '98406e26-80f1-4dff-b570-a74942528de3',
             amount: {
@@ -666,13 +688,17 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '7a93d1e5-3f74-492d-a101-2a70f50a1645',
     domainName: 'libeo.io',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 50,
     name: 'Libeo',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '42 rue de paradis',
+      addressCity: 'Paris',
+      addressPostcode: '75010',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -686,8 +712,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'libeo',
+      url: 'https://www.linkedin.com/company/libeo',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -714,13 +740,18 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
     domainName: 'airbnb.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 6_000,
     name: 'Airbnb',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '888 Brannan Street',
+      addressCity: 'San Francisco',
+      addressState: 'CA',
+      addressPostcode: '75010',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -734,8 +765,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'airbnb',
+      url: 'https://www.linkedin.com/company/airbnb',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -762,13 +793,19 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '9d162de6-cfbf-4156-a790-e39854dcd4eb',
     domainName: 'claap.io',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 7,
     name: 'Claap',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '901 Fifth Avenue',
+      addressStreet2: 'Suite 1200',
+      addressCity: 'Seattle',
+      addressState: 'WA',
+      addressPostcode: '98164',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -782,8 +819,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'claap',
+      url: 'https://www.linkedin.com/company/claap',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -810,13 +847,19 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: 'a674fa6c-1455-4c57-afaf-dd5dc086361d',
     domainName: 'algolia.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 250,
     name: 'Algolia',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '3790 El Camino Real',
+      addressStreet2: 'Unit 518',
+      addressCity: 'Palo Alto',
+      addressState: 'CA',
+      addressPostcode: '94306',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -861,8 +904,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'algolia',
+      url: 'https://www.linkedin.com/company/algolia',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -889,13 +932,17 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: 'a7bc68d5-f79e-40dd-bd06-c36e6abb4678',
     domainName: 'samsung.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 400_000,
     name: 'Samsung',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '129, Samsung-ro',
+      addressStreet2: 'Yeongtong-gu, Suwon-si',
+      addressCity: 'Gyeonggi-do',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -940,8 +987,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'samsung',
+      url: 'https://www.linkedin.com/company/samsung',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -968,13 +1015,19 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: 'aaffcfbd-f86b-419f-b794-02319abe8637',
     domainName: 'hasura.io',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 17_000,
     name: 'Hasura',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '576 Folsom St.',
+      addressStreet2: 'Floor 3',
+      addressCity: 'San Francisco',
+      addressState: 'CA',
+      addressPostcode: '94105',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -988,8 +1041,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'hasura',
+      url: 'https://www.linkedin.com/company/hasura',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -1016,13 +1069,16 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: 'f33dc242-5518-4553-9433-42d8eb82834b',
     domainName: 'wework.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 2_000,
     name: 'Wework',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '575 Lexington Ave 16th Floor',
+      addressCity: 'New York',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -1036,8 +1092,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'wework',
+      url: 'https://www.linkedin.com/company/wework',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -1064,13 +1120,19 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
     domainName: 'linkedin.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 20_000,
     name: 'Linkedin',
     favorites: {
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '',
+    address: {
+      addressStreet1: '315 Montgomery St',
+      addressStreet2: '13th Fl.',
+      addressCity: 'San Francisco',
+      addressState: 'CA',
+      addressPostcode: '94104',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -1145,8 +1207,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      label: 'linkedin',
+      url: 'https://www.linkedin.com/company/linkedin',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -1156,7 +1218,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '7c887ee3-be10-412b-a663-16bd3c2228e1',
-            probability: '0.5',
             stage: 'NEW',
             pointOfContactId: '86083141-1c0e-494c-a1b6-85b1c6fefaa5',
             amount: {

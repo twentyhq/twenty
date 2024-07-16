@@ -1,20 +1,23 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { isDefined } from '~/utils/isDefined';
 
-import { EllipsisDisplay } from './EllipsisDisplay';
-
 type CurrencyDisplayProps = {
   currencyValue: FieldCurrencyValue | null | undefined;
 };
 
-const StyledEllipsisDisplay = styled(EllipsisDisplay)`
+const StyledEllipsisDisplay = styled.div`
   align-items: center;
   display: flex;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 `;
 
 export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
@@ -26,9 +29,7 @@ export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
     ? SETTINGS_FIELD_CURRENCY_CODES[currencyValue?.currencyCode]?.Icon
     : null;
 
-  const amountToDisplay = isDefined(currencyValue?.amountMicros)
-    ? currencyValue.amountMicros / 1000000
-    : 0;
+  const amountToDisplay = (currencyValue?.amountMicros ?? 0) / 1000000;
 
   if (!shouldDisplayCurrency) {
     return <StyledEllipsisDisplay>{0}</StyledEllipsisDisplay>;

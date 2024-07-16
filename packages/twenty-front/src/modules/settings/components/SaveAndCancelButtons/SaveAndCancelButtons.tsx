@@ -13,16 +13,18 @@ type SaveAndCancelButtonsProps = {
   onSave?: () => void;
   onCancel?: () => void;
   isSaveDisabled?: boolean;
+  isCancelDisabled?: boolean;
 };
 
 export const SaveAndCancelButtons = ({
   onSave,
   onCancel,
   isSaveDisabled,
+  isCancelDisabled,
 }: SaveAndCancelButtonsProps) => {
   return (
     <StyledContainer>
-      <CancelButton onCancel={onCancel} />
+      <CancelButton onCancel={onCancel} disabled={isCancelDisabled} />
       <SaveButton onSave={onSave} disabled={isSaveDisabled} />
     </StyledContainer>
   );

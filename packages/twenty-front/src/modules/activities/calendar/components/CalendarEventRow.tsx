@@ -1,7 +1,7 @@
-import { useContext } from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Avatar, AvatarGroup, IconArrowRight, IconLock } from 'twenty-ui';
 
@@ -15,6 +15,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
+import { CalendarChannelVisibility } from '~/generated/graphql';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isDefined } from '~/utils/isDefined';
 
@@ -48,7 +49,7 @@ const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
 const StyledLabels = styled.div`
   align-items: center;
   display: flex;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(2)};
   flex: 1 0 auto;
 `;
@@ -56,6 +57,7 @@ const StyledLabels = styled.div`
 const StyledTime = styled.div`
   align-items: center;
   display: flex;
+  color: ${({ theme }) => theme.font.color.tertiary};
   gap: ${({ theme }) => theme.spacing(1)};
   width: ${({ theme }) => theme.spacing(26)};
 `;
@@ -117,7 +119,8 @@ export const CalendarEventRow = ({
   const isCurrentWorkspaceMemberAttending = calendarEvent.participants?.some(
     ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,
   );
-  const showTitle = calendarEvent.visibility === 'SHARE_EVERYTHING';
+  const showTitle =
+    calendarEvent.visibility === CalendarChannelVisibility.ShareEverything;
 
   return (
     <StyledContainer
@@ -166,7 +169,9 @@ export const CalendarEventRow = ({
                   ? `${participant.firstName} ${participant.lastName}`
                   : participant.displayName
               }
-              entityId={participant.workspaceMemberId ?? participant.personId}
+              placeholderColorSeed={
+                participant.workspaceMemberId ?? participant.personId
+              }
               type="rounded"
             />
           ))}

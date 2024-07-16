@@ -12,5 +12,6 @@ export const DATABASE_CONNECTION_FRAGMENT = gql`
     }
     updatedAt
     schema
+    label
   }
 `;

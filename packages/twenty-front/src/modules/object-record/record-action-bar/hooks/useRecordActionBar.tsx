@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import {
   IconClick,
@@ -13,9 +13,13 @@ import {
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
-import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
+import { useDeleteTableData } from '@/object-record/record-index/options/hooks/useDeleteTableData';
+import {
+  displayedExportProgress,
+  useExportTableData,
+} from '@/object-record/record-index/options/hooks/useExportTableData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
@@ -28,12 +32,14 @@ type useRecordActionBarProps = {
   objectMetadataItem: ObjectMetadataItem;
   selectedRecordIds: string[];
   callback?: () => void;
+  totalNumberOfRecordsSelected?: number;
 };
 
 export const useRecordActionBar = ({
   objectMetadataItem,
   selectedRecordIds,
   callback,
+  totalNumberOfRecordsSelected,
 }: useRecordActionBarProps) => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
@@ -41,10 +47,6 @@ export const useRecordActionBar = ({
     useState(false);
 
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
-
-  const { deleteManyRecords } = useDeleteManyRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
 
   const { executeQuickActionOnOneRecord } = useExecuteQuickActionOnOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -85,10 +87,17 @@ export const useRecordActionBar = ({
     ],
   );
 
-  const handleDeleteClick = useCallback(async () => {
-    callback?.();
-    await deleteManyRecords(selectedRecordIds);
-  }, [callback, deleteManyRecords, selectedRecordIds]);
+  const baseTableDataParams = {
+    delayMs: 100,
+    objectNameSingular: objectMetadataItem.nameSingular,
+    recordIndexId: objectMetadataItem.namePlural,
+  };
+
+  const { deleteTableData } = useDeleteTableData(baseTableDataParams);
+
+  const handleDeleteClick = useCallback(() => {
+    deleteTableData();
+  }, [deleteTableData]);
 
   const handleExecuteQuickActionOnClick = useCallback(async () => {
     callback?.();
@@ -100,56 +109,63 @@ export const useRecordActionBar = ({
   }, [callback, executeQuickActionOnOneRecord, selectedRecordIds]);
 
   const { progress, download } = useExportTableData({
-    delayMs: 100,
+    ...baseTableDataParams,
     filename: `${objectMetadataItem.nameSingular}.csv`,
-    objectNameSingular: objectMetadataItem.nameSingular,
-    recordIndexId: objectMetadataItem.namePlural,
   });
 
   const isRemoteObject = objectMetadataItem.isRemote;
 
-  const baseActions: ContextMenuEntry[] = useMemo(
-    () => [
-      {
-        label: `${progress === undefined ? `Export` : `Export (${progress}%)`}`,
-        Icon: IconFileExport,
-        accent: 'default',
-        onClick: () => download(),
-      },
-    ],
-    [download, progress],
-  );
+  const numberOfSelectedRecords =
+    totalNumberOfRecordsSelected ?? selectedRecordIds.length;
+  const canDelete =
+    !isRemoteObject && numberOfSelectedRecords < DELETE_MAX_COUNT;
 
-  const deletionActions: ContextMenuEntry[] = useMemo(
-    () => [
-      {
-        label: 'Delete',
-        Icon: IconTrash,
-        accent: 'danger',
-        onClick: () => setIsDeleteRecordsModalOpen(true),
-        ConfirmationModal: (
-          <ConfirmationModal
-            isOpen={isDeleteRecordsModalOpen}
-            setIsOpen={setIsDeleteRecordsModalOpen}
-            title={`Delete ${selectedRecordIds.length} ${
-              selectedRecordIds.length === 1 ? `record` : 'records'
-            }`}
-            subtitle={`This action cannot be undone. This will permanently delete ${
-              selectedRecordIds.length === 1 ? 'this record' : 'these records'
-            }`}
-            onConfirmClick={() => handleDeleteClick()}
-            deleteButtonText={`Delete ${
-              selectedRecordIds.length > 1 ? 'Records' : 'Record'
-            }`}
-          />
-        ),
-      },
-    ],
+  const menuActions: ContextMenuEntry[] = useMemo(
+    () =>
+      [
+        {
+          label: displayedExportProgress(progress),
+          Icon: IconFileExport,
+          accent: 'default',
+          onClick: () => download(),
+        } satisfies ContextMenuEntry,
+        canDelete
+          ? ({
+              label: 'Delete',
+              Icon: IconTrash,
+              accent: 'danger',
+              onClick: () => {
+                setIsDeleteRecordsModalOpen(true);
+                handleDeleteClick();
+              },
+              ConfirmationModal: (
+                <ConfirmationModal
+                  isOpen={isDeleteRecordsModalOpen}
+                  setIsOpen={setIsDeleteRecordsModalOpen}
+                  title={`Delete ${numberOfSelectedRecords} ${
+                    numberOfSelectedRecords === 1 ? `record` : 'records'
+                  }`}
+                  subtitle={`This action cannot be undone. This will permanently delete ${
+                    numberOfSelectedRecords === 1
+                      ? 'this record'
+                      : 'these records'
+                  }`}
+                  onConfirmClick={() => handleDeleteClick()}
+                  deleteButtonText={`Delete ${
+                    numberOfSelectedRecords > 1 ? 'Records' : 'Record'
+                  }`}
+                />
+              ),
+            } satisfies ContextMenuEntry)
+          : undefined,
+      ].filter(isDefined),
     [
+      download,
+      progress,
+      canDelete,
       handleDeleteClick,
-      selectedRecordIds,
       isDeleteRecordsModalOpen,
-      setIsDeleteRecordsModalOpen,
+      numberOfSelectedRecords,
     ],
   );
 
@@ -166,8 +182,7 @@ export const useRecordActionBar = ({
   return {
     setContextMenuEntries: useCallback(() => {
       setContextMenuEntries([
-        ...(isRemoteObject ? [] : deletionActions),
-        ...baseActions,
+        ...menuActions,
         ...(!isRemoteObject && isFavorite && hasOnlyOneRecordSelected
           ? [
               {
@@ -188,8 +203,7 @@ export const useRecordActionBar = ({
           : []),
       ]);
     }, [
-      baseActions,
-      deletionActions,
+      menuActions,
       handleFavoriteButtonClick,
       hasOnlyOneRecordSelected,
       isFavorite,
@@ -218,15 +232,12 @@ export const useRecordActionBar = ({
               },
             ]
           : []),
-        ...(isRemoteObject ? [] : deletionActions),
-        ...baseActions,
+        ...menuActions,
       ]);
     }, [
-      baseActions,
+      menuActions,
       dataExecuteQuickActionOnmentEnabled,
-      deletionActions,
       handleExecuteQuickActionOnClick,
-      isRemoteObject,
       setActionBarEntriesState,
     ]),
   };

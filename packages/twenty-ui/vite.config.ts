@@ -1,5 +1,6 @@
 /// <reference types='vitest' />
 import react from '@vitejs/plugin-react-swc';
+import wyw from '@wyw-in-js/vite';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
@@ -25,6 +26,17 @@ export default defineConfig({
     checker({
       typescript: {
         tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
+      },
+    }),
+    wyw({
+      include: [
+        '**/OverflowingTextWithTooltip.tsx',
+        '**/Chip.tsx',
+        '**/Tag.tsx',
+        '**/Avatar.tsx',
+      ],
+      babelOptions: {
+        presets: ['@babel/preset-typescript', '@babel/preset-react'],
       },
     }),
   ],

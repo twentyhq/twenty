@@ -8,7 +8,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type useSetRecordTableDataProps = {
   recordTableId?: string;
-  onEntityCountChange: (entityCount: number) => void;
+  onEntityCountChange: (entityCount?: number) => void;
 };
 
 export const useSetRecordTableData = ({
@@ -19,12 +19,12 @@ export const useSetRecordTableData = ({
     tableRowIdsState,
     numberOfTableRowsState,
     isRowSelectedFamilyState,
-    hasUserSelectedAllRowState,
+    hasUserSelectedAllRowsState,
   } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends ObjectRecord>(newEntityArray: T[], totalCount: number) => {
+      <T extends ObjectRecord>(newEntityArray: T[], totalCount?: number) => {
         for (const entity of newEntityArray) {
           // TODO: refactor with scoped state later
           const currentEntity = snapshot
@@ -39,7 +39,7 @@ export const useSetRecordTableData = ({
 
         const hasUserSelectedAllRows = getSnapshotValue(
           snapshot,
-          hasUserSelectedAllRowState,
+          hasUserSelectedAllRowsState,
         );
 
         const entityIds = newEntityArray.map((entity) => entity.id);
@@ -54,7 +54,7 @@ export const useSetRecordTableData = ({
           }
         }
 
-        set(numberOfTableRowsState, totalCount);
+        set(numberOfTableRowsState, totalCount ?? 0);
         onEntityCountChange(totalCount);
       },
     [
@@ -62,7 +62,7 @@ export const useSetRecordTableData = ({
       tableRowIdsState,
       onEntityCountChange,
       isRowSelectedFamilyState,
-      hasUserSelectedAllRowState,
+      hasUserSelectedAllRowsState,
     ],
   );
 };

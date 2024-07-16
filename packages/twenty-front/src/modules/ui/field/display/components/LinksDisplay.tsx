@@ -1,10 +1,9 @@
-import { MouseEventHandler, useMemo } from 'react';
+import { useMemo } from 'react';
+import { styled } from '@linaria/react';
+import { THEME_COMMON } from 'twenty-ui';
 
 import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
-import {
-  ExpandableList,
-  ExpandableListProps,
-} from '@/ui/layout/expandable-list/components/ExpandableList';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
 import {
   LinkType,
@@ -15,19 +14,27 @@ import { isDefined } from '~/utils/isDefined';
 import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';
 import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
-type LinksDisplayProps = Pick<
-  ExpandableListProps,
-  'anchorElement' | 'isChipCountDisplayed' | 'withExpandedListBorder'
-> & {
+type LinksDisplayProps = {
   value?: FieldLinksValue;
+  isFocused?: boolean;
 };
 
-export const LinksDisplay = ({
-  anchorElement,
-  isChipCountDisplayed,
-  withExpandedListBorder,
-  value,
-}: LinksDisplayProps) => {
+const themeSpacing = THEME_COMMON.spacingMultiplicator;
+
+const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeSpacing * 1}px;
+  justify-content: flex-start;
+
+  max-width: 100%;
+
+  overflow: hidden;
+
+  width: 100%;
+`;
+
+export const LinksDisplay = ({ value, isFocused }: LinksDisplayProps) => {
   const links = useMemo(
     () =>
       [
@@ -51,25 +58,25 @@ export const LinksDisplay = ({
     [value?.primaryLinkLabel, value?.primaryLinkUrl, value?.secondaryLinks],
   );
 
-  const handleClick: MouseEventHandler = (event) => event.stopPropagation();
-
-  return (
-    <ExpandableList
-      anchorElement={anchorElement}
-      isChipCountDisplayed={isChipCountDisplayed}
-      withExpandedListBorder={withExpandedListBorder}
-    >
+  return isFocused ? (
+    <ExpandableList isChipCountDisplayed>
       {links.map(({ url, label, type }, index) =>
         type === LinkType.LinkedIn || type === LinkType.Twitter ? (
-          <SocialLink key={index} href={url} onClick={handleClick} type={type}>
-            {label}
-          </SocialLink>
+          <SocialLink key={index} href={url} type={type} label={label} />
         ) : (
-          <RoundedLink key={index} href={url} onClick={handleClick}>
-            {label}
-          </RoundedLink>
+          <RoundedLink key={index} href={url} label={label} />
         ),
       )}
     </ExpandableList>
+  ) : (
+    <StyledContainer>
+      {links.map(({ url, label, type }, index) =>
+        type === LinkType.LinkedIn || type === LinkType.Twitter ? (
+          <SocialLink key={index} href={url} type={type} label={label} />
+        ) : (
+          <RoundedLink key={index} href={url} label={label} />
+        ),
+      )}
+    </StyledContainer>
   );
 };

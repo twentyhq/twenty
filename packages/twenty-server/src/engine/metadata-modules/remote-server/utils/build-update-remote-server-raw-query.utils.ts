@@ -1,10 +1,12 @@
-import { BadRequestException } from '@nestjs/common';
-
 import {
   ForeignDataWrapperOptions,
   RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import {
+  RemoteServerException,
+  RemoteServerExceptionCode,
+} from 'src/engine/metadata-modules/remote-server/remote-server.exception';
 import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
 
 export type DeepPartial<T> = {
@@ -40,8 +42,19 @@ export const buildUpdateRemoteServerRawQuery = (
     options.push(foreignDataWrapperOptionsQuery);
   }
 
+  if (remoteServerToUpdate.schema) {
+    options.push(`"schema" = $${parametersPositions['schema']}`);
+  }
+
+  if (remoteServerToUpdate.label) {
+    options.push(`"label" = $${parametersPositions['label']}`);
+  }
+
   if (options.length < 1) {
-    throw new BadRequestException('No fields to update');
+    throw new RemoteServerException(
+      'No fields to update',
+      RemoteServerExceptionCode.INVALID_REMOTE_SERVER_INPUT,
+    );
   }
 
   const rawQuery = `UPDATE metadata."remoteServer" SET ${options.join(
@@ -74,6 +87,16 @@ const buildParametersAndPositions = (
         parametersPositions[key] = parameters.length;
       },
     );
+  }
+
+  if (remoteServerToUpdate.schema) {
+    parameters.push(remoteServerToUpdate.schema);
+    parametersPositions['schema'] = parameters.length;
+  }
+
+  if (remoteServerToUpdate.label) {
+    parameters.push(remoteServerToUpdate.label);
+    parametersPositions['label'] = parameters.length;
   }
 
   return [parameters, parametersPositions];

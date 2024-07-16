@@ -4,6 +4,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getNodeTypename } from '@/object-record/cache/utils/getNodeTypename';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
+import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
@@ -11,7 +12,7 @@ import {
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { lowerAndCapitalize } from '~/utils/string/lowerAndCapitalize';
+import { pascalCase } from '~/utils/string/pascalCase';
 
 export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   objectMetadataItems,
@@ -39,7 +40,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
 
   if (!isRootLevel && computeReferences) {
     return {
-      __ref: `${nodeTypeName}:${record.id}`,
+      __ref: getRefName(objectMetadataItem.nameSingular, record.id),
     } as unknown as RecordGqlNode; // Fix typing: we want a Reference in computeReferences mode
   }
 
@@ -129,6 +130,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             ];
           }
           case FieldMetadataType.Link:
+          case FieldMetadataType.Links:
           case FieldMetadataType.Address:
           case FieldMetadataType.FullName:
           case FieldMetadataType.Currency: {
@@ -136,7 +138,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
               fieldName,
               {
                 ...value,
-                __typename: lowerAndCapitalize(field.type),
+                __typename: pascalCase(field.type),
               },
             ];
           }

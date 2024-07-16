@@ -1,0 +1,50 @@
+---
+title: Navigation Bar
+icon: TbRectangle
+image: /images/user-guide/table-views/table.png
+---
+
+Renders a navigation bar that contains multiple `NavigationBarItem` components.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { IconHome, IconUser, IconSettings } from '@tabler/icons-react';
+import { NavigationBar } from "@/ui/navigation/navigation-bar/components/NavigationBar";
+
+export const MyComponent = () => {
+
+   const navigationItems = [
+     {
+       name: "Home",
+       Icon: IconHome,
+       onClick: () => console.log("Home clicked"),
+     },
+     {
+       name: "Profile",
+       Icon: IconUser,
+       onClick: () => console.log("Profile clicked"),
+     },
+     {
+       name: "Settings",
+       Icon: IconSettings,
+       onClick: () => console.log("Settings clicked"),
+     },
+   ];
+
+  return <NavigationBar activeItemName="Home" items={navigationItems}/>;
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['activeItemName', 'string', 'The name of the currently active navigation item'],
+  ['items', 'array', 'An array of objects representing each navigation item. Each object contains the `name` of the item, the `Icon` component to display, and an `onClick` function to be called when the item is clicked']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>

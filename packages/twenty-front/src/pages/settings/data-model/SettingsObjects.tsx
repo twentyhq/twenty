@@ -1,7 +1,12 @@
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronRight, IconPlus, IconSettings } from 'twenty-ui';
+import {
+  H1Title,
+  H2Title,
+  IconChevronRight,
+  IconPlus,
+  IconSettings,
+} from 'twenty-ui';
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -17,14 +22,13 @@ import { SettingsObjectCoverImage } from '@/settings/data-model/objects/Settings
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/SettingsObjectInactiveMenuDropDown';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { H1Title } from '@/ui/display/typography/components/H1Title';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -36,7 +40,6 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsObjects = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
 
   const { activeObjectMetadataItems, inactiveObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -48,15 +51,14 @@ export const SettingsObjects = () => {
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <StyledH1Title title="Objects" />
-          <Button
-            Icon={IconPlus}
-            title="Add object"
-            accent="blue"
-            size="small"
-            onClick={() =>
-              navigate(getSettingsPagePath(SettingsPath.NewObject))
-            }
-          />
+          <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
+            <Button
+              Icon={IconPlus}
+              title="Add object"
+              accent="blue"
+              size="small"
+            />
+          </UndecoratedLink>
         </SettingsHeaderContainer>
         <div>
           <SettingsObjectCoverImage />
@@ -82,13 +84,9 @@ export const SettingsObjects = () => {
                           stroke={theme.icon.stroke.sm}
                         />
                       }
-                      onClick={() =>
-                        navigate(
-                          `/settings/objects/${getObjectSlug(
-                            activeObjectMetadataItem,
-                          )}`,
-                        )
-                      }
+                      to={`/settings/objects/${getObjectSlug(
+                        activeObjectMetadataItem,
+                      )}`}
                     />
                   ))}
                 </TableSection>

@@ -11,6 +11,7 @@ import { RemoteServerDTO } from 'src/engine/metadata-modules/remote-server/dtos/
 import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
 import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { RemoteServerService } from 'src/engine/metadata-modules/remote-server/remote-server.service';
+import { remoteServerGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/remote-server/utils/remote-server-graphql-api-exception-handler.util';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
@@ -24,7 +25,14 @@ export class RemoteServerResolver {
     @Args('input') input: CreateRemoteServerInput<RemoteServerType>,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteServerService.createOneRemoteServer(input, workspaceId);
+    try {
+      return await this.remoteServerService.createOneRemoteServer(
+        input,
+        workspaceId,
+      );
+    } catch (error) {
+      remoteServerGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => RemoteServerDTO)
@@ -32,7 +40,14 @@ export class RemoteServerResolver {
     @Args('input') input: UpdateRemoteServerInput<RemoteServerType>,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteServerService.updateOneRemoteServer(input, workspaceId);
+    try {
+      return await this.remoteServerService.updateOneRemoteServer(
+        input,
+        workspaceId,
+      );
+    } catch (error) {
+      remoteServerGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => RemoteServerDTO)
@@ -40,7 +55,14 @@ export class RemoteServerResolver {
     @Args('input') { id }: RemoteServerIdInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteServerService.deleteOneRemoteServer(id, workspaceId);
+    try {
+      return await this.remoteServerService.deleteOneRemoteServer(
+        id,
+        workspaceId,
+      );
+    } catch (error) {
+      remoteServerGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Query(() => RemoteServerDTO)
@@ -48,7 +70,14 @@ export class RemoteServerResolver {
     @Args('input') { id }: RemoteServerIdInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteServerService.findOneByIdWithinWorkspace(id, workspaceId);
+    try {
+      return await this.remoteServerService.findOneByIdWithinWorkspace(
+        id,
+        workspaceId,
+      );
+    } catch (error) {
+      remoteServerGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Query(() => [RemoteServerDTO])
@@ -57,9 +86,13 @@ export class RemoteServerResolver {
     { foreignDataWrapperType }: RemoteServerTypeInput<RemoteServerType>,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteServerService.findManyByTypeWithinWorkspace(
-      foreignDataWrapperType,
-      workspaceId,
-    );
+    try {
+      return await this.remoteServerService.findManyByTypeWithinWorkspace(
+        foreignDataWrapperType,
+        workspaceId,
+      );
+    } catch (error) {
+      remoteServerGraphqlApiExceptionHandler(error);
+    }
   }
 }

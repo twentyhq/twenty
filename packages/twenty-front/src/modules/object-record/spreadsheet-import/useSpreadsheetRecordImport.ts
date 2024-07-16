@@ -6,6 +6,7 @@ import {
 } from '@/object-record/spreadsheet-import/util/fieldsUtil';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { SpreadsheetOptions } from '@/spreadsheet-import/types';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -20,7 +21,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
     .filter(
       (x) =>
         x.isActive &&
-        !x.isSystem &&
+        (!x.isSystem || x.name === 'id') &&
         x.name !== 'createdAt' &&
         (x.type !== FieldMetadataType.Relation || x.toRelationMetadata),
     )
@@ -46,10 +47,10 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
           return fieldMapping;
         });
         try {
-          await createManyRecords(createInputs);
+          await createManyRecords(createInputs, true);
         } catch (error: any) {
           enqueueSnackBar(error?.message || 'Something went wrong', {
-            variant: 'error',
+            variant: SnackBarVariant.Error,
           });
         }
       },

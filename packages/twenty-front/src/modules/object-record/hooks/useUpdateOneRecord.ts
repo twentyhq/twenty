@@ -47,9 +47,11 @@ export const useUpdateOneRecord = <
   const updateOneRecord = async ({
     idToUpdate,
     updateOneRecordInput,
+    optimisticRecord,
   }: {
     idToUpdate: string;
     updateOneRecordInput: Partial<Omit<UpdatedObjectRecord, 'id'>>;
+    optimisticRecord?: Partial<ObjectRecord>;
   }) => {
     const sanitizedInput = {
       ...sanitizeRecordInput({
@@ -68,16 +70,16 @@ export const useUpdateOneRecord = <
       computeReferences: true,
     });
 
-    const optimisticRecord = {
+    const computedOptimisticRecord = {
       ...cachedRecord,
-      ...sanitizedInput,
+      ...(optimisticRecord ?? sanitizedInput),
       ...{ id: idToUpdate },
       ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
     };
 
     const optimisticRecordWithConnection =
       getRecordNodeFromRecord<ObjectRecord>({
-        record: optimisticRecord,
+        record: computedOptimisticRecord,
         objectMetadataItem,
         objectMetadataItems,
         recordGqlFields: computedRecordGqlFields,
@@ -92,7 +94,7 @@ export const useUpdateOneRecord = <
       objectMetadataItems,
       objectMetadataItem,
       cache: apolloClient.cache,
-      record: optimisticRecord,
+      record: computedOptimisticRecord,
     });
 
     triggerUpdateRecordOptimisticEffect({

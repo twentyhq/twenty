@@ -1,25 +1,11 @@
-import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
+import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
+import { useLinksFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useLinksFieldDisplay';
 import { LinksDisplay } from '@/ui/field/display/components/LinksDisplay';
 
-type LinksFieldDisplayProps = {
-  isCellSoftFocused?: boolean;
-  cellElement?: HTMLElement;
-  fromTableCell?: boolean;
-};
+export const LinksFieldDisplay = () => {
+  const { fieldValue } = useLinksFieldDisplay();
 
-export const LinksFieldDisplay = ({
-  isCellSoftFocused,
-  cellElement,
-  fromTableCell,
-}: LinksFieldDisplayProps) => {
-  const { fieldValue } = useLinksField();
+  const { isFocused } = useFieldFocus();
 
-  return (
-    <LinksDisplay
-      value={fieldValue}
-      anchorElement={cellElement}
-      isChipCountDisplayed={isCellSoftFocused}
-      withExpandedListBorder={fromTableCell}
-    />
-  );
+  return <LinksDisplay value={fieldValue} isFocused={isFocused} />;
 };

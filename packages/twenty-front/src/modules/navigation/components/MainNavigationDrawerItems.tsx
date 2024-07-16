@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCheckbox, IconSearch, IconSettings } from 'twenty-ui';
 
@@ -9,7 +9,6 @@ import { Favorites } from '@/favorites/components/Favorites';
 import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
-import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -20,7 +19,6 @@ export const MainNavigationDrawerItems = () => {
   const { toggleCommandMenu } = useCommandMenu();
   const isTasksPage = useIsTasksPage();
   const currentUserDueTaskCount = useRecoilValue(currentUserDueTaskCountState);
-  const navigate = useNavigate();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
@@ -38,9 +36,9 @@ export const MainNavigationDrawerItems = () => {
           />
           <NavigationDrawerItem
             label="Settings"
+            to={'/settings/profile'}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
-              navigate('/settings/profile');
             }}
             Icon={IconSettings}
           />
@@ -57,10 +55,8 @@ export const MainNavigationDrawerItems = () => {
 
       <Favorites />
 
-      <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="Workspace" />
-        <ObjectMetadataNavItems />
-      </NavigationDrawerSection>
+      <ObjectMetadataNavItems isRemote={false} />
+      <ObjectMetadataNavItems isRemote={true} />
     </>
   );
 };

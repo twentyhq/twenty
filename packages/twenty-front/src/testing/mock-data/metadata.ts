@@ -1,11 +1,13 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
 import {
+  FieldMetadataType,
   ObjectEdge,
   ObjectMetadataItemsQuery,
 } from '~/generated-metadata/graphql';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/standard-metadata-query-result';
 
+// TODO: replace with new mock
 const customObjectMetadataItemEdge: ObjectEdge = {
   __typename: 'objectEdge',
   node: {
@@ -49,6 +51,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
             isCustom: false,
             isActive: true,
             isSystem: true,
+            options: null,
             isNullable: true,
             createdAt: '2024-04-08T12:48:49.538Z',
             updatedAt: '2024-04-08T12:48:49.538Z',
@@ -93,6 +96,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
                 nameSingular: 'viewField',
                 namePlural: 'viewFields',
                 isSystem: true,
+                isRemote: false,
               },
             },
           },
@@ -110,6 +114,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
             isCustom: false,
             isActive: true,
             isSystem: true,
+            options: null,
             isNullable: false,
             createdAt: '2024-04-08T12:48:49.538Z',
             updatedAt: '2024-04-08T12:48:49.538Z',
@@ -132,6 +137,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
             isCustom: false,
             isActive: true,
             isSystem: true,
+            options: null,
             isNullable: true,
             createdAt: '2024-04-08T12:48:49.538Z',
             updatedAt: '2024-04-08T12:48:49.538Z',
@@ -154,6 +160,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
             isCustom: false,
             isActive: true,
             isSystem: true,
+            options: null,
             isNullable: false,
             createdAt: '2024-04-08T12:48:49.538Z',
             updatedAt: '2024-04-08T12:48:49.538Z',
@@ -176,6 +183,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
             isCustom: false,
             isActive: true,
             isSystem: true,
+            options: null,
             isNullable: false,
             createdAt: '2024-04-08T12:48:49.538Z',
             updatedAt: '2024-04-08T12:48:49.538Z',
@@ -198,6 +206,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
             isCustom: false,
             isActive: true,
             isSystem: true,
+            options: null,
             isNullable: false,
             createdAt: '2024-04-08T12:48:49.538Z',
             updatedAt: '2024-04-08T12:48:49.538Z',
@@ -220,10 +229,53 @@ const customObjectMetadataItemEdge: ObjectEdge = {
             isCustom: false,
             isActive: true,
             isSystem: true,
+            options: null,
             isNullable: false,
             createdAt: '2024-04-08T12:48:49.538Z',
             updatedAt: '2024-04-08T12:48:49.538Z',
             defaultValue: 'uuid',
+            relationDefinition: null,
+            fromRelationMetadata: null,
+            toRelationMetadata: null,
+          },
+        },
+        {
+          __typename: 'fieldEdge',
+          node: {
+            __typename: 'field',
+            id: 'e07fcc3f-beec-4d91-8488-9d1d2cfa5f99',
+            type: FieldMetadataType.Select,
+            name: 'priority',
+            label: 'Priority',
+            description: 'A custom Select example',
+            icon: 'IconWarning',
+            isCustom: true,
+            isActive: true,
+            isSystem: false,
+            options: [
+              {
+                id: '2b98dc02-0d99-4f3e-890e-e2e6b8f3196c',
+                value: 'LOW',
+                label: 'Low',
+                color: 'turquoise',
+              },
+              {
+                id: 'd925a8de-d8ec-4b59-a079-64f4012e3311',
+                value: 'MEDIUM',
+                label: 'Medium',
+                color: 'yellow',
+              },
+              {
+                id: '3',
+                value: 'HIGH',
+                label: 'High',
+                color: 'red',
+              },
+            ],
+            isNullable: true,
+            createdAt: '2024-04-08T12:48:49.538Z',
+            updatedAt: '2024-04-08T12:48:49.538Z',
+            defaultValue: null,
             relationDefinition: null,
             fromRelationMetadata: null,
             toRelationMetadata: null,

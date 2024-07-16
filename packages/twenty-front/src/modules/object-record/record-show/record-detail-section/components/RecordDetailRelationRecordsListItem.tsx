@@ -15,7 +15,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -28,7 +27,7 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
-import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
+import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -98,12 +97,6 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const persistField = usePersistField();
 
-  const {
-    called: hasFetchedRelationRecord,
-    findOneRecord: findOneRelationRecord,
-  } = useLazyFindOneRecord({
-    objectNameSingular: relationObjectMetadataNameSingular,
-  });
   const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
@@ -125,7 +118,7 @@ export const RecordDetailRelationRecordsListItem = ({
     )
     .sort();
 
-  const dropdownScopeId = `record-field-card-menu-${relationRecord.id}`;
+  const dropdownScopeId = `record-field-card-menu-${relationFieldMetadataId}-${relationRecord.id}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
 
@@ -167,8 +160,6 @@ export const RecordDetailRelationRecordsListItem = ({
     return [updateEntity, { loading: false }];
   };
 
-  const { setRecords } = useSetRecordInStore();
-
   const handleClick = () => onClick(relationRecord.id);
 
   const AnimatedIconChevronDown = useCallback<IconComponent>(
@@ -187,21 +178,13 @@ export const RecordDetailRelationRecordsListItem = ({
 
   return (
     <>
+      <RecordValueSetterEffect recordId={relationRecord.id} />
       <StyledListItem isDropdownOpen={isDropdownOpen}>
         <RecordChip
           record={relationRecord}
           objectNameSingular={relationObjectMetadataItem.nameSingular}
         />
-        <StyledClickableZone
-          onClick={handleClick}
-          onMouseOver={() =>
-            !hasFetchedRelationRecord &&
-            findOneRelationRecord({
-              objectRecordId: relationRecord.id,
-              onCompleted: (record) => setRecords([record]),
-            })
-          }
-        >
+        <StyledClickableZone onClick={handleClick}>
           <LightIconButton
             className="displayOnHover"
             Icon={AnimatedIconChevronDown}

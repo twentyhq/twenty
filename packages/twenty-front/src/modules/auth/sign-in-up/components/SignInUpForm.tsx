@@ -1,16 +1,23 @@
-import { useMemo, useState } from 'react';
-import { Controller } from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useMemo, useState } from 'react';
+import { Controller } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui';
 
+import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
+import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
+import {
+  SignInUpMode,
+  SignInUpStep,
+  useSignInUp,
+} from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
-import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
@@ -18,15 +25,7 @@ import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
-import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 import { isDefined } from '~/utils/isDefined';
-
-import { Logo } from '../../components/Logo';
-import { Title } from '../../components/Title';
-import { SignInUpMode, SignInUpStep, useSignInUp } from '../hooks/useSignInUp';
-
-import { FooterNote } from './FooterNote';
-import { HorizontalSeparator } from './HorizontalSeparator';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -55,14 +54,12 @@ export const SignInUpForm = () => {
   );
   const [authProviders] = useRecoilState(authProvidersState);
   const [showErrors, setShowErrors] = useState(false);
-  const { handleResetPassword } = useHandleResetPassword();
-  const workspace = useWorkspaceFromInviteHash();
   const { signInWithGoogle } = useSignInWithGoogle();
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
   const { form } = useSignInUpForm();
+  const { handleResetPassword } = useHandleResetPassword();
 
   const {
-    isInviteMode,
     signInUpStep,
     signInUpMode,
     continueWithCredentials,
@@ -73,7 +70,7 @@ export const SignInUpForm = () => {
   const handleKeyDown = async (
     event: React.KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (event.key === 'Enter') {
+    if (event.key === Key.Enter) {
       event.preventDefault();
 
       if (signInUpStep === SignInUpStep.Init) {
@@ -101,23 +98,6 @@ export const SignInUpForm = () => {
     return signInUpMode === SignInUpMode.SignIn ? 'Sign in' : 'Sign up';
   }, [signInUpMode, signInUpStep]);
 
-  const title = useMemo(() => {
-    if (isInviteMode) {
-      return `Join ${workspace?.displayName ?? ''} team`;
-    }
-
-    if (
-      signInUpStep === SignInUpStep.Init ||
-      signInUpStep === SignInUpStep.Email
-    ) {
-      return 'Welcome to Twenty';
-    }
-
-    return signInUpMode === SignInUpMode.SignIn
-      ? 'Sign in to Twenty'
-      : 'Sign up to Twenty';
-  }, [signInUpMode, workspace?.displayName, isInviteMode, signInUpStep]);
-
   const theme = useTheme();
 
   const shouldWaitForCaptchaToken =
@@ -143,10 +123,6 @@ export const SignInUpForm = () => {
 
   return (
     <>
-      <AnimatedEaseIn>
-        <Logo workspaceLogo={workspace?.logo} />
-      </AnimatedEaseIn>
-      <Title animate>{title}</Title>
       <StyledContentContainer>
         {authProviders.google && (
           <>
@@ -282,7 +258,23 @@ export const SignInUpForm = () => {
       )}
       {signInUpStep === SignInUpStep.Init && (
         <FooterNote>
-          By using Twenty, you agree to the Terms of Service and Privacy Policy.
+          By using Twenty, you agree to the{' '}
+          <a
+            href="https://twenty.com/legal/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Terms of Service
+          </a>{' '}
+          and{' '}
+          <a
+            href="https://twenty.com/legal/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Privacy Policy
+          </a>
+          .
         </FooterNote>
       )}
     </>

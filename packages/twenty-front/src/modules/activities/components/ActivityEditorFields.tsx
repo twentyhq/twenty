@@ -57,11 +57,21 @@ export const ActivityEditorFields = ({
     return [upsertActivityMutation, { loading: false }];
   };
 
+  const { FieldContextProvider: ReminderAtFieldContextProvider } =
+    useFieldContext({
+      objectNameSingular: CoreObjectNameSingular.Activity,
+      objectRecordId: activityId,
+      fieldMetadataName: 'reminderAt',
+      fieldPosition: 0,
+      clearable: true,
+      customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
+    });
+
   const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
     objectNameSingular: CoreObjectNameSingular.Activity,
     objectRecordId: activityId,
     fieldMetadataName: 'dueAt',
-    fieldPosition: 0,
+    fieldPosition: 1,
     clearable: true,
     customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
   });
@@ -71,25 +81,21 @@ export const ActivityEditorFields = ({
       objectNameSingular: CoreObjectNameSingular.Activity,
       objectRecordId: activityId,
       fieldMetadataName: 'assignee',
-      fieldPosition: 1,
+      fieldPosition: 2,
       clearable: true,
       customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
-    });
-
-  const { FieldContextProvider: ActivityTargetsContextProvider } =
-    useFieldContext({
-      objectNameSingular: CoreObjectNameSingular.Activity,
-      objectRecordId: activityId,
-      fieldMetadataName: 'activityTargets',
-      fieldPosition: 2,
     });
 
   return (
     <StyledPropertyBox>
       {activity.type === 'Task' &&
+        ReminderAtFieldContextProvider &&
         DueAtFieldContextProvider &&
         AssigneeFieldContextProvider && (
           <>
+            <ReminderAtFieldContextProvider>
+              <RecordInlineCell />
+            </ReminderAtFieldContextProvider>
             <DueAtFieldContextProvider>
               <RecordInlineCell />
             </DueAtFieldContextProvider>
@@ -98,16 +104,12 @@ export const ActivityEditorFields = ({
             </AssigneeFieldContextProvider>
           </>
         )}
-      {ActivityTargetsContextProvider &&
-        isDefined(activityFromCache) &&
-        isRightDrawerAnimationCompleted && (
-          <ActivityTargetsContextProvider>
-            <ActivityTargetsInlineCell
-              activity={activityFromCache}
-              maxWidth={340}
-            />
-          </ActivityTargetsContextProvider>
-        )}
+      {isDefined(activityFromCache) && isRightDrawerAnimationCompleted && (
+        <ActivityTargetsInlineCell
+          activity={activityFromCache}
+          maxWidth={340}
+        />
+      )}
     </StyledPropertyBox>
   );
 };

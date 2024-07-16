@@ -19,7 +19,7 @@ const meta: Meta<PageDecoratorArgs> = {
     RelationPickerDecorator,
   ],
   args: {
-    routePath: 'toto-not-found',
+    routePath: '/toto-not-found',
   },
   parameters: {
     msw: graphqlMocks,

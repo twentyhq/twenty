@@ -25,6 +25,7 @@ export const Default = () => (
         <SelectSheetStep
           sheetNames={sheetNames}
           onContinue={() => Promise.resolve()}
+          onBack={() => Promise.resolve()}
         />
       </ModalWrapper>
     </Providers>

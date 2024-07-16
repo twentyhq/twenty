@@ -34,12 +34,17 @@ const StyledInputContainer = styled.div`
   width: 100%;
 `;
 
-const StyledInput = styled.input<Pick<TextInputV2ComponentProps, 'fullWidth'>>`
+const StyledInput = styled.input<
+  Pick<TextInputV2ComponentProps, 'fullWidth' | 'LeftIcon'>
+>`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+  border-bottom-left-radius: ${({ theme, LeftIcon }) =>
+    !LeftIcon && theme.border.radius.sm};
   border-right: none;
-  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
+  border-left: ${({ LeftIcon }) => LeftIcon && 'none'};
+  border-top-left-radius: ${({ theme, LeftIcon }) =>
+    !LeftIcon && theme.border.radius.sm};
   box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
@@ -67,6 +72,18 @@ const StyledErrorHelper = styled.div`
   color: ${({ theme }) => theme.color.red};
   font-size: ${({ theme }) => theme.font.size.xs};
   padding: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledLeftIconContainer = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+  border-right: none;
+  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
+  display: flex;
+  justify-content: center;
+  padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTrailingIconContainer = styled.div`
@@ -100,7 +117,9 @@ export type TextInputV2ComponentProps = Omit<
   onChange?: (text: string) => void;
   fullWidth?: boolean;
   error?: string;
+  noErrorHelper?: boolean;
   RightIcon?: IconComponent;
+  LeftIcon?: IconComponent;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
 };
@@ -116,6 +135,7 @@ const TextInputV2Component = (
     onKeyDown,
     fullWidth,
     error,
+    noErrorHelper = false,
     required,
     type,
     autoFocus,
@@ -123,7 +143,9 @@ const TextInputV2Component = (
     disabled,
     tabIndex,
     RightIcon,
+    LeftIcon,
     autoComplete,
+    maxLength,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
@@ -143,6 +165,13 @@ const TextInputV2Component = (
     <StyledContainer className={className} fullWidth={fullWidth ?? false}>
       {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
       <StyledInputContainer>
+        {!!LeftIcon && (
+          <StyledLeftIconContainer>
+            <StyledTrailingIcon>
+              <LeftIcon size={theme.icon.size.md} />
+            </StyledTrailingIcon>
+          </StyledLeftIconContainer>
+        )}
         <StyledInput
           autoComplete={autoComplete || 'off'}
           ref={combinedRef}
@@ -154,7 +183,15 @@ const TextInputV2Component = (
             onChange?.(event.target.value);
           }}
           onKeyDown={onKeyDown}
-          {...{ autoFocus, disabled, placeholder, required, value }}
+          {...{
+            autoFocus,
+            disabled,
+            placeholder,
+            required,
+            value,
+            LeftIcon,
+            maxLength,
+          }}
         />
         <StyledTrailingIconContainer>
           {error && (
@@ -181,7 +218,9 @@ const TextInputV2Component = (
           )}
         </StyledTrailingIconContainer>
       </StyledInputContainer>
-      {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
+      {error && !noErrorHelper && (
+        <StyledErrorHelper>{error}</StyledErrorHelper>
+      )}
     </StyledContainer>
   );
 };

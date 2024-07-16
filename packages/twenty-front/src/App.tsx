@@ -13,10 +13,13 @@ import { useRecoilValue } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
+import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
+import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { billingState } from '@/client-config/states/billingState';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
+import indexAppPath from '@/navigation/utils/indexAppPath';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
@@ -35,22 +38,22 @@ import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 import { Authorize } from '~/pages/auth/Authorize';
-import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan';
-import { CreateProfile } from '~/pages/auth/CreateProfile';
-import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
+import { Invite } from '~/pages/auth/Invite';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
-import { PaymentSuccess } from '~/pages/auth/PaymentSuccess';
 import { SignInUp } from '~/pages/auth/SignInUp';
-import { DefaultHomePage } from '~/pages/DefaultHomePage';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
 import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
+import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
+import { CreateProfile } from '~/pages/onboarding/CreateProfile';
+import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
+import { InviteTeam } from '~/pages/onboarding/InviteTeam';
+import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
+import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
-import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/SettingsAccountsCalendarsSettings';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
-import { SettingsAccountsEmailsInboxSettings } from '~/pages/settings/accounts/SettingsAccountsEmailsInboxSettings';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
@@ -58,6 +61,7 @@ import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEd
 import { SettingsObjectFieldEdit } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 import { SettingsObjectNewFieldStep1 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
+import { SettingsObjectOverview } from '~/pages/settings/data-model/SettingsObjectOverview';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
 import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
 import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew';
@@ -83,36 +87,41 @@ const ProvidersThatNeedRouterContext = () => {
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
-    <ApolloProvider>
-      <ClientConfigProviderEffect />
-      <ClientConfigProvider>
-        <UserProviderEffect />
-        <UserProvider>
-          <ApolloMetadataClientProvider>
-            <ObjectMetadataItemsProvider>
-              <PrefetchDataProvider>
-                <AppThemeProvider>
-                  <SnackBarProvider>
-                    <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                      <DialogManager>
-                        <StrictMode>
-                          <PromiseRejectionEffect />
-                          <CommandMenuEffect />
-                          <GotoHotkeysEffect />
-                          <PageTitle title={pageTitle} />
-                          <Outlet />
-                        </StrictMode>
-                      </DialogManager>
-                    </DialogManagerScope>
-                  </SnackBarProvider>
-                </AppThemeProvider>
-              </PrefetchDataProvider>
-              <PageChangeEffect />
-            </ObjectMetadataItemsProvider>
-          </ApolloMetadataClientProvider>
-        </UserProvider>
-      </ClientConfigProvider>
-    </ApolloProvider>
+    <>
+      <ApolloProvider>
+        <ClientConfigProviderEffect />
+        <ClientConfigProvider>
+          <ChromeExtensionSidecarEffect />
+          <ChromeExtensionSidecarProvider>
+            <UserProviderEffect />
+            <UserProvider>
+              <ApolloMetadataClientProvider>
+                <ObjectMetadataItemsProvider>
+                  <PrefetchDataProvider>
+                    <AppThemeProvider>
+                      <SnackBarProvider>
+                        <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                          <DialogManager>
+                            <StrictMode>
+                              <PromiseRejectionEffect />
+                              <CommandMenuEffect />
+                              <GotoHotkeysEffect />
+                              <PageTitle title={pageTitle} />
+                              <Outlet />
+                            </StrictMode>
+                          </DialogManager>
+                        </DialogManagerScope>
+                      </SnackBarProvider>
+                    </AppThemeProvider>
+                  </PrefetchDataProvider>
+                  <PageChangeEffect />
+                </ObjectMetadataItemsProvider>
+              </ApolloMetadataClientProvider>
+            </UserProvider>
+          </ChromeExtensionSidecarProvider>
+        </ClientConfigProvider>
+      </ApolloProvider>
+    </>
   );
 };
 
@@ -128,16 +137,18 @@ const createRouter = (isBillingEnabled?: boolean) =>
         <Route element={<DefaultLayout />}>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
-          <Route path={AppPath.Invite} element={<SignInUp />} />
+          <Route path={AppPath.Invite} element={<Invite />} />
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
+          <Route path={AppPath.SyncEmails} element={<SyncEmails />} />
+          <Route path={AppPath.InviteTeam} element={<InviteTeam />} />
           <Route path={AppPath.PlanRequired} element={<ChooseYourPlan />} />
           <Route
             path={AppPath.PlanRequiredSuccess}
             element={<PaymentSuccess />}
           />
-          <Route path={AppPath.Index} element={<DefaultHomePage />} />
+          <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
@@ -168,16 +179,8 @@ const createRouter = (isBillingEnabled?: boolean) =>
                   element={<SettingsAccountsCalendars />}
                 />
                 <Route
-                  path={SettingsPath.AccountsCalendarsSettings}
-                  element={<SettingsAccountsCalendarsSettings />}
-                />
-                <Route
                   path={SettingsPath.AccountsEmails}
                   element={<SettingsAccountsEmails />}
-                />
-                <Route
-                  path={SettingsPath.AccountsEmailsInboxSettings}
-                  element={<SettingsAccountsEmailsInboxSettings />}
                 />
                 <Route
                   path={SettingsPath.Billing}
@@ -198,6 +201,10 @@ const createRouter = (isBillingEnabled?: boolean) =>
                 <Route
                   path={SettingsPath.Objects}
                   element={<SettingsObjects />}
+                />
+                <Route
+                  path={SettingsPath.ObjectOverview}
+                  element={<SettingsObjectOverview />}
                 />
                 <Route
                   path={SettingsPath.ObjectDetail}

@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/client';
+import { useState } from 'react';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
@@ -18,6 +19,7 @@ type useCreateOneRecordProps = {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   skipPostOptmisticEffect?: boolean;
+  shouldMatchRootQueryFilter?: boolean;
 };
 
 export const useCreateOneRecord = <
@@ -26,8 +28,10 @@ export const useCreateOneRecord = <
   objectNameSingular,
   recordGqlFields,
   skipPostOptmisticEffect = false,
+  shouldMatchRootQueryFilter,
 }: useCreateOneRecordProps) => {
   const apolloClient = useApolloClient();
+  const [loading, setLoading] = useState(false);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -50,6 +54,8 @@ export const useCreateOneRecord = <
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const createOneRecord = async (input: Partial<CreatedObjectRecord>) => {
+    setLoading(true);
+
     const idForCreation = input.id ?? v4();
 
     const sanitizedInput = {
@@ -72,6 +78,7 @@ export const useCreateOneRecord = <
         objectMetadataItem,
         recordsToCreate: [recordCreatedInCache],
         objectMetadataItems,
+        shouldMatchRootQueryFilter,
       });
     }
 
@@ -93,7 +100,10 @@ export const useCreateOneRecord = <
           objectMetadataItem,
           recordsToCreate: [record],
           objectMetadataItems,
+          shouldMatchRootQueryFilter,
         });
+
+        setLoading(false);
       },
     });
 
@@ -102,5 +112,6 @@ export const useCreateOneRecord = <
 
   return {
     createOneRecord,
+    loading,
   };
 };

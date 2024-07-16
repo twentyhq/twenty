@@ -3,8 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class ConnectedAccountRepository {
@@ -15,7 +14,7 @@ export class ConnectedAccountRepository {
   public async getAll(
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>[]> {
+  ): Promise<ConnectedAccountWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -31,7 +30,7 @@ export class ConnectedAccountRepository {
     connectedAccountIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>[]> {
+  ): Promise<ConnectedAccountWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -47,7 +46,7 @@ export class ConnectedAccountRepository {
     workspaceMemberId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>[] | undefined> {
+  ): Promise<ConnectedAccountWorkspaceEntity[] | undefined> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -62,12 +61,47 @@ export class ConnectedAccountRepository {
     return connectedAccounts;
   }
 
+  public async getAllByUserId(
+    userId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ConnectedAccountWorkspaceEntity[] | undefined> {
+    const schemaExists =
+      await this.workspaceDataSourceService.checkSchemaExists(workspaceId);
+
+    if (!schemaExists) {
+      return;
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const workspaceMember = (
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "userId" = $1`,
+        [userId],
+        workspaceId,
+        transactionManager,
+      )
+    )?.[0];
+
+    if (!workspaceMember) {
+      return;
+    }
+
+    return await this.getAllByWorkspaceMemberId(
+      workspaceMember.id,
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getAllByHandleAndWorkspaceMemberId(
     handle: string,
     workspaceMemberId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>[] | undefined> {
+  ): Promise<ConnectedAccountWorkspaceEntity[] | undefined> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -84,7 +118,7 @@ export class ConnectedAccountRepository {
 
   public async create(
     connectedAccount: Pick<
-      ObjectRecord<ConnectedAccountObjectMetadata>,
+      ConnectedAccountWorkspaceEntity,
       | 'id'
       | 'handle'
       | 'provider'
@@ -94,7 +128,7 @@ export class ConnectedAccountRepository {
     >,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>> {
+  ): Promise<ConnectedAccountWorkspaceEntity> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -135,7 +169,7 @@ export class ConnectedAccountRepository {
     connectedAccountId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata> | undefined> {
+  ): Promise<ConnectedAccountWorkspaceEntity | undefined> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -154,7 +188,7 @@ export class ConnectedAccountRepository {
     connectedAccountId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>> {
+  ): Promise<ConnectedAccountWorkspaceEntity> {
     const connectedAccount = await this.getById(
       connectedAccountId,
       workspaceId,
@@ -250,6 +284,42 @@ export class ConnectedAccountRepository {
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."connectedAccount" SET "authFailedAt" = NOW() WHERE "id" = $1`,
       [connectedAccountId],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async getConnectedAccountOrThrow(
+    workspaceId: string,
+    connectedAccountId: string,
+  ): Promise<ConnectedAccountWorkspaceEntity> {
+    const connectedAccount = await this.getById(
+      connectedAccountId,
+      workspaceId,
+    );
+
+    if (!connectedAccount) {
+      throw new Error(
+        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
+      );
+    }
+
+    return connectedAccount;
+  }
+
+  public async updateHandleAliases(
+    handleAliases: string[],
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "handleAliases" = $1 WHERE "id" = $2`,
+      // TODO: modify handleAliases to be of fieldmetadatatype array
+      [handleAliases.join(','), connectedAccountId],
       workspaceId,
       transactionManager,
     );

@@ -1,8 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { IconCheck } from 'twenty-ui';
-
-import { Tag } from '@/ui/display/tag/components/Tag';
-import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
+import { IconCheck, Tag, ThemeColor } from 'twenty-ui';
 
 import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
 
@@ -12,8 +9,9 @@ type MenuItemSelectTagProps = {
   selected: boolean;
   className?: string;
   onClick?: () => void;
-  color: ThemeColor;
+  color: ThemeColor | 'transparent';
   text: string;
+  variant?: 'solid' | 'outline';
 };
 
 export const MenuItemSelectTag = ({
@@ -22,6 +20,7 @@ export const MenuItemSelectTag = ({
   className,
   onClick,
   text,
+  variant = 'solid',
 }: MenuItemSelectTagProps) => {
   const theme = useTheme();
 
@@ -32,7 +31,7 @@ export const MenuItemSelectTag = ({
       selected={selected}
     >
       <StyledMenuItemLeftContent>
-        <Tag color={color} text={text} />
+        <Tag variant={variant} color={color} text={text} />
       </StyledMenuItemLeftContent>
       {selected && <IconCheck size={theme.icon.size.sm} />}
     </StyledMenuItemSelect>

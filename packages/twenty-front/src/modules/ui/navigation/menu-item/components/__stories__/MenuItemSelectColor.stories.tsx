@@ -4,14 +4,11 @@ import {
   CatalogDimension,
   CatalogOptions,
   CatalogStory,
+  ColorSampleVariant,
   ComponentDecorator,
-} from 'twenty-ui';
-
-import { ColorSampleVariant } from '@/ui/display/color/components/ColorSample';
-import {
   MAIN_COLOR_NAMES,
   ThemeColor,
-} from '@/ui/theme/constants/MainColorNames';
+} from 'twenty-ui';
 
 import { MenuItemSelectColor } from '../MenuItemSelectColor';
 

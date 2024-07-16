@@ -1,5 +1,24 @@
 import { Ref } from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+
+const StyledOuterContainer = styled.div<{
+  hasSoftFocus?: boolean;
+}>`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  padding-left: 6px;
+  width: 100%;
+`;
+
+const StyledInnerContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+`;
 
 export type EditableCellDisplayContainerProps = {
   softFocus?: boolean;
@@ -8,48 +27,20 @@ export type EditableCellDisplayContainerProps = {
   isHovered?: boolean;
 };
 
-const StyledEditableCellDisplayModeOuterContainer = styled.div<
-  Pick<EditableCellDisplayContainerProps, 'softFocus' | 'isHovered'>
->`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  overflow: hidden;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  width: 100%;
-  ${(props) =>
-    props.softFocus
-      ? `background: ${props.theme.background.transparent.secondary};
-      border-radius: ${props.theme.border.radius.sm};
-      outline: 1px solid ${props.theme.font.color.extraLight};`
-      : ''}
-`;
-
-const StyledEditableCellDisplayModeInnerContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  overflow: hidden;
-  width: 100%;
-`;
-
 export const RecordTableCellDisplayContainer = ({
   children,
   softFocus,
   onClick,
   scrollRef,
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
-  <StyledEditableCellDisplayModeOuterContainer
+  <StyledOuterContainer
     data-testid={
       softFocus ? 'editable-cell-soft-focus-mode' : 'editable-cell-display-mode'
     }
     onClick={onClick}
-    softFocus={softFocus}
     ref={scrollRef}
+    hasSoftFocus={softFocus}
   >
-    <StyledEditableCellDisplayModeInnerContainer>
-      {children}
-    </StyledEditableCellDisplayModeInnerContainer>
-  </StyledEditableCellDisplayModeOuterContainer>
+    <StyledInnerContainer>{children}</StyledInnerContainer>
+  </StyledOuterContainer>
 );

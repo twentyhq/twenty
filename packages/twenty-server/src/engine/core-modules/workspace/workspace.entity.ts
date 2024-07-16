@@ -10,7 +10,6 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import Stripe from 'stripe';
 
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -18,6 +17,8 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
@@ -63,6 +64,11 @@ export class Workspace {
   })
   appTokens: Relation<AppToken[]>;
 
+  @OneToMany(() => KeyValuePair, (keyValuePair) => keyValuePair.workspace, {
+    cascade: true,
+  })
+  keyValuePairs: Relation<KeyValuePair[]>;
+
   @OneToMany(() => User, (user) => user.defaultWorkspace)
   users: Relation<User[]>;
 
@@ -78,12 +84,8 @@ export class Workspace {
   @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
   featureFlags: Relation<FeatureFlagEntity[]>;
 
-  @Field(() => String)
-  @Column({ type: 'text', default: 'incomplete' })
-  subscriptionStatus: Stripe.Subscription.Status;
-
   @Field({ nullable: true })
-  currentBillingSubscription: BillingSubscription;
+  workspaceMembersCount: number;
 
   @Field()
   activationStatus: 'active' | 'inactive';
@@ -93,4 +95,10 @@ export class Workspace {
     (billingSubscription) => billingSubscription.workspace,
   )
   billingSubscriptions: Relation<BillingSubscription[]>;
+
+  @OneToMany(
+    () => PostgresCredentials,
+    (postgresCredentials) => postgresCredentials.workspace,
+  )
+  allPostgresCredentials: Relation<PostgresCredentials[]>;
 }

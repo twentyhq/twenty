@@ -1,5 +1,6 @@
 'use client';
 import styled from '@emotion/styled';
+import { usePathname } from 'next/navigation';
 
 import { StyledButton } from '@/app/_components/ui/layout/header/styled';
 import { Theme } from '@/app/_components/ui/theme/theme';
@@ -12,7 +13,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
 
-  h1 {
+  h2 {
     margin: 0px;
     font-size: ${Theme.font.size.lg};
   }
@@ -65,25 +66,20 @@ const StyledButtonContainer = styled.div`
   }
 `;
 
-interface ArticleEditContentProps {
-  articleTitle: string;
-}
-
-export default function ArticleEditContent({
-  articleTitle,
-}: ArticleEditContentProps) {
+export default function ArticleEditContent() {
+  const pathname = usePathname().replace('/section', '');
   return (
     <StyledContainer>
       <div>
-        <h1>Noticed something to modify?</h1>
+        <h2 id="edit">Noticed something to change?</h2>
         <p>
-          As an open-source company, we welcome contributions to our GitHub user
-          guide. Help us keep it up-to-date, accurate, and easy to understand by
+          As an open-source company, we welcome contributions through Github.
+          Help us keep it up-to-date, accurate, and easy to understand by
           getting involved and sharing your ideas!
         </p>
         <StyledButtonContainer>
           <a
-            href={`https://github.com/twentyhq/twenty/blob/main/packages/twenty-website/src/content/user-guide/${articleTitle}`}
+            href={`https://github.com/twentyhq/twenty/blob/main/packages/twenty-website/src/content${pathname}.mdx`}
             target="_blank"
             style={{ textDecoration: 'none' }}
           >

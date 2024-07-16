@@ -45,6 +45,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     onToggleColumnFilterState,
     onToggleColumnSortState,
     pendingRecordIdState,
+    hasUserSelectedAllRowsState,
   } = useRecordTableStates(recordTableId);
 
   const setAvailableTableColumns = useRecoilCallback(
@@ -99,7 +100,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const onEntityCountChange = useRecoilCallback(
     ({ snapshot }) =>
-      (count: number) => {
+      (count?: number) => {
         const onEntityCountChange = getSnapshotValue(
           snapshot,
           onEntityCountChangeState,
@@ -226,5 +227,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
     setPendingRecordId,
+    hasUserSelectedAllRowsState,
   };
 };

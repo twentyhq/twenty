@@ -1,16 +1,20 @@
 import { HttpException } from '@nestjs/common';
 
+import { GraphQLError } from 'graphql';
+
 import { ExceptionHandlerUser } from 'src/engine/integrations/exception-handler/interfaces/exception-handler-user.interface';
 
 import {
   AuthenticationError,
   BaseGraphQLError,
-  ForbiddenError,
-  ValidationError,
-  NotFoundError,
   ConflictError,
+  ErrorCode,
+  ForbiddenError,
   MethodNotAllowedError,
-} from 'src/engine/utils/graphql-errors.util';
+  NotFoundError,
+  TimeoutError,
+  ValidationError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 
 const graphQLPredefinedExceptions = {
@@ -19,8 +23,20 @@ const graphQLPredefinedExceptions = {
   403: ForbiddenError,
   404: NotFoundError,
   405: MethodNotAllowedError,
+  408: TimeoutError,
   409: ConflictError,
 };
+
+export const graphQLErrorCodesToFilter = [
+  ErrorCode.GRAPHQL_VALIDATION_FAILED,
+  ErrorCode.UNAUTHENTICATED,
+  ErrorCode.FORBIDDEN,
+  ErrorCode.NOT_FOUND,
+  ErrorCode.METHOD_NOT_ALLOWED,
+  ErrorCode.TIMEOUT,
+  ErrorCode.CONFLICT,
+  ErrorCode.BAD_USER_INPUT,
+];
 
 export const handleExceptionAndConvertToGraphQLError = (
   exception: Error,
@@ -32,7 +48,21 @@ export const handleExceptionAndConvertToGraphQLError = (
   return convertExceptionToGraphQLError(exception);
 };
 
-export const filterException = (exception: Error): boolean => {
+export const shouldFilterException = (exception: Error): boolean => {
+  if (
+    exception instanceof GraphQLError &&
+    (exception?.extensions?.http?.status ?? 500) < 500
+  ) {
+    return true;
+  }
+
+  if (
+    exception instanceof BaseGraphQLError &&
+    graphQLErrorCodesToFilter.includes(exception?.extensions?.code)
+  ) {
+    return true;
+  }
+
   if (exception instanceof HttpException && exception.getStatus() < 500) {
     return true;
   }
@@ -40,12 +70,12 @@ export const filterException = (exception: Error): boolean => {
   return false;
 };
 
-export const handleException = (
+const handleException = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,
 ): void => {
-  if (filterException(exception)) {
+  if (shouldFilterException(exception)) {
     return;
   }
 
@@ -58,11 +88,14 @@ export const convertExceptionToGraphQLError = (
   if (exception instanceof HttpException) {
     return convertHttpExceptionToGraphql(exception);
   }
+  if (exception instanceof BaseGraphQLError) {
+    return exception;
+  }
 
   return convertExceptionToGraphql(exception);
 };
 
-export const convertHttpExceptionToGraphql = (exception: HttpException) => {
+const convertHttpExceptionToGraphql = (exception: HttpException) => {
   const status = exception.getStatus();
   let error: BaseGraphQLError;
 
@@ -87,7 +120,10 @@ export const convertHttpExceptionToGraphql = (exception: HttpException) => {
 };
 
 export const convertExceptionToGraphql = (exception: Error) => {
-  const error = new BaseGraphQLError(exception.name, 'INTERNAL_SERVER_ERROR');
+  const error = new BaseGraphQLError(
+    exception.name,
+    ErrorCode.INTERNAL_SERVER_ERROR,
+  );
 
   error.stack = exception.stack;
   error.extensions['response'] = exception.message;

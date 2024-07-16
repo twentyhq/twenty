@@ -3,6 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FindManyOptions, Repository } from 'typeorm';
 
+import {
+  DataSourceException,
+  DataSourceExceptionCode,
+} from 'src/engine/metadata-modules/data-source/data-source.exception';
+
 import { DataSourceEntity } from './data-source.entity';
 
 @Injectable()
@@ -46,13 +51,29 @@ export class DataSourceService {
     });
   }
 
-  async getLastDataSourceMetadataFromWorkspaceIdOrFail(
+  async getLastDataSourceMetadataFromWorkspaceId(
     workspaceId: string,
-  ): Promise<DataSourceEntity> {
-    return this.dataSourceMetadataRepository.findOneOrFail({
+  ): Promise<DataSourceEntity | null> {
+    return this.dataSourceMetadataRepository.findOne({
       where: { workspaceId },
       order: { createdAt: 'DESC' },
     });
+  }
+
+  async getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    workspaceId: string,
+  ): Promise<DataSourceEntity> {
+    try {
+      return this.dataSourceMetadataRepository.findOneOrFail({
+        where: { workspaceId },
+        order: { createdAt: 'DESC' },
+      });
+    } catch (error) {
+      throw new DataSourceException(
+        `Data source not found for workspace ${workspaceId}: ${error}`,
+        DataSourceExceptionCode.DATA_SOURCE_NOT_FOUND,
+      );
+    }
   }
 
   async delete(workspaceId: string): Promise<void> {

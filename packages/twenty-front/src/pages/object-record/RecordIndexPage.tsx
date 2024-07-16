@@ -1,5 +1,5 @@
-import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useParams } from 'react-router-dom';
 import { v4 } from 'uuid';
 
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
@@ -35,7 +35,6 @@ export const RecordIndexPage = () => {
 
   const handleAddButtonClick = async () => {
     setPendingRecordId(v4());
-
     setSelectedTableCellEditMode(-1, 0);
     setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
   };

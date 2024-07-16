@@ -27,7 +27,6 @@ import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-p
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
 import { GenerateJwtInput } from 'src/engine/core-modules/auth/dto/generate-jwt.input';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
@@ -56,7 +55,6 @@ export class AuthResolver {
     private authService: AuthService,
     private tokenService: TokenService,
     private userService: UserService,
-    private userWorkspaceService: UserWorkspaceService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -84,9 +82,15 @@ export class AuthResolver {
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
   ) {
-    return await this.workspaceRepository.findOneBy({
+    const workspace = await this.workspaceRepository.findOneBy({
       inviteHash: workspaceInviteHashValidInput.inviteHash,
     });
+
+    if (!workspace) {
+      throw new BadRequestException('Workspace does not exist');
+    }
+
+    return workspace;
   }
 
   @UseGuards(CaptchaGuard)
@@ -134,6 +138,7 @@ export class AuthResolver {
     }
     const transientToken = await this.tokenService.generateTransientToken(
       workspaceMember.id,
+      user.id,
       user.defaultWorkspace.id,
     );
 

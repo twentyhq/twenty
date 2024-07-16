@@ -1,9 +1,10 @@
-import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
+import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -22,6 +23,7 @@ type SettingsDataModelObjectAboutFormValues = z.infer<
 
 type SettingsDataModelObjectAboutFormProps = {
   disabled?: boolean;
+  disableNameEdit?: boolean;
   objectMetadataItem?: ObjectMetadataItem;
 };
 
@@ -46,6 +48,7 @@ const StyledInputContainer = styled.div`
 
 export const SettingsDataModelObjectAboutForm = ({
   disabled,
+  disableNameEdit,
   objectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
   const { control } = useFormContext<SettingsDataModelObjectAboutFormValues>();
@@ -93,8 +96,9 @@ export const SettingsDataModelObjectAboutForm = ({
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                disabled={disabled}
+                disabled={disabled || disableNameEdit}
                 fullWidth
+                maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
               />
             )}
           />

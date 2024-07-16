@@ -4,6 +4,7 @@ export type WorkspaceMember = {
   __typename: 'WorkspaceMember';
   id: string;
   name: {
+    __typename?: 'FullName';
     firstName: string;
     lastName: string;
   };

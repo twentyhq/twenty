@@ -2,20 +2,23 @@ import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { TIME_BETWEEN_TEST_RUNS_IN_MS } from '~/testing/profiling/constants/TimeBetweenTestRunsInMs';
-import { currentProfilingRunIndexState } from '~/testing/profiling/states/currentProfilingRunState';
+import { currentProfilingRunIndexState } from '~/testing/profiling/states/currentProfilingRunIndexState';
 import { profilingQueueState } from '~/testing/profiling/states/profilingQueueState';
 import { profilingSessionRunsState } from '~/testing/profiling/states/profilingSessionRunsState';
 import { profilingSessionStatusState } from '~/testing/profiling/states/profilingSessionStatusState';
 import { getTestArray } from '~/testing/profiling/utils/getTestArray';
+import { sleep } from '~/utils/sleep';
 
 export const ProfilingQueueEffect = ({
   profilingId,
   numberOfTestsPerRun,
   numberOfRuns,
+  warmUpRounds,
 }: {
   profilingId: string;
   numberOfTestsPerRun: number;
   numberOfRuns: number;
+  warmUpRounds: number;
 }) => {
   const [currentProfilingRunIndex, setCurrentProfilingRunIndex] =
     useRecoilState(currentProfilingRunIndexState);
@@ -38,9 +41,9 @@ export const ProfilingQueueEffect = ({
         setCurrentProfilingRunIndex(0);
 
         const newTestRuns = [
-          'warm-up-1',
-          'warm-up-2',
-          'warm-up-3',
+          ...[
+            ...Array.from({ length: warmUpRounds }, (_, i) => `warm-up-${i}`),
+          ],
           ...[
             ...Array.from({ length: numberOfRuns }, (_, i) => `real-run-${i}`),
           ],
@@ -76,9 +79,13 @@ export const ProfilingQueueEffect = ({
             return;
           }
 
-          await new Promise((resolve) =>
-            setTimeout(resolve, TIME_BETWEEN_TEST_RUNS_IN_MS),
-          );
+          const timeInMs = profilingSessionRuns[
+            currentProfilingRunIndex
+          ].startsWith('warm-up')
+            ? TIME_BETWEEN_TEST_RUNS_IN_MS * 2
+            : TIME_BETWEEN_TEST_RUNS_IN_MS;
+
+          await sleep(timeInMs);
 
           const nextIndex = currentProfilingRunIndex + 1;
 
@@ -109,6 +116,7 @@ export const ProfilingQueueEffect = ({
     profilingSessionRuns,
     setProfilingSessionRuns,
     numberOfRuns,
+    warmUpRounds,
   ]);
 
   return <></>;

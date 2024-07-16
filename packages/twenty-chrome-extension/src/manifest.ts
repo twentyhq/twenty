@@ -2,10 +2,6 @@ import { defineManifest } from '@crxjs/vite-plugin';
 
 import packageData from '../package.json';
 
-const host_permissions =
-  process.env.VITE_MODE === 'development'
-    ? ['https://www.linkedin.com/*', 'http://localhost:3001/*']
-    : ['https://www.linkedin.com/*'];
 const external_sites =
   process.env.VITE_MODE === 'development'
     ? [`https://app.twenty.com/*`, `http://localhost:3001/*`]
@@ -26,7 +22,7 @@ export default defineManifest({
   action: {},
 
   //TODO: change this to a documenation page
-  options_page: 'options.html',
+  options_page: 'sidepanel.html',
 
   background: {
     service_worker: 'src/background/index.ts',
@@ -36,21 +32,27 @@ export default defineManifest({
   content_scripts: [
     {
       matches: ['https://www.linkedin.com/*'],
-      js: ['src/contentScript/index.ts'],
+      js: [
+        'src/contentScript/index.ts',
+        'src/contentScript/insertSettingsButton.ts',
+      ],
       run_at: 'document_end',
     },
   ],
 
   web_accessible_resources: [
     {
-      resources: ['options.html'],
+      resources: ['sidepanel.html', 'page-inaccessible.html'],
       matches: ['https://www.linkedin.com/*'],
     },
   ],
 
-  permissions: ['activeTab', 'storage', 'identity'],
+  permissions: ['activeTab', 'storage', 'identity', 'sidePanel', 'cookies'],
 
-  host_permissions: host_permissions,
+  // setting host permissions to all http connections will allow
+  // for people who host on their custom domain to get access to
+  // extension instead of white listing individual urls
+  host_permissions: ['https://*/*', 'http://*/*'],
 
   externally_connectable: {
     matches: external_sites,

@@ -1,12 +1,13 @@
-import { useRef } from 'react';
-import { Keys } from 'react-hotkeys-hook';
 import {
   autoUpdate,
   flip,
+  FloatingPortal,
   offset,
   Placement,
   useFloating,
 } from '@floating-ui/react';
+import { useRef } from 'react';
+import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
@@ -36,8 +37,10 @@ type DropdownProps = {
   dropdownPlacement?: Placement;
   dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: { x?: number; y?: number };
+  dropdownStrategy?: 'fixed' | 'absolute';
   disableBlur?: boolean;
   onClickOutside?: () => void;
+  usePortal?: boolean;
   onClose?: () => void;
   onOpen?: () => void;
 };
@@ -51,8 +54,10 @@ export const Dropdown = ({
   dropdownId,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
+  dropdownStrategy = 'absolute',
   dropdownOffset = { x: 0, y: 0 },
   disableBlur = false,
+  usePortal = false,
   onClickOutside,
   onClose,
   onOpen,
@@ -75,6 +80,7 @@ export const Dropdown = ({
     placement: dropdownPlacement,
     middleware: [flip(), ...offsetMiddlewares],
     whileElementsMounted: autoUpdate,
+    strategy: dropdownStrategy,
   });
 
   const handleHotkeyTriggered = () => {
@@ -82,7 +88,7 @@ export const Dropdown = ({
   };
 
   useListenClickOutside({
-    refs: [containerRef],
+    refs: [refs.floating],
     callback: () => {
       onClickOutside?.();
 
@@ -127,7 +133,20 @@ export const Dropdown = ({
             onHotkeyTriggered={handleHotkeyTriggered}
           />
         )}
-        {isDropdownOpen && (
+        {isDropdownOpen && usePortal && (
+          <FloatingPortal>
+            <DropdownMenu
+              disableBlur={disableBlur}
+              width={dropdownMenuWidth ?? dropdownWidth}
+              data-select-disable
+              ref={refs.setFloating}
+              style={floatingStyles}
+            >
+              {dropdownComponents}
+            </DropdownMenu>
+          </FloatingPortal>
+        )}
+        {isDropdownOpen && !usePortal && (
           <DropdownMenu
             disableBlur={disableBlur}
             width={dropdownMenuWidth ?? dropdownWidth}

@@ -1,13 +1,13 @@
-import { useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { AppPath } from '@/types/AppPath';
 import { useGenerateJwtMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { sleep } from '~/utils/sleep';
 
 export const useWorkspaceSwitching = () => {
-  const navigate = useNavigate();
   const setTokenPair = useSetRecoilState(tokenPairState);
   const [generateJWT] = useGenerateJwtMutation();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -30,8 +30,8 @@ export const useWorkspaceSwitching = () => {
 
     const { tokens } = jwt.data.generateJWT;
     setTokenPair(tokens);
-    navigate(`/objects/companies`);
-    window.location.reload();
+    await sleep(0); // This hacky workaround is necessary to ensure the tokens stored in the cookie are updated correctly.
+    window.location.href = AppPath.Index;
   };
 
   return { switchWorkspace };

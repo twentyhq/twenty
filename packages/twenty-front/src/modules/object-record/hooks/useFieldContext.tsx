@@ -19,6 +19,7 @@ export const useFieldContext = ({
   objectNameSingular,
   objectRecordId,
   customUseUpdateOneObjectHook,
+  overridenIsFieldEmpty,
 }: {
   clearable?: boolean;
   fieldMetadataName: string;
@@ -27,6 +28,7 @@ export const useFieldContext = ({
   objectNameSingular: string;
   objectRecordId: string;
   customUseUpdateOneObjectHook?: RecordUpdateHook;
+  overridenIsFieldEmpty?: boolean;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -69,13 +71,16 @@ export const useFieldContext = ({
               isLabelIdentifier,
               fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                 field: fieldMetadataItem,
+                showLabel: true,
                 position: fieldPosition,
                 objectMetadataItem,
+                labelWidth: 90,
               }),
               useUpdateRecord:
                 customUseUpdateOneObjectHook ?? useUpdateOneObjectMutation,
               hotkeyScope: InlineCellHotkeyScope.InlineCell,
               clearable,
+              overridenIsFieldEmpty,
             }}
           >
             {children}

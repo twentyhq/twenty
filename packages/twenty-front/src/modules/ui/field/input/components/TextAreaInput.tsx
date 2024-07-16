@@ -1,10 +1,10 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
+import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 import { isDefined } from '~/utils/isDefined';
 
 export type TextAreaInputProps = {
@@ -30,17 +30,17 @@ const StyledTextArea = styled(TextareaAutosize)`
   display: flex;
   justify-content: center;
   resize: none;
+  max-height: 400px;
   width: calc(100% - ${({ theme }) => theme.spacing(7)});
 `;
 
 const StyledTextAreaContainer = styled.div`
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   position: relative;
   width: 100%;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
-  background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: ${({ theme }) => theme.background.primary};
 `;
 
 const StyledLightIconButtonContainer = styled.div`

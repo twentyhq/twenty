@@ -1,12 +1,9 @@
-import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
+import { ReactNode, useState } from 'react';
+import { H1Title, H1TitleFontColor } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
-import {
-  H1Title,
-  H1TitleFontColor,
-} from '@/ui/display/typography/components/H1Title';
 import { Button, ButtonAccent } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -133,6 +130,7 @@ export const ConfirmationModal = ({
             title={deleteButtonText}
             disabled={!isValidValue}
             fullWidth
+            dataTestId="confirmation-modal-confirm-button"
           />
         </StyledConfirmationModal>
       </LayoutGroup>

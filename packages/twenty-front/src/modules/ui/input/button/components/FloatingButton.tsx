@@ -1,6 +1,6 @@
-import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Link } from 'react-router-dom';
 import { IconComponent } from 'twenty-ui';
 
 export type FloatingButtonSize = 'small' | 'medium';
@@ -16,12 +16,19 @@ export type FloatingButtonProps = {
   applyBlur?: boolean;
   disabled?: boolean;
   focus?: boolean;
+  to?: string;
 };
 
 const StyledButton = styled.button<
   Pick<
     FloatingButtonProps,
-    'size' | 'focus' | 'position' | 'applyBlur' | 'applyShadow' | 'position'
+    | 'size'
+    | 'focus'
+    | 'position'
+    | 'applyBlur'
+    | 'applyShadow'
+    | 'position'
+    | 'to'
   >
 >`
   align-items: center;
@@ -87,6 +94,7 @@ const StyledButton = styled.button<
   &:focus {
     outline: none;
   }
+  text-decoration: none;
 `;
 
 export const FloatingButton = ({
@@ -99,6 +107,7 @@ export const FloatingButton = ({
   applyShadow = true,
   disabled = false,
   focus = false,
+  to,
 }: FloatingButtonProps) => {
   const theme = useTheme();
   return (
@@ -110,6 +119,8 @@ export const FloatingButton = ({
       applyShadow={applyShadow}
       position={position}
       className={className}
+      to={to}
+      as={to ? Link : 'button'}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}

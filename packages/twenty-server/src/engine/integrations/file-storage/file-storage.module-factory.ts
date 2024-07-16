@@ -5,6 +5,7 @@ import {
   FileStorageModuleOptions,
   StorageDriverType,
 } from 'src/engine/integrations/file-storage/interfaces';
+import { resolveAbsolutePath } from 'src/utils/resolve-absolute-path';
 
 /**
  * FileStorage Module factory
@@ -23,7 +24,7 @@ export const fileStorageModuleFactory = async (
       return {
         type: StorageDriverType.Local,
         options: {
-          storagePath: process.cwd() + '/' + storagePath,
+          storagePath: resolveAbsolutePath(storagePath),
         },
       };
     }
@@ -31,15 +32,24 @@ export const fileStorageModuleFactory = async (
       const bucketName = environmentService.get('STORAGE_S3_NAME');
       const endpoint = environmentService.get('STORAGE_S3_ENDPOINT');
       const region = environmentService.get('STORAGE_S3_REGION');
+      const accessKeyId = environmentService.get('STORAGE_S3_ACCESS_KEY_ID');
+      const secretAccessKey = environmentService.get(
+        'STORAGE_S3_SECRET_ACCESS_KEY',
+      );
 
       return {
         type: StorageDriverType.S3,
         options: {
           bucketName: bucketName ?? '',
           endpoint: endpoint,
-          credentials: fromNodeProviderChain({
-            clientConfig: { region },
-          }),
+          credentials: accessKeyId
+            ? {
+                accessKeyId,
+                secretAccessKey,
+              }
+            : fromNodeProviderChain({
+                clientConfig: { region },
+              }),
           forcePathStyle: true,
           region: region ?? '',
         },
