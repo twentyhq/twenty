@@ -1,26 +1,27 @@
 import { Module } from '@nestjs/common';
 
+import { SortDirection } from '@ptc-org/nestjs-query-core';
 import {
   NestjsQueryGraphQLModule,
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-import { SortDirection } from '@ptc-org/nestjs-query-core';
 
-import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
-import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
-import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
+import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
+import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
+import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
+import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
-import { FieldMetadataService } from './field-metadata.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
+import { FieldMetadataService } from './field-metadata.service';
 
 import { CreateFieldInput } from './dtos/create-field.input';
 import { UpdateFieldInput } from './dtos/update-field.input';
@@ -61,6 +62,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
           },
           delete: { disabled: true },
           guards: [JwtAuthGuard],
+          interceptors: [FieldMetadataGraphqlApiExceptionInterceptor],
         },
       ],
     }),
