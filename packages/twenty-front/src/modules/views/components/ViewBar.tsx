@@ -41,7 +41,6 @@ export const ViewBar = ({
   const sortDropdownId = 'view-sort';
 
   const loading = useIsPrefetchLoading();
-
   if (!objectNamePlural) {
     return;
   }

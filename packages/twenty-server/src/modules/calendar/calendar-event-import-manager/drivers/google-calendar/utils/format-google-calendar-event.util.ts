@@ -1,7 +1,7 @@
 import { calendar_v3 as calendarV3 } from 'googleapis';
 
-import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 
 export const formatGoogleCalendarEvents = (
   events: calendarV3.Schema$Event[],
@@ -44,7 +44,6 @@ const formatGoogleCalendarEvent = (
     recurringEventExternalId: event.recurringEventId ?? '',
     participants:
       event.attendees?.map((attendee) => ({
-        iCalUID: event.iCalUID ?? '',
         handle: attendee.email ?? '',
         displayName: attendee.displayName ?? '',
         isOrganizer: attendee.organizer === true,

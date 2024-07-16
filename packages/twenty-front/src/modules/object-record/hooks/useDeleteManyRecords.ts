@@ -1,12 +1,14 @@
 import { useApolloClient } from '@apollo/client';
 
 import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
+import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 import { sleep } from '~/utils/sleep';
 import { capitalize } from '~/utils/string/capitalize';
@@ -24,6 +26,11 @@ type DeleteManyRecordsOptions = {
 export const useDeleteManyRecords = ({
   objectNameSingular,
 }: useDeleteOneRecordProps) => {
+  const apiConfig = useRecoilValue(apiConfigState);
+
+  const mutationPageSize =
+    apiConfig?.mutationMaximumAffectedRecords ?? DEFAULT_MUTATION_BATCH_SIZE;
+
   const apolloClient = useApolloClient();
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -48,16 +55,14 @@ export const useDeleteManyRecords = ({
     idsToDelete: string[],
     options?: DeleteManyRecordsOptions,
   ) => {
-    const numberOfBatches = Math.ceil(
-      idsToDelete.length / DEFAULT_MUTATION_BATCH_SIZE,
-    );
+    const numberOfBatches = Math.ceil(idsToDelete.length / mutationPageSize);
 
     const deletedRecords = [];
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
       const batchIds = idsToDelete.slice(
-        batchIndex * DEFAULT_MUTATION_BATCH_SIZE,
-        (batchIndex + 1) * DEFAULT_MUTATION_BATCH_SIZE,
+        batchIndex * mutationPageSize,
+        (batchIndex + 1) * mutationPageSize,
       );
 
       const deletedRecordsResponse = await apolloClient.mutate({
