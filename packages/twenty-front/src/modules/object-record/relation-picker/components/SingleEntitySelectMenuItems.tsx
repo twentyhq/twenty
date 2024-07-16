@@ -134,6 +134,7 @@ export const SingleEntitySelectMenuItems = ({
             );
             onEntitySelected(entitiesInDropdown[entityIndex]);
           }
+          handleResetSelectedPosition();
         }}
       >
         <DropdownMenuItemsContainer hasMaxHeight>

@@ -112,14 +112,20 @@ export const MultiRecordSelect = ({
                 selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
                 selectableItemIdArray={objectRecordsIdsMultiSelect}
                 hotkeyScope={relationPickerScopedId}
-                onEnter={onChange}
+                onEnter={(selectedId) => {
+                  onChange?.(selectedId);
+                  handleResetSelectedPosition();
+                }}
               >
                 {objectRecordsIdsMultiSelect?.map((recordId) => {
                   return (
                     <MultipleObjectRecordSelectItem
                       key={recordId}
                       objectRecordId={recordId}
-                      onChange={onChange}
+                      onChange={(recordId) => {
+                        onChange?.(recordId);
+                        handleResetSelectedPosition();
+                      }}
                     />
                   );
                 })}

@@ -137,6 +137,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
         value: newFilterValue,
       });
     }
+    handleResetSelectedPosition();
   };
 
   const optionsInDropdown = selectableOptions?.filter((option) =>

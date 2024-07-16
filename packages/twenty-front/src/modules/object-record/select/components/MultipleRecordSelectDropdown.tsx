@@ -106,6 +106,7 @@ export const MultipleRecordSelectDropdown = ({
           recordsInDropdown[record],
           !recordIsSelectedInDropwdown,
         );
+        handleResetSelectedPosition();
       }}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
@@ -115,9 +116,10 @@ export const MultipleRecordSelectDropdown = ({
               key={record.id}
               selected={record.isSelected}
               isKeySelected={record.id === selectedItemId}
-              onSelectChange={(newCheckedValue) =>
-                handleRecordSelectChange(record, newCheckedValue)
-              }
+              onSelectChange={(newCheckedValue) => {
+                handleResetSelectedPosition();
+                handleRecordSelectChange(record, newCheckedValue);
+              }}
               avatar={
                 <Avatar
                   avatarUrl={getImageAbsoluteURIOrBase64(record.avatarUrl)}
