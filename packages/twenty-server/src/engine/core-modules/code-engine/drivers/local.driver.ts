@@ -6,52 +6,40 @@ import { fork } from 'child_process';
 import { v4 } from 'uuid';
 
 import { CodeEngineDriver } from 'src/engine/core-modules/code-engine/drivers/interfaces/code-engine-driver.interface';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
-import { compileTypescript } from 'src/engine/core-modules/code-engine/utils/compile-typescript';
-import { SOURCE_FILE_NAME } from 'src/engine/core-modules/code-engine/drivers/constants/source-file-name';
 import { BUILD_FILE_NAME } from 'src/engine/core-modules/code-engine/drivers/constants/build-file-name';
+import { CommonDriver } from 'src/engine/core-modules/code-engine/drivers/common.driver';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
   fileUploadService: FileUploadService;
 }
 
-export class LocalDriver implements CodeEngineDriver {
+export class LocalDriver extends CommonDriver implements CodeEngineDriver {
   private readonly fileStorageService: FileStorageService;
   private readonly fileUploadService: FileUploadService;
 
   constructor(options: LocalDriverOptions) {
+    super();
     this.fileUploadService = options.fileUploadService;
     this.fileStorageService = options.fileStorageService;
   }
 
-  private _getFolderPath(functionMetadata: FunctionMetadataEntity) {
-    return join(
-      FileFolder.Function,
-      functionMetadata.workspaceId,
-      functionMetadata.id,
-    );
-  }
-
   async build(functionMetadata: FunctionMetadataEntity) {
-    const folderPath = this._getFolderPath(functionMetadata);
-    const fileStream = await this.fileStorageService.read({
-      folderPath,
-      filename: SOURCE_FILE_NAME,
-    });
-    const typescriptCode = await readFileContent(fileStream);
-    const javascriptCode = compileTypescript(typescriptCode);
+    const javascriptCode = await this.getCompiledCode(
+      functionMetadata,
+      this.fileStorageService,
+    );
 
     await this.fileUploadService.uploadFile({
       file: javascriptCode,
       filename: BUILD_FILE_NAME,
       mimeType: undefined,
-      fileFolder: folderPath,
+      fileFolder: this.getFolderPath(functionMetadata),
       forceName: true,
     });
   }
@@ -61,7 +49,7 @@ export class LocalDriver implements CodeEngineDriver {
     payload: object | undefined = undefined,
   ): Promise<object> {
     const fileStream = await this.fileStorageService.read({
-      folderPath: this._getFolderPath(functionMetadata),
+      folderPath: this.getFolderPath(functionMetadata),
       filename: BUILD_FILE_NAME,
     });
     const fileContent = await readFileContent(fileStream);

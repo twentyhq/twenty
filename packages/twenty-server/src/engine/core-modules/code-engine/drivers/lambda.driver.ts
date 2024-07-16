@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { join } from 'path';
 
 import {
   CreateFunctionCommand,
@@ -10,15 +9,12 @@ import {
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 
 import { CodeEngineDriver } from 'src/engine/core-modules/code-engine/drivers/interfaces/code-engine-driver.interface';
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { createZipFile } from 'src/engine/core-modules/code-engine/utils/create-zip-file';
 import { BuildDirectoryManager } from 'src/engine/core-modules/code-engine/utils/build-directory-manager';
 import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
-import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { compileTypescript } from 'src/engine/core-modules/code-engine/utils/compile-typescript';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
-import { SOURCE_FILE_NAME } from 'src/engine/core-modules/code-engine/drivers/constants/source-file-name';
+import { CommonDriver } from 'src/engine/core-modules/code-engine/drivers/common.driver';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -26,12 +22,13 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   role: string;
 }
 
-export class LambdaDriver implements CodeEngineDriver {
+export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
   private readonly lambdaClient: Lambda;
   private readonly lambdaRole: string;
   private readonly fileStorageService: FileStorageService;
 
   constructor(options: LambdaDriverOptions) {
+    super();
     const { region, role, ...lambdaOptions } = options;
 
     this.lambdaClient = new Lambda({ ...lambdaOptions, region });
@@ -40,17 +37,10 @@ export class LambdaDriver implements CodeEngineDriver {
   }
 
   async build(functionMetadata: FunctionMetadataEntity) {
-    const folderPath = join(
-      FileFolder.Function,
-      functionMetadata.workspaceId,
-      functionMetadata.id,
+    const javascriptCode = await this.getCompiledCode(
+      functionMetadata,
+      this.fileStorageService,
     );
-    const fileStream = await this.fileStorageService.read({
-      folderPath,
-      filename: SOURCE_FILE_NAME,
-    });
-    const typescriptCode = await readFileContent(fileStream);
-    const javascriptCode = compileTypescript(typescriptCode);
 
     const buildDirectoryManager = new BuildDirectoryManager();
 
