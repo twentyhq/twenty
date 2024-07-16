@@ -25,7 +25,6 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.BOOLEAN,
     FieldMetadataType.NUMBER,
     FieldMetadataType.NUMERIC,
-    FieldMetadataType.PROBABILITY,
     FieldMetadataType.RATING,
     FieldMetadataType.SELECT,
     FieldMetadataType.MULTI_SELECT,
