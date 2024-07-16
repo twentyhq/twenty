@@ -52,12 +52,15 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     return <SettingsAccountsListEmptyStateCard />;
   }
 
+  const hasMultipleAccounts = accounts.length > 1;
   return (
     <>
-      <TabList
-        tabListId={SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID}
-        tabs={tabs}
-      />
+      <div style={{ display: hasMultipleAccounts ? 'block' : 'none' }}>
+        <TabList
+          tabListId={SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID}
+          tabs={tabs}
+        />
+      </div>
       {messageChannels.map((messageChannel) => (
         <React.Fragment key={messageChannel.id}>
           {messageChannel.id === activeTabId && (

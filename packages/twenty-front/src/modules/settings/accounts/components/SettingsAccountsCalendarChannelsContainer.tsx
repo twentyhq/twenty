@@ -52,13 +52,16 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
   if (!calendarChannels.length) {
     return <SettingsAccountsListEmptyStateCard />;
   }
+  const hasMultipleAccounts = accounts.length > 1;
 
   return (
     <>
-      <TabList
-        tabListId={SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID}
-        tabs={tabs}
-      />
+      <div style={{ display: hasMultipleAccounts ? 'block' : 'none' }}>
+        <TabList
+          tabListId={SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID}
+          tabs={tabs}
+        />
+      </div>
       {calendarChannels.map((calendarChannel) => (
         <React.Fragment key={calendarChannel.id}>
           {calendarChannel.id === activeTabId && (
