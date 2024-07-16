@@ -7,11 +7,11 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 interface UpdateMessageChannelSyncStageEnumCommandOptions {
@@ -27,8 +27,7 @@ export class UpdateMessageChannelSyncStageEnumCommand extends CommandRunner {
     UpdateMessageChannelSyncStageEnumCommand.name,
   );
   constructor(
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
+    private readonly workspaceStatusService: WorkspaceStatusService,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
@@ -58,9 +57,7 @@ export class UpdateMessageChannelSyncStageEnumCommand extends CommandRunner {
     if (options.workspaceId) {
       workspaceIds = [options.workspaceId];
     } else {
-      workspaceIds = (await this.workspaceRepository.find()).map(
-        (workspace) => workspace.id,
-      );
+      workspaceIds = await this.workspaceStatusService.getActiveWorkspaceIds();
     }
 
     if (!workspaceIds.length) {
