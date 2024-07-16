@@ -51,13 +51,13 @@ export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
       lambdaHandler,
     } = await buildDirectoryManager.init();
 
-    fs.writeFileSync(javascriptFilePath, javascriptCode);
+    await fs.promises.writeFile(javascriptFilePath, javascriptCode);
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
     const params: CreateFunctionCommandInput = {
       Code: {
-        ZipFile: fs.readFileSync(lambdaZipPath),
+        ZipFile: await fs.promises.readFile(lambdaZipPath),
       },
       FunctionName: functionMetadata.id,
       Handler: lambdaHandler,

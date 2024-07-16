@@ -23,11 +23,11 @@ export class BuildDirectoryManager {
     const javascriptFilePath = join(sourceTemporaryDir, LAMBDA_ENTRY_FILE_NAME);
 
     if (!fs.existsSync(this.temporaryDir)) {
-      fs.mkdirSync(this.temporaryDir);
-      fs.mkdirSync(sourceTemporaryDir);
+      await fs.promises.mkdir(this.temporaryDir);
+      await fs.promises.mkdir(sourceTemporaryDir);
     } else {
       await fsExtra.emptyDir(this.temporaryDir);
-      fs.mkdirSync(sourceTemporaryDir);
+      await fs.promises.mkdir(sourceTemporaryDir);
     }
 
     return {
@@ -40,6 +40,6 @@ export class BuildDirectoryManager {
 
   async clean() {
     await fsExtra.emptyDir(this.temporaryDir);
-    fs.rmdirSync(this.temporaryDir);
+    await fs.promises.rmdir(this.temporaryDir);
   }
 }
