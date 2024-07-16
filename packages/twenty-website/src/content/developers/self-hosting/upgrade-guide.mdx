@@ -1,0 +1,21 @@
+---
+title: Upgrade guide
+icon: TbCloud
+image: /images/user-guide/notes/notes_header.png
+---
+
+## Usage
+
+This guide will help you transition from a version of twenty to another.
+
+## Upgrade from v0.21.0 to v0.22.0
+
+Run the following for each of your workspaces, replacing $workspaceId with your workspace id:
+```
+yarn command:prod workspace:sync-metadata -w $workspaceId -f  
+```
+```
+yarn command:prod upgrade-0.22 -w $workspaceId
+```
+
+<ArticleEditContent></ArticleEditContent>
