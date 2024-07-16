@@ -6,7 +6,9 @@ import {
   OnApplicationShutdown,
   Provider,
 } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import {
   TwentyORMModuleAsyncOptions,
@@ -70,6 +72,7 @@ export class TwentyORMCoreModule
         useFactory: this.createWorkspaceDataSource,
         inject: [
           WorkspaceCacheStorageService,
+          getRepositoryToken(ObjectMetadataEntity, 'metadata'),
           EntitySchemaFactory,
           ScopedWorkspaceContextFactory,
           WorkspaceDatasourceFactory,
@@ -97,6 +100,7 @@ export class TwentyORMCoreModule
         useFactory: this.createWorkspaceDataSource,
         inject: [
           WorkspaceCacheStorageService,
+          getRepositoryToken(ObjectMetadataEntity, 'metadata'),
           EntitySchemaFactory,
           ScopedWorkspaceContextFactory,
           WorkspaceDatasourceFactory,
@@ -117,6 +121,7 @@ export class TwentyORMCoreModule
 
   static async createWorkspaceDataSource(
     workspaceCacheStorageService: WorkspaceCacheStorageService,
+    objectMetadataRepository: Repository<ObjectMetadataEntity>,
     entitySchemaFactory: EntitySchemaFactory,
     scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     workspaceDataSourceFactory: WorkspaceDatasourceFactory,
@@ -129,16 +134,33 @@ export class TwentyORMCoreModule
       return null;
     }
 
+    console.log('workspaceId', workspaceId);
+    console.log('cacheVersion', cacheVersion);
+
     return workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${cacheVersion}`,
       async () => {
-        const objectMetadataCollection =
+        let objectMetadataCollection =
           await workspaceCacheStorageService.getObjectMetadataCollection(
             workspaceId,
           );
 
         if (!objectMetadataCollection) {
-          throw new Error('Object metadata collection not found');
+          objectMetadataCollection = await objectMetadataRepository.find({
+            where: { workspaceId },
+            relations: [
+              'fields.object',
+              'fields',
+              'fields.fromRelationMetadata',
+              'fields.toRelationMetadata',
+              'fields.fromRelationMetadata.toObjectMetadata',
+            ],
+          });
+
+          await workspaceCacheStorageService.setObjectMetadataCollection(
+            workspaceId,
+            objectMetadataCollection,
+          );
         }
 
         const entities = await Promise.all(
