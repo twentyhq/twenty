@@ -1,11 +1,11 @@
 import { Readable } from 'stream';
 
 export const readFileContent = async (stream: Readable): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = [];
+  const chunks: Buffer[] = [];
 
-    stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-    stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-    stream.on('error', (err) => reject(err));
-  });
+  for await (const chunk of stream) {
+    chunks.push(Buffer.from(chunk));
+  }
+
+  return Buffer.concat(chunks).toString('utf8');
 };
