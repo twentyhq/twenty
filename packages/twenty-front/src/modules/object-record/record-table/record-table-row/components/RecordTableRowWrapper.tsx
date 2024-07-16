@@ -1,10 +1,11 @@
-import { ReactNode, useContext } from 'react';
-import { useInView } from 'react-intersection-observer';
 import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
+import { ReactNode, useContext, useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useRecoilValue } from 'recoil';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
@@ -23,6 +24,7 @@ export const RecordTableRowWrapper = ({
   children: ReactNode;
 }) => {
   const { objectMetadataItem } = useContext(RecordTableContext);
+  const { onIndexRecordsLoaded } = useContext(RecordIndexEventContext);
 
   const theme = useTheme();
 
@@ -37,6 +39,13 @@ export const RecordTableRowWrapper = ({
     ),
     rootMargin: '1000px',
   });
+
+  // TODO: find a better way to emit this event
+  useEffect(() => {
+    if (inView) {
+      onIndexRecordsLoaded?.();
+    }
+  }, [inView, onIndexRecordsLoaded]);
 
   return (
     <Draggable key={recordId} draggableId={recordId} index={rowIndex}>

@@ -80,7 +80,7 @@ export const Favorites = () => {
                         label={labelIdentifier}
                         Icon={() => (
                           <StyledAvatar
-                            entityId={recordId}
+                            placeholderColorSeed={recordId}
                             avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl)}
                             type={avatarType}
                             placeholder={labelIdentifier}

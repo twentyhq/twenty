@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { TimelineActivityContext } from '@/activities/timelineActivities/contexts/TimelineActivityContext';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
+import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -35,16 +36,35 @@ export const RecordShowPage = () => {
     parameters.objectRecordId ?? '',
   );
 
+  const {
+    viewName,
+    hasPreviousRecord,
+    hasNextRecord,
+    navigateToPreviousRecord,
+    navigateToNextRecord,
+    navigateToIndexView,
+    isLoadingPagination,
+  } = useRecordShowPagePagination(
+    parameters.objectNameSingular ?? '',
+    parameters.objectRecordId ?? '',
+  );
+
   return (
     <RecordFieldValueSelectorContextProvider>
       <RecordValueSetterEffect recordId={objectRecordId} />
       <PageContainer>
         <PageTitle title={pageTitle} />
         <PageHeader
-          title={pageName ?? ''}
-          hasBackButton
+          title={viewName}
+          hasPaginationButtons
+          hasClosePageButton
+          onClosePage={navigateToIndexView}
+          hasPreviousRecord={hasPreviousRecord}
+          navigateToPreviousRecord={navigateToPreviousRecord}
+          hasNextRecord={hasNextRecord}
+          navigateToNextRecord={navigateToNextRecord}
           Icon={headerIcon}
-          loading={loading}
+          loading={loading || isLoadingPagination}
         >
           <>
             <PageFavoriteButton

@@ -34,20 +34,20 @@ export const thirdRequestLastCursor = peopleMockWithIdsOnly.edges[mockPageSize *
 
 export const variablesFirstRequest = {
   filter: undefined,
-  limit: undefined,
+  limit: mockPageSize,
   orderBy: undefined
 };
 
 export const variablesSecondRequest = {
   filter: undefined,
-  limit: undefined,
+  limit: mockPageSize,
   orderBy: undefined,
   lastCursor: firstRequestLastCursor
 };
 
 export const variablesThirdRequest = {
   filter: undefined,
-  limit: undefined,
+  limit: mockPageSize,
   orderBy: undefined,
   lastCursor: secondRequestLastCursor
 }

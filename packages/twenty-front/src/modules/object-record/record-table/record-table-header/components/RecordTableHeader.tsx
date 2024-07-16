@@ -39,6 +39,16 @@ const StyledTableHead = styled.thead<{
       position: sticky;
       left: 39px;
       z-index: 5;
+      &::after {
+        content: '';
+        position: absolute;
+        top: -1px;
+        height: calc(100% + 2px);
+        width: 4px;
+        right: 0px;
+        box-shadow: ${({ theme }) => theme.boxShadow.light};
+        clip-path: inset(0px -4px 0px 0px);
+      }
       @media (max-width: ${MOBILE_VIEWPORT}px) {
         width: 35px;
         max-width: 35px;

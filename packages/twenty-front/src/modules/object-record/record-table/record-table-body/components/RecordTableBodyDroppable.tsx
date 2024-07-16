@@ -25,6 +25,16 @@ const StyledTbody = styled.tbody<{
       position: sticky;
       left: 39px;
       z-index: 5;
+      &::after {
+        content: '';
+        position: absolute;
+        top: -1px;
+        height: calc(100% + 2px);
+        width: 4px;
+        right: 0px;
+        box-shadow: ${({ theme }) => theme.boxShadow.light};
+        clip-path: inset(0px -4px 0px 0px);
+      }
     }
   }
 `;
