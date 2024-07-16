@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
@@ -12,11 +13,16 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+
+export enum KeyValuePairType {
+  USER_VAR = 'USER_VAR',
+  FEATURE_FLAG = 'FEATURE_FLAG',
+  SYSTEM_VAR = 'SYSTEM_VAR',
+}
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
 @ObjectType('KeyValuePair')
@@ -59,6 +65,14 @@ export class KeyValuePair {
   @Field(() => String, { nullable: true })
   @Column({ nullable: true, type: 'text' })
   value: string;
+
+  @Field(() => KeyValuePairType)
+  @Column({
+    type: 'enum',
+    enum: Object.values(KeyValuePairType),
+    nullable: false,
+  })
+  type: KeyValuePairType;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

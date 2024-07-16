@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { IsNull, Repository } from 'typeorm';
 
-import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import {
+  KeyValuePair,
+  KeyValuePairType,
+} from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 @Injectable()
 export class UserVarService {
@@ -18,7 +21,7 @@ export class UserVarService {
       where: {
         userId: IsNull(),
         workspaceId,
-        type: 'userVar',
+        type: KeyValuePairType.USER_VAR,
       },
     });
 
@@ -32,7 +35,7 @@ export class UserVarService {
       select: ['key', 'value'],
       where: {
         userId,
-        type: 'userVar',
+        type: KeyValuePairType.USER_VAR,
       },
     });
 
@@ -41,7 +44,10 @@ export class UserVarService {
     );
   }
 
-  async getUserVars(userId: string, workspaceId): Promise<Map<string, any>> {
+  async getUserVars(
+    userId: string,
+    workspaceId: string,
+  ): Promise<Map<string, any>> {
     const workspaceVar = await this.getWorkspaceUserVar(workspaceId);
     const userVar = await this.getUserVar(userId);
 
