@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 
 export type RecordTableRowContextProps = {
   pathToShowPage: string;
@@ -8,6 +9,9 @@ export type RecordTableRowContextProps = {
   isSelected: boolean;
   isReadOnly: boolean;
   isPendingRow?: boolean;
+  isDragging: boolean;
+  dragHandleProps: DraggableProvidedDragHandleProps | null;
+  inView?: boolean;
 };
 
 export const RecordTableRowContext = createContext<RecordTableRowContextProps>(

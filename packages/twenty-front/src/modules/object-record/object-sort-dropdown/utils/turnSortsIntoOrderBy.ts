@@ -2,7 +2,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { hasPositionField } from '@/object-metadata/utils/hasPositionField';
 import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
-import { Field } from '~/generated/graphql';
+import { Field, FieldMetadataType } from '~/generated/graphql';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -13,7 +13,8 @@ export const turnSortsIntoOrderBy = (
   objectMetadataItem: ObjectMetadataItem,
   sorts: Sort[],
 ): RecordGqlOperationOrderBy => {
-  const fields: Pick<Field, 'id' | 'name'>[] = objectMetadataItem?.fields ?? [];
+  const fields: Pick<Field, 'id' | 'name' | 'type'>[] =
+    objectMetadataItem?.fields ?? [];
   const fieldsById = mapArrayToObject(fields, ({ id }) => id);
   const sortsOrderBy = sorts
     .map((sort) => {
@@ -26,7 +27,7 @@ export const turnSortsIntoOrderBy = (
       const direction: OrderBy =
         sort.direction === 'asc' ? 'AscNullsFirst' : 'DescNullsLast';
 
-      return { [correspondingField.name]: direction };
+      return getOrderByForFieldMetadataType(correspondingField, direction);
     })
     .filter(isDefined);
 
@@ -35,4 +36,22 @@ export const turnSortsIntoOrderBy = (
   }
 
   return sortsOrderBy;
+};
+
+const getOrderByForFieldMetadataType = (
+  field: Pick<Field, 'id' | 'name' | 'type'>,
+  direction: OrderBy,
+) => {
+  switch (field.type) {
+    case FieldMetadataType.FullName:
+      return {
+        [field.name]: {
+          firstName: direction,
+          lastName: direction,
+        },
+      };
+
+    default:
+      return { [field.name]: direction };
+  }
 };

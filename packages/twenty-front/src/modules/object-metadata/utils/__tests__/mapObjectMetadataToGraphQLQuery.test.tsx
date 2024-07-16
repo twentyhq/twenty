@@ -65,6 +65,16 @@ annualRecurringRevenue
 }
 createdAt
 address
+{
+  addressStreet1
+  addressStreet2
+  addressCity
+  addressState
+  addressCountry
+  addressPostcode
+  addressLat
+  addressLng
+}
 updatedAt
 name
 accountOwnerId

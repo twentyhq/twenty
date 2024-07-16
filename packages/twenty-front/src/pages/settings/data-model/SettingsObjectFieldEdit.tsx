@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconArchive, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -22,6 +22,7 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
@@ -103,10 +104,8 @@ export const SettingsObjectFieldEdit = () => {
 
   if (!activeObjectMetadataItem || !activeMetadataField) return null;
 
-  const canSave =
-    formConfig.formState.isValid &&
-    formConfig.formState.isDirty &&
-    !formConfig.formState.isSubmitting;
+  const { isDirty, isValid, isSubmitting } = formConfig.formState;
+  const canSave = isDirty && isValid && !isSubmitting;
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: activeMetadataField,
@@ -189,6 +188,7 @@ export const SettingsObjectFieldEdit = () => {
               {shouldDisplaySaveAndCancel && (
                 <SaveAndCancelButtons
                   isSaveDisabled={!canSave}
+                  isCancelDisabled={isSubmitting}
                   onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
                   onSave={formConfig.handleSubmit(handleSave)}
                 />
@@ -202,6 +202,7 @@ export const SettingsObjectFieldEdit = () => {
               <SettingsDataModelFieldAboutForm
                 disabled={!activeMetadataField.isCustom}
                 fieldMetadataItem={activeMetadataField}
+                maxLength={FIELD_NAME_MAXIMUM_LENGTH}
               />
             </Section>
             <Section>
@@ -212,6 +213,7 @@ export const SettingsObjectFieldEdit = () => {
               <StyledSettingsObjectFieldTypeSelect
                 disabled
                 fieldMetadataItem={activeMetadataField}
+                excludedFieldTypes={[FieldMetadataType.Link]}
               />
               <SettingsDataModelFieldSettingsFormCard
                 disableCurrencyForm

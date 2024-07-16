@@ -47,9 +47,6 @@ export class WorkspaceMetadataUpdaterService {
         storage.objectMetadataCreateCollection.map((objectMetadata) => ({
           ...objectMetadata,
           isActive: true,
-          fields: objectMetadata.fields.map((field) =>
-            this.prepareFieldMetadataForCreation(field),
-          ),
         })) as DeepPartial<ObjectMetadataEntity>[],
       );
     const identifiers = createdPartialObjectMetadataCollection.map(
@@ -128,16 +125,6 @@ export class WorkspaceMetadataUpdaterService {
     updatedFieldMetadataCollection: FieldMetadataUpdate[];
   }> {
     const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
-
-    /**
-     * Create field metadata
-     */
-    const createdFieldMetadataCollection = await fieldMetadataRepository.save(
-      storage.fieldMetadataCreateCollection.map((field) =>
-        this.prepareFieldMetadataForCreation(field),
-      ) as DeepPartial<FieldMetadataEntity>[],
-    );
-
     /**
      * Update field metadata
      */
@@ -147,6 +134,15 @@ export class WorkspaceMetadataUpdaterService {
       'objectMetadataId',
       'workspaceId',
     ]);
+
+    /**
+     * Create field metadata
+     */
+    const createdFieldMetadataCollection = await fieldMetadataRepository.save(
+      storage.fieldMetadataCreateCollection.map((field) =>
+        this.prepareFieldMetadataForCreation(field),
+      ) as DeepPartial<FieldMetadataEntity>[],
+    );
 
     /**
      * Delete field metadata

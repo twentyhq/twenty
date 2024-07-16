@@ -24,7 +24,7 @@ const StyledDropdownMenu = styled.div<{
   display: flex;
 
   flex-direction: column;
-  z-index: 1;
+  z-index: 30;
   width: ${({ width = 160 }) =>
     typeof width === 'number' ? `${width}px` : width};
 `;

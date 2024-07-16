@@ -6,10 +6,12 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingMessageChannelSyncStatusMonitoringCronCommand } from 'src/modules/messaging/monitoring/crons/commands/messaging-message-channel-sync-status-monitoring.cron.command';
 import { MessagingMessageChannelSyncStatusMonitoringCronJob } from 'src/modules/messaging/monitoring/crons/jobs/messaging-message-channel-sync-status-monitoring.cron';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 
 @Module({
   imports: [
     MessagingCommonModule,
+    BillingModule,
     TypeOrmModule.forFeature([Workspace], 'core'),
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
   ],

@@ -62,12 +62,9 @@
     "storybook:build": {
       "options": {
         "env": { "NODE_OPTIONS": "--max_old_space_size=5000" }
-      },
-      "configurations": {
-        "test": {}
       }
     },
-    "storybook:dev": {
+    "storybook:serve:dev": {
       "options": { "port": 6006 },
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
@@ -76,11 +73,8 @@
         "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
       }
     },
-    "storybook:static": {
-      "options": { "port": 6006 },
-      "configurations": {
-        "test": {}
-      }
+    "storybook:serve:static": {
+      "options": { "port": 6006 }
     },
     "storybook:coverage": {
       "configurations": {
@@ -100,18 +94,10 @@
         "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
       }
     },
-    "storybook:test:nocoverage": {
-      "configurations": {
-        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
-        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
-        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
-      }
-    },
-    "storybook:static:test": {
+    "storybook:serve-and-test:static": {
       "options": {
         "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --configuration=test --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:serve:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
         ],
         "port": 6006
       },
@@ -122,7 +108,15 @@
         "performance": { "scope": "performance" }
       }
     },
-    "storybook:performance:test": {},
+    "storybook:serve-and-test:static:performance": {},
+    "storybook:test:no-coverage": {
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
+      }
+    },
     "graphql:generate": {
       "executor": "nx:run-commands",
       "defaultConfiguration": "data",

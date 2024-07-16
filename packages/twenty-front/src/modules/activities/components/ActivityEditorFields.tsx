@@ -86,14 +86,6 @@ export const ActivityEditorFields = ({
       customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
     });
 
-  const { FieldContextProvider: ActivityTargetsContextProvider } =
-    useFieldContext({
-      objectNameSingular: CoreObjectNameSingular.Activity,
-      objectRecordId: activityId,
-      fieldMetadataName: 'activityTargets',
-      fieldPosition: 3,
-    });
-
   return (
     <StyledPropertyBox>
       {activity.type === 'Task' &&
@@ -112,16 +104,12 @@ export const ActivityEditorFields = ({
             </AssigneeFieldContextProvider>
           </>
         )}
-      {ActivityTargetsContextProvider &&
-        isDefined(activityFromCache) &&
-        isRightDrawerAnimationCompleted && (
-          <ActivityTargetsContextProvider>
-            <ActivityTargetsInlineCell
-              activity={activityFromCache}
-              maxWidth={340}
-            />
-          </ActivityTargetsContextProvider>
-        )}
+      {isDefined(activityFromCache) && isRightDrawerAnimationCompleted && (
+        <ActivityTargetsInlineCell
+          activity={activityFromCache}
+          maxWidth={340}
+        />
+      )}
     </StyledPropertyBox>
   );
 };

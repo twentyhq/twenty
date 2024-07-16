@@ -1,6 +1,6 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -40,8 +40,8 @@ export const SettingsNewObject = () => {
     resolver: zodResolver(newObjectFormSchema),
   });
 
-  const canSave =
-    formConfig.formState.isValid && !formConfig.formState.isSubmitting;
+  const { isValid, isSubmitting } = formConfig.formState;
+  const canSave = isValid && !isSubmitting;
 
   const handleSave = async (
     formValues: SettingsDataModelNewObjectFormValues,
@@ -84,6 +84,7 @@ export const SettingsNewObject = () => {
             />
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
+              isCancelDisabled={isSubmitting}
               onCancel={() => navigate(settingsObjectsPagePath)}
               onSave={formConfig.handleSubmit(handleSave)}
             />

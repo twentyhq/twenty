@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
+import { useContext, useState } from 'react';
 import { IconDotsVertical, Tag } from 'twenty-ui';
 
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
+import { RecordBoardColumnDefinitionType } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
@@ -79,14 +80,23 @@ export const RecordBoardColumnHeader = () => {
       >
         <Tag
           onClick={handleBoardColumnMenuOpen}
-          color={columnDefinition.color}
+          variant={
+            columnDefinition.type === RecordBoardColumnDefinitionType.Value
+              ? 'solid'
+              : 'outline'
+          }
+          color={
+            columnDefinition.type === RecordBoardColumnDefinitionType.Value
+              ? columnDefinition.color
+              : 'transparent'
+          }
           text={columnDefinition.title}
         />
         {!!boardColumnTotal && <StyledAmount>${boardColumnTotal}</StyledAmount>}
         {!isHeaderHovered && (
           <StyledNumChildren>{recordCount}</StyledNumChildren>
         )}
-        {isHeaderHovered && (
+        {isHeaderHovered && columnDefinition.actions.length > 0 && (
           <StyledHeaderActions>
             <LightIconButton
               accent="tertiary"
@@ -96,7 +106,7 @@ export const RecordBoardColumnHeader = () => {
           </StyledHeaderActions>
         )}
       </StyledHeader>
-      {isBoardColumnMenuOpen && (
+      {isBoardColumnMenuOpen && columnDefinition.actions.length > 0 && (
         <RecordBoardColumnDropdownMenu
           onClose={handleBoardColumnMenuClose}
           stageId={columnDefinition.id}

@@ -23,7 +23,7 @@ export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
     fieldMetadataId: '20202020-ad10-4117-a039-3f04b7a5f939',
     label: 'Address',
     iconName: 'IconMap',
-    type: 'TEXT',
+    type: 'ADDRESS',
   },
   {
     fieldMetadataId: '20202020-0739-495d-8e70-c0807f6b2268',

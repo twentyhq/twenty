@@ -20,14 +20,18 @@ import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-impo
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 import { MessagingMessageImportManagerMessageChannelListener } from 'src/modules/messaging/message-import-manager/listeners/messaging-import-manager-message-channel.listener';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
 @Module({
   imports: [
+    WorkspaceDataSourceModule,
     MessagingGmailDriverModule,
     MessagingCommonModule,
     TypeOrmModule.forFeature([Workspace], 'core'),
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
     TwentyORMModule.forFeature([MessageChannelWorkspaceEntity]),
+    BillingModule,
   ],
   providers: [
     MessagingMessageListFetchCronCommand,

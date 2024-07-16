@@ -1,10 +1,12 @@
 import { useMemo, useRef } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Avatar, IconNotes } from 'twenty-ui';
+import { Avatar, IconNotes, IconSparkles } from 'twenty-ui';
 
+import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
+import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -21,6 +23,7 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
@@ -248,8 +251,27 @@ export const CommandMenu = () => {
     callback: closeCommandMenu,
   });
 
-  const selectableItemIds = matchingCreateCommand
+  const isCopilotEnabled = useIsFeatureEnabled('IS_COPILOT_ENABLED');
+  const setCopilotQuery = useSetRecoilState(copilotQueryState);
+  const openCopilotRightDrawer = useOpenCopilotRightDrawer();
+
+  const copilotCommand: Command = {
+    id: 'copilot',
+    to: '', // TODO
+    Icon: IconSparkles,
+    label: 'Open Copilot',
+    type: CommandType.Navigate,
+    onCommandClick: () => {
+      setCopilotQuery(commandMenuSearch);
+      openCopilotRightDrawer();
+    },
+  };
+
+  const copilotCommands: Command[] = isCopilotEnabled ? [copilotCommand] : [];
+
+  const selectableItemIds = copilotCommands
     .map((cmd) => cmd.id)
+    .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people.map((person) => person.id))
     .concat(companies.map((company) => company.id))
@@ -275,6 +297,7 @@ export const CommandMenu = () => {
                   hotkeyScope={AppHotkeyScope.CommandMenu}
                   onEnter={(itemId) => {
                     const command = [
+                      ...copilotCommands,
                       ...commandMenuCommands,
                       ...otherCommands,
                     ].find((cmd) => cmd.id === itemId);
@@ -292,6 +315,22 @@ export const CommandMenu = () => {
                     !activities.length && (
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
+                  {isCopilotEnabled && (
+                    <CommandGroup heading="Copilot">
+                      <SelectableItem itemId={copilotCommand.id}>
+                        <CommandMenuItem
+                          id={copilotCommand.id}
+                          Icon={copilotCommand.Icon}
+                          label={`${copilotCommand.label} ${
+                            commandMenuSearch.length > 2
+                              ? `"${commandMenuSearch}"`
+                              : ''
+                          }`}
+                          onClick={copilotCommand.onCommandClick}
+                        />
+                      </SelectableItem>
+                    </CommandGroup>
+                  )}
                   <CommandGroup heading="Create">
                     {matchingCreateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>

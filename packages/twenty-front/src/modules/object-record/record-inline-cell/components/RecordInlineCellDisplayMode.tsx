@@ -1,13 +1,16 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
+import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { RecordInlineCellContainerProps } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
+import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
+
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
     RecordInlineCellDisplayModeProps,
-    | 'isDisplayModeContentEmpty'
-    | 'disableHoverEffect'
-    | 'isDisplayModeFixHeight'
-    | 'isHovered'
+    'disableHoverEffect' | 'isDisplayModeFixHeight' | 'isHovered'
   >
 >`
   align-items: center;
@@ -51,33 +54,50 @@ const StyledEmptyField = styled.div`
 `;
 
 type RecordInlineCellDisplayModeProps = {
-  isDisplayModeContentEmpty?: boolean;
   disableHoverEffect?: boolean;
   isDisplayModeFixHeight?: boolean;
   isHovered?: boolean;
   emptyPlaceholder?: string;
-};
+} & Pick<RecordInlineCellContainerProps, 'buttonIcon' | 'editModeContentOnly'>;
 
 export const RecordInlineCellDisplayMode = ({
   children,
-  isDisplayModeContentEmpty,
   disableHoverEffect,
   isDisplayModeFixHeight,
   emptyPlaceholder = 'Empty',
   isHovered,
-}: React.PropsWithChildren<RecordInlineCellDisplayModeProps>) => (
-  <StyledRecordInlineCellNormalModeOuterContainer
-    isDisplayModeContentEmpty={isDisplayModeContentEmpty}
-    disableHoverEffect={disableHoverEffect}
-    isDisplayModeFixHeight={isDisplayModeFixHeight}
-    isHovered={isHovered}
-  >
-    <StyledRecordInlineCellNormalModeInnerContainer>
-      {isDisplayModeContentEmpty || !children ? (
-        <StyledEmptyField>{emptyPlaceholder}</StyledEmptyField>
-      ) : (
-        children
-      )}
-    </StyledRecordInlineCellNormalModeInnerContainer>
-  </StyledRecordInlineCellNormalModeOuterContainer>
-);
+  buttonIcon,
+  editModeContentOnly,
+}: React.PropsWithChildren<RecordInlineCellDisplayModeProps>) => {
+  const { isFocused } = useFieldFocus();
+  const isDisplayModeContentEmpty = useIsFieldEmpty();
+  const showEditButton =
+    buttonIcon &&
+    isFocused &&
+    !isDisplayModeContentEmpty &&
+    !editModeContentOnly;
+
+  const isFieldInputOnly = useIsFieldInputOnly();
+
+  const shouldDisplayEditModeOnFocus = isFocused && isFieldInputOnly;
+
+  return (
+    <>
+      <StyledRecordInlineCellNormalModeOuterContainer
+        disableHoverEffect={disableHoverEffect}
+        isDisplayModeFixHeight={isDisplayModeFixHeight}
+        isHovered={isHovered}
+      >
+        <StyledRecordInlineCellNormalModeInnerContainer>
+          {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
+          !children ? (
+            <StyledEmptyField>{emptyPlaceholder}</StyledEmptyField>
+          ) : (
+            children
+          )}
+        </StyledRecordInlineCellNormalModeInnerContainer>
+      </StyledRecordInlineCellNormalModeOuterContainer>
+      {showEditButton && <RecordInlineCellButton Icon={buttonIcon} />}
+    </>
+  );
+};

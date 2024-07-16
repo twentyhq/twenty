@@ -64,7 +64,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'favorites',
-        placeHolder: 'Favorites',
         relationType: 'FROM_MANY_OBJECTS',
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
@@ -79,7 +78,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-ad10-4117-a039-3f04b7a5f939',
       label: 'Address',
       size: 100,
-      type: FieldMetadataType.Text,
+      type: FieldMetadataType.Address,
       metadata: {
         fieldName: 'address',
         placeHolder: 'Address',
@@ -99,7 +98,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'accountOwner',
-        placeHolder: 'Account Owner',
         relationType: 'TO_ONE_OBJECT',
         relationObjectMetadataNameSingular: 'workspaceMember',
         relationObjectMetadataNamePlural: 'workspaceMembers',
@@ -117,7 +115,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'people',
-        placeHolder: 'People',
         relationType: 'FROM_MANY_OBJECTS',
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
@@ -135,7 +132,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'attachments',
-        placeHolder: 'Attachments',
         relationType: 'FROM_MANY_OBJECTS',
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
@@ -204,7 +200,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'opportunities',
-        placeHolder: 'Opportunities',
         relationType: 'FROM_MANY_OBJECTS',
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
@@ -239,7 +234,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       type: FieldMetadataType.Relation,
       metadata: {
         fieldName: 'activityTargets',
-        placeHolder: 'Activities',
         relationType: 'FROM_MANY_OBJECTS',
         relationObjectMetadataNameSingular: '',
         relationObjectMetadataNamePlural: '',
