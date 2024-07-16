@@ -64,6 +64,7 @@ const meta: Meta = {
         <RecordFieldValueSelectorContextProvider>
           <RecordTableContext.Provider
             value={{
+              viewBarId: mockPerformance.entityId,
               objectMetadataItem: mockPerformance.objectMetadataItem as any,
               onUpsertRecord: () => {},
               onOpenTableCell: () => {},
