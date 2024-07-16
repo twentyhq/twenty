@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -167,36 +168,42 @@ export class UpdateMessageChannelSyncStageEnumCommand extends CommandRunner {
 
       const newOptions = [
         {
+          id: v4(),
           value: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
           label: 'Full messages list fetch pending',
           position: 0,
           color: 'blue',
         },
         {
+          id: v4(),
           value: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
           label: 'Partial messages list fetch pending',
           position: 1,
           color: 'blue',
         },
         {
+          id: v4(),
           value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
           label: 'Messages list fetch ongoing',
           position: 2,
           color: 'orange',
         },
         {
+          id: v4(),
           value: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
           label: 'Messages import pending',
           position: 3,
           color: 'blue',
         },
         {
+          id: v4(),
           value: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
           label: 'Messages import ongoing',
           position: 4,
           color: 'orange',
         },
         {
+          id: v4(),
           value: MessageChannelSyncStage.FAILED,
           label: 'Failed',
           position: 5,
