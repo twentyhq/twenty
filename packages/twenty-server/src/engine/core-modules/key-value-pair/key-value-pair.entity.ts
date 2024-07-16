@@ -71,6 +71,7 @@ export class KeyValuePair {
     type: 'enum',
     enum: Object.values(KeyValuePairType),
     nullable: false,
+    default: KeyValuePairType.USER_VAR,
   })
   type: KeyValuePairType;
 
