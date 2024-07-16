@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { isDefined } from 'class-validator';
-import differenceWith from 'lodash.differenceWith';
+import differenceWith from 'lodash.differencewith';
 import { Any } from 'typeorm';
 
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
