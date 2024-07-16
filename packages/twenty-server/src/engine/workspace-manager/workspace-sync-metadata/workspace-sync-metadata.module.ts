@@ -18,6 +18,11 @@ import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager
 import { WorkspaceSyncRelationMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 import { WorkspaceSyncFunctionMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-function-metadata.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
+import { CodeEngineModule } from 'src/engine/core-modules/code-engine/code-engine.module';
+import { codeEngineModuleFactory } from 'src/engine/core-modules/code-engine/code-engine-module.factory';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 
 @Module({
   imports: [
@@ -34,6 +39,10 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     ),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     WorkspaceCacheVersionModule,
+    CodeEngineModule.forRootAsync({
+      useFactory: codeEngineModuleFactory,
+      inject: [EnvironmentService, FileStorageService, FileUploadService],
+    }),
   ],
   providers: [
     ...workspaceSyncMetadataFactories,
