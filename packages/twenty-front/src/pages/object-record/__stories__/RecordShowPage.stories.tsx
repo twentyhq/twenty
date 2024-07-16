@@ -8,7 +8,7 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getPeopleMock } from '~/testing/mock-data/people';
+import { getPeopleMock, peopleQueryResult } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { RecordShowPage } from '../RecordShowPage';
@@ -22,12 +22,17 @@ const meta: Meta<PageDecoratorArgs> = {
     routePath: '/object/:objectNameSingular/:objectRecordId',
     routeParams: {
       ':objectNameSingular': 'person',
-      ':objectRecordId': '1234',
+      ':objectRecordId': peopleMock[0].id,
     },
   },
   parameters: {
     msw: {
       handlers: [
+        graphql.query('FindManyPeople', () => {
+          return HttpResponse.json({
+            data: peopleQueryResult,
+          });
+        }),
         graphql.query('FindOnePerson', () => {
           return HttpResponse.json({
             data: {
@@ -64,8 +69,8 @@ const meta: Meta<PageDecoratorArgs> = {
                 edges: [],
                 pageInfo: {
                   hasNextPage: false,
-                  startCursor: '1234',
-                  endCursor: '1234',
+                  startCursor: peopleMock[0].id,
+                  endCursor: peopleMock[0].id,
                 },
                 totalCount: 0,
               },

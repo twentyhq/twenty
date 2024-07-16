@@ -33,7 +33,7 @@ export const RecordTableInternalEffect = ({
     callback: () => {
       leaveTableFocus();
     },
-    mode: ClickOutsideMode.comparePixels,
+    mode: ClickOutsideMode.compareHTMLRef,
   });
 
   useScopedHotkeys(

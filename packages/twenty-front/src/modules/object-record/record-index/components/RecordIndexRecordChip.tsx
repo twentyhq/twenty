@@ -1,39 +1,30 @@
 import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
 
-import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
+import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isNonEmptyString } from '@sniptt/guards';
-import { MouseEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
 
-export type RecordChipProps = {
+export type RecordIndexRecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
-  className?: string;
   variant?: AvatarChipVariant;
 };
 
-export const RecordChip = ({
+export const RecordIndexRecordChip = ({
   objectNameSingular,
   record,
-  className,
   variant,
-}: RecordChipProps) => {
-  const navigate = useNavigate();
+}: RecordIndexRecordChipProps) => {
+  const { onIndexIdentifierClick } = useContext(RecordIndexEventContext);
 
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
     record,
   });
 
-  const handleAvatarChipClick = (event: MouseEvent) => {
-    const linkToShowPage = getLinkToShowPage(objectNameSingular, record);
-
-    if (isNonEmptyString(linkToShowPage)) {
-      event.stopPropagation();
-      navigate(linkToShowPage);
-    }
+  const handleAvatarChipClick = () => {
+    onIndexIdentifierClick(record.id);
   };
 
   return (
@@ -43,7 +34,6 @@ export const RecordChip = ({
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
       onClick={handleAvatarChipClick}
-      className={className}
       variant={variant}
     />
   );

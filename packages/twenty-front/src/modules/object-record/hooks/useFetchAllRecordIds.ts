@@ -38,7 +38,7 @@ export const useFetchAllRecordIds = <T>({
     const firstQueryResult =
       findManyRecordsDataResult?.data?.[objectMetadataItem.namePlural];
 
-    const totalCount = firstQueryResult?.totalCount ?? 1;
+    const totalCount = firstQueryResult?.totalCount ?? 0;
 
     const recordsCount = firstQueryResult?.edges.length ?? 0;
 
