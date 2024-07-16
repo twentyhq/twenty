@@ -18,10 +18,12 @@ import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocus
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 
 export const RecordTableContextProvider = ({
+  viewBarId,
   recordTableId,
   objectNameSingular,
   children,
 }: {
+  viewBarId: string;
   recordTableId: string;
   objectNameSingular: string;
   children: ReactNode;
@@ -90,6 +92,7 @@ export const RecordTableContextProvider = ({
   return (
     <RecordTableContext.Provider
       value={{
+        viewBarId,
         objectMetadataItem,
         onUpsertRecord: handleUpsertRecord,
         onOpenTableCell: handleOpenTableCell,

@@ -1,21 +1,19 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { AvatarChip } from '@ui/display/chip/components/AvatarChip';
 
 import { ComponentDecorator, RouterDecorator } from '@ui/testing';
 
-import { EntityChip } from '../EntityChip';
-
-const meta: Meta<typeof EntityChip> = {
-  title: 'UI/Display/Chip/EntityChip',
-  component: EntityChip,
+const meta: Meta<typeof AvatarChip> = {
+  title: 'UI/Display/Chip/AvatarChip',
+  component: AvatarChip,
   decorators: [RouterDecorator, ComponentDecorator],
   args: {
     name: 'Entity name',
-    linkToEntity: '/entity-link',
     avatarType: 'squared',
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof EntityChip>;
+type Story = StoryObj<typeof AvatarChip>;
 
 export const Default: Story = {};

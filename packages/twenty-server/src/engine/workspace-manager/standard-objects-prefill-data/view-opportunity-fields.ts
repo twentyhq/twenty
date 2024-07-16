@@ -50,16 +50,6 @@ export const viewOpportunityFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
-          OPPORTUNITY_STANDARD_FIELD_IDS.probability
-        ],
-      viewId: viewId,
-      position: 4,
-      isVisible: true,
-      size: 150,
-    },
-    {
-      fieldMetadataId:
-        objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
           OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact
         ],
       viewId: viewId,

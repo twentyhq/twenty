@@ -1,140 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-import { Any, EntityManager } from 'typeorm';
 import { isDefined } from 'class-validator';
+import differenceWith from 'lodash.differencewith';
+import { Any } from 'typeorm';
 
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { PersonRepository } from 'src/modules/person/repositories/person.repository';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/calendar-event-import-manager/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
-import {
-  CalendarEventParticipant,
-  CalendarEventParticipantWithCalendarEventId,
-} from 'src/modules/calendar/common/types/calendar-event';
-import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant-manager/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { CalendarEventParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/calendar-event';
 
 @Injectable()
 export class CalendarEventParticipantService {
   constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectWorkspaceRepository(CalendarEventParticipantWorkspaceEntity)
     private readonly calendarEventParticipantRepository: WorkspaceRepository<CalendarEventParticipantWorkspaceEntity>,
-    @InjectObjectMetadataRepository(PersonWorkspaceEntity)
-    private readonly personRepository: PersonRepository,
-    private readonly addPersonIdAndWorkspaceMemberIdService: AddPersonIdAndWorkspaceMemberIdService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
-
-  public async updateCalendarEventParticipantsAfterPeopleCreation(
-    createdPeople: PersonWorkspaceEntity[],
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<CalendarEventParticipantWorkspaceEntity[]> {
-    const participants = await this.calendarEventParticipantRepository.find({
-      where: {
-        handle: Any(createdPeople.map((person) => person.email)),
-      },
-    });
-
-    if (!participants) return [];
-
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const handles = participants.map((participant) => participant.handle);
-
-    const participantPersonIds = await this.personRepository.getByEmails(
-      handles,
-      workspaceId,
-      transactionManager,
-    );
-
-    const calendarEventParticipantsToUpdate = participants.map(
-      (participant) => ({
-        id: participant.id,
-        personId: participantPersonIds.find(
-          (e: { id: string; email: string }) => e.email === participant.handle,
-        )?.id,
-      }),
-    );
-
-    if (calendarEventParticipantsToUpdate.length === 0) return [];
-
-    const { flattenedValues, valuesString } =
-      getFlattenedValuesAndValuesStringForBatchRawQuery(
-        calendarEventParticipantsToUpdate,
-        {
-          id: 'uuid',
-          personId: 'uuid',
-        },
-      );
-
-    return (
-      await this.workspaceDataSourceService.executeRawQuery(
-        `UPDATE ${dataSourceSchema}."calendarEventParticipant" AS "calendarEventParticipant" SET "personId" = "data"."personId"
-      FROM (VALUES ${valuesString}) AS "data"("id", "personId")
-      WHERE "calendarEventParticipant"."id" = "data"."id"
-      RETURNING *`,
-        flattenedValues,
-        workspaceId,
-        transactionManager,
-      )
-    ).flat();
-  }
-
-  public async saveCalendarEventParticipants(
-    calendarEventParticipants: CalendarEventParticipant[],
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<CalendarEventParticipantWorkspaceEntity[]> {
-    if (calendarEventParticipants.length === 0) {
-      return [];
-    }
-
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const calendarEventParticipantsToSave =
-      await this.addPersonIdAndWorkspaceMemberIdService.addPersonIdAndWorkspaceMemberId(
-        calendarEventParticipants,
-        workspaceId,
-        transactionManager,
-      );
-
-    const { flattenedValues, valuesString } =
-      getFlattenedValuesAndValuesStringForBatchRawQuery(
-        calendarEventParticipantsToSave,
-        {
-          calendarEventId: 'uuid',
-          handle: 'text',
-          displayName: 'text',
-          isOrganizer: 'boolean',
-          responseStatus: `${dataSourceSchema}."calendarEventParticipant_responseStatus_enum"`,
-          personId: 'uuid',
-          workspaceMemberId: 'uuid',
-        },
-      );
-
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."calendarEventParticipant" ("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus", "personId", "workspaceMemberId") VALUES ${valuesString}
-      RETURNING *`,
-      flattenedValues,
-      workspaceId,
-      transactionManager,
-    );
-  }
 
   public async upsertAndDeleteCalendarEventParticipants(
     participantsToSave: CalendarEventParticipantWithCalendarEventId[],
     participantsToUpdate: CalendarEventParticipantWithCalendarEventId[],
-    workspaceId: string,
     transactionManager?: any,
-  ): Promise<CalendarEventParticipantWorkspaceEntity[]> {
+  ): Promise<void> {
     const existingCalendarEventParticipants =
       await this.calendarEventParticipantRepository.find({
         where: {
@@ -146,19 +34,21 @@ export class CalendarEventParticipantService {
         },
       });
 
-    const { calendarEventParticipantsToDelete, newCalendarEventParticipants } =
+    const { calendarEventParticipantsToUpdate, newCalendarEventParticipants } =
       participantsToUpdate.reduce(
         (acc, calendarEventParticipant) => {
           const existingCalendarEventParticipant =
             existingCalendarEventParticipants.find(
               (existingCalendarEventParticipant) =>
                 existingCalendarEventParticipant.handle ===
-                calendarEventParticipant.handle,
+                  calendarEventParticipant.handle &&
+                existingCalendarEventParticipant.calendarEventId ===
+                  calendarEventParticipant.calendarEventId,
             );
 
           if (existingCalendarEventParticipant) {
-            acc.calendarEventParticipantsToDelete.push(
-              existingCalendarEventParticipant,
+            acc.calendarEventParticipantsToUpdate.push(
+              calendarEventParticipant,
             );
           } else {
             acc.newCalendarEventParticipants.push(calendarEventParticipant);
@@ -167,28 +57,52 @@ export class CalendarEventParticipantService {
           return acc;
         },
         {
-          calendarEventParticipantsToDelete:
-            [] as CalendarEventParticipantWorkspaceEntity[],
+          calendarEventParticipantsToUpdate:
+            [] as CalendarEventParticipantWithCalendarEventId[],
           newCalendarEventParticipants:
             [] as CalendarEventParticipantWithCalendarEventId[],
         },
       );
 
-    await this.calendarEventParticipantRepository.delete({
-      id: Any(
-        calendarEventParticipantsToDelete.map(
-          (calendarEventParticipant) => calendarEventParticipant.id,
-        ),
-      ),
-    });
+    const calendarEventParticipantsToDelete = differenceWith(
+      existingCalendarEventParticipants,
+      participantsToUpdate,
+      (existingCalendarEventParticipant, participantToUpdate) =>
+        existingCalendarEventParticipant.handle ===
+          participantToUpdate.handle &&
+        existingCalendarEventParticipant.calendarEventId ===
+          participantToUpdate.calendarEventId,
+    );
 
-    await this.calendarEventParticipantRepository.save(participantsToUpdate);
+    await this.calendarEventParticipantRepository.delete(
+      {
+        id: Any(
+          calendarEventParticipantsToDelete.map(
+            (calendarEventParticipant) => calendarEventParticipant.id,
+          ),
+        ),
+      },
+      transactionManager,
+    );
+
+    for (const calendarEventParticipantToUpdate of calendarEventParticipantsToUpdate) {
+      await this.calendarEventParticipantRepository.update(
+        {
+          calendarEventId: calendarEventParticipantToUpdate.calendarEventId,
+          handle: calendarEventParticipantToUpdate.handle,
+        },
+        {
+          ...calendarEventParticipantToUpdate,
+        },
+        transactionManager,
+      );
+    }
 
     participantsToSave.push(...newCalendarEventParticipants);
 
-    return await this.saveCalendarEventParticipants(
+    await this.calendarEventParticipantRepository.save(
       participantsToSave,
-      workspaceId,
+      {},
       transactionManager,
     );
   }

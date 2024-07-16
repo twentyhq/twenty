@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { IconEye } from 'twenty-ui';
 
-import { Button } from '@/ui/input/button/components/Button';
+import { FloatingButton } from '@/ui/input/button/components/FloatingButton';
 import { Card } from '@/ui/layout/card/components/Card';
 
 import DarkCoverImage from '../assets/cover-dark.png';
@@ -30,12 +30,12 @@ export const SettingsObjectCoverImage = () => {
   return (
     <StyledCoverImageContainer>
       <StyledButtonContainer>
-        <Button
+        <FloatingButton
           Icon={IconEye}
           title="Visualize"
           size="small"
           to="/settings/objects/overview"
-        ></Button>
+        />
       </StyledButtonContainer>
     </StyledCoverImageContainer>
   );

@@ -1,10 +1,10 @@
-import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 import {
-  getDocumentString,
-  handleStreamOrSingleExecutionResult,
   OnExecuteDoneHookResultOnNextHook,
   Plugin,
+  getDocumentString,
+  handleStreamOrSingleExecutionResult,
 } from '@envelop/core';
+import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 
 import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
 
@@ -26,6 +26,9 @@ export type ExceptionHandlerPluginOptions = {
   eventIdKey?: string | null;
 };
 
+// This hook is deprecated.
+// We should either handle exception in the context of graphql, controller or command
+// @deprecated
 export const useExceptionHandler = <PluginContext extends GraphQLContext>(
   options: ExceptionHandlerPluginOptions,
 ): Plugin<PluginContext> => {

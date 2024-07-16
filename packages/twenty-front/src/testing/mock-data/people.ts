@@ -1,3 +1,5 @@
+import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+
 export const getPeopleMock = () => {
   const peopleMock = peopleQueryResult.people.edges.map((edge) => edge.node);
 
@@ -22,7 +24,7 @@ export const mockedEmptyPersonData = {
   __typename: 'Person',
 };
 
-export const peopleQueryResult = {
+export const peopleQueryResult: { people: RecordGqlConnection } = {
   people: {
     __typename: 'PersonConnection',
     totalCount: 15,

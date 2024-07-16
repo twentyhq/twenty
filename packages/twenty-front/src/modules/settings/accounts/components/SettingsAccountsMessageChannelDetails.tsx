@@ -29,7 +29,6 @@ const StyledDetailsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
-  padding-top: ${({ theme }) => theme.spacing(6)};
 `;
 
 export const SettingsAccountsMessageChannelDetails = ({
