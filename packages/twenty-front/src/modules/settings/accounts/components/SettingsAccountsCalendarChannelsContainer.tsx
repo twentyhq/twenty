@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { CalendarChannel } from '@/accounts/types/CalendarChannel';
@@ -12,6 +13,10 @@ import { SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/sett
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import React from 'react';
+
+const StyledCalenderContainer = styled.div`
+  padding-bottom: ${({ theme }) => theme.spacing(6)};
+`;
 
 export const SettingsAccountsCalendarChannelsContainer = () => {
   const { activeTabIdState } = useTabList(
@@ -55,10 +60,14 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
 
   return (
     <>
-      <TabList
-        tabListId={SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID}
-        tabs={tabs}
-      />
+      {tabs.length > 1 && (
+        <StyledCalenderContainer>
+          <TabList
+            tabListId={SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID}
+            tabs={tabs}
+          />
+        </StyledCalenderContainer>
+      )}
       {calendarChannels.map((calendarChannel) => (
         <React.Fragment key={calendarChannel.id}>
           {calendarChannel.id === activeTabId && (
