@@ -20,6 +20,7 @@ export const useFetchAllRecordIds = <T>({
     objectNameSingular,
     filter,
     orderBy,
+    limit: pageSize,
     recordGqlFields: { id: true },
   });
 
