@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntitySchema } from 'typeorm';
-import lowerFirst from 'lodash.lowerfirst';
 
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
@@ -72,7 +71,7 @@ export class EntitySchemaFactory {
 
     WorkspaceEntitiesStorage.setEntitySchema(
       workspaceId,
-      lowerFirst(objectMetadata.nameSingular),
+      objectMetadata.nameSingular,
       entitySchema,
     );
 

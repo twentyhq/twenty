@@ -1,4 +1,3 @@
-import lowerFirst from 'lodash.lowerfirst';
 import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -47,8 +46,8 @@ export async function determineRelationDetails(
 
   return {
     relationType,
-    target: lowerFirst(toObjectMetadata.nameSingular),
-    inverseSide: lowerFirst(fromObjectMetadata.nameSingular),
+    target: toObjectMetadata.nameSingular,
+    inverseSide: fromObjectMetadata.nameSingular,
     joinColumn:
       // TODO: This will work for now but we need to handle this better in the future for custom names on the join column
       relationType === 'many-to-one' ||
