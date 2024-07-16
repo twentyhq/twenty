@@ -9,8 +9,8 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
-    FieldMetadataEntity,
-    FieldMetadataType,
+  FieldMetadataEntity,
+  FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
@@ -142,5 +142,19 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
 
       this.logger.log(chalk.green(`Command completed!`));
     }
+  }
+
+  async migrateData({
+    sourceFieldName,
+    targetFieldName,
+    tableName,
+  }: {
+    sourceFieldName: string;
+    targetFieldName: string;
+    tableName: string;
+  }) {
+    await this.workspaceQueryRunner.query(
+      `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${targetFieldName}" = "${sourceFieldName}"`,
+    );
   }
 }
