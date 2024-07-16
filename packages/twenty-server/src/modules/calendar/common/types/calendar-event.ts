@@ -8,6 +8,7 @@ export type CalendarEvent = Omit<
   | 'calendarChannelEventAssociations'
   | 'calendarEventParticipants'
   | 'conferenceLink'
+  | 'id'
 > & {
   conferenceLinkLabel: string;
   conferenceLinkUrl: string;
@@ -23,15 +24,23 @@ export type CalendarEventParticipant = Omit<
   | 'person'
   | 'workspaceMember'
   | 'calendarEvent'
-> & {
-  iCalUID: string;
-};
+  | 'calendarEventId'
+>;
+
+export type CalendarEventParticipantWithCalendarEventId =
+  CalendarEventParticipant & {
+    calendarEventId: string;
+  };
 
 export type CalendarEventWithParticipants = CalendarEvent & {
   externalId: string;
   participants: CalendarEventParticipant[];
+  status: string;
 };
 
-export type CalendarEventParticipantWithId = CalendarEventParticipant & {
+export type CalendarEventWithParticipantsAndCalendarEventId = CalendarEvent & {
   id: string;
+  externalId: string;
+  participants: CalendarEventParticipantWithCalendarEventId[];
+  status: string;
 };
