@@ -28,6 +28,7 @@ import { recordIndexSortsState } from '@/object-record/record-index/states/recor
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useFindRecordCursorFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useFindRecordCursorFromFindManyCacheRootQuery';
 import { findView } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
+import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
@@ -161,15 +162,17 @@ export const RecordIndexContainer = ({
   const handleIndexIdentifierClick = (recordId: string) => {
     const cursor = findCursorInCache(recordId);
 
-    // TODO: use URL builder
-    navigate(
-      `/object/${objectNameSingular}/${recordId}?view=${currentViewId}`,
-      {
-        state: {
-          cursor,
-        },
-      },
+    const showPageURL = buildShowPageURL(
+      objectNameSingular,
+      recordId,
+      currentViewId,
     );
+
+    navigate(showPageURL, {
+      state: {
+        cursor,
+      },
+    });
   };
 
   const handleIndexRecordsLoaded = useRecoilCallback(

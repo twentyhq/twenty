@@ -9,6 +9,8 @@ import {
 import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemsAsFilterDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
@@ -17,11 +19,14 @@ import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useRecordIdsFromFindManyCacheRootQuery';
+import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
+import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { filter } from '@chakra-ui/system';
 import { isNonEmptyString } from '@sniptt/guards';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -34,17 +39,11 @@ export const findView = ({
   objectMetadataItemId: string;
   views: View[];
 }) => {
-  if (!viewId) {
-    return views.find(
-      (view: any) =>
-        view.key === 'INDEX' && view?.objectMetadataId === objectMetadataItemId,
-    ) as View;
-  } else {
-    return views.find(
-      (view: any) =>
-        view?.id === viewId && view?.objectMetadataId === objectMetadataItemId,
-    ) as View;
-  }
+  return views.find(
+    (view: View) =>
+      (view.key === 'INDEX' || view?.id === viewId) &&
+      view?.objectMetadataId === objectMetadataItemId,
+  );
 };
 
 export const useRecordShowPagePagination = (
@@ -69,43 +68,77 @@ export const useRecordShowPagePagination = (
   }
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
-  const view = useMemo(() => {
-    return findView({
-      objectMetadataItemId: objectMetadataItem?.id ?? '',
-      viewId: viewIdQueryParam,
-      views,
-    });
-  }, [viewIdQueryParam, objectMetadataItem, views]);
+  const useViewFromPrefetchedViews = ({
+    objectMetadataItemId,
+    viewId,
+  }: {
+    objectMetadataItemId: string;
+    viewId: string | null;
+  }) => {
+    const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
-  const activeFieldMetadataItems = useMemo(
-    () =>
-      objectMetadataItem
-        ? objectMetadataItem.fields.filter(
-            ({ isActive, isSystem }) => isActive && !isSystem,
-          )
-        : [],
-    [objectMetadataItem],
-  );
+    const view = useMemo(() => {
+      return findView({
+        objectMetadataItemId,
+        viewId,
+        views,
+      });
+    }, [viewId, views, objectMetadataItemId]);
 
-  const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
-    fields: activeFieldMetadataItems,
-  });
+    return view;
+  };
 
-  const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
-    fields: activeFieldMetadataItems,
-  });
-
-  const filter = turnObjectDropdownFilterIntoQueryFilter(
-    mapViewFiltersToFilters(view?.viewFilters ?? [], filterDefinitions),
-    objectMetadataItem?.fields ?? [],
-  );
-
-  const orderBy = turnSortsIntoOrderBy(
+  const useActiveFieldMetadataItems = ({
     objectMetadataItem,
-    mapViewSortsToSorts(view?.viewSorts ?? [], sortDefinitions),
-  );
+  }: {
+    objectMetadataItem: ObjectMetadataItem;
+  }) => {
+    const activeFieldMetadataItems = useMemo(
+      () =>
+        objectMetadataItem
+          ? objectMetadataItem.fields.filter(
+              ({ isActive, isSystem }) => isActive && !isSystem,
+            )
+          : [],
+      [objectMetadataItem],
+    );
+
+    return activeFieldMetadataItems;
+  };
+
+  const getQueryVariablesFromView = ({
+    view,
+    fieldMetadataItems,
+  }: {
+    view: View;
+    fieldMetadataItems: FieldMetadataItem[];
+  }) => {
+    const { viewFilters, viewSorts } = view;
+
+    const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
+      fields: fieldMetadataItems,
+    });
+
+    const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
+      fields: fieldMetadataItems,
+    });
+
+    const filter = turnObjectDropdownFilterIntoQueryFilter(
+      mapViewFiltersToFilters(viewFilters, filterDefinitions),
+      objectMetadataItem?.fields ?? [],
+    );
+
+    const orderBy = turnSortsIntoOrderBy(
+      objectMetadataItem,
+      mapViewSortsToSorts(viewSorts, sortDefinitions),
+    );
+
+    return {
+      filter,
+      orderBy,
+    };
+  };
 
   const recordGqlFields = generateDepthOneRecordGqlFields({
     objectMetadataItem,
@@ -184,9 +217,7 @@ export const useRecordShowPagePagination = (
 
   const navigateToPreviousRecord = () => {
     navigate(
-      `/object/${objectNameSingular}/${recordBefore.id}${
-        viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
-      }`,
+      buildShowPageURL(objectNameSingular, recordBefore.id, viewIdQueryParam),
       {
         state: {
           cursor: recordBeforeCursor,
@@ -197,9 +228,7 @@ export const useRecordShowPagePagination = (
 
   const navigateToNextRecord = () => {
     navigate(
-      `/object/${objectNameSingular}/${recordAfter.id}${
-        viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
-      }`,
+      buildShowPageURL(objectNameSingular, recordAfter.id, viewIdQueryParam),
       {
         state: {
           cursor: recordAfterCursor,
@@ -209,13 +238,14 @@ export const useRecordShowPagePagination = (
   };
 
   const navigateToIndexView = () => {
-    const indexPath = `/objects/${objectMetadataItem.namePlural}${
-      viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
-    }`;
+    const indexTableURL = buildIndexTablePageURL(
+      objectMetadataItem.namePlural,
+      viewIdQueryParam,
+    );
 
     setLastShowPageRecordId(objectRecordId);
 
-    navigate(indexPath);
+    navigate(indexTableURL);
   };
 
   const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({
@@ -225,6 +255,22 @@ export const useRecordShowPagePagination = (
       orderBy,
     },
   });
+
+  const getShowPageTitle = () => {
+    const rankInView = recordIdsInCache.findIndex(
+      (id) => id === objectRecordId,
+    );
+
+    const rankFoundInFiew = rankInView > -1;
+
+    const objectLabel = capitalize(objectMetadataItem.namePlural);
+
+    const viewNameWithCount = rankFoundInFiew
+      ? `${rankInView + 1} of ${totalCount} in ${objectLabel}`
+      : `${objectLabel} (${totalCount})`;
+
+    return viewNameWithCount;
+  };
 
   const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);
 
