@@ -1,12 +1,5 @@
-import { IconComponent } from 'twenty-ui';
+import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
 
-import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
-
-export type ActionBarEntry = {
-  label: string;
-  Icon: IconComponent;
-  accent?: MenuItemAccent;
-  onClick?: () => void;
+export type ActionBarEntry = ContextMenuEntry & {
   subActions?: ActionBarEntry[];
-  ConfirmationModal?: JSX.Element;
 };

@@ -16,6 +16,7 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { getJoinColumn } from 'src/engine/twenty-orm/utils/get-join-column.util';
 
 @Injectable()
 export class StandardFieldFactory {
@@ -23,10 +24,53 @@ export class StandardFieldFactory {
     target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Array<PartialFieldMetadata | PartialComputedFieldMetadata> {
+  ): (PartialFieldMetadata | PartialComputedFieldMetadata)[];
+
+  create(
+    targets: (typeof BaseWorkspaceEntity)[],
+    context: WorkspaceSyncContext,
+    workspaceFeatureFlagsMap: FeatureFlagMap, // Map of standardId to field metadata
+  ): Map<string, (PartialFieldMetadata | PartialComputedFieldMetadata)[]>;
+
+  create(
+    targetOrTargets:
+      | typeof BaseWorkspaceEntity
+      | (typeof BaseWorkspaceEntity)[],
+    context: WorkspaceSyncContext,
+    workspaceFeatureFlagsMap: FeatureFlagMap,
+  ):
+    | (PartialFieldMetadata | PartialComputedFieldMetadata)[]
+    | Map<string, (PartialFieldMetadata | PartialComputedFieldMetadata)[]> {
+    if (Array.isArray(targetOrTargets)) {
+      return targetOrTargets.reduce((acc, target) => {
+        const workspaceEntityMetadataArgs =
+          metadataArgsStorage.filterEntities(target);
+
+        if (!workspaceEntityMetadataArgs) {
+          return acc;
+        }
+
+        if (
+          isGatedAndNotEnabled(
+            workspaceEntityMetadataArgs.gate,
+            workspaceFeatureFlagsMap,
+          )
+        ) {
+          return acc;
+        }
+
+        acc.set(
+          workspaceEntityMetadataArgs.standardId,
+          this.create(target, context, workspaceFeatureFlagsMap),
+        );
+
+        return acc;
+      }, new Map<string, (PartialFieldMetadata | PartialComputedFieldMetadata)[]>());
+    }
+
     const workspaceEntityMetadataArgs =
-      metadataArgsStorage.filterEntities(target);
-    const metadataCollections = this.collectMetadata(target);
+      metadataArgsStorage.filterEntities(targetOrTargets);
+    const metadataCollections = this.collectMetadata(targetOrTargets);
 
     return [
       ...this.processMetadata(
@@ -118,7 +162,7 @@ export class StandardFieldFactory {
         options: workspaceFieldMetadataArgs.options,
         workspaceId: context.workspaceId,
         isNullable: workspaceFieldMetadataArgs.isNullable,
-        isCustom: false,
+        isCustom: workspaceFieldMetadataArgs.isDeprecated ? true : false,
         isSystem:
           workspaceEntityMetadataArgs?.isSystem ||
           workspaceFieldMetadataArgs.isSystem,
@@ -139,6 +183,14 @@ export class StandardFieldFactory {
     const foreignKeyStandardId = createDeterministicUuid(
       workspaceRelationMetadataArgs.standardId,
     );
+    const joinColumnMetadataArgsCollection =
+      metadataArgsStorage.filterJoinColumns(
+        workspaceRelationMetadataArgs.target,
+      );
+    const joinColumn = getJoinColumn(
+      joinColumnMetadataArgsCollection,
+      workspaceRelationMetadataArgs,
+    );
 
     if (
       isGatedAndNotEnabled(
@@ -149,11 +201,11 @@ export class StandardFieldFactory {
       return [];
     }
 
-    if (workspaceRelationMetadataArgs.joinColumn) {
+    if (joinColumn) {
       fieldMetadataCollection.push({
         type: FieldMetadataType.UUID,
         standardId: foreignKeyStandardId,
-        name: workspaceRelationMetadataArgs.joinColumn,
+        name: joinColumn,
         label: `${workspaceRelationMetadataArgs.label} id (foreign key)`,
         description: `${workspaceRelationMetadataArgs.description} id foreign key`,
         icon: workspaceRelationMetadataArgs.icon,

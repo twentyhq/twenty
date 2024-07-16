@@ -66,9 +66,7 @@ export const ShowPageRightContainer = ({
   summary,
   isRightDrawer = false,
 }: ShowPageRightContainerProps) => {
-  const { activeTabIdState } = useTabList(
-    TAB_LIST_COMPONENT_ID + isRightDrawer,
-  );
+  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
 
   const targetObjectNameSingular =
@@ -147,7 +145,7 @@ export const ShowPageRightContainer = ({
       <StyledTabListContainer>
         <TabList
           loading={loading}
-          tabListId={TAB_LIST_COMPONENT_ID + isRightDrawer}
+          tabListId={TAB_LIST_COMPONENT_ID}
           tabs={tabs}
         />
       </StyledTabListContainer>

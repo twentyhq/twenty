@@ -27,8 +27,8 @@ export class WorkspaceObjectComparator {
   constructor() {}
 
   public compare(
-    originalObjectMetadata: ObjectMetadataEntity | undefined,
-    standardObjectMetadata: ComputedPartialWorkspaceEntity,
+    originalObjectMetadata: Omit<ObjectMetadataEntity, 'fields'> | undefined,
+    standardObjectMetadata: Omit<ComputedPartialWorkspaceEntity, 'fields'>,
   ): ObjectComparatorResult {
     // If the object doesn't exist in the original metadata, we need to create it
     if (!originalObjectMetadata) {

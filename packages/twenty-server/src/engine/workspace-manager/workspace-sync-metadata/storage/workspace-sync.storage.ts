@@ -8,9 +8,13 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 
 export class WorkspaceSyncStorage {
   // Object metadata
-  private readonly _objectMetadataCreateCollection: ComputedPartialWorkspaceEntity[] =
-    [];
-  private readonly _objectMetadataUpdateCollection: (Partial<ComputedPartialWorkspaceEntity> & {
+  private readonly _objectMetadataCreateCollection: Omit<
+    ComputedPartialWorkspaceEntity,
+    'fields'
+  >[] = [];
+  private readonly _objectMetadataUpdateCollection: (Partial<
+    Omit<ComputedPartialWorkspaceEntity, 'fields'>
+  > & {
     id: string;
   })[] = [];
   private readonly _objectMetadataDeleteCollection: ObjectMetadataEntity[] = [];
@@ -88,7 +92,9 @@ export class WorkspaceSyncStorage {
     return this._indexMetadataDeleteCollection;
   }
 
-  addCreateObjectMetadata(object: ComputedPartialWorkspaceEntity) {
+  addCreateObjectMetadata(
+    object: Omit<ComputedPartialWorkspaceEntity, 'fields'>,
+  ) {
     this._objectMetadataCreateCollection.push(object);
   }
 

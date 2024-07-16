@@ -35,15 +35,13 @@ export const StandardObject: Story = {
 
 export const CustomObject: Story = {
   args: {
-    routeParams: { ':objectSlug': 'workspaces' },
+    routeParams: { ':objectSlug': 'my-customs' },
   },
 };
 
 export const ObjectDropdownMenu: Story = {
-  play: async ({ canvasElement }) => {
-    await sleep(100);
-
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
     const objectSummaryVerticalDotsIconButton = await canvas.findByRole(
       'button',
       {
@@ -59,10 +57,8 @@ export const ObjectDropdownMenu: Story = {
 };
 
 export const FieldDropdownMenu: Story = {
-  play: async ({ canvasElement }) => {
-    await sleep(100);
-
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
     const [fieldVerticalDotsIconButton] = await canvas.findAllByRole('button', {
       name: 'Active Field Options',
     });

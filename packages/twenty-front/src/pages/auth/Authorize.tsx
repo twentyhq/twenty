@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import styled from '@emotion/styled';
 
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh;
   justify-content: center;
   width: 100%;
 `;

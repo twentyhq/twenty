@@ -67,7 +67,7 @@ describe('triggers.trigger_record.created', () => {
           name: '',
           domainName: '',
           createdAt: '2023-10-19 10:10:12.490',
-          address: '',
+          address: { addressCity: null },
           employees: null,
           linkedinUrl: null,
           xUrl: null,
