@@ -29,13 +29,13 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import {
-  CalendarEventsImportJob,
-  CalendarEventsImportJobData,
-} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
-import {
   CalendarChannelWorkspaceEntity,
   CalendarChannelVisibility,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import {
+  CalendarEventsImportJobData,
+  CalendarEventListFetchJob,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -167,13 +167,21 @@ export class GoogleAPIsService {
     }
 
     if (isCalendarEnabled) {
-      await this.calendarQueueService.add<CalendarEventsImportJobData>(
-        CalendarEventsImportJob.name,
-        {
-          workspaceId,
+      const calendarChannels = await this.calendarChannelRepository.find({
+        where: {
           connectedAccountId: newOrExistingConnectedAccountId,
         },
-      );
+      });
+
+      for (const calendarChannel of calendarChannels) {
+        await this.calendarQueueService.add<CalendarEventsImportJobData>(
+          CalendarEventListFetchJob.name,
+          {
+            calendarChannelId: calendarChannel.id,
+            workspaceId,
+          },
+        );
+      }
     }
   }
 }

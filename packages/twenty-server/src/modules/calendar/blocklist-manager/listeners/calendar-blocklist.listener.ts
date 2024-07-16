@@ -7,15 +7,15 @@ import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/t
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import {
-  BlocklistItemDeleteCalendarEventsJobData,
   BlocklistItemDeleteCalendarEventsJob,
+  BlocklistItemDeleteCalendarEventsJobData,
 } from 'src/modules/calendar/blocklist-manager/jobs/blocklist-item-delete-calendar-events.job';
 import {
-  BlocklistReimportCalendarEventsJobData,
   BlocklistReimportCalendarEventsJob,
+  BlocklistReimportCalendarEventsJobData,
 } from 'src/modules/calendar/blocklist-manager/jobs/blocklist-reimport-calendar-events.job';
-import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 
 @Injectable()
 export class CalendarBlocklistListener {
@@ -46,7 +46,6 @@ export class CalendarBlocklistListener {
       {
         workspaceId: payload.workspaceId,
         workspaceMemberId: payload.properties.before.workspaceMember.id,
-        handle: payload.properties.before.handle,
       },
     );
   }
@@ -68,7 +67,6 @@ export class CalendarBlocklistListener {
       {
         workspaceId: payload.workspaceId,
         workspaceMemberId: payload.properties.after.workspaceMember.id,
-        handle: payload.properties.before.handle,
       },
     );
   }

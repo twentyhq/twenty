@@ -162,7 +162,7 @@ export class StandardFieldFactory {
         options: workspaceFieldMetadataArgs.options,
         workspaceId: context.workspaceId,
         isNullable: workspaceFieldMetadataArgs.isNullable,
-        isCustom: false,
+        isCustom: workspaceFieldMetadataArgs.isDeprecated ? true : false,
         isSystem:
           workspaceEntityMetadataArgs?.isSystem ||
           workspaceFieldMetadataArgs.isSystem,

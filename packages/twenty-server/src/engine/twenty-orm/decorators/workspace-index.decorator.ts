@@ -1,5 +1,6 @@
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 export interface WorkspaceIndexOptions {
   columns?: string[];
@@ -16,11 +17,13 @@ export function WorkspaceIndex(
     }
 
     // TODO: handle composite field metadata types
-    // TODO: handle relation field metadata types
 
     if (Array.isArray(columns) && columns.length > 0) {
       metadataArgsStorage.addIndexes({
-        name: `IDX_${generateDeterministicIndexName(columns)}`,
+        name: `IDX_${generateDeterministicIndexName([
+          convertClassNameToObjectMetadataName(target.name),
+          ...columns,
+        ])}`,
         columns,
         target: target,
       });
@@ -29,7 +32,10 @@ export function WorkspaceIndex(
     }
 
     metadataArgsStorage.addIndexes({
-      name: `IDX_${generateDeterministicIndexName([propertyKey.toString()])}`,
+      name: `IDX_${generateDeterministicIndexName([
+        convertClassNameToObjectMetadataName(target.constructor.name),
+        propertyKey.toString(),
+      ])}`,
       columns: [propertyKey.toString()],
       target: target.constructor,
     });

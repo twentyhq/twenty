@@ -12,6 +12,7 @@
     "esModuleInterop": true,
     "target": "es2017",
     "sourceMap": true,
+    "inlineSources": true,
     "outDir": "./dist",
     "incremental": true,
     "skipLibCheck": true,

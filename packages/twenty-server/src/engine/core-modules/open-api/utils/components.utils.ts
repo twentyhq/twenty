@@ -35,7 +35,6 @@ const getFieldProperties = (type: FieldMetadataType): Property => {
     case FieldMetadataType.NUMBER:
       return { type: 'integer' };
     case FieldMetadataType.NUMERIC:
-    case FieldMetadataType.PROBABILITY:
     case FieldMetadataType.RATING:
     case FieldMetadataType.POSITION:
       return { type: 'number' };
