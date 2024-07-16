@@ -28,7 +28,7 @@ const addressFields = {
 export const useBuildAvailableFieldsArray = (fields: FieldMetadataItem[]) => {
   const { getIcon } = useIcons();
 
-  const templateFields: {
+  const availableFields: {
     icon: IconComponent;
     label: string;
     key: string;
@@ -40,7 +40,7 @@ export const useBuildAvailableFieldsArray = (fields: FieldMetadataItem[]) => {
 
   for (const field of fields) {
     if (field.type === FieldMetadataType.FullName) {
-      templateFields.push({
+      availableFields.push({
         icon: getIcon(field.icon),
         label: `${firstName} (${field.label})`,
         key: `${firstName} (${field.name})`,
@@ -52,7 +52,7 @@ export const useBuildAvailableFieldsArray = (fields: FieldMetadataItem[]) => {
           `${firstName} (${field.label})`,
         ),
       });
-      templateFields.push({
+      availableFields.push({
         icon: getIcon(field.icon),
         label: `${lastName} (${field.label})`,
         key: `${lastName} (${field.name})`,
@@ -65,7 +65,7 @@ export const useBuildAvailableFieldsArray = (fields: FieldMetadataItem[]) => {
         ),
       });
     } else if (field.type === FieldMetadataType.Relation) {
-      templateFields.push({
+      availableFields.push({
         icon: getIcon(field.icon),
         label: field.label + ' (ID)',
         key: field.name,
@@ -78,7 +78,7 @@ export const useBuildAvailableFieldsArray = (fields: FieldMetadataItem[]) => {
         ),
       });
     } else if (field.type === FieldMetadataType.Currency) {
-      templateFields.push({
+      availableFields.push({
         icon: getIcon(field.icon),
         label: `${currencyCode} (${field.label})`,
         key: `${currencyCode} (${field.name})`,
@@ -90,7 +90,7 @@ export const useBuildAvailableFieldsArray = (fields: FieldMetadataItem[]) => {
           `${currencyCode} (${field.label})`,
         ),
       });
-      templateFields.push({
+      availableFields.push({
         icon: getIcon(field.icon),
         label: `${amountMicros} (${field.label})`,
         key: `${amountMicros} (${field.name})`,
@@ -104,7 +104,7 @@ export const useBuildAvailableFieldsArray = (fields: FieldMetadataItem[]) => {
       });
     } else if (field.type === FieldMetadataType.Address) {
       Object.entries(addressFields).forEach(([_, value]) => {
-        templateFields.push({
+        availableFields.push({
           icon: getIcon(field.icon),
           label: `${value} (${field.label})`,
           key: `${value} (${field.name})`,
@@ -118,7 +118,7 @@ export const useBuildAvailableFieldsArray = (fields: FieldMetadataItem[]) => {
         });
       });
     } else {
-      templateFields.push({
+      availableFields.push({
         icon: getIcon(field.icon),
         label: field.label,
         key: field.name,
@@ -130,7 +130,7 @@ export const useBuildAvailableFieldsArray = (fields: FieldMetadataItem[]) => {
     }
   }
 
-  return templateFields;
+  return availableFields;
 };
 
 export const buildFieldMapping = (
