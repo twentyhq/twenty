@@ -21,9 +21,12 @@ import { FileUploadService } from 'src/engine/core-modules/file/file-upload/serv
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { UserVarService } from 'src/engine/core-modules/user/services/user-var.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
@@ -50,20 +53,29 @@ export class UserResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
     private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
+    private readonly userVarService: UserVarService,
   ) {}
 
   @Query(() => User)
-  async currentUser(@AuthUser() { id }: User): Promise<User> {
+  async currentUser(
+    @AuthUser() { id: userId }: User,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
-        id,
+        id: userId,
       },
       relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
     });
 
     assert(user, 'User not found');
 
-    return user;
+    const userVars = await this.userVarService.getUserVars(userId, workspaceId);
+
+    return {
+      ...user,
+      userVars: Object.fromEntries(userVars),
+    };
   }
 
   @ResolveField(() => WorkspaceMember, {
