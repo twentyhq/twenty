@@ -37,9 +37,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
-type SettingsDataModelFieldEditFormValues = z.infer<
-  typeof settingsFieldFormSchema
->;
+type SettingsDataModelFieldEditFormValues = z.infer<ReturnType<typeof settingsFieldFormSchema>>;
 
 const StyledSettingsObjectFieldTypeSelect = styled(
   SettingsDataModelFieldTypeSelect,
@@ -93,7 +91,7 @@ export const SettingsObjectFieldEdit = () => {
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(settingsFieldFormSchema),
+    resolver: zodResolver(settingsFieldFormSchema()),
   });
 
   useEffect(() => {
