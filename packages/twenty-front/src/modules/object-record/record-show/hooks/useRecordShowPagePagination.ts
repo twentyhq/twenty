@@ -109,6 +109,10 @@ export const useRecordShowPagePagination = (
     mapViewSortsToSorts(view?.viewSorts ?? [], sortDefinitions),
   );
 
+  const recordGqlFields = generateDepthOneRecordGqlFields({
+    objectMetadataItem,
+  });
+
   const { state } = useLocation();
 
   const cursorFromIndexPage = state.cursor;
@@ -122,9 +126,7 @@ export const useRecordShowPagePagination = (
       skip: isLoadedRecords,
       limit: 1,
       objectNameSingular,
-      recordGqlFields: generateDepthOneRecordGqlFields({
-        objectMetadataItem,
-      }),
+      recordGqlFields,
     });
 
   const currentRecordCursor = currentRecordsPageInfo?.endCursor;
@@ -135,7 +137,7 @@ export const useRecordShowPagePagination = (
     loading: loadingRecordBefore,
     records: recordsBefore,
     pageInfo: pageInfoBefore,
-    totalCount,
+    totalCount: totalCountBefore,
   } = useFindManyRecords({
     filter,
     orderBy,
@@ -148,15 +150,14 @@ export const useRecordShowPagePagination = (
         }
       : undefined,
     objectNameSingular,
-    recordGqlFields: generateDepthOneRecordGqlFields({
-      objectMetadataItem,
-    }),
+    recordGqlFields,
   });
 
   const {
     loading: loadingRecordAfter,
     records: recordsAfter,
     pageInfo: pageInfoAfter,
+    totalCount: totalCountAfter,
   } = useFindManyRecords({
     filter,
     orderBy,
@@ -169,16 +170,16 @@ export const useRecordShowPagePagination = (
         }
       : undefined,
     objectNameSingular,
-    recordGqlFields: generateDepthOneRecordGqlFields({
-      objectMetadataItem,
-    }),
+    recordGqlFields,
   });
+
+  const totalCount = Math.max(totalCountBefore ?? 0, totalCountAfter ?? 0);
 
   const loading =
     loadingRecordAfter || loadingRecordBefore || loadingCurrentRecord;
 
   const isThereARecordBefore = recordsBefore.length > 0;
-  const isThereARecordAfter = recordsBefore.length > 0;
+  const isThereARecordAfter = recordsAfter.length > 0;
 
   const recordBefore = recordsBefore[0];
   const recordAfter = recordsAfter[0];

@@ -16,6 +16,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
 
+export const ROW_HEIGHT = 32;
+
 export const RecordTableBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
 
@@ -81,7 +83,7 @@ export const RecordTableBodyEffect = () => {
     }
   }, [scrollLeft, setIsRecordTableScrolledLeft]);
 
-  const rowHeight = 32;
+  const rowHeight = ROW_HEIGHT;
   const viewportHeight = records.length * rowHeight;
 
   const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilState(
@@ -101,13 +103,11 @@ export const RecordTableBodyEffect = () => {
           (record) => record.id === lastShowPageRecordId,
         );
 
-        const positionInPx = recordPosition * 32;
+        const positionInPx = recordPosition * ROW_HEIGHT;
 
         scrollToPosition(positionInPx);
 
         setHasInitiazedScroll(true);
-      } else {
-        fetchMoreObjects();
       }
     }
   }, [
