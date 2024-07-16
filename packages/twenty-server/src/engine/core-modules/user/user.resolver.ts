@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -6,7 +7,6 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -14,22 +14,22 @@ import crypto from 'crypto';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
-import { SupportDriver } from 'src/engine/integrations/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { SupportDriver } from 'src/engine/integrations/environment/interfaces/support.interface';
 
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { assert } from 'src/utils/assert';
-import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
+import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
+import { assert } from 'src/utils/assert';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
