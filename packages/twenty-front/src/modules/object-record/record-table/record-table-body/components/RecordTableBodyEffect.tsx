@@ -4,6 +4,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
@@ -15,8 +16,6 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { isNonEmptyString } from '@sniptt/guards';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
-
-export const ROW_HEIGHT = 32;
 
 export const RecordTableBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
@@ -83,8 +82,7 @@ export const RecordTableBodyEffect = () => {
     }
   }, [scrollLeft, setIsRecordTableScrolledLeft]);
 
-  const rowHeight = ROW_HEIGHT;
-  const viewportHeight = records.length * rowHeight;
+  const viewportHeight = records.length * ROW_HEIGHT;
 
   const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilState(
     lastShowPageRecordIdState,

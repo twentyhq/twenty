@@ -3,7 +3,7 @@ import { isFieldFullName } from '@/object-record/record-field/types/guards/isFie
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 
-export const isFieldChipDisplay = (
+export const isFieldIdentifierDisplay = (
   field: Pick<FieldMetadataItem, 'type'>,
   isLabelIdentifier: boolean,
 ) =>
