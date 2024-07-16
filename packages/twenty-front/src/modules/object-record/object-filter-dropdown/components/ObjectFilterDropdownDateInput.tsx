@@ -7,8 +7,6 @@ import { useState } from 'react';
 import { isDefined } from '~/utils/isDefined';
 
 export const ObjectFilterDropdownDateInput = () => {
-  const [internalDate, setInternalDate] = useState<Date | null>(new Date());
-
   const {
     filterDefinitionUsedInDropdownState,
     selectedOperandInDropdownState,
@@ -25,6 +23,10 @@ export const ObjectFilterDropdownDateInput = () => {
   );
 
   const selectedFilter = useRecoilValue(selectedFilterState);
+
+  const [internalDate, setInternalDate] = useState<Date | null>(
+    selectedFilter?.value ? new Date(selectedFilter.value) : new Date(),
+  );
 
   const handleChange = (date: Date | null) => {
     setInternalDate(date);
