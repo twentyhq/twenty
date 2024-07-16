@@ -26,7 +26,7 @@ export async function determineRelationDetails(
   let toObjectMetadata: ObjectMetadataEntity | undefined =
     relationMetadata.toObjectMetadata;
 
-  // RelationMetadata alaways store the relation from the perspective of the `from` object, MANY_TO_ONE relations are not stored yet
+  // RelationMetadata always store the relation from the perspective of the `from` object, MANY_TO_ONE relations are not stored yet
   if (relationType === 'many-to-one') {
     fromObjectMetadata = fieldMetadata.object;
     toObjectMetadata = await workspaceCacheStorageService.getObjectMetadata(
