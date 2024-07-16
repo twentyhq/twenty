@@ -115,7 +115,7 @@ export const useRecordShowPagePagination = (
 
   const { state } = useLocation();
 
-  const cursorFromIndexPage = state.cursor;
+  const cursorFromIndexPage = state?.cursor;
 
   const { loading: loadingCurrentRecord, pageInfo: currentRecordsPageInfo } =
     useFindManyRecords({
