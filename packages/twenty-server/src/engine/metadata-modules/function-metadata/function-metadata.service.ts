@@ -96,6 +96,13 @@ export class FunctionMetadataService {
       forceName: true,
     });
 
-    return functionMetadata;
+    await this.codeEngineService.build(functionMetadata);
+    await this.functionMetadataRepository.update(functionMetadata.id, {
+      syncStatus: FunctionSyncStatus.READY,
+    });
+
+    return await this.functionMetadataRepository.findOneByOrFail({
+      id: functionMetadata.id,
+    });
   }
 }

@@ -35,16 +35,8 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
           read: {
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
           },
-          create: {
-            // Manually created because of the async validation
-            one: { disabled: true },
-            many: { disabled: true },
-          },
-          update: {
-            // Manually created because of the async validation
-            one: { disabled: true },
-            many: { disabled: true },
-          },
+          create: { disabled: true },
+          update: { disabled: true },
           delete: { disabled: true },
           guards: [JwtAuthGuard],
         },
