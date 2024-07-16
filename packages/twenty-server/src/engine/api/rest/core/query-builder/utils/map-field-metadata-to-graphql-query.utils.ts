@@ -19,14 +19,18 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.UUID,
     FieldMetadataType.TEXT,
     FieldMetadataType.PHONE,
+    FieldMetadataType.EMAIL,
     FieldMetadataType.DATE_TIME,
     FieldMetadataType.DATE,
-    FieldMetadataType.EMAIL,
-    FieldMetadataType.NUMBER,
-    FieldMetadataType.SELECT,
-    FieldMetadataType.RATING,
     FieldMetadataType.BOOLEAN,
+    FieldMetadataType.NUMBER,
+    FieldMetadataType.NUMERIC,
+    FieldMetadataType.PROBABILITY,
+    FieldMetadataType.RATING,
+    FieldMetadataType.SELECT,
+    FieldMetadataType.MULTI_SELECT,
     FieldMetadataType.POSITION,
+    FieldMetadataType.RAW_JSON,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {
