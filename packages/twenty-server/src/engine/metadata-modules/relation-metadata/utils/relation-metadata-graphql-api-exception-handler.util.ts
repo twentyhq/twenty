@@ -1,13 +1,13 @@
 import {
-  RelationMetadataException,
-  RelationMetadataExceptionCode,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
-import {
-  UserInputError,
   ConflictError,
   InternalServerError,
   NotFoundError,
-} from 'src/engine/utils/graphql-errors.util';
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  RelationMetadataException,
+  RelationMetadataExceptionCode,
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
 
 export const relationMetadataGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof RelationMetadataException) {

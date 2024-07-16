@@ -109,7 +109,7 @@ export const useRecordTableStates = (recordTableId?: string) => {
       isRowSelectedComponentFamilyState,
       scopeId,
     ),
-    hasUserSelectedAllRowState: extractComponentState(
+    hasUserSelectedAllRowsState: extractComponentState(
       hasUserSelectedAllRowsComponentState,
       scopeId,
     ),

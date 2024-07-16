@@ -46,6 +46,13 @@ export function WorkspaceField<T extends FieldMetadataType>(
       object,
       propertyKey.toString(),
     );
+    const isDeprecated =
+      TypedReflect.getMetadata(
+        'workspace:is-deprecated-field-metadata-args',
+        object,
+        propertyKey.toString(),
+      ) ?? false;
+
     const defaultValue = (options.defaultValue ??
       generateDefaultValue(
         options.type,
@@ -65,6 +72,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       isNullable,
       isSystem,
       gate,
+      isDeprecated,
     });
   };
 }

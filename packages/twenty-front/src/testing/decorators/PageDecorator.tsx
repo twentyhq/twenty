@@ -1,3 +1,6 @@
+import { ApolloProvider } from '@apollo/client';
+import { loadDevMessages } from '@apollo/client/dev';
+import { Decorator } from '@storybook/react';
 import { HelmetProvider } from 'react-helmet-async';
 import {
   createMemoryRouter,
@@ -6,9 +9,6 @@ import {
   Route,
   RouterProvider,
 } from 'react-router-dom';
-import { ApolloProvider } from '@apollo/client';
-import { loadDevMessages } from '@apollo/client/dev';
-import { Decorator } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
@@ -21,6 +21,7 @@ import { DefaultLayout } from '~/modules/ui/layout/page/DefaultLayout';
 import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
+import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
 
 export type PageDecoratorArgs = {
@@ -73,7 +74,9 @@ const Providers = () => {
                 <HelmetProvider>
                   <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
                     <ObjectMetadataItemsProvider>
-                      <Outlet />
+                      <PrefetchDataProvider>
+                        <Outlet />
+                      </PrefetchDataProvider>
                     </ObjectMetadataItemsProvider>
                   </SnackBarProviderScope>
                 </HelmetProvider>

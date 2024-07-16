@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { useClearField } from '@/object-record/record-field/hooks/useClearField';
@@ -98,14 +98,16 @@ export const SelectFieldInput = ({
         <DropdownMenuSeparator />
 
         <DropdownMenuItemsContainer hasMaxHeight>
-          <MenuItemSelectTag
-            key={`No ${fieldDefinition.label}`}
-            selected={false}
-            text={`No ${fieldDefinition.label}`}
-            color="transparent"
-            variant="outline"
-            onClick={handleClearField}
-          />
+          {fieldDefinition.metadata.isNullable && (
+            <MenuItemSelectTag
+              key={`No ${fieldDefinition.label}`}
+              selected={false}
+              text={`No ${fieldDefinition.label}`}
+              color="transparent"
+              variant="outline"
+              onClick={handleClearField}
+            />
+          )}
 
           {optionsInDropDown.map((option) => {
             return (

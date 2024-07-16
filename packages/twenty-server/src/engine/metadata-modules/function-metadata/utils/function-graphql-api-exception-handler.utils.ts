@@ -7,7 +7,7 @@ import {
   ForbiddenError,
   InternalServerError,
   NotFoundError,
-} from 'src/engine/utils/graphql-errors.util';
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export const functionGraphQLApiExceptionHandler = (error: any) => {
   if (error instanceof FunctionMetadataException) {

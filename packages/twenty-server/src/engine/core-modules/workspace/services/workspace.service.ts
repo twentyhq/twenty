@@ -1,24 +1,24 @@
-import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { Repository } from 'typeorm';
-import { SendInviteLinkEmail } from 'twenty-emails';
 import { render } from '@react-email/render';
+import { SendInviteLinkEmail } from 'twenty-emails';
+import { Repository } from 'typeorm';
 
-import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
+import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
