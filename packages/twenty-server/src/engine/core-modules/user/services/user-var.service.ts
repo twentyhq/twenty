@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
 
@@ -10,6 +11,7 @@ import {
 @Injectable()
 export class UserVarService {
   constructor(
+    @InjectRepository(KeyValuePair, 'core')
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
   ) {}
 

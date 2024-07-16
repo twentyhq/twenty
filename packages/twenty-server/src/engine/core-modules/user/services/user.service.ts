@@ -5,7 +5,6 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -23,8 +22,6 @@ export class UserService extends TypeOrmQueryService<User> {
     private readonly typeORMService: TypeORMService,
     private readonly eventEmitter: EventEmitter2,
     private readonly workspaceService: WorkspaceService,
-    @InjectRepository(KeyValuePair, 'core')
-    private readonly keyValuePairRepository: Repository<KeyValuePair>,
   ) {
     super(userRepository);
   }

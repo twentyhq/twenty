@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
@@ -7,6 +8,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UserVarService } from 'src/engine/core-modules/user/services/user-var.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -31,6 +33,7 @@ import { UserService } from './services/user.service';
     FileUploadModule,
     WorkspaceModule,
     OnboardingModule,
+    TypeOrmModule.forFeature([KeyValuePair], 'core'),
   ],
   exports: [UserService],
   providers: [UserService, UserVarService, UserResolver, TypeORMService],
