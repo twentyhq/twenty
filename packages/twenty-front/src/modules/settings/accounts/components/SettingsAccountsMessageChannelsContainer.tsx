@@ -59,14 +59,14 @@ export const SettingsAccountsMessageChannelsContainer = () => {
 
   return (
     <>
-    {tabs.length > 1 && (
-      <StyledMessageContainer>
-      <TabList
-        tabListId={SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID}
-        tabs={tabs}
-      />
-      </StyledMessageContainer>
-    )}
+      {tabs.length > 1 && (
+        <StyledMessageContainer>
+          <TabList
+            tabListId={SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID}
+            tabs={tabs}
+          />
+        </StyledMessageContainer>
+      )}
       {messageChannels.map((messageChannel) => (
         <React.Fragment key={messageChannel.id}>
           {messageChannel.id === activeTabId && (
