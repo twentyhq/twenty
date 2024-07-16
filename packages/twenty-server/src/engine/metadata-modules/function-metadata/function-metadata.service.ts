@@ -9,7 +9,10 @@ import { Repository } from 'typeorm';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { CodeEngineService } from 'src/engine/core-modules/code-engine/code-engine.service';
-import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
+import {
+  FunctionMetadataEntity,
+  FunctionSyncStatus,
+} from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
 import {
   FunctionMetadataException,
   FunctionMetadataExceptionCode,
@@ -41,6 +44,13 @@ export class FunctionMetadataService {
     if (!functionToExecute) {
       throw new FunctionMetadataException(
         `Function does not exist`,
+        FunctionMetadataExceptionCode.FUNCTION_NOT_FOUND,
+      );
+    }
+
+    if (functionToExecute.syncStatus === FunctionSyncStatus.NOT_READY) {
+      throw new FunctionMetadataException(
+        `Function is not ready to be executed`,
         FunctionMetadataExceptionCode.FUNCTION_NOT_FOUND,
       );
     }

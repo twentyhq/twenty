@@ -10,4 +10,5 @@ export class FunctionMetadataException extends CustomException {
 export enum FunctionMetadataExceptionCode {
   FUNCTION_NOT_FOUND = 'FUNCTION_NOT_FOUND',
   FUNCTION_ALREADY_EXIST = 'FUNCTION_ALREADY_EXIST',
+  FUNCTION_NOT_READY = 'FUNCTION_NOT_READY',
 }
