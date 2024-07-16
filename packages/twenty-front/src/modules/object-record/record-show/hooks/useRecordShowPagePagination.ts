@@ -1,5 +1,5 @@
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import {
   useLocation,
   useNavigate,
@@ -61,8 +61,6 @@ export const useRecordShowPagePagination = (
 
   const setLastShowPageRecordId = useSetRecoilState(lastShowPageRecordIdState);
 
-  const [isLoadedRecords, setIsLoadedRecords] = useState(false);
-
   const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
 
@@ -115,7 +113,7 @@ export const useRecordShowPagePagination = (
 
   const { state } = useLocation();
 
-  const cursorFromIndexPage = state.cursor;
+  const cursorFromIndexPage = state?.cursor;
 
   const { loading: loadingCurrentRecord, pageInfo: currentRecordsPageInfo } =
     useFindManyRecords({
@@ -123,7 +121,6 @@ export const useRecordShowPagePagination = (
         id: { eq: objectRecordId },
       },
       orderBy,
-      skip: isLoadedRecords,
       limit: 1,
       objectNameSingular,
       recordGqlFields,
@@ -141,7 +138,6 @@ export const useRecordShowPagePagination = (
   } = useFindManyRecords({
     filter,
     orderBy,
-    skip: isLoadedRecords,
     cursorFilter: isNonEmptyString(cursor)
       ? {
           cursorDirection: 'before',
@@ -161,7 +157,6 @@ export const useRecordShowPagePagination = (
   } = useFindManyRecords({
     filter,
     orderBy,
-    skip: isLoadedRecords,
     cursorFilter: cursor
       ? {
           cursorDirection: 'after',
