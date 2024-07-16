@@ -1,5 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+/* eslint-disable @nx/workspace-no-navigate-prefer-link */
+import { useMemo, useState } from 'react';
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -10,14 +16,36 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
-import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useReasd';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useRecordIdsFromFindManyCacheRootQuery';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-import { isDefined } from 'twenty-ui';
+import { isNonEmptyString } from '@sniptt/guards';
+import { capitalize } from '~/utils/string/capitalize';
+
+export const findView = ({
+  viewId,
+  objectMetadataItemId,
+  views,
+}: {
+  viewId: string | null;
+  objectMetadataItemId: string;
+  views: View[];
+}) => {
+  if (!viewId) {
+    return views.find(
+      (view: any) =>
+        view.key === 'INDEX' && view?.objectMetadataId === objectMetadataItemId,
+    ) as View;
+  } else {
+    return views.find(
+      (view: any) =>
+        view?.id === viewId && view?.objectMetadataId === objectMetadataItemId,
+    ) as View;
+  }
+};
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
@@ -33,16 +61,7 @@ export const useRecordShowPagePagination = (
 
   const setLastShowPageRecordId = useSetRecoilState(lastShowPageRecordIdState);
 
-  const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
-  const [hasPreviousRecord, setHasPreviousRecord] = useState(false);
-  const [hasNextRecord, setHasNextRecord] = useState(false);
-  const [objectRecords, setObjectRecords] = useState<ObjectRecord[]>([]);
-  const [totalRecords, setTotalRecords] = useState(0);
   const [isLoadedRecords, setIsLoadedRecords] = useState(false);
-  const [isLoadingPagination, setIsLoadingPagination] = useState(true);
-  const [hasNextPage, setHasNextPage] = useState<boolean | undefined>();
-
-  const [viewName, setViewName] = useState('');
 
   const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
@@ -52,22 +71,14 @@ export const useRecordShowPagePagination = (
   }
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
-  const { records: views } = usePrefetchedData(PrefetchKey.AllViews);
+  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
   const view = useMemo(() => {
-    if (!viewIdQueryParam) {
-      return views.find(
-        (view: any) =>
-          view.key === 'INDEX' &&
-          view?.objectMetadataId === objectMetadataItem.id,
-      ) as View;
-    } else {
-      return views.find(
-        (view: any) =>
-          view?.id === viewIdQueryParam &&
-          view?.objectMetadataId === objectMetadataItem.id,
-      ) as View;
-    }
+    return findView({
+      objectMetadataItemId: objectMetadataItem?.id ?? '',
+      viewId: viewIdQueryParam,
+      views,
+    });
   }, [viewIdQueryParam, objectMetadataItem, views]);
 
   const activeFieldMetadataItems = useMemo(
@@ -98,102 +109,107 @@ export const useRecordShowPagePagination = (
     mapViewSortsToSorts(view?.viewSorts ?? [], sortDefinitions),
   );
 
-  const { fetchMoreRecords } = useFindManyRecords({
+  const { state } = useLocation();
+
+  const cursorFromIndexPage = state.cursor;
+
+  const { loading: loadingCurrentRecord, pageInfo: currentRecordsPageInfo } =
+    useFindManyRecords({
+      filter: {
+        id: { eq: objectRecordId },
+      },
+      orderBy,
+      skip: isLoadedRecords,
+      limit: 1,
+      objectNameSingular,
+      recordGqlFields: generateDepthOneRecordGqlFields({
+        objectMetadataItem,
+      }),
+    });
+
+  const currentRecordCursor = currentRecordsPageInfo?.endCursor;
+
+  const cursor = cursorFromIndexPage ?? currentRecordCursor;
+
+  const {
+    loading: loadingRecordBefore,
+    records: recordsBefore,
+    pageInfo: pageInfoBefore,
+    totalCount,
+  } = useFindManyRecords({
     filter,
     orderBy,
     skip: isLoadedRecords,
-    limit: 2,
+    cursorFilter: isNonEmptyString(cursor)
+      ? {
+          cursorDirection: 'before',
+          cursor: cursor,
+          limit: 1,
+        }
+      : undefined,
     objectNameSingular,
     recordGqlFields: generateDepthOneRecordGqlFields({
       objectMetadataItem,
     }),
-    onCompleted: (records, options) => {
-      setObjectRecords(records);
-      setTotalRecords(options?.totalCount ?? 0);
-      setHasNextPage(options?.pageInfo?.hasNextPage);
-      setIsLoadingPagination(false);
-    },
   });
 
-  useEffect(() => {
-    if (
-      !isLoadingPagination &&
-      objectRecords.length > 0 &&
-      isDefined(hasNextPage)
-    ) {
-      const recordIndex = objectRecords.findIndex(
-        (rec) => rec.id === objectRecordId,
-      );
-      if (recordIndex < 0 && hasNextPage) {
-        fetchMoreRecords();
-      } else if (recordIndex < 0 && !hasNextPage) {
-        throw new Error('Object name or Record id not found');
-      }
-      setHasPreviousRecord(recordIndex !== 0);
-      setHasNextRecord(recordIndex !== objectRecords.length || hasNextPage);
-      setCurrentRecordIndex(recordIndex);
-      if (recordIndex >= 0) setIsLoadedRecords(true);
-    }
+  const {
+    loading: loadingRecordAfter,
+    records: recordsAfter,
+    pageInfo: pageInfoAfter,
+  } = useFindManyRecords({
+    filter,
+    orderBy,
+    skip: isLoadedRecords,
+    cursorFilter: cursor
+      ? {
+          cursorDirection: 'after',
+          cursor: cursor,
+          limit: 1,
+        }
+      : undefined,
+    objectNameSingular,
+    recordGqlFields: generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+    }),
+  });
 
-    if (isDefined(view)) {
-      setViewName(view.name);
-    }
-  }, [
-    objectRecordId,
-    isLoadingPagination,
-    objectRecords,
-    hasNextPage,
-    view,
-    fetchMoreRecords,
-    setHasPreviousRecord,
-    setHasNextRecord,
-    setCurrentRecordIndex,
-    setViewName,
-    setIsLoadedRecords,
-  ]);
+  const loading =
+    loadingRecordAfter || loadingRecordBefore || loadingCurrentRecord;
 
-  useEffect(() => {
-    const previousIndex = currentRecordIndex - 1;
-    const nextIndex = currentRecordIndex + 1;
-    setHasPreviousRecord(previousIndex >= 0);
-    const nextRecordIsLast = nextIndex === objectRecords.length;
+  const isThereARecordBefore = recordsBefore.length > 0;
+  const isThereARecordAfter = recordsBefore.length > 0;
 
-    if (nextRecordIsLast === true && hasNextPage === true) {
-      setIsLoadedRecords(false);
-      fetchMoreRecords();
-    }
-    setHasNextRecord(nextIndex < objectRecords.length);
-  }, [
-    hasNextPage,
-    currentRecordIndex,
-    objectRecords,
-    setHasPreviousRecord,
-    setHasNextRecord,
-    fetchMoreRecords,
-    setObjectRecords,
-    setIsLoadedRecords,
-  ]);
+  const recordBefore = recordsBefore[0];
+  const recordAfter = recordsAfter[0];
+
+  const recordBeforeCursor = pageInfoBefore?.endCursor;
+  const recordAfterCursor = pageInfoAfter?.endCursor;
 
   const navigateToPreviousRecord = () => {
-    const previousIndex = currentRecordIndex - 1;
-    const prevRecord = objectRecords[previousIndex];
     navigate(
-      `/object/${objectNameSingular}/${prevRecord.id}${
+      `/object/${objectNameSingular}/${recordBefore.id}${
         viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
       }`,
+      {
+        state: {
+          cursor: recordBeforeCursor,
+        },
+      },
     );
-    setCurrentRecordIndex(previousIndex);
   };
 
   const navigateToNextRecord = () => {
-    const nextIndex = currentRecordIndex + 1;
-    const nextRecord = objectRecords[nextIndex];
     navigate(
-      `/object/${objectNameSingular}/${nextRecord.id}${
+      `/object/${objectNameSingular}/${recordAfter.id}${
         viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
       }`,
+      {
+        state: {
+          cursor: recordAfterCursor,
+        },
+      },
     );
-    setCurrentRecordIndex(nextIndex);
   };
 
   const navigateToIndexView = () => {
@@ -214,20 +230,21 @@ export const useRecordShowPagePagination = (
     },
   });
 
-  const recordPositionInQueryCache = recordIdsInCache.findIndex(
-    (id) => id === objectRecordId,
-  );
+  const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);
 
-  const viewNameWithCount =
-    recordPositionInQueryCache > -1
-      ? `${recordPositionInQueryCache + 1} of ${totalRecords} in ${viewName}`
-      : `${viewName} (${totalRecords})`;
+  const rankFoundInFiew = rankInView > -1;
+
+  const objectLabel = capitalize(objectMetadataItem.namePlural);
+
+  const viewNameWithCount = rankFoundInFiew
+    ? `${rankInView + 1} of ${totalCount} in ${objectLabel}`
+    : `${objectLabel} (${totalCount})`;
 
   return {
     viewName: viewNameWithCount,
-    hasPreviousRecord,
-    isLoadingPagination,
-    hasNextRecord,
+    hasPreviousRecord: isThereARecordBefore,
+    isLoadingPagination: loading,
+    hasNextRecord: isThereARecordAfter,
     navigateToPreviousRecord,
     navigateToNextRecord,
     navigateToIndexView,
