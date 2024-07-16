@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntitySchema } from 'typeorm';
+import lowerFirst from 'lodash.lowerfirst';
 
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectEntitiesStorage } from 'src/engine/twenty-orm/storage/object-entities.storage';
+import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -69,7 +70,11 @@ export class EntitySchemaFactory {
       relations,
     });
 
-    ObjectEntitiesStorage.setObjectMetadataEntity(entitySchema, objectMetadata);
+    WorkspaceEntitiesStorage.setEntitySchema(
+      workspaceId,
+      lowerFirst(objectMetadata.nameSingular),
+      entitySchema,
+    );
 
     return entitySchema;
   }

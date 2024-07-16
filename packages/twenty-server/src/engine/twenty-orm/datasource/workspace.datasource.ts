@@ -1,7 +1,6 @@
 import {
   DataSource,
   DataSourceOptions,
-  EntityManager,
   EntityTarget,
   ObjectLiteral,
   QueryRunner,
@@ -22,11 +21,8 @@ export class WorkspaceDataSource extends DataSource {
   ) {
     super(options);
     this.internalContext = internalContext;
-    console.log(
-      'WorkspaceDataSource constructor: ',
-      internalContext,
-      this.internalContext,
-    );
+    // Recreate manager after internalContext has been initialized
+    this.manager = this.createEntityManager();
   }
 
   override getRepository<Entity extends ObjectLiteral>(
@@ -35,7 +31,9 @@ export class WorkspaceDataSource extends DataSource {
     return this.manager.getRepository(target);
   }
 
-  override createEntityManager(queryRunner?: QueryRunner): EntityManager {
+  override createEntityManager(
+    queryRunner?: QueryRunner,
+  ): WorkspaceEntityManager {
     return new WorkspaceEntityManager(this.internalContext, this, queryRunner);
   }
 }

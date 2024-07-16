@@ -20,11 +20,6 @@ export class WorkspaceEntityManager extends EntityManager {
   ) {
     super(connection, queryRunner);
     this.internalContext = internalContext;
-    console.log(
-      'WorkspaceEntityManager constructor: ',
-      internalContext,
-      this.internalContext,
-    );
   }
 
   override getRepository<Entity extends ObjectLiteral>(

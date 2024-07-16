@@ -8,7 +8,7 @@ import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { ObjectEntitiesStorage } from 'src/engine/twenty-orm/storage/object-entities.storage';
+import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { workspaceDataSourceCacheInstance } from 'src/engine/twenty-orm/twenty-orm-core.module';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
@@ -93,7 +93,7 @@ export class TwentyORMManager {
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${cacheVersion}`,
       async () => {
-        const entities = ObjectEntitiesStorage.getAllEntitySchemas();
+        const entities = WorkspaceEntitiesStorage.getEntities(workspaceId);
 
         return this.workspaceDataSourceFactory.create(entities, workspaceId);
       },
