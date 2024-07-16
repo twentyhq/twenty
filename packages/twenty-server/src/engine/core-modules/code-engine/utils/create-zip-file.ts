@@ -1,18 +1,21 @@
 import fs from 'fs';
+import { pipeline } from 'stream/promises';
 
 import archiver from 'archiver';
 
-export const createZipFile = async (sourceDir, outPath): Promise<void> => {
+export const createZipFile = async (
+  sourceDir: string,
+  outPath: string,
+): Promise<void> => {
   const output = fs.createWriteStream(outPath);
   const archive = archiver('zip', {
     zlib: { level: 9 }, // Compression level
   });
 
-  return new Promise((resolve, reject) => {
-    output.on('close', () => resolve());
-    archive.on('error', (err) => reject(err));
-    archive.pipe(output);
-    archive.directory(sourceDir, false);
-    archive.finalize();
-  });
+  const p = pipeline(archive, output);
+
+  archive.directory(sourceDir, false);
+  archive.finalize();
+
+  return p;
 };
