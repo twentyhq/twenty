@@ -1,56 +1,47 @@
-import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
-import { isNonEmptyString } from '@sniptt/guards';
 
 import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { Chip, ChipVariant } from '@ui/display/chip/components/Chip';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { isDefined } from '@ui/utilities/isDefined';
 import { Nullable } from '@ui/utilities/types/Nullable';
+import { MouseEvent } from 'react';
 
-export type EntityChipProps = {
-  linkToEntity?: string;
-  entityId: string;
+export type AvatarChipProps = {
   name: string;
   avatarUrl?: string;
   avatarType?: Nullable<AvatarType>;
-  variant?: EntityChipVariant;
+  variant?: AvatarChipVariant;
   LeftIcon?: IconComponent;
   className?: string;
+  placeholderColorSeed?: string;
+  onClick?: (event: MouseEvent) => void;
 };
 
-export enum EntityChipVariant {
+export enum AvatarChipVariant {
   Regular = 'regular',
   Transparent = 'transparent',
 }
 
-export const EntityChip = ({
-  linkToEntity,
-  entityId,
+export const AvatarChip = ({
   name,
   avatarUrl,
   avatarType = 'rounded',
-  variant = EntityChipVariant.Regular,
+  variant = AvatarChipVariant.Regular,
   LeftIcon,
   className,
-}: EntityChipProps) => {
-  const navigate = useNavigate();
+  placeholderColorSeed,
+  onClick,
+}: AvatarChipProps) => {
   const theme = useTheme();
-
-  const handleLinkClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (isNonEmptyString(linkToEntity)) {
-      event.stopPropagation();
-      navigate(linkToEntity);
-    }
-  };
 
   return (
     <Chip
       label={name}
       variant={
-        linkToEntity
-          ? variant === EntityChipVariant.Regular
+        isDefined(onClick)
+          ? variant === AvatarChipVariant.Regular
             ? ChipVariant.Highlighted
             : ChipVariant.Regular
           : ChipVariant.Transparent
@@ -61,15 +52,15 @@ export const EntityChip = ({
         ) : (
           <Avatar
             avatarUrl={avatarUrl}
-            entityId={entityId}
+            placeholderColorSeed={placeholderColorSeed}
             placeholder={name}
             size="sm"
             type={avatarType}
           />
         )
       }
-      clickable={!!linkToEntity}
-      onClick={handleLinkClick}
+      clickable={isDefined(onClick)}
+      onClick={onClick}
       className={className}
     />
   );

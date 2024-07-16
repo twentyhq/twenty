@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
@@ -11,6 +12,10 @@ import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/setti
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import React from 'react';
+
+const StyledMessageContainer = styled.div`
+  padding-bottom: ${({ theme }) => theme.spacing(6)};
+`;
 
 export const SettingsAccountsMessageChannelsContainer = () => {
   const { activeTabIdState } = useTabList(
@@ -54,10 +59,14 @@ export const SettingsAccountsMessageChannelsContainer = () => {
 
   return (
     <>
-      <TabList
-        tabListId={SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID}
-        tabs={tabs}
-      />
+      {tabs.length > 1 && (
+        <StyledMessageContainer>
+          <TabList
+            tabListId={SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID}
+            tabs={tabs}
+          />
+        </StyledMessageContainer>
+      )}
       {messageChannels.map((messageChannel) => (
         <React.Fragment key={messageChannel.id}>
           {messageChannel.id === activeTabId && (

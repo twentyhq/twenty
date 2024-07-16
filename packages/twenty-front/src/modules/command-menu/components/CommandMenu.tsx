@@ -1,6 +1,6 @@
-import { useMemo, useRef } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles } from 'twenty-ui';
@@ -377,7 +377,7 @@ export const CommandMenu = () => {
                             <Avatar
                               type="rounded"
                               avatarUrl={null}
-                              entityId={person.id}
+                              placeholderColorSeed={person.id}
                               placeholder={
                                 person.name.firstName +
                                 ' ' +
@@ -399,7 +399,7 @@ export const CommandMenu = () => {
                           to={`object/company/${company.id}`}
                           Icon={() => (
                             <Avatar
-                              entityId={company.id}
+                              placeholderColorSeed={company.id}
                               placeholder={company.name}
                               avatarUrl={getLogoUrlFromDomainName(
                                 company.domainName,
