@@ -51,19 +51,17 @@ type AssertFieldMetadataFunction = <
                           ? FieldNumberMetadata
                           : E extends 'PHONE'
                             ? FieldPhoneMetadata
-                            : E extends 'PROBABILITY'
-                              ? FieldRatingMetadata
-                              : E extends 'RELATION'
-                                ? FieldRelationMetadata
-                                : E extends 'TEXT'
-                                  ? FieldTextMetadata
-                                  : E extends 'UUID'
-                                    ? FieldUuidMetadata
-                                    : E extends 'ADDRESS'
-                                      ? FieldAddressMetadata
-                                      : E extends 'RAW_JSON'
-                                        ? FieldRawJsonMetadata
-                                        : never,
+                            : E extends 'RELATION'
+                              ? FieldRelationMetadata
+                              : E extends 'TEXT'
+                                ? FieldTextMetadata
+                                : E extends 'UUID'
+                                  ? FieldUuidMetadata
+                                  : E extends 'ADDRESS'
+                                    ? FieldAddressMetadata
+                                    : E extends 'RAW_JSON'
+                                      ? FieldRawJsonMetadata
+                                      : never,
 >(
   fieldType: E,
   fieldTypeGuard: (
