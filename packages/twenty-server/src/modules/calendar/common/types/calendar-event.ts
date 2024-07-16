@@ -25,9 +25,7 @@ export type CalendarEventParticipant = Omit<
   | 'workspaceMember'
   | 'calendarEvent'
   | 'calendarEventId'
-> & {
-  iCalUID: string;
-};
+>;
 
 export type CalendarEventParticipantWithCalendarEventId =
   CalendarEventParticipant & {
