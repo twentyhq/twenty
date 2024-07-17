@@ -17,11 +17,6 @@ import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
 import { WorkspaceSyncRelationMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
-import { ServerlessModule } from 'src/engine/integrations/serverless/serverless.module';
-import { serverlessModuleFactory } from 'src/engine/integrations/serverless/serverless-module.factory';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 
 @Module({
   imports: [
@@ -38,10 +33,6 @@ import { FileUploadService } from 'src/engine/core-modules/file/file-upload/serv
     ),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     WorkspaceCacheVersionModule,
-    ServerlessModule.forRootAsync({
-      useFactory: serverlessModuleFactory,
-      inject: [EnvironmentService, FileStorageService, FileUploadService],
-    }),
   ],
   providers: [
     ...workspaceSyncMetadataFactories,

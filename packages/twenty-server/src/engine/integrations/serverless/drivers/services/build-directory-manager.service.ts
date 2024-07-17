@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import { join } from 'path';
 import { tmpdir } from 'os';
 import fs from 'fs';
@@ -10,7 +12,8 @@ const TEMPORARY_LAMBDA_SOURCE_FOLDER = 'src';
 const LAMBDA_ZIP_FILE_NAME = 'lambda.zip';
 const LAMBDA_ENTRY_FILE_NAME = 'index.js';
 
-export class BuildDirectoryManager {
+@Injectable()
+export class BuildDirectoryManagerService {
   private temporaryDir = join(tmpdir(), `${TEMPORARY_LAMBDA_FOLDER}_${v4()}`);
   private lambdaHandler = `${LAMBDA_ENTRY_FILE_NAME.split('.')[0]}.handler`;
 

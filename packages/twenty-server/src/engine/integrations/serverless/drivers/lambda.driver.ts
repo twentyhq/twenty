@@ -11,13 +11,14 @@ import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/co
 import { ServerlessDriver } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { createZipFile } from 'src/engine/integrations/serverless/drivers/utils/create-zip-file';
-import { BuildDirectoryManager } from 'src/engine/integrations/serverless/drivers/utils/build-directory-manager';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
+import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
+  buildDirectoryManagerService: BuildDirectoryManagerService;
   region: string;
   role: string;
 }
@@ -29,6 +30,7 @@ export class LambdaDriver
   private readonly lambdaClient: Lambda;
   private readonly lambdaRole: string;
   private readonly fileStorageService: FileStorageService;
+  private readonly buildDirectoryManagerService: BuildDirectoryManagerService;
 
   constructor(options: LambdaDriverOptions) {
     super();
@@ -37,6 +39,7 @@ export class LambdaDriver
     this.lambdaClient = new Lambda({ ...lambdaOptions, region });
     this.lambdaRole = role;
     this.fileStorageService = options.fileStorageService;
+    this.buildDirectoryManagerService = options.buildDirectoryManagerService;
   }
 
   async build(serverlessFunction: ServerlessFunctionEntity) {
@@ -45,14 +48,12 @@ export class LambdaDriver
       this.fileStorageService,
     );
 
-    const buildDirectoryManager = new BuildDirectoryManager();
-
     const {
       sourceTemporaryDir,
       lambdaZipPath,
       javascriptFilePath,
       lambdaHandler,
-    } = await buildDirectoryManager.init();
+    } = await this.buildDirectoryManagerService.init();
 
     await fs.promises.writeFile(javascriptFilePath, javascriptCode);
 
@@ -74,7 +75,7 @@ export class LambdaDriver
 
     await this.lambdaClient.send(command);
 
-    await buildDirectoryManager.clean();
+    await this.buildDirectoryManagerService.clean();
   }
 
   async execute(

@@ -20,6 +20,7 @@ import { ServerlessModule } from 'src/engine/integrations/serverless/serverless.
 import { serverlessModuleFactory } from 'src/engine/integrations/serverless/serverless-module.factory';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
 
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
@@ -68,7 +69,12 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
     }),
     ServerlessModule.forRootAsync({
       useFactory: serverlessModuleFactory,
-      inject: [EnvironmentService, FileStorageService, FileUploadService],
+      inject: [
+        EnvironmentService,
+        FileStorageService,
+        FileUploadService,
+        BuildDirectoryManagerService,
+      ],
     }),
   ],
   exports: [],

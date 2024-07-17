@@ -7,11 +7,13 @@ import {
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
 
 export const serverlessModuleFactory = async (
   environmentService: EnvironmentService,
   fileStorageService: FileStorageService,
   fileUploadService: FileUploadService,
+  buildDirectoryManagerService: BuildDirectoryManagerService,
 ): Promise<ServerlessModuleOptions> => {
   const driverType = environmentService.get('SERVERLESS_TYPE');
 
@@ -35,6 +37,7 @@ export const serverlessModuleFactory = async (
       return {
         type: ServerlessDriverType.Lambda,
         options: {
+          buildDirectoryManagerService,
           fileStorageService,
           credentials: accessKeyId
             ? {
