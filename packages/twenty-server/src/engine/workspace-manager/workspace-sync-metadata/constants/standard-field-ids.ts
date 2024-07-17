@@ -195,15 +195,6 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   custom: '20202020-855a-4bc8-9861-79deef37011f',
 };
 
-export const FUNCTION_STANDARD_FIELD_IDS = {
-  syncStatus: '20202020-dd26-42c6-8c3c-2727e2d4e17b',
-  rawSourcePath: '20202020-dd26-42c6-8c3c-89fce9e35713',
-  buildSourcePath: '20202020-dd26-42c6-8c3c-413b84dea9ef',
-  name: '20202020-dd26-42c6-8c3c-d19b06d6ec8e',
-  author: '20202020-dd26-42c6-8c3c-d19b06d6ec8f',
-  workspaceId: '20202020-dd26-42c6-8c3c-d19b06d6ec8a',
-};
-
 export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS = {
   messageChannel: '20202020-b658-408f-bd46-3bd2d15d7e52',
   message: '20202020-da5d-4ac5-8743-342ab0a0336b',
