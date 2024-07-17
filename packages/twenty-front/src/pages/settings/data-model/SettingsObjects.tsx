@@ -12,6 +12,7 @@ import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDelet
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
+import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
@@ -48,6 +49,7 @@ export const SettingsObjects = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <InformationBanner />
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <StyledH1Title title="Objects" />

@@ -1,10 +1,11 @@
+import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DateTime } from 'luxon';
 import { H2Title, IconSettings } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -63,6 +64,7 @@ export const SettingsDevelopersApiKeysNew = () => {
   const canSave = !!formValues.name && createOneApiKey;
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <InformationBanner />
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb

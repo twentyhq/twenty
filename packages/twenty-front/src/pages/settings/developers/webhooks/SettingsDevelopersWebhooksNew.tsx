@@ -4,6 +4,7 @@ import { H2Title, IconSettings } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -45,6 +46,7 @@ export const SettingsDevelopersWebhooksNew = () => {
   const canSave = !!formValues.targetUrl && createOneWebhook;
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <InformationBanner />
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb

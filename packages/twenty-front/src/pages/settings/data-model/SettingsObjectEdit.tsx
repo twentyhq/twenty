@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
+import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -106,6 +107,7 @@ export const SettingsObjectEdit = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <InformationBanner />
         <SettingsPageContainer>
           <SettingsHeaderContainer>
             <Breadcrumb

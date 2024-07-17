@@ -7,6 +7,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
 import { SettingsAccountLoader } from '@/settings/accounts/components/SettingsAccountLoader';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
@@ -38,6 +39,7 @@ export const SettingsAccounts = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <InformationBanner />
       <SettingsPageContainer>
         <Breadcrumb links={[{ children: 'Accounts' }]} />
 

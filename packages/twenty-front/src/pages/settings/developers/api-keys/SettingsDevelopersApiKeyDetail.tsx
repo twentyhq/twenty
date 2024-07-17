@@ -10,6 +10,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
@@ -129,6 +130,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     <>
       {apiKeyData?.name && (
         <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+          <InformationBanner />
           <SettingsPageContainer>
             <SettingsHeaderContainer>
               <Breadcrumb

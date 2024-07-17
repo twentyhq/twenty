@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
+import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -71,6 +72,7 @@ export const SettingsNewObject = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <InformationBanner />
         <SettingsPageContainer>
           <SettingsHeaderContainer>
             <Breadcrumb

@@ -1,12 +1,13 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneDatabaseConnection } from '@/databases/hooks/useCreateOneDatabaseConnection';
 import { getForeignDataWrapperType } from '@/databases/utils/getForeignDataWrapperType';
+import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -133,6 +134,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <InformationBanner />
       <SettingsPageContainer>
         <FormProvider
           // eslint-disable-next-line react/jsx-props-no-spreading
