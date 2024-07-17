@@ -8,8 +8,13 @@ import { SettingsReadDocumentationButton } from '@/settings/developers/component
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { useRecoilValue } from 'recoil';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+
+const REVERT_PUBLIC_KEY = 'pk_live_a87fee8c-28c7-494f-99a3-996ff89f9918';
 
 export const SettingsCRMMigration = () => {
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -18,12 +23,10 @@ export const SettingsCRMMigration = () => {
           <SettingsReadDocumentationButton />
         </SettingsHeaderContainer>
         <Section>
-          test
           <RevertConnect
             config={{
-              revertToken: 'pk_test_73db8636-2d3e-4ead-ac43-1bfa288c09f2',
-              tenantId:
-                'sfdc_acc_8a24c1b6-a8fe-4feb-9a8d-27562783d37a_development',
+              revertToken: REVERT_PUBLIC_KEY,
+              tenantId: currentWorkspace?.id,
             }}
           />
         </Section>
