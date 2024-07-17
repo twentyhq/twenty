@@ -47,6 +47,11 @@ export class ServerlessFunctionDto {
   @Field()
   name: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  sourceFileHash: string;
+
   @IsEnum(ServerlessFunctionSyncStatus)
   @IsNotEmpty()
   @Field(() => ServerlessFunctionSyncStatus)

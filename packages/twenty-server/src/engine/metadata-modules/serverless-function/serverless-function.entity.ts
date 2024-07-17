@@ -21,6 +21,9 @@ export class ServerlessFunctionEntity {
   @Column({ nullable: false })
   name: string;
 
+  @Column({ nullable: false })
+  sourceFileHash: string;
+
   @Column({
     nullable: false,
     default: ServerlessFunctionSyncStatus.NOT_READY,

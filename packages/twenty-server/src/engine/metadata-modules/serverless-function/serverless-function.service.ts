@@ -20,6 +20,7 @@ import {
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
+import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -78,12 +79,13 @@ export class ServerlessFunctionService {
       );
     }
 
+    const typescriptCode = await readFileContent(createReadStream());
+
     const serverlessFunction = await this.serverlessFunctionRepository.save({
       name,
       workspaceId,
+      sourceFileHash: serverlessFunctionCreateHash(typescriptCode),
     });
-
-    const typescriptCode = await readFileContent(createReadStream());
 
     const fileFolder = join(
       FileFolder.ServerlessFunction,
