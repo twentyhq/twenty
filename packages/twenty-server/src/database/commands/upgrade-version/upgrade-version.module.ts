@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { StartDataSeedDemoWorkspaceCronCommand } from 'src/database/commands/data-seed-demo-workspace/crons/start-data-seed-demo-workspace.cron.command';
-import { StopDataSeedDemoWorkspaceCronCommand } from 'src/database/commands/data-seed-demo-workspace/crons/stop-data-seed-demo-workspace.cron.command';
-import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace-command';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
-import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
-import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
-import { UpdateMessageChannelVisibilityEnumCommand } from 'src/database/commands/upgrade-version/0-20/0-20-update-message-channel-visibility-enum.command';
-import { UpgradeTo0_22CommandModule } from 'src/database/commands/upgrade-version/0-22/0-22-upgrade-version.module';
-import { UpgradeVersionModule } from 'src/database/commands/upgrade-version/upgrade-version.module';
-import { WorkspaceAddTotalCountCommand } from 'src/database/commands/workspace-add-total-count.command';
+import { AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand } from 'src/database/commands/upgrade-version/0-22/0-22-add-new-address-field-to-views-with-deprecated-address.command';
+import { FixObjectMetadataIdStandardIdCommand } from 'src/database/commands/upgrade-version/0-22/0-22-fix-object-metadata-id-standard-id.command';
+import { UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand } from 'src/database/commands/upgrade-version/0-22/0-22-update-boolean-fields-null-default-values-and-null-values.command';
+import { UpdateMessageChannelSyncStageEnumCommand } from 'src/database/commands/upgrade-version/0-22/0-22-update-message-channel-sync-stage-enum.command';
+import { UpdateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/upgrade-version/0-22/0-22-update-message-channel-sync-status-enum.command';
+import { UpgradeTo0_22Command } from 'src/database/commands/upgrade-version/0-22/0-22-upgrade-version.command';
+import { UpgradeVersionCommand } from 'src/database/commands/upgrade-version/upgrade-version.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -46,17 +44,18 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     ObjectMetadataModule,
     DataSeedDemoWorkspaceModule,
     WorkspaceCacheVersionModule,
-    UpgradeTo0_22CommandModule, // TODO Deprecate/remove
-    UpgradeVersionModule,
   ],
   providers: [
-    DataSeedWorkspaceCommand,
-    DataSeedDemoWorkspaceCommand,
-    WorkspaceAddTotalCountCommand,
-    ConfirmationQuestion,
-    StartDataSeedDemoWorkspaceCronCommand,
-    StopDataSeedDemoWorkspaceCronCommand,
-    UpdateMessageChannelVisibilityEnumCommand,
+    // general
+    UpgradeVersionCommand,
+
+    // 0.22 (legacy)
+    UpgradeTo0_22Command,
+    FixObjectMetadataIdStandardIdCommand,
+    UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand,
+    UpdateMessageChannelSyncStatusEnumCommand,
+    UpdateMessageChannelSyncStageEnumCommand,
+    AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand,
   ],
 })
-export class DatabaseCommandModule {}
+export class UpgradeVersionModule {}

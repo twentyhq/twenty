@@ -53,4 +53,4 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     UpgradeTo0_22Command,
   ],
 })
-export class UpgradeTo0_22CommandModule {}
+export class UpgradeTo0_22CommandModule {} // TODO: deprecate / remove
