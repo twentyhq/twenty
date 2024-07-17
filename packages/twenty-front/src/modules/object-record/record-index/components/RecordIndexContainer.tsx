@@ -226,6 +226,9 @@ export const RecordIndexContainer = ({
             />
           </StyledContainerWithPadding>
         </SpreadsheetImportProvider>
+        {
+          // Put the banner here
+        }
         <RecordIndexEventContext.Provider
           value={{
             onIndexIdentifierClick: handleIndexIdentifierClick,
