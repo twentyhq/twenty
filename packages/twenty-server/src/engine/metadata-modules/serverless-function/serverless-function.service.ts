@@ -17,13 +17,14 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
+import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
 
 @Injectable()
 export class ServerlessFunctionService {
   constructor(
-    private readonly fileUploadService: FileUploadService,
+    private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
     @InjectRepository(ServerlessFunctionEntity, 'metadata')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
@@ -90,12 +91,11 @@ export class ServerlessFunctionService {
       serverlessFunction.id,
     );
 
-    await this.fileUploadService.uploadFile({
+    await this.fileStorageService.write({
       file: typescriptCode,
-      filename: 'source.ts',
+      name: SOURCE_FILE_NAME,
       mimeType: mimetype,
-      fileFolder,
-      forceName: true,
+      folder: fileFolder,
     });
 
     await this.serverlessService.build(serverlessFunction);

@@ -6,22 +6,21 @@ import {
 } from 'src/engine/integrations/serverless/serverless.interface';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
 
 export const serverlessModuleFactory = async (
   environmentService: EnvironmentService,
   fileStorageService: FileStorageService,
-  fileUploadService: FileUploadService,
   buildDirectoryManagerService: BuildDirectoryManagerService,
 ): Promise<ServerlessModuleOptions> => {
   const driverType = environmentService.get('SERVERLESS_TYPE');
+  const options = { fileStorageService };
 
   switch (driverType) {
     case ServerlessDriverType.Local: {
       return {
         type: ServerlessDriverType.Local,
-        options: { fileStorageService, fileUploadService },
+        options,
       };
     }
     case ServerlessDriverType.Lambda: {
@@ -37,8 +36,8 @@ export const serverlessModuleFactory = async (
       return {
         type: ServerlessDriverType.Lambda,
         options: {
+          ...options,
           buildDirectoryManagerService,
-          fileStorageService,
           credentials: accessKeyId
             ? {
                 accessKeyId,

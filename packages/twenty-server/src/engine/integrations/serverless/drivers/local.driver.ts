@@ -8,7 +8,6 @@ import { v4 } from 'uuid';
 import { ServerlessDriver } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { BUILD_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/build-file-name';
@@ -16,7 +15,6 @@ import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
-  fileUploadService: FileUploadService;
 }
 
 export class LocalDriver
@@ -24,11 +22,9 @@ export class LocalDriver
   implements ServerlessDriver
 {
   private readonly fileStorageService: FileStorageService;
-  private readonly fileUploadService: FileUploadService;
 
   constructor(options: LocalDriverOptions) {
     super();
-    this.fileUploadService = options.fileUploadService;
     this.fileStorageService = options.fileStorageService;
   }
 
@@ -38,12 +34,11 @@ export class LocalDriver
       this.fileStorageService,
     );
 
-    await this.fileUploadService.uploadFile({
+    await this.fileStorageService.write({
       file: javascriptCode,
-      filename: BUILD_FILE_NAME,
+      name: BUILD_FILE_NAME,
       mimeType: undefined,
-      fileFolder: this.getFolderPath(serverlessFunction),
-      forceName: true,
+      folder: this.getFolderPath(serverlessFunction),
     });
   }
 
