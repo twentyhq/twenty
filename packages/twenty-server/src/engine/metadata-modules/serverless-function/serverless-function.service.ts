@@ -24,7 +24,7 @@ import { readFileContent } from 'src/engine/integrations/file-storage/utils/read
 export class ServerlessFunctionService {
   constructor(
     private readonly fileUploadService: FileUploadService,
-    private readonly codeEngineService: ServerlessService,
+    private readonly serverlessService: ServerlessService,
     @InjectRepository(ServerlessFunctionEntity, 'metadata')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
@@ -57,7 +57,7 @@ export class ServerlessFunctionService {
       );
     }
 
-    return this.codeEngineService.execute(functionToExecute, payload);
+    return this.serverlessService.execute(functionToExecute, payload);
   }
 
   async createOne(
@@ -98,7 +98,7 @@ export class ServerlessFunctionService {
       forceName: true,
     });
 
-    await this.codeEngineService.build(serverlessFunction);
+    await this.serverlessService.build(serverlessFunction);
     await this.serverlessFunctionRepository.update(serverlessFunction.id, {
       syncStatus: ServerlessFunctionSyncStatus.READY,
     });
