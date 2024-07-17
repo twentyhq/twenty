@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { H1Title, H2Title, IconSettings, IconTrash } from 'twenty-ui';
 
@@ -8,15 +8,16 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
@@ -51,6 +52,7 @@ export const SettingsWorkspaceMembers = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <InformationBanner />
       <SettingsPageContainer>
         <StyledH1Title title="Members" />
         <Section>
