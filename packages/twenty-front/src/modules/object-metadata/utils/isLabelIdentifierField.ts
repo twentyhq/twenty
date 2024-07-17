@@ -11,15 +11,12 @@ export const isLabelIdentifierField = ({
   fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'name'>;
   objectMetadataItem: Pick<
     ObjectMetadataItem,
-    'labelIdentifierFieldMetadataId' | 'nameSingular'
+    'labelIdentifierFieldMetadataId'
   >;
 }) => {
   // Temporary hack while waiting for Weiko's PR
   // https://github.com/twentyhq/twenty/pull/6227
-  if (
-    objectMetadataItem.nameSingular === 'activity' &&
-    fieldMetadataItem.name === 'title'
-  ) {
+  if (fieldMetadataItem.name === 'title') {
     return true;
   }
 
