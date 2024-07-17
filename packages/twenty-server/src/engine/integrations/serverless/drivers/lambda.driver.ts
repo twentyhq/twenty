@@ -10,11 +10,11 @@ import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/co
 
 import { ServerlessDriver } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
-import { createZipFile } from 'src/engine/integrations/serverless/utils/create-zip-file';
-import { BuildDirectoryManager } from 'src/engine/integrations/serverless/utils/build-directory-manager';
+import { createZipFile } from 'src/engine/integrations/serverless/drivers/utils/create-zip-file';
+import { BuildDirectoryManager } from 'src/engine/integrations/serverless/drivers/utils/build-directory-manager';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
-import { CommonDriver } from 'src/engine/integrations/serverless/drivers/common.driver';
+import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -22,7 +22,10 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   role: string;
 }
 
-export class LambdaDriver extends CommonDriver implements ServerlessDriver {
+export class LambdaDriver
+  extends BaseServerlessDriver
+  implements ServerlessDriver
+{
   private readonly lambdaClient: Lambda;
   private readonly lambdaRole: string;
   private readonly fileStorageService: FileStorageService;

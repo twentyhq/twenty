@@ -5,10 +5,10 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { compileTypescript } from 'src/engine/integrations/serverless/utils/compile-typescript';
+import { compileTypescript } from 'src/engine/integrations/serverless/drivers/utils/compile-typescript';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
-export class CommonDriver {
+export class BaseServerlessDriver {
   getFolderPath(serverlessFunction: ServerlessFunctionEntity) {
     return join(
       FileFolder.ServerlessFunction,

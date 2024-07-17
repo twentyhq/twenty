@@ -12,14 +12,17 @@ import { FileUploadService } from 'src/engine/core-modules/file/file-upload/serv
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { BUILD_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/build-file-name';
-import { CommonDriver } from 'src/engine/integrations/serverless/drivers/common.driver';
+import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
   fileUploadService: FileUploadService;
 }
 
-export class LocalDriver extends CommonDriver implements ServerlessDriver {
+export class LocalDriver
+  extends BaseServerlessDriver
+  implements ServerlessDriver
+{
   private readonly fileStorageService: FileStorageService;
   private readonly fileUploadService: FileUploadService;
 
