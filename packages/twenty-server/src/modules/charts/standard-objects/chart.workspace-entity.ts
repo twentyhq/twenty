@@ -14,6 +14,7 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { ChartFilterWorkspaceEntity } from 'src/modules/charts/standard-objects/chart-filter.workspace-entity';
+import { ChartMeasure } from 'src/modules/charts/types/chart-measure';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.chart,
@@ -50,7 +51,7 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Aggregate function of the chart',
     icon: 'IconRulerMeasure',
   })
-  measure: string;
+  measure: ChartMeasure;
 
   @WorkspaceField({
     standardId: CHART_STANDARD_FIELD_IDS.sourceObjectNameSingular,
@@ -65,7 +66,7 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CHART_STANDARD_FIELD_IDS.fieldPath,
     type: FieldMetadataType.TEXT,
     label: 'Field path',
-    description: 'Dot-separated path to the source field.',
+    description: 'Dot-separated path from source object to the target field.',
     icon: 'IconForms',
   })
   fieldPath: string;
