@@ -61,7 +61,7 @@ export const useRecordShowPagePagination = (
 
   const setLastShowPageRecordId = useSetRecoilState(lastShowPageRecordIdState);
 
-  const [isLoadedRecords, setIsLoadedRecords] = useState(false);
+  const [isLoadedRecords] = useState(false);
 
   const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
