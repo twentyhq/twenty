@@ -1,45 +1,4 @@
-import { Activity } from '@/activities/types/Activity';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { Comment } from '@/activities/types/Comment';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-
-type MockedActivity = Pick<
-  Activity,
-  | 'id'
-  | 'createdAt'
-  | 'updatedAt'
-  | '__typename'
-  | 'type'
-  | 'body'
-  | 'title'
-  | 'authorId'
-  | 'dueAt'
-  | 'completedAt'
-  | 'reminderAt'
-  | 'assigneeId'
-> & {
-  author: WorkspaceMember;
-  assignee: WorkspaceMember;
-  comments: Comment[];
-  activityTargets: Array<
-    Pick<
-      ActivityTarget,
-      | 'id'
-      | '__typename'
-      | 'createdAt'
-      | 'updatedAt'
-      | 'activityId'
-      | 'personId'
-      | 'companyId'
-      | 'targetObjectNameSingular'
-    > & {
-      activity: Pick<Activity, 'id' | 'createdAt' | 'updatedAt' | '__typename'>;
-      person?: ObjectRecord | null;
-      company?: ObjectRecord | null;
-    }
-  >;
-};
 
 const workspaceMember: WorkspaceMember = {
   __typename: 'WorkspaceMember',
@@ -57,7 +16,7 @@ const workspaceMember: WorkspaceMember = {
   colorScheme: 'Light',
 };
 
-export const mockedTasks: Array<MockedActivity> = [
+export const mockedTasks = [
   {
     id: 'c554852c-b28a-4307-a41d-a7a0fdde3386',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
@@ -78,7 +37,7 @@ export const mockedTasks: Array<MockedActivity> = [
   },
 ];
 
-export const mockedActivities: Array<MockedActivity> = [
+export const mockedActivities = [
   {
     id: '3ecaa1be-aac7-463a-a38e-64078dd451d5',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
