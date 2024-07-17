@@ -39,7 +39,7 @@ const StyledInput = styled.input<
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid
     ${({ theme, error }) =>
-      error ? theme.color.lightRed : theme.border.color.medium};
+      error ? theme.border.color.danger : theme.border.color.medium};
   border-bottom-left-radius: ${({ theme, LeftIcon }) =>
     !LeftIcon && theme.border.radius.sm};
   border-right: none;
@@ -94,7 +94,7 @@ const StyledTrailingIconContainer = styled.div<
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid
     ${({ theme, error }) =>
-      error ? theme.color.lightRed : theme.border.color.medium};
+      error ? theme.border.color.danger : theme.border.color.medium};
   border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
   border-left: none;
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};

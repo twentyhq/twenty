@@ -9,7 +9,6 @@ export const MAIN_COLORS = {
   purple: '#915ffd',
   pink: '#f54bd0',
   red: '#f83e3e',
-  lightRed: '#fed8d8',
   orange: '#ff7222',
   yellow: '#ffd338',
   gray: GRAY_SCALE.gray30,
