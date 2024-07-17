@@ -350,9 +350,9 @@ export enum FieldMetadataType {
 
 export enum FileFolder {
   Attachment = 'Attachment',
-  Function = 'Function',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
+  ServerlessFunction = 'ServerlessFunction',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -368,26 +368,6 @@ export type FullName = {
   firstName: Scalars['String']['output'];
   lastName: Scalars['String']['output'];
 };
-
-export type FunctionConnection = {
-  __typename?: 'FunctionConnection';
-  /** Array of edges. */
-  edges: Array<FunctionEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
-};
-
-export type FunctionExecutionResult = {
-  __typename?: 'FunctionExecutionResult';
-  /** Execution result in JSON format */
-  result: Scalars['JSON']['output'];
-};
-
-/** SyncStatus of the function */
-export enum FunctionSyncStatus {
-  NotReady = 'NOT_READY',
-  Ready = 'READY'
-}
 
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
@@ -422,10 +402,10 @@ export type Mutation = {
   checkoutSession: SessionEntity;
   createOneAppToken: AppToken;
   createOneField: Field;
-  createOneFunction: Function;
   createOneObject: Object;
   createOneRelation: Relation;
   createOneRemoteServer: RemoteServer;
+  createOneServerlessFunction: ServerlessFunction;
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
   deleteOneObject: Object;
@@ -436,7 +416,7 @@ export type Mutation = {
   emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
   exchangeAuthorizationCode: ExchangeAuthCode;
-  executeOneFunction: FunctionExecutionResult;
+  executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateJWT: AuthTokens;
   generateTransientToken: TransientToken;
@@ -503,12 +483,6 @@ export type MutationCreateOneFieldArgs = {
 };
 
 
-export type MutationCreateOneFunctionArgs = {
-  file: Scalars['Upload']['input'];
-  name: Scalars['String']['input'];
-};
-
-
 export type MutationCreateOneObjectArgs = {
   input: CreateOneObjectInput;
 };
@@ -521,6 +495,12 @@ export type MutationCreateOneRelationArgs = {
 
 export type MutationCreateOneRemoteServerArgs = {
   input: CreateRemoteServerInput;
+};
+
+
+export type MutationCreateOneServerlessFunctionArgs = {
+  file: Scalars['Upload']['input'];
+  name: Scalars['String']['input'];
 };
 
 
@@ -556,7 +536,7 @@ export type MutationExchangeAuthorizationCodeArgs = {
 };
 
 
-export type MutationExecuteOneFunctionArgs = {
+export type MutationExecuteOneServerlessFunctionArgs = {
   name: Scalars['String']['input'];
   payload?: InputMaybe<Scalars['JSON']['input']>;
 };
@@ -749,8 +729,6 @@ export type Query = {
   findManyRemoteServersByType: Array<RemoteServer>;
   findOneRemoteServerById: RemoteServer;
   findWorkspaceFromInviteHash: Workspace;
-  function: Function;
-  functions: FunctionConnection;
   getAISQLQuery: AisqlQueryResult;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
@@ -762,6 +740,8 @@ export type Query = {
   objects: ObjectConnection;
   relation: Relation;
   relations: RelationConnection;
+  serverlessFunction: ServerlessFunction;
+  serverlessFunctions: ServerlessFunctionConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
 };
 
@@ -810,18 +790,6 @@ export type QueryFindOneRemoteServerByIdArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String']['input'];
-};
-
-
-export type QueryFunctionArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
-export type QueryFunctionsArgs = {
-  filter?: FunctionFilter;
-  paging?: CursorPaging;
-  sorting?: Array<FunctionSort>;
 };
 
 
@@ -881,6 +849,18 @@ export type QueryRelationArgs = {
 
 export type QueryRelationsArgs = {
   paging?: CursorPaging;
+};
+
+
+export type QueryServerlessFunctionArgs = {
+  id: Scalars['UUID']['input'];
+};
+
+
+export type QueryServerlessFunctionsArgs = {
+  filter?: ServerlessFunctionFilter;
+  paging?: CursorPaging;
+  sorting?: Array<ServerlessFunctionSort>;
 };
 
 
@@ -976,6 +956,26 @@ export type Sentry = {
   environment?: Maybe<Scalars['String']['output']>;
   release?: Maybe<Scalars['String']['output']>;
 };
+
+export type ServerlessFunctionConnection = {
+  __typename?: 'ServerlessFunctionConnection';
+  /** Array of edges. */
+  edges: Array<ServerlessFunctionEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+};
+
+export type ServerlessFunctionExecutionResult = {
+  __typename?: 'ServerlessFunctionExecutionResult';
+  /** Execution result in JSON format */
+  result: Scalars['JSON']['output'];
+};
+
+/** SyncStatus of the serverlessFunction */
+export enum ServerlessFunctionSyncStatus {
+  NotReady = 'NOT_READY',
+  Ready = 'READY'
+}
 
 export type SessionEntity = {
   __typename?: 'SessionEntity';
@@ -1340,39 +1340,6 @@ export type FieldFilter = {
   or?: InputMaybe<Array<FieldFilter>>;
 };
 
-export type Function = {
-  __typename?: 'function';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  syncStatus: FunctionSyncStatus;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type FunctionEdge = {
-  __typename?: 'functionEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
-  /** The node containing the function */
-  node: Function;
-};
-
-export type FunctionFilter = {
-  and?: InputMaybe<Array<FunctionFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<FunctionFilter>>;
-};
-
-export type FunctionSort = {
-  direction: SortDirection;
-  field: FunctionSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum FunctionSortFields {
-  Id = 'id'
-}
-
 export type Object = {
   __typename?: 'object';
   createdAt: Scalars['DateTime']['output'];
@@ -1439,6 +1406,39 @@ export type RelationEdge = {
   /** The node containing the relation */
   node: Relation;
 };
+
+export type ServerlessFunction = {
+  __typename?: 'serverlessFunction';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  name: Scalars['String']['output'];
+  syncStatus: ServerlessFunctionSyncStatus;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ServerlessFunctionEdge = {
+  __typename?: 'serverlessFunctionEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']['output'];
+  /** The node containing the serverlessFunction */
+  node: ServerlessFunction;
+};
+
+export type ServerlessFunctionFilter = {
+  and?: InputMaybe<Array<ServerlessFunctionFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  or?: InputMaybe<Array<ServerlessFunctionFilter>>;
+};
+
+export type ServerlessFunctionSort = {
+  direction: SortDirection;
+  field: ServerlessFunctionSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum ServerlessFunctionSortFields {
+  Id = 'id'
+}
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
 

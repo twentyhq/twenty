@@ -7,12 +7,12 @@ import {
 import { SortDirection } from '@ptc-org/nestjs-query-core';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
-import { CodeEngineModule } from 'src/engine/core-modules/code-engine/code-engine.module';
-import { FunctionMetadataService } from 'src/engine/metadata-modules/function-metadata/function-metadata.service';
-import { FunctionMetadataResolver } from 'src/engine/metadata-modules/function-metadata/function-metadata.resolver';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { ServerlessModule } from 'src/engine/integrations/serverless/serverless.module';
+import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { ServerlessFunctionResolver } from 'src/engine/metadata-modules/serverless-function/serverless-function.resolver';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { FunctionMetadataDTO } from 'src/engine/metadata-modules/function-metadata/dtos/function-metadata.dto';
+import { ServerlessFunctionDto } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 
 @Module({
@@ -21,16 +21,16 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
       imports: [
         FileUploadModule,
         NestjsQueryTypeOrmModule.forFeature(
-          [FunctionMetadataEntity],
+          [ServerlessFunctionEntity],
           'metadata',
         ),
       ],
-      services: [FunctionMetadataService],
+      services: [ServerlessFunctionService],
       resolvers: [
         {
-          EntityClass: FunctionMetadataEntity,
-          DTOClass: FunctionMetadataDTO,
-          ServiceClass: FunctionMetadataService,
+          EntityClass: ServerlessFunctionEntity,
+          DTOClass: ServerlessFunctionDto,
+          ServiceClass: ServerlessFunctionService,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
@@ -42,9 +42,9 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
         },
       ],
     }),
-    CodeEngineModule,
+    ServerlessModule,
   ],
-  providers: [FunctionMetadataService, FunctionMetadataResolver],
-  exports: [FunctionMetadataService],
+  providers: [ServerlessFunctionService, ServerlessFunctionResolver],
+  exports: [ServerlessFunctionService],
 })
-export class FunctionMetadataModule {}
+export class ServerlessFunctionModule {}

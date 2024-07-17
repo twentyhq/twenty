@@ -8,13 +8,13 @@ import {
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 
-import { CodeEngineDriver } from 'src/engine/core-modules/code-engine/drivers/interfaces/code-engine-driver.interface';
+import { ServerlessDriver } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
-import { createZipFile } from 'src/engine/core-modules/code-engine/utils/create-zip-file';
-import { BuildDirectoryManager } from 'src/engine/core-modules/code-engine/utils/build-directory-manager';
-import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
+import { createZipFile } from 'src/engine/integrations/serverless/utils/create-zip-file';
+import { BuildDirectoryManager } from 'src/engine/integrations/serverless/utils/build-directory-manager';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
-import { CommonDriver } from 'src/engine/core-modules/code-engine/drivers/common.driver';
+import { CommonDriver } from 'src/engine/integrations/serverless/drivers/common.driver';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -22,7 +22,7 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
   role: string;
 }
 
-export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
+export class LambdaDriver extends CommonDriver implements ServerlessDriver {
   private readonly lambdaClient: Lambda;
   private readonly lambdaRole: string;
   private readonly fileStorageService: FileStorageService;
@@ -36,9 +36,9 @@ export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
     this.fileStorageService = options.fileStorageService;
   }
 
-  async build(functionMetadata: FunctionMetadataEntity) {
+  async build(serverlessFunction: ServerlessFunctionEntity) {
     const javascriptCode = await this.getCompiledCode(
-      functionMetadata,
+      serverlessFunction,
       this.fileStorageService,
     );
 
@@ -59,7 +59,7 @@ export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
       Code: {
         ZipFile: await fs.promises.readFile(lambdaZipPath),
       },
-      FunctionName: functionMetadata.id,
+      FunctionName: serverlessFunction.id,
       Handler: lambdaHandler,
       Role: this.lambdaRole,
       Runtime: 'nodejs18.x',
@@ -75,7 +75,7 @@ export class LambdaDriver extends CommonDriver implements CodeEngineDriver {
   }
 
   async execute(
-    functionToExecute: FunctionMetadataEntity,
+    functionToExecute: ServerlessFunctionEntity,
     payload: object | undefined = undefined,
   ): Promise<object> {
     const params = {

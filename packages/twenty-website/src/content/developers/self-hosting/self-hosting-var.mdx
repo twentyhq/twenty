@@ -150,11 +150,11 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 ### Custom Code Execution
 
 <ArticleTable options={[
-  ['CODE_EXECUTOR_TYPE', 'local', "Custom code engine driver: 'local' or 'lambda'"],
-  ['CODE_EXECUTOR_LAMBDA_REGION', '', 'Lambda Region'],
-  ['CODE_EXECUTOR_LAMBDA_ROLE', '', 'Lambda Role'],
-  ['CODE_EXECUTOR_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
-  ['CODE_EXECUTOR_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
+  ['SERVERLESS_TYPE', 'local', "Serverless driver type: 'local' or 'lambda'"],
+  ['SERVERLESS_LAMBDA_REGION', '', 'Lambda Region'],
+  ['SERVERLESS_LAMBDA_ROLE', '', 'Lambda Role'],
+  ['SERVERLESS_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
+  ['SERVERLESS_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
 ]}></ArticleTable>
 
 ### Message Queue

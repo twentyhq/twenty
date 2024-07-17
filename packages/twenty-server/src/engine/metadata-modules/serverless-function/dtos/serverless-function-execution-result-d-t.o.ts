@@ -3,8 +3,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IsObject } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 
-@ObjectType('FunctionExecutionResult')
-export class FunctionExecutionResultDTO {
+@ObjectType('ServerlessFunctionExecutionResult')
+export class ServerlessFunctionExecutionResultDTO {
   @IsObject()
   @Field(() => graphqlTypeJson, {
     description: 'Execution result in JSON format',

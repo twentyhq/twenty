@@ -14,7 +14,6 @@ import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-syn
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
-import { WorkspaceSyncFunctionMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-function-metadata.service';
 
 interface SynchronizeOptions {
   applyChanges?: boolean;
@@ -34,7 +33,6 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncFieldMetadataService: WorkspaceSyncFieldMetadataService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,
-    private readonly workspaceSyncFunctionMetadataService: WorkspaceSyncFunctionMetadataService,
   ) {}
 
   /**
@@ -109,12 +107,6 @@ export class WorkspaceSyncMetadataService {
           storage,
           workspaceFeatureFlagsMap,
         );
-
-      // 5 - Sync functions
-      await this.workspaceSyncFunctionMetadataService.synchronize(
-        context,
-        manager,
-      );
 
       // Save workspace migrations into the database
       workspaceMigrations = await workspaceMigrationRepository.save([

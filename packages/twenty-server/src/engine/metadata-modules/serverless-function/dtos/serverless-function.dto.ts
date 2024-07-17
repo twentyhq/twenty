@@ -19,14 +19,14 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { FunctionSyncStatus } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
+import { ServerlessFunctionSyncStatus } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
-registerEnumType(FunctionSyncStatus, {
-  name: 'FunctionSyncStatus',
-  description: 'SyncStatus of the function',
+registerEnumType(ServerlessFunctionSyncStatus, {
+  name: 'ServerlessFunctionSyncStatus',
+  description: 'SyncStatus of the serverlessFunction',
 });
 
-@ObjectType('function')
+@ObjectType('serverlessFunction')
 @Authorize({
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.user?.workspace?.id },
@@ -36,7 +36,7 @@ registerEnumType(FunctionSyncStatus, {
   defaultResultSize: 10,
   maxResultsSize: 1000,
 })
-export class FunctionMetadataDTO {
+export class ServerlessFunctionDto {
   @IsUUID()
   @IsNotEmpty()
   @IDField(() => UUIDScalarType)
@@ -47,10 +47,10 @@ export class FunctionMetadataDTO {
   @Field()
   name: string;
 
-  @IsEnum(FunctionSyncStatus)
+  @IsEnum(ServerlessFunctionSyncStatus)
   @IsNotEmpty()
-  @Field(() => FunctionSyncStatus)
-  syncStatus: FunctionSyncStatus;
+  @Field(() => ServerlessFunctionSyncStatus)
+  syncStatus: ServerlessFunctionSyncStatus;
 
   @HideField()
   workspaceId: string;

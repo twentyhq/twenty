@@ -7,14 +7,14 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export enum FunctionSyncStatus {
+export enum ServerlessFunctionSyncStatus {
   NOT_READY = 'NOT_READY',
   READY = 'READY',
 }
 
-@Entity('functionMetadata')
+@Entity('serverlessFunction')
 @Unique('IndexOnNameAndWorkspaceIdUnique', ['name', 'workspaceId'])
-export class FunctionMetadataEntity {
+export class ServerlessFunctionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -23,11 +23,11 @@ export class FunctionMetadataEntity {
 
   @Column({
     nullable: false,
-    default: FunctionSyncStatus.NOT_READY,
+    default: ServerlessFunctionSyncStatus.NOT_READY,
     type: 'enum',
-    enum: FunctionSyncStatus,
+    enum: ServerlessFunctionSyncStatus,
   })
-  syncStatus: FunctionSyncStatus;
+  syncStatus: ServerlessFunctionSyncStatus;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

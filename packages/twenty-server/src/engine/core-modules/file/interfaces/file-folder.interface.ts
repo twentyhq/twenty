@@ -5,7 +5,7 @@ export enum FileFolder {
   WorkspaceLogo = 'workspace-logo',
   Attachment = 'attachment',
   PersonPicture = 'person-picture',
-  Function = 'function',
+  ServerlessFunction = 'serverless-function',
 }
 
 registerEnumType(FileFolder, {

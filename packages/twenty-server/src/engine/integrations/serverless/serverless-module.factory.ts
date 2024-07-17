@@ -1,40 +1,39 @@
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
 import {
-  CodeEngineModuleOptions,
-  CodeEngineDriverType,
-} from 'src/engine/core-modules/code-engine/interfaces/code-engine.interface';
-
+  ServerlessModuleOptions,
+  ServerlessDriverType,
+} from 'src/engine/integrations/serverless/serverless.interface';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 
-export const codeEngineModuleFactory = async (
+export const serverlessModuleFactory = async (
   environmentService: EnvironmentService,
   fileStorageService: FileStorageService,
   fileUploadService: FileUploadService,
-): Promise<CodeEngineModuleOptions> => {
-  const driverType = environmentService.get('CODE_EXECUTOR_TYPE');
+): Promise<ServerlessModuleOptions> => {
+  const driverType = environmentService.get('SERVERLESS_TYPE');
 
   switch (driverType) {
-    case CodeEngineDriverType.Local: {
+    case ServerlessDriverType.Local: {
       return {
-        type: CodeEngineDriverType.Local,
+        type: ServerlessDriverType.Local,
         options: { fileStorageService, fileUploadService },
       };
     }
-    case CodeEngineDriverType.Lambda: {
-      const region = environmentService.get('CODE_EXECUTOR_LAMBDA_REGION');
+    case ServerlessDriverType.Lambda: {
+      const region = environmentService.get('SERVERLESS_LAMBDA_REGION');
       const accessKeyId = environmentService.get(
-        'CODE_EXECUTOR_LAMBDA_ACCESS_KEY_ID',
+        'SERVERLESS_LAMBDA_ACCESS_KEY_ID',
       );
       const secretAccessKey = environmentService.get(
-        'CODE_EXECUTOR_LAMBDA_SECRET_ACCESS_KEY',
+        'SERVERLESS_LAMBDA_SECRET_ACCESS_KEY',
       );
-      const role = environmentService.get('CODE_EXECUTOR_LAMBDA_ROLE');
+      const role = environmentService.get('SERVERLESS_LAMBDA_ROLE');
 
       return {
-        type: CodeEngineDriverType.Lambda,
+        type: ServerlessDriverType.Lambda,
         options: {
           fileStorageService,
           credentials: accessKeyId
@@ -52,7 +51,7 @@ export const codeEngineModuleFactory = async (
     }
     default:
       throw new Error(
-        `Invalid custom code engine driver type (${driverType}), check your .env file`,
+        `Invalid serverless driver type (${driverType}), check your .env file`,
       );
   }
 };

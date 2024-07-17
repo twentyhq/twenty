@@ -2,26 +2,26 @@ import { join } from 'path';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
-import { SOURCE_FILE_NAME } from 'src/engine/core-modules/code-engine/drivers/constants/source-file-name';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { compileTypescript } from 'src/engine/core-modules/code-engine/utils/compile-typescript';
+import { compileTypescript } from 'src/engine/integrations/serverless/utils/compile-typescript';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
 export class CommonDriver {
-  getFolderPath(functionMetadata: FunctionMetadataEntity) {
+  getFolderPath(serverlessFunction: ServerlessFunctionEntity) {
     return join(
-      FileFolder.Function,
-      functionMetadata.workspaceId,
-      functionMetadata.id,
+      FileFolder.ServerlessFunction,
+      serverlessFunction.workspaceId,
+      serverlessFunction.id,
     );
   }
 
   async getCompiledCode(
-    functionMetadata: FunctionMetadataEntity,
+    serverlessFunction: ServerlessFunctionEntity,
     fileStorageService: FileStorageService,
   ) {
-    const folderPath = this.getFolderPath(functionMetadata);
+    const folderPath = this.getFolderPath(serverlessFunction);
     const fileStream = await fileStorageService.read({
       folderPath,
       filename: SOURCE_FILE_NAME,

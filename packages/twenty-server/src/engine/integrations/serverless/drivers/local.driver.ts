@@ -5,21 +5,21 @@ import { fork } from 'child_process';
 
 import { v4 } from 'uuid';
 
-import { CodeEngineDriver } from 'src/engine/core-modules/code-engine/drivers/interfaces/code-engine-driver.interface';
+import { ServerlessDriver } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { FunctionMetadataEntity } from 'src/engine/metadata-modules/function-metadata/function-metadata.entity';
-import { BUILD_FILE_NAME } from 'src/engine/core-modules/code-engine/drivers/constants/build-file-name';
-import { CommonDriver } from 'src/engine/core-modules/code-engine/drivers/common.driver';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { BUILD_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/build-file-name';
+import { CommonDriver } from 'src/engine/integrations/serverless/drivers/common.driver';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
   fileUploadService: FileUploadService;
 }
 
-export class LocalDriver extends CommonDriver implements CodeEngineDriver {
+export class LocalDriver extends CommonDriver implements ServerlessDriver {
   private readonly fileStorageService: FileStorageService;
   private readonly fileUploadService: FileUploadService;
 
@@ -29,9 +29,9 @@ export class LocalDriver extends CommonDriver implements CodeEngineDriver {
     this.fileStorageService = options.fileStorageService;
   }
 
-  async build(functionMetadata: FunctionMetadataEntity) {
+  async build(serverlessFunction: ServerlessFunctionEntity) {
     const javascriptCode = await this.getCompiledCode(
-      functionMetadata,
+      serverlessFunction,
       this.fileStorageService,
     );
 
@@ -39,17 +39,17 @@ export class LocalDriver extends CommonDriver implements CodeEngineDriver {
       file: javascriptCode,
       filename: BUILD_FILE_NAME,
       mimeType: undefined,
-      fileFolder: this.getFolderPath(functionMetadata),
+      fileFolder: this.getFolderPath(serverlessFunction),
       forceName: true,
     });
   }
 
   async execute(
-    functionMetadata: FunctionMetadataEntity,
+    serverlessFunction: ServerlessFunctionEntity,
     payload: object | undefined = undefined,
   ): Promise<object> {
     const fileStream = await this.fileStorageService.read({
-      folderPath: this.getFolderPath(functionMetadata),
+      folderPath: this.getFolderPath(serverlessFunction),
       filename: BUILD_FILE_NAME,
     });
     const fileContent = await readFileContent(fileStream);
