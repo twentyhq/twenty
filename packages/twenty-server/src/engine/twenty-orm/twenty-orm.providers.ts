@@ -21,6 +21,7 @@ export function createTwentyORMProviders(
       const entity = entitySchemaFactory.create(object as Type);
 
       if (!dataSource) {
+        // TODO: Throw here when the code is well architected
         return null;
       }
 
