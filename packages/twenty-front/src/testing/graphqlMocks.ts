@@ -110,6 +110,57 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query('CombinedFindManyRecords', () => {
+      return HttpResponse.json({
+        data: {
+          views: {
+            edges: mockedViewsData.map((view) => ({
+              node: {
+                ...view,
+                viewFilters: {
+                  edges: [],
+                  totalCount: 0,
+                },
+                viewSorts: {
+                  edges: [],
+                  totalCount: 0,
+                },
+                viewFields: {
+                  edges: mockedViewFieldsData
+                    .filter((viewField) => viewField.viewId === view.id)
+                    .map((viewField) => ({
+                      node: viewField,
+                      cursor: null,
+                    })),
+                  totalCount: mockedViewFieldsData.filter(
+                    (viewField) => viewField.viewId === view.id,
+                  ).length,
+                },
+              },
+              cursor: null,
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+              totalCount: mockedViewsData.length,
+            },
+            totalCount: mockedViewsData.length,
+          },
+        },
+        favorites: {
+          edges: [],
+          totalCount: 0,
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
+          },
+        },
+      });
+    }),
     graphql.query('FindManyCompanies', ({ variables }) => {
       const mockedData = variables.limit
         ? companiesMock.slice(0, variables.limit)

@@ -5,7 +5,12 @@ export const getQueryIdentifier = ({
   filter,
   orderBy,
   limit,
+  cursorFilter,
 }: RecordGqlOperationVariables & {
   objectNameSingular: string;
 }) =>
-  objectNameSingular + JSON.stringify(filter) + JSON.stringify(orderBy) + limit;
+  objectNameSingular +
+  JSON.stringify(filter) +
+  JSON.stringify(orderBy) +
+  limit +
+  (cursorFilter ? JSON.stringify(cursorFilter) : undefined);

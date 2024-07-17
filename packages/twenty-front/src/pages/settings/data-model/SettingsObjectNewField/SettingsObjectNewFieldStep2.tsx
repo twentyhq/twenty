@@ -165,7 +165,7 @@ export const SettingsObjectNewFieldStep2 = () => {
       // FieldMetadataType.FullName,
       FieldMetadataType.Link,
       FieldMetadataType.Numeric,
-      FieldMetadataType.Probability,
+      // FieldMetadataType.Probability,
       // FieldMetadataType.Uuid,
       // FieldMetadataType.Phone,
     ] as const

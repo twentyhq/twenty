@@ -1,6 +1,6 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
+import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
@@ -50,7 +50,7 @@ export type AvatarProps = {
   className?: string;
   size?: AvatarSize;
   placeholder: string | undefined;
-  entityId?: string;
+  placeholderColorSeed?: string;
   type?: Nullable<AvatarType>;
   color?: string;
   backgroundColor?: string;
@@ -62,7 +62,7 @@ export const Avatar = ({
   avatarUrl,
   size = 'md',
   placeholder,
-  entityId = placeholder,
+  placeholderColorSeed = placeholder,
   onClick,
   type = 'squared',
   color,
@@ -85,9 +85,10 @@ export const Avatar = ({
     }
   };
 
-  const fixedColor = color ?? stringToHslColor(entityId ?? '', 75, 25);
+  const fixedColor =
+    color ?? stringToHslColor(placeholderColorSeed ?? '', 75, 25);
   const fixedBackgroundColor =
-    backgroundColor ?? stringToHslColor(entityId ?? '', 75, 85);
+    backgroundColor ?? stringToHslColor(placeholderColorSeed ?? '', 75, 85);
 
   const showBackgroundColor = showPlaceholder;
 

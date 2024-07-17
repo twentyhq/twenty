@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
@@ -21,6 +20,8 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from '~/utils/isDefined';
 
+import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
+import { useContext } from 'react';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -40,13 +41,13 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
+  const { onIndexIdentifierClick } = useContext(RecordIndexEventContext);
   const moveEditModeToTableCellPosition =
     useMoveEditModeToTableCellPosition(tableScopeId);
 
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
 
-  const navigate = useNavigate();
   const leaveTableFocus = useLeaveTableFocus(tableScopeId);
   const { toggleClickOutsideListener } = useClickOutsideListener(
     SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID,
@@ -66,7 +67,6 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         initialValue,
         cellPosition,
         isReadOnly,
-        pathToShowPage,
         objectNameSingular,
         customCellHotkeyScope,
         fieldDefinition,
@@ -94,7 +94,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
         if (isFirstColumnCell && !isEmpty && !isActionButtonClick) {
           leaveTableFocus();
-          navigate(pathToShowPage);
+
+          onIndexIdentifierClick(entityId);
 
           return;
         }
@@ -142,7 +143,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       openRightDrawer,
       setViewableRecordId,
       setViewableRecordNameSingular,
-      navigate,
+      onIndexIdentifierClick,
     ],
   );
 

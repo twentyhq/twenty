@@ -20,6 +20,7 @@ export const useFetchAllRecordIds = <T>({
     objectNameSingular,
     filter,
     orderBy,
+    limit: pageSize,
     recordGqlFields: { id: true },
   });
 
@@ -37,7 +38,7 @@ export const useFetchAllRecordIds = <T>({
     const firstQueryResult =
       findManyRecordsDataResult?.data?.[objectMetadataItem.namePlural];
 
-    const totalCount = firstQueryResult?.totalCount ?? 1;
+    const totalCount = firstQueryResult?.totalCount ?? 0;
 
     const recordsCount = firstQueryResult?.edges.length ?? 0;
 
@@ -49,12 +50,17 @@ export const useFetchAllRecordIds = <T>({
 
     const remainingPages = Math.ceil(remainingCount / pageSize);
 
-    let lastCursor = firstQueryResult?.pageInfo.endCursor ?? '';
+    let lastCursor = firstQueryResult?.pageInfo.endCursor ?? null;
 
-    for (let i = 0; i < remainingPages; i++) {
+    for (let pageIndex = 0; pageIndex < remainingPages; pageIndex++) {
+      if (lastCursor === null) {
+        break;
+      }
+
       const rawResult = await fetchMore?.({
         variables: {
           lastCursor: lastCursor,
+          limit: pageSize,
         },
       });
 
@@ -64,7 +70,11 @@ export const useFetchAllRecordIds = <T>({
         recordIdSet.add(edge.node.id);
       }
 
-      lastCursor = fetchMoreResult.pageInfo.endCursor ?? '';
+      if (fetchMoreResult.pageInfo.hasNextPage === false) {
+        break;
+      }
+
+      lastCursor = fetchMoreResult.pageInfo.endCursor ?? null;
     }
 
     const recordIds = Array.from(recordIdSet);
