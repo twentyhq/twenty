@@ -37,7 +37,9 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
-type SettingsDataModelFieldEditFormValues = z.infer<ReturnType<typeof settingsFieldFormSchema>>;
+type SettingsDataModelFieldEditFormValues = z.infer<
+  ReturnType<typeof settingsFieldFormSchema>
+>;
 
 const StyledSettingsObjectFieldTypeSelect = styled(
   SettingsDataModelFieldTypeSelect,
