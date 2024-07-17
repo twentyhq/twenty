@@ -12,7 +12,7 @@ import {
   IconSettings,
 } from 'twenty-ui';
 
-import { tableSortFamilyState } from '@/activities/states/tabelSortFamilyState';
+import { tableSortFamilyState } from '@/activities/states/tableSortFamilyState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';

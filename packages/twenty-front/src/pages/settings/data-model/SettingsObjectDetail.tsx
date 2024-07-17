@@ -10,7 +10,7 @@ import {
   IconSettings,
 } from 'twenty-ui';
 
-import { tableSortFamilyState } from '@/activities/states/tabelSortFamilyState';
+import { tableSortFamilyState } from '@/activities/states/tableSortFamilyState';
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';

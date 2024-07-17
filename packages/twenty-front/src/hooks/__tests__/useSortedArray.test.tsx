@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 
-import { tableSortFamilyState } from '@/activities/states/tabelSortFamilyState';
+import { tableSortFamilyState } from '@/activities/states/tableSortFamilyState';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import {
   mockedTableData as tableData,

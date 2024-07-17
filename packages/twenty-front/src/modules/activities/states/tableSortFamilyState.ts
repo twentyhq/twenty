@@ -25,5 +25,5 @@ export const tableSortFamilyState = createFamilyState<
   TableSortFamilyKey
 >({
   key: 'tableSortFamilyState',
-  defaultValue: getDefaultTableSortState as unknown as TableSortState,
+  defaultValue: getDefaultTableSortState as TableSortState,
 });

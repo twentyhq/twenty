@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { tableSortFamilyState } from '@/activities/states/tabelSortFamilyState';
+import { tableSortFamilyState } from '@/activities/states/tableSortFamilyState';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 
 export const useSortedArray = <T>(
