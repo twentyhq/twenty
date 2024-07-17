@@ -84,7 +84,7 @@ export class ServerlessFunctionService {
     const serverlessFunction = await this.serverlessFunctionRepository.save({
       name,
       workspaceId,
-      sourceFileHash: serverlessFunctionCreateHash(typescriptCode),
+      sourceCodeHash: serverlessFunctionCreateHash(typescriptCode),
     });
 
     const fileFolder = join(

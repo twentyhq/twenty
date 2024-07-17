@@ -22,7 +22,7 @@ export class ServerlessFunctionEntity {
   name: string;
 
   @Column({ nullable: false })
-  sourceFileHash: string;
+  sourceCodeHash: string;
 
   @Column({
     nullable: false,
