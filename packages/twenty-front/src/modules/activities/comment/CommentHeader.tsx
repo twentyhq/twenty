@@ -62,7 +62,7 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
         <Avatar
           avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl)}
           size="md"
-          entityId={author?.id}
+          placeholderColorSeed={author?.id}
           placeholder={authorName}
         />
         <StyledName>{authorName}</StyledName>

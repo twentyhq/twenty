@@ -133,6 +133,7 @@ export type FieldSelectMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   options: { label: string; color: ThemeColor; value: string }[];
+  isNullable: boolean;
 };
 
 export type FieldMultiSelectMetadata = {

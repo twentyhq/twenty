@@ -4,14 +4,15 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import {
-  IconChevronLeft,
+  IconChevronDown,
+  IconChevronUp,
   IconComponent,
+  IconX,
   MOBILE_VIEWPORT,
   OverflowingTextWithTooltip,
 } from 'twenty-ui';
 
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -53,6 +54,7 @@ const StyledLeftContainer = styled.div`
 const StyledTitleContainer = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   margin-left: ${({ theme }) => theme.spacing(1)};
   max-width: 50%;
 `;
@@ -61,6 +63,7 @@ const StyledTopBarIconStyledTitleContainer = styled.div`
   align-items: center;
   display: flex;
   flex: 1 0 auto;
+  gap: ${({ theme }) => theme.spacing(1)};
   flex-direction: row;
 `;
 
@@ -89,7 +92,13 @@ const StyledSkeletonLoader = () => {
 
 type PageHeaderProps = ComponentProps<'div'> & {
   title: string;
-  hasBackButton?: boolean;
+  hasClosePageButton?: boolean;
+  onClosePage?: () => void;
+  hasPaginationButtons?: boolean;
+  hasPreviousRecord?: boolean;
+  hasNextRecord?: boolean;
+  navigateToPreviousRecord?: () => void;
+  navigateToNextRecord?: () => void;
   Icon: IconComponent;
   children?: ReactNode;
   loading?: boolean;
@@ -97,7 +106,13 @@ type PageHeaderProps = ComponentProps<'div'> & {
 
 export const PageHeader = ({
   title,
-  hasBackButton,
+  hasClosePageButton,
+  onClosePage,
+  hasPaginationButtons,
+  hasPreviousRecord,
+  hasNextRecord,
+  navigateToPreviousRecord,
+  navigateToNextRecord,
   Icon,
   children,
   loading,
@@ -114,19 +129,36 @@ export const PageHeader = ({
             <NavigationDrawerCollapseButton direction="right" />
           </StyledTopBarButtonContainer>
         )}
-        {hasBackButton && (
-          <UndecoratedLink to={-1}>
-            <IconButton
-              Icon={IconChevronLeft}
-              size="small"
-              variant="tertiary"
-            />
-          </UndecoratedLink>
+        {hasClosePageButton && (
+          <IconButton
+            Icon={IconX}
+            size="small"
+            variant="tertiary"
+            onClick={() => onClosePage?.()}
+          />
         )}
         {loading ? (
           <StyledSkeletonLoader />
         ) : (
           <StyledTopBarIconStyledTitleContainer>
+            {hasPaginationButtons && (
+              <>
+                <IconButton
+                  Icon={IconChevronUp}
+                  size="small"
+                  variant="secondary"
+                  disabled={!hasPreviousRecord}
+                  onClick={() => navigateToPreviousRecord?.()}
+                />
+                <IconButton
+                  Icon={IconChevronDown}
+                  size="small"
+                  variant="secondary"
+                  disabled={!hasNextRecord}
+                  onClick={() => navigateToNextRecord?.()}
+                />
+              </>
+            )}
             {Icon && <Icon size={theme.icon.size.md} />}
             <StyledTitleContainer data-testid="top-bar-title">
               <OverflowingTextWithTooltip text={title} />

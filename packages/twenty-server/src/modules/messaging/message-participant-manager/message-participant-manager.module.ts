@@ -9,7 +9,7 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant-manager/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
+import { ContactCreationManagerModule } from 'src/modules/contact-creation-manager/contact-creation-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessageParticipantMatchParticipantJob } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-match-participant.job';
 import { MessageParticipantUnmatchParticipantJob } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
@@ -24,7 +24,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   imports: [
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     AnalyticsModule,
-    AutoCompaniesAndContactsCreationModule,
+    ContactCreationManagerModule,
     WorkspaceDataSourceModule,
     ObjectMetadataRepositoryModule.forFeature([
       TimelineActivityWorkspaceEntity,

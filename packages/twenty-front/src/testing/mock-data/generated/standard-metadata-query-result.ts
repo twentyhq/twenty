@@ -5571,29 +5571,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
 							"__typename": "fieldEdge",
 							"node": {
 								"__typename": "field",
-								"id": "dd99cf8d-a10c-4d41-8469-6b5e03e5ae2e",
-								"type": "TEXT",
-								"name": "probability",
-								"label": "Probability",
-								"description": "Opportunity probability",
-								"icon": "IconProgressCheck",
-								"isCustom": false,
-								"isActive": true,
-								"isSystem": false,
-								"isNullable": false,
-								"createdAt": "2024-06-07T09:05:12.599Z",
-								"updatedAt": "2024-06-07T09:05:12.599Z",
-								"defaultValue": "'0'",
-								"options": null,
-								"relationDefinition": null,
-								"fromRelationMetadata": null,
-								"toRelationMetadata": null
-							}
-						},
-						{
-							"__typename": "fieldEdge",
-							"node": {
-								"__typename": "field",
 								"id": "cd5b7961-afe1-41e3-9c20-a17c5beb45d7",
 								"type": "RELATION",
 								"name": "activityTargets",

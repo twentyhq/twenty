@@ -16,7 +16,7 @@ import { CalendarEventParticipantListener } from 'src/modules/calendar/calendar-
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
+import { ContactCreationManagerModule } from 'src/modules/contact-creation-manager/contact-creation-manager.module';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Module({
@@ -28,7 +28,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
       [ObjectMetadataEntity, FieldMetadataEntity],
       'metadata',
     ),
-    AutoCompaniesAndContactsCreationModule,
+    ContactCreationManagerModule,
     CalendarCommonModule,
   ],
   providers: [

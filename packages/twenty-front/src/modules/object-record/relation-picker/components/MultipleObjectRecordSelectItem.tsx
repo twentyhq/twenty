@@ -66,7 +66,7 @@ export const MultipleObjectRecordSelectItem = ({
         avatar={
           <Avatar
             avatarUrl={getImageAbsoluteURIOrBase64(recordIdentifier.avatarUrl)}
-            entityId={objectRecordId}
+            placeholderColorSeed={objectRecordId}
             placeholder={recordIdentifier.name}
             size="md"
             type={recordIdentifier.avatarType ?? 'rounded'}

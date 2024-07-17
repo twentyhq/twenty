@@ -1,7 +1,7 @@
-import { ChangeEvent, ReactNode, useRef } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ChangeEvent, ReactNode, useRef } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { AppTooltip, Avatar, AvatarType } from 'twenty-ui';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -124,7 +124,7 @@ export const ShowPageSummaryCard = ({
           avatarUrl={logoOrAvatar}
           onClick={onUploadPicture ? handleAvatarClick : undefined}
           size="xl"
-          entityId={id}
+          placeholderColorSeed={id}
           placeholder={avatarPlaceholder}
           type={avatarType}
         />

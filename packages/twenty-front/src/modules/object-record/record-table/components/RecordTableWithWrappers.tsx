@@ -76,6 +76,7 @@ export const RecordTableWithWrappers = ({
             <StyledTableContainer>
               <StyledTableInternalContainer ref={tableBodyRef}>
                 <RecordTable
+                  viewBarId={viewBarId}
                   recordTableId={recordTableId}
                   objectNameSingular={objectNameSingular}
                   onColumnsChange={handleColumnsChange}

@@ -55,9 +55,6 @@ describe('computeSchemaComponents', () => {
           fieldNumeric: {
             type: 'number',
           },
-          fieldProbability: {
-            type: 'number',
-          },
           fieldLink: {
             properties: {
               label: { type: 'string' },

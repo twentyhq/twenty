@@ -39,11 +39,6 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
       return acc;
     }
 
-    // Todo: remove once Rating fieldtype is implemented
-    if (field.name === 'probability') {
-      return acc;
-    }
-
     return [...acc, formatFieldMetadataItemAsFilterDefinition({ field })];
   }, [] as FilterDefinition[]);
 

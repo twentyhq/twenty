@@ -41,7 +41,6 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.BOOLEAN]: [FieldMetadataDefaultValueBoolean],
   [FieldMetadataType.NUMBER]: [FieldMetadataDefaultValueNumber],
   [FieldMetadataType.NUMERIC]: [FieldMetadataDefaultValueString],
-  [FieldMetadataType.PROBABILITY]: [FieldMetadataDefaultValueNumber],
   [FieldMetadataType.LINK]: [FieldMetadataDefaultValueLink],
   [FieldMetadataType.CURRENCY]: [FieldMetadataDefaultValueCurrency],
   [FieldMetadataType.FULL_NAME]: [FieldMetadataDefaultValueFullName],

@@ -25,7 +25,6 @@ export const query = gql`
                 updatedAt
                 companyId
                 stage
-                probability
                 closeDate
                 amount {
                   amountMicros
@@ -50,7 +49,6 @@ export const query = gql`
                 updatedAt
                 companyId
                 stage
-                probability
                 closeDate
                 amount {
                   amountMicros
