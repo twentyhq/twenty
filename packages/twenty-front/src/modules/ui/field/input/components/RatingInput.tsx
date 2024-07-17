@@ -46,7 +46,7 @@ export const RatingInput = ({
   const previousRating = useRef<FieldRatingValue>(null);
 
   const handleClick = (value: FieldRatingValue) => {
-    if (readonly) return undefined;
+    if (readonly) return;
     if (previousRating.current === currentValue) {
       setHoveredValue(null);
       clearField();
