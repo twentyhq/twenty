@@ -1,11 +1,11 @@
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
-export const getImageAbsoluteURIOrBase64 = (imageUrl?: string | null) => {
+export const getImageAbsoluteURI = (imageUrl?: string | null) => {
   if (!imageUrl) {
     return null;
   }
 
-  if (imageUrl?.startsWith('data:') || imageUrl?.startsWith('https:')) {
+  if (imageUrl?.startsWith('https:')) {
     return imageUrl;
   }
 

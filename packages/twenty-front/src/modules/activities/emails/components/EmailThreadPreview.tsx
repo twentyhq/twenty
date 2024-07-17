@@ -10,7 +10,7 @@ import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 const StyledCardContent = styled(CardContent)<{
   visibility: MessageChannelVisibility;
@@ -154,15 +154,13 @@ export const EmailThreadPreview = ({
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
-            avatarUrl={getImageAbsoluteURIOrBase64(
-              thread?.firstParticipant?.avatarUrl,
-            )}
+            avatarUrl={getImageAbsoluteURI(thread?.firstParticipant?.avatarUrl)}
             placeholder={thread.firstParticipant.displayName}
             type="rounded"
           />
           {thread?.lastTwoParticipants?.[0] && (
             <StyledAvatar
-              avatarUrl={getImageAbsoluteURIOrBase64(
+              avatarUrl={getImageAbsoluteURI(
                 thread.lastTwoParticipants[0].avatarUrl,
               )}
               placeholder={thread.lastTwoParticipants[0].displayName}
@@ -171,7 +169,7 @@ export const EmailThreadPreview = ({
           )}
           {finalDisplayedName && (
             <StyledAvatar
-              avatarUrl={getImageAbsoluteURIOrBase64(finalAvatarUrl)}
+              avatarUrl={getImageAbsoluteURI(finalAvatarUrl)}
               placeholder={finalDisplayedName}
               type="rounded"
               color={isCountIcon ? GRAY_SCALE.gray50 : undefined}

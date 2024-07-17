@@ -11,7 +11,7 @@ import {
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
@@ -49,7 +49,7 @@ export const AppNavigationDrawer = ({
     : {
         logo:
           (currentWorkspace?.logo &&
-            getImageAbsoluteURIOrBase64(currentWorkspace.logo)) ??
+            getImageAbsoluteURI(currentWorkspace.logo)) ??
           undefined,
         title: currentWorkspace?.displayName ?? undefined,
         children: <MainNavigationDrawerItems />,

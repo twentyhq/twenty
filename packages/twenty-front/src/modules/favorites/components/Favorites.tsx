@@ -10,7 +10,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 import { useFavorites } from '../hooks/useFavorites';
 
@@ -81,7 +81,7 @@ export const Favorites = () => {
                         Icon={() => (
                           <StyledAvatar
                             placeholderColorSeed={recordId}
-                            avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl)}
+                            avatarUrl={getImageAbsoluteURI(avatarUrl)}
                             type={avatarType}
                             placeholder={labelIdentifier}
                             className="fav-avatar"

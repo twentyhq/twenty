@@ -11,7 +11,7 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 const StyledAvatarContainer = styled.div`
   align-items: center;
@@ -154,7 +154,7 @@ export const TimelineActivity = ({
       <StyledTimelineItemContainer>
         <StyledAvatarContainer>
           <Avatar
-            avatarUrl={getImageAbsoluteURIOrBase64(
+            avatarUrl={getImageAbsoluteURI(
               activityForTimeline.author?.avatarUrl,
             )}
             placeholder={activityForTimeline.author?.name.firstName ?? ''}

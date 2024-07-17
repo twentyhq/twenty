@@ -1,6 +1,6 @@
 import { AvatarChip, IconComponent } from 'twenty-ui';
 
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 import { Filter } from '../types/Filter';
 
@@ -17,7 +17,7 @@ export const GenericEntityFilterChip = ({
     placeholderColorSeed={filter.value}
     name={filter.displayValue}
     avatarType="rounded"
-    avatarUrl={getImageAbsoluteURIOrBase64(filter.displayAvatarUrl) || ''}
+    avatarUrl={getImageAbsoluteURI(filter.displayAvatarUrl) || ''}
     LeftIcon={Icon}
   />
 );

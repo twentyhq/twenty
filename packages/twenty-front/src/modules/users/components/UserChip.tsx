@@ -1,6 +1,6 @@
 import { AvatarChip } from 'twenty-ui';
 
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 export type UserChipProps = {
   id: string;
@@ -13,6 +13,6 @@ export const UserChip = ({ id, name, avatarUrl }: UserChipProps) => (
     placeholderColorSeed={id}
     name={name}
     avatarType="rounded"
-    avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl) || ''}
+    avatarUrl={getImageAbsoluteURI(avatarUrl) || ''}
   />
 );

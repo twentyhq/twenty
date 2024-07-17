@@ -6,7 +6,7 @@ import { EntityForSelect } from '@/object-record/relation-picker/types/EntityFor
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 type SelectableMenuItemSelectProps = {
   entity: EntityForSelect;
@@ -40,7 +40,7 @@ export const SelectableMenuItemSelect = ({
         hovered={isSelectedItemId}
         avatar={
           <Avatar
-            avatarUrl={getImageAbsoluteURIOrBase64(entity.avatarUrl)}
+            avatarUrl={getImageAbsoluteURI(entity.avatarUrl)}
             placeholderColorSeed={entity.id}
             placeholder={entity.name}
             size="md"
