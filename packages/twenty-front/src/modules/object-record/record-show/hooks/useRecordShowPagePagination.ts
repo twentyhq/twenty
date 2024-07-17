@@ -61,7 +61,7 @@ export const useRecordShowPagePagination = (
 
   const setLastShowPageRecordId = useSetRecoilState(lastShowPageRecordIdState);
 
-  const [isLoadedRecords, setIsLoadedRecords] = useState(false);
+  const [isLoadedRecords] = useState(false);
 
   const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
@@ -115,7 +115,7 @@ export const useRecordShowPagePagination = (
 
   const { state } = useLocation();
 
-  const cursorFromIndexPage = state.cursor;
+  const cursorFromIndexPage = state?.cursor;
 
   const { loading: loadingCurrentRecord, pageInfo: currentRecordsPageInfo } =
     useFindManyRecords({
