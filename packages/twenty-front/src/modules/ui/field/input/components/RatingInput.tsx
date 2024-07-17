@@ -47,6 +47,7 @@ export const RatingInput = ({
 
   const handleClick = (value: FieldRatingValue) => {
     if (readonly) return;
+    previousRating.current = value;
     if (previousRating.current === currentValue) {
       setHoveredValue(null);
       clearField();
@@ -54,10 +55,6 @@ export const RatingInput = ({
       onChange?.(value);
     }
   };
-
-  useEffect(() => {
-    previousRating.current = value;
-  }, [value]);
 
   return (
     <StyledContainer
