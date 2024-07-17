@@ -17,7 +17,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
   relation: z.object({
-    field: fieldMetadataItemSchema.pick({
+    field: fieldMetadataItemSchema().pick({
       icon: true,
       label: true,
     }),
