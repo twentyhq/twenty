@@ -1,10 +1,5 @@
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -45,10 +40,6 @@ export const useRecordShowPagePagination = (
     objectMetadataItem,
   });
 
-  const { state } = useLocation();
-
-  const cursorFromIndexPage = state?.cursor;
-
   const { filter, orderBy } =
     useQueryVariablesFromActiveFieldsOfViewOrDefaultView({
       objectMetadataItem,
@@ -68,7 +59,7 @@ export const useRecordShowPagePagination = (
 
   const currentRecordCursor = currentRecordsPageInfo?.endCursor;
 
-  const cursor = cursorFromIndexPage ?? currentRecordCursor;
+  const cursor = currentRecordCursor;
 
   const {
     loading: loadingRecordBefore,

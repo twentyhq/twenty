@@ -5,9 +5,11 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 export const getRecordsFromRecordConnection = <T extends ObjectRecord>({
   recordConnection,
 }: {
-  recordConnection: RecordGqlConnection;
+  recordConnection: RecordGqlConnection | undefined;
 }): T[] => {
-  return recordConnection.edges.map((edge) =>
-    getRecordFromRecordNode<T>({ recordNode: edge.node }),
+  return (
+    recordConnection?.edges.map((edge) =>
+      getRecordFromRecordNode<T>({ recordNode: edge.node }),
+    ) ?? []
   );
 };

@@ -1,7 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
+import { CursorByRecordId } from '@/object-record/cache/utils/getCursorByRecordIdFromRecordConnection';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { cursorByRecordFamilyState } from '@/object-record/record-table/states/cursorByRecordFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -24,17 +26,27 @@ export const useSetRecordTableData = ({
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends ObjectRecord>(newEntityArray: T[], totalCount?: number) => {
-        for (const entity of newEntityArray) {
+      <T extends ObjectRecord>(
+        newRecords: T[],
+        cursorsByRecordId: CursorByRecordId[],
+        totalCount?: number,
+      ) => {
+        for (const record of newRecords) {
           // TODO: refactor with scoped state later
-          const currentEntity = snapshot
-            .getLoadable(recordStoreFamilyState(entity.id))
+          const currentRecord = snapshot
+            .getLoadable(recordStoreFamilyState(record.id))
             .getValue();
 
-          if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
-            set(recordStoreFamilyState(entity.id), entity);
+          if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
+            set(recordStoreFamilyState(record.id), record);
+            set(
+              cursorByRecordFamilyState(record.id),
+              cursorsByRecordId.find((cursor) => cursor.recordId === record.id)
+                ?.cursor,
+            );
           }
         }
+
         const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState);
 
         const hasUserSelectedAllRows = getSnapshotValue(
@@ -42,7 +54,7 @@ export const useSetRecordTableData = ({
           hasUserSelectedAllRowsState,
         );
 
-        const entityIds = newEntityArray.map((entity) => entity.id);
+        const entityIds = newRecords.map((entity) => entity.id);
 
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
           set(tableRowIdsState, entityIds);

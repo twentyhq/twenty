@@ -26,6 +26,7 @@ import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
+import { getCursorByRecordIdFromRecordConnection } from '@/object-record/cache/utils/getCursorByRecordIdFromRecordConnection';
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '../states/isFetchingMoreRecordsFamilyState';
@@ -209,15 +210,23 @@ export const useFetchMoreRecordsWithPagination = <
 
   const totalCount = data?.[objectMetadataItem.namePlural]?.totalCount;
 
+  const recordConnection = data?.[objectMetadataItem.namePlural];
+
   const records = useMemo(
     () =>
-      data?.[objectMetadataItem.namePlural]
-        ? getRecordsFromRecordConnection<T>({
-            recordConnection: data?.[objectMetadataItem.namePlural],
-          })
-        : ([] as T[]),
+      getRecordsFromRecordConnection<T>({
+        recordConnection,
+      }),
 
-    [data, objectMetadataItem.namePlural],
+    [recordConnection],
+  );
+
+  const cursorsByRecordId = useMemo(
+    () =>
+      getCursorByRecordIdFromRecordConnection({
+        recordConnection,
+      }),
+    [recordConnection],
   );
 
   return {
@@ -225,5 +234,6 @@ export const useFetchMoreRecordsWithPagination = <
     totalCount,
     records,
     hasNextPage,
+    cursorsByRecordId,
   };
 };
