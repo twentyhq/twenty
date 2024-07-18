@@ -37,7 +37,7 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
     closeDropdown();
   };
 
-  const isDeletable = isCustomField && fieldType !== FieldMetadataType.Address;
+  const isDeletable = isCustomField;
 
   return (
     <Dropdown
