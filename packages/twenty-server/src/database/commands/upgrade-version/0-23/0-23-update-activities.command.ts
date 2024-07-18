@@ -6,6 +6,7 @@ import { IsNull, QueryRunner } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
@@ -33,6 +34,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {
     super();
   }
@@ -93,6 +95,8 @@ export class UpdateActivitiesCommand extends CommandRunner {
         activity.position = i;
         await activityRepository.save(activity);
       }
+
+      await this.workspaceCacheVersionService.incrementVersion(workspaceId);
     };
 
     return this.sharedBoilerplate(_passedParam, options, updateActivities);
