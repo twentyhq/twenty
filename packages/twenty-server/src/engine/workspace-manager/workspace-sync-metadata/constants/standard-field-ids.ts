@@ -122,6 +122,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   annualRecurringRevenue: '20202020-602a-495c-9776-f5d5b11d227b',
   idealCustomerProfile: '20202020-ba6b-438a-8213-2c5ba28d76a2',
   position: '20202020-9b4e-462b-991d-a0ee33326454',
+  createdBy: '20202020-fabc-451d-ab7d-412170916baa',
   people: '20202020-3213-4ddf-9494-6422bcff8d7c',
   accountOwner: '20202020-95b8-4e10-9881-edb5d4765f9d',
   activityTargets: '20202020-c2a5-4c9b-9d9a-582bcd57fbc8',

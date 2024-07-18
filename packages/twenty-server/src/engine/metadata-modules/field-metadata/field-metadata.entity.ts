@@ -42,6 +42,7 @@ export enum FieldMetadataType {
   POSITION = 'POSITION',
   ADDRESS = 'ADDRESS',
   RAW_JSON = 'RAW_JSON',
+  CREATED_BY = 'CREATED_BY',
 }
 
 @Entity('fieldMetadata')

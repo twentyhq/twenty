@@ -19,6 +19,10 @@ import {
   AddressMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
 import { linksCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import {
+  createdByCompositeType,
+  CreatedByMetadata,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 
 export type CompositeFieldsDefinitionFunction = (
   fieldMetadata?: FieldMetadataInterface,
@@ -33,10 +37,12 @@ export const compositeTypeDefintions = new Map<
   [FieldMetadataType.CURRENCY, currencyCompositeType],
   [FieldMetadataType.FULL_NAME, fullNameCompositeType],
   [FieldMetadataType.ADDRESS, addressCompositeType],
+  [FieldMetadataType.CREATED_BY, createdByCompositeType],
 ]);
 
 export type CompositeMetadataTypes =
   | AddressMetadata
   | CurrencyMetadata
   | FullNameMetadata
-  | LinkMetadata;
+  | LinkMetadata
+  | CreatedByMetadata;
