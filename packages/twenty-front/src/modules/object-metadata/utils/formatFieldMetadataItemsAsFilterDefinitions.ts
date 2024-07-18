@@ -34,6 +34,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Relation,
         FieldMetadataType.Select,
         FieldMetadataType.Currency,
+        FieldMetadataType.Rating,
       ].includes(field.type)
     ) {
       return acc;
@@ -85,6 +86,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'MULTI_SELECT';
     case FieldMetadataType.Address:
       return 'ADDRESS';
+    case FieldMetadataType.Rating:
+      return 'RATING';
     default:
       return 'TEXT';
   }

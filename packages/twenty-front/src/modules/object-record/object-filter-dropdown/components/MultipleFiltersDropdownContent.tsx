@@ -5,6 +5,7 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
+import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
 import { ObjectFilterDropdownDateInput } from './ObjectFilterDropdownDateInput';
 import { ObjectFilterDropdownFilterSelect } from './ObjectFilterDropdownFilterSelect';
@@ -70,6 +71,9 @@ export const MultipleFiltersDropdownContent = ({
             {['NUMBER', 'CURRENCY'].includes(
               filterDefinitionUsedInDropdown.type,
             ) && <ObjectFilterDropdownNumberInput />}
+            {filterDefinitionUsedInDropdown.type === 'RATING' && (
+              <ObjectFilterDropdownRatingInput />
+            )}
             {filterDefinitionUsedInDropdown.type === 'DATE_TIME' && (
               <ObjectFilterDropdownDateInput />
             )}

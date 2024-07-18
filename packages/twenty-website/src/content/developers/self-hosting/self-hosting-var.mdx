@@ -147,6 +147,16 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
     ['STORAGE_LOCAL_PATH', '.local-storage', 'data path (local storage)'],
     ]}></ArticleTable>
 
+### Custom Code Execution
+
+<ArticleTable options={[
+  ['SERVERLESS_TYPE', 'local', "Serverless driver type: 'local' or 'lambda'"],
+  ['SERVERLESS_LAMBDA_REGION', '', 'Lambda Region'],
+  ['SERVERLESS_LAMBDA_ROLE', '', 'Lambda Role'],
+  ['SERVERLESS_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
+  ['SERVERLESS_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
+]}></ArticleTable>
+
 ### Message Queue
 
 <ArticleTable options={[

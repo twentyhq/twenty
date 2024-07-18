@@ -18,6 +18,12 @@ export const LinkDisplay = ({ value }: LinkDisplayProps) => {
     return <></>;
   }
 
+  const absoluteUrl = url
+    ? url.startsWith('http')
+      ? url
+      : 'https://' + url
+    : '';
+
   const displayedValue = isNonEmptyString(value?.label)
     ? value?.label
     : url?.replace(/^http[s]?:\/\/(?:[w]+\.)?/gm, '').replace(/^[w]+\./gm, '');
@@ -29,8 +35,8 @@ export const LinkDisplay = ({ value }: LinkDisplayProps) => {
       : LinkType.Url;
 
   if (type === LinkType.LinkedIn || type === LinkType.Twitter) {
-    return <SocialLink href={url} type={type} label={displayedValue} />;
+    return <SocialLink href={absoluteUrl} type={type} label={displayedValue} />;
   }
 
-  return <RoundedLink href={url} label={displayedValue} />;
+  return <RoundedLink href={absoluteUrl} label={displayedValue} />;
 };
