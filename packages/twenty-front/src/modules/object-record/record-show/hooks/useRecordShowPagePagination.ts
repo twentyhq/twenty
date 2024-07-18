@@ -52,7 +52,6 @@ export const useRecordShowPagePagination = (
   const {
     loading: loadingRecordBefore,
     records: recordsBefore,
-    pageInfo: pageInfoBefore,
     totalCount: totalCountBefore,
   } = useFindManyRecords({
     filter,
@@ -71,7 +70,6 @@ export const useRecordShowPagePagination = (
   const {
     loading: loadingRecordAfter,
     records: recordsAfter,
-    pageInfo: pageInfoAfter,
     totalCount: totalCountAfter,
   } = useFindManyRecords({
     filter,
@@ -97,28 +95,15 @@ export const useRecordShowPagePagination = (
   const recordBefore = recordsBefore[0];
   const recordAfter = recordsAfter[0];
 
-  const recordBeforeCursor = pageInfoBefore?.endCursor;
-  const recordAfterCursor = pageInfoAfter?.endCursor;
-
   const navigateToPreviousRecord = () => {
     navigate(
       buildShowPageURL(objectNameSingular, recordBefore.id, viewIdQueryParam),
-      {
-        state: {
-          cursor: recordBeforeCursor,
-        },
-      },
     );
   };
 
   const navigateToNextRecord = () => {
     navigate(
       buildShowPageURL(objectNameSingular, recordAfter.id, viewIdQueryParam),
-      {
-        state: {
-          cursor: recordAfterCursor,
-        },
-      },
     );
   };
 
