@@ -1,4 +1,5 @@
 import React from 'react';
+// @ts-expect-error external library has a typing issue
 import { RevertConnect } from '@revertdotdev/revert-react';
 import { IconSettings } from 'twenty-ui';
 
