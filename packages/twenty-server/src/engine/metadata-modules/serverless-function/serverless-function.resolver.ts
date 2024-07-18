@@ -27,9 +27,11 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      return await this.serverlessFunctionService.createOne(
-        name,
-        workspaceId,
+      return await this.serverlessFunctionService.createOneServerlessFunction(
+        {
+          name,
+          workspaceId,
+        },
         file,
       );
     } catch (error) {

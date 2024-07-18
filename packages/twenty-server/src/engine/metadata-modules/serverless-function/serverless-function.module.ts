@@ -14,6 +14,7 @@ import { ServerlessFunctionResolver } from 'src/engine/metadata-modules/serverle
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { ServerlessFunctionDto } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
         {
           EntityClass: ServerlessFunctionEntity,
           DTOClass: ServerlessFunctionDto,
+          CreateDTOClass: CreateServerlessFunctionInput,
           ServiceClass: ServerlessFunctionService,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {

@@ -5,6 +5,7 @@ import { join } from 'path';
 
 import { FileUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -21,15 +22,18 @@ import { readFileContent } from 'src/engine/integrations/file-storage/utils/read
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
+import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 
 @Injectable()
-export class ServerlessFunctionService {
+export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
     @InjectRepository(ServerlessFunctionEntity, 'metadata')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
-  ) {}
+  ) {
+    super(serverlessFunctionRepository);
+  }
 
   async executeOne(
     name: string,
@@ -62,11 +66,11 @@ export class ServerlessFunctionService {
     return this.serverlessService.execute(functionToExecute, payload);
   }
 
-  async createOne(
-    name: string,
-    workspaceId: string,
+  async createOneServerlessFunction(
+    serverlessFunctionInput: CreateServerlessFunctionInput,
     { createReadStream, mimetype }: FileUpload,
   ) {
+    const { name, workspaceId } = serverlessFunctionInput;
     const existingServerlessFunction =
       await this.serverlessFunctionRepository.findOne({
         where: { name, workspaceId },
@@ -81,9 +85,8 @@ export class ServerlessFunctionService {
 
     const typescriptCode = await readFileContent(createReadStream());
 
-    const serverlessFunction = await this.serverlessFunctionRepository.save({
-      name,
-      workspaceId,
+    const serverlessFunction = await super.createOne({
+      ...serverlessFunctionInput,
       sourceCodeHash: serverlessFunctionCreateHash(typescriptCode),
     });
 
@@ -101,12 +104,10 @@ export class ServerlessFunctionService {
     });
 
     await this.serverlessService.build(serverlessFunction);
-    await this.serverlessFunctionRepository.update(serverlessFunction.id, {
+    await super.updateOne(serverlessFunction.id, {
       syncStatus: ServerlessFunctionSyncStatus.READY,
     });
 
-    return await this.serverlessFunctionRepository.findOneByOrFail({
-      id: serverlessFunction.id,
-    });
+    return await this.findById(serverlessFunction.id);
   }
 }
