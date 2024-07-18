@@ -61,18 +61,6 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
   body: string | null;
 
   @WorkspaceField({
-    standardId: ACTIVITY_STANDARD_FIELD_IDS.typeDeprecated,
-    type: FieldMetadataType.TEXT,
-    label: 'Type (Deprecated)',
-    description: 'Activity type',
-    icon: 'IconCheckbox',
-    defaultValue: "'Note'",
-  })
-  @WorkspaceIsDeprecated()
-  @WorkspaceIsSystem()
-  typeDeprecated: string;
-
-  @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.SELECT,
     label: 'Type',
@@ -85,6 +73,18 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     ],
   })
   type: string;
+
+  @WorkspaceField({
+    standardId: ACTIVITY_STANDARD_FIELD_IDS.typeDeprecated,
+    type: FieldMetadataType.TEXT,
+    label: 'Type (Deprecated)',
+    description: 'Activity type',
+    icon: 'IconCheckbox',
+    defaultValue: "'Note'",
+  })
+  @WorkspaceIsDeprecated()
+  @WorkspaceIsSystem()
+  typeDeprecated: string;
 
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.reminderAt,
