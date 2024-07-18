@@ -658,7 +658,9 @@ export class WorkspaceRepository<
     }
 
     if (Array.isArray(data)) {
-      return data.map((item) => this.formatData(item)) as T;
+      return Promise.all(
+        data.map((item) => this.formatData(item)),
+      ) as Promise<T>;
     }
     const compositeFieldMetadataCollection =
       await this.getCompositeFieldMetadata();
@@ -675,7 +677,7 @@ export class WorkspaceRepository<
 
       if (!fieldMetadata) {
         if (isPlainObject(value)) {
-          newData[key] = this.formatData(value);
+          newData[key] = await this.formatData(value);
         } else {
           newData[key] = value;
         }
