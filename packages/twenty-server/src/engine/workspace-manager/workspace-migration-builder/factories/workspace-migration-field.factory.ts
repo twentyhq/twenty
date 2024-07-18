@@ -7,15 +7,15 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationEntity,
   WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
-import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export interface FieldMetadataUpdate {
   current: FieldMetadataEntity;
@@ -47,7 +47,6 @@ export class WorkspaceMigrationFieldFactory {
     fieldMetadataCollectionOrFieldMetadataUpdateCollection:
       | FieldMetadataEntity[]
       | FieldMetadataUpdate[],
-    action: WorkspaceMigrationBuilderAction,
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const originalObjectMetadataMap = originalObjectMetadataCollection.reduce(
       (result, currentObject) => {
@@ -58,25 +57,44 @@ export class WorkspaceMigrationFieldFactory {
       {} as Record<string, ObjectMetadataEntity>,
     );
 
-    switch (action) {
-      case WorkspaceMigrationBuilderAction.CREATE:
-        return this.createFieldMigration(
-          originalObjectMetadataMap,
-          fieldMetadataCollectionOrFieldMetadataUpdateCollection as FieldMetadataEntity[],
-        );
-      case WorkspaceMigrationBuilderAction.UPDATE:
-        return this.updateFieldMigration(
-          originalObjectMetadataMap,
-          fieldMetadataCollectionOrFieldMetadataUpdateCollection as FieldMetadataUpdate[],
-        );
-      case WorkspaceMigrationBuilderAction.DELETE:
-        return this.deleteFieldMigration(
-          originalObjectMetadataMap,
-          fieldMetadataCollectionOrFieldMetadataUpdateCollection as FieldMetadataEntity[],
-        );
-      default:
-        return [];
+    const orderedActions = [
+      WorkspaceMigrationBuilderAction.DELETE,
+      WorkspaceMigrationBuilderAction.UPDATE,
+      WorkspaceMigrationBuilderAction.CREATE,
+    ];
+
+    let migrations: Partial<WorkspaceMigrationEntity>[] = [];
+
+    for (const action of orderedActions) {
+      switch (action) {
+        case WorkspaceMigrationBuilderAction.DELETE:
+          migrations = migrations.concat(
+            await this.deleteFieldMigration(
+              originalObjectMetadataMap,
+              fieldMetadataCollectionOrFieldMetadataUpdateCollection as FieldMetadataEntity[],
+            ),
+          );
+          break;
+        case WorkspaceMigrationBuilderAction.UPDATE:
+          migrations = migrations.concat(
+            await this.updateFieldMigration(
+              originalObjectMetadataMap,
+              fieldMetadataCollectionOrFieldMetadataUpdateCollection as FieldMetadataUpdate[],
+            ),
+          );
+          break;
+        case WorkspaceMigrationBuilderAction.CREATE:
+          migrations = migrations.concat(
+            await this.createFieldMigration(
+              originalObjectMetadataMap,
+              fieldMetadataCollectionOrFieldMetadataUpdateCollection as FieldMetadataEntity[],
+            ),
+          );
+          break;
+      }
     }
+
+    return migrations;
   }
 
   private async createFieldMigration(
