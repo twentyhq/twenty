@@ -2,6 +2,7 @@ import {
   DeepPartial,
   DeleteResult,
   EntityManager,
+  EntitySchema,
   EntityTarget,
   FindManyOptions,
   FindOneOptions,
@@ -182,12 +183,23 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<T | T[]> {
     const manager = entityManager || this.manager;
-    const formattedEntityOrEntities = this.formatData(entityOrEntities);
-    const result = await manager.save(
-      this.target,
-      formattedEntityOrEntities as any,
-      options,
-    );
+    const formattedEntityOrEntities = await this.formatData(entityOrEntities);
+    let result: T | T[];
+
+    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    if (Array.isArray(formattedEntityOrEntities)) {
+      result = await manager.save(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    } else {
+      result = await manager.save(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    }
 
     const formattedResult = await this.formatResult(result);
 
@@ -279,11 +291,23 @@ export class WorkspaceRepository<
   ): Promise<T | T[]> {
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
-    const result = await manager.softRemove(
-      this.target,
-      formattedEntityOrEntities as any,
-      options,
-    );
+    let result: T | T[];
+
+    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    if (Array.isArray(formattedEntityOrEntities)) {
+      result = await manager.softRemove(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    } else {
+      result = await manager.softRemove(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    }
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -345,11 +369,23 @@ export class WorkspaceRepository<
   ): Promise<T | T[]> {
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
-    const result = await manager.recover(
-      this.target,
-      formattedEntityOrEntities as any,
-      options,
-    );
+    let result: T | T[];
+
+    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    if (Array.isArray(formattedEntityOrEntities)) {
+      result = await manager.recover(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    } else {
+      result = await manager.recover(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    }
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -573,7 +609,7 @@ export class WorkspaceRepository<
   private async getObjectMetadataFromTarget() {
     const objectMetadataName = WorkspaceEntitiesStorage.getObjectMetadataName(
       this.internalContext.workspaceId,
-      this.target as any,
+      this.target as EntitySchema,
     );
 
     if (!objectMetadataName) {
