@@ -66,7 +66,7 @@ export const BLOCKLIST_STANDARD_FIELD_IDS = {
 export const CHART_STANDARD_FIELD_IDS = {
   name: '20202020-e5aa-45b1-aec0-431420660570',
   description: '20202020-71b2-4df1-8cb3-120d55272b12',
-  measure: '20202020-4542-4187-ab4a-9688f2c625a0',
+  measure: '20202020-0a99-48ce-b7cf-a0546a96ad95',
   sourceObjectNameSingular: '20202020-1e61-41f2-b921-4b2b21b25002',
   fieldPath: '20202020-b301-49fc-a26e-55f1a482a4c8',
   chartFilters: '20202020-9703-4059-8b49-50a44cf3da26',

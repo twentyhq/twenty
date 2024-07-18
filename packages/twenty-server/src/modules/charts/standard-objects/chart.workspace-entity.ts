@@ -14,7 +14,14 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { ChartFilterWorkspaceEntity } from 'src/modules/charts/standard-objects/chart-filter.workspace-entity';
-import { ChartMeasure } from 'src/modules/charts/types/chart-measure';
+
+export enum ChartMeasure {
+  AVERAGE = 'AVERAGE',
+  SUM = 'SUM',
+  MIN = 'MIN',
+  MAX = 'MAX',
+  COUNT = 'COUNT',
+}
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.chart,
@@ -46,10 +53,43 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CHART_STANDARD_FIELD_IDS.measure,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Measure',
     description: 'Aggregate function of the chart',
     icon: 'IconRulerMeasure',
+    options: [
+      {
+        value: ChartMeasure.AVERAGE,
+        label: 'Average',
+        position: 0,
+        color: 'blue',
+      },
+      {
+        value: ChartMeasure.SUM,
+        label: 'Sum',
+        position: 1,
+        color: 'green',
+      },
+      {
+        value: ChartMeasure.MIN,
+        label: 'Minimum',
+        position: 2,
+        color: 'orange',
+      },
+      {
+        value: ChartMeasure.MAX,
+        label: 'Maximum',
+        position: 3,
+        color: 'red',
+      },
+      {
+        value: ChartMeasure.COUNT,
+        label: 'Count',
+        position: 4,
+        color: 'purple',
+      },
+    ],
+    defaultValue: `'${ChartMeasure.COUNT}'`,
   })
   measure: ChartMeasure;
 

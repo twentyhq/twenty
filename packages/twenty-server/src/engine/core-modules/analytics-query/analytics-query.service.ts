@@ -7,9 +7,11 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ChartResult } from 'src/engine/core-modules/analytics-query/dtos/analytics-query-result.dto';
-import { ChartWorkspaceEntity } from 'src/modules/charts/standard-objects/chart.workspace-entity';
+import {
+  ChartMeasure,
+  ChartWorkspaceEntity,
+} from 'src/modules/charts/standard-objects/chart.workspace-entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { ChartMeasure } from 'src/modules/charts/types/chart-measure';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
@@ -149,15 +151,15 @@ export class AnalyticsQueryService {
     targetSelectColumn: string,
   ) {
     switch (chartMeasure) {
-      case ChartMeasure.Count:
+      case ChartMeasure.COUNT:
         return 'COUNT(*) as measure';
-      case ChartMeasure.Average:
+      case ChartMeasure.AVERAGE:
         return `AVG(${targetSelectColumn}) as measure`;
-      case ChartMeasure.Min:
+      case ChartMeasure.MIN:
         return `MIN(${targetSelectColumn}) as measure`;
-      case ChartMeasure.Max:
+      case ChartMeasure.MAX:
         return `MAX(${targetSelectColumn}) as measure`;
-      case ChartMeasure.Sum:
+      case ChartMeasure.SUM:
         return `SUM(${targetSelectColumn}) as measure`;
     }
   }
