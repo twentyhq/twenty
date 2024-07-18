@@ -35,7 +35,7 @@ export class WorkspaceEntitiesStorage {
     const workspace = this.workspaceEntities.get(workspaceId);
 
     return Array.from(workspace?.entries() || []).find(
-      ([, schema]) => schema === target,
+      ([, schema]) => schema.options.name === target.options.name,
     )?.[0];
   }
 
