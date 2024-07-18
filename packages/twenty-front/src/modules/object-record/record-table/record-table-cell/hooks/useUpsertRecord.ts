@@ -1,6 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordFieldInputDraftValueComponentSelector } from '@/object-record/record-field/states/selectors/recordFieldInputDraftValueComponentSelector';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
@@ -19,11 +20,6 @@ export const useUpsertRecord = ({
     objectNameSingular,
   });
 
-  const { labelIdentifierFieldMetadataItem } =
-    useLabelIdentifierFieldMetadataItem({
-      objectNameSingular,
-    });
-
   const upsertRecord = useRecoilCallback(
     ({ snapshot }) =>
       (
@@ -32,6 +28,21 @@ export const useUpsertRecord = ({
         fieldName: string,
         recordTableId: string,
       ) => {
+        const objectMetadataItems = snapshot
+          .getLoadable(objectMetadataItemsState)
+          .getValue();
+
+        const foundObjectMetadataItem = objectMetadataItems.find(
+          (item) => item.nameSingular === objectNameSingular,
+        );
+
+        if (!foundObjectMetadataItem) {
+          throw new Error('Object metadata item cannot be found');
+        }
+
+        const labelIdentifierFieldMetadataItem =
+          getLabelIdentifierFieldMetadataItem(foundObjectMetadataItem);
+
         const tableScopeId = getScopeIdFromComponentId(recordTableId);
 
         const recordTablePendingRecordIdState = extractComponentState(
@@ -64,7 +75,7 @@ export const useUpsertRecord = ({
           persistField();
         }
       },
-    [createOneRecord, labelIdentifierFieldMetadataItem],
+    [createOneRecord, objectNameSingular],
   );
 
   return { upsertRecord };
