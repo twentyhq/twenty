@@ -1412,6 +1412,8 @@ export type ServerlessFunction = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
   name: Scalars['String']['output'];
+  runtime: Scalars['String']['output'];
+  sourceCodeHash: Scalars['String']['output'];
   syncStatus: ServerlessFunctionSyncStatus;
   updatedAt: Scalars['DateTime']['output'];
 };

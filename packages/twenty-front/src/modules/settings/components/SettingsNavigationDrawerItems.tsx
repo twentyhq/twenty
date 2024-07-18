@@ -23,6 +23,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
+import { IconFunction } from '@tabler/icons-react';
 
 export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
@@ -96,6 +97,11 @@ export const SettingsNavigationDrawerItems = () => {
           label="Developers"
           path={SettingsPath.Developers}
           Icon={IconCode}
+        />
+        <SettingsNavigationDrawerItem
+          label="Functions"
+          path={SettingsPath.ServerlessFunctions}
+          Icon={IconFunction}
         />
         <SettingsNavigationDrawerItem
           label="Integrations"
