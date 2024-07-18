@@ -11,6 +11,7 @@ import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPag
 import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
 import { isNonEmptyString } from '@sniptt/guards';
+import { getRelayCursorFromRecordId } from '~/utils/getRelayCursorFromRecordId';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useRecordShowPagePagination = (
@@ -46,20 +47,7 @@ export const useRecordShowPagePagination = (
       viewId: viewIdQueryParam,
     });
 
-  const { loading: loadingCurrentRecord, pageInfo: currentRecordsPageInfo } =
-    useFindManyRecords({
-      filter: {
-        id: { eq: objectRecordId },
-      },
-      orderBy,
-      limit: 1,
-      objectNameSingular,
-      recordGqlFields,
-    });
-
-  const currentRecordCursor = currentRecordsPageInfo?.endCursor;
-
-  const cursor = currentRecordCursor;
+  const cursor = getRelayCursorFromRecordId(objectRecordId);
 
   const {
     loading: loadingRecordBefore,
@@ -101,8 +89,7 @@ export const useRecordShowPagePagination = (
 
   const totalCount = Math.max(totalCountBefore ?? 0, totalCountAfter ?? 0);
 
-  const loading =
-    loadingRecordAfter || loadingRecordBefore || loadingCurrentRecord;
+  const loading = loadingRecordAfter || loadingRecordBefore;
 
   const isThereARecordBefore = recordsBefore.length > 0;
   const isThereARecordAfter = recordsAfter.length > 0;

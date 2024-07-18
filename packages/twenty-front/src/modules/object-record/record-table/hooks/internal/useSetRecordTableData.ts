@@ -1,9 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
-import { CursorByRecordId } from '@/object-record/cache/utils/getCursorByRecordIdFromRecordConnection';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { cursorByRecordFamilyState } from '@/object-record/record-table/states/cursorByRecordFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -26,11 +24,7 @@ export const useSetRecordTableData = ({
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends ObjectRecord>(
-        newRecords: T[],
-        cursorsByRecordId: CursorByRecordId[],
-        totalCount?: number,
-      ) => {
+      <T extends ObjectRecord>(newRecords: T[], totalCount?: number) => {
         for (const record of newRecords) {
           // TODO: refactor with scoped state later
           const currentRecord = snapshot
@@ -39,11 +33,6 @@ export const useSetRecordTableData = ({
 
           if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
             set(recordStoreFamilyState(record.id), record);
-            set(
-              cursorByRecordFamilyState(record.id),
-              cursorsByRecordId.find((cursor) => cursor.recordId === record.id)
-                ?.cursor,
-            );
           }
         }
 

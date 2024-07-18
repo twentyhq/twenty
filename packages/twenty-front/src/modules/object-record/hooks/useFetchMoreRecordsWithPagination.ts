@@ -214,10 +214,11 @@ export const useFetchMoreRecordsWithPagination = <
 
   const records = useMemo(
     () =>
-      getRecordsFromRecordConnection<T>({
-        recordConnection,
-      }),
-
+      isDefined(recordConnection)
+        ? getRecordsFromRecordConnection<T>({
+            recordConnection,
+          })
+        : [],
     [recordConnection],
   );
 

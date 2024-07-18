@@ -44,6 +44,7 @@ export const RecordTableBodyEffect = () => {
     isRecordTableScrolledTopComponentState,
   );
 
+  // TODO: move this outside because it might cause way too many re-renders for other hooks
   useEffect(() => {
     setIsRecordTableScrolledTop(scrollTop === 0);
     if (scrollTop > 0) {
@@ -119,7 +120,7 @@ export const RecordTableBodyEffect = () => {
 
   useEffect(() => {
     if (!loading) {
-      setRecordTableData(records, cursorsByRecordId, totalCount);
+      setRecordTableData(records, totalCount);
     }
   }, [records, totalCount, setRecordTableData, loading, cursorsByRecordId]);
 
