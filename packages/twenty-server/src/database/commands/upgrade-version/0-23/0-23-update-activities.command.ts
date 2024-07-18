@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { QueryRunner } from 'typeorm';
+import { IsNull, QueryRunner } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -22,7 +22,8 @@ type CoreLogicFunction = (params: {
 
 @Command({
   name: 'migrate-0.23:update-activities-type',
-  description: 'Update activities.type to change Note to NOTE and Task to TASK',
+  description:
+    'Update activities.type to change Note to NOTE and Task to TASK, backfill activity.position, update activity.body when null',
 })
 export class UpdateActivitiesCommand extends CommandRunner {
   private readonly logger = new Logger(UpdateActivitiesCommand.name);
@@ -49,7 +50,6 @@ export class UpdateActivitiesCommand extends CommandRunner {
     _passedParam: string[],
     options: UpdateActivitiesCommandOptions,
   ): Promise<void> {
-    console.log('yo');
     const updateActivities = async ({
       workspaceId,
     }: {
@@ -62,18 +62,37 @@ export class UpdateActivitiesCommand extends CommandRunner {
         );
 
       await activityRepository.update(
-        { type: 'Task' },
+        { typeDeprecated: 'Task' },
         {
           type: 'TASK',
         },
       );
 
       await activityRepository.update(
-        { type: 'Note' },
+        { typeDeprecated: 'Note' },
         {
           type: 'NOTE',
         },
       );
+
+      await activityRepository.update(
+        { body: '' },
+        {
+          body: null,
+        },
+      );
+
+      const activitiesToUpdate = await activityRepository.find({
+        where: [{ position: IsNull() }],
+        order: { createdAt: 'ASC' },
+      });
+
+      for (let i = 0; i < activitiesToUpdate.length; i++) {
+        const activity = activitiesToUpdate[i];
+
+        activity.position = i;
+        await activityRepository.save(activity);
+      }
     };
 
     return this.sharedBoilerplate(_passedParam, options, updateActivities);
