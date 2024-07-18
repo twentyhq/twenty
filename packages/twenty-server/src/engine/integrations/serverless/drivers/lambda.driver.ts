@@ -66,7 +66,7 @@ export class LambdaDriver
       FunctionName: serverlessFunction.id,
       Handler: lambdaHandler,
       Role: this.lambdaRole,
-      Runtime: 'nodejs18.x',
+      Runtime: serverlessFunction.runtime,
       Description: 'Lambda function to run user script',
       Timeout: 900,
     };
