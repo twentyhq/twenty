@@ -57,6 +57,18 @@ export const SettingsDevelopersWebhooksDetail = () => {
             </Section>
             <Section>
               <H2Title
+                title="Description"
+                description="An optional description"
+              />
+              <TextInput
+                placeholder="Description"
+                value={webhookData.description}
+                disabled
+                fullWidth
+              />
+            </Section>
+            <Section>
+              <H2Title
                 title="Danger zone"
                 description="Delete this integration"
               />
