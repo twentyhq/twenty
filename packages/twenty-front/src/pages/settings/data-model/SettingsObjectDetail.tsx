@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import styled from '@emotion/styled';
 import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
@@ -198,7 +198,6 @@ export const SettingsObjectDetail = () => {
                     ActionIcon={
                       <SettingsObjectFieldInactiveActionDropdown
                         isCustomField={!!deactivatedMetadataField.isCustom}
-                        fieldType={deactivatedMetadataField.type}
                         scopeKey={deactivatedMetadataField.id}
                         onActivate={() =>
                           activateMetadataField(deactivatedMetadataField)

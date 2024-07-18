@@ -258,6 +258,7 @@ export enum FileFolder {
   Attachment = 'Attachment',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
+  ServerlessFunction = 'ServerlessFunction',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -683,6 +684,26 @@ export type Sentry = {
   release?: Maybe<Scalars['String']>;
 };
 
+export type ServerlessFunctionConnection = {
+  __typename?: 'ServerlessFunctionConnection';
+  /** Array of edges. */
+  edges: Array<ServerlessFunctionEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+};
+
+export type ServerlessFunctionExecutionResult = {
+  __typename?: 'ServerlessFunctionExecutionResult';
+  /** Execution result in JSON format */
+  result: Scalars['JSON'];
+};
+
+/** SyncStatus of the serverlessFunction */
+export enum ServerlessFunctionSyncStatus {
+  NotReady = 'NOT_READY',
+  Ready = 'READY'
+}
+
 export type SessionEntity = {
   __typename?: 'SessionEntity';
   url?: Maybe<Scalars['String']>;
@@ -1062,6 +1083,23 @@ export type RelationEdge = {
   cursor: Scalars['ConnectionCursor'];
   /** The node containing the relation */
   node: Relation;
+};
+
+export type ServerlessFunction = {
+  __typename?: 'serverlessFunction';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  syncStatus: ServerlessFunctionSyncStatus;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type ServerlessFunctionEdge = {
+  __typename?: 'serverlessFunctionEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the serverlessFunction */
+  node: ServerlessFunction;
 };
 
 export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };

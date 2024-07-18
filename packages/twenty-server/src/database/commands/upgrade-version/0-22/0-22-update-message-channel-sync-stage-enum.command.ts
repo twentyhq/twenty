@@ -114,6 +114,10 @@ export class UpdateMessageChannelSyncStageEnumCommand extends CommandRunner {
               );
 
               await queryRunner.query(
+                `ALTER TABLE "${dataSourceMetadata.schema}"."messageChannel" ALTER COLUMN "syncStage" SET DEFAULT 'FULL_MESSAGE_LIST_FETCH_PENDING'`,
+              );
+
+              await queryRunner.query(
                 `DROP TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStage_enum_old"`,
               );
               await queryRunner.commitTransaction();

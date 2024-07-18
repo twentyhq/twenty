@@ -38,7 +38,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 type SettingsDataModelFieldEditFormValues = z.infer<
-  typeof settingsFieldFormSchema
+  ReturnType<typeof settingsFieldFormSchema>
 >;
 
 const StyledSettingsObjectFieldTypeSelect = styled(
@@ -93,7 +93,7 @@ export const SettingsObjectFieldEdit = () => {
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(settingsFieldFormSchema),
+    resolver: zodResolver(settingsFieldFormSchema()),
   });
 
   useEffect(() => {

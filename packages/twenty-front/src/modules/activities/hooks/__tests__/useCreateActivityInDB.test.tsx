@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import gql from 'graphql-tag';
 import pick from 'lodash.pick';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';

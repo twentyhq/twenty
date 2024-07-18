@@ -4,7 +4,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const getLinkToShowPage = (
   objectNameSingular: string,
-  record: ObjectRecord,
+  record: Pick<ObjectRecord, 'id'>,
 ) => {
   const basePathToShowPage = getBasePathToShowPage({
     objectNameSingular,
