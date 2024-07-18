@@ -474,30 +474,26 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           );
         }
 
-        await Promise.all(
-          compositeType.properties.map(async (property) => {
-            const columnToDelete = computeCompositeColumnName(
-              fieldMetadata.name,
-              property,
-            );
-
-            await this.workspaceMigrationService.createCustomMigration(
-              generateMigrationName(`delete-${columnToDelete}`),
-              workspaceId,
-              [
-                {
-                  name: computeObjectTargetTable(objectMetadata),
-                  action: WorkspaceMigrationTableActionType.ALTER,
-                  columns: [
-                    {
-                      action: WorkspaceMigrationColumnActionType.DROP,
-                      columnName: columnToDelete,
-                    } satisfies WorkspaceMigrationColumnDrop,
-                  ],
-                } satisfies WorkspaceMigrationTableAction,
-              ],
-            );
-          }),
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(
+            `delete-${fieldMetadata.name}-composite-columns`,
+          ),
+          workspaceId,
+          [
+            {
+              name: computeObjectTargetTable(objectMetadata),
+              action: WorkspaceMigrationTableActionType.ALTER,
+              columns: compositeType.properties.map((property) => {
+                return {
+                  action: WorkspaceMigrationColumnActionType.DROP,
+                  columnName: computeCompositeColumnName(
+                    fieldMetadata.name,
+                    property,
+                  ),
+                } satisfies WorkspaceMigrationColumnDrop;
+              }),
+            } satisfies WorkspaceMigrationTableAction,
+          ],
         );
       } else {
         await this.workspaceMigrationService.createCustomMigration(

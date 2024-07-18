@@ -21,7 +21,6 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
   scopeKey,
   onDelete,
   isCustomField,
-  fieldType,
 }: SettingsObjectFieldInactiveActionDropdownProps) => {
   const dropdownId = `${scopeKey}-settings-field-disabled-action-dropdown`;
 
