@@ -9,8 +9,10 @@ import { ExecuteServerlessFunctionInput } from 'src/engine/metadata-modules/serv
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ServerlessFunctionDto } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
-import { ServerlessFunctionExecutionResultDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result-d-t.o';
+import { ServerlessFunctionExecutionResultDto } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
+import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
+import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function-from-file.input';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
@@ -21,25 +23,44 @@ export class ServerlessFunctionResolver {
 
   @Mutation(() => ServerlessFunctionDto)
   async createOneServerlessFunction(
-    @Args({ name: 'file', type: () => GraphQLUpload })
-    file: FileUpload,
-    @Args('name', { type: () => String }) name: string,
+    @Args('input')
+    input: CreateServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
       return await this.serverlessFunctionService.createOneServerlessFunction(
         {
-          name,
-          workspaceId,
+          name: input.name,
+          description: input.description,
         },
-        file,
+        input.code,
+        workspaceId,
       );
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 
-  @Mutation(() => ServerlessFunctionExecutionResultDTO)
+  @Mutation(() => ServerlessFunctionDto)
+  async createOneServerlessFunctionFromFile(
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    file: FileUpload,
+    @Args('input')
+    input: CreateServerlessFunctionFromFileInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    try {
+      return await this.serverlessFunctionService.createOneServerlessFunction(
+        input,
+        file,
+        workspaceId,
+      );
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
+  @Mutation(() => ServerlessFunctionExecutionResultDto)
   async executeOneServerlessFunction(
     @Args() executeServerlessFunctionInput: ExecuteServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,

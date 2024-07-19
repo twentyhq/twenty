@@ -25,6 +25,9 @@ export class ServerlessFunctionEntity {
   @Column({ nullable: false })
   name: string;
 
+  @Column({ nullable: true })
+  description: string;
+
   @Column({ nullable: false })
   sourceCodeHash: string;
 

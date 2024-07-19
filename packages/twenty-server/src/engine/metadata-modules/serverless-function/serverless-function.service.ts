@@ -22,7 +22,7 @@ import { readFileContent } from 'src/engine/integrations/file-storage/utils/read
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
-import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
+import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function-from-file.input';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -67,13 +67,14 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
   }
 
   async createOneServerlessFunction(
-    serverlessFunctionInput: CreateServerlessFunctionInput,
-    { createReadStream, mimetype }: FileUpload,
+    serverlessFunctionInput: CreateServerlessFunctionFromFileInput,
+    code: FileUpload | string,
+    workspaceId: string,
   ) {
-    const { name, workspaceId } = serverlessFunctionInput;
+    const { name, description } = serverlessFunctionInput;
     const existingServerlessFunction =
       await this.serverlessFunctionRepository.findOne({
-        where: { name, workspaceId },
+        where: { name, description, workspaceId },
       });
 
     if (existingServerlessFunction) {
@@ -83,10 +84,17 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       );
     }
 
-    const typescriptCode = await readFileContent(createReadStream());
+    let typescriptCode: string;
+
+    if (typeof code === 'string') {
+      typescriptCode = code;
+    } else {
+      typescriptCode = await readFileContent(code.createReadStream());
+    }
 
     const serverlessFunction = await super.createOne({
       ...serverlessFunctionInput,
+      workspaceId,
       sourceCodeHash: serverlessFunctionCreateHash(typescriptCode),
     });
 
@@ -99,7 +107,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     await this.fileStorageService.write({
       file: typescriptCode,
       name: SOURCE_FILE_NAME,
-      mimeType: mimetype,
+      mimeType: undefined,
       folder: fileFolder,
     });
 

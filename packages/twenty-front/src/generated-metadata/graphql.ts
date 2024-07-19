@@ -245,6 +245,17 @@ export type CreateRemoteServerInput = {
   userMappingOptions?: InputMaybe<UserMappingOptions>;
 };
 
+export type CreateServerlessFunctionFromFileInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+};
+
+export type CreateServerlessFunctionInput = {
+  code: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']['input']>;
@@ -406,6 +417,7 @@ export type Mutation = {
   createOneRelation: Relation;
   createOneRemoteServer: RemoteServer;
   createOneServerlessFunction: ServerlessFunction;
+  createOneServerlessFunctionFromFile: ServerlessFunction;
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
   deleteOneObject: Object;
@@ -499,8 +511,13 @@ export type MutationCreateOneRemoteServerArgs = {
 
 
 export type MutationCreateOneServerlessFunctionArgs = {
+  input: CreateServerlessFunctionInput;
+};
+
+
+export type MutationCreateOneServerlessFunctionFromFileArgs = {
   file: Scalars['Upload']['input'];
-  name: Scalars['String']['input'];
+  input: CreateServerlessFunctionFromFileInput;
 };
 
 
@@ -1410,6 +1427,7 @@ export type RelationEdge = {
 export type ServerlessFunction = {
   __typename?: 'serverlessFunction';
   createdAt: Scalars['DateTime']['output'];
+  description: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   name: Scalars['String']['output'];
   runtime: Scalars['String']['output'];

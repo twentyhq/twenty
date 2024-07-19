@@ -48,6 +48,10 @@ export class ServerlessFunctionDto {
   name: string;
 
   @IsString()
+  @Field()
+  description: string;
+
+  @IsString()
   @IsNotEmpty()
   @Field()
   sourceCodeHash: string;

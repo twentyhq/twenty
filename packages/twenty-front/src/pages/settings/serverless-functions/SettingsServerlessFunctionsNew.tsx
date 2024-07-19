@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import { useState } from 'react';
+import { useCreateOneServerlessFunctionItem } from '@/settings/serverless-functions/hooks/useCreateOneServerlessFunctionItem';
 
 const DEFAULT_CODE = `export const handler = async (
   event: object,
@@ -41,10 +42,31 @@ export const SettingsServerlessFunctionsNew = () => {
     description: '',
     code: DEFAULT_CODE,
   });
-  const handleSave = () => {
-    console.log('handleSave->formValues:', formValues);
+
+  const { createOneServerlessFunctionItem } =
+    useCreateOneServerlessFunctionItem();
+
+  const handleSave = async () => {
+    const newServerlessFunction = await createOneServerlessFunctionItem({
+      name: formValues.name,
+      description: formValues.description,
+      code: formValues.code ?? '',
+    });
+
+    if (!newServerlessFunction) {
+      return;
+    }
+    navigate(
+      `/settings/functions/${newServerlessFunction.data.createOneServerlessFunction.id}`,
+    );
   };
-  const canSave = !!formValues.name && formValues.code !== DEFAULT_CODE;
+
+  const canSave =
+    !!formValues.name &&
+    !!formValues.code &&
+    formValues.code !== DEFAULT_CODE &&
+    createOneServerlessFunctionItem;
+
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
