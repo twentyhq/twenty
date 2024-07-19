@@ -5,7 +5,7 @@ import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/displ
 import { RatingFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RatingFieldDisplay';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
 import { RichTextFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RichTextFieldDisplay';
-import { isFieldChipDisplay } from '@/object-record/record-field/meta-types/display/utils/isFieldChipDisplay';
+import { isFieldIdentifierDisplay } from '@/object-record/record-field/meta-types/display/utils/isFieldIdentifierDisplay';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
@@ -48,7 +48,10 @@ import { isFieldUuid } from '../types/guards/isFieldUuid';
 export const FieldDisplay = () => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
-  const isChipDisplay = isFieldChipDisplay(fieldDefinition, isLabelIdentifier);
+  const isChipDisplay = isFieldIdentifierDisplay(
+    fieldDefinition,
+    isLabelIdentifier,
+  );
 
   return isChipDisplay ? (
     <ChipFieldDisplay />

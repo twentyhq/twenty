@@ -11,6 +11,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 import { FeatureFlagFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/feature-flags.factory';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
+import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
 import { WorkspaceSyncRelationMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
@@ -33,6 +34,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncFieldMetadataService: WorkspaceSyncFieldMetadataService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,
+    private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
   ) {}
 
   /**
@@ -108,6 +110,14 @@ export class WorkspaceSyncMetadataService {
           workspaceFeatureFlagsMap,
         );
 
+      // 5 - Sync standard object metadata identifiers, does not need to return nor apply migrations
+      await this.workspaceSyncObjectMetadataIdentifiersService.synchronize(
+        context,
+        manager,
+        storage,
+        workspaceFeatureFlagsMap,
+      );
+
       // Save workspace migrations into the database
       workspaceMigrations = await workspaceMigrationRepository.save([
         ...workspaceObjectMigrations,
@@ -138,7 +148,7 @@ export class WorkspaceSyncMetadataService {
         context.workspaceId,
       );
     } catch (error) {
-      console.error('Sync of standard objects failed with:', error);
+      this.logger.error('Sync of standard objects failed with:', error);
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();

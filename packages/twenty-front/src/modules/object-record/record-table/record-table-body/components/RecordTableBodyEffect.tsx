@@ -4,6 +4,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
@@ -13,10 +14,7 @@ import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
-
-export const ROW_HEIGHT = 32;
 
 export const RecordTableBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
@@ -30,6 +28,7 @@ export const RecordTableBodyEffect = () => {
     setRecordTableData,
     loading,
     queryStateIdentifier,
+    cursorsByRecordId,
   } = useLoadRecordIndexTable(objectNameSingular);
 
   const isFetchingMoreObjects = useRecoilValue(
@@ -45,6 +44,7 @@ export const RecordTableBodyEffect = () => {
     isRecordTableScrolledTopComponentState,
   );
 
+  // TODO: move this outside because it might cause way too many re-renders for other hooks
   useEffect(() => {
     setIsRecordTableScrolledTop(scrollTop === 0);
     if (scrollTop > 0) {
@@ -83,9 +83,6 @@ export const RecordTableBodyEffect = () => {
     }
   }, [scrollLeft, setIsRecordTableScrolledLeft]);
 
-  const rowHeight = ROW_HEIGHT;
-  const viewportHeight = records.length * rowHeight;
-
   const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilState(
     lastShowPageRecordIdState,
   );
@@ -121,13 +118,11 @@ export const RecordTableBodyEffect = () => {
     setLastShowPageRecordId,
   ]);
 
-  useScrollRestoration(viewportHeight);
-
   useEffect(() => {
     if (!loading) {
       setRecordTableData(records, totalCount);
     }
-  }, [records, totalCount, setRecordTableData, loading]);
+  }, [records, totalCount, setRecordTableData, loading, cursorsByRecordId]);
 
   const fetchMoreDebouncedIfRequested = useDebouncedCallback(async () => {
     // We are debouncing here to give the user some room to scroll if they want to within this throttle window
