@@ -123,6 +123,7 @@ export const MultipleRecordSelectDropdown = ({
               avatar={
                 <Avatar
                   avatarUrl={getImageAbsoluteURIOrBase64(record.avatarUrl)}
+                  placeholderColorSeed={record.id}
                   placeholder={record.name}
                   size="md"
                   type={record.avatarType ?? 'rounded'}
