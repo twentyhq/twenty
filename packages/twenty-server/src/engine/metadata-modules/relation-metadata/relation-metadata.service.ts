@@ -24,7 +24,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
-  validateMetadataName,
+  validateMetadataNameOrThrow,
   InvalidStringException,
 } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
@@ -63,8 +63,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     );
 
     try {
-      validateMetadataName(relationMetadataInput.fromName);
-      validateMetadataName(relationMetadataInput.toName);
+      validateMetadataNameOrThrow(relationMetadataInput.fromName);
+      validateMetadataNameOrThrow(relationMetadataInput.toName);
     } catch (error) {
       if (error instanceof InvalidStringException) {
         throw new RelationMetadataException(

@@ -162,7 +162,7 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "test-storybook --url http://localhost:{args.port} --maxWorkers=3"
+          "test-storybook --url http://localhost:{args.port} --maxWorkers=2"
         ],
         "port": 6006
       }

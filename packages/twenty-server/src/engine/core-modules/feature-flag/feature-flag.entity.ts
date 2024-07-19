@@ -1,19 +1,19 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
-  Entity,
-  Unique,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   ManyToOne,
+  PrimaryGeneratedColumn,
   Relation,
+  Unique,
+  UpdateDateColumn,
 } from 'typeorm';
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum FeatureFlagKeys {
   IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
@@ -21,7 +21,6 @@ export enum FeatureFlagKeys {
   IsAirtableIntegrationEnabled = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
-  IsContactCreationForSentAndReceivedEmailsEnabled = 'IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED',
   IsCopilotEnabled = 'IS_COPILOT_ENABLED',
   IsMessagingAliasFetchingEnabled = 'IS_MESSAGING_ALIAS_FETCHING_ENABLED',
   IsGoogleCalendarSyncV2Enabled = 'IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED',

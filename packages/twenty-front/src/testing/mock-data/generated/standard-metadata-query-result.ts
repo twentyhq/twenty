@@ -1,10 +1,6 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
-  FieldMetadataType,
-  ObjectEdge,
-  ObjectMetadataItemsQuery,
+	ObjectMetadataItemsQuery
 } from '~/generated-metadata/graphql';
-import { CalendarChannelVisibility, MessageChannelVisibility } from "~/generated/graphql";
 
 // This file is not designed to be manually edited.
 // It's an extract from the dev seeded environment metadata call
@@ -5565,29 +5561,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
 								"createdAt": "2024-06-07T09:05:12.599Z",
 								"updatedAt": "2024-06-07T09:05:12.599Z",
 								"defaultValue": null,
-								"options": null,
-								"relationDefinition": null,
-								"fromRelationMetadata": null,
-								"toRelationMetadata": null
-							}
-						},
-						{
-							"__typename": "fieldEdge",
-							"node": {
-								"__typename": "field",
-								"id": "dd99cf8d-a10c-4d41-8469-6b5e03e5ae2e",
-								"type": "TEXT",
-								"name": "probability",
-								"label": "Probability",
-								"description": "Opportunity probability",
-								"icon": "IconProgressCheck",
-								"isCustom": false,
-								"isActive": true,
-								"isSystem": false,
-								"isNullable": false,
-								"createdAt": "2024-06-07T09:05:12.599Z",
-								"updatedAt": "2024-06-07T09:05:12.599Z",
-								"defaultValue": "'0'",
 								"options": null,
 								"relationDefinition": null,
 								"fromRelationMetadata": null,

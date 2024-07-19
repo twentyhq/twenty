@@ -7,16 +7,17 @@ import {
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { RelationMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/relation-metadata/interceptors/relation-metadata-graphql-api-exception.interceptor';
+import { RelationMetadataResolver } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.resolver';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
-import { RelationMetadataResolver } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.resolver';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-import { RelationMetadataService } from './relation-metadata.service';
 import { RelationMetadataEntity } from './relation-metadata.entity';
+import { RelationMetadataService } from './relation-metadata.service';
 
 import { CreateRelationInput } from './dtos/create-relation.input';
 import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
@@ -47,6 +48,7 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
           update: { disabled: true },
           delete: { disabled: true },
           guards: [JwtAuthGuard],
+          interceptors: [RelationMetadataGraphqlApiExceptionInterceptor],
         },
       ],
     }),

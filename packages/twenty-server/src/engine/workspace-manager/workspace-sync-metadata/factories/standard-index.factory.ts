@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
+import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 
 @Injectable()
@@ -31,7 +31,7 @@ export class StandardIndexFactory {
     target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    workspaceFeatureFlagsMap: FeatureFlagMap,
+    _workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<IndexMetadataEntity>[] {
     const workspaceEntity = metadataArgsStorage.filterEntities(target);
 

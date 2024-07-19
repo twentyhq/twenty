@@ -13,16 +13,16 @@ export class EmailAliasManagerService {
     private readonly googleEmailAliasManagerService: GoogleEmailAliasManagerService,
   ) {}
 
-  public async refreshEmailAliases(
+  public async refreshHandleAliases(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
-    let emailAliases: string[];
+    let handleAliases: string[];
 
     switch (connectedAccount.provider) {
       case 'google':
-        emailAliases =
-          await this.googleEmailAliasManagerService.getEmailAliases(
+        handleAliases =
+          await this.googleEmailAliasManagerService.getHandleAliases(
             connectedAccount,
           );
         break;
@@ -32,8 +32,8 @@ export class EmailAliasManagerService {
         );
     }
 
-    await this.connectedAccountRepository.updateEmailAliases(
-      emailAliases,
+    await this.connectedAccountRepository.updateHandleAliases(
+      handleAliases,
       connectedAccount.id,
       workspaceId,
     );
