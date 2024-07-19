@@ -1,5 +1,5 @@
-import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRef } from 'react';
 
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityBodyEffect } from '@/activities/components/ActivityBodyEffect';
@@ -10,8 +10,6 @@ import { ActivityTitleEffect } from '@/activities/components/ActivityTitleEffect
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { ActivityTitle } from './ActivityTitle';
-
-import '@blocknote/core/style.css';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;

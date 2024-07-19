@@ -1,6 +1,7 @@
 import { ClipboardEvent } from 'react';
 import { filterSuggestionItems } from '@blocknote/core';
-import { BlockNoteView, SuggestionMenuController } from '@blocknote/react';
+import { SuggestionMenuController } from '@blocknote/react';
+import { BlockNoteView } from '@blocknote/mantine';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
