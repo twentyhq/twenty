@@ -82,6 +82,7 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 import { SettingsServerlessFunctions } from '~/pages/settings/serverless-functions/SettingsServerlessFunctions';
+import { SettingsServerlessFunctionsNew } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew';
 
 const ProvidersThatNeedRouterContext = () => {
   const { pathname } = useLocation();
@@ -249,6 +250,10 @@ const createRouter = (isBillingEnabled?: boolean) =>
                 <Route
                   path={SettingsPath.ServerlessFunctions}
                   element={<SettingsServerlessFunctions />}
+                />
+                <Route
+                  path={SettingsPath.NewServerlessFunction}
+                  element={<SettingsServerlessFunctionsNew />}
                 />
                 <Route
                   path={SettingsPath.Integrations}

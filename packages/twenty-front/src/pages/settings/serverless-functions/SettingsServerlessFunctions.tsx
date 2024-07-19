@@ -16,7 +16,9 @@ export const SettingsServerlessFunctions = () => {
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb links={[{ children: 'Functions' }]} />
-          <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewFunction)}>
+          <UndecoratedLink
+            to={getSettingsPagePath(SettingsPath.NewServerlessFunction)}
+          >
             <Button
               Icon={IconPlus}
               title="New Function"

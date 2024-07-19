@@ -16,7 +16,7 @@ export enum SettingsPath {
   ObjectNewFieldStep2 = 'objects/:objectSlug/new-field/step-2',
   ObjectFieldEdit = 'objects/:objectSlug/:fieldSlug',
   NewObject = 'objects/new',
-  NewFunction = 'functions/new',
+  NewServerlessFunction = 'functions/new',
   WorkspaceMembersPage = 'workspace-members',
   Workspace = 'workspace',
   Developers = 'developers',
