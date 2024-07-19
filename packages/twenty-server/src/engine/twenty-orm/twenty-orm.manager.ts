@@ -54,9 +54,42 @@ export class TwentyORMManager {
       throw new Error('Workspace data source not found');
     }
 
+    const workspaceId = this.workspaceDataSource.getWorkspaceId();
+
+    let objectMetadataCollection =
+      await this.workspaceCacheStorageService.getObjectMetadataCollection(
+        workspaceId,
+      );
+
+    if (!objectMetadataCollection) {
+      objectMetadataCollection = await this.objectMetadataRepository.find({
+        where: { workspaceId },
+        relations: [
+          'fields.object',
+          'fields',
+          'fields.fromRelationMetadata',
+          'fields.toRelationMetadata',
+          'fields.fromRelationMetadata.toObjectMetadata',
+        ],
+      });
+
+      await this.workspaceCacheStorageService.setObjectMetadataCollection(
+        workspaceId,
+        objectMetadataCollection,
+      );
+    }
+
+    const objectMetadata = objectMetadataCollection.find(
+      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
+    );
+
+    if (!objectMetadata) {
+      throw new Error('Object metadata not found');
+    }
+
     const entitySchema = await this.entitySchemaFactory.create(
-      this.workspaceDataSource.internalContext.workspaceId,
-      objectMetadataName,
+      workspaceId,
+      objectMetadata,
     );
 
     if (!entitySchema) {
@@ -95,38 +128,38 @@ export class TwentyORMManager {
       );
     }
 
+    let objectMetadataCollection =
+      await this.workspaceCacheStorageService.getObjectMetadataCollection(
+        workspaceId,
+      );
+
+    if (!objectMetadataCollection) {
+      objectMetadataCollection = await this.objectMetadataRepository.find({
+        where: { workspaceId },
+        relations: [
+          'fields.object',
+          'fields',
+          'fields.fromRelationMetadata',
+          'fields.toRelationMetadata',
+          'fields.fromRelationMetadata.toObjectMetadata',
+        ],
+      });
+
+      await this.workspaceCacheStorageService.setObjectMetadataCollection(
+        workspaceId,
+        objectMetadataCollection,
+      );
+    }
+
+    const entities = await Promise.all(
+      objectMetadataCollection.map((objectMetadata) =>
+        this.entitySchemaFactory.create(workspaceId, objectMetadata),
+      ),
+    );
+
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${cacheVersion}`,
       async () => {
-        let objectMetadataCollection =
-          await this.workspaceCacheStorageService.getObjectMetadataCollection(
-            workspaceId,
-          );
-
-        if (!objectMetadataCollection) {
-          objectMetadataCollection = await this.objectMetadataRepository.find({
-            where: { workspaceId },
-            relations: [
-              'fields.object',
-              'fields',
-              'fields.fromRelationMetadata',
-              'fields.toRelationMetadata',
-              'fields.fromRelationMetadata.toObjectMetadata',
-            ],
-          });
-
-          await this.workspaceCacheStorageService.setObjectMetadataCollection(
-            workspaceId,
-            objectMetadataCollection,
-          );
-        }
-
-        const entities = await Promise.all(
-          objectMetadataCollection.map((objectMetadata) =>
-            this.entitySchemaFactory.create(workspaceId, objectMetadata),
-          ),
-        );
-
         const workspaceDataSource =
           await this.workspaceDataSourceFactory.create(entities, workspaceId);
 
@@ -135,9 +168,17 @@ export class TwentyORMManager {
       (dataSource) => dataSource.destroy(),
     );
 
+    const objectMetadata = objectMetadataCollection.find(
+      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
+    );
+
+    if (!objectMetadata) {
+      throw new Error('Object metadata not found');
+    }
+
     const entitySchema = await this.entitySchemaFactory.create(
       workspaceId,
-      objectMetadataName,
+      objectMetadata,
     );
 
     if (!workspaceDataSource) {

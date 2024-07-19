@@ -11,8 +11,6 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 
@@ -22,8 +20,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectWorkspaceRepository(WorkspaceMemberWorkspaceEntity)
-    private readonly workspaceMemberRepository: WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private eventEmitter: EventEmitter2,
@@ -107,13 +103,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     });
   }
 
-  public async getWorkspaceMemberCount(): Promise<number | undefined> {
-    // TODO: to refactor, this could happen today for the first signup since the workspace does not exist yet
-    if (!this.workspaceMemberRepository) {
-      return undefined;
-    }
-
-    return await this.workspaceMemberRepository.count();
+  public async getUserCount(workspaceId): Promise<number | undefined> {
+    return await this.userWorkspaceRepository.countBy({
+      workspaceId,
+    });
   }
 
   async checkUserWorkspaceExists(
