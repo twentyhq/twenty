@@ -6,8 +6,12 @@ import { IsNull, QueryRunner } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { activitiesAllNotesView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all-notes.view';
+import { activitiesAllTasksView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all-tasks.view';
+import { activitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all.view';
 import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
 
@@ -35,6 +39,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
     private readonly dataSourceService: DataSourceService,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly objectMetadataService: ObjectMetadataService,
   ) {
     super();
   }
@@ -54,8 +59,12 @@ export class UpdateActivitiesCommand extends CommandRunner {
   ): Promise<void> {
     const updateActivities = async ({
       workspaceId,
+      queryRunner,
+      schema,
     }: {
       workspaceId: string;
+      queryRunner: QueryRunner;
+      schema: string;
     }): Promise<void> => {
       const activityRepository =
         await this.twentyORMManager.getRepositoryForWorkspace(
@@ -63,6 +72,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
           ActivityWorkspaceEntity,
         );
 
+      // Migrate type field to enum
       await activityRepository.update(
         { typeDeprecated: 'Task' },
         {
@@ -84,6 +94,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
         },
       );
 
+      // Backfill positions
       const activitiesToUpdate = await activityRepository.find({
         where: [{ position: IsNull() }],
         order: { createdAt: 'ASC' },
@@ -94,6 +105,121 @@ export class UpdateActivitiesCommand extends CommandRunner {
 
         activity.position = i;
         await activityRepository.save(activity);
+      }
+
+      // Create missing views
+
+      const objectMetadata =
+        await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
+
+      const objectMetadataMap = objectMetadata.reduce((acc, object) => {
+        acc[object.standardId ?? ''] = {
+          id: object.id,
+          fields: object.fields.reduce((acc, field) => {
+            acc[field.standardId ?? ''] = field.id;
+
+            return acc;
+          }, {}),
+        };
+        schema;
+
+        return acc;
+      }, {});
+
+      const viewDefinitions = [
+        await activitiesAllView(objectMetadataMap),
+        await activitiesAllNotesView(objectMetadataMap),
+        await activitiesAllTasksView(objectMetadataMap),
+      ];
+
+      const createdViews = await queryRunner.manager
+        .createQueryBuilder()
+        .insert()
+        .into(`${schema}.view`, [
+          'name',
+          'objectMetadataId',
+          'type',
+          'key',
+          'position',
+          'icon',
+          'kanbanFieldMetadataId',
+        ])
+        .values(
+          viewDefinitions.map(
+            ({
+              name,
+              objectMetadataId,
+              type,
+              key,
+              position,
+              icon,
+              kanbanFieldMetadataId,
+            }) => ({
+              name,
+              objectMetadataId,
+              type,
+              key,
+              position,
+              icon,
+              kanbanFieldMetadataId,
+            }),
+          ),
+        )
+        .returning('*')
+        .execute();
+
+      const viewIdMap = createdViews.raw.reduce((acc, view) => {
+        acc[view.name] = view.id;
+
+        return acc;
+      }, {});
+
+      for (const viewDefinition of viewDefinitions) {
+        if (viewDefinition.fields && viewDefinition.fields.length > 0) {
+          await queryRunner.manager
+            .createQueryBuilder()
+            .insert()
+            .into(`${schema}.viewField`, [
+              'fieldMetadataId',
+              'position',
+              'isVisible',
+              'size',
+              'viewId',
+            ])
+            .values(
+              viewDefinition.fields.map((field) => ({
+                fieldMetadataId: field.fieldMetadataId,
+                position: field.position,
+                isVisible: field.isVisible,
+                size: field.size,
+                viewId: viewIdMap[viewDefinition.name],
+              })),
+            )
+            .execute();
+        }
+
+        if (viewDefinition.filters && viewDefinition.filters.length > 0) {
+          await queryRunner.manager
+            .createQueryBuilder()
+            .insert()
+            .into(`${schema}.viewFilter`, [
+              'fieldMetadataId',
+              'displayValue',
+              'operand',
+              'value',
+              'viewId',
+            ])
+            .values(
+              viewDefinition.filters.map((filter) => ({
+                fieldMetadataId: filter.fieldMetadataId,
+                displayValue: filter.displayValue,
+                operand: filter.operand,
+                value: filter.value,
+                viewId: viewIdMap[viewDefinition.name],
+              })),
+            )
+            .execute();
+        }
       }
 
       await this.workspaceCacheVersionService.incrementVersion(workspaceId);
@@ -125,7 +251,9 @@ export class UpdateActivitiesCommand extends CommandRunner {
       chalk.green(`Running command on ${workspaceIds.length} workspaces`),
     );
 
-    const requiresQueryRunner = coreLogic.toString().includes('queryRunner');
+    const requiresQueryRunner =
+      coreLogic.toString().includes('queryRunner') ||
+      coreLogic.toString().includes('schema');
 
     for (const workspaceId of workspaceIds) {
       try {
