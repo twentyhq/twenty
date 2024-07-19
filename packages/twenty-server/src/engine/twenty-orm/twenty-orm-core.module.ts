@@ -6,7 +6,7 @@ import {
   OnApplicationShutdown,
   Provider,
 } from '@nestjs/common';
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
@@ -15,22 +15,22 @@ import {
   TwentyORMOptions,
 } from 'src/engine/twenty-orm/interfaces/twenty-orm-options.interface';
 
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
+import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
+import { CacheManager } from 'src/engine/twenty-orm/storage/cache-manager.storage';
 import { TWENTY_ORM_WORKSPACE_DATASOURCE } from 'src/engine/twenty-orm/twenty-orm.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN,
 } from 'src/engine/twenty-orm/twenty-orm.module-definition';
-import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
-import { CacheManager } from 'src/engine/twenty-orm/storage/cache-manager.storage';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
@@ -125,7 +125,7 @@ export class TwentyORMCoreModule
     entitySchemaFactory: EntitySchemaFactory,
     scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     workspaceDataSourceFactory: WorkspaceDatasourceFactory,
-    options?: TwentyORMOptions,
+    _options?: TwentyORMOptions,
   ) {
     const { workspaceId, cacheVersion } =
       scopedWorkspaceContextFactory.create();
@@ -133,9 +133,6 @@ export class TwentyORMCoreModule
     if (!workspaceId) {
       return null;
     }
-
-    console.log('workspaceId', workspaceId);
-    console.log('cacheVersion', cacheVersion);
 
     return workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${cacheVersion}`,

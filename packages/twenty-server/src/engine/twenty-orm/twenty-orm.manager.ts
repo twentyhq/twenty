@@ -1,17 +1,19 @@
 import { Injectable, Optional, Type } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { ObjectLiteral } from 'typeorm';
+import { ObjectLiteral, Repository } from 'typeorm';
 
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
+import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
-import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { workspaceDataSourceCacheInstance } from 'src/engine/twenty-orm/twenty-orm-core.module';
-import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
 export class TwentyORMManager {
@@ -19,8 +21,11 @@ export class TwentyORMManager {
     @Optional()
     @InjectWorkspaceDatasource()
     private readonly workspaceDataSource: WorkspaceDataSource | null,
-    private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
     private readonly entitySchemaFactory: EntitySchemaFactory,
   ) {}
 
@@ -93,9 +98,39 @@ export class TwentyORMManager {
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${cacheVersion}`,
       async () => {
-        const entities = WorkspaceEntitiesStorage.getEntities(workspaceId);
+        let objectMetadataCollection =
+          await this.workspaceCacheStorageService.getObjectMetadataCollection(
+            workspaceId,
+          );
 
-        return this.workspaceDataSourceFactory.create(entities, workspaceId);
+        if (!objectMetadataCollection) {
+          objectMetadataCollection = await this.objectMetadataRepository.find({
+            where: { workspaceId },
+            relations: [
+              'fields.object',
+              'fields',
+              'fields.fromRelationMetadata',
+              'fields.toRelationMetadata',
+              'fields.fromRelationMetadata.toObjectMetadata',
+            ],
+          });
+
+          await this.workspaceCacheStorageService.setObjectMetadataCollection(
+            workspaceId,
+            objectMetadataCollection,
+          );
+        }
+
+        const entities = await Promise.all(
+          objectMetadataCollection.map((objectMetadata) =>
+            this.entitySchemaFactory.create(workspaceId, objectMetadata),
+          ),
+        );
+
+        const workspaceDataSource =
+          await this.workspaceDataSourceFactory.create(entities, workspaceId);
+
+        return workspaceDataSource;
       },
       (dataSource) => dataSource.destroy(),
     );
