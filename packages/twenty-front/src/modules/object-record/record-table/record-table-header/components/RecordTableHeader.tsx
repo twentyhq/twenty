@@ -25,20 +25,30 @@ const StyledTableHead = styled.thead<{
   }
 
   &.first-columns-sticky {
-    th:nth-child(1) {
+    th:nth-of-type(1) {
       position: sticky;
       left: 0;
       z-index: 5;
     }
-    th:nth-child(2) {
+    th:nth-of-type(2) {
       position: sticky;
       left: 9px;
       z-index: 5;
     }
-    th:nth-child(3) {
+    th:nth-of-type(3) {
       position: sticky;
       left: 39px;
       z-index: 5;
+      &::after {
+        content: '';
+        position: absolute;
+        top: -1px;
+        height: calc(100% + 2px);
+        width: 4px;
+        right: 0px;
+        box-shadow: ${({ theme }) => theme.boxShadow.light};
+        clip-path: inset(0px -4px 0px 0px);
+      }
       @media (max-width: ${MOBILE_VIEWPORT}px) {
         width: 35px;
         max-width: 35px;
@@ -55,9 +65,9 @@ const StyledTableHead = styled.thead<{
   }
 
   &.header-sticky.first-columns-sticky {
-    th:nth-child(1),
-    th:nth-child(2),
-    th:nth-child(3) {
+    th:nth-of-type(1),
+    th:nth-of-type(2),
+    th:nth-of-type(3) {
       z-index: 10;
     }
   }

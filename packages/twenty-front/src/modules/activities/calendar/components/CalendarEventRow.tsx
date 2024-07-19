@@ -1,7 +1,7 @@
-import { useContext } from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Avatar, AvatarGroup, IconArrowRight, IconLock } from 'twenty-ui';
 
@@ -14,8 +14,8 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { CalendarChannelVisibility } from '~/generated/graphql';
 import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
+import { CalendarChannelVisibility } from '~/generated/graphql';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isDefined } from '~/utils/isDefined';
 
@@ -169,7 +169,9 @@ export const CalendarEventRow = ({
                   ? `${participant.firstName} ${participant.lastName}`
                   : participant.displayName
               }
-              entityId={participant.workspaceMemberId ?? participant.personId}
+              placeholderColorSeed={
+                participant.workspaceMemberId ?? participant.personId
+              }
               type="rounded"
             />
           ))}

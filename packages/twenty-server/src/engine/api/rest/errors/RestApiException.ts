@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { BaseGraphQLError } from 'src/engine/utils/graphql-errors.util';
+import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 const formatMessage = (message: BaseGraphQLError) => {
   if (message.extensions) {

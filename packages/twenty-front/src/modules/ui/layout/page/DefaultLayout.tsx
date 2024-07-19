@@ -1,7 +1,7 @@
-import { Outlet } from 'react-router-dom';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { Outlet } from 'react-router-dom';
 
 import { AuthModal } from '@/auth/components/Modal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
@@ -21,7 +21,7 @@ const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh;
   position: relative;
   scrollbar-color: ${({ theme }) => theme.border.color.medium};
   scrollbar-width: 4px;

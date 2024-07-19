@@ -58,7 +58,7 @@ export const TwoConnectedAccounts: Story = {
                       provider: 'google',
                       accountOwnerId: '20202020-03f2-4d83-b0d5-2ec2bcee72d4',
                       lastSyncHistoryId: '',
-                      emailAliases: '',
+                      handleAliases: '',
                       handle: 'test.test@gmail.com',
                       authFailedAt: null,
                     },

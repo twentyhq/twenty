@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconArchive, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -38,7 +38,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 type SettingsDataModelFieldEditFormValues = z.infer<
-  typeof settingsFieldFormSchema
+  ReturnType<typeof settingsFieldFormSchema>
 >;
 
 const StyledSettingsObjectFieldTypeSelect = styled(
@@ -93,7 +93,7 @@ export const SettingsObjectFieldEdit = () => {
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(settingsFieldFormSchema),
+    resolver: zodResolver(settingsFieldFormSchema()),
   });
 
   useEffect(() => {
@@ -104,10 +104,8 @@ export const SettingsObjectFieldEdit = () => {
 
   if (!activeObjectMetadataItem || !activeMetadataField) return null;
 
-  const canSave =
-    formConfig.formState.isValid &&
-    formConfig.formState.isDirty &&
-    !formConfig.formState.isSubmitting;
+  const { isDirty, isValid, isSubmitting } = formConfig.formState;
+  const canSave = isDirty && isValid && !isSubmitting;
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: activeMetadataField,
@@ -190,6 +188,7 @@ export const SettingsObjectFieldEdit = () => {
               {shouldDisplaySaveAndCancel && (
                 <SaveAndCancelButtons
                   isSaveDisabled={!canSave}
+                  isCancelDisabled={isSubmitting}
                   onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
                   onSave={formConfig.handleSubmit(handleSave)}
                 />
@@ -214,6 +213,7 @@ export const SettingsObjectFieldEdit = () => {
               <StyledSettingsObjectFieldTypeSelect
                 disabled
                 fieldMetadataItem={activeMetadataField}
+                excludedFieldTypes={[FieldMetadataType.Link]}
               />
               <SettingsDataModelFieldSettingsFormCard
                 disableCurrencyForm

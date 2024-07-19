@@ -36,6 +36,7 @@ const expectedQueryTemplate = `
       }
       pageInfo {
         hasNextPage
+        hasPreviousPage
         startCursor
         endCursor
       }

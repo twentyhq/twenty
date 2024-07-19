@@ -78,7 +78,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-ad10-4117-a039-3f04b7a5f939',
       label: 'Address',
       size: 100,
-      type: FieldMetadataType.Text,
+      type: FieldMetadataType.Address,
       metadata: {
         fieldName: 'address',
         placeHolder: 'Address',

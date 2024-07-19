@@ -20,6 +20,7 @@ export const formatFieldMetadataItemsAsSortDefinitions = ({
         FieldMetadataType.Phone,
         FieldMetadataType.Email,
         FieldMetadataType.FullName,
+        FieldMetadataType.Rating,
       ].includes(field.type)
     ) {
       return acc;
