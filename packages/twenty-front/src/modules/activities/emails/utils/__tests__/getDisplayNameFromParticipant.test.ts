@@ -44,7 +44,7 @@ describe('getDisplayNameFromParticipant', () => {
         firstName: 'Jane',
         lastName: 'Smith',
       },
-      locale: WorkspaceMemberLocaleEnum.EnUs,
+      locale: WorkspaceMemberLocaleEnum.Fr,
       createdAt: '',
       updatedAt: '',
       userEmail: '',

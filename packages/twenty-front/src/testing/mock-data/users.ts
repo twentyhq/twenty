@@ -79,7 +79,7 @@ export const mockedWorkspaceMemberData: WorkspaceMember = {
   id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
   colorScheme: WorkspaceMemberColorSchemeEnum.Light,
   avatarUrl,
-  locale: WorkspaceMemberLocaleEnum.EnUs,
+  locale: WorkspaceMemberLocaleEnum.Fr,
   name: {
     firstName: 'Charles',
     lastName: 'Test',
@@ -104,7 +104,7 @@ export const mockedUserData: MockedUser = {
     'a95afad9ff6f0b364e2a3fd3e246a1a852c22b6e55a3ca33745a86c201f9c10d',
   workspaceMember: mockedWorkspaceMemberData,
   defaultWorkspace: mockDefaultWorkspace,
-  locale: WorkspaceMemberLocaleEnum.EnUs,
+  locale: WorkspaceMemberLocaleEnum.Fr,
   workspaces: [{ workspace: mockDefaultWorkspace }],
   onboardingStatus: OnboardingStatus.Completed,
 };
@@ -123,7 +123,7 @@ export const mockedOnboardingUserData = (
       '4fb61d34ed3a4aeda2476d4b308b5162db9e1809b2b8277e6fdc6efc4a609254',
     workspaceMember: null,
     defaultWorkspace: mockDefaultWorkspace,
-    locale: WorkspaceMemberLocaleEnum.EnUs,
+    locale: WorkspaceMemberLocaleEnum.Fr,
     workspaces: [{ workspace: mockDefaultWorkspace }],
     onboardingStatus: onboardingStatus || null,
   };

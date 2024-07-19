@@ -28,10 +28,15 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import {
-  WorkspaceMemberLocaleEnum,
-  workspaceMemberLocaleOptions,
-} from 'src/modules/workspace-member/standard-objects/options/workspace-member-locale.options';
+
+export enum WorkspaceMemberLocaleEnum {
+  FR = 'FR',
+  NL = 'NL',
+  DE = 'DE',
+  IT = 'IT',
+  PT = 'PT',
+  ES = 'ES',
+}
 
 export enum WorkspaceMemberColorSchemeEnum {
   LIGHT = 'LIGHT',
@@ -51,6 +56,11 @@ export enum WorkspaceMemberTimeFormatEnum {
   HOUR_12 = 'HOUR_12',
   HOUR_24 = 'HOUR_24',
 }
+
+registerEnumType(WorkspaceMemberLocaleEnum, {
+  name: "WorkspaceMemberLocaleEnum",
+  description: "The language code as per region",
+})
 
 registerEnumType(WorkspaceMemberColorSchemeEnum, {
   name: 'WorkspaceMemberColorSchemeEnum',
@@ -129,8 +139,45 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Language',
     description: 'Preferred language',
     icon: 'IconLanguage',
-    options: workspaceMemberLocaleOptions,
-    defaultValue: `'${WorkspaceMemberLocaleEnum.EN_US}'`,
+    options: [
+      {
+        value: WorkspaceMemberLocaleEnum.NL,
+        label: 'Dutch',
+        position: 0,
+        color: 'grey',
+      },
+      {
+        value: WorkspaceMemberLocaleEnum.FR,
+        label: 'French',
+        position: 1,
+        color: 'grey',
+      },
+      {
+        value: WorkspaceMemberLocaleEnum.DE,
+        label: 'German',
+        position: 2,
+        color: 'grey',
+      },
+      {
+        value: WorkspaceMemberLocaleEnum.IT,
+        label: 'Italian',
+        position: 3,
+        color: 'grey',
+      },
+      {
+        value: WorkspaceMemberLocaleEnum.PT,
+        label: 'Portuguese',
+        position: 4,
+        color: 'grey',
+      },
+      {
+        value: WorkspaceMemberLocaleEnum.ES,
+        label: 'Spanish',
+        position: 5,
+        color: 'grey',
+      },
+    ],
+    defaultValue: `'${WorkspaceMemberLocaleEnum.FR}'`,
   })
   locale: string;
 

@@ -60,7 +60,7 @@ const workspaceMember: WorkspaceMember = {
     lastName: 'Test',
   },
   avatarUrl: '',
-  locale: WorkspaceMemberLocaleEnum.EnUs,
+  locale: WorkspaceMemberLocaleEnum.Fr,
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   userId: 'e2409670-1088-46b4-858e-f20a598d9d0f',

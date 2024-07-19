@@ -22,7 +22,7 @@ describe('useTimelineActivities', () => {
         id: '166ec73f-26b1-4934-bb3b-c86c8513b99b',
         workspaceMember: {
           __typename: 'WorkspaceMember',
-          locale: WorkspaceMemberLocaleEnum.EnUs,
+          locale: WorkspaceMemberLocaleEnum.Fr,
           avatarUrl: '',
           updatedAt: '2024-03-21T16:01:41.839Z',
           name: {

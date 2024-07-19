@@ -29,7 +29,7 @@ const workspaceMember: Omit<
     firstName: 'firstName',
     lastName: 'lastName',
   },
-  locale: WorkspaceMemberLocaleEnum.EnUs,
+  locale: WorkspaceMemberLocaleEnum.Fr,
   timeZone: 'system',
   dateFormat: WorkspaceMemberDateFormatEnum.System,
   timeFormat: WorkspaceMemberTimeFormatEnum.System,

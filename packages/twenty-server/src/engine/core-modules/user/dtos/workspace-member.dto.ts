@@ -3,10 +3,10 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { WorkspaceMemberLocaleEnum } from 'src/modules/workspace-member/standard-objects/options/workspace-member-locale.options';
 import {
   WorkspaceMemberColorSchemeEnum,
   WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberLocaleEnum,
   WorkspaceMemberTimeFormatEnum,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 

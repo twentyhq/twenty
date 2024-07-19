@@ -298,7 +298,7 @@ export const mockWorkspaceMember = {
     lastName: 'Last',
   },
   avatarUrl: '',
-  locale: WorkspaceMemberLocaleEnum.EnUs,
+  locale: WorkspaceMemberLocaleEnum.Fr,
   colorScheme: WorkspaceMemberColorSchemeEnum.Dark,
   createdAt: '',
   updatedAt: '',
