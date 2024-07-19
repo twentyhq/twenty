@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import {
@@ -7,9 +8,11 @@ import {
 
 export const isFieldCellSupported = (fieldMetadataItem: FieldMetadataItem) => {
   if (
-    [FieldMetadataType.Uuid, FieldMetadataType.Position].includes(
-      fieldMetadataItem.type,
-    )
+    [
+      FieldMetadataType.Uuid,
+      FieldMetadataType.Position,
+      FieldMetadataType.RichText,
+    ].includes(fieldMetadataItem.type)
   ) {
     return false;
   }
@@ -21,6 +24,15 @@ export const isFieldCellSupported = (fieldMetadataItem: FieldMetadataItem) => {
     const relationObjectMetadataItem =
       fieldMetadataItem.fromRelationMetadata?.toObjectMetadata ??
       fieldMetadataItem.toRelationMetadata?.fromObjectMetadata;
+
+    if (
+      fieldMetadataItem.fromRelationMetadata?.toObjectMetadata?.nameSingular ===
+        CoreObjectNameSingular.ActivityTarget &&
+      fieldMetadataItem.relationDefinition?.sourceObjectMetadata
+        .nameSingular === CoreObjectNameSingular.Activity
+    ) {
+      return true;
+    }
 
     if (
       !relationMetadata ||
