@@ -42,17 +42,20 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
         }
 
         const matchingFilterInCurrentView = currentView.viewFilters.find(
-          (viewFilter) => viewFilter.id === upsertedFilter.id,
+          (viewFilter) =>
+            viewFilter.fieldMetadataId === upsertedFilter.fieldMetadataId,
         );
 
         const matchingFilterInUnsavedFilters = unsavedToUpsertViewFilters.find(
-          (viewFilter) => viewFilter.id === upsertedFilter.id,
+          (viewFilter) =>
+            viewFilter.fieldMetadataId === upsertedFilter.fieldMetadataId,
         );
 
         if (isDefined(matchingFilterInUnsavedFilters)) {
           const updatedFilters = unsavedToUpsertViewFilters.map((viewFilter) =>
-            viewFilter.id === matchingFilterInUnsavedFilters.id
-              ? { ...viewFilter, ...upsertedFilter }
+            viewFilter.fieldMetadataId ===
+            matchingFilterInUnsavedFilters.fieldMetadataId
+              ? { ...viewFilter, ...upsertedFilter, id: viewFilter.id }
               : viewFilter,
           );
 
@@ -63,7 +66,11 @@ export const useCombinedViewFilters = (viewBarComponentId?: string) => {
         if (isDefined(matchingFilterInCurrentView)) {
           set(unsavedToUpsertViewFiltersState, [
             ...unsavedToUpsertViewFilters,
-            { ...matchingFilterInCurrentView, ...upsertedFilter },
+            {
+              ...matchingFilterInCurrentView,
+              ...upsertedFilter,
+              id: matchingFilterInCurrentView.id,
+            },
           ]);
           set(
             unsavedToDeleteViewFilterIdsState,

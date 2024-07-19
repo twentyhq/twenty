@@ -1,6 +1,6 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useChipFieldDisplay';
-import { RecordIndexRecordChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
+import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 
 export const ChipFieldDisplay = () => {
   const { recordValue, objectNameSingular, isLabelIdentifier } =
@@ -11,7 +11,7 @@ export const ChipFieldDisplay = () => {
   }
 
   return isLabelIdentifier ? (
-    <RecordIndexRecordChip
+    <RecordIdentifierChip
       objectNameSingular={objectNameSingular}
       record={recordValue}
     />

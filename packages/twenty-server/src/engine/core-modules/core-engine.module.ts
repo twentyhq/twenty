@@ -13,9 +13,9 @@ import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { AISQLQueryModule } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 
-import { AnalyticsModule } from './analytics/analytics.module';
-import { FileModule } from './file/file.module';
 import { ClientConfigModule } from './client-config/client-config.module';
+import { FileModule } from './file/file.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [

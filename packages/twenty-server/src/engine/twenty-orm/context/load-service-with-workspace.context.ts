@@ -2,12 +2,15 @@ import { Inject, Type } from '@nestjs/common';
 import { ModuleRef, createContextId } from '@nestjs/core';
 import { Injector } from '@nestjs/core/injector/injector';
 
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+
 export class LoadServiceWithWorkspaceContext {
   private readonly injector = new Injector();
 
   constructor(
     @Inject(ModuleRef)
     private readonly moduleRef: ModuleRef,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {}
 
   async load<T>(service: T, workspaceId: string): Promise<T> {
@@ -21,10 +24,12 @@ export class LoadServiceWithWorkspaceContext {
     }
 
     const contextId = createContextId();
+    const cacheVersion =
+      await this.workspaceCacheVersionService.getVersion(workspaceId);
 
     if (this.moduleRef.registerRequestByContextId) {
       this.moduleRef.registerRequestByContextId(
-        { req: { workspaceId } },
+        { req: { workspaceId, cacheVersion } },
         contextId,
       );
     }
