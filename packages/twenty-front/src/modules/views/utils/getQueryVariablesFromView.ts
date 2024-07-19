@@ -20,8 +20,8 @@ export const getQueryVariablesFromView = ({
 }) => {
   if (!isDefined(view)) {
     return {
-      filter: {},
-      orderBy: [],
+      filter: undefined,
+      orderBy: undefined,
     };
   }
 

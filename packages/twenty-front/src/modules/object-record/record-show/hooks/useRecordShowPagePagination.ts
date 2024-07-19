@@ -11,7 +11,6 @@ import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPag
 import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
 import { isNonEmptyString } from '@sniptt/guards';
-import { getRelayCursorFromRecordId } from '~/utils/getRelayCursorFromRecordId';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useRecordShowPagePagination = (
@@ -47,19 +46,32 @@ export const useRecordShowPagePagination = (
       viewId: viewIdQueryParam,
     });
 
-  const cursor = getRelayCursorFromRecordId(objectRecordId);
+  const { loading: loadingCursor, pageInfo: currentRecordsPageInfo } =
+    useFindManyRecords({
+      filter: {
+        id: { eq: objectRecordId },
+      },
+      orderBy,
+      limit: 1,
+      objectNameSingular,
+      recordGqlFields,
+    });
+
+  const cursorFromRequest = currentRecordsPageInfo?.endCursor;
 
   const {
     loading: loadingRecordBefore,
     records: recordsBefore,
     totalCount: totalCountBefore,
   } = useFindManyRecords({
+    skip: loadingCursor,
+    fetchPolicy: 'network-only',
     filter,
     orderBy,
-    cursorFilter: isNonEmptyString(cursor)
+    cursorFilter: isNonEmptyString(cursorFromRequest)
       ? {
           cursorDirection: 'before',
-          cursor: cursor,
+          cursor: cursorFromRequest,
           limit: 1,
         }
       : undefined,
@@ -72,12 +84,14 @@ export const useRecordShowPagePagination = (
     records: recordsAfter,
     totalCount: totalCountAfter,
   } = useFindManyRecords({
+    skip: loadingCursor,
     filter,
+    fetchPolicy: 'network-only',
     orderBy,
-    cursorFilter: cursor
+    cursorFilter: cursorFromRequest
       ? {
           cursorDirection: 'after',
-          cursor: cursor,
+          cursor: cursorFromRequest,
           limit: 1,
         }
       : undefined,
@@ -87,7 +101,7 @@ export const useRecordShowPagePagination = (
 
   const totalCount = Math.max(totalCountBefore ?? 0, totalCountAfter ?? 0);
 
-  const loading = loadingRecordAfter || loadingRecordBefore;
+  const loading = loadingRecordAfter || loadingRecordBefore || loadingCursor;
 
   const isThereARecordBefore = recordsBefore.length > 0;
   const isThereARecordAfter = recordsAfter.length > 0;
