@@ -9,6 +9,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { TextArea } from '@/ui/input/components/TextArea';
+import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -49,6 +50,7 @@ export const SettingsServerlessFunctionsNew = () => {
         </Section>
         <Section>
           <H2Title title="Definition" description="Write your function below" />
+          <CodeEditor />
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

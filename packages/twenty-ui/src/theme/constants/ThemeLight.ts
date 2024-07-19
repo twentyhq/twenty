@@ -8,6 +8,7 @@ import { BOX_SHADOW_LIGHT } from './BoxShadowLight';
 import { FONT_LIGHT } from './FontLight';
 import { TAG_LIGHT } from './TagLight';
 import { THEME_COMMON } from './ThemeCommon';
+import { CODE_LIGHT } from './CodeLight';
 
 export const THEME_LIGHT = {
   ...THEME_COMMON,
@@ -21,5 +22,6 @@ export const THEME_LIGHT = {
     name: 'light',
     snackBar: SNACK_BAR_LIGHT,
     tag: TAG_LIGHT,
+    code: CODE_LIGHT,
   },
 };
