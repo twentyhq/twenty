@@ -41,6 +41,62 @@ See also:
 🚀 [Self-hosting](https://twenty.com/developers/section/self-hosting)  
 🖥️ [Local Setup](https://twenty.com/developers/local-setup)  
 
+# Setup
+
+
+
+Follow these steps to set up Twenty on your local machine:
+
+
+
+1. **Clone the repository:**
+
+    ```sh
+
+    git clone https://github.com/twentyhq/twenty.git
+
+    cd twenty
+
+    ```
+
+
+
+2. **Install dependencies:**
+
+    ```sh
+
+    yarn install
+
+    ```
+
+
+
+3. **Set up environment variables:**
+
+   Create a `.env.local` file in the root directory and add the necessary environment variables. You can use the `.env.example` file as a reference.
+
+
+
+4. **Run the development server:**
+
+    ```sh
+
+    yarn dev
+
+    ```
+
+
+
+5. **Access the application:**
+
+   Open [http://localhost:3000](http://localhost:3000) in your browser to see the application in action.
+
+
+
+Refer to the [Local Setup Guide](https://twenty.com/developers/local-setup) for detailed instructions.
+
+
+
 # Why Choose Twenty?
 We understand that the CRM landscape is vast. So why should you choose us?
 
