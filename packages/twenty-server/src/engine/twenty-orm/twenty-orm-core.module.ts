@@ -5,36 +5,46 @@ import {
   Module,
   OnApplicationShutdown,
   Provider,
-  Type,
 } from '@nestjs/common';
+import { TypeOrmModule, getRepositoryToken } from '@nestjs/typeorm';
 
-import { importClassesFromDirectories } from 'typeorm/util/DirectoryExportedClassesLoader';
-import { Logger as TypeORMLogger } from 'typeorm/logger/Logger';
+import { Repository } from 'typeorm';
 
 import {
   TwentyORMModuleAsyncOptions,
   TwentyORMOptions,
 } from 'src/engine/twenty-orm/interfaces/twenty-orm-options.interface';
 
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
+import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
+import { CacheManager } from 'src/engine/twenty-orm/storage/cache-manager.storage';
 import { TWENTY_ORM_WORKSPACE_DATASOURCE } from 'src/engine/twenty-orm/twenty-orm.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { DataSourceStorage } from 'src/engine/twenty-orm/storage/data-source.storage';
-import { ScopedWorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-datasource.factory';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { splitClassesAndStrings } from 'src/engine/twenty-orm/utils/split-classes-and-strings.util';
-import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN,
 } from 'src/engine/twenty-orm/twenty-orm.module-definition';
-import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+
+export const workspaceDataSourceCacheInstance =
+  new CacheManager<WorkspaceDataSource>();
 
 @Global()
 @Module({
-  imports: [DataSourceModule],
+  imports: [
+    TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+    DataSourceModule,
+    WorkspaceCacheVersionModule,
+    WorkspaceCacheStorageModule,
+  ],
   providers: [
     ...entitySchemaFactories,
     TwentyORMManager,
@@ -55,27 +65,18 @@ export class TwentyORMCoreModule
   static register(options: TwentyORMOptions): DynamicModule {
     const dynamicModule = super.register(options);
 
+    // TODO: Avoid code duplication here
     const providers: Provider[] = [
       {
         provide: TWENTY_ORM_WORKSPACE_DATASOURCE,
-        useFactory: async (
-          entitySchemaFactory: EntitySchemaFactory,
-          scopedWorkspaceDatasourceFactory: ScopedWorkspaceDatasourceFactory,
-        ) => {
-          const workspaceEntities = await this.loadEntities(
-            options.workspaceEntities,
-          );
-
-          const entities = workspaceEntities.map((entityClass) =>
-            entitySchemaFactory.create(entityClass),
-          );
-
-          const scopedWorkspaceDataSource =
-            await scopedWorkspaceDatasourceFactory.create(entities);
-
-          return scopedWorkspaceDataSource;
-        },
-        inject: [EntitySchemaFactory, ScopedWorkspaceDatasourceFactory],
+        useFactory: this.createWorkspaceDataSource,
+        inject: [
+          WorkspaceCacheStorageService,
+          getRepositoryToken(ObjectMetadataEntity, 'metadata'),
+          EntitySchemaFactory,
+          ScopedWorkspaceContextFactory,
+          WorkspaceDatasourceFactory,
+        ],
       },
     ];
 
@@ -96,27 +97,13 @@ export class TwentyORMCoreModule
     const providers: Provider[] = [
       {
         provide: TWENTY_ORM_WORKSPACE_DATASOURCE,
-        useFactory: async (
-          entitySchemaFactory: EntitySchemaFactory,
-          scopedWorkspaceDatasourceFactory: ScopedWorkspaceDatasourceFactory,
-          options: TwentyORMOptions,
-        ) => {
-          const workspaceEntities = await this.loadEntities(
-            options.workspaceEntities,
-          );
-
-          const entities = workspaceEntities.map((entityClass) =>
-            entitySchemaFactory.create(entityClass),
-          );
-
-          const scopedWorkspaceDataSource =
-            await scopedWorkspaceDatasourceFactory.create(entities);
-
-          return scopedWorkspaceDataSource;
-        },
+        useFactory: this.createWorkspaceDataSource,
         inject: [
+          WorkspaceCacheStorageService,
+          getRepositoryToken(ObjectMetadataEntity, 'metadata'),
           EntitySchemaFactory,
-          ScopedWorkspaceDatasourceFactory,
+          ScopedWorkspaceContextFactory,
+          WorkspaceDatasourceFactory,
           MODULE_OPTIONS_TOKEN,
         ],
       },
@@ -132,45 +119,70 @@ export class TwentyORMCoreModule
     };
   }
 
+  static async createWorkspaceDataSource(
+    workspaceCacheStorageService: WorkspaceCacheStorageService,
+    objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    entitySchemaFactory: EntitySchemaFactory,
+    scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    workspaceDataSourceFactory: WorkspaceDatasourceFactory,
+    _options?: TwentyORMOptions,
+  ) {
+    const { workspaceId, cacheVersion } =
+      scopedWorkspaceContextFactory.create();
+
+    if (!workspaceId) {
+      return null;
+    }
+
+    return workspaceDataSourceCacheInstance.execute(
+      `${workspaceId}-${cacheVersion}`,
+      async () => {
+        let objectMetadataCollection =
+          await workspaceCacheStorageService.getObjectMetadataCollection(
+            workspaceId,
+          );
+
+        if (!objectMetadataCollection) {
+          objectMetadataCollection = await objectMetadataRepository.find({
+            where: { workspaceId },
+            relations: [
+              'fields.object',
+              'fields',
+              'fields.fromRelationMetadata',
+              'fields.toRelationMetadata',
+              'fields.fromRelationMetadata.toObjectMetadata',
+            ],
+          });
+
+          await workspaceCacheStorageService.setObjectMetadataCollection(
+            workspaceId,
+            objectMetadataCollection,
+          );
+        }
+
+        const entities = await Promise.all(
+          objectMetadataCollection.map((objectMetadata) =>
+            entitySchemaFactory.create(workspaceId, objectMetadata),
+          ),
+        );
+
+        const workspaceDataSource = await workspaceDataSourceFactory.create(
+          entities,
+          workspaceId,
+        );
+
+        return workspaceDataSource;
+      },
+      (dataSource) => dataSource.destroy(),
+    );
+  }
+
   /**
    * Destroys all data sources on application shutdown
    */
   async onApplicationShutdown() {
-    const dataSources = DataSourceStorage.getAllDataSources();
-
-    for (const dataSource of dataSources) {
-      try {
-        if (dataSource && dataSource.isInitialized) {
-          await dataSource.destroy();
-        }
-      } catch (e) {
-        this.logger.error(e?.message);
-      }
-    }
-  }
-
-  private static async loadEntities(
-    workspaceEntities: (Type<BaseWorkspaceEntity> | string)[],
-  ): Promise<Type<BaseWorkspaceEntity>[]> {
-    const [entityClassesOrSchemas, entityDirectories] = splitClassesAndStrings(
-      workspaceEntities || [],
-    );
-    const importedEntities = await importClassesFromDirectories(
-      // Only `log` function is used under importClassesFromDirectories function
-      this.logger as unknown as TypeORMLogger,
-      entityDirectories,
-    );
-    const entities = [
-      ...entityClassesOrSchemas,
-      ...(importedEntities as Type<BaseWorkspaceEntity>[]),
-    ];
-
-    return entities.filter(
-      (entity) =>
-        // Filter out CustomWorkspaceEntity as it's a partial entity handled separately
-        entity.name !== CustomWorkspaceEntity.name &&
-        // Filter out BaseWorkspaceEntity as it's a base entity and should not be included in the workspace entities
-        entity.name !== BaseWorkspaceEntity.name,
+    workspaceDataSourceCacheInstance.clear((dataSource) =>
+      dataSource.destroy(),
     );
   }
 }
