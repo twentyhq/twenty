@@ -24,7 +24,7 @@ export const useRefreshShowPageFindManyActivitiesQueries = () => {
       prepareFindManyActivitiesQuery({
         targetableObject: objectShowPageTargetableObject,
         additionalFilter: {
-          completedAt: { is: 'NULL' },
+          status: { is: 'TODO' },
           type: { eq: 'TASK' },
         },
         shouldActivityBeExcluded: (activity: Activity) => {

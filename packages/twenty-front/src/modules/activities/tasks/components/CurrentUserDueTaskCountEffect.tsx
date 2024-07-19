@@ -20,7 +20,7 @@ export const CurrentUserDueTaskCountEffect = () => {
     objectNameSingular: CoreObjectNameSingular.Activity,
     filter: {
       type: { eq: 'TASK' },
-      completedAt: { is: 'NULL' },
+      status: { eq: 'TODO' },
       assigneeId: { eq: currentWorkspaceMember?.id },
     },
   });

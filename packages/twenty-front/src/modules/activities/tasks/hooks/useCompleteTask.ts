@@ -4,7 +4,7 @@ import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
-type Task = Pick<Activity, 'id' | 'completedAt'>;
+type Task = Pick<Activity, 'id' | 'status'>;
 
 export const useCompleteTask = (task: Task) => {
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
@@ -13,11 +13,11 @@ export const useCompleteTask = (task: Task) => {
 
   const completeTask = useCallback(
     async (value: boolean) => {
-      const completedAt = value ? new Date().toISOString() : null;
+      const status = value ? 'DONE' : 'TODO';
       await updateOneActivity?.({
         idToUpdate: task.id,
         updateOneRecordInput: {
-          completedAt,
+          status,
         },
       });
     },

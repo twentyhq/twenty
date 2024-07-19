@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
@@ -9,15 +9,15 @@ import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdow
 const completedTasks = [
   {
     id: '1',
-    completedAt: '2024-03-15T07:33:14.212Z',
+    status: 'DONE',
   },
   {
     id: '2',
-    completedAt: '2024-03-15T07:33:14.212Z',
+    status: 'DONE',
   },
   {
     id: '3',
-    completedAt: '2024-03-15T07:33:14.212Z',
+    status: 'DONE',
   },
 ];
 
@@ -42,9 +42,9 @@ const useActivitiesMock = jest.fn(
   ({
     activitiesFilters,
   }: {
-    activitiesFilters: { completedAt: { is: 'NULL' | 'NOT_NULL' } };
+    activitiesFilters: { status: { eq: 'TODO' | 'DONE' } };
   }) => {
-    const isCompletedFilter = activitiesFilters.completedAt.is === 'NOT_NULL';
+    const isCompletedFilter = activitiesFilters.status.eq === 'DONE';
     return {
       activities: isCompletedFilter
         ? completedTasks

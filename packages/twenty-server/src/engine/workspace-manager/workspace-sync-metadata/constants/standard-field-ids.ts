@@ -21,6 +21,7 @@ export const ACTIVITY_STANDARD_FIELD_IDS = {
   typeDeprecated: '20202020-0f2b-4aab-8827-ee5d3f07d993',
   reminderAt: '20202020-eb06-43e2-ba06-336be0e665a3',
   dueAt: '20202020-0336-4511-ba79-565b12801bd9',
+  status: '20202020-0dc7-481e-b3d7-df594376d3da',
   completedAt: '20202020-0f4d-4fca-9f2f-6309d9ecb85f',
   activityTargets: '20202020-7253-42cb-8586-8cf950e70b79',
   attachments: '20202020-5547-4197-bc2e-a07dfc4559ca',

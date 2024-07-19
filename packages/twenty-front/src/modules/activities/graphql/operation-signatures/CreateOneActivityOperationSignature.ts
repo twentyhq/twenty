@@ -26,7 +26,7 @@ export const CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE: RecordGqlOperationSignatur
       attachments: true,
       body: true,
       title: true,
-      completedAt: true,
+      status: true,
       dueAt: true,
       reminderAt: true,
       type: true,

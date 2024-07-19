@@ -16,7 +16,7 @@ type MockedActivity = Pick<
   | 'title'
   | 'authorId'
   | 'dueAt'
-  | 'completedAt'
+  | 'status'
   | 'reminderAt'
   | 'assigneeId'
 > & {
@@ -71,7 +71,7 @@ export const mockedTasks: Array<MockedActivity> = [
     type: 'TASK',
     body: '',
     dueAt: '2023-04-26T10:12:42.33625+00:00',
-    completedAt: null,
+    status: null,
     author: workspaceMember,
     assignee: workspaceMember,
     assigneeId: workspaceMember.id,
@@ -92,7 +92,7 @@ export const mockedActivities: Array<MockedActivity> = [
     type: 'NOTE',
     body: '',
     dueAt: '2023-04-26T10:12:42.33625+00:00',
-    completedAt: null,
+    status: null,
     author: workspaceMember,
     assignee: workspaceMember,
     assigneeId: workspaceMember.id,
@@ -156,7 +156,7 @@ export const mockedActivities: Array<MockedActivity> = [
     title: 'Another note',
     body: '',
     type: 'NOTE',
-    completedAt: null,
+    status: null,
     dueAt: '2029-08-26T10:12:42.33625+00:00',
     author: {
       ...workspaceMember,

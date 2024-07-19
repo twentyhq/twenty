@@ -28,7 +28,7 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
       attachments: true,
       body: true,
       title: true,
-      completedAt: true,
+      status: true,
       dueAt: true,
       reminderAt: true,
       type: true,

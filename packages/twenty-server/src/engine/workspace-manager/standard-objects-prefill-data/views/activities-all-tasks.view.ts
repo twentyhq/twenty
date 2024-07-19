@@ -42,7 +42,16 @@ export const activitiesAllTasksView = async (
           objectMetadataMap[STANDARD_OBJECT_IDS.activity].fields[
             ACTIVITY_STANDARD_FIELD_IDS.type
           ],
-        position: 0,
+        position: 1,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.activity].fields[
+            ACTIVITY_STANDARD_FIELD_IDS.dueAt
+          ],
+        position: 2,
         isVisible: true,
         size: 150,
       },

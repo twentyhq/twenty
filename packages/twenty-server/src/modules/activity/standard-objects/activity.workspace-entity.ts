@@ -114,7 +114,35 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCheck',
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
+  @WorkspaceIsDeprecated()
   completedAt: Date | null;
+
+  @WorkspaceField({
+    standardId: ACTIVITY_STANDARD_FIELD_IDS.status,
+    type: FieldMetadataType.SELECT,
+    label: 'Status',
+    description: 'Activity status',
+    icon: 'IconCheck',
+    defaultValue: "'TODO'",
+    options: [
+      { value: 'TODO', label: 'To do', position: 0, color: 'sky' },
+      {
+        value: 'IN_PROGESS',
+        label: 'In progress',
+        position: 1,
+        color: 'purple',
+      },
+      {
+        value: 'DONE',
+        label: 'Done',
+        position: 1,
+        color: 'green',
+      },
+    ],
+  })
+  @WorkspaceIsNullable()
+  status: Date | null;
 
   @WorkspaceRelation({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.activityTargets,

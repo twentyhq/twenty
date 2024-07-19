@@ -23,7 +23,7 @@ const mockActivity = {
   __typename: 'Activity',
   updatedAt: '2021-08-03T19:20:06.000Z',
   createdAt: '2021-08-03T19:20:06.000Z',
-  completedAt: '2021-08-03T19:20:06.000Z',
+  status: 'DONE',
   reminderAt: '2021-08-03T19:20:06.000Z',
   title: 'title',
   authorId: '1',
@@ -121,7 +121,7 @@ const mocks: MockedResponse[] = [
                 reminderAt
                 authorId
                 title
-                completedAt
+                status
                 updatedAt
                 body
                 dueAt

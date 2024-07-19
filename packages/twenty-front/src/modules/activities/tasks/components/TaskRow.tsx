@@ -99,12 +99,12 @@ export const TaskRow = ({ task }: { task: Activity }) => {
           }}
         >
           <Checkbox
-            checked={!!task.completedAt}
+            checked={task.status === 'DONE'}
             shape={CheckboxShape.Rounded}
             onCheckedChange={completeTask}
           />
         </StyledCheckboxContainer>
-        <StyledTaskTitle completed={task.completedAt !== null}>
+        <StyledTaskTitle completed={task.status === 'DONE'}>
           {task.title || <StyledPlaceholder>Task title</StyledPlaceholder>}
         </StyledTaskTitle>
         <StyledTaskBody>
@@ -125,7 +125,7 @@ export const TaskRow = ({ task }: { task: Activity }) => {
         />
         <StyledDueDate
           isPast={
-            !!task.dueAt && hasDatePassed(task.dueAt) && !task.completedAt
+            !!task.dueAt && hasDatePassed(task.dueAt) && task.status === 'TODO'
           }
         >
           <IconCalendar size={theme.icon.size.md} />

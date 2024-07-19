@@ -23,7 +23,6 @@ import {
 } from '@/ui/input/components/Checkbox';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledEditableTitleInput = styled.input<{
   completed: boolean;
@@ -166,12 +165,12 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
     upsertActivity({
       activity,
       input: {
-        completedAt: value ? new Date().toISOString() : null,
+        status: value ? 'DONE' : 'TODO',
       },
     });
   };
 
-  const completed = isDefined(activity.completedAt);
+  const completed = activity.status === 'DONE';
 
   return (
     <StyledContainer>

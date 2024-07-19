@@ -25,7 +25,7 @@ const activityNode = {
   type: 'NOTE',
   body: '',
   dueAt: '2023-04-26T10:12:42.33625+00:00',
-  completedAt: null,
+  status: 'TODO',
   author: null,
   assignee: null,
   assigneeId: null,
@@ -74,7 +74,7 @@ cache.writeFragment({
       title
       body
       dueAt
-      completedAt
+      status
       author
       assignee
       assigneeId

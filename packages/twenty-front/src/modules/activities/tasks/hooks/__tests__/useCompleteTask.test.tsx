@@ -6,11 +6,7 @@ import { RecoilRoot } from 'recoil';
 
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
 
-const task = { id: '123', completedAt: '2024-03-15T07:33:14.212Z' };
-
-const mockedDate = task.completedAt;
-const toISOStringMock = jest.fn(() => mockedDate);
-global.Date.prototype.toISOString = toISOStringMock;
+const task = { id: '123', status: '2024-03-15T07:33:14.212Z' };
 
 const mocks: MockedResponse[] = [
   {
@@ -26,7 +22,7 @@ const mocks: MockedResponse[] = [
             reminderAt
             authorId
             title
-            completedAt
+            status
             updatedAt
             body
             dueAt
@@ -38,7 +34,7 @@ const mocks: MockedResponse[] = [
       `,
       variables: {
         idToUpdate: task.id,
-        input: { completedAt: task.completedAt },
+        input: { status: task.status },
       },
     },
     result: jest.fn(() => ({
@@ -49,7 +45,7 @@ const mocks: MockedResponse[] = [
           reminderAt: null,
           authorId: '123',
           title: 'Test',
-          completedAt: '2024-03-15T07:33:14.212Z',
+          status: 'DONE',
           updatedAt: '2024-03-15T07:33:14.212Z',
           body: 'Test',
           dueAt: '2024-03-15T07:33:14.212Z',

@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { IsNull, QueryRunner } from 'typeorm';
+import { IsNull, Not, QueryRunner } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -87,10 +87,19 @@ export class UpdateActivitiesCommand extends CommandRunner {
         },
       );
 
+      // Converting body from text to rich text
       await activityRepository.update(
         { body: '' },
         {
           body: null,
+        },
+      );
+
+      // Introducing status and deprecating completedAt
+      await activityRepository.update(
+        { completedAt: Not(IsNull()) },
+        {
+          status: 'DONE',
         },
       );
 
@@ -108,7 +117,6 @@ export class UpdateActivitiesCommand extends CommandRunner {
       }
 
       // Create missing views
-
       const objectMetadata =
         await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 

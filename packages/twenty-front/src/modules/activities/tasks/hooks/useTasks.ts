@@ -44,7 +44,7 @@ export const useTasks = ({
     () =>
       ({
         filter: {
-          completedAt: { is: 'NOT_NULL' },
+          status: { is: 'DONE' },
           type: { eq: 'TASK' },
           ...assigneeIdFilter,
         },
@@ -57,7 +57,7 @@ export const useTasks = ({
     () =>
       ({
         filter: {
-          completedAt: { is: 'NULL' },
+          status: { is: 'TODO' },
           type: { eq: 'TASK' },
           ...assigneeIdFilter,
         },

@@ -3,13 +3,14 @@ import { Comment } from '@/activities/types/Comment';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 export type ActivityType = 'TASK' | 'NOTE';
+export type ActivityStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
 
 export type Activity = {
   __typename: 'Activity';
   id: string;
   createdAt: string;
   updatedAt: string;
-  completedAt: string | null;
+  status: ActivityStatus | null;
   reminderAt: string | null;
   dueAt: string | null;
   activityTargets: ActivityTarget[];

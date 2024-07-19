@@ -3,6 +3,7 @@ import { Comment } from '@/activities/types/Comment';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 export type ActivityType = 'TASK' | 'NOTE';
+export type ActivityStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
 
 type ActivityTargetNode = {
   node: ActivityTarget;
@@ -17,7 +18,7 @@ export type GraphQLActivity = {
   id: string;
   createdAt: string;
   updatedAt: string;
-  completedAt: string | null;
+  status: ActivityStatus;
   dueAt: string | null;
   activityTargets: {
     edges: ActivityTargetNode[];

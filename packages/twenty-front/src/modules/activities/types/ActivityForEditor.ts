@@ -9,7 +9,7 @@ export type ActivityForEditor = Pick<
   | 'title'
   | 'body'
   | 'type'
-  | 'completedAt'
+  | 'status'
   | 'dueAt'
   | 'updatedAt'
   | '__typename'
