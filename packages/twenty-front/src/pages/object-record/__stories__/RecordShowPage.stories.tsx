@@ -11,6 +11,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getPeopleMock, peopleQueryResult } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
+import { viewQueryResultMock } from '~/testing/mock-data/views';
 import { RecordShowPage } from '../RecordShowPage';
 
 const peopleMock = getPeopleMock();
@@ -65,15 +66,7 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query('FindManyViews', () => {
           return HttpResponse.json({
             data: {
-              views: {
-                edges: [],
-                pageInfo: {
-                  hasNextPage: false,
-                  startCursor: peopleMock[0].id,
-                  endCursor: peopleMock[0].id,
-                },
-                totalCount: 0,
-              },
+              views: viewQueryResultMock,
             },
           });
         }),

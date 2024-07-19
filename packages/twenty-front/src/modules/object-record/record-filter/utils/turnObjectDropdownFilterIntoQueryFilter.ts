@@ -18,6 +18,11 @@ import { Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
+import {
+  convertGreaterThanRatingToArrayOfRatingValues,
+  convertLessThanRatingToArrayOfRatingValues,
+  convertRatingToRatingValue,
+} from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
 export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
@@ -187,6 +192,11 @@ const applyEmptyFilters = (
         [correspondingField.name]: { is: 'NULL' } as FloatFilter,
       };
       break;
+    case 'RATING':
+      emptyRecordFilter = {
+        [correspondingField.name]: { is: 'NULL' } as StringFilter,
+      };
+      break;
     case 'DATE_TIME':
       emptyRecordFilter = {
         [correspondingField.name]: { is: 'NULL' } as DateFilter,
@@ -296,6 +306,48 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               [correspondingField.name]: {
                 lte: rawUIFilter.value,
               } as DateFilter,
+            });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              rawUIFilter.definition.type,
+            );
+            break;
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
+        break;
+      case 'RATING':
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Is:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                eq: convertRatingToRatingValue(parseFloat(rawUIFilter.value)),
+              } as StringFilter,
+            });
+            break;
+          case ViewFilterOperand.GreaterThan:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                in: convertGreaterThanRatingToArrayOfRatingValues(
+                  parseFloat(rawUIFilter.value),
+                ),
+              } as StringFilter,
+            });
+            break;
+          case ViewFilterOperand.LessThan:
+            objectRecordFilters.push({
+              [correspondingField.name]: {
+                in: convertLessThanRatingToArrayOfRatingValues(
+                  parseFloat(rawUIFilter.value),
+                ),
+              } as StringFilter,
             });
             break;
           case ViewFilterOperand.IsEmpty:

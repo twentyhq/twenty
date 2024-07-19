@@ -209,15 +209,16 @@ export const useFetchMoreRecordsWithPagination = <
 
   const totalCount = data?.[objectMetadataItem.namePlural]?.totalCount;
 
+  const recordConnection = data?.[objectMetadataItem.namePlural];
+
   const records = useMemo(
     () =>
-      data?.[objectMetadataItem.namePlural]
+      isDefined(recordConnection)
         ? getRecordsFromRecordConnection<T>({
-            recordConnection: data?.[objectMetadataItem.namePlural],
+            recordConnection,
           })
-        : ([] as T[]),
-
-    [data, objectMetadataItem.namePlural],
+        : [],
+    [recordConnection],
   );
 
   return {

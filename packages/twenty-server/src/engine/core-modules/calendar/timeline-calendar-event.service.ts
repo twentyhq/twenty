@@ -1,24 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { Any } from 'typeorm';
 import omit from 'lodash.omit';
+import { Any } from 'typeorm';
 
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
 import { TimelineCalendarEventsWithTotal } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Injectable()
 export class TimelineCalendarEventService {
-  constructor(
-    @InjectWorkspaceRepository(CalendarEventWorkspaceEntity)
-    private readonly calendarEventRepository: WorkspaceRepository<CalendarEventWorkspaceEntity>,
-    @InjectWorkspaceRepository(PersonWorkspaceEntity)
-    private readonly personRepository: WorkspaceRepository<PersonWorkspaceEntity>,
-  ) {}
+  constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   // TODO: Align return type with the entities to avoid mapping
   async getCalendarEventsFromPersonIds(
@@ -28,7 +22,12 @@ export class TimelineCalendarEventService {
   ): Promise<TimelineCalendarEventsWithTotal> {
     const offset = (page - 1) * pageSize;
 
-    const calendarEventIds = await this.calendarEventRepository.find({
+    const calendarEventRepository =
+      await this.twentyORMManager.getRepository<CalendarEventWorkspaceEntity>(
+        'calendarEvent',
+      );
+
+    const calendarEventIds = await calendarEventRepository.find({
       where: {
         calendarEventParticipants: {
           personId: Any(personIds),
@@ -55,7 +54,7 @@ export class TimelineCalendarEventService {
     }
 
     // We've split the query into two parts, because we want to fetch all the participants without any filtering
-    const [events, total] = await this.calendarEventRepository.findAndCount({
+    const [events, total] = await calendarEventRepository.findAndCount({
       where: {
         id: Any(ids),
       },
@@ -131,7 +130,12 @@ export class TimelineCalendarEventService {
     page = 1,
     pageSize: number = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineCalendarEventsWithTotal> {
-    const personIds = await this.personRepository.find({
+    const personRepository =
+      await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
+        'person',
+      );
+
+    const personIds = await personRepository.find({
       where: {
         companyId,
       },

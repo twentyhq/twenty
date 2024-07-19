@@ -16,6 +16,10 @@ import { LLMChatModelModule } from 'src/engine/integrations/llm-chat-model/llm-c
 import { llmChatModelModuleFactory } from 'src/engine/integrations/llm-chat-model/llm-chat-model.module-factory';
 import { LLMTracingModule } from 'src/engine/integrations/llm-tracing/llm-tracing.module';
 import { llmTracingModuleFactory } from 'src/engine/integrations/llm-tracing/llm-tracing.module-factory';
+import { ServerlessModule } from 'src/engine/integrations/serverless/serverless.module';
+import { serverlessModuleFactory } from 'src/engine/integrations/serverless/serverless-module.factory';
+import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
 
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
@@ -61,6 +65,14 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
     LLMTracingModule.forRoot({
       useFactory: llmTracingModuleFactory,
       inject: [EnvironmentService],
+    }),
+    ServerlessModule.forRootAsync({
+      useFactory: serverlessModuleFactory,
+      inject: [
+        EnvironmentService,
+        FileStorageService,
+        BuildDirectoryManagerService,
+      ],
     }),
   ],
   exports: [],
