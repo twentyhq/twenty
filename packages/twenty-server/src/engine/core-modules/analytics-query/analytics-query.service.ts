@@ -186,15 +186,13 @@ export class AnalyticsQueryService {
       chart.fieldPath,
     );
 
-    console.log('joinTables', joinOperations);
-
     const measureSelectColumn = this.getMeasureSelectColumn(
       chart.measure,
       chart.fieldPath,
     );
-    const groupBySelectColumn = chart?.groupBy;
+    const groupByClause = chart?.groupBy && `GROUP BY ${chart?.groupBy}`;
 
-    const selectColumns = [measureSelectColumn, groupBySelectColumn].filter(
+    const selectColumns = [measureSelectColumn, chart?.groupBy].filter(
       (col) => !!col,
     );
 
@@ -213,7 +211,7 @@ export class AnalyticsQueryService {
 SELECT ${selectColumns.join(', ')}
 FROM "${dataSourceSchema}"."${computeObjectTargetTable(objectMetadata)}" table_0
 ${joinClauses}
-GROUP BY ${groupBySelectColumn}
+${groupByClause}
 LIMIT 1000;
 `.trim();
 
