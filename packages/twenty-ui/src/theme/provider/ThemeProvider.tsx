@@ -1,9 +1,9 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 
-import { ThemeType } from '..';
+import { ThemeContextProvider } from '@ui/theme/provider/ThemeContextProvider';
 
-import './theme.css';
+import { ThemeType } from '..';
 
 type ThemeProviderProps = {
   theme: ThemeType;
@@ -11,12 +11,11 @@ type ThemeProviderProps = {
 };
 
 const ThemeProvider = ({ theme, children }: ThemeProviderProps) => {
-  useEffect(() => {
-    document.documentElement.className =
-      theme.name === 'dark' ? 'dark' : 'light';
-  }, [theme]);
-
-  return <EmotionThemeProvider theme={theme}>{children}</EmotionThemeProvider>;
+  return (
+    <EmotionThemeProvider theme={theme}>
+      <ThemeContextProvider theme={theme}>{children}</ThemeContextProvider>
+    </EmotionThemeProvider>
+  );
 };
 
 export default ThemeProvider;

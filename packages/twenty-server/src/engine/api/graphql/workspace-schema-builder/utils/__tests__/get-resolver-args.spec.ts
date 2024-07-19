@@ -1,4 +1,4 @@
-import { GraphQLID, GraphQLInt, GraphQLString } from 'graphql';
+import { GraphQLBoolean, GraphQLID, GraphQLInt, GraphQLString } from 'graphql';
 
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -13,7 +13,11 @@ describe('getResolverArgs', () => {
       before: { type: GraphQLString, isNullable: true },
       after: { type: GraphQLString, isNullable: true },
       filter: { kind: InputTypeDefinitionKind.Filter, isNullable: true },
-      orderBy: { kind: InputTypeDefinitionKind.OrderBy, isNullable: true },
+      orderBy: {
+        kind: InputTypeDefinitionKind.OrderBy,
+        isNullable: true,
+        isArray: true,
+      },
       limit: { type: GraphQLInt, isNullable: true },
     },
     findOne: {
@@ -25,9 +29,19 @@ describe('getResolverArgs', () => {
         isNullable: false,
         isArray: true,
       },
+      upsert: {
+        isArray: false,
+        isNullable: true,
+        type: GraphQLBoolean,
+      },
     },
     createOne: {
       data: { kind: InputTypeDefinitionKind.Create, isNullable: false },
+      upsert: {
+        isArray: false,
+        isNullable: true,
+        type: GraphQLBoolean,
+      },
     },
     updateOne: {
       id: { type: GraphQLID, isNullable: false },

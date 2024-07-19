@@ -1,14 +1,17 @@
-import { EntityChip, EntityChipVariant } from 'twenty-ui';
+import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
 
-import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
+import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { isNonEmptyString } from '@sniptt/guards';
+import { MouseEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   className?: string;
-  variant?: EntityChipVariant;
+  variant?: AvatarChipVariant;
 };
 
 export const RecordChip = ({
@@ -17,21 +20,29 @@ export const RecordChip = ({
   className,
   variant,
 }: RecordChipProps) => {
-  const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
+  const navigate = useNavigate();
+
+  const { recordChipData } = useRecordChipData({
     objectNameSingular,
+    record,
   });
 
-  const objectRecordIdentifier = mapToObjectRecordIdentifier(record);
+  const handleAvatarChipClick = (event: MouseEvent) => {
+    const linkToShowPage = getLinkToShowPage(objectNameSingular, record);
+
+    if (isNonEmptyString(linkToShowPage)) {
+      event.stopPropagation();
+      navigate(linkToShowPage);
+    }
+  };
 
   return (
-    <EntityChip
-      entityId={record.id}
-      name={objectRecordIdentifier.name}
-      avatarType={objectRecordIdentifier.avatarType}
-      avatarUrl={
-        getImageAbsoluteURIOrBase64(objectRecordIdentifier.avatarUrl) || ''
-      }
-      linkToEntity={objectRecordIdentifier.linkToShowPage}
+    <AvatarChip
+      placeholderColorSeed={record.id}
+      name={recordChipData.name}
+      avatarType={recordChipData.avatarType}
+      avatarUrl={recordChipData.avatarUrl ?? ''}
+      onClick={handleAvatarChipClick}
       className={className}
       variant={variant}
     />

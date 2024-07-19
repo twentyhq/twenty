@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
 import { gql } from '@apollo/client';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
@@ -49,7 +49,7 @@ const mocks: MockedResponse[] = [
       query: gql`
         query FindManyActivityTargets(
           $filter: ActivityTargetFilterInput
-          $orderBy: ActivityTargetOrderByInput
+          $orderBy: [ActivityTargetOrderByInput]
           $lastCursor: String
           $limit: Int
         ) {
@@ -71,6 +71,7 @@ const mocks: MockedResponse[] = [
             }
             pageInfo {
               hasNextPage
+              hasPreviousPage
               startCursor
               endCursor
             }
@@ -103,7 +104,7 @@ const mocks: MockedResponse[] = [
       query: gql`
         query FindManyActivities(
           $filter: ActivityFilterInput
-          $orderBy: ActivityOrderByInput
+          $orderBy: [ActivityOrderByInput]
           $lastCursor: String
           $limit: Int
         ) {
@@ -132,6 +133,7 @@ const mocks: MockedResponse[] = [
             }
             pageInfo {
               hasNextPage
+              hasPreviousPage
               startCursor
               endCursor
             }
@@ -142,7 +144,7 @@ const mocks: MockedResponse[] = [
       variables: {
         filter: { id: { in: ['234'] } },
         limit: undefined,
-        orderBy: {},
+        orderBy: [{}],
       },
     },
     result: jest.fn(() => ({
@@ -178,7 +180,7 @@ describe('useActivities', () => {
         useActivities({
           targetableObjects: [],
           activitiesFilters: {},
-          activitiesOrderByVariables: {},
+          activitiesOrderByVariables: [{}],
           skip: false,
         }),
       { wrapper: Wrapper },
@@ -202,7 +204,7 @@ describe('useActivities', () => {
             { targetObjectNameSingular: 'company', id: '123' },
           ],
           activitiesFilters: {},
-          activitiesOrderByVariables: {},
+          activitiesOrderByVariables: [{}],
           skip: false,
         });
         return { activities, setCurrentWorkspaceMember };

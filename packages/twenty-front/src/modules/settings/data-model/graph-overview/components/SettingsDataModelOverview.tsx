@@ -203,7 +203,6 @@ export const SettingsDataModelOverview = () => {
         proOptions={{ hideAttribution: true }}
       >
         <Background />
-
         <IconButtonGroup
           className="react-flow__panel react-flow__controls bottom left"
           size="small"

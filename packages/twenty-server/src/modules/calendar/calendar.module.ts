@@ -1,11 +1,20 @@
 import { Module } from '@nestjs/common';
 
-import { CalendarBlocklistListener } from 'src/modules/calendar/listeners/calendar-blocklist.listener';
-import { CalendarChannelListener } from 'src/modules/calendar/listeners/calendar-channel.listener';
+import { CalendarBlocklistManagerModule } from 'src/modules/calendar/blocklist-manager/calendar-blocklist-manager.module';
+import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
+import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
+import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
+import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 
 @Module({
-  imports: [],
-  providers: [CalendarChannelListener, CalendarBlocklistListener],
+  imports: [
+    CalendarBlocklistManagerModule,
+    CalendarEventCleanerModule,
+    CalendarEventImportManagerModule,
+    CalendarEventParticipantManagerModule,
+    CalendarCommonModule,
+  ],
+  providers: [],
   exports: [],
 })
 export class CalendarModule {}

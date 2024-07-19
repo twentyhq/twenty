@@ -13,10 +13,6 @@
       "path": "../packages/twenty-docker"
     },
     {
-      "name": "packages/twenty-docs",
-      "path": "../packages/twenty-docs"
-    },
-    {
       "name": "packages/twenty-front",
       "path": "../packages/twenty-front"
     },
@@ -47,21 +43,21 @@
     "[typescript]": {
       "editor.formatOnSave": false,
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true,
+        "source.fixAll.eslint": "explicit",
         "source.addMissingImports": "always"
       }
     },
     "[javascript]": {
       "editor.formatOnSave": false,
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true,
+        "source.fixAll.eslint": "explicit",
         "source.addMissingImports": "always"
       }
     },
     "[typescriptreact]": {
       "editor.formatOnSave": false,
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true,
+        "source.fixAll.eslint": "explicit",
         "source.addMissingImports": "always"
       }
     },
@@ -99,7 +95,6 @@
       "ROOT",
       "packages/twenty-zapier",
       "packages/twenty-docker",
-      "packages/twenty-docs",
       "packages/twenty-utils",
       "packages/twenty-postgres"
     ]

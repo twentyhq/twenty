@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -74,7 +74,7 @@ export type ActivityActivityTargetsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityTargetOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
 
@@ -86,7 +86,7 @@ export type ActivityAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -98,7 +98,7 @@ export type ActivityCommentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CommentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CommentOrderByInput>>>;
 };
 
 /** An activity */
@@ -395,6 +395,10 @@ export type AddressUpdateInput = {
 export type Analytics = {
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type ApiConfig = {
+  mutationMaximumAffectedRecords: Scalars['Float'];
 };
 
 /** An api key */
@@ -853,8 +857,8 @@ export type Billing = {
 
 export type BillingSubscription = {
   id: Scalars['UUID'];
-  interval?: Maybe<Scalars['String']>;
-  status: Scalars['String'];
+  interval?: Maybe<SubscriptionInterval>;
+  status: SubscriptionStatus;
 };
 
 export type BillingSubscriptionFilter = {
@@ -980,6 +984,8 @@ export type CalendarChannel = {
   connectedAccount?: Maybe<ConnectedAccount>;
   /** Connected Account id foreign key */
   connectedAccountId?: Maybe<Scalars['UUID']>;
+  /** Automatically create records for people you participated with in an event. */
+  contactAutoCreationPolicy?: Maybe<CalendarChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: Maybe<Scalars['DateTime']>;
   /** Handle */
@@ -992,10 +998,14 @@ export type CalendarChannel = {
   isSyncEnabled?: Maybe<Scalars['Boolean']>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: Maybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: Maybe<CalendarChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: Maybe<Scalars['DateTime']>;
+  /** Sync status */
+  syncStatus?: Maybe<CalendarChannelSyncStatusEnum>;
   /** Throttle Failure Count */
   throttleFailureCount?: Maybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: Maybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: Maybe<Scalars['DateTime']>;
   /** Visibility */
@@ -1011,7 +1021,7 @@ export type CalendarChannelCalendarChannelEventAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarChannelEventAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>>;
 };
 
 /** Calendar Channels */
@@ -1022,10 +1032,31 @@ export type CalendarChannelConnection = {
   totalCount?: Maybe<Scalars['Int']>;
 };
 
+/** Automatically create records for people you participated with in an event. */
+export enum CalendarChannelContactAutoCreationPolicyEnum {
+  /** As Organizer */
+  AsOrganizer = 'AS_ORGANIZER',
+  /** As Participant */
+  AsParticipant = 'AS_PARTICIPANT',
+  /** As Participant and Organizer */
+  AsParticipantAndOrganizer = 'AS_PARTICIPANT_AND_ORGANIZER',
+  /** None */
+  None = 'NONE'
+}
+
+export type CalendarChannelContactAutoCreationPolicyEnumFilter = {
+  eq?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>;
+  in?: InputMaybe<Array<InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>;
+};
+
 /** Calendar Channels */
 export type CalendarChannelCreateInput = {
   /** Connected Account id foreign key */
   connectedAccountId: Scalars['UUID'];
+  /** Automatically create records for people you participated with in an event. */
+  contactAutoCreationPolicy?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: InputMaybe<Scalars['DateTime']>;
   /** Handle */
@@ -1038,10 +1069,14 @@ export type CalendarChannelCreateInput = {
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: InputMaybe<CalendarChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<Scalars['DateTime']>;
+  /** Sync status */
+  syncStatus?: InputMaybe<CalendarChannelSyncStatusEnum>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   /** Visibility */
@@ -1160,6 +1195,8 @@ export type CalendarChannelFilterInput = {
   and?: InputMaybe<Array<InputMaybe<CalendarChannelFilterInput>>>;
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<IdFilter>;
+  /** Automatically create records for people you participated with in an event. */
+  contactAutoCreationPolicy?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnumFilter>;
   /** Creation date */
   createdAt?: InputMaybe<DateFilter>;
   /** Handle */
@@ -1174,10 +1211,14 @@ export type CalendarChannelFilterInput = {
   or?: InputMaybe<Array<InputMaybe<CalendarChannelFilterInput>>>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<StringFilter>;
+  /** Sync stage */
+  syncStage?: InputMaybe<CalendarChannelSyncStageEnumFilter>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<DateFilter>;
+  /** Sync status */
+  syncStatus?: InputMaybe<CalendarChannelSyncStatusEnumFilter>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<FloatFilter>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<DateFilter>;
   /** Update date */
   updatedAt?: InputMaybe<DateFilter>;
   /** Visibility */
@@ -1188,6 +1229,8 @@ export type CalendarChannelFilterInput = {
 export type CalendarChannelOrderByInput = {
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<OrderByDirection>;
+  /** Automatically create records for people you participated with in an event. */
+  contactAutoCreationPolicy?: InputMaybe<OrderByDirection>;
   /** Creation date */
   createdAt?: InputMaybe<OrderByDirection>;
   /** Handle */
@@ -1200,20 +1243,70 @@ export type CalendarChannelOrderByInput = {
   isSyncEnabled?: InputMaybe<OrderByDirection>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<OrderByDirection>;
+  /** Sync stage */
+  syncStage?: InputMaybe<OrderByDirection>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<OrderByDirection>;
+  /** Sync status */
+  syncStatus?: InputMaybe<OrderByDirection>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<OrderByDirection>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<OrderByDirection>;
   /** Update date */
   updatedAt?: InputMaybe<OrderByDirection>;
   /** Visibility */
   visibility?: InputMaybe<OrderByDirection>;
 };
 
+/** Sync stage */
+export enum CalendarChannelSyncStageEnum {
+  /** Calendar events import ongoing */
+  CalendarEventsImportOngoing = 'CALENDAR_EVENTS_IMPORT_ONGOING',
+  /** Calendar events import pending */
+  CalendarEventsImportPending = 'CALENDAR_EVENTS_IMPORT_PENDING',
+  /** Calendar event list fetch ongoing */
+  CalendarEventListFetchOngoing = 'CALENDAR_EVENT_LIST_FETCH_ONGOING',
+  /** Failed */
+  Failed = 'FAILED',
+  /** Full calendar event list fetch pending */
+  FullCalendarEventListFetchPending = 'FULL_CALENDAR_EVENT_LIST_FETCH_PENDING',
+  /** Partial calendar event list fetch pending */
+  PartialCalendarEventListFetchPending = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING'
+}
+
+export type CalendarChannelSyncStageEnumFilter = {
+  eq?: InputMaybe<CalendarChannelSyncStageEnum>;
+  in?: InputMaybe<Array<InputMaybe<CalendarChannelSyncStageEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<CalendarChannelSyncStageEnum>;
+};
+
+/** Sync status */
+export enum CalendarChannelSyncStatusEnum {
+  /** Active */
+  Active = 'ACTIVE',
+  /** Failed Insufficient Permissions */
+  FailedInsufficientPermissions = 'FAILED_INSUFFICIENT_PERMISSIONS',
+  /** Failed Unknown */
+  FailedUnknown = 'FAILED_UNKNOWN',
+  /** Not Synced */
+  NotSynced = 'NOT_SYNCED',
+  /** Ongoing */
+  Ongoing = 'ONGOING'
+}
+
+export type CalendarChannelSyncStatusEnumFilter = {
+  eq?: InputMaybe<CalendarChannelSyncStatusEnum>;
+  in?: InputMaybe<Array<InputMaybe<CalendarChannelSyncStatusEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<CalendarChannelSyncStatusEnum>;
+};
+
 /** Calendar Channels */
 export type CalendarChannelUpdateInput = {
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<Scalars['UUID']>;
+  /** Automatically create records for people you participated with in an event. */
+  contactAutoCreationPolicy?: InputMaybe<CalendarChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: InputMaybe<Scalars['DateTime']>;
   /** Handle */
@@ -1226,10 +1319,14 @@ export type CalendarChannelUpdateInput = {
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: InputMaybe<CalendarChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<Scalars['DateTime']>;
+  /** Sync status */
+  syncStatus?: InputMaybe<CalendarChannelSyncStatusEnum>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   /** Visibility */
@@ -1306,7 +1403,7 @@ export type CalendarEventCalendarChannelEventAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarChannelEventAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>>;
 };
 
 
@@ -1318,7 +1415,7 @@ export type CalendarEventCalendarEventParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarEventParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarEventParticipantOrderByInput>>>;
 };
 
 /** Calendar events */
@@ -1650,11 +1747,12 @@ export type Captcha = {
 };
 
 export enum CaptchaDriverType {
-  GoogleRecatpcha = 'GoogleRecatpcha',
+  GoogleRecaptcha = 'GoogleRecaptcha',
   Turnstile = 'Turnstile'
 }
 
 export type ClientConfig = {
+  api: ApiConfig;
   authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
@@ -1821,7 +1919,7 @@ export type CompanyActivityTargetsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityTargetOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
 
@@ -1833,7 +1931,7 @@ export type CompanyAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -1845,7 +1943,7 @@ export type CompanyFavoritesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FavoriteOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
 
@@ -1857,7 +1955,7 @@ export type CompanyOpportunitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<OpportunityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<OpportunityOrderByInput>>>;
 };
 
 
@@ -1869,7 +1967,7 @@ export type CompanyPeopleArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<PersonOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<PersonOrderByInput>>>;
 };
 
 
@@ -1881,7 +1979,7 @@ export type CompanyTimelineActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TimelineActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<TimelineActivityOrderByInput>>>;
 };
 
 /** A company */
@@ -2060,7 +2158,7 @@ export type ConnectedAccountCalendarChannelsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarChannelOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelOrderByInput>>>;
 };
 
 
@@ -2072,7 +2170,7 @@ export type ConnectedAccountMessageChannelsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelOrderByInput>>>;
 };
 
 /** A connected account */
@@ -2430,7 +2528,6 @@ export enum FieldMetadataType {
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
   Position = 'POSITION',
-  Probability = 'PROBABILITY',
   Rating = 'RATING',
   RawJson = 'RAW_JSON',
   Relation = 'RELATION',
@@ -2607,7 +2704,7 @@ export type MessageMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelMessageAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
 };
 
 
@@ -2619,7 +2716,7 @@ export type MessageMessageParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageParticipantOrderByInput>>>;
 };
 
 /** Message Channels */
@@ -2628,8 +2725,14 @@ export type MessageChannel = {
   connectedAccount?: Maybe<ConnectedAccount>;
   /** Connected Account id foreign key */
   connectedAccountId?: Maybe<Scalars['UUID']>;
+  /** Automatically create People records when receiving or sending emails */
+  contactAutoCreationPolicy?: Maybe<MessageChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: Maybe<Scalars['DateTime']>;
+  /** Exclude group emails */
+  excludeGroupEmails?: Maybe<Scalars['Boolean']>;
+  /** Exclude non professional emails */
+  excludeNonProfessionalEmails?: Maybe<Scalars['Boolean']>;
   /** Handle */
   handle?: Maybe<Scalars['String']>;
   /** Id */
@@ -2640,20 +2743,18 @@ export type MessageChannel = {
   isSyncEnabled?: Maybe<Scalars['Boolean']>;
   /** Messages from the channel. */
   messageChannelMessageAssociations?: Maybe<MessageChannelMessageAssociationConnection>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: Maybe<Scalars['DateTime']>;
   /** Last sync cursor */
   syncCursor?: Maybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: Maybe<MessageChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: Maybe<Scalars['DateTime']>;
   /** Sync status */
   syncStatus?: Maybe<MessageChannelSyncStatusEnum>;
-  /** Sync sub status */
-  syncSubStatus?: Maybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: Maybe<Scalars['DateTime']>;
   /** Throttle Failure Count */
   throttleFailureCount?: Maybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: Maybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: Maybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -2671,7 +2772,7 @@ export type MessageChannelMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelMessageAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
 };
 
 /** Message Channels */
@@ -2682,12 +2783,35 @@ export type MessageChannelConnection = {
   totalCount?: Maybe<Scalars['Int']>;
 };
 
+/** Automatically create People records when receiving or sending emails */
+export enum MessageChannelContactAutoCreationPolicyEnum {
+  /** None */
+  None = 'NONE',
+  /** Sent */
+  Sent = 'SENT',
+  /** Sent and Received */
+  SentAndReceived = 'SENT_AND_RECEIVED'
+}
+
+export type MessageChannelContactAutoCreationPolicyEnumFilter = {
+  eq?: InputMaybe<MessageChannelContactAutoCreationPolicyEnum>;
+  in?: InputMaybe<Array<InputMaybe<MessageChannelContactAutoCreationPolicyEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<MessageChannelContactAutoCreationPolicyEnum>;
+};
+
 /** Message Channels */
 export type MessageChannelCreateInput = {
   /** Connected Account id foreign key */
   connectedAccountId: Scalars['UUID'];
+  /** Automatically create People records when receiving or sending emails */
+  contactAutoCreationPolicy?: InputMaybe<MessageChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** Exclude group emails */
+  excludeGroupEmails?: InputMaybe<Scalars['Boolean']>;
+  /** Exclude non professional emails */
+  excludeNonProfessionalEmails?: InputMaybe<Scalars['Boolean']>;
   /** Handle */
   handle?: InputMaybe<Scalars['String']>;
   /** Id */
@@ -2696,20 +2820,18 @@ export type MessageChannelCreateInput = {
   isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: InputMaybe<MessageChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Sync status */
   syncStatus?: InputMaybe<MessageChannelSyncStatusEnum>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: InputMaybe<Scalars['DateTime']>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -2729,8 +2851,14 @@ export type MessageChannelFilterInput = {
   and?: InputMaybe<Array<InputMaybe<MessageChannelFilterInput>>>;
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<IdFilter>;
+  /** Automatically create People records when receiving or sending emails */
+  contactAutoCreationPolicy?: InputMaybe<MessageChannelContactAutoCreationPolicyEnumFilter>;
   /** Creation date */
   createdAt?: InputMaybe<DateFilter>;
+  /** Exclude group emails */
+  excludeGroupEmails?: InputMaybe<BooleanFilter>;
+  /** Exclude non professional emails */
+  excludeNonProfessionalEmails?: InputMaybe<BooleanFilter>;
   /** Handle */
   handle?: InputMaybe<StringFilter>;
   /** Id */
@@ -2740,21 +2868,19 @@ export type MessageChannelFilterInput = {
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<BooleanFilter>;
   not?: InputMaybe<MessageChannelFilterInput>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<DateFilter>;
   or?: InputMaybe<Array<InputMaybe<MessageChannelFilterInput>>>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<StringFilter>;
+  /** Sync stage */
+  syncStage?: InputMaybe<MessageChannelSyncStageEnumFilter>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<DateFilter>;
   /** Sync status */
   syncStatus?: InputMaybe<MessageChannelSyncStatusEnumFilter>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnumFilter>;
   /** Last sync date */
   syncedAt?: InputMaybe<DateFilter>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<FloatFilter>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<DateFilter>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnumFilter>;
   /** Update date */
@@ -2890,8 +3016,14 @@ export type MessageChannelMessageAssociationUpdateInput = {
 export type MessageChannelOrderByInput = {
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<OrderByDirection>;
+  /** Automatically create People records when receiving or sending emails */
+  contactAutoCreationPolicy?: InputMaybe<OrderByDirection>;
   /** Creation date */
   createdAt?: InputMaybe<OrderByDirection>;
+  /** Exclude group emails */
+  excludeGroupEmails?: InputMaybe<OrderByDirection>;
+  /** Exclude non professional emails */
+  excludeNonProfessionalEmails?: InputMaybe<OrderByDirection>;
   /** Handle */
   handle?: InputMaybe<OrderByDirection>;
   /** Id */
@@ -2900,26 +3032,47 @@ export type MessageChannelOrderByInput = {
   isContactAutoCreationEnabled?: InputMaybe<OrderByDirection>;
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<OrderByDirection>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<OrderByDirection>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<OrderByDirection>;
+  /** Sync stage */
+  syncStage?: InputMaybe<OrderByDirection>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<OrderByDirection>;
   /** Sync status */
   syncStatus?: InputMaybe<OrderByDirection>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<OrderByDirection>;
   /** Last sync date */
   syncedAt?: InputMaybe<OrderByDirection>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<OrderByDirection>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<OrderByDirection>;
   /** Channel Type */
   type?: InputMaybe<OrderByDirection>;
   /** Update date */
   updatedAt?: InputMaybe<OrderByDirection>;
   /** Visibility */
   visibility?: InputMaybe<OrderByDirection>;
+};
+
+/** Sync stage */
+export enum MessageChannelSyncStageEnum {
+  /** Failed */
+  Failed = 'FAILED',
+  /** Full messages list fetch pending */
+  FullMessageListFetchPending = 'FULL_MESSAGE_LIST_FETCH_PENDING',
+  /** Messages import ongoing */
+  MessagesImportOngoing = 'MESSAGES_IMPORT_ONGOING',
+  /** Messages import pending */
+  MessagesImportPending = 'MESSAGES_IMPORT_PENDING',
+  /** Messages list fetch ongoing */
+  MessageListFetchOngoing = 'MESSAGE_LIST_FETCH_ONGOING',
+  /** Partial messages list fetch pending */
+  PartialMessageListFetchPending = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING'
+}
+
+export type MessageChannelSyncStageEnumFilter = {
+  eq?: InputMaybe<MessageChannelSyncStageEnum>;
+  in?: InputMaybe<Array<InputMaybe<MessageChannelSyncStageEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<MessageChannelSyncStageEnum>;
 };
 
 /** Sync status */
@@ -2949,29 +3102,6 @@ export type MessageChannelSyncStatusEnumFilter = {
   neq?: InputMaybe<MessageChannelSyncStatusEnum>;
 };
 
-/** Sync sub status */
-export enum MessageChannelSyncSubStatusEnum {
-  /** Failed */
-  Failed = 'FAILED',
-  /** Full messages list fetch pending */
-  FullMessageListFetchPending = 'FULL_MESSAGE_LIST_FETCH_PENDING',
-  /** Messages import ongoing */
-  MessagesImportOngoing = 'MESSAGES_IMPORT_ONGOING',
-  /** Messages import pending */
-  MessagesImportPending = 'MESSAGES_IMPORT_PENDING',
-  /** Messages list fetch ongoing */
-  MessageListFetchOngoing = 'MESSAGE_LIST_FETCH_ONGOING',
-  /** Partial messages list fetch pending */
-  PartialMessageListFetchPending = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING'
-}
-
-export type MessageChannelSyncSubStatusEnumFilter = {
-  eq?: InputMaybe<MessageChannelSyncSubStatusEnum>;
-  in?: InputMaybe<Array<InputMaybe<MessageChannelSyncSubStatusEnum>>>;
-  is?: InputMaybe<FilterIs>;
-  neq?: InputMaybe<MessageChannelSyncSubStatusEnum>;
-};
-
 /** Channel Type */
 export enum MessageChannelTypeEnum {
   /** Email */
@@ -2991,8 +3121,14 @@ export type MessageChannelTypeEnumFilter = {
 export type MessageChannelUpdateInput = {
   /** Connected Account id foreign key */
   connectedAccountId?: InputMaybe<Scalars['UUID']>;
+  /** Automatically create People records when receiving or sending emails */
+  contactAutoCreationPolicy?: InputMaybe<MessageChannelContactAutoCreationPolicyEnum>;
   /** Creation date */
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** Exclude group emails */
+  excludeGroupEmails?: InputMaybe<Scalars['Boolean']>;
+  /** Exclude non professional emails */
+  excludeNonProfessionalEmails?: InputMaybe<Scalars['Boolean']>;
   /** Handle */
   handle?: InputMaybe<Scalars['String']>;
   /** Id */
@@ -3001,20 +3137,18 @@ export type MessageChannelUpdateInput = {
   isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: InputMaybe<MessageChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Sync status */
   syncStatus?: InputMaybe<MessageChannelSyncStatusEnum>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: InputMaybe<Scalars['DateTime']>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -3320,7 +3454,7 @@ export type MessageThreadMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelMessageAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
 };
 
 
@@ -3332,7 +3466,7 @@ export type MessageThreadMessagesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageOrderByInput>>>;
 };
 
 /** Message Thread */
@@ -3537,7 +3671,9 @@ export type Mutation = {
   deleteWebhooks?: Maybe<Array<Webhook>>;
   deleteWorkspaceMember?: Maybe<WorkspaceMember>;
   deleteWorkspaceMembers?: Maybe<Array<WorkspaceMember>>;
+  disablePostgresProxy: PostgresCredentials;
   emailPasswordResetLink: EmailPasswordResetLink;
+  enablePostgresProxy: PostgresCredentials;
   exchangeAuthorizationCode: ExchangeAuthCode;
   executeQuickActionOnActivity?: Maybe<Activity>;
   executeQuickActionOnActivityTarget?: Maybe<ActivityTarget>;
@@ -3572,8 +3708,9 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
+  sendInviteLink: SendInviteLink;
   signUp: LoginToken;
-  skipSyncEmailOnboardingStep: SkipSyncEmailOnboardingStep;
+  skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
   updateActivities?: Maybe<Array<Activity>>;
   updateActivity?: Maybe<Activity>;
@@ -3668,288 +3805,344 @@ export type MutationChallengeArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
-  recurringInterval: Scalars['String'];
+  recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationCreateActivitiesArgs = {
   data?: InputMaybe<Array<ActivityCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateActivityArgs = {
   data?: InputMaybe<ActivityCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateActivityTargetArgs = {
   data?: InputMaybe<ActivityTargetCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateActivityTargetsArgs = {
   data?: InputMaybe<Array<ActivityTargetCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateApiKeyArgs = {
   data?: InputMaybe<ApiKeyCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateApiKeysArgs = {
   data?: InputMaybe<Array<ApiKeyCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateAttachmentArgs = {
   data?: InputMaybe<AttachmentCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateAttachmentsArgs = {
   data?: InputMaybe<Array<AttachmentCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateAuditLogArgs = {
   data?: InputMaybe<AuditLogCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateAuditLogsArgs = {
   data?: InputMaybe<Array<AuditLogCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateBlocklistArgs = {
   data?: InputMaybe<BlocklistCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateBlocklistsArgs = {
   data?: InputMaybe<Array<BlocklistCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarChannelArgs = {
   data?: InputMaybe<CalendarChannelCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarChannelEventAssociationArgs = {
   data?: InputMaybe<CalendarChannelEventAssociationCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarChannelEventAssociationsArgs = {
   data?: InputMaybe<Array<CalendarChannelEventAssociationCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarChannelsArgs = {
   data?: InputMaybe<Array<CalendarChannelCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarEventArgs = {
   data?: InputMaybe<CalendarEventCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarEventParticipantArgs = {
   data?: InputMaybe<CalendarEventParticipantCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarEventParticipantsArgs = {
   data?: InputMaybe<Array<CalendarEventParticipantCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCalendarEventsArgs = {
   data?: InputMaybe<Array<CalendarEventCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCommentArgs = {
   data?: InputMaybe<CommentCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCommentsArgs = {
   data?: InputMaybe<Array<CommentCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCompaniesArgs = {
   data?: InputMaybe<Array<CompanyCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateCompanyArgs = {
   data?: InputMaybe<CompanyCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateConnectedAccountArgs = {
   data?: InputMaybe<ConnectedAccountCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateConnectedAccountsArgs = {
   data?: InputMaybe<Array<ConnectedAccountCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateFavoriteArgs = {
   data?: InputMaybe<FavoriteCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateFavoritesArgs = {
   data?: InputMaybe<Array<FavoriteCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageArgs = {
   data?: InputMaybe<MessageCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageChannelArgs = {
   data?: InputMaybe<MessageChannelCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageChannelMessageAssociationArgs = {
   data?: InputMaybe<MessageChannelMessageAssociationCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageChannelMessageAssociationsArgs = {
   data?: InputMaybe<Array<MessageChannelMessageAssociationCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageChannelsArgs = {
   data?: InputMaybe<Array<MessageChannelCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageParticipantArgs = {
   data?: InputMaybe<MessageParticipantCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageParticipantsArgs = {
   data?: InputMaybe<Array<MessageParticipantCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageThreadArgs = {
   data?: InputMaybe<MessageThreadCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessageThreadsArgs = {
   data?: InputMaybe<Array<MessageThreadCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateMessagesArgs = {
   data?: InputMaybe<Array<MessageCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateOpportunitiesArgs = {
   data?: InputMaybe<Array<OpportunityCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateOpportunityArgs = {
   data?: InputMaybe<OpportunityCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreatePeopleArgs = {
   data?: InputMaybe<Array<PersonCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreatePersonArgs = {
   data?: InputMaybe<PersonCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateTimelineActivitiesArgs = {
   data?: InputMaybe<Array<TimelineActivityCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateTimelineActivityArgs = {
   data?: InputMaybe<TimelineActivityCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewArgs = {
   data?: InputMaybe<ViewCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewFieldArgs = {
   data?: InputMaybe<ViewFieldCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewFieldsArgs = {
   data?: InputMaybe<Array<ViewFieldCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewFilterArgs = {
   data?: InputMaybe<ViewFilterCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewFiltersArgs = {
   data?: InputMaybe<Array<ViewFilterCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewSortArgs = {
   data?: InputMaybe<ViewSortCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewSortsArgs = {
   data?: InputMaybe<Array<ViewSortCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateViewsArgs = {
   data?: InputMaybe<Array<ViewCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateWebhookArgs = {
   data?: InputMaybe<WebhookCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateWebhooksArgs = {
   data?: InputMaybe<Array<WebhookCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateWorkspaceMemberArgs = {
   data?: InputMaybe<WorkspaceMemberCreateInput>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationCreateWorkspaceMembersArgs = {
   data?: InputMaybe<Array<WorkspaceMemberCreateInput>>;
+  upsert?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -4411,6 +4604,11 @@ export type MutationRenewTokenArgs = {
 };
 
 
+export type MutationSendInviteLinkArgs = {
+  emails: Array<Scalars['String']>;
+};
+
+
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -4817,6 +5015,21 @@ export type ObjectFieldsConnection = {
   pageInfo: PageInfo;
 };
 
+/** Onboarding status */
+export enum OnboardingStatus {
+  Completed = 'COMPLETED',
+  InviteTeam = 'INVITE_TEAM',
+  PlanRequired = 'PLAN_REQUIRED',
+  ProfileCreation = 'PROFILE_CREATION',
+  SyncEmail = 'SYNC_EMAIL',
+  WorkspaceActivation = 'WORKSPACE_ACTIVATION'
+}
+
+export type OnboardingStepSuccess = {
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 /** An opportunity */
 export type Opportunity = {
   /** Activities tied to the opportunity */
@@ -4864,7 +5077,7 @@ export type OpportunityActivityTargetsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityTargetOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
 
@@ -4876,7 +5089,7 @@ export type OpportunityAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -4888,7 +5101,7 @@ export type OpportunityFavoritesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FavoriteOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
 
@@ -4900,7 +5113,7 @@ export type OpportunityTimelineActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TimelineActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<TimelineActivityOrderByInput>>>;
 };
 
 /** An opportunity */
@@ -5123,7 +5336,7 @@ export type PersonActivityTargetsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityTargetOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
 
@@ -5135,7 +5348,7 @@ export type PersonAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -5147,7 +5360,7 @@ export type PersonCalendarEventParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarEventParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarEventParticipantOrderByInput>>>;
 };
 
 
@@ -5159,7 +5372,7 @@ export type PersonFavoritesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FavoriteOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
 
@@ -5171,7 +5384,7 @@ export type PersonMessageParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageParticipantOrderByInput>>>;
 };
 
 
@@ -5183,7 +5396,7 @@ export type PersonPointOfContactForOpportunitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<OpportunityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<OpportunityOrderByInput>>>;
 };
 
 
@@ -5195,7 +5408,7 @@ export type PersonTimelineActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TimelineActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<TimelineActivityOrderByInput>>>;
 };
 
 /** A person */
@@ -5335,9 +5548,16 @@ export type PersonUpdateInput = {
   xLink?: InputMaybe<LinkUpdateInput>;
 };
 
+export type PostgresCredentials = {
+  id: Scalars['UUID'];
+  password: Scalars['String'];
+  user: Scalars['String'];
+  workspaceId: Scalars['String'];
+};
+
 export type ProductPriceEntity = {
   created: Scalars['Float'];
-  recurringInterval: Scalars['String'];
+  recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
   unitAmount: Scalars['Float'];
 };
@@ -5350,53 +5570,54 @@ export type ProductPricesEntity = {
 export type Query = {
   activities?: Maybe<ActivityConnection>;
   activity?: Maybe<Activity>;
-  activityDuplicates?: Maybe<ActivityConnection>;
+  activityDuplicates?: Maybe<Array<ActivityConnection>>;
   activityTarget?: Maybe<ActivityTarget>;
-  activityTargetDuplicates?: Maybe<ActivityTargetConnection>;
+  activityTargetDuplicates?: Maybe<Array<ActivityTargetConnection>>;
   activityTargets?: Maybe<ActivityTargetConnection>;
   apiKey?: Maybe<ApiKey>;
-  apiKeyDuplicates?: Maybe<ApiKeyConnection>;
+  apiKeyDuplicates?: Maybe<Array<ApiKeyConnection>>;
   apiKeys?: Maybe<ApiKeyConnection>;
   attachment?: Maybe<Attachment>;
-  attachmentDuplicates?: Maybe<AttachmentConnection>;
+  attachmentDuplicates?: Maybe<Array<AttachmentConnection>>;
   attachments?: Maybe<AttachmentConnection>;
   auditLog?: Maybe<AuditLog>;
-  auditLogDuplicates?: Maybe<AuditLogConnection>;
+  auditLogDuplicates?: Maybe<Array<AuditLogConnection>>;
   auditLogs?: Maybe<AuditLogConnection>;
   billingPortalSession: SessionEntity;
   blocklist?: Maybe<Blocklist>;
-  blocklistDuplicates?: Maybe<BlocklistConnection>;
+  blocklistDuplicates?: Maybe<Array<BlocklistConnection>>;
   blocklists?: Maybe<BlocklistConnection>;
   calendarChannel?: Maybe<CalendarChannel>;
-  calendarChannelDuplicates?: Maybe<CalendarChannelConnection>;
+  calendarChannelDuplicates?: Maybe<Array<CalendarChannelConnection>>;
   calendarChannelEventAssociation?: Maybe<CalendarChannelEventAssociation>;
-  calendarChannelEventAssociationDuplicates?: Maybe<CalendarChannelEventAssociationConnection>;
+  calendarChannelEventAssociationDuplicates?: Maybe<Array<CalendarChannelEventAssociationConnection>>;
   calendarChannelEventAssociations?: Maybe<CalendarChannelEventAssociationConnection>;
   calendarChannels?: Maybe<CalendarChannelConnection>;
   calendarEvent?: Maybe<CalendarEvent>;
-  calendarEventDuplicates?: Maybe<CalendarEventConnection>;
+  calendarEventDuplicates?: Maybe<Array<CalendarEventConnection>>;
   calendarEventParticipant?: Maybe<CalendarEventParticipant>;
-  calendarEventParticipantDuplicates?: Maybe<CalendarEventParticipantConnection>;
+  calendarEventParticipantDuplicates?: Maybe<Array<CalendarEventParticipantConnection>>;
   calendarEventParticipants?: Maybe<CalendarEventParticipantConnection>;
   calendarEvents?: Maybe<CalendarEventConnection>;
   checkUserExists: UserExists;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
   comment?: Maybe<Comment>;
-  commentDuplicates?: Maybe<CommentConnection>;
+  commentDuplicates?: Maybe<Array<CommentConnection>>;
   comments?: Maybe<CommentConnection>;
   companies?: Maybe<CompanyConnection>;
   company?: Maybe<Company>;
-  companyDuplicates?: Maybe<CompanyConnection>;
+  companyDuplicates?: Maybe<Array<CompanyConnection>>;
   connectedAccount?: Maybe<ConnectedAccount>;
-  connectedAccountDuplicates?: Maybe<ConnectedAccountConnection>;
+  connectedAccountDuplicates?: Maybe<Array<ConnectedAccountConnection>>;
   connectedAccounts?: Maybe<ConnectedAccountConnection>;
   currentUser: User;
   currentWorkspace: Workspace;
   favorite?: Maybe<Favorite>;
-  favoriteDuplicates?: Maybe<FavoriteConnection>;
+  favoriteDuplicates?: Maybe<Array<FavoriteConnection>>;
   favorites?: Maybe<FavoriteConnection>;
   findWorkspaceFromInviteHash: Workspace;
+  getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -5404,48 +5625,48 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   message?: Maybe<Message>;
   messageChannel?: Maybe<MessageChannel>;
-  messageChannelDuplicates?: Maybe<MessageChannelConnection>;
+  messageChannelDuplicates?: Maybe<Array<MessageChannelConnection>>;
   messageChannelMessageAssociation?: Maybe<MessageChannelMessageAssociation>;
-  messageChannelMessageAssociationDuplicates?: Maybe<MessageChannelMessageAssociationConnection>;
+  messageChannelMessageAssociationDuplicates?: Maybe<Array<MessageChannelMessageAssociationConnection>>;
   messageChannelMessageAssociations?: Maybe<MessageChannelMessageAssociationConnection>;
   messageChannels?: Maybe<MessageChannelConnection>;
-  messageDuplicates?: Maybe<MessageConnection>;
+  messageDuplicates?: Maybe<Array<MessageConnection>>;
   messageParticipant?: Maybe<MessageParticipant>;
-  messageParticipantDuplicates?: Maybe<MessageParticipantConnection>;
+  messageParticipantDuplicates?: Maybe<Array<MessageParticipantConnection>>;
   messageParticipants?: Maybe<MessageParticipantConnection>;
   messageThread?: Maybe<MessageThread>;
-  messageThreadDuplicates?: Maybe<MessageThreadConnection>;
+  messageThreadDuplicates?: Maybe<Array<MessageThreadConnection>>;
   messageThreads?: Maybe<MessageThreadConnection>;
   messages?: Maybe<MessageConnection>;
   object: Object;
   objects: ObjectConnection;
   opportunities?: Maybe<OpportunityConnection>;
   opportunity?: Maybe<Opportunity>;
-  opportunityDuplicates?: Maybe<OpportunityConnection>;
+  opportunityDuplicates?: Maybe<Array<OpportunityConnection>>;
   people?: Maybe<PersonConnection>;
   person?: Maybe<Person>;
-  personDuplicates?: Maybe<PersonConnection>;
+  personDuplicates?: Maybe<Array<PersonConnection>>;
   timelineActivities?: Maybe<TimelineActivityConnection>;
   timelineActivity?: Maybe<TimelineActivity>;
-  timelineActivityDuplicates?: Maybe<TimelineActivityConnection>;
+  timelineActivityDuplicates?: Maybe<Array<TimelineActivityConnection>>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   view?: Maybe<View>;
-  viewDuplicates?: Maybe<ViewConnection>;
+  viewDuplicates?: Maybe<Array<ViewConnection>>;
   viewField?: Maybe<ViewField>;
-  viewFieldDuplicates?: Maybe<ViewFieldConnection>;
+  viewFieldDuplicates?: Maybe<Array<ViewFieldConnection>>;
   viewFields?: Maybe<ViewFieldConnection>;
   viewFilter?: Maybe<ViewFilter>;
-  viewFilterDuplicates?: Maybe<ViewFilterConnection>;
+  viewFilterDuplicates?: Maybe<Array<ViewFilterConnection>>;
   viewFilters?: Maybe<ViewFilterConnection>;
   viewSort?: Maybe<ViewSort>;
-  viewSortDuplicates?: Maybe<ViewSortConnection>;
+  viewSortDuplicates?: Maybe<Array<ViewSortConnection>>;
   viewSorts?: Maybe<ViewSortConnection>;
   views?: Maybe<ViewConnection>;
   webhook?: Maybe<Webhook>;
-  webhookDuplicates?: Maybe<WebhookConnection>;
+  webhookDuplicates?: Maybe<Array<WebhookConnection>>;
   webhooks?: Maybe<WebhookConnection>;
   workspaceMember?: Maybe<WorkspaceMember>;
-  workspaceMemberDuplicates?: Maybe<WorkspaceMemberConnection>;
+  workspaceMemberDuplicates?: Maybe<Array<WorkspaceMemberConnection>>;
   workspaceMembers?: Maybe<WorkspaceMemberConnection>;
 };
 
@@ -5457,7 +5678,7 @@ export type QueryActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityOrderByInput>>>;
 };
 
 
@@ -5467,8 +5688,8 @@ export type QueryActivityArgs = {
 
 
 export type QueryActivityDuplicatesArgs = {
-  data?: InputMaybe<ActivityCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ActivityCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5478,8 +5699,8 @@ export type QueryActivityTargetArgs = {
 
 
 export type QueryActivityTargetDuplicatesArgs = {
-  data?: InputMaybe<ActivityTargetCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ActivityTargetCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5490,7 +5711,7 @@ export type QueryActivityTargetsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityTargetOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityTargetOrderByInput>>>;
 };
 
 
@@ -5500,8 +5721,8 @@ export type QueryApiKeyArgs = {
 
 
 export type QueryApiKeyDuplicatesArgs = {
-  data?: InputMaybe<ApiKeyCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ApiKeyCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5512,7 +5733,7 @@ export type QueryApiKeysArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ApiKeyOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ApiKeyOrderByInput>>>;
 };
 
 
@@ -5522,8 +5743,8 @@ export type QueryAttachmentArgs = {
 
 
 export type QueryAttachmentDuplicatesArgs = {
-  data?: InputMaybe<AttachmentCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<AttachmentCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5534,7 +5755,7 @@ export type QueryAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -5544,8 +5765,8 @@ export type QueryAuditLogArgs = {
 
 
 export type QueryAuditLogDuplicatesArgs = {
-  data?: InputMaybe<AuditLogCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<AuditLogCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5556,7 +5777,7 @@ export type QueryAuditLogsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AuditLogOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AuditLogOrderByInput>>>;
 };
 
 
@@ -5571,8 +5792,8 @@ export type QueryBlocklistArgs = {
 
 
 export type QueryBlocklistDuplicatesArgs = {
-  data?: InputMaybe<BlocklistCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<BlocklistCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5583,7 +5804,7 @@ export type QueryBlocklistsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<BlocklistOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<BlocklistOrderByInput>>>;
 };
 
 
@@ -5593,8 +5814,8 @@ export type QueryCalendarChannelArgs = {
 
 
 export type QueryCalendarChannelDuplicatesArgs = {
-  data?: InputMaybe<CalendarChannelCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CalendarChannelCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5604,8 +5825,8 @@ export type QueryCalendarChannelEventAssociationArgs = {
 
 
 export type QueryCalendarChannelEventAssociationDuplicatesArgs = {
-  data?: InputMaybe<CalendarChannelEventAssociationCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5616,7 +5837,7 @@ export type QueryCalendarChannelEventAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarChannelEventAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelEventAssociationOrderByInput>>>;
 };
 
 
@@ -5627,7 +5848,7 @@ export type QueryCalendarChannelsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarChannelOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarChannelOrderByInput>>>;
 };
 
 
@@ -5637,8 +5858,8 @@ export type QueryCalendarEventArgs = {
 
 
 export type QueryCalendarEventDuplicatesArgs = {
-  data?: InputMaybe<CalendarEventCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CalendarEventCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5648,8 +5869,8 @@ export type QueryCalendarEventParticipantArgs = {
 
 
 export type QueryCalendarEventParticipantDuplicatesArgs = {
-  data?: InputMaybe<CalendarEventParticipantCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CalendarEventParticipantCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5660,7 +5881,7 @@ export type QueryCalendarEventParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarEventParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarEventParticipantOrderByInput>>>;
 };
 
 
@@ -5671,7 +5892,7 @@ export type QueryCalendarEventsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarEventOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarEventOrderByInput>>>;
 };
 
 
@@ -5692,8 +5913,8 @@ export type QueryCommentArgs = {
 
 
 export type QueryCommentDuplicatesArgs = {
-  data?: InputMaybe<CommentCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CommentCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5704,7 +5925,7 @@ export type QueryCommentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CommentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CommentOrderByInput>>>;
 };
 
 
@@ -5715,7 +5936,7 @@ export type QueryCompaniesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CompanyOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CompanyOrderByInput>>>;
 };
 
 
@@ -5725,8 +5946,8 @@ export type QueryCompanyArgs = {
 
 
 export type QueryCompanyDuplicatesArgs = {
-  data?: InputMaybe<CompanyCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<CompanyCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5736,8 +5957,8 @@ export type QueryConnectedAccountArgs = {
 
 
 export type QueryConnectedAccountDuplicatesArgs = {
-  data?: InputMaybe<ConnectedAccountCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ConnectedAccountCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5748,7 +5969,7 @@ export type QueryConnectedAccountsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ConnectedAccountOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ConnectedAccountOrderByInput>>>;
 };
 
 
@@ -5758,8 +5979,8 @@ export type QueryFavoriteArgs = {
 
 
 export type QueryFavoriteDuplicatesArgs = {
-  data?: InputMaybe<FavoriteCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<FavoriteCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5770,7 +5991,7 @@ export type QueryFavoritesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FavoriteOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
 
@@ -5823,8 +6044,8 @@ export type QueryMessageChannelArgs = {
 
 
 export type QueryMessageChannelDuplicatesArgs = {
-  data?: InputMaybe<MessageChannelCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<MessageChannelCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5834,8 +6055,8 @@ export type QueryMessageChannelMessageAssociationArgs = {
 
 
 export type QueryMessageChannelMessageAssociationDuplicatesArgs = {
-  data?: InputMaybe<MessageChannelMessageAssociationCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5846,7 +6067,7 @@ export type QueryMessageChannelMessageAssociationsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelMessageAssociationOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelMessageAssociationOrderByInput>>>;
 };
 
 
@@ -5857,13 +6078,13 @@ export type QueryMessageChannelsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageChannelOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageChannelOrderByInput>>>;
 };
 
 
 export type QueryMessageDuplicatesArgs = {
-  data?: InputMaybe<MessageCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<MessageCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5873,8 +6094,8 @@ export type QueryMessageParticipantArgs = {
 
 
 export type QueryMessageParticipantDuplicatesArgs = {
-  data?: InputMaybe<MessageParticipantCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<MessageParticipantCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5885,7 +6106,7 @@ export type QueryMessageParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageParticipantOrderByInput>>>;
 };
 
 
@@ -5895,8 +6116,8 @@ export type QueryMessageThreadArgs = {
 
 
 export type QueryMessageThreadDuplicatesArgs = {
-  data?: InputMaybe<MessageThreadCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<MessageThreadCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5907,7 +6128,7 @@ export type QueryMessageThreadsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageThreadOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageThreadOrderByInput>>>;
 };
 
 
@@ -5918,7 +6139,7 @@ export type QueryMessagesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageOrderByInput>>>;
 };
 
 
@@ -5929,7 +6150,7 @@ export type QueryOpportunitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<OpportunityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<OpportunityOrderByInput>>>;
 };
 
 
@@ -5939,8 +6160,8 @@ export type QueryOpportunityArgs = {
 
 
 export type QueryOpportunityDuplicatesArgs = {
-  data?: InputMaybe<OpportunityCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<OpportunityCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5951,7 +6172,7 @@ export type QueryPeopleArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<PersonOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<PersonOrderByInput>>>;
 };
 
 
@@ -5961,8 +6182,8 @@ export type QueryPersonArgs = {
 
 
 export type QueryPersonDuplicatesArgs = {
-  data?: InputMaybe<PersonCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<PersonCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5973,7 +6194,7 @@ export type QueryTimelineActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TimelineActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<TimelineActivityOrderByInput>>>;
 };
 
 
@@ -5983,8 +6204,8 @@ export type QueryTimelineActivityArgs = {
 
 
 export type QueryTimelineActivityDuplicatesArgs = {
-  data?: InputMaybe<TimelineActivityCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<TimelineActivityCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -5999,8 +6220,8 @@ export type QueryViewArgs = {
 
 
 export type QueryViewDuplicatesArgs = {
-  data?: InputMaybe<ViewCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ViewCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6010,8 +6231,8 @@ export type QueryViewFieldArgs = {
 
 
 export type QueryViewFieldDuplicatesArgs = {
-  data?: InputMaybe<ViewFieldCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ViewFieldCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6022,7 +6243,7 @@ export type QueryViewFieldsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewFieldOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewFieldOrderByInput>>>;
 };
 
 
@@ -6032,8 +6253,8 @@ export type QueryViewFilterArgs = {
 
 
 export type QueryViewFilterDuplicatesArgs = {
-  data?: InputMaybe<ViewFilterCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ViewFilterCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6044,7 +6265,7 @@ export type QueryViewFiltersArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewFilterOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewFilterOrderByInput>>>;
 };
 
 
@@ -6054,8 +6275,8 @@ export type QueryViewSortArgs = {
 
 
 export type QueryViewSortDuplicatesArgs = {
-  data?: InputMaybe<ViewSortCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<ViewSortCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6066,7 +6287,7 @@ export type QueryViewSortsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewSortOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewSortOrderByInput>>>;
 };
 
 
@@ -6077,7 +6298,7 @@ export type QueryViewsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewOrderByInput>>>;
 };
 
 
@@ -6087,8 +6308,8 @@ export type QueryWebhookArgs = {
 
 
 export type QueryWebhookDuplicatesArgs = {
-  data?: InputMaybe<WebhookCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<WebhookCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6099,7 +6320,7 @@ export type QueryWebhooksArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<WebhookOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<WebhookOrderByInput>>>;
 };
 
 
@@ -6109,8 +6330,8 @@ export type QueryWorkspaceMemberArgs = {
 
 
 export type QueryWorkspaceMemberDuplicatesArgs = {
-  data?: InputMaybe<WorkspaceMemberCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
+  data?: InputMaybe<Array<InputMaybe<WorkspaceMemberCreateInput>>>;
+  ids?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
 };
 
 
@@ -6121,7 +6342,7 @@ export type QueryWorkspaceMembersArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<WorkspaceMemberOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<WorkspaceMemberOrderByInput>>>;
 };
 
 export type RawJsonFilter = {
@@ -6186,6 +6407,11 @@ export enum RemoteTableStatus {
   Synced = 'SYNCED'
 }
 
+export type SendInviteLink = {
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 export type Sentry = {
   dsn?: Maybe<Scalars['String']>;
   environment?: Maybe<Scalars['String']>;
@@ -6194,11 +6420,6 @@ export type Sentry = {
 
 export type SessionEntity = {
   url?: Maybe<Scalars['String']>;
-};
-
-export type SkipSyncEmailOnboardingStep = {
-  /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean'];
 };
 
 /** Sort Directions */
@@ -6229,13 +6450,30 @@ export type StringFilter = {
   startsWith?: InputMaybe<Scalars['String']>;
 };
 
+export enum SubscriptionInterval {
+  Day = 'Day',
+  Month = 'Month',
+  Week = 'Week',
+  Year = 'Year'
+}
+
+export enum SubscriptionStatus {
+  Active = 'Active',
+  Canceled = 'Canceled',
+  Incomplete = 'Incomplete',
+  IncompleteExpired = 'IncompleteExpired',
+  PastDue = 'PastDue',
+  Paused = 'Paused',
+  Trialing = 'Trialing',
+  Unpaid = 'Unpaid'
+}
+
 export type Support = {
   supportDriver: Scalars['String'];
   supportFrontChatId?: Maybe<Scalars['String']>;
 };
 
 export type Telemetry = {
-  anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
 };
 
@@ -6537,12 +6775,12 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['UUID'];
   lastName: Scalars['String'];
+  onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetToken?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']>;
-  state: UserState;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
@@ -6562,10 +6800,6 @@ export type UserExists = {
 
 export type UserMappingOptionsUser = {
   user?: Maybe<Scalars['String']>;
-};
-
-export type UserState = {
-  skipSyncEmailOnboardingStep?: Maybe<Scalars['Boolean']>;
 };
 
 export type UserWorkspace = {
@@ -6630,7 +6864,7 @@ export type ViewViewFieldsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewFieldOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewFieldOrderByInput>>>;
 };
 
 
@@ -6642,7 +6876,7 @@ export type ViewViewFiltersArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewFilterOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewFilterOrderByInput>>>;
 };
 
 
@@ -6654,7 +6888,7 @@ export type ViewViewSortsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ViewSortOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ViewSortOrderByInput>>>;
 };
 
 /** (System) Views */
@@ -7229,8 +7463,8 @@ export type Workspace = {
   id: Scalars['UUID'];
   inviteHash?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
-  subscriptionStatus: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+  workspaceMembersCount?: Maybe<Scalars['Float']>;
 };
 
 
@@ -7311,7 +7545,7 @@ export type WorkspaceMemberAccountOwnerForCompaniesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CompanyOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CompanyOrderByInput>>>;
 };
 
 
@@ -7323,7 +7557,7 @@ export type WorkspaceMemberAssignedActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityOrderByInput>>>;
 };
 
 
@@ -7335,7 +7569,7 @@ export type WorkspaceMemberAuditLogsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AuditLogOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AuditLogOrderByInput>>>;
 };
 
 
@@ -7347,7 +7581,7 @@ export type WorkspaceMemberAuthoredActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ActivityOrderByInput>>>;
 };
 
 
@@ -7359,7 +7593,7 @@ export type WorkspaceMemberAuthoredAttachmentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<AttachmentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<AttachmentOrderByInput>>>;
 };
 
 
@@ -7371,7 +7605,7 @@ export type WorkspaceMemberAuthoredCommentsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CommentOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CommentOrderByInput>>>;
 };
 
 
@@ -7383,7 +7617,7 @@ export type WorkspaceMemberBlocklistArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<BlocklistOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<BlocklistOrderByInput>>>;
 };
 
 
@@ -7395,7 +7629,7 @@ export type WorkspaceMemberCalendarEventParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<CalendarEventParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<CalendarEventParticipantOrderByInput>>>;
 };
 
 
@@ -7407,7 +7641,7 @@ export type WorkspaceMemberConnectedAccountsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<ConnectedAccountOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<ConnectedAccountOrderByInput>>>;
 };
 
 
@@ -7419,7 +7653,7 @@ export type WorkspaceMemberFavoritesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<FavoriteOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<FavoriteOrderByInput>>>;
 };
 
 
@@ -7431,7 +7665,7 @@ export type WorkspaceMemberMessageParticipantsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<MessageParticipantOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<MessageParticipantOrderByInput>>>;
 };
 
 
@@ -7443,7 +7677,7 @@ export type WorkspaceMemberTimelineActivitiesArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<TimelineActivityOrderByInput>;
+  orderBy?: InputMaybe<Array<InputMaybe<TimelineActivityOrderByInput>>>;
 };
 
 /** A workspace member */

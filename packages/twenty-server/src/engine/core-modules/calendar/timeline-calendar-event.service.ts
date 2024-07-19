@@ -7,9 +7,9 @@ import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modu
 import { TimelineCalendarEventsWithTotal } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { CalendarChannelVisibility } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
+import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
 @Injectable()
 export class TimelineCalendarEventService {
@@ -31,9 +31,7 @@ export class TimelineCalendarEventService {
     const calendarEventIds = await this.calendarEventRepository.find({
       where: {
         calendarEventParticipants: {
-          person: {
-            id: Any(personIds),
-          },
+          personId: Any(personIds),
         },
       },
       select: {
@@ -81,19 +79,19 @@ export class TimelineCalendarEventService {
       const participants = event.calendarEventParticipants.map(
         (participant) => ({
           calendarEventId: event.id,
-          personId: participant.person?.id,
-          workspaceMemberId: participant.workspaceMember?.id,
+          personId: participant.personId ?? null,
+          workspaceMemberId: participant.workspaceMemberId ?? null,
           firstName:
-            participant.person?.name.firstName ||
+            participant.person?.name?.firstName ||
             participant.workspaceMember?.name.firstName ||
             '',
           lastName:
-            participant.person?.name.lastName ||
+            participant.person?.name?.lastName ||
             participant.workspaceMember?.name.lastName ||
             '',
           displayName:
-            participant.person?.name.firstName ||
-            participant.person?.name.lastName ||
+            participant.person?.name?.firstName ||
+            participant.person?.name?.lastName ||
             participant.workspaceMember?.name.firstName ||
             participant.workspaceMember?.name.lastName ||
             '',
@@ -135,9 +133,7 @@ export class TimelineCalendarEventService {
   ): Promise<TimelineCalendarEventsWithTotal> {
     const personIds = await this.personRepository.find({
       where: {
-        company: {
-          id: companyId,
-        },
+        companyId,
       },
       select: {
         id: true,

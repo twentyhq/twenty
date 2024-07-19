@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 
 @Injectable()
@@ -17,7 +16,7 @@ export class MessageChannelMessageAssociationRepository {
     messageChannelId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity>[]> {
+  ): Promise<MessageChannelMessageAssociationWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -67,9 +66,9 @@ export class MessageChannelMessageAssociationRepository {
     );
   }
 
-  public async deleteByMessageParticipantHandleAndMessageChannelIdsAndRoles(
+  public async deleteByMessageParticipantHandleAndMessageChannelIdAndRoles(
     messageParticipantHandle: string,
-    messageChannelIds: string[],
+    messageChannelId: string,
     rolesToDelete: ('from' | 'to' | 'cc' | 'bcc')[],
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -79,21 +78,35 @@ export class MessageChannelMessageAssociationRepository {
 
     const isHandleDomain = messageParticipantHandle.startsWith('@');
 
+    const messageChannel =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."messageChannel"
+        WHERE "id" = $1`,
+        [messageChannelId],
+        workspaceId,
+        transactionManager,
+      );
+
+    const messageChannelHandle = messageChannel[0].handle;
+
     const messageChannelMessageAssociationIdsToDelete =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT "messageChannelMessageAssociation".id
       FROM ${dataSourceSchema}."messageChannelMessageAssociation" "messageChannelMessageAssociation"
       JOIN ${dataSourceSchema}."message" ON "messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
       JOIN ${dataSourceSchema}."messageParticipant" "messageParticipant" ON ${dataSourceSchema}."message"."id" = "messageParticipant"."messageId"
-      WHERE "messageParticipant"."handle" ${
-        isHandleDomain ? 'ILIKE' : '='
-      } $1 AND "messageParticipant"."role" = ANY($2) AND "messageChannelMessageAssociation"."messageChannelId" = ANY($3)`,
+      WHERE "messageParticipant"."handle" != $1
+      AND "messageParticipant"."handle" ${isHandleDomain ? '~*' : '='} $2
+      AND "messageParticipant"."role" = ANY($3)
+      AND "messageChannelMessageAssociation"."messageChannelId" = $4`,
         [
+          messageChannelHandle,
           isHandleDomain
-            ? `%${messageParticipantHandle}`
+            ? // eslint-disable-next-line no-useless-escape
+              `.+@(.+\.)?${messageParticipantHandle.slice(1)}`
             : messageParticipantHandle,
           rolesToDelete,
-          messageChannelIds,
+          messageChannelId,
         ],
         workspaceId,
         transactionManager,
@@ -116,7 +129,7 @@ export class MessageChannelMessageAssociationRepository {
     messageChannelIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity>[]> {
+  ): Promise<MessageChannelMessageAssociationWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -169,7 +182,7 @@ export class MessageChannelMessageAssociationRepository {
     messageThreadExternalIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity>[]> {
+  ): Promise<MessageChannelMessageAssociationWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -186,7 +199,7 @@ export class MessageChannelMessageAssociationRepository {
     messageThreadExternalId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity> | null> {
+  ): Promise<MessageChannelMessageAssociationWorkspaceEntity | null> {
     const existingMessageChannelMessageAssociations =
       await this.getByMessageThreadExternalIds(
         [messageThreadExternalId],
@@ -208,7 +221,7 @@ export class MessageChannelMessageAssociationRepository {
     messageIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity>[]> {
+  ): Promise<MessageChannelMessageAssociationWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -225,7 +238,7 @@ export class MessageChannelMessageAssociationRepository {
     messageThreadId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity>[]> {
+  ): Promise<MessageChannelMessageAssociationWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

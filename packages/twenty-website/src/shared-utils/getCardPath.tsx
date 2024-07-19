@@ -16,7 +16,7 @@ export const getCardPath = (
   if (isPlayground.includes(card.fileName)) {
     const apiType = card.fileName.includes('rest') ? 'rest-api' : 'graphql';
     const apiName = card.fileName.includes('core') ? 'core' : 'metadata';
-    return `${basePath}/${apiType}/${apiName}`;
+    return `/developers/${apiType}/${apiName}`;
   } else if (card.fileName.includes('storybook')) {
     return 'https://storybook.twenty.com';
   } else if (card.fileName.includes('components')) {
@@ -24,7 +24,7 @@ export const getCardPath = (
   } else {
     if (sectionName) {
       return card.numberOfFiles > 1
-        ? `${basePath}/section/${sectionName}/${card.fileName}`
+        ? `${basePath}section/${sectionName}/${card.fileName}`
         : `${basePath}${card.fileName}`;
     } else {
       return card.numberOfFiles > 1 && !isSection

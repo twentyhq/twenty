@@ -56,7 +56,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
-  properties: JSON;
+  properties: JSON | null;
 
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.context,
@@ -67,7 +67,7 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
-  context: JSON;
+  context: JSON | null;
 
   @WorkspaceField({
     standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.objectName,
@@ -86,5 +86,5 @@ export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
-  recordId: string;
+  recordId: string | null;
 }

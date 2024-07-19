@@ -7,11 +7,11 @@ import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/a
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.comment,
@@ -22,7 +22,6 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
   icon: 'IconMessageCircle',
 })
 @WorkspaceIsSystem()
-@WorkspaceIsNotAuditLogged()
 export class CommentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMMENT_STANDARD_FIELD_IDS.body,
@@ -39,11 +38,13 @@ export class CommentWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Author',
     description: 'Comment author',
     icon: 'IconCircleUser',
-    joinColumn: 'authorId',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'authoredComments',
   })
   author: Relation<WorkspaceMemberWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('author')
+  authorId: string;
 
   @WorkspaceRelation({
     standardId: COMMENT_STANDARD_FIELD_IDS.activity,
@@ -51,9 +52,11 @@ export class CommentWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Activity',
     description: 'Comment activity',
     icon: 'IconNotes',
-    joinColumn: 'activityId',
     inverseSideTarget: () => ActivityWorkspaceEntity,
     inverseSideFieldKey: 'comments',
   })
   activity: Relation<ActivityWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('activity')
+  activityId: string;
 }

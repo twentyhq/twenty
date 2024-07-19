@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
@@ -13,9 +15,12 @@ import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/is
 import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/isFieldRawJsonValue';
+import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
+import { isFieldRelationToOneValue } from '@/object-record/record-field/types/guards/isFieldRelationToOneValue';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
@@ -34,8 +39,6 @@ import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldPhoneValue } from '../types/guards/isFieldPhoneValue';
 import { isFieldRating } from '../types/guards/isFieldRating';
 import { isFieldRatingValue } from '../types/guards/isFieldRatingValue';
-import { isFieldRelation } from '../types/guards/isFieldRelation';
-import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldTextValue } from '../types/guards/isFieldTextValue';
 
@@ -51,9 +54,10 @@ export const usePersistField = () => {
   const persistField = useRecoilCallback(
     ({ set }) =>
       (valueToPersist: unknown) => {
-        const fieldIsRelation =
-          isFieldRelation(fieldDefinition) &&
-          isFieldRelationValue(valueToPersist);
+        const fieldIsRelationToOneObject =
+          isFieldRelationToOneObject(
+            fieldDefinition as FieldDefinition<FieldRelationMetadata>,
+          ) && isFieldRelationToOneValue(valueToPersist);
 
         const fieldIsText =
           isFieldText(fieldDefinition) && isFieldTextValue(valueToPersist);
@@ -78,7 +82,7 @@ export const usePersistField = () => {
           isFieldBoolean(fieldDefinition) &&
           isFieldBooleanValue(valueToPersist);
 
-        const fieldIsProbability =
+        const fieldIsRating =
           isFieldRating(fieldDefinition) && isFieldRatingValue(valueToPersist);
 
         const fieldIsNumber =
@@ -111,11 +115,11 @@ export const usePersistField = () => {
           isFieldRawJsonValue(valueToPersist);
 
         const isValuePersistable =
-          fieldIsRelation ||
+          fieldIsRelationToOneObject ||
           fieldIsText ||
           fieldIsBoolean ||
           fieldIsEmail ||
-          fieldIsProbability ||
+          fieldIsRating ||
           fieldIsNumber ||
           fieldIsDateTime ||
           fieldIsDate ||
@@ -136,13 +140,14 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          if (fieldIsRelation) {
+          if (fieldIsRelationToOneObject) {
+            const value = valueToPersist as EntityForSelect;
             updateRecord?.({
               variables: {
                 where: { id: entityId },
                 updateOneRecordInput: {
-                  [fieldName]: valueToPersist,
-                  [`${fieldName}Id`]: valueToPersist?.id ?? null,
+                  [fieldName]: value,
+                  [`${fieldName}Id`]: value?.id ?? null,
                 },
               },
             });

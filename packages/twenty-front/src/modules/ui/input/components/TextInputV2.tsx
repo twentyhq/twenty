@@ -1,16 +1,15 @@
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
   ChangeEvent,
   FocusEventHandler,
   ForwardedRef,
-  forwardRef,
   InputHTMLAttributes,
+  forwardRef,
   useRef,
   useState,
 } from 'react';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { IconAlertCircle, IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
-
+import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 const StyledContainer = styled.div<
@@ -35,10 +34,12 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledInput = styled.input<
-  Pick<TextInputV2ComponentProps, 'fullWidth' | 'LeftIcon'>
+  Pick<TextInputV2ComponentProps, 'fullWidth' | 'LeftIcon' | 'error'>
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border: 1px solid
+    ${({ theme, error }) =>
+      error ? theme.border.color.danger : theme.border.color.medium};
   border-bottom-left-radius: ${({ theme, LeftIcon }) =>
     !LeftIcon && theme.border.radius.sm};
   border-right: none;
@@ -86,10 +87,14 @@ const StyledLeftIconContainer = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTrailingIconContainer = styled.div`
+const StyledTrailingIconContainer = styled.div<
+  Pick<TextInputV2ComponentProps, 'error'>
+>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border: 1px solid
+    ${({ theme, error }) =>
+      error ? theme.border.color.danger : theme.border.color.medium};
   border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
   border-left: none;
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
@@ -117,6 +122,7 @@ export type TextInputV2ComponentProps = Omit<
   onChange?: (text: string) => void;
   fullWidth?: boolean;
   error?: string;
+  noErrorHelper?: boolean;
   RightIcon?: IconComponent;
   LeftIcon?: IconComponent;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -134,6 +140,7 @@ const TextInputV2Component = (
     onKeyDown,
     fullWidth,
     error,
+    noErrorHelper = false,
     required,
     type,
     autoFocus,
@@ -143,6 +150,7 @@ const TextInputV2Component = (
     RightIcon,
     LeftIcon,
     autoComplete,
+    maxLength,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
@@ -180,14 +188,18 @@ const TextInputV2Component = (
             onChange?.(event.target.value);
           }}
           onKeyDown={onKeyDown}
-          {...{ autoFocus, disabled, placeholder, required, value, LeftIcon }}
+          {...{
+            autoFocus,
+            disabled,
+            placeholder,
+            required,
+            value,
+            LeftIcon,
+            maxLength,
+            error,
+          }}
         />
-        <StyledTrailingIconContainer>
-          {error && (
-            <StyledTrailingIcon>
-              <IconAlertCircle size={16} color={theme.color.red} />
-            </StyledTrailingIcon>
-          )}
+        <StyledTrailingIconContainer {...{ error }}>
           {!error && type === INPUT_TYPE_PASSWORD && (
             <StyledTrailingIcon
               onClick={handleTogglePasswordVisibility}
@@ -207,7 +219,9 @@ const TextInputV2Component = (
           )}
         </StyledTrailingIconContainer>
       </StyledInputContainer>
-      {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
+      {error && !noErrorHelper && (
+        <StyledErrorHelper>{error}</StyledErrorHelper>
+      )}
     </StyledContainer>
   );
 };

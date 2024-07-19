@@ -1,7 +1,11 @@
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { CompositeProperty } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { pascalCase } from 'src/utils/pascal-case';
 
@@ -29,8 +33,9 @@ export function computeColumnName<T extends FieldMetadataType | 'default'>(
   }
 
   if (isCompositeFieldMetadataType(fieldMetadataOrFieldName.type)) {
-    throw new Error(
-      `Cannot compute column name for composite field metadata type: ${fieldMetadataOrFieldName.type}`,
+    throw new FieldMetadataException(
+      `Cannot compute composite column name for field: ${fieldMetadataOrFieldName.type}`,
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
     );
   }
 
@@ -61,8 +66,9 @@ export function computeCompositeColumnName<
   }
 
   if (!isCompositeFieldMetadataType(fieldMetadataOrFieldName.type)) {
-    throw new Error(
+    throw new FieldMetadataException(
       `Cannot compute composite column name for non-composite field metadata type: ${fieldMetadataOrFieldName.type}`,
+      FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
     );
   }
 

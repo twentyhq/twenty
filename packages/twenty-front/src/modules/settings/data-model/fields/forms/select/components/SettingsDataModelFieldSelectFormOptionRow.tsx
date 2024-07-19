@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -13,6 +13,7 @@ import {
 import { v4 } from 'uuid';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/select/utils/getOptionValueFromLabel';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -31,6 +32,7 @@ type SettingsDataModelFieldSelectFormOptionRowProps = {
   onSetAsDefault?: () => void;
   onRemoveAsDefault?: () => void;
   option: FieldMetadataItemOption;
+  focused?: boolean;
 };
 
 const StyledRow = styled.div`
@@ -63,18 +65,30 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   onSetAsDefault,
   onRemoveAsDefault,
   option,
+  focused,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const theme = useTheme();
 
   const dropdownIds = useMemo(() => {
     const baseScopeId = `select-field-option-row-${v4()}`;
-    return { color: `${baseScopeId}-color`, actions: `${baseScopeId}-actions` };
+    return {
+      color: `${baseScopeId}-color`,
+      actions: `${baseScopeId}-actions`,
+    };
   }, []);
 
   const { closeDropdown: closeColorDropdown } = useDropdown(dropdownIds.color);
   const { closeDropdown: closeActionsDropdown } = useDropdown(
     dropdownIds.actions,
   );
+
+  useEffect(() => {
+    if (focused === true) {
+      inputRef.current?.focus();
+    }
+  }, [focused]);
 
   return (
     <StyledRow className={className}>
@@ -109,11 +123,18 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         }
       />
       <StyledOptionInput
+        ref={inputRef}
+        disableHotkeys
         value={option.label}
         onChange={(label) =>
-          onChange({ ...option, label, value: getOptionValueFromLabel(label) })
+          onChange({
+            ...option,
+            label,
+            value: getOptionValueFromLabel(label),
+          })
         }
         RightIcon={isDefault ? IconCheck : undefined}
+        maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
       />
       <Dropdown
         dropdownId={dropdownIds.actions}

@@ -19,9 +19,6 @@ export class ClientConfigResolver {
       },
       telemetry: {
         enabled: this.environmentService.get('TELEMETRY_ENABLED'),
-        anonymizationEnabled: this.environmentService.get(
-          'TELEMETRY_ANONYMIZATION_ENABLED',
-        ),
       },
       billing: {
         isBillingEnabled: this.environmentService.get('IS_BILLING_ENABLED'),
@@ -49,6 +46,11 @@ export class ClientConfigResolver {
         siteKey: this.environmentService.get('CAPTCHA_SITE_KEY'),
       },
       chromeExtensionId: this.environmentService.get('CHROME_EXTENSION_ID'),
+      api: {
+        mutationMaximumAffectedRecords: this.environmentService.get(
+          'MUTATION_MAXIMUM_AFFECTED_RECORDS',
+        ),
+      },
     };
 
     return Promise.resolve(clientConfig);

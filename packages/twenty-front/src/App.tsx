@@ -48,13 +48,12 @@ import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
 import { CreateProfile } from '~/pages/onboarding/CreateProfile';
 import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
+import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
-import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/SettingsAccountsCalendarsSettings';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
-import { SettingsAccountsEmailsInboxSettings } from '~/pages/settings/accounts/SettingsAccountsEmailsInboxSettings';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
@@ -143,6 +142,7 @@ const createRouter = (isBillingEnabled?: boolean) =>
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
           <Route path={AppPath.SyncEmails} element={<SyncEmails />} />
+          <Route path={AppPath.InviteTeam} element={<InviteTeam />} />
           <Route path={AppPath.PlanRequired} element={<ChooseYourPlan />} />
           <Route
             path={AppPath.PlanRequiredSuccess}
@@ -179,16 +179,8 @@ const createRouter = (isBillingEnabled?: boolean) =>
                   element={<SettingsAccountsCalendars />}
                 />
                 <Route
-                  path={SettingsPath.AccountsCalendarsSettings}
-                  element={<SettingsAccountsCalendarsSettings />}
-                />
-                <Route
                   path={SettingsPath.AccountsEmails}
                   element={<SettingsAccountsEmails />}
-                />
-                <Route
-                  path={SettingsPath.AccountsEmailsInboxSettings}
-                  element={<SettingsAccountsEmailsInboxSettings />}
                 />
                 <Route
                   path={SettingsPath.Billing}

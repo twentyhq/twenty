@@ -10,7 +10,11 @@ export enum CurrencyCode {
   USD = 'USD',
   NOK = 'NOK',
   SEK = 'SEK',
+  BHT = 'BHT',
   MAD = 'MAD',
   QAR = 'QAR',
   AED = 'AED',
+  KRW = 'KRW',
+  BRL = 'BRL',
+  AUD = 'AUD',
 }

@@ -6,23 +6,9 @@ import {
   displayedExportProgress,
   download,
   generateCsv,
-  sleep,
 } from '../useExportTableData';
 
 jest.useFakeTimers();
-
-describe('sleep', () => {
-  it('waits the provided number of milliseconds', async () => {
-    const spy = jest.fn();
-    sleep(1000).then(spy);
-
-    jest.advanceTimersByTime(999);
-    expect(spy).not.toHaveBeenCalled();
-    jest.advanceTimersByTime(1);
-    await Promise.resolve(); // let queued promises execute
-    expect(spy).toHaveBeenCalledTimes(1);
-  });
-});
 
 describe('download', () => {
   it('creates a download link and clicks it', () => {
@@ -54,6 +40,7 @@ describe('generateCsv', () => {
     ] as ColumnDefinition<FieldMetadata>[];
     const rows = [
       {
+        id: '1',
         bar: 'another field',
         empty: null,
         foo: 'some field',
@@ -62,8 +49,8 @@ describe('generateCsv', () => {
       },
     ];
     const csv = generateCsv({ columns, rows });
-    expect(csv).toEqual(`Foo,Empty,Nested Foo,Nested Nested,Relation
-some field,,foo,nested,a relation`);
+    expect(csv).toEqual(`Id,Foo,Empty,Nested Foo,Nested Nested,Relation
+1,some field,,foo,nested,a relation`);
   });
 });
 
@@ -76,6 +63,7 @@ describe('csvDownloader', () => {
         { id: 2, name: 'Alice' },
       ],
       columns: [],
+      objectNameSingular: '',
     };
 
     const link = document.createElement('a');

@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import {
   H2Title,
@@ -316,8 +316,7 @@ export const SettingsObjectDetail = () => {
                       ActionIcon={
                         <SettingsObjectFieldInactiveActionDropdown
                           isCustomField={!!deactivatedMetadataField.isCustom}
-                          fieldType={deactivatedMetadataField.type}
-                          scopeKey={deactivatedMetadataField.id}
+                            scopeKey={deactivatedMetadataField.id}
                           onActivate={() =>
                             activateMetadataField(deactivatedMetadataField)
                           }

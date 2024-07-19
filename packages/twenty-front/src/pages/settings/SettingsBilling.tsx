@@ -10,10 +10,9 @@ import {
   IconCurrencyDollar,
 } from 'twenty-ui';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
+import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat';
 import { AppPath } from '@/types/AppPath';
@@ -24,8 +23,11 @@ import { Button } from '@/ui/input/button/components/Button';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
+import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
+  OnboardingStatus,
+  SubscriptionInterval,
+  SubscriptionStatus,
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
 } from '~/generated/graphql';
@@ -40,21 +42,21 @@ const StyledInvisibleChat = styled.div`
 `;
 
 type SwitchInfo = {
-  newInterval: string;
+  newInterval: SubscriptionInterval;
   to: string;
   from: string;
   impact: string;
 };
 
 const MONTHLY_SWITCH_INFO: SwitchInfo = {
-  newInterval: 'year',
+  newInterval: SubscriptionInterval.Year,
   to: 'to yearly',
   from: 'from monthly to yearly',
   impact: 'You will be charged immediately for the full year.',
 };
 
 const YEARLY_SWITCH_INFO: SwitchInfo = {
-  newInterval: 'month',
+  newInterval: SubscriptionInterval.Month,
   to: 'to monthly',
   from: 'from yearly to monthly',
   impact: 'Your credit balance will be used to pay the monthly bills.',
@@ -68,10 +70,12 @@ const SWITCH_INFOS = {
 export const SettingsBilling = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
+  const subscriptionStatus = useSubscriptionStatus();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const switchingInfo =
-    currentWorkspace?.currentBillingSubscription?.interval === 'year'
+    currentWorkspace?.currentBillingSubscription?.interval ===
+    SubscriptionInterval.Year
       ? SWITCH_INFOS.year
       : SWITCH_INFOS.month;
   const [isSwitchingIntervalModalOpen, setIsSwitchingIntervalModalOpen] =
@@ -94,14 +98,15 @@ export const SettingsBilling = () => {
     onboardingStatus !== OnboardingStatus.Completed;
 
   const displayPaymentFailInfo =
-    onboardingStatus === OnboardingStatus.PastDue ||
-    onboardingStatus === OnboardingStatus.Unpaid;
+    subscriptionStatus === SubscriptionStatus.PastDue ||
+    subscriptionStatus === SubscriptionStatus.Unpaid;
 
   const displaySubscriptionCanceledInfo =
-    onboardingStatus === OnboardingStatus.Canceled;
+    subscriptionStatus === SubscriptionStatus.Canceled;
 
   const displaySubscribeInfo =
-    onboardingStatus === OnboardingStatus.CompletedWithoutSubscription;
+    onboardingStatus === OnboardingStatus.Completed &&
+    !isDefined(subscriptionStatus);
 
   const openBillingPortal = () => {
     if (isDefined(data) && isDefined(data.billingPortalSession.url)) {
@@ -153,22 +158,20 @@ export const SettingsBilling = () => {
           />
         )}
         {displaySubscriptionCanceledInfo && (
-          <UndecoratedLink to={AppPath.PlanRequired}>
-            <Info
-              text={'Subscription canceled. Please start a new one'}
-              buttonTitle={'Subscribe'}
-              accent={'danger'}
-            />
-          </UndecoratedLink>
+          <Info
+            text={'Subscription canceled. Please start a new one'}
+            buttonTitle={'Subscribe'}
+            accent={'danger'}
+            to={AppPath.PlanRequired}
+          />
         )}
         {displaySubscribeInfo ? (
-          <UndecoratedLink to={AppPath.PlanRequired}>
-            <Info
-              text={'Your workspace does not have an active subscription'}
-              buttonTitle={'Subscribe'}
-              accent={'danger'}
-            />
-          </UndecoratedLink>
+          <Info
+            text={'Your workspace does not have an active subscription'}
+            buttonTitle={'Subscribe'}
+            accent={'danger'}
+            to={AppPath.PlanRequired}
+          />
         ) : (
           <>
             <Section>

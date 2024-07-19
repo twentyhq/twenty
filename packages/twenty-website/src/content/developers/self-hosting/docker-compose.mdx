@@ -31,6 +31,10 @@ FILE_TOKEN_SECRET=replace_me_with_a_random_string_refresh
 5. Run the command `docker-compose up -d`
 6. Go to http://localhost:3000 and see your docker instance.
 
+## System requirements 
+
+Please use an environment with at least 2GB or RAM or one of the processes could crash due to memory issues.
+
 ## Troubleshooting
 
 #### Not able to login
@@ -50,3 +54,5 @@ Complete step three and four with:
 #### Persistence
 
 By default the docker-compose will create volumes for the Database and local storage of the Server. Note that the containers will not persist data if your server is not configured to be stateful (for example Heroku). You probably want to configure a special stateful resource for this purpose.
+
+<ArticleEditContent></ArticleEditContent>

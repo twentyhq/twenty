@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 
 const expectedQueryTemplate = `
-  query FindManyPeople($filter: PersonFilterInput, $orderBy: PersonOrderByInput, $lastCursor: String, $limit: Int) {
+  query FindManyPeople($filter: PersonFilterInput, $orderBy: [PersonOrderByInput], $lastCursor: String, $limit: Int) {
     people(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor) {
       edges {
         node {
@@ -36,6 +36,7 @@ const expectedQueryTemplate = `
       }
       pageInfo {
         hasNextPage
+        hasPreviousPage
         startCursor
         endCursor
       }

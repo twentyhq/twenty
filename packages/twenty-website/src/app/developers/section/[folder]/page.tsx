@@ -1,11 +1,10 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 import DocsMain from '@/app/_components/docs/DocsMain';
 import { getDocsArticles } from '@/content/user-guide/constants/getDocsArticles';
 import { fetchArticleFromSlug } from '@/shared-utils/fetchArticleFromSlug';
 import { formatSlug } from '@/shared-utils/formatSlug';
-
-export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -29,5 +28,11 @@ export default async function DocsSlug({
   const filePath = `src/content/developers/${params.folder}/`;
   const docsArticleCards = getDocsArticles(filePath);
   const isSection = true;
+  const hasOnlyEmptySections = docsArticleCards.every(
+    (article) => article.topic === 'Empty Section',
+  );
+  if (!docsArticleCards || hasOnlyEmptySections) {
+    notFound();
+  }
   return <DocsMain docsArticleCards={docsArticleCards} isSection={isSection} />;
 }

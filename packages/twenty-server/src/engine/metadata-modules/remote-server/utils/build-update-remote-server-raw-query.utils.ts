@@ -1,10 +1,12 @@
-import { BadRequestException } from '@nestjs/common';
-
 import {
   ForeignDataWrapperOptions,
   RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import {
+  RemoteServerException,
+  RemoteServerExceptionCode,
+} from 'src/engine/metadata-modules/remote-server/remote-server.exception';
 import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
 
 export type DeepPartial<T> = {
@@ -49,7 +51,10 @@ export const buildUpdateRemoteServerRawQuery = (
   }
 
   if (options.length < 1) {
-    throw new BadRequestException('No fields to update');
+    throw new RemoteServerException(
+      'No fields to update',
+      RemoteServerExceptionCode.INVALID_REMOTE_SERVER_INPUT,
+    );
   }
 
   const rawQuery = `UPDATE metadata."remoteServer" SET ${options.join(

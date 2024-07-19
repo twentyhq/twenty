@@ -4,7 +4,8 @@ import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContain
 
 export const RecordTableCellDisplayMode = ({
   children,
-}: React.PropsWithChildren<unknown>) => {
+  softFocus,
+}: React.PropsWithChildren<{ softFocus?: boolean }>) => {
   const isEmpty = useIsFieldEmpty();
 
   if (isEmpty) {
@@ -12,7 +13,7 @@ export const RecordTableCellDisplayMode = ({
   }
 
   return (
-    <RecordTableCellDisplayContainer>
+    <RecordTableCellDisplayContainer softFocus={softFocus}>
       {children}
     </RecordTableCellDisplayContainer>
   );

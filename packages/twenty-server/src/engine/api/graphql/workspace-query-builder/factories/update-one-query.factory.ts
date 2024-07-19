@@ -20,7 +20,7 @@ export class UpdateOneQueryFactory {
   ) {}
 
   async create<Record extends IRecord = IRecord>(
-    args: UpdateOneResolverArgs<Record>,
+    args: UpdateOneResolverArgs<Partial<Record>>,
     options: WorkspaceQueryBuilderOptions,
   ) {
     const fieldsString = await this.fieldsStringFactory.create(
@@ -35,6 +35,7 @@ export class UpdateOneQueryFactory {
 
     const argsData = {
       ...computedArgs.data,
+      id: undefined, // do not allow updating an existing object's id
       updatedAt: new Date().toISOString(),
     };
 

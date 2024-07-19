@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { ParticipantWithId } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
 
@@ -17,7 +16,7 @@ export class MessageParticipantRepository {
     handles: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageParticipantWorkspaceEntity>[]> {
+  ): Promise<MessageParticipantWorkspaceEntity[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -40,6 +39,23 @@ export class MessageParticipantRepository {
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."messageParticipant" SET "personId" = $1 WHERE "id" = ANY($2)`,
+      [personId, participantIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateParticipantsPersonIdAndReturn(
+    participantIds: string[],
+    personId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageParticipant" SET "personId" = $1 WHERE "id" = ANY($2) RETURNING *`,
       [personId, participantIds],
       workspaceId,
       transactionManager,

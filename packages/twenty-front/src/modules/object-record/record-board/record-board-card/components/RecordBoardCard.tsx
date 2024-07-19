@@ -1,10 +1,9 @@
+import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { EntityChipVariant, IconEye } from 'twenty-ui';
+import { AvatarChipVariant, IconEye } from 'twenty-ui';
 
-import { RecordChip } from '@/object-record/components/RecordChip';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -14,6 +13,7 @@ import {
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
+import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
@@ -23,7 +23,6 @@ import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
-import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
@@ -67,7 +66,7 @@ const StyledBoardCardWrapper = styled.div`
   width: 100%;
 `;
 
-const StyledBoardCardHeader = styled.div<{
+export const StyledBoardCardHeader = styled.div<{
   showCompactView: boolean;
 }>`
   align-items: center;
@@ -90,7 +89,7 @@ const StyledBoardCardHeader = styled.div<{
   }
 `;
 
-const StyledBoardCardBody = styled.div`
+export const StyledBoardCardBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(0.5)};
@@ -118,6 +117,7 @@ const StyledFieldContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: fit-content;
+  max-width: 100%;
 `;
 
 const StyledCompactIconContainer = styled.div`
@@ -200,7 +200,6 @@ export const RecordBoardCard = () => {
   };
 
   const scrollWrapperRef = useContext(ScrollWrapperContext);
-  const { isDragSelectionStartEnabled } = useDragSelect();
 
   const { ref: cardRef, inView } = useInView({
     root: scrollWrapperRef.current,
@@ -223,10 +222,10 @@ export const RecordBoardCard = () => {
         }}
       >
         <StyledBoardCardHeader showCompactView={isCompactModeActive}>
-          <RecordChip
+          <RecordIdentifierChip
             objectNameSingular={objectMetadataItem.nameSingular}
             record={record}
-            variant={EntityChipVariant.Transparent}
+            variant={AvatarChipVariant.Transparent}
           />
           {isCompactModeActive && (
             <StyledCompactIconContainer className="compact-icon-container">
@@ -264,7 +263,7 @@ export const RecordBoardCard = () => {
                     recoilScopeId: recordId + fieldDefinition.fieldMetadataId,
                     isLabelIdentifier: false,
                     fieldDefinition: {
-                      disableTooltip: true,
+                      disableTooltip: false,
                       fieldMetadataId: fieldDefinition.fieldMetadataId,
                       label: fieldDefinition.label,
                       iconName: fieldDefinition.iconName,
@@ -280,7 +279,7 @@ export const RecordBoardCard = () => {
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
-                  {inView || isDragSelectionStartEnabled() ? (
+                  {inView ? (
                     <RecordInlineCell />
                   ) : (
                     <StyledRecordInlineCellPlaceholder />

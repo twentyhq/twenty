@@ -1,6 +1,8 @@
-import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { useRef, useState } from 'react';
+import { Key } from 'ts-key-enum';
 
+import { useClearField } from '@/object-record/record-field/hooks/useClearField';
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -8,6 +10,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItemSelectTag } from '@/ui/navigation/menu-item/components/MenuItemSelectTag';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
@@ -26,13 +29,17 @@ export const SelectFieldInput = ({
   onSubmit,
   onCancel,
 }: SelectFieldInputProps) => {
-  const { persistField, fieldDefinition, fieldValue } = useSelectField();
+  const { persistField, fieldDefinition, fieldValue, hotkeyScope } =
+    useSelectField();
+  const clearField = useClearField();
+
   const [searchFilter, setSearchFilter] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = fieldDefinition.metadata.options.find(
     (option) => option.value === fieldValue,
   );
+
   const optionsToSelect =
     fieldDefinition.metadata.options.filter((option) => {
       return (
@@ -40,9 +47,16 @@ export const SelectFieldInput = ({
         option.label.toLowerCase().includes(searchFilter.toLowerCase())
       );
     }) || [];
+
   const optionsInDropDown = selectedOption
     ? [selectedOption, ...optionsToSelect]
     : optionsToSelect;
+
+  // handlers
+  const handleClearField = () => {
+    clearField();
+    onCancel?.();
+  };
 
   useListenClickOutside({
     refs: [containerRef],
@@ -59,6 +73,20 @@ export const SelectFieldInput = ({
     },
   });
 
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      const selectedOption = optionsInDropDown.find((option) =>
+        option.label.toLowerCase().includes(searchFilter.toLowerCase()),
+      );
+
+      if (isDefined(selectedOption)) {
+        onSubmit?.(() => persistField(selectedOption.value));
+      }
+    },
+    hotkeyScope,
+  );
+
   return (
     <StyledRelationPickerContainer ref={containerRef}>
       <DropdownMenu data-select-disable>
@@ -68,7 +96,19 @@ export const SelectFieldInput = ({
           autoFocus
         />
         <DropdownMenuSeparator />
+
         <DropdownMenuItemsContainer hasMaxHeight>
+          {fieldDefinition.metadata.isNullable && (
+            <MenuItemSelectTag
+              key={`No ${fieldDefinition.label}`}
+              selected={false}
+              text={`No ${fieldDefinition.label}`}
+              color="transparent"
+              variant="outline"
+              onClick={handleClearField}
+            />
+          )}
+
           {optionsInDropDown.map((option) => {
             return (
               <MenuItemSelectTag

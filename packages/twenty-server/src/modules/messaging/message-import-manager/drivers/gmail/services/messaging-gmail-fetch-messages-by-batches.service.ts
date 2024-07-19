@@ -7,7 +7,6 @@ import { gmail_v1 } from 'googleapis';
 
 import { assert, assertNotNull } from 'src/utils/assert';
 import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
-import { MessageQuery } from 'src/modules/messaging/message-import-manager/types/message-or-thread-query';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { MessagingFetchByBatchesService } from 'src/modules/messaging/common/services/messaging-fetch-by-batch.service';
 
@@ -22,28 +21,31 @@ export class MessagingGmailFetchMessagesByBatchesService {
   ) {}
 
   async fetchAllMessages(
-    queries: MessageQuery[],
+    messageIds: string[],
     accessToken: string,
-    workspaceId: string,
     connectedAccountId: string,
+    workspaceId: string,
   ): Promise<GmailMessage[]> {
     let startTime = Date.now();
-    const batchResponses = await this.fetchByBatchesService.fetchAllByBatches(
-      queries,
-      accessToken,
-      'batch_gmail_messages',
-    );
+
+    const { messageIdsByBatch, batchResponses } =
+      await this.fetchByBatchesService.fetchAllByBatches(
+        messageIds,
+        accessToken,
+        'batch_gmail_messages',
+      );
     let endTime = Date.now();
 
     this.logger.log(
       `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} fetching ${
-        queries.length
+        messageIds.length
       } messages in ${endTime - startTime}ms`,
     );
 
     startTime = Date.now();
 
     const formattedResponse = this.formatBatchResponsesAsGmailMessages(
+      messageIdsByBatch,
       batchResponses,
       workspaceId,
       connectedAccountId,
@@ -53,7 +55,7 @@ export class MessagingGmailFetchMessagesByBatchesService {
 
     this.logger.log(
       `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} formatting ${
-        queries.length
+        messageIds.length
       } messages in ${endTime - startTime}ms`,
     );
 
@@ -61,6 +63,7 @@ export class MessagingGmailFetchMessagesByBatchesService {
   }
 
   private formatBatchResponseAsGmailMessage(
+    messageIds: string[],
     responseCollection: AxiosResponse<any, any>,
     workspaceId: string,
     connectedAccountId: string,
@@ -72,94 +75,92 @@ export class MessagingGmailFetchMessagesByBatchesService {
       return str.replace(/\0/g, '');
     };
 
-    const formattedResponse = parsedResponses.map(
-      (response): GmailMessage | null => {
-        if ('error' in response) {
-          if (response.error.code === 404) {
-            return null;
-          }
-
-          throw response.error;
-        }
-
-        const {
-          historyId,
-          id,
-          threadId,
-          internalDate,
-          subject,
-          from,
-          to,
-          cc,
-          bcc,
-          headerMessageId,
-          text,
-          attachments,
-          deliveredTo,
-        } = this.parseGmailMessage(response);
-
-        if (!from) {
-          this.logger.log(
-            `From value is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
-          );
-
+    const formattedResponse = parsedResponses.map((response, index) => {
+      if ('error' in response) {
+        if (response.error.code === 404) {
           return null;
         }
 
-        if (!to && !deliveredTo && !bcc && !cc) {
-          this.logger.log(
-            `To, Delivered-To, Bcc or Cc value is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
-          );
+        throw { ...response.error, messageId: messageIds[index] };
+      }
 
-          return null;
-        }
+      const {
+        historyId,
+        id,
+        threadId,
+        internalDate,
+        subject,
+        from,
+        to,
+        cc,
+        bcc,
+        headerMessageId,
+        text,
+        attachments,
+        deliveredTo,
+      } = this.parseGmailMessage(response);
 
-        if (!headerMessageId) {
-          this.logger.log(
-            `Message-ID is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
-          );
+      if (!from) {
+        this.logger.log(
+          `From value is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
+        );
 
-          return null;
-        }
+        return null;
+      }
 
-        if (!threadId) {
-          this.logger.log(
-            `Thread Id is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
-          );
+      if (!to && !deliveredTo && !bcc && !cc) {
+        this.logger.log(
+          `To, Delivered-To, Bcc or Cc value is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
+        );
 
-          return null;
-        }
+        return null;
+      }
 
-        const participants = [
-          ...formatAddressObjectAsParticipants(from, 'from'),
-          ...formatAddressObjectAsParticipants(to ?? deliveredTo, 'to'),
-          ...formatAddressObjectAsParticipants(cc, 'cc'),
-          ...formatAddressObjectAsParticipants(bcc, 'bcc'),
-        ];
+      if (!headerMessageId) {
+        this.logger.log(
+          `Message-ID is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
+        );
 
-        let textWithoutReplyQuotations = text;
+        return null;
+      }
 
-        if (text) {
-          textWithoutReplyQuotations = planer.extractFrom(text, 'text/plain');
-        }
+      if (!threadId) {
+        this.logger.log(
+          `Thread Id is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
+        );
 
-        const messageFromGmail: GmailMessage = {
-          historyId,
-          externalId: id,
-          headerMessageId,
-          subject: subject || '',
-          messageThreadExternalId: threadId,
-          internalDate,
-          fromHandle: from[0].address || '',
-          fromDisplayName: from[0].name || '',
-          participants,
-          text: sanitizeString(textWithoutReplyQuotations || ''),
-          attachments,
-        };
+        return null;
+      }
 
-        return messageFromGmail;
-      },
-    );
+      const participants = [
+        ...formatAddressObjectAsParticipants(from, 'from'),
+        ...formatAddressObjectAsParticipants(to ?? deliveredTo, 'to'),
+        ...formatAddressObjectAsParticipants(cc, 'cc'),
+        ...formatAddressObjectAsParticipants(bcc, 'bcc'),
+      ];
+
+      let textWithoutReplyQuotations = text;
+
+      if (text) {
+        textWithoutReplyQuotations = planer.extractFrom(text, 'text/plain');
+      }
+
+      const messageFromGmail: GmailMessage = {
+        historyId,
+        externalId: id,
+        headerMessageId,
+        subject: subject || '',
+        messageThreadExternalId: threadId,
+        internalDate,
+        fromHandle: from[0].address || '',
+        fromDisplayName: from[0].name || '',
+        participants,
+        text: sanitizeString(textWithoutReplyQuotations || ''),
+        attachments,
+      };
+
+      return messageFromGmail;
+    });
 
     const filteredMessages = formattedResponse.filter((message) =>
       assertNotNull(message),
@@ -169,12 +170,14 @@ export class MessagingGmailFetchMessagesByBatchesService {
   }
 
   private formatBatchResponsesAsGmailMessages(
+    messageIdsByBatch: string[][],
     batchResponses: AxiosResponse<any, any>[],
     workspaceId: string,
     connectedAccountId: string,
   ): GmailMessage[] {
-    const messageBatches = batchResponses.map((response) => {
+    const messageBatches = batchResponses.map((response, index) => {
       return this.formatBatchResponseAsGmailMessage(
+        messageIdsByBatch[index],
         response,
         workspaceId,
         connectedAccountId,

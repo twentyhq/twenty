@@ -1,12 +1,21 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { useChipField } from '@/object-record/record-field/meta-types/hooks/useChipField';
+import { useChipFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useChipFieldDisplay';
+import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 
 export const ChipFieldDisplay = () => {
-  const { objectNameSingular, record } = useChipField();
+  const { recordValue, objectNameSingular, isLabelIdentifier } =
+    useChipFieldDisplay();
 
-  if (!record) return null;
+  if (!recordValue) {
+    return null;
+  }
 
-  return (
-    <RecordChip objectNameSingular={objectNameSingular || ''} record={record} />
+  return isLabelIdentifier ? (
+    <RecordIdentifierChip
+      objectNameSingular={objectNameSingular}
+      record={recordValue}
+    />
+  ) : (
+    <RecordChip objectNameSingular={objectNameSingular} record={recordValue} />
   );
 };

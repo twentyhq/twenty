@@ -6,7 +6,6 @@ import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
-import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
@@ -19,17 +18,17 @@ import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 type RecordInlineCellProps = {
   readonly?: boolean;
   loading?: boolean;
+  isCentered?: boolean;
 };
 
+// TODO: refactor props drilling with a RecordInlineCellContext
 export const RecordInlineCell = ({
   readonly,
   loading,
+  isCentered,
 }: RecordInlineCellProps) => {
   const { fieldDefinition, entityId } = useContext(FieldContext);
-
   const buttonIcon = useGetButtonIcon();
-
-  const isFieldEmpty = useIsFieldEmpty();
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
@@ -90,6 +89,7 @@ export const RecordInlineCell = ({
         label={fieldDefinition.label}
         labelWidth={fieldDefinition.labelWidth}
         showLabel={fieldDefinition.showLabel}
+        isCentered={isCentered}
         editModeContent={
           <FieldInput
             recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
@@ -104,7 +104,6 @@ export const RecordInlineCell = ({
           />
         }
         displayModeContent={<FieldDisplay />}
-        isDisplayModeContentEmpty={isFieldEmpty}
         isDisplayModeFixHeight
         editModeContentOnly={isFieldInputOnly}
         loading={loading}

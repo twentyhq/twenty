@@ -73,7 +73,6 @@ export class TypeMapperService {
         ),
       ],
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
-      [FieldMetadataType.PROBABILITY, GraphQLFloat],
       [FieldMetadataType.POSITION, PositionScalarType],
       [FieldMetadataType.RAW_JSON, RawJSONScalar],
     ]);
@@ -109,7 +108,6 @@ export class TypeMapperService {
         ),
       ],
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
-      [FieldMetadataType.PROBABILITY, FloatFilterType],
       [FieldMetadataType.POSITION, FloatFilterType],
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
     ]);
@@ -130,7 +128,6 @@ export class TypeMapperService {
       [FieldMetadataType.BOOLEAN, OrderByDirectionType],
       [FieldMetadataType.NUMBER, OrderByDirectionType],
       [FieldMetadataType.NUMERIC, OrderByDirectionType],
-      [FieldMetadataType.PROBABILITY, OrderByDirectionType],
       [FieldMetadataType.RATING, OrderByDirectionType],
       [FieldMetadataType.SELECT, OrderByDirectionType],
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],

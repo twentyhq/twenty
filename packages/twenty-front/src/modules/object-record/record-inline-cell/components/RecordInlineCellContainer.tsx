@@ -1,8 +1,7 @@
-import React, { ReactElement, useContext } from 'react';
-import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
+import { ReactElement, useContext } from 'react';
+import { AppTooltip, IconComponent, TooltipDelay } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
@@ -34,6 +33,7 @@ const StyledLabelAndIconContainer = styled.div`
 
 const StyledValueContainer = styled.div`
   display: flex;
+  flex-grow: 1;
   min-width: 0;
 `;
 
@@ -52,17 +52,8 @@ const StyledInlineCellBaseContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 
   user-select: none;
-`;
 
-const StyledTooltip = styled(Tooltip)`
-  background-color: ${({ theme }) => theme.background.primary};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-
-  color: ${({ theme }) => theme.font.color.primary};
-
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  padding: ${({ theme }) => theme.spacing(2)};
+  justify-content: center;
 `;
 
 export const StyledSkeletonDiv = styled.div`
@@ -80,12 +71,13 @@ export type RecordInlineCellContainerProps = {
   editModeContentOnly?: boolean;
   displayModeContent: ReactElement;
   customEditHotkeyScope?: HotkeyScope;
-  isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
   loading?: boolean;
+  isCentered?: boolean;
 };
 
+// TODO: refactor props drilling with a RecordInlineCellContext
 export const RecordInlineCellContainer = ({
   readonly,
   IconLabel,
@@ -96,11 +88,11 @@ export const RecordInlineCellContainer = ({
   editModeContent,
   displayModeContent,
   customEditHotkeyScope,
-  isDisplayModeContentEmpty,
   editModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
   loading = false,
+  isCentered,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
@@ -140,13 +132,14 @@ export const RecordInlineCellContainer = ({
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
           {!showLabel && !fieldDefinition?.disableTooltip && (
-            <StyledTooltip
+            <AppTooltip
               anchorSelect={`#${labelId}`}
               content={label}
               clickable
               noArrow
               place="bottom"
               positionStrategy="fixed"
+              delay={TooltipDelay.shortDelay}
             />
           )}
         </StyledLabelAndIconContainer>
@@ -159,13 +152,13 @@ export const RecordInlineCellContainer = ({
             disableHoverEffect,
             editModeContent,
             editModeContentOnly,
-            isDisplayModeContentEmpty,
             isDisplayModeFixHeight,
             buttonIcon,
             label,
             loading,
             readonly,
             showLabel,
+            isCentered,
           }}
         />
       </StyledValueContainer>

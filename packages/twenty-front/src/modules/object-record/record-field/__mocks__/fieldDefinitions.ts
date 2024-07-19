@@ -7,7 +7,6 @@ import {
   FieldSelectMetadata,
   FieldTextMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
-import { type } from 'os';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   mockedCompanyObjectMetadataItem,
@@ -44,6 +43,7 @@ export const selectFieldDefinition: FieldDefinition<FieldSelectMetadata> = {
   metadata: {
     fieldName: 'accountOwner',
     options: [{ label: 'Elon Musk', color: 'blue', value: 'userId' }],
+    isNullable: true,
   },
 };
 

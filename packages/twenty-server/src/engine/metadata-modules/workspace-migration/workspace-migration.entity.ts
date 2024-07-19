@@ -18,6 +18,11 @@ export enum WorkspaceMigrationColumnActionType {
 export type WorkspaceMigrationRenamedEnum = { from: string; to: string };
 export type WorkspaceMigrationEnum = string | WorkspaceMigrationRenamedEnum;
 
+export enum WorkspaceMigrationIndexActionType {
+  CREATE = 'CREATE',
+  DROP = 'DROP',
+}
+
 export interface WorkspaceMigrationColumnDefinition {
   columnName: string;
   columnType: string;
@@ -25,6 +30,12 @@ export interface WorkspaceMigrationColumnDefinition {
   isArray?: boolean;
   isNullable?: boolean;
   defaultValue?: any;
+}
+
+export interface WorkspaceMigrationIndexAction {
+  action: WorkspaceMigrationIndexActionType;
+  name: string;
+  columns: string[];
 }
 
 export interface WorkspaceMigrationColumnCreate
@@ -105,6 +116,7 @@ export enum WorkspaceMigrationTableActionType {
   CREATE_FOREIGN_TABLE = 'create_foreign_table',
   DROP_FOREIGN_TABLE = 'drop_foreign_table',
   ALTER_FOREIGN_TABLE = 'alter_foreign_table',
+  ALTER_INDEXES = 'alter_indexes',
 }
 
 export type WorkspaceMigrationTableAction = {
@@ -113,6 +125,7 @@ export type WorkspaceMigrationTableAction = {
   action: WorkspaceMigrationTableActionType;
   columns?: WorkspaceMigrationColumnAction[];
   foreignTable?: WorkspaceMigrationForeignTable;
+  indexes?: WorkspaceMigrationIndexAction[];
 };
 
 @Entity('workspaceMigration')

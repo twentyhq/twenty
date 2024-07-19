@@ -1,12 +1,14 @@
-import { useFullNameField } from '@/object-record/record-field/meta-types/hooks/useFullNameField';
-import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { useFullNameFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useFullNameFieldDisplay';
+import { OverflowingTextWithTooltip } from 'twenty-ui';
 
 export const FullNameFieldDisplay = () => {
-  const { fieldValue } = useFullNameField();
+  const { fieldValue } = useFullNameFieldDisplay();
 
-  const content = [fieldValue.firstName, fieldValue.lastName]
-    .filter(Boolean)
+  const content = [fieldValue?.firstName, fieldValue?.lastName]
+    .filter(isNonEmptyString)
     .join(' ');
 
-  return <TextDisplay text={content} />;
+  return <OverflowingTextWithTooltip text={content} />;
 };

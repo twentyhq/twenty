@@ -8,10 +8,13 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedPeopleData } from '~/testing/mock-data/people';
+import { getPeopleMock, peopleQueryResult } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
+import { viewQueryResultMock } from '~/testing/mock-data/views';
 import { RecordShowPage } from '../RecordShowPage';
+
+const peopleMock = getPeopleMock();
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordShowPage',
@@ -20,16 +23,21 @@ const meta: Meta<PageDecoratorArgs> = {
     routePath: '/object/:objectNameSingular/:objectRecordId',
     routeParams: {
       ':objectNameSingular': 'person',
-      ':objectRecordId': '1234',
+      ':objectRecordId': peopleMock[0].id,
     },
   },
   parameters: {
     msw: {
       handlers: [
+        graphql.query('FindManyPeople', () => {
+          return HttpResponse.json({
+            data: peopleQueryResult,
+          });
+        }),
         graphql.query('FindOnePerson', () => {
           return HttpResponse.json({
             data: {
-              person: mockedPeopleData[0],
+              person: peopleMock[0],
             },
           });
         }),
@@ -58,15 +66,7 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query('FindManyViews', () => {
           return HttpResponse.json({
             data: {
-              views: {
-                edges: [],
-                pageInfo: {
-                  hasNextPage: false,
-                  startCursor: '1234',
-                  endCursor: '1234',
-                },
-                totalCount: 0,
-              },
+              views: viewQueryResultMock,
             },
           });
         }),
@@ -87,7 +87,9 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findAllByText('Alexandre Prot');
+    await canvas.findAllByText(
+      peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
+    );
     await canvas.findByText('Add your first Activity');
   },
 };
@@ -99,7 +101,11 @@ export const Loading: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(canvas.queryByText('Alexandre Prot')).toBeNull();
+    expect(
+      canvas.queryByText(
+        peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
+      ),
+    ).toBeNull();
     expect(canvas.queryByText('Add your first Activity')).toBeNull();
   },
 };

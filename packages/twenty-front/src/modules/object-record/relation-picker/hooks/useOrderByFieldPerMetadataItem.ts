@@ -16,9 +16,7 @@ export const useOrderByFieldPerMetadataItem = ({
 
         return [
           `orderBy${capitalize(objectMetadataItem.nameSingular)}`,
-          {
-            ...orderByField,
-          },
+          [...orderByField],
         ];
       })
       .filter(isDefined),

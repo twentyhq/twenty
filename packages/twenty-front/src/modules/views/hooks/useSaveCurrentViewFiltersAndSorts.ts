@@ -58,12 +58,14 @@ export const useSaveCurrentViewFiltersAndSorts = (
         const viewSortsToCreate = unsavedToUpsertViewSorts.filter(
           (viewSort) =>
             !view.viewSorts.some(
-              (vf) => vf.fieldMetadataId === viewSort.fieldMetadataId,
+              (vs) => vs.fieldMetadataId === viewSort.fieldMetadataId,
             ),
         );
 
         const viewSortsToUpdate = unsavedToUpsertViewSorts.filter((viewSort) =>
-          view.viewSorts.some((vf) => vf.id === viewSort.id),
+          view.viewSorts.some(
+            (vs) => vs.fieldMetadataId === viewSort.fieldMetadataId,
+          ),
         );
 
         await createViewSortRecords(viewSortsToCreate, view);
@@ -101,12 +103,16 @@ export const useSaveCurrentViewFiltersAndSorts = (
 
         const viewFiltersToCreate = unsavedToUpsertViewFilters.filter(
           (viewFilter) =>
-            !view.viewFilters.some((vf) => vf.id === viewFilter.id),
+            !view.viewFilters.some(
+              (vf) => vf.fieldMetadataId === viewFilter.fieldMetadataId,
+            ),
         );
 
         const viewFiltersToUpdate = unsavedToUpsertViewFilters.filter(
           (viewFilter) =>
-            view.viewFilters.some((vf) => vf.id === viewFilter.id),
+            view.viewFilters.some(
+              (vf) => vf.fieldMetadataId === viewFilter.fieldMetadataId,
+            ),
         );
 
         await createViewFilterRecords(viewFiltersToCreate, view);

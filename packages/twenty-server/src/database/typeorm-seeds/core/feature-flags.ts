@@ -33,7 +33,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKeys.IsEventObjectEnabled,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: FeatureFlagKeys.IsStripeIntegrationEnabled,
@@ -41,7 +41,12 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsContactCreationForSentAndReceivedEmailsEnabled,
+        key: FeatureFlagKeys.IsMessagingAliasFetchingEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsGoogleCalendarSyncV2Enabled,
         workspaceId: workspaceId,
         value: true,
       },

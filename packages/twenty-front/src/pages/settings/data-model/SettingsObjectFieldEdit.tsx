@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconArchive, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -18,9 +18,11 @@ import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFiel
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
+import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
@@ -36,7 +38,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 type SettingsDataModelFieldEditFormValues = z.infer<
-  typeof settingsFieldFormSchema
+  ReturnType<typeof settingsFieldFormSchema>
 >;
 
 const StyledSettingsObjectFieldTypeSelect = styled(
@@ -91,7 +93,7 @@ export const SettingsObjectFieldEdit = () => {
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(settingsFieldFormSchema),
+    resolver: zodResolver(settingsFieldFormSchema()),
   });
 
   useEffect(() => {
@@ -102,10 +104,8 @@ export const SettingsObjectFieldEdit = () => {
 
   if (!activeObjectMetadataItem || !activeMetadataField) return null;
 
-  const canSave =
-    formConfig.formState.isValid &&
-    formConfig.formState.isDirty &&
-    !formConfig.formState.isSubmitting;
+  const { isDirty, isValid, isSubmitting } = formConfig.formState;
+  const canSave = isDirty && isValid && !isSubmitting;
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: activeMetadataField,
@@ -169,70 +169,75 @@ export const SettingsObjectFieldEdit = () => {
     canPersistFieldMetadataItemUpdate(activeMetadataField);
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        <SettingsPageContainer>
-          <SettingsHeaderContainer>
-            <Breadcrumb
-              links={[
-                { children: 'Objects', href: '/settings/objects' },
-                {
-                  children: activeObjectMetadataItem.labelPlural,
-                  href: `/settings/objects/${objectSlug}`,
-                },
-                { children: activeMetadataField.label },
-              ]}
-            />
-            {shouldDisplaySaveAndCancel && (
-              <SaveAndCancelButtons
-                isSaveDisabled={!canSave}
-                onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                onSave={formConfig.handleSubmit(handleSave)}
+    <RecordFieldValueSelectorContextProvider>
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <FormProvider {...formConfig}>
+        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+          <SettingsPageContainer>
+            <SettingsHeaderContainer>
+              <Breadcrumb
+                links={[
+                  { children: 'Objects', href: '/settings/objects' },
+                  {
+                    children: activeObjectMetadataItem.labelPlural,
+                    href: `/settings/objects/${objectSlug}`,
+                  },
+                  { children: activeMetadataField.label },
+                ]}
               />
-            )}
-          </SettingsHeaderContainer>
-          <Section>
-            <H2Title
-              title="Name and description"
-              description="The name and description of this field"
-            />
-            <SettingsDataModelFieldAboutForm
-              disabled={!activeMetadataField.isCustom}
-              fieldMetadataItem={activeMetadataField}
-            />
-          </Section>
-          <Section>
-            <H2Title
-              title="Type and values"
-              description="The field's type and values."
-            />
-            <StyledSettingsObjectFieldTypeSelect
-              disabled
-              fieldMetadataItem={activeMetadataField}
-            />
-            <SettingsDataModelFieldSettingsFormCard
-              disableCurrencyForm
-              fieldMetadataItem={activeMetadataField}
-              objectMetadataItem={activeObjectMetadataItem}
-            />
-          </Section>
-          {!isLabelIdentifier && (
+              {shouldDisplaySaveAndCancel && (
+                <SaveAndCancelButtons
+                  isSaveDisabled={!canSave}
+                  isCancelDisabled={isSubmitting}
+                  onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+                  onSave={formConfig.handleSubmit(handleSave)}
+                />
+              )}
+            </SettingsHeaderContainer>
             <Section>
               <H2Title
-                title="Danger zone"
-                description="Deactivate this field"
+                title="Name and description"
+                description="The name and description of this field"
               />
-              <Button
-                Icon={IconArchive}
-                title="Deactivate"
-                size="small"
-                onClick={handleDeactivate}
+              <SettingsDataModelFieldAboutForm
+                disabled={!activeMetadataField.isCustom}
+                fieldMetadataItem={activeMetadataField}
+                maxLength={FIELD_NAME_MAXIMUM_LENGTH}
               />
             </Section>
-          )}
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </FormProvider>
+            <Section>
+              <H2Title
+                title="Type and values"
+                description="The field's type and values."
+              />
+              <StyledSettingsObjectFieldTypeSelect
+                disabled
+                fieldMetadataItem={activeMetadataField}
+                excludedFieldTypes={[FieldMetadataType.Link]}
+              />
+              <SettingsDataModelFieldSettingsFormCard
+                disableCurrencyForm
+                fieldMetadataItem={activeMetadataField}
+                objectMetadataItem={activeObjectMetadataItem}
+              />
+            </Section>
+            {!isLabelIdentifier && (
+              <Section>
+                <H2Title
+                  title="Danger zone"
+                  description="Deactivate this field"
+                />
+                <Button
+                  Icon={IconArchive}
+                  title="Deactivate"
+                  size="small"
+                  onClick={handleDeactivate}
+                />
+              </Section>
+            )}
+          </SettingsPageContainer>
+        </SubMenuTopBarContainer>
+      </FormProvider>
+    </RecordFieldValueSelectorContextProvider>
   );
 };

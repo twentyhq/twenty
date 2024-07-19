@@ -6,6 +6,16 @@ image: /images/user-guide/table-views/table.png
 
 import OptionTable from '@site/src/theme/OptionTable'
 
+# Setup Messaging & Calendar sync
+
+Twenty offers integrations with Gmail and Google Calendar. To enable these features, you need to connect to register the following recurring jobs:
+```
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+```
+
 # Setup Environment Variables
 
 ## Frontend
@@ -96,9 +106,9 @@ import OptionTable from '@site/src/theme/OptionTable'
 
   You will need to provision an [App Password](https://support.google.com/accounts/answer/185833).
   - EMAIL_SMTP_HOST=smtp.gmail.com
-  - EMAIL_SERVER_PORT=465
-  - EMAIL_SERVER_USER=gmail_email_address
-  - EMAIL_SERVER_PASSWORD='gmail_app_password'
+  - EMAIL_SMTP_PORT=465
+  - EMAIL_SMTP_USER=gmail_email_address
+  - EMAIL_SMTP_PASSWORD='gmail_app_password'
 
   </ArticleTab>
 
@@ -106,9 +116,9 @@ import OptionTable from '@site/src/theme/OptionTable'
 
     Keep in mind that if you have 2FA enabled, you will need to provision an [App Password](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
     - EMAIL_SMTP_HOST=smtp.office365.com
-    - EMAIL_SERVER_PORT=587
-    - EMAIL_SERVER_USER=office365_email_address
-    - EMAIL_SERVER_PASSWORD='office365_password'
+    - EMAIL_SMTP_PORT=587
+    - EMAIL_SMTP_USER=office365_email_address
+    - EMAIL_SMTP_PASSWORD='office365_password'
 
   </ArticleTab>
 
@@ -118,8 +128,8 @@ import OptionTable from '@site/src/theme/OptionTable'
     - Run the smtp4dev image: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
     - Access the smtp4dev ui here: [http://localhost:8090](http://localhost:8090)
     - Set the following env variables:
-      - EMAIL_SERVER_HOST=localhost
-      - EMAIL_SERVER_PORT=2525
+      - EMAIL_SMTP_HOST=localhost
+      - EMAIL_SMTP_PORT=2525
 
   </ArticleTab>
 
@@ -132,8 +142,20 @@ import OptionTable from '@site/src/theme/OptionTable'
     ['STORAGE_S3_REGION', '', 'Storage Region'],
     ['STORAGE_S3_NAME', '', 'Bucket Name'],
     ['STORAGE_S3_ENDPOINT', '', 'Use if a different Endpoint is needed (for example Google)'],
+    ['STORAGE_S3_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
+    ['STORAGE_S3_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
     ['STORAGE_LOCAL_PATH', '.local-storage', 'data path (local storage)'],
     ]}></ArticleTable>
+
+### Custom Code Execution
+
+<ArticleTable options={[
+  ['SERVERLESS_TYPE', 'local', "Serverless driver type: 'local' or 'lambda'"],
+  ['SERVERLESS_LAMBDA_REGION', '', 'Lambda Region'],
+  ['SERVERLESS_LAMBDA_ROLE', '', 'Lambda Role'],
+  ['SERVERLESS_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
+  ['SERVERLESS_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
+]}></ArticleTable>
 
 ### Message Queue
 
@@ -144,7 +166,7 @@ import OptionTable from '@site/src/theme/OptionTable'
 ### Logging
 
 <ArticleTable options={[
-    ['LOGGER_DRIVER', 'console', "The logging driver can be: 'console' or 'sentry'"],
+    ['LOGGER_DRIVER', 'console', "Currently, only supports 'console'"],
     ['LOGGER_IS_BUFFER_ENABLED', 'true', 'Buffer the logs before sending them to the logging driver'],
     ['LOG_LEVELS', 'error,warn', "The loglevels which are logged to the logging driver. Can include: 'log', 'warn', 'error'"],
     ['EXCEPTION_HANDLER_DRIVER', 'sentry', "The exception handler driver can be: 'console' or 'sentry'"],
@@ -158,8 +180,13 @@ import OptionTable from '@site/src/theme/OptionTable'
 ### Data enrichment and AI
 
 <ArticleTable options={[
-    ['OPENROUTER_API_KEY', '', "The API key for openrouter.ai, an abstraction layer over models from Mistral, OpenAI and more"]
-    ]}></ArticleTable>
+    ['OPENROUTER_API_KEY', '', "The API key for openrouter.ai, an abstraction layer over models from Mistral, OpenAI and more"],
+    ['OPENAI_API_KEY', 'sk-proj-abcdabcd...', "OpenAI API key"],
+    ['LLM_CHAT_MODEL_DRIVER', 'openai', "LLM provider"],
+    ['LLM_TRACING_DRIVER', 'langfuse', "Where to output LangChain logs. 'langfuse' or 'console'."],
+    ['LANGFUSE_SECRET_KEY', 'sk-lf-abcdabcd-abcd...', "Langfuse secret key"],
+    ['LANGFUSE_PUBLIC_KEY', 'pk-lf-abcdabcd-abcd...', "Langfuse public key"],
+]}></ArticleTable>
 
 
 ### Support Chat
@@ -198,3 +225,5 @@ import OptionTable from '@site/src/theme/OptionTable'
     ['CAPTCHA_SITE_KEY', '', 'The captcha site key'],
     ['CAPTCHA_SECRET_KEY', '', 'The captcha secret key'],
 ]}></ArticleTable>
+
+<ArticleEditContent></ArticleEditContent>

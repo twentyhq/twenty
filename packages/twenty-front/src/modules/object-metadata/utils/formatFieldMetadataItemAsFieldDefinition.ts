@@ -37,7 +37,10 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     relationObjectMetadataNamePlural:
       relationObjectMetadataItem?.namePlural ?? '',
     objectMetadataNameSingular: objectMetadataItem.nameSingular ?? '',
+    targetFieldMetadataName:
+      field.relationDefinition?.targetFieldMetadata?.name ?? '',
     options: field.options,
+    isNullable: field.isNullable,
   };
 
   return {

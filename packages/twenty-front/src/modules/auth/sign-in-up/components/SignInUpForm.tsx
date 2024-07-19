@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react';
-import { Controller } from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useMemo, useState } from 'react';
+import { Controller } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui';
 
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
@@ -69,7 +70,7 @@ export const SignInUpForm = () => {
   const handleKeyDown = async (
     event: React.KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (event.key === 'Enter') {
+    if (event.key === Key.Enter) {
       event.preventDefault();
 
       if (signInUpStep === SignInUpStep.Init) {
@@ -257,7 +258,23 @@ export const SignInUpForm = () => {
       )}
       {signInUpStep === SignInUpStep.Init && (
         <FooterNote>
-          By using Twenty, you agree to the Terms of Service and Privacy Policy.
+          By using Twenty, you agree to the{' '}
+          <a
+            href="https://twenty.com/legal/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Terms of Service
+          </a>{' '}
+          and{' '}
+          <a
+            href="https://twenty.com/legal/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Privacy Policy
+          </a>
+          .
         </FooterNote>
       )}
     </>

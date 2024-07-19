@@ -17,6 +17,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.timelineActivity,
@@ -56,7 +57,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconListDetails',
   })
   @WorkspaceIsNullable()
-  properties: JSON;
+  properties: JSON | null;
 
   // Special objects that don't have their own timeline and are 'link' to the main object
   @WorkspaceField({
@@ -76,7 +77,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
-  linkedRecordId: string;
+  linkedRecordId: string | null;
 
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.linkedObjectMetadataId,
@@ -86,7 +87,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconAbc',
   })
   @WorkspaceIsNullable()
-  linkedObjectMetadataId: string;
+  linkedObjectMetadataId: string | null;
 
   // Who made the action
   @WorkspaceRelation({
@@ -95,12 +96,14 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Workspace Member',
     description: 'Event workspace member',
     icon: 'IconCircleUser',
-    joinColumn: 'workspaceMemberId',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('workspaceMember')
+  workspaceMemberId: string | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.person,
@@ -108,12 +111,14 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Person',
     description: 'Event person',
     icon: 'IconUser',
-    joinColumn: 'personId',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  person: Relation<PersonWorkspaceEntity>;
+  person: Relation<PersonWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('person')
+  personId: string | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.company,
@@ -121,12 +126,14 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Company',
     description: 'Event company',
     icon: 'IconBuildingSkyscraper',
-    joinColumn: 'companyId',
     inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  company: Relation<CompanyWorkspaceEntity>;
+  company: Relation<CompanyWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('company')
+  companyId: string | null;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.opportunity,
@@ -134,12 +141,14 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Opportunity',
     description: 'Event opportunity',
     icon: 'IconTargetArrow',
-    joinColumn: 'opportunityId',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  opportunity: Relation<OpportunityWorkspaceEntity>;
+  opportunity: Relation<OpportunityWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('opportunity')
+  opportunityId: string | null;
 
   @WorkspaceDynamicRelation({
     type: RelationMetadataType.MANY_TO_ONE,

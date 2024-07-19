@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { MultipleFiltersDropdownContent } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownContent';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { FilterOperand } from '@/object-record/object-filter-dropdown/types/FilterOperand';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -62,13 +63,16 @@ export const EditableFilterDropdownButton = ({
   const handleRemove = () => {
     closeDropdown();
 
-    removeCombinedViewFilter(viewFilter.fieldMetadataId);
+    removeCombinedViewFilter(viewFilter.id);
   };
 
   const handleDropdownClickOutside = useCallback(() => {
-    const { value, fieldMetadataId } = viewFilter;
-    if (!value) {
-      removeCombinedViewFilter(fieldMetadataId);
+    const { id: fieldId, value, operand } = viewFilter;
+    if (
+      !value &&
+      ![FilterOperand.IsEmpty, FilterOperand.IsNotEmpty].includes(operand)
+    ) {
+      removeCombinedViewFilter(fieldId);
     }
   }, [viewFilter, removeCombinedViewFilter]);
 

@@ -1,36 +1,32 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { IconCheck, IconX } from 'twenty-ui';
+import { styled } from '@linaria/react';
+import { IconCheck, IconX, THEME_COMMON } from 'twenty-ui';
 
 import { isDefined } from '~/utils/isDefined';
 
+const spacing = THEME_COMMON.spacingMultiplicator * 1;
+const iconSizeSm = THEME_COMMON.icon.size.sm;
+
 const StyledBooleanFieldValue = styled.div`
-  margin-left: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${spacing}px;
 `;
 
 type BooleanDisplayProps = {
-  value: boolean | null;
+  value: boolean | null | undefined;
 };
 
 export const BooleanDisplay = ({ value }: BooleanDisplayProps) => {
-  const theme = useTheme();
+  if (!isDefined(value)) {
+    return <></>;
+  }
+
+  const isTrue = value === true;
 
   return (
     <>
-      {isDefined(value) ? (
-        <>
-          {value ? (
-            <IconCheck size={theme.icon.size.sm} />
-          ) : (
-            <IconX size={theme.icon.size.sm} />
-          )}
-          <StyledBooleanFieldValue>
-            {value ? 'True' : 'False'}
-          </StyledBooleanFieldValue>
-        </>
-      ) : (
-        <></>
-      )}
+      {isTrue ? <IconCheck size={iconSizeSm} /> : <IconX size={iconSizeSm} />}
+      <StyledBooleanFieldValue>
+        {isTrue ? 'True' : 'False'}
+      </StyledBooleanFieldValue>
     </>
   );
 };
