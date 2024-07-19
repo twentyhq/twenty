@@ -24,6 +24,7 @@ export function createTwentyORMProviders(
       );
 
       if (!dataSource) {
+        // TODO: Throw here when the code is well architected
         return null;
       }
 
