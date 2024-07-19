@@ -4,8 +4,7 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CanAccessCalendarEventService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/can-access-calendar-event.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 
@@ -17,8 +16,7 @@ export class CalendarEventFindOnePreQueryHook
   implements WorkspaceQueryHookInstance
 {
   constructor(
-    @InjectWorkspaceRepository(CalendarChannelEventAssociationWorkspaceEntity)
-    private readonly calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>,
+    private readonly twentyORMManager: TwentyORMManager,
     private readonly canAccessCalendarEventService: CanAccessCalendarEventService,
   ) {}
 
@@ -31,9 +29,14 @@ export class CalendarEventFindOnePreQueryHook
       throw new BadRequestException('id filter is required');
     }
 
+    const calendarChannelEventAssociationRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        'calendarChannelEventAssociation',
+      );
+
     // TODO: Re-implement this using twenty ORM
     const calendarChannelCalendarEventAssociations =
-      await this.calendarChannelEventAssociationRepository.find({
+      await calendarChannelEventAssociationRepository.find({
         where: {
           calendarEventId: payload?.filter?.id?.eq,
         },
