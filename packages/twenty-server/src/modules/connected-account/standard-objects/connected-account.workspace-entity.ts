@@ -30,6 +30,7 @@ export enum ConnectedAccountProvider {
   labelPlural: 'Connected Accounts',
   description: 'A connected account',
   icon: 'IconAt',
+  labelIdentifierStandardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
