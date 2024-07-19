@@ -3,10 +3,10 @@ import { SerializableParam } from 'recoil';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
-interface TableSortState {
+type TableSortState = {
   fieldName: string;
   orderBy: OrderBy | null;
-}
+};
 
 type TableSortFamilyKey = {
   tableId: string;

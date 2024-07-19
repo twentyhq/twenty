@@ -12,11 +12,11 @@ export const useSortedArray = <T>(
   );
 
   const sortTableData = (
-    data: T[],
+    arrayToSort: T[],
     columnKey: keyof T,
     order: OrderBy | null,
   ): T[] => {
-    return data.sort((a: T, b: T) => {
+    return arrayToSort.toSorted((a: T, b: T) => {
       if (typeof a[columnKey] === 'string') {
         return order === 'AscNullsLast'
           ? (a[columnKey] as string).localeCompare(b[columnKey] as string)
@@ -25,7 +25,9 @@ export const useSortedArray = <T>(
         return order === 'AscNullsLast'
           ? (a[columnKey] as number) - (b[columnKey] as number)
           : (b[columnKey] as number) - (a[columnKey] as number);
-      } else return 0;
+      } else {
+        return 0;
+      }
     });
   };
 
