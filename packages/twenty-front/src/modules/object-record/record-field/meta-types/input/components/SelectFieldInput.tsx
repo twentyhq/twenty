@@ -141,15 +141,17 @@ export const SelectFieldInput = ({
           <DropdownMenuSeparator />
 
           <DropdownMenuItemsContainer hasMaxHeight>
-            <MenuItemSelectTag
-              key={`No ${fieldDefinition.label}`}
-              selected={false}
-              text={`No ${fieldDefinition.label}`}
-              color="transparent"
-              variant="outline"
-              onClick={handleClearField}
-              isKeySelected={selectedItemId === `No ${fieldDefinition.label}`}
-            />
+            {fieldDefinition.metadata.isNullable ?? (
+              <MenuItemSelectTag
+                key={`No ${fieldDefinition.label}`}
+                selected={false}
+                text={`No ${fieldDefinition.label}`}
+                color="transparent"
+                variant="outline"
+                onClick={handleClearField}
+                isKeySelected={selectedItemId === `No ${fieldDefinition.label}`}
+              />
+            )}
 
             {optionsInDropDown.map((option) => {
               return (
