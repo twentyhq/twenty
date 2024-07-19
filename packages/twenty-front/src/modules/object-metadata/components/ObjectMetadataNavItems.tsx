@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
@@ -91,7 +93,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
               objectMetadataViews.length > 1;
 
             return (
-              <>
+              <React.Fragment key={objectMetadataItem.id}>
                 <NavigationDrawerItem
                   key={objectMetadataItem.id}
                   label={objectMetadataItem.labelPlural}
@@ -120,7 +122,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
                         Icon={getIcon(view.icon)}
                       />
                     ))}
-              </>
+              </React.Fragment>
             );
           })}
       </NavigationDrawerSection>

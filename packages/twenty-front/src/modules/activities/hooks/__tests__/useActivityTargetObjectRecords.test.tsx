@@ -23,7 +23,7 @@ const activityNode = {
   reminderAt: null,
   title: 'My very first note',
   type: 'NOTE',
-  body: '',
+  body: null,
   dueAt: '2023-04-26T10:12:42.33625+00:00',
   status: 'TODO',
   author: null,

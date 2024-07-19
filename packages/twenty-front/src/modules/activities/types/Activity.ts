@@ -16,7 +16,7 @@ export type Activity = {
   activityTargets: ActivityTarget[];
   type: ActivityType;
   title: string;
-  body: string;
+  body: string | null;
   author: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'>;
   authorId: string;
   assignee: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;

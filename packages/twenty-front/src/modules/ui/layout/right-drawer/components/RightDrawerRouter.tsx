@@ -37,7 +37,7 @@ const RIGHT_DRAWER_PAGES_CONFIG = {
   },
   [RightDrawerPages.EditActivity]: {
     page: <RightDrawerEditActivity />,
-    topBar: <RightDrawerTopBar page={RightDrawerPages.EditActivity} />,
+    topBar: <RightDrawerTopBar page={RightDrawerPages.ViewRecord} />,
   },
   [RightDrawerPages.ViewEmailThread]: {
     page: <RightDrawerEmailThread />,

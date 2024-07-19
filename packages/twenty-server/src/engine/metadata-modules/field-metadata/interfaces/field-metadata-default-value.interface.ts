@@ -9,6 +9,7 @@ import {
   FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueNumber,
   FieldMetadataDefaultValueRawJson,
+  FieldMetadataDefaultValueRichText,
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
@@ -44,7 +45,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
-  [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
 };
 
 export type FieldMetadataClassValidation =
