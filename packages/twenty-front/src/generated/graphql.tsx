@@ -159,6 +159,28 @@ export type ClientConfig = {
   telemetry: Telemetry;
 };
 
+export type CreateFieldInput = {
+  defaultValue?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  isNullable?: InputMaybe<Scalars['Boolean']>;
+  isRemoteCreation?: InputMaybe<Scalars['Boolean']>;
+  isSystem?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  name: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+  options?: InputMaybe<Scalars['JSON']>;
+  settings?: InputMaybe<Scalars['JSON']>;
+  type: FieldMetadataType;
+};
+
+export type CreateOneFieldMetadataInput = {
+  /** The record to create */
+  field: CreateFieldInput;
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -170,8 +192,18 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
+export type DeleteOneFieldInput = {
+  /** The id of the field to delete. */
+  id: Scalars['UUID'];
+};
+
 export type DeleteOneObjectInput = {
   /** The id of the record to delete. */
+  id: Scalars['UUID'];
+};
+
+export type DeleteOneRelationInput = {
+  /** The id of the relation to delete. */
   id: Scalars['UUID'];
 };
 
@@ -298,9 +330,13 @@ export type Mutation = {
   challenge: LoginToken;
   checkoutSession: SessionEntity;
   createOneAppToken: AppToken;
+  createOneField: Field;
   createOneObject: Object;
+  createOneRelation: Relation;
   deleteCurrentWorkspace: Workspace;
+  deleteOneField: Field;
   deleteOneObject: Object;
+  deleteOneRelation: Relation;
   deleteUser: User;
   disablePostgresProxy: PostgresCredentials;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -311,12 +347,12 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
-  runChartQuery: ChartResult;
   sendInviteLink: SendInviteLink;
   signUp: LoginToken;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
   updateBillingSubscription: UpdateBillingEntity;
+  updateOneField: Field;
   updateOneObject: Object;
   updatePasswordViaResetToken: InvalidatePassword;
   updateWorkspace: Workspace;
@@ -358,8 +394,23 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
+export type MutationCreateOneFieldArgs = {
+  input: CreateOneFieldMetadataInput;
+};
+
+
+export type MutationDeleteOneFieldArgs = {
+  input: DeleteOneFieldInput;
+};
+
+
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
+};
+
+
+export type MutationDeleteOneRelationArgs = {
+  input: DeleteOneRelationInput;
 };
 
 
@@ -396,11 +447,6 @@ export type MutationRenewTokenArgs = {
 };
 
 
-export type MutationRunChartQueryArgs = {
-  chartId: Scalars['String'];
-};
-
-
 export type MutationSendInviteLinkArgs = {
   emails: Array<Scalars['String']>;
 };
@@ -417,6 +463,11 @@ export type MutationSignUpArgs = {
 export type MutationTrackArgs = {
   data: Scalars['JSON'];
   type: Scalars['String'];
+};
+
+
+export type MutationUpdateOneFieldArgs = {
+  input: UpdateOneFieldMetadataInput;
 };
 
 
@@ -531,11 +582,14 @@ export type ProductPricesEntity = {
 export type Query = {
   __typename?: 'Query';
   billingPortalSession: SessionEntity;
+  chartData: ChartResult;
   checkUserExists: UserExists;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
+  field: Field;
+  fields: FieldConnection;
   findWorkspaceFromInviteHash: Workspace;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
@@ -545,12 +599,19 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   object: Object;
   objects: ObjectConnection;
+  relation: Relation;
+  relations: RelationConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
 };
 
 
 export type QueryBillingPortalSessionArgs = {
   returnUrlPath?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryChartDataArgs = {
+  chartId: Scalars['String'];
 };
 
 
@@ -820,6 +881,20 @@ export type UpdateBillingEntity = {
   success: Scalars['Boolean'];
 };
 
+export type UpdateFieldInput = {
+  defaultValue?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  isNullable?: InputMaybe<Scalars['Boolean']>;
+  isSystem?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  options?: InputMaybe<Scalars['JSON']>;
+  settings?: InputMaybe<Scalars['JSON']>;
+};
+
 export type UpdateObjectPayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -830,6 +905,13 @@ export type UpdateObjectPayload = {
   labelSingular?: InputMaybe<Scalars['String']>;
   namePlural?: InputMaybe<Scalars['String']>;
   nameSingular?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateOneFieldMetadataInput = {
+  /** The id of the record to update */
+  id: Scalars['UUID'];
+  /** The record to update */
+  update: UpdateFieldInput;
 };
 
 export type UpdateOneObjectInput = {
@@ -1111,12 +1193,12 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
-export type RunChartQueryMutationVariables = Exact<{
+export type ChartDataQueryVariables = Exact<{
   chartId: Scalars['String'];
 }>;
 
 
-export type RunChartQueryMutation = { __typename?: 'Mutation', runChartQuery: { __typename?: 'ChartResult', chartResult: string } };
+export type ChartDataQuery = { __typename?: 'Query', chartData: { __typename?: 'ChartResult', chartResult: string } };
 
 export type TrackMutationVariables = Exact<{
   type: Scalars['String'];
@@ -1650,39 +1732,41 @@ export function useGetTimelineThreadsFromPersonIdLazyQuery(baseOptions?: Apollo.
 export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdQuery>;
 export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
 export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
-export const RunChartQueryDocument = gql`
-    mutation RunChartQuery($chartId: String!) {
-  runChartQuery(chartId: $chartId) {
+export const ChartDataDocument = gql`
+    query ChartData($chartId: String!) {
+  chartData(chartId: $chartId) {
     chartResult
   }
 }
     `;
-export type RunChartQueryMutationFn = Apollo.MutationFunction<RunChartQueryMutation, RunChartQueryMutationVariables>;
 
 /**
- * __useRunChartQueryMutation__
+ * __useChartDataQuery__
  *
- * To run a mutation, you first call `useRunChartQueryMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRunChartQueryMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
+ * To run a query within a React component, call `useChartDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChartDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const [runChartQueryMutation, { data, loading, error }] = useRunChartQueryMutation({
+ * const { data, loading, error } = useChartDataQuery({
  *   variables: {
  *      chartId: // value for 'chartId'
  *   },
  * });
  */
-export function useRunChartQueryMutation(baseOptions?: Apollo.MutationHookOptions<RunChartQueryMutation, RunChartQueryMutationVariables>) {
+export function useChartDataQuery(baseOptions: Apollo.QueryHookOptions<ChartDataQuery, ChartDataQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RunChartQueryMutation, RunChartQueryMutationVariables>(RunChartQueryDocument, options);
+        return Apollo.useQuery<ChartDataQuery, ChartDataQueryVariables>(ChartDataDocument, options);
       }
-export type RunChartQueryMutationHookResult = ReturnType<typeof useRunChartQueryMutation>;
-export type RunChartQueryMutationResult = Apollo.MutationResult<RunChartQueryMutation>;
-export type RunChartQueryMutationOptions = Apollo.BaseMutationOptions<RunChartQueryMutation, RunChartQueryMutationVariables>;
+export function useChartDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChartDataQuery, ChartDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ChartDataQuery, ChartDataQueryVariables>(ChartDataDocument, options);
+        }
+export type ChartDataQueryHookResult = ReturnType<typeof useChartDataQuery>;
+export type ChartDataLazyQueryHookResult = ReturnType<typeof useChartDataLazyQuery>;
+export type ChartDataQueryResult = Apollo.QueryResult<ChartDataQuery, ChartDataQueryVariables>;
 export const TrackDocument = gql`
     mutation Track($type: String!, $data: JSON!) {
   track(type: $type, data: $data) {

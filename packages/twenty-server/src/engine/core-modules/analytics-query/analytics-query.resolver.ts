@@ -1,4 +1,4 @@
-import { Args, Resolver, ArgsType, Field, Mutation } from '@nestjs/graphql';
+import { Args, Resolver, ArgsType, Field, Query } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -20,8 +20,8 @@ class GetAnalyticsQueryArgs {
 export class AnalyticsQueryResolver {
   constructor(private readonly analyticsQueryService: AnalyticsQueryService) {}
 
-  @Mutation(() => ChartResult)
-  async runChartQuery(
+  @Query(() => ChartResult)
+  async chartData(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @AuthUser() user: User,
     @Args() { chartId }: GetAnalyticsQueryArgs,
