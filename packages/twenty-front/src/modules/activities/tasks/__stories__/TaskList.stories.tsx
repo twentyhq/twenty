@@ -4,6 +4,7 @@ import { ComponentDecorator } from 'twenty-ui';
 import { TaskList } from '@/activities/tasks/components/TaskList';
 import { Activity } from '@/activities/types/Activity';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { WorkspaceMemberColorSchemeEnum, WorkspaceMemberDateFormatEnum, WorkspaceMemberLocaleEnum, WorkspaceMemberTimeFormatEnum } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -16,12 +17,15 @@ const workspaceMember: WorkspaceMember = {
     lastName: 'Test',
   },
   avatarUrl: '',
-  locale: 'en',
+  locale: WorkspaceMemberLocaleEnum.Fr,
+  timeZone: 'system',
+  dateFormat: WorkspaceMemberDateFormatEnum.System,
+  timeFormat: WorkspaceMemberTimeFormatEnum.System,
   createdAt: '2023-04-26T10:23:42.33625+00:00',
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   userId: 'e2409670-1088-46b4-858e-f20a598d9d0f',
   userEmail: 'charles@test.com',
-  colorScheme: 'Light',
+  colorScheme: WorkspaceMemberColorSchemeEnum.Light,
 };
 
 const mockedActivities: Array<Activity> = [
