@@ -140,11 +140,6 @@ export const useRecordShowPagePagination = (
     },
   });
 
-  console.log({
-    recordIdsInCache,
-    objectRecordId,
-  });
-
   const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);
 
   const rankFoundInFiew = rankInView > -1;
