@@ -26,7 +26,7 @@ interface MigrateLinkFieldsToLinksCommandOptions {
 
 @Command({
   name: 'migrate-0.23:migrate-link-fields-to-links',
-  description: 'Adding new field Address to views containing old address field',
+  description: 'Migrating fields of deprecated type LINK to type LINKS',
 })
 export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
   private readonly logger = new Logger(MigrateLinkFieldsToLinksCommand.name);
@@ -46,7 +46,8 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
 
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
-    description: 'workspace id. Command runs on all workspaces if not provided',
+    description:
+      'workspace id. Command runs on all active workspaces if not provided',
     required: false,
   })
   parseWorkspaceId(value: string): string {
@@ -153,18 +154,18 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
             );
 
             // Migrate data from linkLabel to primaryLinkLabel
-            await this.migrateData({
-              sourceFieldName: `${fieldWithLinkType.name}Label`,
-              targetFieldName: `${tmpNewLinksField.name}PrimaryLinkLabel`,
+            await this.migrateDataWithinTable({
+              sourceColumnName: `${fieldWithLinkType.name}Label`,
+              targetColumnName: `${tmpNewLinksField.name}PrimaryLinkLabel`,
               tableName,
               workspaceQueryRunner,
               dataSourceMetadata,
             });
 
             // Migrate data from linkUrl to primaryLinkUrl
-            await this.migrateData({
-              sourceFieldName: `${fieldWithLinkType.name}Url`,
-              targetFieldName: `${tmpNewLinksField.name}PrimaryLinkUrl`,
+            await this.migrateDataWithinTable({
+              sourceColumnName: `${fieldWithLinkType.name}Url`,
+              targetColumnName: `${tmpNewLinksField.name}PrimaryLinkUrl`,
               tableName,
               workspaceQueryRunner,
               dataSourceMetadata,
@@ -242,19 +243,19 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
 
               if (tmpNewLinksField) {
                 this.logger.log(
-                  `Restoring data in link field ${fieldWithLinkType.name}`,
+                  `Restoring data in field ${fieldWithLinkType.name}`,
                 );
-                await this.migrateData({
-                  sourceFieldName: `${tmpNewLinksField.name}PrimaryLinkLabel`,
-                  targetFieldName: `${restoredField.name}PrimaryLinkLabel`,
+                await this.migrateDataWithinTable({
+                  sourceColumnName: `${tmpNewLinksField.name}PrimaryLinkLabel`,
+                  targetColumnName: `${restoredField.name}PrimaryLinkLabel`,
                   tableName,
                   workspaceQueryRunner,
                   dataSourceMetadata,
                 });
 
-                await this.migrateData({
-                  sourceFieldName: `${tmpNewLinksField.name}PrimaryLinkUrl`,
-                  targetFieldName: `${restoredField.name}PrimaryLinkUrl`,
+                await this.migrateDataWithinTable({
+                  sourceColumnName: `${tmpNewLinksField.name}PrimaryLinkUrl`,
+                  targetColumnName: `${restoredField.name}PrimaryLinkUrl`,
                   tableName,
                   workspaceQueryRunner,
                   dataSourceMetadata,
@@ -289,21 +290,21 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
     }
   }
 
-  private async migrateData({
-    sourceFieldName,
-    targetFieldName,
+  private async migrateDataWithinTable({
+    sourceColumnName,
+    targetColumnName,
     tableName,
     workspaceQueryRunner,
     dataSourceMetadata,
   }: {
-    sourceFieldName: string;
-    targetFieldName: string;
+    sourceColumnName: string;
+    targetColumnName: string;
     tableName: string;
     workspaceQueryRunner: QueryRunner;
     dataSourceMetadata: DataSourceEntity;
   }) {
     await workspaceQueryRunner.query(
-      `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${targetFieldName}" = "${sourceFieldName}"`,
+      `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${targetColumnName}" = "${sourceColumnName}"`,
     );
   }
 }

@@ -52,6 +52,7 @@ import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
 import {
   FieldMetadataEntity,
@@ -226,28 +227,35 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
 
         if (!isEmpty(view)) {
-          const existingViewFields = await workspaceQueryRunner?.query(
+          const existingViewFields = (await workspaceQueryRunner?.query(
             `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
       WHERE "viewId" = '${view[0].id}'`,
+          )) as ViewFieldWorkspaceEntity[];
+
+          const createdFieldIsAlreadyInView = existingViewFields.some(
+            (existingViewField) =>
+              existingViewField.fieldMetadataId === createdFieldMetadata.id,
           );
 
-          const lastPosition = existingViewFields
-            .map((viewField) => viewField.position)
-            .reduce((acc, position) => {
-              if (position > acc) {
-                return position;
-              }
+          if (!createdFieldIsAlreadyInView) {
+            const lastPosition = existingViewFields
+              .map((viewField) => viewField.position)
+              .reduce((acc, position) => {
+                if (position > acc) {
+                  return position;
+                }
 
-              return acc;
-            }, -1);
+                return acc;
+              }, -1);
 
-          await workspaceQueryRunner?.query(
-            `INSERT INTO ${dataSourceMetadata.schema}."viewField"
+            await workspaceQueryRunner?.query(
+              `INSERT INTO ${dataSourceMetadata.schema}."viewField"
     ("fieldMetadataId", "position", "isVisible", "size", "viewId")
     VALUES ('${createdFieldMetadata.id}', '${lastPosition + 1}', true, 180, '${
       view[0].id
     }')`,
-          );
+            );
+          }
         }
 
         await workspaceQueryRunner.commitTransaction();
