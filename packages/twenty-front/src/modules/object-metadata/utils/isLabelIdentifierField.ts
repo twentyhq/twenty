@@ -14,12 +14,6 @@ export const isLabelIdentifierField = ({
     'labelIdentifierFieldMetadataId'
   >;
 }) => {
-  // Temporary hack while waiting for Weiko's PR
-  // https://github.com/twentyhq/twenty/pull/6227
-  if (fieldMetadataItem.name === 'title') {
-    return true;
-  }
-
   return isDefined(objectMetadataItem.labelIdentifierFieldMetadataId)
     ? fieldMetadataItem.id === objectMetadataItem.labelIdentifierFieldMetadataId
     : fieldMetadataItem.name === DEFAULT_LABEL_IDENTIFIER_FIELD_NAME;

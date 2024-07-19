@@ -22,7 +22,6 @@ import { isDefined } from '~/utils/isDefined';
 
 import { RecordIndexEventContext } from '@/object-record/record-index/contexts/RecordIndexEventContext';
 import { useContext } from 'react';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -75,11 +74,6 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         isActionButtonClick,
       }: OpenTableCellArgs) => {
         if (isReadOnly) {
-          return;
-        }
-
-        // TODO: do something more generic
-        if (fieldDefinition.type === FieldMetadataType.RichText) {
           return;
         }
 

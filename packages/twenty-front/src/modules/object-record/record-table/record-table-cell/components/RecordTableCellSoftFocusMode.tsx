@@ -22,6 +22,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
+import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 type RecordTableCellSoftFocusModeProps = {
@@ -35,7 +36,11 @@ export const RecordTableCellSoftFocusMode = ({
 }: RecordTableCellSoftFocusModeProps) => {
   const { columnIndex } = useContext(RecordTableCellContext);
   const closeCurrentTableCell = useCloseCurrentTableCellInEditMode();
-  const { isReadOnly } = useContext(RecordTableRowContext);
+  const { isReadOnly: isRowReadOnly } = useContext(RecordTableRowContext);
+
+  const isFieldReadOnly = useIsFieldReadOnly();
+
+  const isCellReadOnly = isFieldReadOnly || isRowReadOnly;
 
   const { openTableCell } = useOpenRecordTableCellFromCell();
 
@@ -76,7 +81,7 @@ export const RecordTableCellSoftFocusMode = ({
   useScopedHotkeys(
     Key.Enter,
     () => {
-      if (!isFieldInputOnly) {
+      if (!isFieldInputOnly && !isCellReadOnly) {
         openTableCell();
       } else {
         toggleEditOnlyInput();
@@ -114,7 +119,7 @@ export const RecordTableCellSoftFocusMode = ({
   );
 
   const handleClick = () => {
-    if (!isFieldInputOnly) {
+    if (!isFieldInputOnly && !isCellReadOnly) {
       openTableCell();
     }
   };
@@ -146,7 +151,7 @@ export const RecordTableCellSoftFocusMode = ({
     isDefined(buttonIcon) &&
     !editModeContentOnly &&
     (!isFirstColumn || !isEmpty) &&
-    !isReadOnly;
+    !isCellReadOnly;
 
   return (
     <>

@@ -16,6 +16,10 @@ export const getLabelIdentifierFieldValue = (
     return `${record.name?.firstName ?? ''} ${record.name?.lastName ?? ''}`;
   }
 
+  if (objectNameSingular === CoreObjectNameSingular.ActivityTarget) {
+    return record.activity?.title;
+  }
+
   if (isDefined(labelIdentifierFieldMetadataItem?.name)) {
     return String(record[labelIdentifierFieldMetadataItem.name]);
   }

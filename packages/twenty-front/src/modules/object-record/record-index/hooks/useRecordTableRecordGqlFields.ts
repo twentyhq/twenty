@@ -34,6 +34,12 @@ export const useRecordTableRecordGqlFields = ({
     ),
     ...identifierQueryFields,
     position: true,
+    activityTargets: {
+      activity: {
+        id: true,
+        title: true,
+      },
+    },
   };
 
   return recordGqlFields;
