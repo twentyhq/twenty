@@ -78,7 +78,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       onError: handleFindManyRecordsError,
     });
 
-  const { fetchMoreRecords, records, hasNextPage, cursorsByRecordId } =
+  const { fetchMoreRecords, records, hasNextPage } =
     useFetchMoreRecordsWithPagination<T>({
       objectNameSingular,
       filter,
@@ -103,6 +103,5 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     queryStateIdentifier: queryIdentifier,
     hasNextPage,
     pageInfo,
-    cursorsByRecordId,
   };
 };

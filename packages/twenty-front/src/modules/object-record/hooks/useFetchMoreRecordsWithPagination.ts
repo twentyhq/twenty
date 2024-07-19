@@ -26,7 +26,6 @@ import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
-import { getCursorByRecordIdFromRecordConnection } from '@/object-record/cache/utils/getCursorByRecordIdFromRecordConnection';
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '../states/isFetchingMoreRecordsFamilyState';
@@ -222,19 +221,10 @@ export const useFetchMoreRecordsWithPagination = <
     [recordConnection],
   );
 
-  const cursorsByRecordId = useMemo(
-    () =>
-      getCursorByRecordIdFromRecordConnection({
-        recordConnection,
-      }),
-    [recordConnection],
-  );
-
   return {
     fetchMoreRecords,
     totalCount,
     records,
     hasNextPage,
-    cursorsByRecordId,
   };
 };

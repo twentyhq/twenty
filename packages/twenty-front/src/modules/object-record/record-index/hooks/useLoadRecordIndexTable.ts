@@ -52,7 +52,6 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     totalCount,
     fetchMoreRecords,
     queryStateIdentifier,
-    cursorsByRecordId,
   } = useFindManyRecords({
     ...params,
     recordGqlFields,
@@ -74,6 +73,5 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     fetchMoreRecords,
     queryStateIdentifier,
     setRecordTableData,
-    cursorsByRecordId,
   };
 };
