@@ -17,6 +17,7 @@ import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
+import { ViewService } from 'src/modules/view/services/view.service';
 
 interface MigrateLinkFieldsToLinksCommandOptions {
   workspaceId?: string;
@@ -37,6 +38,7 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceStatusService: WorkspaceStatusService,
+    private readonly viewService: ViewService,
   ) {
     super();
   }
@@ -76,6 +78,9 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
       );
     }
 
+    // TO DO
+    // defaultValue
+    // query Runner in fieldMetadataService
     for (const workspaceId of workspaceIds) {
       this.logger.log(`Running command for workspace ${workspaceId}`);
       try {
@@ -125,7 +130,6 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
           await workspaceQueryRunner.connect();
           await workspaceQueryRunner.startTransaction();
           try {
-            //   const fieldIsStandard = fieldWithLinkType.isCustom === false;
             const fieldName = fieldWithLinkType.name;
             const { id: _id, ...fieldWithLinkTypeWithoutId } =
               fieldWithLinkType;
@@ -141,7 +145,7 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
               objectMetadata.isCustom,
             );
 
-            // Migrate from linkLabel to primaryLinkLabel
+            // Migrate data from linkLabel to primaryLinkLabel
             await this.migrateData({
               sourceFieldName: `${fieldWithLinkType.name}Label`,
               targetFieldName: `${tmpNewLinksField.name}PrimaryLinkLabel`,
@@ -150,7 +154,7 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
               dataSourceMetadata,
             });
 
-            // Migrate from linkUrl to primaryLinkUrl
+            // Migrate data from linkUrl to primaryLinkUrl
             await this.migrateData({
               sourceFieldName: `${fieldWithLinkType.name}Url`,
               targetFieldName: `${tmpNewLinksField.name}PrimaryLinkUrl`,
@@ -159,14 +163,28 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
               dataSourceMetadata,
             });
 
-            // Problem: we dont support deletion of composite fields..
+            // Duplicate link field's views behaviour for new links field
+            await this.viewService.removeFieldFromViews({
+              workspaceId: workspaceId,
+              fieldId: tmpNewLinksField.id,
+            });
+
+            await this.viewService.addFieldToViewsContainingOldField({
+              workspaceId: workspaceId,
+              newFieldId: tmpNewLinksField.id,
+              oldFieldId: fieldWithLinkType.id,
+            });
+
+            // Delete link field
             await this.fieldMetadataService.deleteOneField(
               { id: fieldWithLinkType.id },
               workspaceId,
             );
 
-            this.fieldMetadataService.createOne({
-              ...tmpNewLinksField,
+            // Rename temporary links field
+            await this.fieldMetadataService.updateOne(tmpNewLinksField.id, {
+              id: tmpNewLinksField.id,
+              workspaceId: tmpNewLinksField.workspaceId,
               name: `${fieldName}`,
             });
 
@@ -174,7 +192,7 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
               `Migration of ${fieldWithLinkType.name} on ${objectMetadata.nameSingular} done!`,
             );
 
-            // TODO handle views
+            await workspaceQueryRunner.commitTransaction();
           } catch (error) {
             this.logger.log(
               `Failed to migrate field ${fieldWithLinkType.name} on ${objectMetadata.nameSingular}, rolling back.`,
@@ -192,12 +210,14 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
               );
 
             if (tmpNewLinksField) {
-              // Problem: we dont support deletion of composite fields..
               await this.fieldMetadataService.deleteOneField(
                 { id: tmpNewLinksField.id },
                 workspaceId,
               );
             }
+          } finally {
+            console.log('releasing');
+            await workspaceQueryRunner.release();
           }
         }
       } catch (error) {
@@ -228,7 +248,7 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
   }) {
     await workspaceQueryRunner.query(
       `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${targetFieldName}" = "${sourceFieldName}"`,
-    );
+    ); // TODO only if null ?
   }
 
   private async getWorkspaceDataSource({

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import isEmpty from 'lodash.isempty';
 import { DataSource, FindOneOptions, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -224,28 +225,31 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
         );
 
-        const existingViewFields = await workspaceQueryRunner?.query(
-          `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
+        if (!isEmpty(view)) {
+          const existingViewFields = await workspaceQueryRunner?.query(
+            `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
       WHERE "viewId" = '${view[0].id}'`,
-        );
+          );
 
-        const lastPosition = existingViewFields
-          .map((viewField) => viewField.position)
-          .reduce((acc, position) => {
-            if (position > acc) {
-              return position;
-            }
+          const lastPosition = existingViewFields
+            .map((viewField) => viewField.position)
+            .reduce((acc, position) => {
+              if (position > acc) {
+                return position;
+              }
 
-            return acc;
-          }, -1);
+              return acc;
+            }, -1);
 
-        await workspaceQueryRunner?.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."viewField"
+          await workspaceQueryRunner?.query(
+            `INSERT INTO ${dataSourceMetadata.schema}."viewField"
     ("fieldMetadataId", "position", "isVisible", "size", "viewId")
     VALUES ('${createdFieldMetadata.id}', '${lastPosition + 1}', true, 180, '${
       view[0].id
     }')`,
-        );
+          );
+        }
+
         await workspaceQueryRunner.commitTransaction();
       } catch (error) {
         await workspaceQueryRunner.rollbackTransaction();

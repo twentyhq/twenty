@@ -11,18 +11,19 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
+import { ViewModule } from 'src/modules/view/view.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Workspace], 'core'),
     WorkspaceCacheVersionModule,
     FieldMetadataModule,
-    // ObjectMetadataModule,
     DataSourceModule,
     WorkspaceStatusModule,
     TypeOrmModule.forFeature([FieldMetadataEntity], 'metadata'),
     TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
     TypeORMModule,
+    ViewModule,
   ],
   providers: [MigrateLinkFieldsToLinksCommand, UpgradeTo0_23Command],
 })
