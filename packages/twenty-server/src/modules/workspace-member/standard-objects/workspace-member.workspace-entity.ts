@@ -58,9 +58,9 @@ export enum WorkspaceMemberTimeFormatEnum {
 }
 
 registerEnumType(WorkspaceMemberLocaleEnum, {
-  name: "WorkspaceMemberLocaleEnum",
-  description: "The language code as per region",
-})
+  name: 'WorkspaceMemberLocaleEnum',
+  description: 'The language code as per region',
+});
 
 registerEnumType(WorkspaceMemberColorSchemeEnum, {
   name: 'WorkspaceMemberColorSchemeEnum',

@@ -6,7 +6,10 @@ import {
 } from 'src/database/typeorm-seeds/core/workspaces';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
-import { WorkspaceMemberColorSchemeEnum, WorkspaceMemberLocaleEnum } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import {
+  WorkspaceMemberColorSchemeEnum,
+  WorkspaceMemberLocaleEnum,
+} from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const tableName = 'workspaceMember';
 
