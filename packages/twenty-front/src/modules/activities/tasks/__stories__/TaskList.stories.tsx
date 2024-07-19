@@ -4,7 +4,12 @@ import { ComponentDecorator } from 'twenty-ui';
 import { TaskList } from '@/activities/tasks/components/TaskList';
 import { Activity } from '@/activities/types/Activity';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { WorkspaceMemberColorSchemeEnum, WorkspaceMemberDateFormatEnum, WorkspaceMemberLocaleEnum, WorkspaceMemberTimeFormatEnum } from '~/generated/graphql';
+import {
+  WorkspaceMemberColorSchemeEnum,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberLocaleEnum,
+  WorkspaceMemberTimeFormatEnum,
+} from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
