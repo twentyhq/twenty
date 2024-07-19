@@ -89,8 +89,6 @@ export class ViewService {
       await viewFieldRepository.delete({
         viewId: viewWithField.viewId as string,
         fieldMetadataId: fieldId,
-        position: viewWithField.position - 0.5,
-        isVisible: true,
       });
 
       this.logger.log(

@@ -9,6 +9,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { FieldMetadataDefaultValueLink } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
@@ -78,9 +79,6 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
       );
     }
 
-    // TO DO
-    // defaultValue
-    // query Runner in fieldMetadataService
     for (const workspaceId of workspaceIds) {
       this.logger.log(`Running command for workspace ${workspaceId}`);
       try {
@@ -128,15 +126,24 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
           const workspaceQueryRunner = workspaceDataSource.createQueryRunner();
 
           await workspaceQueryRunner.connect();
-          await workspaceQueryRunner.startTransaction();
+
+          const fieldName = fieldWithLinkType.name;
+          const { id: _id, ...fieldWithLinkTypeWithoutId } = fieldWithLinkType;
+
+          const linkDefaultValue =
+            fieldWithLinkTypeWithoutId.defaultValue as FieldMetadataDefaultValueLink;
+
+          const defaultValueForLinksField = {
+            primaryLinkUrl: linkDefaultValue.url,
+            primaryLinkLabel: linkDefaultValue.label,
+            secondaryLinks: null,
+          };
+
           try {
-            const fieldName = fieldWithLinkType.name;
-            const { id: _id, ...fieldWithLinkTypeWithoutId } =
-              fieldWithLinkType;
             const tmpNewLinksField = await this.fieldMetadataService.createOne({
               ...fieldWithLinkTypeWithoutId,
               type: FieldMetadataType.LINKS,
-              defaultValue: null,
+              defaultValue: defaultValueForLinksField,
               name: `${fieldName}Tmp`,
             } satisfies CreateFieldInput);
 
@@ -191,23 +198,73 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
             this.logger.log(
               `Migration of ${fieldWithLinkType.name} on ${objectMetadata.nameSingular} done!`,
             );
-
-            await workspaceQueryRunner.commitTransaction();
           } catch (error) {
             this.logger.log(
               `Failed to migrate field ${fieldWithLinkType.name} on ${objectMetadata.nameSingular}, rolling back.`,
             );
-            await workspaceQueryRunner.rollbackTransaction();
+
+            // Re-create initial field if it was deleted
+            const initialField =
+              await this.fieldMetadataService.findOneWithinWorkspace(
+                workspaceId,
+                {
+                  where: {
+                    name: `${fieldWithLinkType.name}`,
+                    objectMetadataId: fieldWithLinkType.objectMetadataId,
+                  },
+                },
+              );
+
             const tmpNewLinksField =
               await this.fieldMetadataService.findOneWithinWorkspace(
                 workspaceId,
                 {
                   where: {
-                    name: `${fieldWithLinkType}Tmp`,
+                    name: `${fieldWithLinkType.name}Tmp`,
                     objectMetadataId: fieldWithLinkType.objectMetadataId,
                   },
                 },
               );
+
+            if (!initialField) {
+              this.logger.log(
+                `Re-creating initial link field ${fieldWithLinkType.name} but of type links`, // Cannot create link fields anymore
+              );
+              const restoredField = await this.fieldMetadataService.createOne({
+                ...fieldWithLinkType,
+                defaultValue: defaultValueForLinksField,
+                type: FieldMetadataType.LINKS,
+              });
+              const tableName = computeTableName(
+                objectMetadata.nameSingular,
+                objectMetadata.isCustom,
+              );
+
+              if (tmpNewLinksField) {
+                this.logger.log(
+                  `Restoring data in link field ${fieldWithLinkType.name}`,
+                );
+                await this.migrateData({
+                  sourceFieldName: `${tmpNewLinksField.name}PrimaryLinkLabel`,
+                  targetFieldName: `${restoredField.name}PrimaryLinkLabel`,
+                  tableName,
+                  workspaceQueryRunner,
+                  dataSourceMetadata,
+                });
+
+                await this.migrateData({
+                  sourceFieldName: `${tmpNewLinksField.name}PrimaryLinkUrl`,
+                  targetFieldName: `${restoredField.name}PrimaryLinkUrl`,
+                  tableName,
+                  workspaceQueryRunner,
+                  dataSourceMetadata,
+                });
+              } else {
+                this.logger.log(
+                  `Failed to restore data in link field ${fieldWithLinkType.name}`,
+                );
+              }
+            }
 
             if (tmpNewLinksField) {
               await this.fieldMetadataService.deleteOneField(
@@ -216,7 +273,6 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
               );
             }
           } finally {
-            console.log('releasing');
             await workspaceQueryRunner.release();
           }
         }
@@ -248,34 +304,6 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
   }) {
     await workspaceQueryRunner.query(
       `UPDATE "${dataSourceMetadata.schema}"."${tableName}" SET "${targetFieldName}" = "${sourceFieldName}"`,
-    ); // TODO only if null ?
-  }
-
-  private async getWorkspaceDataSource({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
-        workspaceId,
-      );
-
-    if (!dataSourceMetadata) {
-      throw new Error(
-        `Could not find dataSourceMetadata for workspace ${workspaceId}`,
-      );
-    }
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    if (!workspaceDataSource) {
-      throw new Error(
-        `Could not connect to dataSource for workspace ${workspaceId}`,
-      );
-    }
-
-    return workspaceDataSource;
+    );
   }
 }
