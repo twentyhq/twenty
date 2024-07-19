@@ -14,6 +14,7 @@ import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPage
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
+import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 export const useOpenCreateActivityDrawer = () => {
@@ -27,6 +28,9 @@ export const useOpenCreateActivityDrawer = () => {
     activityTargetableEntityArrayState,
   );
   const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
+  const setViewableRecordNameSingular = useSetRecoilState(
+    viewableRecordNameSingularState,
+  );
 
   const setIsCreatingActivity = useSetRecoilState(isActivityInCreateModeState);
 
@@ -60,8 +64,10 @@ export const useOpenCreateActivityDrawer = () => {
     setIsCreatingActivity(true);
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setViewableRecordId(createdActivityInCache.id);
+    setViewableRecordNameSingular('activity');
     setActivityTargetableEntityArray(targetableObjects ?? []);
-    openRightDrawer(RightDrawerPages.CreateActivity);
+
+    openRightDrawer(RightDrawerPages.ViewRecord);
     setIsUpsertingActivityInDB(false);
   };
 

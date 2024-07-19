@@ -2,6 +2,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
@@ -13,6 +14,11 @@ export const useOpenActivityRightDrawer = () => {
   const [viewableRecordId, setViewableRecordId] = useRecoilState(
     viewableRecordIdState,
   );
+
+  const setViewableRecordNameSingular = useSetRecoilState(
+    viewableRecordNameSingularState,
+  );
+
   const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState);
   const setHotkeyScope = useSetHotkeyScope();
 
@@ -27,7 +33,8 @@ export const useOpenActivityRightDrawer = () => {
 
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setViewableRecordId(activityId);
+    setViewableRecordNameSingular('activity');
     setActivityIdInDrawer(activityId);
-    openRightDrawer(RightDrawerPages.EditActivity);
+    openRightDrawer(RightDrawerPages.ViewRecord);
   };
 };

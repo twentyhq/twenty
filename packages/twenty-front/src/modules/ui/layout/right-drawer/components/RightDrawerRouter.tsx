@@ -33,7 +33,7 @@ const StyledRightDrawerBody = styled.div`
 const RIGHT_DRAWER_PAGES_CONFIG = {
   [RightDrawerPages.CreateActivity]: {
     page: <RightDrawerCreateActivity />,
-    topBar: <RightDrawerTopBar page={RightDrawerPages.CreateActivity} />,
+    topBar: <RightDrawerTopBar page={RightDrawerPages.ViewRecord} />,
   },
   [RightDrawerPages.EditActivity]: {
     page: <RightDrawerEditActivity />,
