@@ -5,6 +5,7 @@ import { getWorkspaceRepositoryToken } from 'src/engine/twenty-orm/utils/get-wor
 import { TWENTY_ORM_WORKSPACE_DATASOURCE } from 'src/engine/twenty-orm/twenty-orm.constants';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 /**
  * Create providers for the given entities.
@@ -14,17 +15,28 @@ export function createTwentyORMProviders(
 ): Provider[] {
   return (objects || []).map((object) => ({
     provide: getWorkspaceRepositoryToken(object),
-    useFactory: (
+    useFactory: async (
       dataSource: WorkspaceDataSource | null,
       entitySchemaFactory: EntitySchemaFactory,
     ) => {
-      const entity = entitySchemaFactory.create(object as Type);
+      const objectMetadataName = convertClassNameToObjectMetadataName(
+        (object as Type).name,
+      );
 
       if (!dataSource) {
         return null;
       }
 
-      return dataSource.getRepository(entity);
+      const entitySchema = await entitySchemaFactory.create(
+        dataSource.internalContext.workspaceId,
+        objectMetadataName,
+      );
+
+      if (!entitySchema) {
+        throw new Error('Entity schema not found');
+      }
+
+      return dataSource.getRepository(entitySchema);
     },
     inject: [TWENTY_ORM_WORKSPACE_DATASOURCE, EntitySchemaFactory],
   }));

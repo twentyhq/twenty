@@ -50,4 +50,16 @@ export interface WorkspaceEntityMetadataArgs {
    * Entity gate.
    */
   readonly gate?: Gate;
+
+  /**
+   * Label identifier.
+   */
+
+  readonly labelIdentifierStandardId: string | null;
+
+  /**
+   * Image identifier.
+   */
+
+  readonly imageIdentifierStandardId: string | null;
 }

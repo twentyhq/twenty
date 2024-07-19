@@ -1,51 +1,18 @@
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
-import { useMemo, useState } from 'react';
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { formatFieldMetadataItemsAsFilterDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
-import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useRecordIdsFromFindManyCacheRootQuery';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { View } from '@/views/types/View';
-import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
-import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
+import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
+import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
 import { isNonEmptyString } from '@sniptt/guards';
+import { getRelayCursorFromRecordId } from '~/utils/getRelayCursorFromRecordId';
 import { capitalize } from '~/utils/string/capitalize';
-
-export const findView = ({
-  viewId,
-  objectMetadataItemId,
-  views,
-}: {
-  viewId: string | null;
-  objectMetadataItemId: string;
-  views: View[];
-}) => {
-  if (!viewId) {
-    return views.find(
-      (view: any) =>
-        view.key === 'INDEX' && view?.objectMetadataId === objectMetadataItemId,
-    ) as View;
-  } else {
-    return views.find(
-      (view: any) =>
-        view?.id === viewId && view?.objectMetadataId === objectMetadataItemId,
-    ) as View;
-  }
-};
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
@@ -61,8 +28,6 @@ export const useRecordShowPagePagination = (
 
   const setLastShowPageRecordId = useSetRecoilState(lastShowPageRecordIdState);
 
-  const [isLoadedRecords] = useState(false);
-
   const objectNameSingular = propsObjectNameSingular || paramObjectNameSingular;
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
 
@@ -71,77 +36,26 @@ export const useRecordShowPagePagination = (
   }
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
-
-  const view = useMemo(() => {
-    return findView({
-      objectMetadataItemId: objectMetadataItem?.id ?? '',
-      viewId: viewIdQueryParam,
-      views,
-    });
-  }, [viewIdQueryParam, objectMetadataItem, views]);
-
-  const activeFieldMetadataItems = useMemo(
-    () =>
-      objectMetadataItem
-        ? objectMetadataItem.fields.filter(
-            ({ isActive, isSystem }) => isActive && !isSystem,
-          )
-        : [],
-    [objectMetadataItem],
-  );
-
-  const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
-    fields: activeFieldMetadataItems,
-  });
-
-  const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
-    fields: activeFieldMetadataItems,
-  });
-
-  const filter = turnObjectDropdownFilterIntoQueryFilter(
-    mapViewFiltersToFilters(view?.viewFilters ?? [], filterDefinitions),
-    objectMetadataItem?.fields ?? [],
-  );
-
-  const orderBy = turnSortsIntoOrderBy(
-    objectMetadataItem,
-    mapViewSortsToSorts(view?.viewSorts ?? [], sortDefinitions),
-  );
 
   const recordGqlFields = generateDepthOneRecordGqlFields({
     objectMetadataItem,
   });
 
-  const { state } = useLocation();
-
-  const cursorFromIndexPage = state?.cursor;
-
-  const { loading: loadingCurrentRecord, pageInfo: currentRecordsPageInfo } =
-    useFindManyRecords({
-      filter: {
-        id: { eq: objectRecordId },
-      },
-      orderBy,
-      skip: isLoadedRecords,
-      limit: 1,
-      objectNameSingular,
-      recordGqlFields,
+  const { filter, orderBy } =
+    useQueryVariablesFromActiveFieldsOfViewOrDefaultView({
+      objectMetadataItem,
+      viewId: viewIdQueryParam,
     });
 
-  const currentRecordCursor = currentRecordsPageInfo?.endCursor;
-
-  const cursor = cursorFromIndexPage ?? currentRecordCursor;
+  const cursor = getRelayCursorFromRecordId(objectRecordId);
 
   const {
     loading: loadingRecordBefore,
     records: recordsBefore,
-    pageInfo: pageInfoBefore,
     totalCount: totalCountBefore,
   } = useFindManyRecords({
     filter,
     orderBy,
-    skip: isLoadedRecords,
     cursorFilter: isNonEmptyString(cursor)
       ? {
           cursorDirection: 'before',
@@ -156,12 +70,10 @@ export const useRecordShowPagePagination = (
   const {
     loading: loadingRecordAfter,
     records: recordsAfter,
-    pageInfo: pageInfoAfter,
     totalCount: totalCountAfter,
   } = useFindManyRecords({
     filter,
     orderBy,
-    skip: isLoadedRecords,
     cursorFilter: cursor
       ? {
           cursorDirection: 'after',
@@ -175,8 +87,7 @@ export const useRecordShowPagePagination = (
 
   const totalCount = Math.max(totalCountBefore ?? 0, totalCountAfter ?? 0);
 
-  const loading =
-    loadingRecordAfter || loadingRecordBefore || loadingCurrentRecord;
+  const loading = loadingRecordAfter || loadingRecordBefore;
 
   const isThereARecordBefore = recordsBefore.length > 0;
   const isThereARecordAfter = recordsAfter.length > 0;
@@ -184,43 +95,27 @@ export const useRecordShowPagePagination = (
   const recordBefore = recordsBefore[0];
   const recordAfter = recordsAfter[0];
 
-  const recordBeforeCursor = pageInfoBefore?.endCursor;
-  const recordAfterCursor = pageInfoAfter?.endCursor;
-
   const navigateToPreviousRecord = () => {
     navigate(
-      `/object/${objectNameSingular}/${recordBefore.id}${
-        viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
-      }`,
-      {
-        state: {
-          cursor: recordBeforeCursor,
-        },
-      },
+      buildShowPageURL(objectNameSingular, recordBefore.id, viewIdQueryParam),
     );
   };
 
   const navigateToNextRecord = () => {
     navigate(
-      `/object/${objectNameSingular}/${recordAfter.id}${
-        viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
-      }`,
-      {
-        state: {
-          cursor: recordAfterCursor,
-        },
-      },
+      buildShowPageURL(objectNameSingular, recordAfter.id, viewIdQueryParam),
     );
   };
 
   const navigateToIndexView = () => {
-    const indexPath = `/objects/${objectMetadataItem.namePlural}${
-      viewIdQueryParam ? `?view=${viewIdQueryParam}` : ''
-    }`;
+    const indexTableURL = buildIndexTablePageURL(
+      objectMetadataItem.namePlural,
+      viewIdQueryParam,
+    );
 
     setLastShowPageRecordId(objectRecordId);
 
-    navigate(indexPath);
+    navigate(indexTableURL);
   };
 
   const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({

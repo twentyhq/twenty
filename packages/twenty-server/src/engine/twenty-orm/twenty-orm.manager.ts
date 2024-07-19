@@ -1,57 +1,66 @@
 import { Injectable, Optional, Type } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { ObjectLiteral } from 'typeorm';
+import { ObjectLiteral, Repository } from 'typeorm';
 
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
-import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
-import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
-import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
-import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
-import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
-import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
-import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
-import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
-import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
-import { BehavioralEventWorkspaceEntity } from 'src/modules/timeline/standard-objects/behavioral-event.workspace-entity';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
-import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
-import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
-import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
-import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { workspaceDataSourceCacheInstance } from 'src/engine/twenty-orm/twenty-orm-core.module';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
 export class TwentyORMManager {
   constructor(
     @Optional()
+    @InjectWorkspaceDatasource()
     private readonly workspaceDataSource: WorkspaceDataSource | null,
-    private readonly entitySchemaFactory: EntitySchemaFactory,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
+    private readonly entitySchemaFactory: EntitySchemaFactory,
   ) {}
 
-  getRepository<T extends ObjectLiteral>(
+  async getRepository<T extends ObjectLiteral>(
+    objectMetadataName: string,
+  ): Promise<WorkspaceRepository<T>>;
+
+  async getRepository<T extends ObjectLiteral>(
     entityClass: Type<T>,
-  ): WorkspaceRepository<T> {
-    const entitySchema = this.entitySchemaFactory.create(entityClass);
+  ): Promise<WorkspaceRepository<T>>;
+
+  async getRepository<T extends ObjectLiteral>(
+    entityClassOrobjectMetadataName: Type<T> | string,
+  ): Promise<WorkspaceRepository<T>> {
+    let objectMetadataName: string;
+
+    if (typeof entityClassOrobjectMetadataName === 'string') {
+      objectMetadataName = entityClassOrobjectMetadataName;
+    } else {
+      objectMetadataName = convertClassNameToObjectMetadataName(
+        entityClassOrobjectMetadataName.name,
+      );
+    }
 
     if (!this.workspaceDataSource) {
       throw new Error('Workspace data source not found');
+    }
+
+    const entitySchema = await this.entitySchemaFactory.create(
+      this.workspaceDataSource.internalContext.workspaceId,
+      objectMetadataName,
+    );
+
+    if (!entitySchema) {
+      throw new Error('Entity schema not found');
     }
 
     return this.workspaceDataSource.getRepository<T>(entitySchema);
@@ -60,54 +69,84 @@ export class TwentyORMManager {
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
     entityClass: Type<T>,
-  ): Promise<WorkspaceRepository<T>> {
-    // TODO: This is a temporary solution to get all workspace entities
-    const workspaceEntities = [
-      ActivityTargetWorkspaceEntity,
-      ActivityWorkspaceEntity,
-      ApiKeyWorkspaceEntity,
-      AttachmentWorkspaceEntity,
-      BlocklistWorkspaceEntity,
-      BehavioralEventWorkspaceEntity,
-      CalendarChannelEventAssociationWorkspaceEntity,
-      CalendarChannelWorkspaceEntity,
-      CalendarEventParticipantWorkspaceEntity,
-      CalendarEventWorkspaceEntity,
-      CommentWorkspaceEntity,
-      CompanyWorkspaceEntity,
-      ConnectedAccountWorkspaceEntity,
-      FavoriteWorkspaceEntity,
-      AuditLogWorkspaceEntity,
-      MessageChannelMessageAssociationWorkspaceEntity,
-      MessageChannelWorkspaceEntity,
-      MessageParticipantWorkspaceEntity,
-      MessageThreadWorkspaceEntity,
-      MessageWorkspaceEntity,
-      OpportunityWorkspaceEntity,
-      PersonWorkspaceEntity,
-      TimelineActivityWorkspaceEntity,
-      ViewFieldWorkspaceEntity,
-      ViewFilterWorkspaceEntity,
-      ViewSortWorkspaceEntity,
-      ViewWorkspaceEntity,
-      WebhookWorkspaceEntity,
-      WorkspaceMemberWorkspaceEntity,
-    ];
+  ): Promise<WorkspaceRepository<T>>;
 
-    const entities = workspaceEntities.map((workspaceEntity) =>
-      this.entitySchemaFactory.create(workspaceEntity as any),
+  async getRepositoryForWorkspace(
+    workspaceId: string,
+    objectMetadataName: string,
+  ): Promise<WorkspaceRepository<CustomWorkspaceEntity>>;
+
+  async getRepositoryForWorkspace<T extends ObjectLiteral>(
+    workspaceId: string,
+    entityClassOrobjectMetadataName: Type<T> | string,
+  ): Promise<
+    WorkspaceRepository<T> | WorkspaceRepository<CustomWorkspaceEntity>
+  > {
+    const cacheVersion =
+      await this.workspaceCacheVersionService.getVersion(workspaceId);
+
+    let objectMetadataName: string;
+
+    if (typeof entityClassOrobjectMetadataName === 'string') {
+      objectMetadataName = entityClassOrobjectMetadataName;
+    } else {
+      objectMetadataName = convertClassNameToObjectMetadataName(
+        entityClassOrobjectMetadataName.name,
+      );
+    }
+
+    const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
+      `${workspaceId}-${cacheVersion}`,
+      async () => {
+        let objectMetadataCollection =
+          await this.workspaceCacheStorageService.getObjectMetadataCollection(
+            workspaceId,
+          );
+
+        if (!objectMetadataCollection) {
+          objectMetadataCollection = await this.objectMetadataRepository.find({
+            where: { workspaceId },
+            relations: [
+              'fields.object',
+              'fields',
+              'fields.fromRelationMetadata',
+              'fields.toRelationMetadata',
+              'fields.fromRelationMetadata.toObjectMetadata',
+            ],
+          });
+
+          await this.workspaceCacheStorageService.setObjectMetadataCollection(
+            workspaceId,
+            objectMetadataCollection,
+          );
+        }
+
+        const entities = await Promise.all(
+          objectMetadataCollection.map((objectMetadata) =>
+            this.entitySchemaFactory.create(workspaceId, objectMetadata),
+          ),
+        );
+
+        const workspaceDataSource =
+          await this.workspaceDataSourceFactory.create(entities, workspaceId);
+
+        return workspaceDataSource;
+      },
+      (dataSource) => dataSource.destroy(),
     );
 
-    const workspaceDataSource = await this.workspaceDataSourceFactory.create(
-      entities,
+    const entitySchema = await this.entitySchemaFactory.create(
       workspaceId,
+      objectMetadataName,
     );
 
     if (!workspaceDataSource) {
       throw new Error('Workspace data source not found');
     }
 
-    const entitySchema = this.entitySchemaFactory.create(entityClass);
+    if (!entitySchema) {
+      throw new Error('Entity schema not found');
+    }
 
     return workspaceDataSource.getRepository<T>(entitySchema);
   }

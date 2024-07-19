@@ -1,7 +1,7 @@
-import { useContext } from 'react';
-import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
+import { useContext } from 'react';
+import { createPortal } from 'react-dom';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 
@@ -19,7 +19,8 @@ const StyledInlineCellInput = styled.div`
   display: flex;
 
   min-height: 32px;
-  min-width: 200px;
+  min-width: 320px;
+
   width: inherit;
 
   z-index: 1000;
@@ -29,6 +30,7 @@ type RecordInlineCellEditModeProps = {
   children: React.ReactNode;
 };
 
+// TODO: Refactor this to avoid setting absolute px values.
 export const RecordInlineCellEditMode = ({
   children,
 }: RecordInlineCellEditModeProps) => {
@@ -41,7 +43,8 @@ export const RecordInlineCellEditMode = ({
       offset(
         isCentered
           ? {
-              mainAxis: -30,
+              mainAxis: -32,
+              crossAxis: 160,
             }
           : {
               crossAxis: -4,
