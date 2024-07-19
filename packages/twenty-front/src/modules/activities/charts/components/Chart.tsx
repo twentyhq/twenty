@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { ResponsiveBar } from '@nivo/bar';
 
 import { Chart as ChartType } from '@/activities/charts/types/Chart';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
@@ -34,16 +35,37 @@ export const Chart = (props: ChartProps) => {
   if (!chart) throw new Error('Could not load chart');
 
   return (
-    <StyledChartContainer>
-      <button
-        onClick={async () => {
-          await runChartQuery();
-        }}
-      >
-        Run query
-      </button>
-      <p>{chart.result}</p>
-      {/* TODO: Nivo charts */}
-    </StyledChartContainer>
+    <>
+      <StyledChartContainer>
+        <button
+          onClick={async () => {
+            await runChartQuery();
+          }}
+        >
+          Run query
+        </button>
+        <p>{chart.result}</p>
+        {/* TODO: Nivo charts */}
+      </StyledChartContainer>
+      <ResponsiveBar
+        data={[
+          {
+            day: 'Monday',
+            degress: 59,
+          },
+          {
+            day: 'Tuesday',
+            degress: 61,
+          },
+        ]}
+        keys={['degress']}
+        indexBy="day"
+        margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+        padding={0.4}
+        valueScale={{ type: 'linear' }}
+        animate={true}
+        enableLabel={false}
+      />
+    </>
   );
 };
