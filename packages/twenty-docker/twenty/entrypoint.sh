@@ -5,7 +5,7 @@ if [ "${ENABLE_DB_MIGRATIONS}" = "true" ] && [ ! -f /app/${STORAGE_LOCAL_PATH:-.
     echo "Running database setup and migrations..."
 
     # Run setup and migration scripts
-    NODE_OPTIONS="--max-old-space-size=8192" npx ts-node ./scripts/setup-db.ts
+    NODE_OPTIONS="--max-old-space-size=1500" npx ts-node ./scripts/setup-db.ts
     yarn database:migrate:prod
 
     # Mark initialization as done
