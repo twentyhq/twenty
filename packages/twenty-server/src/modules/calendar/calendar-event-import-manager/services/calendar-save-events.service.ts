@@ -42,7 +42,7 @@ export class CalendarSaveEventsService {
   ): Promise<void> {
     const calendarEventRepository =
       await this.twentyORMManager.getRepository<CalendarEventWorkspaceEntity>(
-        'calendarChannel',
+        'calendarEvent',
       );
 
     const existingCalendarEvents = await calendarEventRepository.find({
