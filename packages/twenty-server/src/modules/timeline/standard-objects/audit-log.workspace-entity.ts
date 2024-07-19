@@ -20,6 +20,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelPlural: 'Audit Logs',
   description: 'An audit log of actions performed in the system',
   icon: 'IconIconTimelineEvent',
+  labelIdentifierStandardId: AUDIT_LOGS_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
 export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
