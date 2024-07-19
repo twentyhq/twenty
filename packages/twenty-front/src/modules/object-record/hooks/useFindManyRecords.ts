@@ -34,6 +34,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   fetchPolicy,
   onError,
   onCompleted,
+  cursorFilter,
 }: UseFindManyRecordsParams<T>) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -42,6 +43,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,
     recordGqlFields,
+    cursorDirection: cursorFilter?.cursorDirection,
   });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
@@ -67,15 +69,16 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       skip: skip || !objectMetadataItem || !currentWorkspaceMember,
       variables: {
         filter,
-        limit,
         orderBy,
+        lastCursor: cursorFilter?.cursor ?? undefined,
+        limit: cursorFilter?.limit ?? limit,
       },
       fetchPolicy: fetchPolicy,
       onCompleted: handleFindManyRecordsCompleted,
       onError: handleFindManyRecordsError,
     });
 
-  const { fetchMoreRecords, totalCount, records, hasNextPage } =
+  const { fetchMoreRecords, records, hasNextPage } =
     useFetchMoreRecordsWithPagination<T>({
       objectNameSingular,
       filter,
@@ -87,6 +90,9 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       objectMetadataItem,
     });
 
+  const pageInfo = data?.[objectMetadataItem.namePlural].pageInfo;
+  const totalCount = data?.[objectMetadataItem.namePlural].totalCount;
+
   return {
     objectMetadataItem,
     records,
@@ -96,5 +102,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     fetchMoreRecords,
     queryStateIdentifier: queryIdentifier,
     hasNextPage,
+    pageInfo,
   };
 };

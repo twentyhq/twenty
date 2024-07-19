@@ -6,7 +6,7 @@ describe('metadataLabelSchema', () => {
     const validMetadataLabel = 'Option 1';
 
     // When
-    const result = metadataLabelSchema.parse(validMetadataLabel);
+    const result = metadataLabelSchema().parse(validMetadataLabel);
 
     // Then
     expect(result).toEqual(validMetadataLabel);
@@ -16,7 +16,7 @@ describe('metadataLabelSchema', () => {
     const validMetadataLabel = 'עִבְרִי';
 
     // When
-    const result = metadataLabelSchema.parse(validMetadataLabel);
+    const result = metadataLabelSchema().parse(validMetadataLabel);
 
     // Then
     expect(result).toEqual(validMetadataLabel);

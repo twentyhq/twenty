@@ -1,16 +1,15 @@
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import {
   ChangeEvent,
   FocusEventHandler,
   ForwardedRef,
-  forwardRef,
   InputHTMLAttributes,
+  forwardRef,
   useRef,
   useState,
 } from 'react';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { IconAlertCircle, IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
-
+import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 const StyledContainer = styled.div<
@@ -35,10 +34,12 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledInput = styled.input<
-  Pick<TextInputV2ComponentProps, 'fullWidth' | 'LeftIcon'>
+  Pick<TextInputV2ComponentProps, 'fullWidth' | 'LeftIcon' | 'error'>
 >`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border: 1px solid
+    ${({ theme, error }) =>
+      error ? theme.border.color.danger : theme.border.color.medium};
   border-bottom-left-radius: ${({ theme, LeftIcon }) =>
     !LeftIcon && theme.border.radius.sm};
   border-right: none;
@@ -86,10 +87,14 @@ const StyledLeftIconContainer = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTrailingIconContainer = styled.div`
+const StyledTrailingIconContainer = styled.div<
+  Pick<TextInputV2ComponentProps, 'error'>
+>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border: 1px solid
+    ${({ theme, error }) =>
+      error ? theme.border.color.danger : theme.border.color.medium};
   border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
   border-left: none;
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
@@ -191,14 +196,10 @@ const TextInputV2Component = (
             value,
             LeftIcon,
             maxLength,
+            error,
           }}
         />
-        <StyledTrailingIconContainer>
-          {error && (
-            <StyledTrailingIcon>
-              <IconAlertCircle size={16} color={theme.color.red} />
-            </StyledTrailingIcon>
-          )}
+        <StyledTrailingIconContainer {...{ error }}>
           {!error && type === INPUT_TYPE_PASSWORD && (
             <StyledTrailingIcon
               onClick={handleTogglePasswordVisibility}

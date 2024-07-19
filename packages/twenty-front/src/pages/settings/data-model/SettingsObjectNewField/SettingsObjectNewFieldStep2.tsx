@@ -36,7 +36,7 @@ import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
-  typeof settingsFieldFormSchema
+  ReturnType<typeof settingsFieldFormSchema>
 >;
 
 const StyledSettingsObjectFieldTypeSelect = styled(
@@ -59,7 +59,11 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(settingsFieldFormSchema),
+    resolver: zodResolver(
+      settingsFieldFormSchema(
+        activeObjectMetadataItem?.fields.map((value) => value.name),
+      ),
+    ),
   });
 
   useEffect(() => {
@@ -169,8 +173,9 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   return (
     <RecordFieldValueSelectorContextProvider>
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-      <FormProvider {...formConfig}>
+      <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
+        {...formConfig}
+      >
         <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
           <SettingsPageContainer>
             <SettingsHeaderContainer>
