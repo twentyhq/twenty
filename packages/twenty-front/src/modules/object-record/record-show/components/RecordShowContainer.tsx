@@ -22,7 +22,6 @@ import { recordStoreIdentifierFamilySelector } from '@/object-record/record-stor
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
-import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
@@ -247,28 +246,19 @@ export const RecordShowContainer = ({
         <ShowPageLeftContainer forceMobile={isInRightDrawer}>
           {!isMobile && summary}
         </ShowPageLeftContainer>
-        {recordFromStore && objectNameSingular !== 'activity' ? (
-          <ShowPageRightContainer
-            targetableObject={{
-              id: objectRecordId,
-              targetObjectNameSingular: objectMetadataItem?.nameSingular,
-            }}
-            timeline
-            tasks
-            notes
-            emails
-            isRightDrawer={isInRightDrawer}
-            summary={summary}
-            loading={isPrefetchLoading || loading || recordLoading}
-          />
-        ) : (
-          <></>
-        )}
-        {recordFromStore && objectNameSingular === 'activity' ? (
-          <ShowPageActivityContainer objectRecordId={objectRecordId} />
-        ) : (
-          <></>
-        )}
+        <ShowPageRightContainer
+          targetableObject={{
+            id: objectRecordId,
+            targetObjectNameSingular: objectMetadataItem?.nameSingular,
+          }}
+          timeline
+          tasks
+          notes
+          emails
+          isRightDrawer={isInRightDrawer}
+          summary={summary}
+          loading={isPrefetchLoading || loading || recordLoading}
+        />
       </ShowPageContainer>
     </RecoilScope>
   );

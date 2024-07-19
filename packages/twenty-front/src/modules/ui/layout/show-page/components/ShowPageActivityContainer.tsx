@@ -1,4 +1,5 @@
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import styled from '@emotion/styled';
 
 const StyledShowPageActivityContainer = styled.div`
@@ -6,14 +7,17 @@ const StyledShowPageActivityContainer = styled.div`
   width: 100%;
 `;
 export const ShowPageActivityContainer = ({
-  objectRecordId,
+  targetableObject,
 }: {
-  objectRecordId: string;
+  targetableObject: Pick<
+    ActivityTargetableObject,
+    'targetObjectNameSingular' | 'id'
+  >;
 }) => {
   return (
     <StyledShowPageActivityContainer>
       <ActivityBodyEditor
-        activityId={objectRecordId}
+        activityId={targetableObject.id}
         fillTitleFromBody={false}
       />
     </StyledShowPageActivityContainer>

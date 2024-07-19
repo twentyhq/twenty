@@ -19,6 +19,7 @@ import { TimelineActivities } from '@/activities/timelineActivities/components/T
 import { TimelineActivitiesQueryEffect } from '@/activities/timelineActivities/components/TimelineActivitiesQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -90,14 +91,35 @@ export const ShowPageRightContainer = ({
       hide: !isMobile,
     },
     {
+      id: 'richText',
+      title: 'Content',
+      Icon: IconNotes,
+      hide: targetableObject.targetObjectNameSingular !== 'activity',
+    },
+    {
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
       hide: !timeline || isRightDrawer,
     },
-    { id: 'tasks', title: 'Tasks', Icon: IconCheckbox, hide: !tasks },
-    { id: 'notes', title: 'Notes', Icon: IconNotes, hide: !notes },
-    { id: 'files', title: 'Files', Icon: IconPaperclip, hide: !notes },
+    {
+      id: 'tasks',
+      title: 'Tasks',
+      Icon: IconCheckbox,
+      hide: !tasks || targetableObject.targetObjectNameSingular === 'activity',
+    },
+    {
+      id: 'notes',
+      title: 'Notes',
+      Icon: IconNotes,
+      hide: !notes || targetableObject.targetObjectNameSingular === 'activity',
+    },
+    {
+      id: 'files',
+      title: 'Files',
+      Icon: IconPaperclip,
+      hide: !notes || targetableObject.targetObjectNameSingular === 'activity',
+    },
     {
       id: 'emails',
       title: 'Emails',
@@ -125,6 +147,10 @@ export const ShowPageRightContainer = ({
         );
       case 'summary':
         return summary;
+      case 'richText':
+        return (
+          <ShowPageActivityContainer targetableObject={targetableObject} />
+        );
       case 'tasks':
         return <ObjectTasks targetableObject={targetableObject} />;
       case 'notes':
