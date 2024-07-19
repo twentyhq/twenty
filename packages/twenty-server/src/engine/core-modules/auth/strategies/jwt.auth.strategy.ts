@@ -1,20 +1,20 @@
-import { PassportStrategy } from '@nestjs/passport';
 import {
   ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
-import { assert } from 'src/utils/assert';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { assert } from 'src/utils/assert';
 
 export type JwtPayload = { sub: string; workspaceId: string; jti?: string };
 export type PassportUser = { user?: User; workspace: Workspace };
@@ -55,7 +55,8 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
       const apiKey = await workspaceDataSource?.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."apiKey" WHERE id = '${payload.jti}'`,
+        `SELECT * FROM ${dataSourceMetadata.schema}."apiKey" WHERE id = $1`,
+        [payload.jti],
       );
 
       assert(
