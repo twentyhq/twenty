@@ -6,12 +6,12 @@ export const opportunitiesAllView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'All Opportunities',
+    name: 'All',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].id,
     type: 'table',
     key: 'INDEX',
     position: 0,
-    icon: 'IconTargetArrow',
+    icon: 'IconList',
     kanbanFieldMetadataId: '',
     filters: [],
     fields: [

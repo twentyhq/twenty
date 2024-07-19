@@ -9,12 +9,12 @@ export const peopleAllView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'All People',
+    name: 'All',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.person].id,
     type: 'table',
     key: 'INDEX',
     position: 0,
-    icon: 'IconUser',
+    icon: 'IconList',
     kanbanFieldMetadataId: '',
     filters: [],
     fields: [

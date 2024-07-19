@@ -1,4 +1,5 @@
 import { EntityManager } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { activitiesAllNotesView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all-notes.view';
@@ -24,10 +25,16 @@ export const viewPrefillData = async (
     await activitiesAllTasksView(objectMetadataMap),
   ];
 
+  const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({
+    ...viewDefinition,
+    id: v4(),
+  }));
+
   const createdViews = await entityManager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.view`, [
+      'id',
       'name',
       'objectMetadataId',
       'type',
@@ -37,8 +44,9 @@ export const viewPrefillData = async (
       'kanbanFieldMetadataId',
     ])
     .values(
-      viewDefinitions.map(
+      viewDefinitionsWithId.map(
         ({
+          id,
           name,
           objectMetadataId,
           type,
@@ -47,6 +55,7 @@ export const viewPrefillData = async (
           icon,
           kanbanFieldMetadataId,
         }) => ({
+          id,
           name,
           objectMetadataId,
           type,
@@ -60,13 +69,7 @@ export const viewPrefillData = async (
     .returning('*')
     .execute();
 
-  const viewIdMap = createdViews.raw.reduce((acc, view) => {
-    acc[view.name] = view.id;
-
-    return acc;
-  }, {});
-
-  for (const viewDefinition of viewDefinitions) {
+  for (const viewDefinition of viewDefinitionsWithId) {
     if (viewDefinition.fields && viewDefinition.fields.length > 0) {
       await entityManager
         .createQueryBuilder()
@@ -84,7 +87,7 @@ export const viewPrefillData = async (
             position: field.position,
             isVisible: field.isVisible,
             size: field.size,
-            viewId: viewIdMap[viewDefinition.name],
+            viewId: viewDefinition.id,
           })),
         )
         .execute();
@@ -107,7 +110,7 @@ export const viewPrefillData = async (
             displayValue: filter.displayValue,
             operand: filter.operand,
             value: filter.value,
-            viewId: viewIdMap[viewDefinition.name],
+            viewId: viewDefinition.id,
           })),
         )
         .execute();

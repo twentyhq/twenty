@@ -9,12 +9,12 @@ export const companiesAllView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'All Companies',
+    name: 'All',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.company].id,
     type: 'table',
     key: 'INDEX',
     position: 0,
-    icon: 'IconBuildingSkyscraper',
+    icon: 'IconList',
     kanbanFieldMetadataId: '',
     filters: [],
     fields: [

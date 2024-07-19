@@ -35,6 +35,10 @@ export const ShowPageAddButton = ({
     closeDropdown();
   };
 
+  if (activityTargetObject.targetObjectNameSingular === 'activity') {
+    return;
+  }
+
   return (
     <StyledContainer>
       <Dropdown

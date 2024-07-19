@@ -26,7 +26,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelSingular: 'Activity',
   labelPlural: 'Activities',
   description: 'An activity',
-  icon: 'IconCheckbox',
+  icon: 'IconActivity',
 })
 // @WorkspaceIsSystem()
 export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {

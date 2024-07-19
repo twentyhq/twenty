@@ -9,12 +9,12 @@ export const activitiesAllView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'All Activities',
+    name: 'All',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.activity].id,
     type: 'table',
     key: 'INDEX',
     position: 1,
-    icon: 'IconCheckbox',
+    icon: 'IconList',
     kanbanFieldMetadataId: '',
     filters: [],
     fields: [

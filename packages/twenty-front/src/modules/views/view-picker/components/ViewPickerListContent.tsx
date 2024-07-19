@@ -1,6 +1,6 @@
-import { MouseEvent, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
+import { MouseEvent, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { IconLock, IconPencil, IconPlus, useIcons } from 'twenty-ui';
 
@@ -87,6 +87,22 @@ export const ViewPickerListContent = () => {
   return (
     <>
       <DropdownMenuItemsContainer>
+        {indexView && (
+          <MenuItemDraggable
+            key={indexView.id}
+            iconButtons={[
+              {
+                Icon: IconLock,
+              },
+            ].filter(isDefined)}
+            isIconDisplayedOnHoverOnly={false}
+            onClick={() => handleViewSelect(indexView.id)}
+            LeftIcon={getIcon(indexView.icon)}
+            text={indexView.name}
+            accent="placeholder"
+            isDragDisabled
+          />
+        )}
         <DraggableList
           onDragEnd={handleDragEnd}
           draggableItems={viewsOnCurrentObjectWithoutIndex.map(
@@ -116,22 +132,6 @@ export const ViewPickerListContent = () => {
             ),
           )}
         />
-        {indexView && (
-          <MenuItemDraggable
-            key={indexView.id}
-            iconButtons={[
-              {
-                Icon: IconLock,
-              },
-            ].filter(isDefined)}
-            isIconDisplayedOnHoverOnly={false}
-            onClick={() => handleViewSelect(indexView.id)}
-            LeftIcon={getIcon(indexView.icon)}
-            text={indexView.name}
-            accent="placeholder"
-            isDragDisabled
-          />
-        )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <StyledBoldDropdownMenuItemsContainer>

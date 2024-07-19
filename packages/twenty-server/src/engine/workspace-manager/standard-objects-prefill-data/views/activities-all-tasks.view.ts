@@ -14,7 +14,7 @@ export const activitiesAllTasksView = async (
     type: 'table',
     key: null,
     position: 0,
-    icon: 'IconCheck',
+    icon: 'IconCheckbox',
     kanbanFieldMetadataId: '',
     filters: [
       {
