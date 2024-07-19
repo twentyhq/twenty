@@ -71,8 +71,6 @@ export const CHART_STANDARD_FIELD_IDS = {
   fieldPath: '20202020-b301-49fc-a26e-55f1a482a4c8',
   chartFilters: '20202020-9703-4059-8b49-50a44cf3da26',
   groupBy: '20202020-c5e7-4158-bd3e-3ab1283b52a3',
-  result: '20202020-4473-4124-a643-13d9ad9f68d2',
-  resultCreatedAt: '20202020-070d-490b-a974-f6677f77b909',
   position: '20202020-b014-4ead-b2f4-5cbb9c67cd05',
 };
 

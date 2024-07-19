@@ -135,26 +135,6 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
   groupBy: string;
 
   @WorkspaceField({
-    standardId: CHART_STANDARD_FIELD_IDS.result,
-    type: FieldMetadataType.RAW_JSON,
-    label: 'Query result',
-    description: 'Result of the chart',
-    icon: 'IconTable',
-  })
-  @WorkspaceIsNullable()
-  analyticsQueryResult: object;
-
-  @WorkspaceField({
-    standardId: CHART_STANDARD_FIELD_IDS.resultCreatedAt,
-    type: FieldMetadataType.DATE_TIME,
-    label: 'Query result created at',
-    description: 'Timestamp of when the chart was successfully run',
-    icon: 'IconCalendarTime',
-  })
-  @WorkspaceIsNullable()
-  analyticsQueryResultCreatedAt: Date;
-
-  @WorkspaceField({
     standardId: CHART_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
