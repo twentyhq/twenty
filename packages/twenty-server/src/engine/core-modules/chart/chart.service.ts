@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ChartResult } from 'src/engine/core-modules/analytics-query/dtos/analytics-query-result.dto';
+import { ChartResult } from 'src/engine/core-modules/chart/dtos/chart-result.dto';
 import {
   ChartMeasure,
   ChartWorkspaceEntity,

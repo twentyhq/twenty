@@ -6,8 +6,8 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { AnalyticsQueryService } from 'src/engine/core-modules/analytics-query/analytics-query.service';
-import { ChartResult } from 'src/engine/core-modules/analytics-query/dtos/analytics-query-result.dto';
+import { AnalyticsQueryService } from 'src/engine/core-modules/chart/chart.service';
+import { ChartResult } from 'src/engine/core-modules/chart/dtos/chart-result.dto';
 
 @ArgsType()
 class GetAnalyticsQueryArgs {
