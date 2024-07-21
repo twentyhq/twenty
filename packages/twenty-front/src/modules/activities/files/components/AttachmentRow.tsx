@@ -1,18 +1,19 @@
-import { useMemo } from 'react';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { IconCalendar } from 'twenty-ui';
-
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
 import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
   GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { EditableField } from '@/ui/field/input/components/EditableField';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useMemo, useState } from 'react';
+import { IconCalendar } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
@@ -57,6 +58,8 @@ const StyledLink = styled.a`
 
 export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const theme = useTheme();
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState(attachment.name);
   const fieldContext = useMemo(
     () => ({ recoilScopeId: attachment?.id ?? '' }),
     [attachment?.id],
@@ -70,17 +73,51 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     deleteOneAttachment(attachment.id);
   };
 
+  const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
+
+  const handleUpdate = () => {
+    updateOneAttachment({
+      idToUpdate: attachment.id,
+      updateOneRecordInput: { name: newName },
+    });
+    setIsEditing(false);
+  };
+
+  const handleRename = () => {
+    setIsEditing(true);
+  };
+
+  const handleInputChange = (text: string) => {
+    setNewName(text);
+  };
+
+  const handleInputBlur = () => {
+    handleUpdate();
+  };
+
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
       <StyledRow>
         <StyledLeftContent>
           <AttachmentIcon attachmentType={attachment.type} />
-          <StyledLink
-            href={REACT_APP_SERVER_BASE_URL + '/files/' + attachment.fullPath}
-            target="__blank"
-          >
-            {attachment.name}
-          </StyledLink>
+          {isEditing ? (
+            <EditableField
+              value={newName}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+              autoFocus
+              fullWidth
+            />
+          ) : (
+            <StyledLink
+              href={REACT_APP_SERVER_BASE_URL + '/files/' + attachment.fullPath}
+              target="__blank"
+            >
+              {attachment.name}
+            </StyledLink>
+          )}
         </StyledLeftContent>
         <StyledRightContent>
           <StyledCalendarIconContainer>
@@ -93,6 +130,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
             onDownload={() => {
               downloadFile(attachment.fullPath, attachment.name);
             }}
+            onRename={handleRename}
           />
         </StyledRightContent>
       </StyledRow>
