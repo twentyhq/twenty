@@ -41,7 +41,7 @@ To make configuration changes to how this doc is generated, see `./.terraform-do
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_twentycrm_app_hostname"></a> [twentycrm\_app\_hostname](#input\_twentycrm\_app\_hostname) | The protocol, DNS fully qualified hostname, and port used to access TwentyCRM in your environemnt. Ex: https://crm.example.com:443 | `string` | n/a | yes |
+| <a name="input_twentycrm_app_hostname"></a> [twentycrm\_app\_hostname](#input\_twentycrm\_app\_hostname) | The protocol, DNS fully qualified hostname, and port used to access TwentyCRM in your environment. Ex: https://crm.example.com:443 | `string` | n/a | yes |
 | <a name="input_twentycrm_pgdb_admin_password"></a> [twentycrm\_pgdb\_admin\_password](#input\_twentycrm\_pgdb\_admin\_password) | TwentyCRM password for postgres database. | `string` | n/a | yes |
 | <a name="input_twentycrm_token_accessToken"></a> [twentycrm\_token\_accessToken](#input\_twentycrm\_token\_accessToken) | TwentyCRM access Token | `string` | n/a | yes |
 | <a name="input_twentycrm_token_fileToken"></a> [twentycrm\_token\_fileToken](#input\_twentycrm\_token\_fileToken) | TwentyCRM file Token | `string` | n/a | yes |
@@ -49,16 +49,16 @@ To make configuration changes to how this doc is generated, see `./.terraform-do
 | <a name="input_twentycrm_token_refreshToken"></a> [twentycrm\_token\_refreshToken](#input\_twentycrm\_token\_refreshToken) | TwentyCRM refresh Token | `string` | n/a | yes |
 | <a name="input_twentycrm_app_name"></a> [twentycrm\_app\_name](#input\_twentycrm\_app\_name) | A friendly name prefix to use for every component deployed. | `string` | `"twentycrm"` | no |
 | <a name="input_twentycrm_db_image"></a> [twentycrm\_db\_image](#input\_twentycrm\_db\_image) | TwentyCRM image for database deployment. This defaults to latest. | `string` | `"twentycrm/twenty-postgres:latest"` | no |
-| <a name="input_twentycrm_db_pv_capacity"></a> [twentycrm\_db\_pv\_capacity](#input\_twentycrm\_db\_pv\_capacity) | Storage capacity provisioned for database persistant volume. | `string` | `"10Gi"` | no |
+| <a name="input_twentycrm_db_pv_capacity"></a> [twentycrm\_db\_pv\_capacity](#input\_twentycrm\_db\_pv\_capacity) | Storage capacity provisioned for database persistent volume. | `string` | `"10Gi"` | no |
 | <a name="input_twentycrm_db_pv_path"></a> [twentycrm\_db\_pv\_path](#input\_twentycrm\_db\_pv\_path) | Local path to use to store the physical volume if using local storage on nodes. | `string` | `""` | no |
-| <a name="input_twentycrm_db_pvc_requests"></a> [twentycrm\_db\_pvc\_requests](#input\_twentycrm\_db\_pvc\_requests) | Storage capacity reservation for database persistant volume claim. | `string` | `"10Gi"` | no |
+| <a name="input_twentycrm_db_pvc_requests"></a> [twentycrm\_db\_pvc\_requests](#input\_twentycrm\_db\_pvc\_requests) | Storage capacity reservation for database persistent volume claim. | `string` | `"10Gi"` | no |
 | <a name="input_twentycrm_db_replicas"></a> [twentycrm\_db\_replicas](#input\_twentycrm\_db\_replicas) | Number of replicas for the TwentyCRM database deployment. This defaults to 1. | `number` | `1` | no |
 | <a name="input_twentycrm_namespace"></a> [twentycrm\_namespace](#input\_twentycrm\_namespace) | Namespace for all TwentyCRM resources | `string` | `"twentycrm"` | no |
 | <a name="input_twentycrm_server_data_mount_path"></a> [twentycrm\_server\_data\_mount\_path](#input\_twentycrm\_server\_data\_mount\_path) | TwentyCRM mount path for servers application data. Defaults to '/app/docker-data'. | `string` | `"/app/docker-data"` | no |
 | <a name="input_twentycrm_server_image"></a> [twentycrm\_server\_image](#input\_twentycrm\_server\_image) | TwentyCRM server image for the server deployment. This defaults to latest. This value is also used for the workers image. | `string` | `"twentycrm/twenty:latest"` | no |
-| <a name="input_twentycrm_server_pv_capacity"></a> [twentycrm\_server\_pv\_capacity](#input\_twentycrm\_server\_pv\_capacity) | Storage capacity provisioned for server persistant volume. | `string` | `"10Gi"` | no |
+| <a name="input_twentycrm_server_pv_capacity"></a> [twentycrm\_server\_pv\_capacity](#input\_twentycrm\_server\_pv\_capacity) | Storage capacity provisioned for server persistent volume. | `string` | `"10Gi"` | no |
 | <a name="input_twentycrm_server_pv_path"></a> [twentycrm\_server\_pv\_path](#input\_twentycrm\_server\_pv\_path) | Local path to use to store the physical volume if using local storage on nodes. | `string` | `""` | no |
-| <a name="input_twentycrm_server_pvc_requests"></a> [twentycrm\_server\_pvc\_requests](#input\_twentycrm\_server\_pvc\_requests) | Storage capacity reservation for server persistant volume claim. | `string` | `"10Gi"` | no |
+| <a name="input_twentycrm_server_pvc_requests"></a> [twentycrm\_server\_pvc\_requests](#input\_twentycrm\_server\_pvc\_requests) | Storage capacity reservation for server persistent volume claim. | `string` | `"10Gi"` | no |
 | <a name="input_twentycrm_server_replicas"></a> [twentycrm\_server\_replicas](#input\_twentycrm\_server\_replicas) | Number of replicas for the TwentyCRM server deployment. This defaults to 1. | `number` | `1` | no |
 | <a name="input_twentycrm_worker_replicas"></a> [twentycrm\_worker\_replicas](#input\_twentycrm\_worker\_replicas) | Number of replicas for the TwentyCRM worker deployment. This defaults to 1. | `number` | `1` | no |
 <!-- END_TF_DOCS -->

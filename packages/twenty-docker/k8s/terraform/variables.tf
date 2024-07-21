@@ -33,7 +33,7 @@ variable "twentycrm_pgdb_admin_password" {
 
 variable "twentycrm_app_hostname" {
   type        = string
-  description = "The protocol, DNS fully qualified hostname, and port used to access TwentyCRM in your environemnt. Ex: https://crm.example.com:443"
+  description = "The protocol, DNS fully qualified hostname, and port used to access TwentyCRM in your environment. Ex: https://crm.example.com:443"
 }
 
 ######################
@@ -96,25 +96,25 @@ variable "twentycrm_server_pv_path" {
 variable "twentycrm_db_pv_capacity" {
   type        = string
   default     = "10Gi"
-  description = "Storage capacity provisioned for database persistant volume."
+  description = "Storage capacity provisioned for database persistent volume."
 }
 
 variable "twentycrm_db_pvc_requests" {
   type        = string
   default     = "10Gi"
-  description = "Storage capacity reservation for database persistant volume claim."
+  description = "Storage capacity reservation for database persistent volume claim."
 }
 
 variable "twentycrm_server_pv_capacity" {
   type        = string
   default     = "10Gi"
-  description = "Storage capacity provisioned for server persistant volume."
+  description = "Storage capacity provisioned for server persistent volume."
 }
 
 variable "twentycrm_server_pvc_requests" {
   type        = string
   default     = "10Gi"
-  description = "Storage capacity reservation for server persistant volume claim."
+  description = "Storage capacity reservation for server persistent volume claim."
 }
 
 variable "twentycrm_namespace" {
