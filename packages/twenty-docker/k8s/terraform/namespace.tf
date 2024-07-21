@@ -1,9 +1,9 @@
 resource "kubernetes_namespace" "twentycrm" {
   metadata {
     annotations = {
-      name = "twentycrm"
+      name = var.twentycrm_namespace
     }
 
-    name = "twentycrm"
+    name = var.twentycrm_namespace
   }
 }
