@@ -22,7 +22,7 @@ export const useUpsertRecord = ({
     ({ snapshot }) =>
       (
         persistField: () => void,
-        entityId: string,
+        recordId: string,
         fieldName: string,
         recordTableId: string,
       ) => {
@@ -38,7 +38,7 @@ export const useUpsertRecord = ({
           recordTablePendingRecordIdState,
         );
         const fieldScopeId = getScopeIdFromComponentId(
-          `${entityId}-${fieldName}`,
+          `${recordId}-${fieldName}`,
         );
 
         const draftValueSelector = extractComponentSelector(

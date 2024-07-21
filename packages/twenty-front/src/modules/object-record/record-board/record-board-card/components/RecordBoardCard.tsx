@@ -258,7 +258,7 @@ export const RecordBoardCard = () => {
               >
                 <FieldContext.Provider
                   value={{
-                    entityId: recordId,
+                    recordId: recordId,
                     maxWidth: 156,
                     recoilScopeId: recordId + fieldDefinition.fieldMetadataId,
                     isLabelIdentifier: false,

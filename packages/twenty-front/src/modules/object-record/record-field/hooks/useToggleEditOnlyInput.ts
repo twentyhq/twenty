@@ -8,7 +8,7 @@ import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 
 export const useToggleEditOnlyInput = () => {
   const {
-    entityId,
+    recordId,
     fieldDefinition,
     useUpdateRecord = () => [],
   } = useContext(FieldContext);
@@ -24,18 +24,18 @@ export const useToggleEditOnlyInput = () => {
           const fieldName = fieldDefinition.metadata.fieldName;
           const oldValue = snapshot
             .getLoadable(
-              recordStoreFamilySelector({ recordId: entityId, fieldName }),
+              recordStoreFamilySelector({ recordId: recordId, fieldName }),
             )
             .getValue();
           const valueToPersist = !oldValue;
           set(
-            recordStoreFamilySelector({ recordId: entityId, fieldName }),
+            recordStoreFamilySelector({ recordId: recordId, fieldName }),
             valueToPersist,
           );
 
           updateRecord?.({
             variables: {
-              where: { id: entityId },
+              where: { id: recordId },
               updateOneRecordInput: {
                 [fieldName]: valueToPersist,
               },
@@ -47,7 +47,7 @@ export const useToggleEditOnlyInput = () => {
           );
         }
       },
-    [entityId, fieldDefinition, updateRecord],
+    [recordId, fieldDefinition, updateRecord],
   );
 
   return toggleField;

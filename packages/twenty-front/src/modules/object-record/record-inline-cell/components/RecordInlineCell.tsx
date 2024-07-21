@@ -27,7 +27,7 @@ export const RecordInlineCell = ({
   loading,
   isCentered,
 }: RecordInlineCellProps) => {
-  const { fieldDefinition, entityId } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -92,7 +92,7 @@ export const RecordInlineCell = ({
         isCentered={isCentered}
         editModeContent={
           <FieldInput
-            recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
+            recordFieldInputdId={`${recordId}-${fieldDefinition?.metadata?.fieldName}`}
             onEnter={handleEnter}
             onCancel={handleCancel}
             onEscape={handleEscape}

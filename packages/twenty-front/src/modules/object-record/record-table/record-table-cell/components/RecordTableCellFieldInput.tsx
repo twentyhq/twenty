@@ -9,13 +9,13 @@ import { RecordTableRowContext } from '@/object-record/record-table/contexts/Rec
 export const RecordTableCellFieldInput = () => {
   const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
     useContext(RecordTableContext);
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
   const { isReadOnly } = useContext(RecordTableRowContext);
 
   const handleEnter: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -26,7 +26,7 @@ export const RecordTableCellFieldInput = () => {
   const handleSubmit: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -40,7 +40,7 @@ export const RecordTableCellFieldInput = () => {
   const handleClickOutside: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -50,7 +50,7 @@ export const RecordTableCellFieldInput = () => {
   const handleEscape: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -60,7 +60,7 @@ export const RecordTableCellFieldInput = () => {
   const handleTab: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -71,7 +71,7 @@ export const RecordTableCellFieldInput = () => {
   const handleShiftTab: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -81,7 +81,7 @@ export const RecordTableCellFieldInput = () => {
 
   return (
     <FieldInput
-      recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
+      recordFieldInputdId={`${recordId}-${fieldDefinition?.metadata?.fieldName}`}
       onCancel={handleCancel}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}

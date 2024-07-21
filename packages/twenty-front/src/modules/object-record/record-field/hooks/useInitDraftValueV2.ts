@@ -15,14 +15,14 @@ export const useInitDraftValueV2 = <FieldValue>() => {
     ({ set, snapshot }) =>
       ({
         value,
-        entityId,
+        recordId,
         fieldDefinition,
       }: {
         value?: string;
-        entityId: string;
+        recordId: string;
         fieldDefinition: FieldDefinition<FieldMetadata>;
       }) => {
-        const recordFieldInputScopeId = `${entityId}-${fieldDefinition?.metadata?.fieldName}-scope`;
+        const recordFieldInputScopeId = `${recordId}-${fieldDefinition?.metadata?.fieldName}-scope`;
 
         const getDraftValueSelector = extractComponentSelector<
           FieldInputDraftValue<FieldValue> | undefined
@@ -31,7 +31,7 @@ export const useInitDraftValueV2 = <FieldValue>() => {
         const recordFieldValue = snapshot
           .getLoadable(
             recordStoreFamilySelector<FieldValue>({
-              recordId: entityId,
+              recordId: recordId,
               fieldName: fieldDefinition.metadata.fieldName,
             }),
           )

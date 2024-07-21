@@ -178,35 +178,35 @@ describe('useFilterDropdown', () => {
     });
   });
 
-  it('should set objectFilterDropdownSelectedEntityId', async () => {
-    const mockResult = 'value';
-    const { result } = renderHook(() => {
-      useFilterDropdown({ filterDropdownId });
-      const { objectFilterDropdownSelectedEntityIdState } =
-        useFilterDropdownStates(filterDropdownId);
+  // it('should set objectFilterDropdownSelectedEntityId', async () => {
+  //   const mockResult = 'value';
+  //   const { result } = renderHook(() => {
+  //     useFilterDropdown({ filterDropdownId });
+  //     const { objectFilterDropdownSelectedEntityIdState } =
+  //       useFilterDropdownStates(filterDropdownId);
 
-      const [
-        objectFilterDropdownSelectedEntityId,
-        setObjectFilterDropdownSelectedEntityId,
-      ] = useRecoilState(objectFilterDropdownSelectedEntityIdState);
-      return {
-        objectFilterDropdownSelectedEntityId,
-        setObjectFilterDropdownSelectedEntityId,
-      };
-    }, renderHookConfig);
+  //     const [
+  //       objectFilterDropdownSelectedEntityId,
+  //       setObjectFilterDropdownSelectedEntityId,
+  //     ] = useRecoilState(objectFilterDropdownSelectedEntityIdState);
+  //     return {
+  //       objectFilterDropdownSelectedEntityId,
+  //       setObjectFilterDropdownSelectedEntityId,
+  //     };
+  //   }, renderHookConfig);
 
-    expect(result.current.objectFilterDropdownSelectedEntityId).toBeNull();
+  //   expect(result.current.objectFilterDropdownSelectedEntityId).toBeNull();
 
-    act(() => {
-      result.current.setObjectFilterDropdownSelectedEntityId(mockResult);
-    });
+  //   act(() => {
+  //     result.current.setObjectFilterDropdownSelectedEntityId(mockResult);
+  //   });
 
-    await waitFor(() => {
-      expect(result.current.objectFilterDropdownSelectedEntityId).toBe(
-        mockResult,
-      );
-    });
-  });
+  //   await waitFor(() => {
+  //     expect(result.current.objectFilterDropdownSelectedEntityId).toBe(
+  //       mockResult,
+  //     );
+  //   });
+  // });
 
   it('should set objectFilterDropdownSelectedRecordIds', async () => {
     const mockResult = ['id-0', 'id-1', 'id-2'];

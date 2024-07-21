@@ -15,7 +15,7 @@ export const useRecordFieldInput = <FieldValue>(
   const { scopeId, getDraftValueSelector } =
     useRecordFieldInputStates<FieldValue>(recordFieldInputId);
 
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const setDraftValue = useSetRecoilState(getDraftValueSelector());
 
@@ -25,7 +25,7 @@ export const useRecordFieldInput = <FieldValue>(
         const recordFieldValue = snapshot
           .getLoadable(
             recordStoreFamilySelector<FieldValue>({
-              recordId: entityId,
+              recordId: recordId,
               fieldName: fieldDefinition.metadata.fieldName,
             }),
           )
@@ -46,7 +46,7 @@ export const useRecordFieldInput = <FieldValue>(
           );
         }
       },
-    [entityId, fieldDefinition, getDraftValueSelector],
+    [recordId, fieldDefinition, getDraftValueSelector],
   );
 
   const isDraftValueEmpty = (

@@ -43,10 +43,10 @@ export const useOpenRecordTableCell = () => {
   const isFirstColumnCell = columnIndex === 0;
   const isEmpty = useIsFieldEmpty();
 
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { initDraftValue: initFieldInputDraftValue } = useRecordFieldInput(
-    `${entityId}-${fieldDefinition?.metadata?.fieldName}`,
+    `${recordId}-${fieldDefinition?.metadata?.fieldName}`,
   );
 
   const openTableCell = useRecoilCallback(

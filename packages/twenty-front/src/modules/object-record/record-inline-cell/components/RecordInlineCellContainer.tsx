@@ -94,7 +94,7 @@ export const RecordInlineCellContainer = ({
   loading = false,
   isCentered,
 }: RecordInlineCellContainerProps) => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { setIsFocused } = useFieldFocus();
 
@@ -111,7 +111,7 @@ export const RecordInlineCellContainer = ({
   };
 
   const theme = useTheme();
-  const labelId = `label-${entityId}-${fieldDefinition?.metadata?.fieldName}`;
+  const labelId = `label-${recordId}-${fieldDefinition?.metadata?.fieldName}`;
 
   return (
     <StyledInlineCellBaseContainer

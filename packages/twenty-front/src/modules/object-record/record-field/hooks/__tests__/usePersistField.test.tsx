@@ -53,12 +53,12 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query,
-      variables: { idToUpdate: 'entityId', input: { phone: '+1 123 456' } },
+      variables: { idToUpdate: 'recordId', input: { phone: '+1 123 456' } },
     },
     result: jest.fn(() => ({
       data: {
         updatePerson: {
-          id: 'entityId',
+          id: 'recordId',
         },
       },
     })),
@@ -67,21 +67,21 @@ const mocks: MockedResponse[] = [
     request: {
       query,
       variables: {
-        idToUpdate: 'entityId',
+        idToUpdate: 'recordId',
         input: { companyId: 'companyId' },
       },
     },
     result: jest.fn(() => ({
       data: {
         updatePerson: {
-          id: 'entityId',
+          id: 'recordId',
         },
       },
     })),
   },
 ];
 
-const entityId = 'entityId';
+const recordId = 'recordId';
 
 const getWrapper =
   (fieldDefinition: FieldDefinition<FieldMetadata>) =>
@@ -106,7 +106,7 @@ const getWrapper =
         <FieldContext.Provider
           value={{
             fieldDefinition,
-            entityId,
+            recordId,
             hotkeyScope: 'hotkeyScope',
             isLabelIdentifier: false,
             useUpdateRecord: useUpdateOneRecordMutation,
@@ -126,7 +126,7 @@ describe('usePersistField', () => {
     const { result } = renderHook(
       () => {
         const entityFields = useRecoilValue(
-          recordStoreFamilySelector({ recordId: entityId, fieldName: 'phone' }),
+          recordStoreFamilySelector({ recordId: recordId, fieldName: 'phone' }),
         );
 
         return {
@@ -151,7 +151,7 @@ describe('usePersistField', () => {
       () => {
         const entityFields = useRecoilValue(
           recordStoreFamilySelector({
-            recordId: entityId,
+            recordId: recordId,
             fieldName: 'company',
           }),
         );

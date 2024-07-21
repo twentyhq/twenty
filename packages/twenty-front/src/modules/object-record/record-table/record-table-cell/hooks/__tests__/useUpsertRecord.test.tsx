@@ -70,7 +70,7 @@ const Wrapper = ({
   >
     <FieldContext.Provider
       value={{
-        entityId: 'entityId',
+        recordId: 'recordId',
         fieldDefinition: {
           ...textfieldDefinition,
           metadata: {
@@ -109,7 +109,7 @@ describe('useUpsertRecord', () => {
     await act(async () => {
       await result.current.upsertRecord(
         updateOneRecordMock,
-        'entityId',
+        'recordId',
         'name',
         'recordTableId',
       );
@@ -135,7 +135,7 @@ describe('useUpsertRecord', () => {
     await act(async () => {
       await result.current.upsertRecord(
         updateOneRecordMock,
-        'entityId',
+        'recordId',
         'name',
         'recordTableId',
       );
