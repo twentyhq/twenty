@@ -12,6 +12,7 @@ const StyledChartContainer = styled.div`
   flex: 1;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
 `;
 
 interface ChartProps {
@@ -47,15 +48,17 @@ export const Chart = (props: ChartProps) => {
   }
 
   return (
-    <ResponsiveBar
-      data={chartResult}
-      keys={['measure']}
-      indexBy={chart?.groupBy}
-      margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-      padding={0.4}
-      valueScale={{ type: 'linear' }}
-      animate={true}
-      enableLabel={false}
-    />
+    <StyledChartContainer>
+      <ResponsiveBar
+        data={chartResult}
+        keys={['measure']}
+        indexBy={chart?.groupBy}
+        margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+        padding={0.4}
+        valueScale={{ type: 'linear' }}
+        animate={true}
+        enableLabel={false}
+      />
+    </StyledChartContainer>
   );
 };

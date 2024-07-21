@@ -52,7 +52,6 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
-  charts?: boolean;
   summary?: JSX.Element;
   isRightDrawer?: boolean;
   loading: boolean;
@@ -64,7 +63,6 @@ export const ShowPageRightContainer = ({
   tasks,
   notes,
   emails,
-  charts,
   loading,
   summary,
   isRightDrawer = false,

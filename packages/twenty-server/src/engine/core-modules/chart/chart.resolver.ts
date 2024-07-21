@@ -6,26 +6,26 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { AnalyticsQueryService } from 'src/engine/core-modules/chart/chart.service';
+import { ChartService } from 'src/engine/core-modules/chart/chart.service';
 import { ChartResult } from 'src/engine/core-modules/chart/dtos/chart-result.dto';
 
 @ArgsType()
-class GetAnalyticsQueryArgs {
+class ChartDataArgs {
   @Field(() => String)
   chartId: string;
 }
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
-export class AnalyticsQueryResolver {
-  constructor(private readonly analyticsQueryService: AnalyticsQueryService) {}
+export class ChartResolver {
+  constructor(private readonly chartService: ChartService) {}
 
   @Query(() => ChartResult)
   async chartData(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @AuthUser() user: User,
-    @Args() { chartId }: GetAnalyticsQueryArgs,
+    @Args() { chartId }: ChartDataArgs,
   ) {
-    return await this.analyticsQueryService.run(workspaceId, chartId);
+    return await this.chartService.run(workspaceId, chartId);
   }
 }

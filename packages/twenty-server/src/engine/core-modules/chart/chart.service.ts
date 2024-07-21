@@ -19,7 +19,7 @@ import {
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 
 @Injectable()
-export class AnalyticsQueryService {
+export class ChartService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
