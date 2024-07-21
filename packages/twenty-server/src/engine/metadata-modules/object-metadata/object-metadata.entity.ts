@@ -1,21 +1,21 @@
 import {
-  Entity,
-  Unique,
-  PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
   Relation,
+  Unique,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 @Entity('objectMetadata')
 @Unique('IndexOnNameSingularAndWorkspaceIdUnique', [
@@ -69,11 +69,11 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: true })
   isAuditLogged: boolean;
 
-  @Column({ nullable: true })
-  labelIdentifierFieldMetadataId?: string;
+  @Column({ nullable: true, type: 'uuid' })
+  labelIdentifierFieldMetadataId?: string | null;
 
-  @Column({ nullable: true })
-  imageIdentifierFieldMetadataId?: string;
+  @Column({ nullable: true, type: 'uuid' })
+  imageIdentifierFieldMetadataId?: string | null;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

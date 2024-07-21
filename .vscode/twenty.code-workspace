@@ -43,21 +43,21 @@
     "[typescript]": {
       "editor.formatOnSave": false,
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true,
+        "source.fixAll.eslint": "explicit",
         "source.addMissingImports": "always"
       }
     },
     "[javascript]": {
       "editor.formatOnSave": false,
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true,
+        "source.fixAll.eslint": "explicit",
         "source.addMissingImports": "always"
       }
     },
     "[typescriptreact]": {
       "editor.formatOnSave": false,
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true,
+        "source.fixAll.eslint": "explicit",
         "source.addMissingImports": "always"
       }
     },

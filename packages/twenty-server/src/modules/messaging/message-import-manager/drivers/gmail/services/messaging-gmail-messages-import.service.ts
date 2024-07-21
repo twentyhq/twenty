@@ -1,26 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { IsFeatureEnabledService } from 'src/engine/core-modules/feature-flag/services/is-feature-enabled.service';
+import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
-import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
+import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
+import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
+import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
+import { RefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/services/refresh-access-token.service';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { MessagingErrorHandlingService } from 'src/modules/messaging/common/services/messaging-error-handling.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import {
-  MessageChannelWorkspaceEntity,
   MessageChannelSyncStage,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
 import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-by-batches.service';
-import { MessagingErrorHandlingService } from 'src/modules/messaging/common/services/messaging-error-handling.service';
-import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/common/services/messaging-save-messages-and-enqueue-contact-creation.service';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-save-messages-and-enqueue-contact-creation.service';
+import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 
 @Injectable()
 export class MessagingGmailMessagesImportService {
@@ -35,12 +38,14 @@ export class MessagingGmailMessagesImportService {
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
-    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
+    private readonly refreshAccessTokenService: RefreshAccessTokenService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
+    private readonly emailAliasManagerService: EmailAliasManagerService,
+    private readonly isFeatureEnabledService: IsFeatureEnabledService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
@@ -77,9 +82,9 @@ export class MessagingGmailMessagesImportService {
 
     try {
       accessToken =
-        await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+        await this.refreshAccessTokenService.refreshAndSaveAccessToken(
+          connectedAccount,
           workspaceId,
-          connectedAccount.id,
         );
     } catch (error) {
       await this.messagingTelemetryService.track({
@@ -101,6 +106,30 @@ export class MessagingGmailMessagesImportService {
       );
 
       return;
+    }
+
+    if (
+      await this.isFeatureEnabledService.isFeatureEnabled(
+        FeatureFlagKeys.IsMessagingAliasFetchingEnabled,
+        workspaceId,
+      )
+    ) {
+      try {
+        await this.emailAliasManagerService.refreshHandleAliases(
+          connectedAccount,
+          workspaceId,
+        );
+      } catch (error) {
+        await this.gmailErrorHandlingService.handleGmailError(
+          {
+            code: error.code,
+            reason: error.message,
+          },
+          'messages-import',
+          messageChannel,
+          workspaceId,
+        );
+      }
     }
 
     const messageIdsToFetch =

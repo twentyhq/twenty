@@ -1,14 +1,14 @@
 
 {
-    "$schema": "https://json.schemastore.org/swcrc",
-    "sourceMaps": true,
-    "jsc": {
-      "parser": {
-        "syntax": "typescript",
-        "decorators": true,
-        "dynamicImport": true
-      },
-      "baseUrl": "./../../"
+  "$schema": "https://json.schemastore.org/swcrc",
+  "sourceMaps": true,
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true,
+      "dynamicImport": true
     },
-    "minify": false
- }
+    "baseUrl": "./../../"
+  },
+  "minify": false
+}

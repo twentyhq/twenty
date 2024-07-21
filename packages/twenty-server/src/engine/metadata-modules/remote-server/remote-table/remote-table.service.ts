@@ -1,4 +1,4 @@
-import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -40,6 +40,10 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  RemoteTableException,
+  RemoteTableExceptionCode,
+} from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.exception';
 
 export class RemoteTableService {
   private readonly logger = new Logger(RemoteTableService.name);
@@ -74,7 +78,10 @@ export class RemoteTableService {
     });
 
     if (!remoteServer) {
-      throw new NotFoundException('Remote server does not exist');
+      throw new RemoteTableException(
+        'Remote server does not exist',
+        RemoteTableExceptionCode.INVALID_REMOTE_TABLE_INPUT,
+      );
     }
 
     const currentRemoteTables = await this.findRemoteTablesByServerId({
@@ -148,7 +155,10 @@ export class RemoteTableService {
     });
 
     if (!remoteServer) {
-      throw new NotFoundException('Remote server does not exist');
+      throw new RemoteTableException(
+        'Remote server does not exist',
+        RemoteTableExceptionCode.INVALID_REMOTE_TABLE_INPUT,
+      );
     }
 
     const currentRemoteTableWithSameDistantName =
@@ -161,7 +171,10 @@ export class RemoteTableService {
       });
 
     if (currentRemoteTableWithSameDistantName) {
-      throw new BadRequestException('Remote table already exists');
+      throw new RemoteTableException(
+        'Remote server does not exist',
+        RemoteTableExceptionCode.REMOTE_TABLE_ALREADY_EXISTS,
+      );
     }
 
     const dataSourceMetatada =
@@ -200,7 +213,10 @@ export class RemoteTableService {
       );
 
     if (!distantTableColumns) {
-      throw new BadRequestException('Table not found');
+      throw new RemoteTableException(
+        'Remote server does not exist',
+        RemoteTableExceptionCode.REMOTE_TABLE_NOT_FOUND,
+      );
     }
 
     // We only support remote tables with an id column for now.
@@ -209,7 +225,10 @@ export class RemoteTableService {
     );
 
     if (!distantTableIdColumn) {
-      throw new BadRequestException('Remote table must have an id column');
+      throw new RemoteTableException(
+        'Remote server does not exist',
+        RemoteTableExceptionCode.INVALID_REMOTE_TABLE_INPUT,
+      );
     }
 
     await this.foreignTableService.createForeignTable(
@@ -250,7 +269,10 @@ export class RemoteTableService {
     });
 
     if (!remoteServer) {
-      throw new NotFoundException('Remote server does not exist');
+      throw new RemoteTableException(
+        'Remote server does not exist',
+        RemoteTableExceptionCode.INVALID_REMOTE_TABLE_INPUT,
+      );
     }
 
     const remoteTable = await this.remoteTableRepository.findOne({
@@ -262,7 +284,10 @@ export class RemoteTableService {
     });
 
     if (!remoteTable) {
-      throw new NotFoundException('Remote table does not exist');
+      throw new RemoteTableException(
+        'Remote table does not exist',
+        RemoteTableExceptionCode.REMOTE_TABLE_NOT_FOUND,
+      );
     }
 
     await this.unsyncOne(workspaceId, remoteTable, remoteServer);
@@ -302,7 +327,10 @@ export class RemoteTableService {
     });
 
     if (!remoteServer) {
-      throw new NotFoundException('Remote server does not exist');
+      throw new RemoteTableException(
+        'Remote server does not exist',
+        RemoteTableExceptionCode.INVALID_REMOTE_TABLE_INPUT,
+      );
     }
 
     const remoteTable = await this.remoteTableRepository.findOne({
@@ -314,7 +342,10 @@ export class RemoteTableService {
     });
 
     if (!remoteTable) {
-      throw new NotFoundException('Remote table does not exist');
+      throw new RemoteTableException(
+        'Remote table does not exist',
+        RemoteTableExceptionCode.REMOTE_TABLE_NOT_FOUND,
+      );
     }
 
     const distantTableColumns =
@@ -379,7 +410,10 @@ export class RemoteTableService {
       );
 
     if (!currentForeignTableNames.includes(remoteTable.localTableName)) {
-      throw new NotFoundException('Foreign table does not exist');
+      throw new RemoteTableException(
+        'Foreign table does not exist',
+        RemoteTableExceptionCode.NO_FOREIGN_TABLES_FOUND,
+      );
     }
 
     const objectMetadata =
@@ -507,8 +541,9 @@ export class RemoteTableService {
       });
 
     if (!objectMetadata) {
-      throw new NotFoundException(
+      throw new RemoteTableException(
         `Cannot find associated object for table ${foreignTableName}`,
+        RemoteTableExceptionCode.NO_OBJECT_METADATA_FOUND,
       );
     }
     for (const columnUpdate of columnsUpdates) {
@@ -547,8 +582,9 @@ export class RemoteTableService {
         });
 
       if (!fieldMetadataToDelete) {
-        throw new NotFoundException(
+        throw new RemoteTableException(
           `Cannot find associated field metadata for column ${columnName}`,
+          RemoteTableExceptionCode.NO_FIELD_METADATA_FOUND,
         );
       }
 

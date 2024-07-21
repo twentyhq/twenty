@@ -27,7 +27,6 @@ export const query = gql`
                 updatedAt
                 companyId
                 stage
-                probability
                 closeDate
                 amount {
                   amountMicros
@@ -53,7 +52,6 @@ export const query = gql`
                 updatedAt
                 companyId
                 stage
-                probability
                 closeDate
                 amount {
                   amountMicros
@@ -82,7 +80,16 @@ export const query = gql`
               currencyCode
             }
             createdAt
-            address
+            address {
+              addressStreet1
+              addressStreet2
+              addressCity
+              addressState
+              addressCountry
+              addressPostcode
+              addressLat
+              addressLng
+            }
             updatedAt
             name
             accountOwnerId

@@ -13,7 +13,7 @@ Twenty offers integrations with Gmail and Google Calendar. To enable these featu
 # from your worker container
 yarn command:prod cron:messaging:messages-import
 yarn command:prod cron:messaging:message-list-fetch
-yarn command:prod cron:calendar:google-calendar-sync
+yarn command:prod cron:calendar:calendar-event-list-fetch
 ```
 
 # Setup Environment Variables
@@ -147,6 +147,16 @@ yarn command:prod cron:calendar:google-calendar-sync
     ['STORAGE_LOCAL_PATH', '.local-storage', 'data path (local storage)'],
     ]}></ArticleTable>
 
+### Custom Code Execution
+
+<ArticleTable options={[
+  ['SERVERLESS_TYPE', 'local', "Serverless driver type: 'local' or 'lambda'"],
+  ['SERVERLESS_LAMBDA_REGION', '', 'Lambda Region'],
+  ['SERVERLESS_LAMBDA_ROLE', '', 'Lambda Role'],
+  ['SERVERLESS_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
+  ['SERVERLESS_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
+]}></ArticleTable>
+
 ### Message Queue
 
 <ArticleTable options={[
@@ -170,8 +180,13 @@ yarn command:prod cron:calendar:google-calendar-sync
 ### Data enrichment and AI
 
 <ArticleTable options={[
-    ['OPENROUTER_API_KEY', '', "The API key for openrouter.ai, an abstraction layer over models from Mistral, OpenAI and more"]
-    ]}></ArticleTable>
+    ['OPENROUTER_API_KEY', '', "The API key for openrouter.ai, an abstraction layer over models from Mistral, OpenAI and more"],
+    ['OPENAI_API_KEY', 'sk-proj-abcdabcd...', "OpenAI API key"],
+    ['LLM_CHAT_MODEL_DRIVER', 'openai', "LLM provider"],
+    ['LLM_TRACING_DRIVER', 'langfuse', "Where to output LangChain logs. 'langfuse' or 'console'."],
+    ['LANGFUSE_SECRET_KEY', 'sk-lf-abcdabcd-abcd...', "Langfuse secret key"],
+    ['LANGFUSE_PUBLIC_KEY', 'pk-lf-abcdabcd-abcd...', "Langfuse public key"],
+]}></ArticleTable>
 
 
 ### Support Chat

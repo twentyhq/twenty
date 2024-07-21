@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { PlayFunction } from '@storybook/types';
+import { useState } from 'react';
 import { Avatar, ComponentDecorator } from 'twenty-ui';
 
 import { Button } from '@/ui/input/button/components/Button';
@@ -76,8 +76,8 @@ export const Empty: Story = {
       <StyledEmptyDropdownContent data-testid="dropdown-content" />
     ),
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const button = await canvas.findByRole('button');
     userEvent.click(button);
@@ -199,8 +199,8 @@ const FakeCheckableMenuItemList = ({ hasAvatar }: { hasAvatar?: boolean }) => {
   );
 };
 
-const playInteraction: PlayFunction<any, any> = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
+const playInteraction: PlayFunction<any, any> = async () => {
+  const canvas = within(document.body);
 
   const button = await canvas.findByRole('button');
   userEvent.click(button);
@@ -251,8 +251,8 @@ export const SearchWithLoadingMenu: Story = {
       </>
     ),
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(document.body);
 
     const button = await canvas.findByRole('button');
 

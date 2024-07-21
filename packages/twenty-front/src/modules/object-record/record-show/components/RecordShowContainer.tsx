@@ -171,7 +171,7 @@ export const RecordShowContainer = ({
                   isCentered: true,
                 }}
               >
-                <RecordInlineCell readonly={isReadOnly} />
+                <RecordInlineCell readonly={isReadOnly} isCentered={true} />
               </FieldContext.Provider>
             }
             avatarType={recordIdentifier?.avatarType ?? 'rounded'}

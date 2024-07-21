@@ -1,5 +1,5 @@
-import { RelationMetadataInterface } from './relation-metadata.interface';
 import { FieldMetadataInterface } from './field-metadata.interface';
+import { RelationMetadataInterface } from './relation-metadata.interface';
 
 export interface ObjectMetadataInterface {
   id: string;
@@ -18,4 +18,6 @@ export interface ObjectMetadataInterface {
   isActive: boolean;
   isRemote: boolean;
   isAuditLogged: boolean;
+  labelIdentifierFieldMetadataId?: string | null;
+  imageIdentifierFieldMetadataId?: string | null;
 }

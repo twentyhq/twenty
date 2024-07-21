@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import isEmpty from 'lodash.isempty';
@@ -27,6 +23,10 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { buildUpdateRemoteServerRawQuery } from 'src/engine/metadata-modules/remote-server/utils/build-update-remote-server-raw-query.utils';
 import { validateRemoteServerType } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-type.util';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import {
+  RemoteServerException,
+  RemoteServerExceptionCode,
+} from 'src/engine/metadata-modules/remote-server/remote-server.exception';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
@@ -122,7 +122,10 @@ export class RemoteServerService<T extends RemoteServerType> {
     );
 
     if (!remoteServer) {
-      throw new NotFoundException('Remote server does not exist');
+      throw new RemoteServerException(
+        'Remote server does not exist',
+        RemoteServerExceptionCode.REMOTE_SERVER_NOT_FOUND,
+      );
     }
 
     const currentRemoteTablesForServer =
@@ -132,8 +135,9 @@ export class RemoteServerService<T extends RemoteServerType> {
       });
 
     if (currentRemoteTablesForServer.length > 0) {
-      throw new ForbiddenException(
+      throw new RemoteServerException(
         'Cannot update remote server with synchronized tables',
+        RemoteServerExceptionCode.REMOTE_SERVER_MUTATION_NOT_ALLOWED,
       );
     }
 
@@ -207,7 +211,10 @@ export class RemoteServerService<T extends RemoteServerType> {
     });
 
     if (!remoteServer) {
-      throw new NotFoundException('Remote server does not exist');
+      throw new RemoteServerException(
+        'Remote server does not exist',
+        RemoteServerExceptionCode.REMOTE_SERVER_NOT_FOUND,
+      );
     }
 
     await this.remoteTableService.unsyncAll(workspaceId, remoteServer);

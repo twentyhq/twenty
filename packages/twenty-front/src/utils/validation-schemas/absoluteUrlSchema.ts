@@ -8,4 +8,5 @@ export const absoluteUrlSchema = z
       .string()
       .transform((value) => `https://${value}`)
       .pipe(z.string().url()),
-  );
+  )
+  .or(z.literal(''));

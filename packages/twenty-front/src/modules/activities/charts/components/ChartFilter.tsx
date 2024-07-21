@@ -17,7 +17,7 @@ export const ChartFilter = (props: ChartFilterProps) => {
     <StyledContainer>
       <Select
         fullWidth
-        dropdownId="analytics-query-field-select"
+        dropdownId="chart-filter-field-select"
         options={[]}
         //value={}
         onChange={async () => {
@@ -26,7 +26,7 @@ export const ChartFilter = (props: ChartFilterProps) => {
       />
       <Select
         fullWidth
-        dropdownId="analytics-query-operator-select"
+        dropdownId="chart-filter-operator-select"
         options={[]}
         //value={}
         onChange={async () => {

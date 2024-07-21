@@ -85,9 +85,6 @@ export class Workspace {
   featureFlags: Relation<FeatureFlagEntity[]>;
 
   @Field({ nullable: true })
-  currentBillingSubscription: BillingSubscription;
-
-  @Field({ nullable: true })
   workspaceMembersCount: number;
 
   @Field()

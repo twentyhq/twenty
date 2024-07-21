@@ -1,6 +1,6 @@
-import React, { ReactElement, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ReactElement, useContext } from 'react';
 import { AppTooltip, IconComponent, TooltipDelay } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -52,6 +52,8 @@ const StyledInlineCellBaseContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 
   user-select: none;
+
+  justify-content: center;
 `;
 
 export const StyledSkeletonDiv = styled.div`
@@ -72,8 +74,10 @@ export type RecordInlineCellContainerProps = {
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
   loading?: boolean;
+  isCentered?: boolean;
 };
 
+// TODO: refactor props drilling with a RecordInlineCellContext
 export const RecordInlineCellContainer = ({
   readonly,
   IconLabel,
@@ -88,6 +92,7 @@ export const RecordInlineCellContainer = ({
   isDisplayModeFixHeight,
   disableHoverEffect,
   loading = false,
+  isCentered,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
@@ -153,6 +158,7 @@ export const RecordInlineCellContainer = ({
             loading,
             readonly,
             showLabel,
+            isCentered,
           }}
         />
       </StyledValueContainer>

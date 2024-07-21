@@ -17,7 +17,10 @@ import {
 
 import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.interface';
 import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
+import { LLMChatModelDriver } from 'src/engine/integrations/llm-chat-model/interfaces/llm-chat-model.interface';
+import { LLMTracingDriver } from 'src/engine/integrations/llm-tracing/interfaces/llm-tracing.interface';
 
+import { ServerlessDriverType } from 'src/engine/integrations/serverless/serverless.interface';
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/engine/integrations/environment/decorators/cast-to-string-array.decorator';
 import { ExceptionHandlerDriver } from 'src/engine/integrations/exception-handler/interfaces';
@@ -202,6 +205,30 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 
+  // Custom Code Engine
+  @IsEnum(ServerlessDriverType)
+  @IsOptional()
+  SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.Local;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsAWSRegion()
+  SERVERLESS_LAMBDA_REGION: AwsRegion;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_ROLE: string;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_ACCESS_KEY_ID: string;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
+
   // Storage
   @IsEnum(StorageDriverType)
   @IsOptional()
@@ -368,6 +395,16 @@ export class EnvironmentVariables {
   EMAIL_SMTP_PASSWORD: string;
 
   OPENROUTER_API_KEY: string;
+
+  LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver;
+
+  OPENAI_API_KEY: string;
+
+  LANGFUSE_SECRET_KEY: string;
+
+  LANGFUSE_PUBLIC_KEY: string;
+
+  LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.Console;
 
   @CastToPositiveNumber()
   API_RATE_LIMITING_TTL = 100;

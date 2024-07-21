@@ -25,12 +25,12 @@ import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controller
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 import { AuthResolver } from './auth.resolver';
 
