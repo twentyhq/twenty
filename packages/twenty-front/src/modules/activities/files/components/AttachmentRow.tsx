@@ -107,6 +107,11 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
               value={newName}
               onChange={handleInputChange}
               onBlur={handleInputBlur}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleUpdate();
+                }
+              }}
               autoFocus
               fullWidth
             />

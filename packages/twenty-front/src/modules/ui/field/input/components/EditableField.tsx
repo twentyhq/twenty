@@ -97,13 +97,18 @@ const EditableFieldComponent = (
     tabIndex,
     autoComplete,
     maxLength,
+    onKeyDown,
   }: EditableFieldComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
 ): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
   const combinedRef = useCombinedRefs(ref, inputRef);
-
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      onKeyDown?.(event); // Trigger the passed in onKeyDown function
+    }
+  };
   return (
     <StyledContainer className={className} fullWidth={fullWidth ?? false}>
       {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
@@ -117,6 +122,7 @@ const EditableFieldComponent = (
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             onChange?.(event.target.value);
           }}
+          onKeyDown={handleKeyDown}
           {...{
             autoFocus,
             disabled,
