@@ -187,22 +187,31 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
                 workspaceId,
                 ViewFieldWorkspaceEntity,
               );
-            const viewsWithDeprecatedField = await viewFieldRepository.find({
-              where: {
-                fieldMetadataId: fieldWithLinkType.id,
-                isVisible: true,
-              },
-            });
+            const viewFieldsWithDeprecatedField =
+              await viewFieldRepository.find({
+                where: {
+                  fieldMetadataId: fieldWithLinkType.id,
+                  isVisible: true,
+                },
+              });
 
             await this.viewService.addFieldToViews({
               workspaceId: workspaceId,
               fieldId: tmpNewLinksField.id,
-              viewsIds: viewsWithDeprecatedField.map((view) => view.id),
-              positions: viewsWithDeprecatedField.reduce((acc, view) => {
-                acc[view.id] = view.position;
+              viewsIds: viewFieldsWithDeprecatedField
+                .filter((viewField) => viewField.viewId !== null)
+                .map((viewField) => viewField.viewId as string),
+              positions: viewFieldsWithDeprecatedField.reduce(
+                (acc, viewField) => {
+                  if (!viewField.viewId) {
+                    return acc;
+                  }
+                  acc[viewField.viewId] = viewField.position;
 
-                return acc;
-              }, []),
+                  return acc;
+                },
+                [],
+              ),
             });
 
             // Delete link field
