@@ -42,7 +42,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
     <StyledRow>
       {Icon && <Icon size={theme.icon.size.md} />}
       <StyledFieldName>
-        {capitalize(relatedObject?.namePlural ?? '')}
+        {capitalize(relatedObject?.labelPlural ?? '')}
       </StyledFieldName>
       <Handle
         type={field.toRelationMetadata ? 'source' : 'target'}
