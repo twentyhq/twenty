@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
 import isEmpty from 'lodash.isempty';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -10,33 +11,30 @@ export class ViewService {
   private readonly logger = new Logger(ViewService.name);
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
-  async addFieldToViewsContainingOldField({
+  async addFieldToViews({
     workspaceId,
-    newFieldId,
-    oldFieldId,
+    fieldId,
+    viewsIds,
+    positions,
   }: {
     workspaceId: string;
-    newFieldId: string;
-    oldFieldId: string;
-  }): Promise<void> {
+    fieldId: string;
+    viewsIds: string[];
+    positions?: {
+      [key: string]: number;
+    }[];
+  }) {
     const viewFieldRepository =
       await this.twentyORMManager.getRepositoryForWorkspace(
         workspaceId,
         ViewFieldWorkspaceEntity,
       );
-    const viewsWithDeprecatedField = await viewFieldRepository.find({
-      where: {
-        fieldMetadataId: oldFieldId,
-        isVisible: true,
-      },
-    });
 
-    for (const viewWithDeprecatedField of viewsWithDeprecatedField) {
-      const viewId = viewWithDeprecatedField.viewId;
-
+    for (const viewId of viewsIds) {
+      const position = positions?.[viewId];
       const newFieldInThisView = await viewFieldRepository.findBy({
-        fieldMetadataId: newFieldId,
-        viewId: viewWithDeprecatedField.viewId as string,
+        fieldMetadataId: fieldId,
+        viewId: viewId as string,
         isVisible: true,
       });
 
@@ -45,13 +43,13 @@ export class ViewService {
       }
 
       this.logger.log(
-        `Adding new field ${newFieldId} to view ${viewId} for workspace ${workspaceId}...`,
+        `Adding new field ${fieldId} to view ${viewId} for workspace ${workspaceId}...`,
       );
       const newViewField = viewFieldRepository.create({
-        viewId: viewWithDeprecatedField.viewId,
-        fieldMetadataId: newFieldId,
-        position: viewWithDeprecatedField.position - 0.5,
+        viewId: viewId,
+        fieldMetadataId: fieldId,
         isVisible: true,
+        ...(isDefined(position) && { position: position - 0.5 }),
       });
 
       await viewFieldRepository.save(newViewField);
