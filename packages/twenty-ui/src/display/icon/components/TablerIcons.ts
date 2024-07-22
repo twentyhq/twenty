@@ -108,6 +108,7 @@ export {
   IconLink,
   IconLinkOff,
   IconList,
+  IconListCheck,
   IconListNumbers,
   IconLock,
   IconLockOpen,
@@ -162,7 +163,12 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
+<<<<<<< HEAD
   IconX
+=======
+  IconX,
+  IconMoodSmile,
+>>>>>>> main
 } from '@tabler/icons-react';
 export type { TablerIconsProps } from '@tabler/icons-react';
 

@@ -28,7 +28,6 @@ export const RecordTableBodyEffect = () => {
     setRecordTableData,
     loading,
     queryStateIdentifier,
-    cursorsByRecordId,
   } = useLoadRecordIndexTable(objectNameSingular);
 
   const isFetchingMoreObjects = useRecoilValue(
@@ -122,7 +121,7 @@ export const RecordTableBodyEffect = () => {
     if (!loading) {
       setRecordTableData(records, totalCount);
     }
-  }, [records, totalCount, setRecordTableData, loading, cursorsByRecordId]);
+  }, [records, totalCount, setRecordTableData, loading]);
 
   const fetchMoreDebouncedIfRequested = useDebouncedCallback(async () => {
     // We are debouncing here to give the user some room to scroll if they want to within this throttle window

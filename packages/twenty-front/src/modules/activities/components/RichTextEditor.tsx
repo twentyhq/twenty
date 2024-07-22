@@ -30,6 +30,8 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { getFileType } from '../files/utils/getFileType';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import '@blocknote/core/fonts/inter.css';
+import '@blocknote/mantine/style.css';
 import '@blocknote/react/style.css';
 
 type RichTextEditorProps = {
