@@ -5,11 +5,15 @@ import {
   IconH1,
   IconH2,
   IconH3,
+  IconHeadphones,
   IconList,
+  IconListCheck,
   IconListNumbers,
+  IconMoodSmile,
   IconPhoto,
   IconPilcrow,
   IconTable,
+  IconVideo,
 } from 'twenty-ui';
 
 import { SuggestionItem } from '@/ui/input/editor/components/CustomSlashMenu';
@@ -22,9 +26,13 @@ const Icons: Record<string, IconComponent> = {
   'Heading 3': IconH3,
   'Numbered List': IconListNumbers,
   'Bullet List': IconList,
+  'Check List': IconListCheck,
   Paragraph: IconPilcrow,
   Table: IconTable,
   Image: IconPhoto,
+  Video: IconVideo,
+  Audio: IconHeadphones,
+  Emoji: IconMoodSmile,
 };
 
 export const getSlashMenu = (editor: typeof blockSchema.BlockNoteEditor) => {
