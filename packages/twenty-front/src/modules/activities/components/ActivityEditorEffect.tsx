@@ -23,7 +23,9 @@ export const ActivityEditorEffect = ({
     RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
   );
 
-  const { upsertActivity } = useUpsertActivity();
+  const { upsertActivity } = useUpsertActivity({
+    objectNameSingular: CoreObjectNameSingular.Activity,
+  });
   const deleteRecordFromCache = useDeleteRecordFromCache({
     objectNameSingular: CoreObjectNameSingular.Activity,
   });

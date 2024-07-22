@@ -2,7 +2,6 @@ import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconSearch, IconSettings } from 'twenty-ui';
 
-import { CurrentUserDueTaskCountEffect } from '@/activities/tasks/components/CurrentUserDueTaskCountEffect';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
@@ -37,7 +36,6 @@ export const MainNavigationDrawerItems = () => {
             }}
             Icon={IconSettings}
           />
-          <CurrentUserDueTaskCountEffect />
         </NavigationDrawerSection>
       )}
 

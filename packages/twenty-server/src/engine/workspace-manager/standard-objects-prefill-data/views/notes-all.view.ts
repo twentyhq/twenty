@@ -1,37 +1,27 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
-  ACTIVITY_STANDARD_FIELD_IDS,
   BASE_OBJECT_STANDARD_FIELD_IDS,
+  NOTE_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const activitiesAllNotesView = async (
+export const notesAllView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
     name: 'All Notes',
-    objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.activity].id,
+    objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.note].id,
     type: 'table',
     key: null,
     position: 0,
     icon: 'IconNotes',
     kanbanFieldMetadataId: '',
-    filters: [
-      {
-        fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.activity].fields[
-            ACTIVITY_STANDARD_FIELD_IDS.type
-          ],
-        displayValue: 'Note',
-        operand: 'is',
-        value: '["NOTE"]',
-      },
-    ],
+    filters: [],
     fields: [
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.activity].fields[
-            ACTIVITY_STANDARD_FIELD_IDS.title
+          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
+            NOTE_STANDARD_FIELD_IDS.title
           ],
         position: 0,
         isVisible: true,
@@ -39,8 +29,8 @@ export const activitiesAllNotesView = async (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.activity].fields[
-            ACTIVITY_STANDARD_FIELD_IDS.type
+          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
+            NOTE_STANDARD_FIELD_IDS.body
           ],
         position: 0,
         isVisible: true,
@@ -48,16 +38,7 @@ export const activitiesAllNotesView = async (
       },
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.activity].fields[
-            ACTIVITY_STANDARD_FIELD_IDS.body
-          ],
-        position: 0,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.activity].fields[
+          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
             BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
           ],
         position: 0,

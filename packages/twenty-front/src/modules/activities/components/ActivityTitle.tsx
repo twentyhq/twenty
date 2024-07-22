@@ -76,7 +76,9 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
     canCreateActivityState,
   );
 
-  const { upsertActivity } = useUpsertActivity();
+  const { upsertActivity } = useUpsertActivity({
+    objectNameSingular: CoreObjectNameSingular.Activity,
+  });
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,

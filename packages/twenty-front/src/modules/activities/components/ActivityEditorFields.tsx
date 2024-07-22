@@ -26,7 +26,9 @@ export const ActivityEditorFields = ({
 }: {
   activityId: string;
 }) => {
-  const { upsertActivity } = useUpsertActivity();
+  const { upsertActivity } = useUpsertActivity({
+    objectNameSingular: CoreObjectNameSingular.Activity,
+  });
 
   const isRightDrawerAnimationCompleted = useRecoilValue(
     isRightDrawerAnimationCompletedState,

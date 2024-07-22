@@ -57,7 +57,9 @@ export const ActivityActionBar = () => {
   );
 
   const { refreshShowPageFindManyActivitiesQueries } =
-    useRefreshShowPageFindManyActivitiesQueries();
+    useRefreshShowPageFindManyActivitiesQueries({
+      objectNameSingular: CoreObjectNameSingular.Activity,
+    });
 
   const deleteActivity = useRecoilCallback(
     ({ snapshot }) =>

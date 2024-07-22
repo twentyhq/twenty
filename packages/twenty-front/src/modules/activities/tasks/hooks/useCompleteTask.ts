@@ -8,7 +8,7 @@ type Task = Pick<Activity, 'id' | 'status'>;
 
 export const useCompleteTask = (task: Task) => {
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
-    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectNameSingular: CoreObjectNameSingular.Task,
   });
 
   const completeTask = useCallback(

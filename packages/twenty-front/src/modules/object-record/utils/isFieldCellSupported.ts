@@ -25,11 +25,21 @@ export const isFieldCellSupported = (fieldMetadataItem: FieldMetadataItem) => {
       fieldMetadataItem.fromRelationMetadata?.toObjectMetadata ??
       fieldMetadataItem.toRelationMetadata?.fromObjectMetadata;
 
+    // Hack to display targets on Notes and Tasks
     if (
       fieldMetadataItem.fromRelationMetadata?.toObjectMetadata?.nameSingular ===
-        CoreObjectNameSingular.ActivityTarget &&
+        CoreObjectNameSingular.NoteTarget &&
       fieldMetadataItem.relationDefinition?.sourceObjectMetadata
-        .nameSingular === CoreObjectNameSingular.Activity
+        .nameSingular === CoreObjectNameSingular.Note
+    ) {
+      return true;
+    }
+
+    if (
+      fieldMetadataItem.fromRelationMetadata?.toObjectMetadata?.nameSingular ===
+        CoreObjectNameSingular.TaskTarget &&
+      fieldMetadataItem.relationDefinition?.sourceObjectMetadata
+        .nameSingular === CoreObjectNameSingular.Task
     ) {
       return true;
     }

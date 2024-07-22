@@ -134,16 +134,20 @@ export const RecordShowContainer = ({
         : 'inlineFieldMetadataItems',
   );
 
-  const inlineRelationFieldMetadataItems = relationFieldMetadataItems.filter(
+  const inlineRelationFieldMetadataItems = relationFieldMetadataItems?.filter(
     (fieldMetadataItem) =>
-      objectNameSingular === CoreObjectNameSingular.Activity &&
-      fieldMetadataItem.name === 'activityTargets',
+      (objectNameSingular === CoreObjectNameSingular.Note &&
+        fieldMetadataItem.name === 'noteTargets') ||
+      (objectNameSingular === CoreObjectNameSingular.Task &&
+        fieldMetadataItem.name === 'taskTargets'),
   );
 
   const boxedRelationFieldMetadataItems = relationFieldMetadataItems?.filter(
     (fieldMetadataItem) =>
-      objectNameSingular !== CoreObjectNameSingular.Activity &&
-      fieldMetadataItem.name !== 'activityTargets',
+      objectNameSingular !== CoreObjectNameSingular.Note &&
+      fieldMetadataItem.name !== 'noteTargets' &&
+      objectNameSingular !== CoreObjectNameSingular.Task &&
+      fieldMetadataItem.name !== 'taskTargets',
   );
 
   const isReadOnly = objectMetadataItem.isRemote;

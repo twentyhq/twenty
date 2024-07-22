@@ -9,8 +9,6 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { activitiesAllNotesView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all-notes.view';
-import { activitiesAllTasksView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all-tasks.view';
 import { activitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all.view';
 import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
@@ -134,11 +132,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
         return acc;
       }, {});
 
-      const viewDefinitions = [
-        await activitiesAllView(objectMetadataMap),
-        await activitiesAllNotesView(objectMetadataMap),
-        await activitiesAllTasksView(objectMetadataMap),
-      ];
+      const viewDefinitions = [await activitiesAllView(objectMetadataMap)];
 
       const createdViews = await queryRunner.manager
         .createQueryBuilder()
@@ -218,7 +212,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
               'viewId',
             ])
             .values(
-              viewDefinition.filters.map((filter) => ({
+              viewDefinition.filters.map((filter: any) => ({
                 fieldMetadataId: filter.fieldMetadataId,
                 displayValue: filter.displayValue,
                 operand: filter.operand,

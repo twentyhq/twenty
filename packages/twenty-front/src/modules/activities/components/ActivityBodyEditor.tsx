@@ -1,7 +1,7 @@
-import { ClipboardEvent, useCallback, useMemo } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { useCreateBlockNote } from '@blocknote/react';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
+import { ClipboardEvent, useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
@@ -67,7 +67,9 @@ export const ActivityBodyEditor = ({
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
-  const { upsertActivity } = useUpsertActivity();
+  const { upsertActivity } = useUpsertActivity({
+    objectNameSingular: CoreObjectNameSingular.Activity,
+  });
 
   const persistBodyDebounced = useDebouncedCallback((newBody: string) => {
     if (isDefined(activity)) {

@@ -29,7 +29,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   icon: 'IconActivity',
   labelIdentifierStandardId: ACTIVITY_STANDARD_FIELD_IDS.title,
 })
-// @WorkspaceIsSystem()
+@WorkspaceIsSystem()
 export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.position,

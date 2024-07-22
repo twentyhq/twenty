@@ -16,7 +16,10 @@ export const getLabelIdentifierFieldValue = (
     return `${record.name?.firstName ?? ''} ${record.name?.lastName ?? ''}`;
   }
 
-  if (objectNameSingular === CoreObjectNameSingular.ActivityTarget) {
+  if (
+    objectNameSingular === CoreObjectNameSingular.NoteTarget ||
+    objectNameSingular === CoreObjectNameSingular.TaskTarget
+  ) {
     return record.activity?.title;
   }
 

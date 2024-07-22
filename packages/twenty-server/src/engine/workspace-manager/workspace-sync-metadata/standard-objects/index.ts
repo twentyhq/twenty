@@ -16,8 +16,12 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
+import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
+import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { BehavioralEventWorkspaceEntity } from 'src/modules/timeline/standard-objects/behavioral-event.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
@@ -45,18 +49,22 @@ export const standardObjectMetadataDefinitions = [
   CompanyWorkspaceEntity,
   ConnectedAccountWorkspaceEntity,
   FavoriteWorkspaceEntity,
-  OpportunityWorkspaceEntity,
-  PersonWorkspaceEntity,
-  TimelineActivityWorkspaceEntity,
-  ViewFieldWorkspaceEntity,
-  ViewFilterWorkspaceEntity,
-  ViewSortWorkspaceEntity,
-  ViewWorkspaceEntity,
-  WebhookWorkspaceEntity,
   WorkspaceMemberWorkspaceEntity,
   MessageThreadWorkspaceEntity,
   MessageWorkspaceEntity,
   MessageChannelWorkspaceEntity,
   MessageParticipantWorkspaceEntity,
   MessageChannelMessageAssociationWorkspaceEntity,
+  NoteWorkspaceEntity,
+  NoteTargetWorkspaceEntity,
+  OpportunityWorkspaceEntity,
+  PersonWorkspaceEntity,
+  TaskWorkspaceEntity,
+  TaskTargetWorkspaceEntity,
+  TimelineActivityWorkspaceEntity,
+  ViewFieldWorkspaceEntity,
+  ViewFilterWorkspaceEntity,
+  ViewSortWorkspaceEntity,
+  ViewWorkspaceEntity,
+  WebhookWorkspaceEntity,
 ];

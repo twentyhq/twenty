@@ -14,14 +14,18 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 import { isDefined } from '~/utils/isDefined';
 
-export const usePrepareFindManyActivitiesQuery = () => {
+export const usePrepareFindManyActivitiesQuery = ({
+  objectNameSingular,
+}: {
+  objectNameSingular: CoreObjectNameSingular;
+}) => {
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.Activity,
+      objectNameSingular,
     });
 
   const getActivityFromCache = useGetRecordFromCache({
-    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectNameSingular,
   });
 
   const cache = useApolloClient().cache;

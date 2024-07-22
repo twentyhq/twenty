@@ -5,13 +5,17 @@ import { useRefreshShowPageFindManyActivitiesQueries } from '@/activities/hooks/
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
-import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
+import { objectShowPageTargetableObjectState } from '@/activities/timelineActivities/states/objectShowPageTargetableObjectIdState';
 import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDefined } from '~/utils/isDefined';
 
-export const useUpsertActivity = () => {
+export const useUpsertActivity = ({
+  objectNameSingular,
+}: {
+  objectNameSingular: CoreObjectNameSingular;
+}) => {
   const [isActivityInCreateMode, setIsActivityInCreateMode] = useRecoilState(
     isActivityInCreateModeState,
   );
@@ -33,7 +37,7 @@ export const useUpsertActivity = () => {
   );
 
   const { refreshShowPageFindManyActivitiesQueries } =
-    useRefreshShowPageFindManyActivitiesQueries();
+    useRefreshShowPageFindManyActivitiesQueries({ objectNameSingular });
 
   const upsertActivity = async ({
     activity,

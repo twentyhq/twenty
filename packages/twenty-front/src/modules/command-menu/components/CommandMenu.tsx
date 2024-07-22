@@ -8,7 +8,6 @@ import { Avatar, IconNotes, IconSparkles } from 'twenty-ui';
 import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
 import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { Activity } from '@/activities/types/Activity';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
@@ -33,6 +32,7 @@ import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command, CommandType } from '../types/Command';
 
+import { Note } from '@/activities/types/Note';
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 
@@ -166,7 +166,7 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { records: activities } = useFindManyRecords<Activity>({
+  const { records: activities } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Activity,
     filter: commandMenuSearch

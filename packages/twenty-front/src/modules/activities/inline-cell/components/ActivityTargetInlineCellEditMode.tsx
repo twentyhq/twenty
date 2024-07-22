@@ -67,7 +67,9 @@ export const ActivityTargetInlineCellEditMode = ({
 
   const { closeInlineCell: closeEditableField } = useInlineCell();
 
-  const { upsertActivity } = useUpsertActivity();
+  const { upsertActivity } = useUpsertActivity({
+    objectNameSingular: CoreObjectNameSingular.Activity,
+  });
 
   const { objectMetadataItem: objectMetadataItemActivityTarget } =
     useObjectMetadataItem({

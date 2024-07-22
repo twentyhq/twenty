@@ -96,7 +96,11 @@ export const ShowPageRightContainer = ({
       id: 'richText',
       title: 'Content',
       Icon: IconNotes,
-      hide: targetableObject.targetObjectNameSingular !== 'activity',
+      hide:
+        targetableObject.targetObjectNameSingular !==
+          CoreObjectNameSingular.Note &&
+        targetableObject.targetObjectNameSingular !==
+          CoreObjectNameSingular.Task,
     },
     {
       id: 'timeline',
@@ -108,19 +112,29 @@ export const ShowPageRightContainer = ({
       id: 'tasks',
       title: 'Tasks',
       Icon: IconCheckbox,
-      hide: !tasks || targetableObject.targetObjectNameSingular === 'activity',
+      hide:
+        !tasks ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Note ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Task,
     },
     {
       id: 'notes',
       title: 'Notes',
       Icon: IconNotes,
-      hide: !notes || targetableObject.targetObjectNameSingular === 'activity',
+      hide:
+        !notes ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Note ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Task,
     },
     {
       id: 'files',
       title: 'Files',
       Icon: IconPaperclip,
-      hide: !notes || targetableObject.targetObjectNameSingular === 'activity',
+      hide: !notes,
     },
     {
       id: 'emails',
