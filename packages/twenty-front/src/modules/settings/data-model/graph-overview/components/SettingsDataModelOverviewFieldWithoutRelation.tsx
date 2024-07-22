@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { useIcons } from 'twenty-ui';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { capitalize } from '~/utils/string/capitalize';
 
 type ObjectFieldRowWithoutRelationProps = {
   field: FieldMetadataItem;
@@ -33,7 +32,7 @@ export const ObjectFieldRowWithoutRelation = ({
   return (
     <StyledRow>
       {Icon && <Icon size={theme.icon.size.md} />}
-      <StyledFieldName>{capitalize(field.label)}</StyledFieldName>
+      <StyledFieldName>{field.label}</StyledFieldName>
     </StyledRow>
   );
 };
