@@ -91,15 +91,6 @@ export const RecordInlineCellContainer = () => {
     label,
     labelWidth,
     showLabel,
-    buttonIcon,
-    editModeContent,
-    displayModeContent,
-    customEditHotkeyScope,
-    editModeContentOnly,
-    isDisplayModeFixHeight,
-    disableHoverEffect,
-    loading,
-    isCentered,
   } = context;
 
   const { entityId, fieldDefinition } = useContext(FieldContext);
@@ -153,20 +144,7 @@ export const RecordInlineCellContainer = () => {
         </StyledLabelAndIconContainer>
       )}
       <StyledValueContainer>
-        <RecordInlineCellValue
-          displayModeContent={displayModeContent}
-          customEditHotkeyScope={customEditHotkeyScope}
-          disableHoverEffect={disableHoverEffect}
-          editModeContent={editModeContent}
-          editModeContentOnly={editModeContentOnly}
-          isDisplayModeFixHeight={isDisplayModeFixHeight}
-          buttonIcon={buttonIcon}
-          label={label}
-          loading={loading}
-          readonly={readonly}
-          showLabel={showLabel}
-          isCentered={isCentered}
-        />
+        <RecordInlineCellValue />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>
   );
