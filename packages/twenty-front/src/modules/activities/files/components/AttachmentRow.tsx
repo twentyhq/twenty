@@ -24,7 +24,6 @@ const StyledRow = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   justify-content: space-between;
-
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
