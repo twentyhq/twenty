@@ -79,7 +79,6 @@ export type RecordInlineCellContainerProps = {
   isCentered?: boolean;
 };
 
-// TODO: refactor props drilling with a RecordInlineCellContext
 export const RecordInlineCellContainer = () => {
 
   const context = useRecordInlineCellContext();
