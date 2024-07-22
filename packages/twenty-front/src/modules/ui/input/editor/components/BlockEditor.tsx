@@ -41,10 +41,6 @@ const StyledEditor = styled.div`
     width: 20px;
     height: 20px;
   }
-  & .bn-block-content[data-content-type='checkListItem'] {
-    display: flex;
-    align-items: center;
-  }
   & .bn-block-content[data-content-type='checkListItem'] > div > div {
     display: flex;
     align-items: center;
