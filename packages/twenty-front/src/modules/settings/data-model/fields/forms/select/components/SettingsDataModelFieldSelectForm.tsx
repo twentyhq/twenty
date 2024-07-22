@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
+import { useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { IconPlus } from 'twenty-ui';
 import { z } from 'zod';
@@ -225,7 +225,7 @@ export const SettingsDataModelFieldSelectForm = ({
                   <>
                     {options.map((option, index) => (
                       <DraggableItem
-                        isInsideScrollableContainer={true}
+                        isInsideScrollableContainer
                         key={option.id}
                         draggableId={option.id}
                         index={index}
