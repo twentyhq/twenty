@@ -62,9 +62,9 @@ export class KeyValuePair {
   @Column({ nullable: false, type: 'text' })
   key: string;
 
-  @Field(() => String, { nullable: true })
-  @Column({ nullable: true, type: 'text' })
-  value: string;
+  @Field(() => JSON, { nullable: true })
+  @Column('jsonb', { nullable: true })
+  value: JSON;
 
   @Field(() => KeyValuePairType)
   @Column({

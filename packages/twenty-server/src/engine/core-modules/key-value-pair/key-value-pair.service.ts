@@ -1,5 +1,5 @@
-import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
@@ -49,7 +49,7 @@ export class KeyValuePairService<TYPE> {
       userId,
       workspaceId,
       key: key as string,
-      value: value as string,
+      value: value as JSON,
     };
 
     const conflictPaths = Object.keys(upsertData).filter(
