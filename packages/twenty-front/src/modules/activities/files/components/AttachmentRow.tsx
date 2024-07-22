@@ -12,7 +12,7 @@ import {
 import { EditableField } from '@/ui/field/input/components/EditableField';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { IconCalendar } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
@@ -60,6 +60,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(attachment.name);
+  const inputRef = useRef<HTMLInputElement>(null);
   const fieldContext = useMemo(
     () => ({ recoilScopeId: attachment?.id ?? '' }),
     [attachment?.id],
@@ -96,6 +97,12 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const handleInputBlur = () => {
     handleUpdate();
   };
+  useEffect(() => {
+    if (Boolean(isEditing) && Boolean(inputRef.current)) {
+      inputRef?.current?.focus();
+      inputRef?.current?.select();
+    }
+  }, [isEditing]);
 
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
@@ -104,6 +111,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           <AttachmentIcon attachmentType={attachment.type} />
           {isEditing ? (
             <EditableField
+              ref={inputRef}
               value={newName}
               onChange={handleInputChange}
               onBlur={handleInputBlur}
