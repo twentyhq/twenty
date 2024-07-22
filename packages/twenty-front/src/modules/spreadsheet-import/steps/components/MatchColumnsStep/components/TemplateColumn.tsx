@@ -1,10 +1,10 @@
 // TODO: We should create our own accordion component
 import {
   Accordion,
-  AccordionButton as ChakraAccordionButton,
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  AccordionButton as ChakraAccordionButton,
 } from '@chakra-ui/accordion';
 import styled from '@emotion/styled';
 import { IconChevronDown, IconForbid } from 'twenty-ui';
@@ -15,6 +15,7 @@ import { Fields } from '@/spreadsheet-import/types';
 
 import { Column, Columns, ColumnType } from '../MatchColumnsStep';
 
+import { isDefined } from '~/utils/isDefined';
 import { SubMatchingSelect } from './SubMatchingSelect';
 
 const StyledContainer = styled.div`
@@ -69,7 +70,7 @@ const getAccordionTitle = <T extends string>(
 
   return `Match ${fieldLabel} (${
     'matchedOptions' in column &&
-    column.matchedOptions.filter((option) => option.value === undefined).length
+    column.matchedOptions.filter((option) => !isDefined(option.value)).length
   } Unmatched)`;
 };
 
