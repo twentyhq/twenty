@@ -15,7 +15,6 @@ import { canCreateActivityState } from '@/activities/states/canCreateActivitySta
 import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
@@ -30,16 +29,19 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { getFileType } from '../files/utils/getFileType';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import '@blocknote/react/style.css';
 
 type RichTextEditorProps = {
   activityId: string;
   fillTitleFromBody: boolean;
+  objectNameSingular: string;
 };
 
 export const RichTextEditor = ({
   activityId,
   fillTitleFromBody,
+  objectNameSingular,
 }: RichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
   const cache = useApolloClient().cache;
@@ -59,7 +61,7 @@ export const RichTextEditor = ({
 
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.Activity,
+      objectNameSingular: objectNameSingular,
     });
 
   const {
@@ -68,7 +70,7 @@ export const RichTextEditor = ({
   } = usePreviousHotkeyScope();
 
   const { upsertActivity } = useUpsertActivity({
-    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectNameSingular: objectNameSingular as CoreObjectNameSingular,
   });
 
   const persistBodyDebounced = useDebouncedCallback((newBody: string) => {

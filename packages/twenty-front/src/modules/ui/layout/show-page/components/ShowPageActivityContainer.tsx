@@ -19,6 +19,7 @@ export const ShowPageActivityContainer = ({
       <RichTextEditor
         activityId={targetableObject.id}
         fillTitleFromBody={false}
+        objectNameSingular={targetableObject.targetObjectNameSingular}
       />
     </StyledShowPageActivityContainer>
   );

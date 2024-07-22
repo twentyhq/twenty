@@ -6,9 +6,10 @@ import { v4 } from 'uuid';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { ActivityTargetObjectRecordEffect } from '@/activities/inline-cell/components/ActivityTargetObjectRecordEffect';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
-import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
+import { Note } from '@/activities/types/Note';
 import { NoteTarget } from '@/activities/types/NoteTarget';
+import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { getActivityTargetObjectFieldName } from '@/activities/utils/getActivityTargetObjectFieldName';
@@ -38,7 +39,7 @@ const StyledSelectContainer = styled.div`
 `;
 
 type ActivityTargetInlineCellEditModeProps = {
-  activity: Activity;
+  activity: Task | Note;
   activityTargetWithTargetRecords: ActivityTargetWithTargetRecord[];
   objectNameSingular: CoreObjectNameSingular;
 };
@@ -73,7 +74,7 @@ export const ActivityTargetInlineCellEditMode = ({
   const { closeInlineCell: closeEditableField } = useInlineCell();
 
   const { upsertActivity } = useUpsertActivity({
-    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectNameSingular: objectNameSingular,
   });
 
   const { objectMetadataItem: objectMetadataItemActivityTarget } =

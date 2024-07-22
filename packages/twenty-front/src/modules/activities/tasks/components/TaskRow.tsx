@@ -4,11 +4,11 @@ import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
-import { Activity } from '@/activities/types/Activity';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
+import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCompleteTask } from '../hooks/useCompleteTask';
 
@@ -41,13 +41,6 @@ const StyledTaskTitle = styled.div<{
   text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
 `;
 
-const StyledCommentIcon = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
-  display: flex;
-  margin-left: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledDueDate = styled.div<{
   isPast: boolean;
 }>`
@@ -76,7 +69,7 @@ const StyledCheckboxContainer = styled.div`
   display: flex;
 `;
 
-export const TaskRow = ({ task }: { task: Activity }) => {
+export const TaskRow = ({ task }: { task: Task }) => {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer({
     objectNameSingular: CoreObjectNameSingular.Task,

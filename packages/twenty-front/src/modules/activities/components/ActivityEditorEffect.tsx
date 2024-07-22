@@ -28,6 +28,7 @@ export const ActivityEditorEffect = ({
   const { upsertActivity } = useUpsertActivity({
     objectNameSingular,
   });
+
   const deleteRecordFromCache = useDeleteRecordFromCache({
     objectNameSingular,
   });
