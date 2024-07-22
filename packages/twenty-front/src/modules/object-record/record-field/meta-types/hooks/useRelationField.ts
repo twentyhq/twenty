@@ -27,7 +27,7 @@ export const useRelationField = <
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldRelationValue<T>>(
-    recordStoreFamilySelector({ recordId: recordId, fieldName }),
+    recordStoreFamilySelector({ recordId, fieldName }),
   );
 
   const { getDraftValueSelector } = useRecordFieldInput<FieldRelationValue<T>>(

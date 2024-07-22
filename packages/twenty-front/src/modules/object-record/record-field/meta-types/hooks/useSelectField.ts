@@ -21,7 +21,7 @@ export const useSelectField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldSelectValue>(
     recordStoreFamilySelector({
-      recordId: recordId,
+      recordId,
       fieldName: fieldName,
     }),
   );

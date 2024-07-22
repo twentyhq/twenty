@@ -21,7 +21,7 @@ export const useTextField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldTextValue>(
     recordStoreFamilySelector({
-      recordId: recordId,
+      recordId,
       fieldName: fieldName,
     }),
   );

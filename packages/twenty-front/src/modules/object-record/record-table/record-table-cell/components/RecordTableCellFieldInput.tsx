@@ -5,6 +5,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 
 export const RecordTableCellFieldInput = () => {
   const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
@@ -81,7 +82,7 @@ export const RecordTableCellFieldInput = () => {
 
   return (
     <FieldInput
-      recordFieldInputdId={`${recordId}-${fieldDefinition?.metadata?.fieldName}`}
+      recordFieldInputdId={getRecordFieldInputId(recordId,fieldDefinition?.metadata?.fieldName)}
       onCancel={handleCancel}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}

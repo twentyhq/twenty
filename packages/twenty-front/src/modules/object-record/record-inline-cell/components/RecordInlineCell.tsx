@@ -14,6 +14,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { useInlineCell } from '../hooks/useInlineCell';
 
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 
 type RecordInlineCellProps = {
   readonly?: boolean;
@@ -92,7 +93,7 @@ export const RecordInlineCell = ({
         isCentered={isCentered}
         editModeContent={
           <FieldInput
-            recordFieldInputdId={`${recordId}-${fieldDefinition?.metadata?.fieldName}`}
+            recordFieldInputdId={getRecordFieldInputId(recordId, fieldDefinition?.metadata?.fieldName)}
             onEnter={handleEnter}
             onCancel={handleCancel}
             onEscape={handleEscape}

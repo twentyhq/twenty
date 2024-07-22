@@ -71,12 +71,12 @@ export const useUpdateRelationFromManyFieldInput = ({
 
         if (isNewlySelected) {
           await updateOneRecordAndAttachRelations({
-            recordId: recordId,
+            recordId,
             relatedRecordId: objectRecordId,
           });
         } else {
           await updateOneRecordAndDetachRelations({
-            recordId: recordId,
+            recordId,
             relatedRecordId: objectRecordId,
           });
         }

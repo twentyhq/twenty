@@ -60,7 +60,7 @@ export const RecordDetailRelationSection = ({
 
   const fieldValue = useRecoilValue<
     ({ id: string } & Record<string, any>) | ObjectRecord[] | null
-  >(recordStoreFamilySelector({ recordId: recordId, fieldName }));
+  >(recordStoreFamilySelector({ recordId, fieldName }));
 
   // TODO: use new relation type
   const isToOneObject = relationType === 'TO_ONE_OBJECT';

@@ -23,13 +23,11 @@ export const useToggleEditOnlyInput = () => {
         if (fieldIsBoolean) {
           const fieldName = fieldDefinition.metadata.fieldName;
           const oldValue = snapshot
-            .getLoadable(
-              recordStoreFamilySelector({ recordId: recordId, fieldName }),
-            )
+            .getLoadable(recordStoreFamilySelector({ recordId, fieldName }))
             .getValue();
           const valueToPersist = !oldValue;
           set(
-            recordStoreFamilySelector({ recordId: recordId, fieldName }),
+            recordStoreFamilySelector({ recordId, fieldName }),
             valueToPersist,
           );
 

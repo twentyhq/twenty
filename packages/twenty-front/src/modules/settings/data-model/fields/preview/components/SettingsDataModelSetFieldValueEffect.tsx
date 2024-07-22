@@ -17,7 +17,7 @@ export const SettingsDataModelSetFieldValueEffect = ({
 }: SettingsDataModelSetFieldValueEffectProps) => {
   const setFieldValue = useSetRecoilState(
     recordStoreFamilySelector({
-      recordId: recordId,
+      recordId,
       fieldName,
     }),
   );

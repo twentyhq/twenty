@@ -19,7 +19,7 @@ export const useEmailField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     recordStoreFamilySelector({
-      recordId: recordId,
+      recordId,
       fieldName: fieldName,
     }),
   );

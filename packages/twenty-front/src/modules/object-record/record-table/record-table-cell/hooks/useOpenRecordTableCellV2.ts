@@ -82,7 +82,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         const fieldValue = getSnapshotValue(
           snapshot,
           recordStoreFamilySelector({
-            recordId: recordId,
+            recordId,
             fieldName: fieldDefinition.metadata.fieldName,
           }),
         );

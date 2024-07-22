@@ -25,7 +25,7 @@ export const useRecordFieldInput = <FieldValue>(
         const recordFieldValue = snapshot
           .getLoadable(
             recordStoreFamilySelector<FieldValue>({
-              recordId: recordId,
+              recordId,
               fieldName: fieldDefinition.metadata.fieldName,
             }),
           )

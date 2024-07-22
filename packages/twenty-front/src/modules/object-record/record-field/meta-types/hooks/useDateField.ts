@@ -20,7 +20,7 @@ export const useDateField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     recordStoreFamilySelector({
-      recordId: recordId,
+      recordId,
       fieldName: fieldName,
     }),
   );

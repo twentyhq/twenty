@@ -24,7 +24,7 @@ export const useNumberField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<number | null>(
     recordStoreFamilySelector({
-      recordId: recordId,
+      recordId,
       fieldName: fieldName,
     }),
   );

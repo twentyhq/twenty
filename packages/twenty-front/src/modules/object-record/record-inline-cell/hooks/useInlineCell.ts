@@ -9,6 +9,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';
 import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 
 export const useInlineCell = () => {
   const {
@@ -27,7 +28,7 @@ export const useInlineCell = () => {
   } = usePreviousHotkeyScope();
 
   const { initDraftValue: initFieldInputDraftValue } = useRecordFieldInput(
-    `${recordId}-${fieldDefinition?.metadata?.fieldName}`,
+    getRecordFieldInputId(recordId,fieldDefinition?.metadata?.fieldName)
   );
 
   const closeInlineCell = () => {

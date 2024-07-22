@@ -18,7 +18,7 @@ export const useRatingField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldRatingValue | null>(
     recordStoreFamilySelector({
-      recordId: recordId,
+      recordId,
       fieldName: fieldName,
     }),
   );

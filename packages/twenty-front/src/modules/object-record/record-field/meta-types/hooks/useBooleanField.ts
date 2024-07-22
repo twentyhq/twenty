@@ -21,7 +21,7 @@ export const useBooleanField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<boolean>(
     recordStoreFamilySelector({
-      recordId: recordId,
+      recordId,
       fieldName: fieldName,
     }),
   );

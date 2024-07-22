@@ -136,7 +136,7 @@ export const usePersistField = () => {
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;
           set(
-            recordStoreFamilySelector({ recordId: recordId, fieldName }),
+            recordStoreFamilySelector({ recordId, fieldName }),
             valueToPersist,
           );
 

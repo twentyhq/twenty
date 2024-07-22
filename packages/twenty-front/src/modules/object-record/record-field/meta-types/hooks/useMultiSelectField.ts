@@ -24,7 +24,7 @@ export const useMultiSelectField = () => {
 
   const [fieldValues, setFieldValue] = useRecoilState<FieldMultiSelectValue>(
     recordStoreFamilySelector({
-      recordId: recordId,
+      recordId,
       fieldName: fieldName,
     }),
   );

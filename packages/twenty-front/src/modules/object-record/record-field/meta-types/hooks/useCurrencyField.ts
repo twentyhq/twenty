@@ -26,7 +26,7 @@ export const useCurrencyField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldCurrencyValue>(
     recordStoreFamilySelector({
-      recordId: recordId,
+      recordId,
       fieldName: fieldName,
     }),
   );

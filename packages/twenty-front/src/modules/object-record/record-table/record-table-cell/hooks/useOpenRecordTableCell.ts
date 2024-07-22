@@ -19,6 +19,7 @@ import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentTableCellEditMode } from './useCurrentTableCellEditMode';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 
 export const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
@@ -46,7 +47,7 @@ export const useOpenRecordTableCell = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { initDraftValue: initFieldInputDraftValue } = useRecordFieldInput(
-    `${recordId}-${fieldDefinition?.metadata?.fieldName}`,
+    getRecordFieldInputId(recordId,fieldDefinition?.metadata?.fieldName)
   );
 
   const openTableCell = useRecoilCallback(

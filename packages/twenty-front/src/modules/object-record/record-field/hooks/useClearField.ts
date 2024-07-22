@@ -45,7 +45,7 @@ export const useClearField = () => {
         const emptyFieldValue = generateEmptyFieldValue(foundFieldMetadataItem);
 
         set(
-          recordStoreFamilySelector({ recordId: recordId, fieldName }),
+          recordStoreFamilySelector({ recordId, fieldName }),
           emptyFieldValue,
         );
 

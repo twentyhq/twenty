@@ -25,7 +25,7 @@ export const useFullNameField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldFullNameValue>(
     recordStoreFamilySelector({
-      recordId: recordId,
+      recordId,
       fieldName: fieldName,
     }),
   );
