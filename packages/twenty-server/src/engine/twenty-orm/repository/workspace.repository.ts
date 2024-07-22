@@ -16,19 +16,19 @@ import {
   SaveOptions,
   UpdateResult,
 } from 'typeorm';
+import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
-import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { isPlainObject } from 'src/utils/is-plain-object';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isPlainObject } from 'src/utils/is-plain-object';
 
 export class WorkspaceRepository<
   Entity extends ObjectLiteral,
@@ -607,10 +607,13 @@ export class WorkspaceRepository<
    * PRIVATE METHODS
    */
   private async getObjectMetadataFromTarget() {
-    const objectMetadataName = WorkspaceEntitiesStorage.getObjectMetadataName(
-      this.internalContext.workspaceId,
-      this.target as EntitySchema,
-    );
+    const objectMetadataName =
+      typeof this.target === 'string'
+        ? this.target
+        : WorkspaceEntitiesStorage.getObjectMetadataName(
+            this.internalContext.workspaceId,
+            this.target as EntitySchema,
+          );
 
     if (!objectMetadataName) {
       throw new Error('Object metadata name is missing');
