@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import { IconTwentyStarFilled, THEME_COMMON, ThemeContext } from 'twenty-ui';
 
 import { useClearField } from '@/object-record/record-field/hooks/useClearField';
@@ -16,7 +16,7 @@ const StyledRatingIconContainer = styled.div<{
 }>`
   color: ${({ color }) => color};
   display: inline-flex;
-`;  
+`;
 
 type RatingInputProps = {
   onChange?: (newValue: FieldRatingValue) => void;
@@ -41,18 +41,18 @@ export const RatingInput = ({
 
   const currentValue = hoveredValue ?? value;
 
-  const selectedIndex = currentValue !== null ? RATING_VALUES.indexOf(currentValue) : -1;
+  const selectedIndex =
+    currentValue !== null ? RATING_VALUES.indexOf(currentValue) : -1;
 
-  const previousRating = useRef<FieldRatingValue>(null);
+  const canClick = !readonly;
 
-  const handleClick = (value: FieldRatingValue) => {
-    if (readonly) return;
-    previousRating.current = value;
-    if (previousRating.current === currentValue) {
+  const handleClick = (newValue: FieldRatingValue) => {
+    if (!canClick) return;
+    if (newValue === value) {
       setHoveredValue(null);
       clearField();
     } else {
-      onChange?.(value);
+      onChange?.(newValue);
     }
   };
 
