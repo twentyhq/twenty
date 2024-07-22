@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
 import { gql } from '@apollo/client';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
@@ -71,6 +71,7 @@ const mocks: MockedResponse[] = [
             }
             pageInfo {
               hasNextPage
+              hasPreviousPage
               startCursor
               endCursor
             }
@@ -132,6 +133,7 @@ const mocks: MockedResponse[] = [
             }
             pageInfo {
               hasNextPage
+              hasPreviousPage
               startCursor
               endCursor
             }

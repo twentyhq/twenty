@@ -200,7 +200,6 @@ export const SettingsObjectDetail = () => {
                     ActionIcon={
                       <SettingsObjectFieldInactiveActionDropdown
                         isCustomField={!!deactivatedMetadataField.isCustom}
-                        fieldType={deactivatedMetadataField.type}
                         scopeKey={deactivatedMetadataField.id}
                         onActivate={() =>
                           activateMetadataField(deactivatedMetadataField)

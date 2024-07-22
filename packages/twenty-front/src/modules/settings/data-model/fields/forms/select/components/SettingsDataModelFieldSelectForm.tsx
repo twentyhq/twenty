@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
-import { Key } from 'ts-key-enum';
+import { useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 import { IconPlus } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -21,8 +20,6 @@ import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
@@ -189,19 +186,15 @@ export const SettingsDataModelFieldSelectForm = ({
     setFormValue('options', newOptions);
   };
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
-      const newOptions = getOptionsWithNewOption();
+  const handleInputEnter = () => {
+    const newOptions = getOptionsWithNewOption();
 
-      setFormValue('options', newOptions);
+    setFormValue('options', newOptions);
 
-      const lastOptionId = newOptions[newOptions.length - 1].id;
+    const lastOptionId = newOptions[newOptions.length - 1].id;
 
-      setFocusedOptionId(lastOptionId);
-    },
-    AppHotkeyScope.App,
-  );
+    setFocusedOptionId(lastOptionId);
+  };
 
   return (
     <>
@@ -270,6 +263,7 @@ export const SettingsDataModelFieldSelectForm = ({
                             onRemoveAsDefault={() =>
                               handleRemoveOptionAsDefault(option.value)
                             }
+                            onInputEnter={handleInputEnter}
                           />
                         }
                       />

@@ -1,10 +1,7 @@
-import { FactoryProvider, ModuleMetadata, Type } from '@nestjs/common';
+import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-
-export interface TwentyORMOptions {
-  workspaceEntities: (Type<BaseWorkspaceEntity> | string)[];
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface TwentyORMOptions {}
 
 export type TwentyORMModuleAsyncOptions = {
   useFactory: (...args: any[]) => TwentyORMOptions | Promise<TwentyORMOptions>;
