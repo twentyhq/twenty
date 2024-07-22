@@ -11,7 +11,11 @@ const SharedNavigationModal = ({
 }: SharedNavigationModalProps) => {
   return (
     <div data-select-disable className={customClassName}>
-      {actionBarEntries[0]?.ConfirmationModal ?? null}
+      {actionBarEntries.map((actionBarEntry, index) =>
+        actionBarEntry.ConfirmationModal ? (
+          <div key={index}>{actionBarEntry.ConfirmationModal}</div>
+        ) : null,
+      )}
     </div>
   );
 };

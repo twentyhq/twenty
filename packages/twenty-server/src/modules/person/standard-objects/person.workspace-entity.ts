@@ -32,6 +32,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   labelPlural: 'People',
   description: 'A person',
   icon: 'IconUser',
+  labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
 })
 export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({

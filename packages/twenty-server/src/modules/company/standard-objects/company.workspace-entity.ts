@@ -34,6 +34,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelPlural: 'Companies',
   description: 'A company',
   icon: 'IconBuildingSkyscraper',
+  labelIdentifierStandardId: COMPANY_STANDARD_FIELD_IDS.name,
 })
 export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({

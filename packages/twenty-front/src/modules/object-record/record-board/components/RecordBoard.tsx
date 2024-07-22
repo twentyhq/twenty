@@ -25,9 +25,11 @@ export type RecordBoardProps = {
 
 const StyledContainer = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  overflow: auto;
   display: flex;
   flex: 1;
   flex-direction: row;
+  min-height: calc(100% - 1px);
 `;
 
 const StyledWrapper = styled.div`

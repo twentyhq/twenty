@@ -4,42 +4,42 @@ import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import {
+  CalendarEventListFetchJob,
+  CalendarEventsImportJobData,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
+import {
+  CalendarChannelVisibility,
+  CalendarChannelWorkspaceEntity,
+} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import {
-  ConnectedAccountWorkspaceEntity,
   ConnectedAccountProvider,
+  ConnectedAccountWorkspaceEntity,
 } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import {
-  MessageChannelWorkspaceEntity,
+  MessageChannelSyncStatus,
   MessageChannelType,
   MessageChannelVisibility,
-  MessageChannelSyncStatus,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessageListFetchJob,
   MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
-import {
-  CalendarChannelWorkspaceEntity,
-  CalendarChannelVisibility,
-} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import {
-  CalendarEventsImportJobData,
-  CalendarEventListFetchJob,
-} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 
 @Injectable()
 export class GoogleAPIsService {
   constructor(
+    private readonly twentyORMManager: TwentyORMManager,
     @InjectWorkspaceDatasource()
     private readonly workspaceDataSource: WorkspaceDataSource,
     @InjectMessageQueue(MessageQueue.messagingQueue)
@@ -51,8 +51,6 @@ export class GoogleAPIsService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
   ) {}
 
   async refreshGoogleRefreshToken(input: {
@@ -86,6 +84,11 @@ export class GoogleAPIsService {
     const existingAccountId = connectedAccounts?.[0]?.id;
     const newOrExistingConnectedAccountId = existingAccountId ?? v4();
 
+    const calendarChannelRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+        'calendarChannel',
+      );
+
     await this.workspaceDataSource.transaction(
       async (manager: EntityManager) => {
         if (!existingAccountId) {
@@ -117,7 +120,7 @@ export class GoogleAPIsService {
           );
 
           if (isCalendarEnabled) {
-            await this.calendarChannelRepository.save(
+            await calendarChannelRepository.save(
               {
                 id: v4(),
                 connectedAccountId: newOrExistingConnectedAccountId,
@@ -167,7 +170,7 @@ export class GoogleAPIsService {
     }
 
     if (isCalendarEnabled) {
-      const calendarChannels = await this.calendarChannelRepository.find({
+      const calendarChannels = await calendarChannelRepository.find({
         where: {
           connectedAccountId: newOrExistingConnectedAccountId,
         },

@@ -64,9 +64,6 @@ export const ViewPickerListContent = () => {
   const { getIcon } = useIcons();
 
   const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
-  const viewsOnCurrentObjectWithoutIndex = viewsOnCurrentObject.filter(
-    (view) => view.key !== 'INDEX',
-  );
 
   const handleDragEnd = useCallback(
     (result: DropResult) => {
@@ -89,49 +86,41 @@ export const ViewPickerListContent = () => {
       <DropdownMenuItemsContainer>
         <DraggableList
           onDragEnd={handleDragEnd}
-          draggableItems={viewsOnCurrentObjectWithoutIndex.map(
-            (view, index) => (
-              <DraggableItem
-                key={view.id}
-                draggableId={view.id}
-                index={index}
-                isDragDisabled={viewsOnCurrentObjectWithoutIndex.length === 1}
-                itemComponent={
-                  <MenuItemDraggable
-                    key={view.id}
-                    iconButtons={[
-                      {
-                        Icon: IconPencil,
-                        onClick: (event: MouseEvent<HTMLButtonElement>) =>
-                          handleEditViewButtonClick(event, view.id),
-                      },
-                    ].filter(isDefined)}
-                    isIconDisplayedOnHoverOnly
-                    onClick={() => handleViewSelect(view.id)}
-                    LeftIcon={getIcon(view.icon)}
-                    text={view.name}
-                  />
-                }
-              />
-            ),
-          )}
+          draggableItems={viewsOnCurrentObject.map((view, index) => (
+            <DraggableItem
+              key={view.id}
+              draggableId={view.id}
+              index={index}
+              isDragDisabled={viewsOnCurrentObject.length === 1}
+              itemComponent={
+                <MenuItemDraggable
+                  key={view.id}
+                  iconButtons={
+                    indexView?.id === view.id
+                      ? [
+                          {
+                            Icon: IconLock,
+                          },
+                        ]
+                      : [
+                          {
+                            Icon: IconPencil,
+                            onClick: (event: MouseEvent<HTMLButtonElement>) =>
+                              handleEditViewButtonClick(event, view.id),
+                          },
+                        ].filter(isDefined)
+                  }
+                  isIconDisplayedOnHoverOnly={
+                    indexView?.id === view.id ? false : true
+                  }
+                  onClick={() => handleViewSelect(view.id)}
+                  LeftIcon={getIcon(view.icon)}
+                  text={view.name}
+                />
+              }
+            />
+          ))}
         />
-        {indexView && (
-          <MenuItemDraggable
-            key={indexView.id}
-            iconButtons={[
-              {
-                Icon: IconLock,
-              },
-            ].filter(isDefined)}
-            isIconDisplayedOnHoverOnly={false}
-            onClick={() => handleViewSelect(indexView.id)}
-            LeftIcon={getIcon(indexView.icon)}
-            text={indexView.name}
-            accent="placeholder"
-            isDragDisabled
-          />
-        )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <StyledBoldDropdownMenuItemsContainer>
