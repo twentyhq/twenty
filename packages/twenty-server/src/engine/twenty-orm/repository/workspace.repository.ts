@@ -27,6 +27,7 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
+import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isPlainObject } from 'src/utils/is-plain-object';
 
@@ -754,20 +755,30 @@ export class WorkspaceRepository<
         ]);
       }),
     );
+
     const relationMetadataMap = new Map(
       objectMetadata.fields
         .filter(({ type }) => isRelationFieldMetadataType(type))
         .map((fieldMetadata) => [
           fieldMetadata.name,
-          fieldMetadata.fromRelationMetadata ??
-            fieldMetadata.toRelationMetadata,
+          {
+            relationMetadata:
+              fieldMetadata.fromRelationMetadata ??
+              fieldMetadata.toRelationMetadata,
+            relationType: computeRelationType(
+              fieldMetadata,
+              fieldMetadata.fromRelationMetadata ??
+                fieldMetadata.toRelationMetadata,
+            ),
+          },
         ]),
     );
     const newData: object = {};
 
     for (const [key, value] of Object.entries(data)) {
       const compositePropertyArgs = compositeFieldMetadataMap.get(key);
-      const relationMetadata = relationMetadataMap.get(key);
+      const { relationMetadata, relationType } =
+        relationMetadataMap.get(key) ?? {};
 
       if (!compositePropertyArgs && !relationMetadata) {
         if (isPlainObject(value)) {
@@ -779,22 +790,38 @@ export class WorkspaceRepository<
       }
 
       if (relationMetadata) {
-        const inverseSideObjectName =
-          relationMetadata.toObjectMetadata.nameSingular;
-        const objectMetadata =
+        const toObjectMetadata =
           await this.internalContext.workspaceCacheStorage.getObjectMetadata(
-            this.internalContext.workspaceId,
+            relationMetadata.workspaceId,
             (objectMetadata) =>
-              objectMetadata.nameSingular === inverseSideObjectName,
+              objectMetadata.id === relationMetadata.toObjectMetadataId,
           );
 
-        if (!objectMetadata) {
+        const fromObjectMetadata =
+          await this.internalContext.workspaceCacheStorage.getObjectMetadata(
+            relationMetadata.workspaceId,
+            (objectMetadata) =>
+              objectMetadata.id === relationMetadata.fromObjectMetadataId,
+          );
+
+        if (!toObjectMetadata) {
           throw new Error(
-            `Object metadata for object metadata "${inverseSideObjectName}" is missing`,
+            `Object metadata for object metadataId "${relationMetadata.toObjectMetadataId}" is missing`,
           );
         }
 
-        newData[key] = await this.formatResult(value, objectMetadata);
+        if (!fromObjectMetadata) {
+          throw new Error(
+            `Object metadata for object metadataId "${relationMetadata.fromObjectMetadataId}" is missing`,
+          );
+        }
+
+        newData[key] = await this.formatResult(
+          value,
+          relationType === 'one-to-many'
+            ? toObjectMetadata
+            : fromObjectMetadata,
+        );
         continue;
       }
 
