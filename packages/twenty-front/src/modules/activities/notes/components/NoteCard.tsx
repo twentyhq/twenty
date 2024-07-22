@@ -1,12 +1,13 @@
-import { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useMemo } from 'react';
 import { IconComment } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   FieldContext,
   GenericFieldContextType,
@@ -82,7 +83,9 @@ export const NoteCard = ({
   isSingleNote: boolean;
 }) => {
   const theme = useTheme();
-  const openActivityRightDrawer = useOpenActivityRightDrawer();
+  const openActivityRightDrawer = useOpenActivityRightDrawer({
+    objectNameSingular: CoreObjectNameSingular.Note,
+  });
   const body = getActivityPreview(note.body);
 
   const fieldContext = useMemo(

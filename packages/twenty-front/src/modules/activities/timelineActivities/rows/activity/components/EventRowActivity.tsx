@@ -7,6 +7,7 @@ import {
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
 } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 type EventRowActivityProps = EventRowDynamicComponentProps;
@@ -22,7 +23,9 @@ export const EventRowActivity = ({
 }: EventRowActivityProps) => {
   const [, eventAction] = event.name.split('.');
 
-  const openActivityRightDrawer = useOpenActivityRightDrawer();
+  const openActivityRightDrawer = useOpenActivityRightDrawer({
+    objectNameSingular: CoreObjectNameSingular.Activity, // TODO
+  });
 
   if (!event.linkedRecordId) {
     throw new Error('Could not find linked record id for event');

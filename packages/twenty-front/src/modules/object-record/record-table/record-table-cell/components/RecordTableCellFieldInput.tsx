@@ -4,18 +4,11 @@ import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RecordTableCellFieldInput = () => {
   const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
     useContext(RecordTableContext);
   const { entityId, fieldDefinition } = useContext(FieldContext);
-  const { isReadOnly } = useContext(RecordTableRowContext);
-  const isReadonlyCell =
-    isReadOnly ||
-    fieldDefinition.type === FieldMetadataType.RichText ||
-    fieldDefinition.metadata.fieldName === 'activityTargets';
 
   const handleEnter: FieldInputEvent = (persistField) => {
     onUpsertRecord({

@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Chip, ChipAccent, ChipSize, useIcons } from 'twenty-ui';
 
-import { ActivityActionBar } from '@/activities/right-drawer/components/ActivityActionBar';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RightDrawerTopBarCloseButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarCloseButton';
@@ -80,20 +79,15 @@ export const RightDrawerTopBar = ({ page }: { page: RightDrawerPages }) => {
       onClick={handleOnclick}
       isRightDrawerMinimized={isRightDrawerMinimized}
     >
-      {!isRightDrawerMinimized &&
-        (page === RightDrawerPages.EditActivity ||
-          page === RightDrawerPages.CreateActivity) && <ActivityActionBar />}
-      {!isRightDrawerMinimized &&
-        page !== RightDrawerPages.EditActivity &&
-        page !== RightDrawerPages.CreateActivity && (
-          <Chip
-            label={label}
-            leftComponent={<Icon size={theme.icon.size.md} />}
-            size={ChipSize.Large}
-            accent={ChipAccent.TextSecondary}
-            clickable={false}
-          />
-        )}
+      {!isRightDrawerMinimized && (
+        <Chip
+          label={label}
+          leftComponent={<Icon size={theme.icon.size.md} />}
+          size={ChipSize.Large}
+          accent={ChipAccent.TextSecondary}
+          clickable={false}
+        />
+      )}
       {isRightDrawerMinimized && (
         <StyledMinimizeTopBarTitleContainer>
           <StyledMinimizeTopBarIcon>

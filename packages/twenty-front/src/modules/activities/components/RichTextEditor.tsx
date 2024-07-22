@@ -32,15 +32,15 @@ import { getFileType } from '../files/utils/getFileType';
 
 import '@blocknote/react/style.css';
 
-type ActivityBodyEditorProps = {
+type RichTextEditorProps = {
   activityId: string;
   fillTitleFromBody: boolean;
 };
 
-export const ActivityBodyEditor = ({
+export const RichTextEditor = ({
   activityId,
   fillTitleFromBody,
-}: ActivityBodyEditorProps) => {
+}: RichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
   const cache = useApolloClient().cache;
   const activity = activityInStore as Activity | null;

@@ -1,4 +1,4 @@
-import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
+import { RichTextEditor } from '@/activities/components/RichTextEditor';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import styled from '@emotion/styled';
 
@@ -16,7 +16,7 @@ export const ShowPageActivityContainer = ({
 }) => {
   return (
     <StyledShowPageActivityContainer>
-      <ActivityBodyEditor
+      <RichTextEditor
         activityId={targetableObject.id}
         fillTitleFromBody={false}
       />

@@ -13,6 +13,7 @@ import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCompleteTask } from '../hooks/useCompleteTask';
 
 const StyledContainer = styled.div`
@@ -81,7 +82,9 @@ const StyledCheckboxContainer = styled.div`
 
 export const TaskRow = ({ task }: { task: Activity }) => {
   const theme = useTheme();
-  const openActivityRightDrawer = useOpenActivityRightDrawer();
+  const openActivityRightDrawer = useOpenActivityRightDrawer({
+    objectNameSingular: CoreObjectNameSingular.Task,
+  });
 
   const body = getActivitySummary(task.body);
   const { completeTask } = useCompleteTask(task);

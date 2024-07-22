@@ -106,7 +106,9 @@ export const CommandMenu = () => {
   const { toggleCommandMenu, onItemClick, closeCommandMenu } = useCommandMenu();
   const commandMenuRef = useRef<HTMLDivElement>(null);
 
-  const openActivityRightDrawer = useOpenActivityRightDrawer();
+  const openActivityRightDrawer = useOpenActivityRightDrawer({
+    objectNameSingular: CoreObjectNameSingular.Note,
+  });
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
@@ -166,9 +168,9 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { records: activities } = useFindManyRecords<Note>({
+  const { records: notes } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectNameSingular: CoreObjectNameSingular.Note,
     filter: commandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${commandMenuSearch}%` } },
@@ -198,24 +200,24 @@ export const CommandMenu = () => {
     [companies],
   );
 
-  const activityCommands = useMemo(
+  const noteCommands = useMemo(
     () =>
-      activities.map((activity) => ({
-        id: activity.id,
-        label: activity.title ?? '',
+      notes.map((note) => ({
+        id: note.id,
+        label: note.title ?? '',
         to: '',
-        onCommandClick: () => openActivityRightDrawer(activity.id),
+        onCommandClick: () => openActivityRightDrawer(note.id),
       })),
-    [activities, openActivityRightDrawer],
+    [notes, openActivityRightDrawer],
   );
 
   const otherCommands = useMemo(() => {
     return [
       ...peopleCommands,
       ...companyCommands,
-      ...activityCommands,
+      ...noteCommands,
     ] as Command[];
-  }, [peopleCommands, companyCommands, activityCommands]);
+  }, [peopleCommands, companyCommands, noteCommands]);
 
   const checkInShortcuts = (cmd: Command, search: string) => {
     return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
@@ -275,7 +277,7 @@ export const CommandMenu = () => {
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people.map((person) => person.id))
     .concat(companies.map((company) => company.id))
-    .concat(activities.map((activity) => activity.id));
+    .concat(notes.map((note) => note.id));
 
   return (
     <>
@@ -312,7 +314,7 @@ export const CommandMenu = () => {
                     !matchingNavigateCommand.length &&
                     !people.length &&
                     !companies.length &&
-                    !activities.length && (
+                    !notes.length && (
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
                   {isCopilotEnabled && (
@@ -411,14 +413,14 @@ export const CommandMenu = () => {
                     ))}
                   </CommandGroup>
                   <CommandGroup heading="Notes">
-                    {activities.map((activity) => (
-                      <SelectableItem itemId={activity.id} key={activity.id}>
+                    {notes.map((note) => (
+                      <SelectableItem itemId={note.id} key={note.id}>
                         <CommandMenuItem
-                          id={activity.id}
+                          id={note.id}
                           Icon={IconNotes}
-                          key={activity.id}
-                          label={activity.title ?? ''}
-                          onClick={() => openActivityRightDrawer(activity.id)}
+                          key={note.id}
+                          label={note.title ?? ''}
+                          onClick={() => openActivityRightDrawer(note.id)}
                         />
                       </SelectableItem>
                     ))}

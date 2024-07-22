@@ -1,5 +1,5 @@
-import { act } from 'react-dom/test-utils';
 import { renderHook } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { isRightDrawerExpandedState } from '../../states/isRightDrawerExpandedState';
@@ -37,12 +37,10 @@ describe('useRightDrawer', () => {
     expect(result.current.closeRightDrawer).toBeInstanceOf(Function);
 
     await act(async () => {
-      result.current.openRightDrawer(RightDrawerPages.CreateActivity);
+      result.current.openRightDrawer(RightDrawerPages.ViewRecord);
     });
 
-    expect(result.current.rightDrawerPage).toEqual(
-      RightDrawerPages.CreateActivity,
-    );
+    expect(result.current.rightDrawerPage).toEqual(RightDrawerPages.ViewRecord);
     expect(result.current.isRightDrawerExpanded).toBeFalsy();
     expect(result.current.isRightDrawerOpen).toBeTruthy();
 
