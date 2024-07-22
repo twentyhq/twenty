@@ -185,7 +185,7 @@ export type FieldAddressValue = {
   addressLat: number | null;
   addressLng: number | null;
 };
-export type FieldRatingValue = (typeof RATING_VALUES)[number];
+export type FieldRatingValue = (typeof RATING_VALUES)[number] | null;
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 

@@ -1,20 +1,22 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import {
   AvailableProduct,
   BillingWorkspaceService,
 } from 'src/engine/core-modules/billing/billing.workspace-service';
-import { ProductInput } from 'src/engine/core-modules/billing/dto/product.input';
-import { assert } from 'src/utils/assert';
-import { ProductPricesEntity } from 'src/engine/core-modules/billing/dto/product-prices.entity';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { CheckoutSessionInput } from 'src/engine/core-modules/billing/dto/checkout-session.input';
-import { SessionEntity } from 'src/engine/core-modules/billing/dto/session.entity';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dto/billing-session.input';
+import { CheckoutSessionInput } from 'src/engine/core-modules/billing/dto/checkout-session.input';
+import { ProductPricesEntity } from 'src/engine/core-modules/billing/dto/product-prices.entity';
+import { ProductInput } from 'src/engine/core-modules/billing/dto/product.input';
+import { SessionEntity } from 'src/engine/core-modules/billing/dto/session.entity';
 import { UpdateBillingEntity } from 'src/engine/core-modules/billing/dto/update-billing.entity';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { assert } from 'src/utils/assert';
 
 @Resolver()
 export class BillingResolver {
@@ -60,6 +62,7 @@ export class BillingResolver {
   @Mutation(() => SessionEntity)
   @UseGuards(JwtAuthGuard)
   async checkoutSession(
+    @AuthWorkspace() workspace: Workspace,
     @AuthUser() user: User,
     @Args() { recurringInterval, successUrlPath }: CheckoutSessionInput,
   ) {
@@ -87,6 +90,7 @@ export class BillingResolver {
     return {
       url: await this.billingWorkspaceService.computeCheckoutSessionURL(
         user,
+        workspace,
         stripePriceId,
         successUrlPath,
       ),

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
 import { CalendarEventError } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-error.type';
@@ -16,9 +15,8 @@ export enum CalendarEventImportSyncStep {
 @Injectable()
 export class CalendarEventImportErrorHandlerService {
   constructor(
+    private readonly twentyORMManager: TwentyORMManager,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
-    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
   ) {}
 
   public async handleError(
@@ -68,7 +66,12 @@ export class CalendarEventImportErrorHandlerService {
       return;
     }
 
-    await this.calendarChannelRepository.increment(
+    const calendarChannelRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+        'calendarChannel',
+      );
+
+    await calendarChannelRepository.increment(
       {
         id: calendarChannel.id,
       },
