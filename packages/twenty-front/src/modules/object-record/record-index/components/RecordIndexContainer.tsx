@@ -40,7 +40,8 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledContainerWithPadding = styled.div`
+const StyledContainerWithPadding = styled.div<{ fullHeight?: boolean }>`
+  min-height: ${({ fullHeight }) => (fullHeight ? '100%' : 'auto')};
   padding-left: ${({ theme }) => theme.table.horizontalCellPadding};
 `;
 
@@ -193,7 +194,7 @@ export const RecordIndexContainer = ({
             </>
           )}
           {recordIndexViewType === ViewType.Kanban && (
-            <StyledContainerWithPadding>
+            <StyledContainerWithPadding fullHeight>
               <RecordIndexBoardContainer
                 recordBoardId={recordIndexId}
                 viewBarId={recordIndexId}
