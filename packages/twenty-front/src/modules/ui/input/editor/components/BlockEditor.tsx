@@ -1,9 +1,9 @@
-import { ClipboardEvent } from 'react';
 import { filterSuggestionItems } from '@blocknote/core';
-import { SuggestionMenuController } from '@blocknote/react';
 import { BlockNoteView } from '@blocknote/mantine';
+import { SuggestionMenuController } from '@blocknote/react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ClipboardEvent } from 'react';
 
 import { blockSchema } from '@/activities/blocks/schema';
 import { getSlashMenu } from '@/activities/blocks/slashMenu';
@@ -40,6 +40,14 @@ const StyledEditor = styled.div`
   & .bn-container .bn-drag-handle {
     width: 20px;
     height: 20px;
+  }
+  & .bn-block-content[data-content-type='checkListItem'] {
+    display: flex;
+    align-items: center;
+  }
+  & .bn-block-content[data-content-type='checkListItem'] > div > div {
+    display: flex;
+    align-items: center;
   }
 `;
 
