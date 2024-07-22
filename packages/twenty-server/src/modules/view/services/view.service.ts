@@ -2,14 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 import isEmpty from 'lodash.isempty';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
 @Injectable()
 export class ViewService {
   private readonly logger = new Logger(ViewService.name);
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(private readonly twentyORMGlobalManager: TwentyORMGlobalManager) {}
 
   async addFieldToViews({
     workspaceId,
@@ -25,7 +25,7 @@ export class ViewService {
     }[];
   }) {
     const viewFieldRepository =
-      await this.twentyORMManager.getRepositoryForWorkspace(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         ViewFieldWorkspaceEntity,
       );
@@ -67,7 +67,7 @@ export class ViewService {
     fieldId: string;
   }) {
     const viewFieldRepository =
-      await this.twentyORMManager.getRepositoryForWorkspace(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         ViewFieldWorkspaceEntity,
       );

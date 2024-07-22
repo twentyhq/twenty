@@ -16,7 +16,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { ViewService } from 'src/modules/view/services/view.service';
@@ -38,7 +38,7 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceStatusService: WorkspaceStatusService,
@@ -183,7 +183,7 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
             });
 
             const viewFieldRepository =
-              await this.twentyORMManager.getRepositoryForWorkspace(
+              await this.twentyORMGlobalManager.getRepositoryForWorkspace(
                 workspaceId,
                 ViewFieldWorkspaceEntity,
               );
