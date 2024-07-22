@@ -7,9 +7,7 @@ import { MessageQueueModule } from 'src/engine/integrations/message-queue/messag
 
 @Module({
   imports: [
-    TwentyORMModule.register({
-      workspaceEntities: ['dist/src/**/*.workspace-entity{.ts,.js}'],
-    }),
+    TwentyORMModule.register({}),
     IntegrationsModule,
     MessageQueueModule.registerExplorer(),
     JobsModule,

@@ -2,18 +2,17 @@ import { Scope } from '@nestjs/common';
 
 import { Any } from 'typeorm';
 
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   CalendarChannelSyncStage,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type BlocklistReimportCalendarEventsJobData = {
   workspaceId: string;
@@ -26,10 +25,9 @@ export type BlocklistReimportCalendarEventsJobData = {
 })
 export class BlocklistReimportCalendarEventsJob {
   constructor(
+    private readonly twentyORMManager: TwentyORMManager,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
   ) {}
 
   @Process(BlocklistReimportCalendarEventsJob.name)
@@ -46,7 +44,11 @@ export class BlocklistReimportCalendarEventsJob {
       return;
     }
 
-    await this.calendarChannelRepository.update(
+    const calendarChannelRepository = await this.twentyORMManager.getRepository(
+      CalendarChannelWorkspaceEntity,
+    );
+
+    await calendarChannelRepository.update(
       {
         connectedAccountId: Any(
           connectedAccounts.map((connectedAccount) => connectedAccount.id),

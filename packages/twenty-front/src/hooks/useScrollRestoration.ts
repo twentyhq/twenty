@@ -7,6 +7,7 @@ import { scrollPositionState } from '@/ui/utilities/scroll/states/scrollPosition
 import { isDefined } from '~/utils/isDefined';
 
 /**
+ * @deprecated We should now use useScrollToPosition instead
  * Note that `location.key` is used in the cache key, not `location.pathname`,
  * so the same path navigated to at different points in the history stack will
  * not share the same scroll position.

@@ -14,6 +14,7 @@ import { workspaceSyncMetadataFactories } from 'src/engine/workspace-manager/wor
 import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
+import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
 import { WorkspaceSyncRelationMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
@@ -39,6 +40,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     ...workspaceSyncMetadataComparators,
     WorkspaceMetadataUpdaterService,
     WorkspaceSyncObjectMetadataService,
+    WorkspaceSyncObjectMetadataIdentifiersService,
     WorkspaceSyncRelationMetadataService,
     WorkspaceSyncFieldMetadataService,
     WorkspaceSyncMetadataService,

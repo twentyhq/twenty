@@ -5,17 +5,17 @@ import { RecordIndexEventContext } from '@/object-record/record-index/contexts/R
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
 
-export type RecordIndexRecordChipProps = {
+export type RecordIdentifierChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   variant?: AvatarChipVariant;
 };
 
-export const RecordIndexRecordChip = ({
+export const RecordIdentifierChip = ({
   objectNameSingular,
   record,
   variant,
-}: RecordIndexRecordChipProps) => {
+}: RecordIdentifierChipProps) => {
   const { onIndexIdentifierClick } = useContext(RecordIndexEventContext);
 
   const { recordChipData } = useRecordChipData({

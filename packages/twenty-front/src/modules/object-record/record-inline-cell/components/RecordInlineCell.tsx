@@ -18,11 +18,14 @@ import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 type RecordInlineCellProps = {
   readonly?: boolean;
   loading?: boolean;
+  isCentered?: boolean;
 };
 
+// TODO: refactor props drilling with a RecordInlineCellContext
 export const RecordInlineCell = ({
   readonly,
   loading,
+  isCentered,
 }: RecordInlineCellProps) => {
   const { fieldDefinition, entityId } = useContext(FieldContext);
   const buttonIcon = useGetButtonIcon();
@@ -86,6 +89,7 @@ export const RecordInlineCell = ({
         label={fieldDefinition.label}
         labelWidth={fieldDefinition.labelWidth}
         showLabel={fieldDefinition.showLabel}
+        isCentered={isCentered}
         editModeContent={
           <FieldInput
             recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
