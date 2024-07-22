@@ -17,6 +17,7 @@ export enum SettingsPath {
   ObjectFieldEdit = 'objects/:objectSlug/:fieldSlug',
   NewObject = 'objects/new',
   NewServerlessFunction = 'functions/new',
+  ServerlessFunctionDetail = 'functions/:serverlessFunctionId',
   WorkspaceMembersPage = 'workspace-members',
   Workspace = 'workspace',
   Developers = 'developers',

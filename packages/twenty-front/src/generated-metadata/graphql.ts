@@ -554,7 +554,7 @@ export type MutationExchangeAuthorizationCodeArgs = {
 
 
 export type MutationExecuteOneServerlessFunctionArgs = {
-  name: Scalars['String']['input'];
+  id: Scalars['String']['input'];
   payload?: InputMaybe<Scalars['JSON']['input']>;
 };
 
@@ -1431,6 +1431,7 @@ export type ServerlessFunction = {
   id: Scalars['UUID']['output'];
   name: Scalars['String']['output'];
   runtime: Scalars['String']['output'];
+  sourceCodeFullPath: Scalars['String']['output'];
   sourceCodeHash: Scalars['String']['output'];
   syncStatus: ServerlessFunctionSyncStatus;
   updatedAt: Scalars['DateTime']['output'];

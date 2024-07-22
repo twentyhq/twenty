@@ -13,8 +13,8 @@ import {
   FieldContext,
   GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
+import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
 const StyledRow = styled.div`
   align-items: center;
@@ -76,7 +76,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
         <StyledLeftContent>
           <AttachmentIcon attachmentType={attachment.type} />
           <StyledLink
-            href={REACT_APP_SERVER_BASE_URL + '/files/' + attachment.fullPath}
+            href={getFileAbsoluteURI(attachment.fullPath)}
             target="__blank"
           >
             {attachment.name}

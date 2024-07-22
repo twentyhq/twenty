@@ -31,6 +31,9 @@ export class ServerlessFunctionEntity {
   @Column({ nullable: false })
   sourceCodeHash: string;
 
+  @Column({ nullable: false })
+  sourceCodeFullPath: string;
+
   @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE18 })
   runtime: ServerlessFunctionRuntime;
 

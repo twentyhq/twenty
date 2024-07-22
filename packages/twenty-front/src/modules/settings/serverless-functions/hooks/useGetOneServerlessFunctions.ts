@@ -3,7 +3,7 @@ import { FIND_MANY_SERVERLESS_FUNCTIONS } from '@/settings/serverless-functions/
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { ServerlessFunctionEdge } from '~/generated-metadata/graphql';
 
-export const useGetServerlessFunctions = () => {
+export const useGetOneServerlessFunctions = () => {
   const apolloMetadataClient = useApolloMetadataClient();
   const { data } = useQuery(FIND_MANY_SERVERLESS_FUNCTIONS, {
     client: apolloMetadataClient ?? undefined,

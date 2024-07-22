@@ -66,11 +66,11 @@ export class ServerlessFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
-      const { name, payload } = executeServerlessFunctionInput;
+      const { id, payload } = executeServerlessFunctionInput;
 
       return {
         result: await this.serverlessFunctionService.executeOne(
-          name,
+          id,
           workspaceId,
           payload,
         ),

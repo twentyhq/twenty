@@ -59,6 +59,11 @@ export class ServerlessFunctionDto {
   @IsString()
   @IsNotEmpty()
   @Field()
+  sourceCodeFullPath: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
   runtime: string;
 
   @IsEnum(ServerlessFunctionSyncStatus)

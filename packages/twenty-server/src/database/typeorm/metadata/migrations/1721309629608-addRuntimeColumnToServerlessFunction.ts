@@ -12,6 +12,9 @@ export class AddRuntimeColumnToServerlessFunction1721309629608
     await queryRunner.query(
       `ALTER TABLE "metadata"."serverlessFunction" ADD "description" character varying`,
     );
+    await queryRunner.query(
+      `ALTER TABLE "metadata"."serverlessFunction" ADD "sourceCodeFullPath" character varying NOT NULL`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

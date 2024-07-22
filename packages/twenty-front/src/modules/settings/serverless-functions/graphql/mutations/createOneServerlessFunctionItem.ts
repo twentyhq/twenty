@@ -7,7 +7,12 @@ export const CREATE_ONE_SERVERLESS_FUNCTION_ITEM = gql`
     createOneServerlessFunction(input: $input) {
       id
       name
-      description
+      sourceCodeHash
+      sourceCodeFullPath
+      runtime
+      syncStatus
+      createdAt
+      updatedAt
     }
   }
 `;

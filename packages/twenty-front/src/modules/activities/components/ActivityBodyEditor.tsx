@@ -23,7 +23,6 @@ import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDraw
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -31,6 +30,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { getFileType } from '../files/utils/getFileType';
 
 import '@blocknote/react/style.css';
+import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
 type ActivityBodyEditorProps = {
   activityId: string;
@@ -126,9 +126,7 @@ export const ActivityBodyEditor = ({
     if (!result?.data?.uploadFile) {
       throw new Error("Couldn't upload Image");
     }
-    const imageUrl =
-      REACT_APP_SERVER_BASE_URL + '/files/' + result?.data?.uploadFile;
-    return imageUrl;
+    return getFileAbsoluteURI(result.data.uploadFile);
   };
 
   const handlePersistBody = useCallback(

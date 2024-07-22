@@ -3,7 +3,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import styled from '@emotion/styled';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
-import { useGetServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetServerlessFunctions';
+import { useGetOneServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctions';
 import { SettingsServerlessFunctionsFieldItemTableRow } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsFieldItemTableRow';
 import { ServerlessFunction } from '~/generated-metadata/graphql';
 
@@ -16,7 +16,7 @@ const StyledTableBody = styled(TableBody)`
 `;
 
 export const SettingsServerlessFunctionsTable = () => {
-  const { serverlessFunctions } = useGetServerlessFunctions();
+  const { serverlessFunctions } = useGetOneServerlessFunctions();
   return (
     <Table>
       <StyledTableRow>

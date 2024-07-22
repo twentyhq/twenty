@@ -6,6 +6,7 @@ import { join } from 'path';
 import { FileUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { v4 } from 'uuid';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -36,13 +37,13 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
   }
 
   async executeOne(
-    name: string,
+    id: string,
     workspaceId: string,
     payload: object | undefined = undefined,
   ) {
     const functionToExecute = await this.serverlessFunctionRepository.findOne({
       where: {
-        name,
+        id,
         workspaceId,
       },
     });
@@ -92,17 +93,23 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       typescriptCode = await readFileContent(code.createReadStream());
     }
 
-    const serverlessFunction = await super.createOne({
-      ...serverlessFunctionInput,
-      workspaceId,
-      sourceCodeHash: serverlessFunctionCreateHash(typescriptCode),
-    });
+    const serverlessFunctionId = v4();
 
     const fileFolder = join(
       FileFolder.ServerlessFunction,
       workspaceId,
-      serverlessFunction.id,
+      serverlessFunctionId,
     );
+
+    const sourceCodeFullPath = fileFolder + '/' + SOURCE_FILE_NAME;
+
+    const serverlessFunction = await super.createOne({
+      ...serverlessFunctionInput,
+      id: serverlessFunctionId,
+      workspaceId,
+      sourceCodeHash: serverlessFunctionCreateHash(typescriptCode),
+      sourceCodeFullPath,
+    });
 
     await this.fileStorageService.write({
       file: typescriptCode,
@@ -112,10 +119,10 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     });
 
     await this.serverlessService.build(serverlessFunction);
-    await super.updateOne(serverlessFunction.id, {
+    await super.updateOne(serverlessFunctionId, {
       syncStatus: ServerlessFunctionSyncStatus.READY,
     });
 
-    return await this.findById(serverlessFunction.id);
+    return await this.findById(serverlessFunctionId);
   }
 }

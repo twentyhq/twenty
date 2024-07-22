@@ -1,9 +1,18 @@
-import Editor, { EditorProps, Monaco } from '@monaco-editor/react';
+import Editor, { Monaco, EditorProps } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { codeEditorTheme } from '@/ui/input/code-editor/theme/CodeEditorTheme';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
+
+export const DEFAULT_CODE = `export const handler = async (
+  event: object,
+  context: object
+): Promise<object> => {
+  // Your code here
+  return {};
+}
+`;
 
 const StyledEditor = styled(Editor)`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -13,8 +22,11 @@ const StyledEditor = styled(Editor)`
 type CodeEditorProps = EditorProps;
 
 export const CodeEditor = ({
-  value = '',
+  value = DEFAULT_CODE,
   onChange = () => {},
+  defaultLanguage = 'typescript',
+  height = 500,
+  options = undefined,
 }: CodeEditorProps) => {
   const theme = useTheme();
   const handleEditorDidMount = (
@@ -38,12 +50,13 @@ export const CodeEditor = ({
   }, []);
   return (
     <StyledEditor
-      height="500px"
-      defaultLanguage="typescript"
-      defaultValue={value}
+      height={height}
+      defaultLanguage={defaultLanguage}
+      value={value}
       onMount={handleEditorDidMount}
       onChange={onChange}
       options={{
+        ...options,
         overviewRulerLanes: 0,
         scrollbar: {
           vertical: 'hidden',
