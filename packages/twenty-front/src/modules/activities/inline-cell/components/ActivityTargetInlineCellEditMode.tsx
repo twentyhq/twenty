@@ -7,10 +7,12 @@ import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { ActivityTargetObjectRecordEffect } from '@/activities/inline-cell/components/ActivityTargetObjectRecordEffect';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { Activity } from '@/activities/types/Activity';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
+import { NoteTarget } from '@/activities/types/NoteTarget';
+import { TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { getActivityTargetObjectFieldName } from '@/activities/utils/getActivityTargetObjectFieldName';
+import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
@@ -38,11 +40,13 @@ const StyledSelectContainer = styled.div`
 type ActivityTargetInlineCellEditModeProps = {
   activity: Activity;
   activityTargetWithTargetRecords: ActivityTargetWithTargetRecord[];
+  objectNameSingular: CoreObjectNameSingular;
 };
 
 export const ActivityTargetInlineCellEditMode = ({
   activity,
   activityTargetWithTargetRecords,
+  objectNameSingular,
 }: ActivityTargetInlineCellEditModeProps) => {
   const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
   const relationPickerScopeId = `relation-picker-${activity.id}`;
@@ -54,14 +58,15 @@ export const ActivityTargetInlineCellEditMode = ({
     }),
   );
 
-  const { createManyRecords: createManyActivityTargets } =
-    useCreateManyRecords<ActivityTarget>({
-      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-    });
+  const { createManyRecords: createManyActivityTargets } = useCreateManyRecords<
+    NoteTarget | TaskTarget
+  >({
+    objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
+  });
 
   const { deleteManyRecords: deleteManyActivityTargets } = useDeleteManyRecords(
     {
-      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+      objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
     },
   );
 
@@ -73,7 +78,7 @@ export const ActivityTargetInlineCellEditMode = ({
 
   const { objectMetadataItem: objectMetadataItemActivityTarget } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+      objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
     });
 
   const setActivityFromStore = useSetRecoilState(
@@ -81,8 +86,8 @@ export const ActivityTargetInlineCellEditMode = ({
   );
 
   const { createManyRecordsInCache: createManyActivityTargetsInCache } =
-    useCreateManyRecordsInCache<ActivityTarget>({
-      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+    useCreateManyRecordsInCache<NoteTarget | TaskTarget>({
+      objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
     });
 
   const handleSubmit = useRecoilCallback(
@@ -171,7 +176,7 @@ export const ActivityTargetInlineCellEditMode = ({
           const fieldNameWithIdSuffix = getActivityTargetObjectFieldIdName({
             nameSingular: record.objectMetadataItem.nameSingular,
           });
-          const newActivityTarget = prefillRecord<ActivityTarget>({
+          const newActivityTarget = prefillRecord<NoteTarget | TaskTarget>({
             objectMetadataItem: objectMetadataItemActivityTarget,
             input: {
               id: newActivityTargetId,
@@ -191,7 +196,11 @@ export const ActivityTargetInlineCellEditMode = ({
             upsertActivity({
               activity,
               input: {
-                activityTargets: activityTargetsAfterUpdate,
+                [objectNameSingular === CoreObjectNameSingular.Task
+                  ? 'taskTargets'
+                  : objectNameSingular === CoreObjectNameSingular.Note
+                    ? 'noteTargets'
+                    : '']: activityTargetsAfterUpdate,
               },
             });
           } else {
@@ -224,7 +233,11 @@ export const ActivityTargetInlineCellEditMode = ({
             upsertActivity({
               activity,
               input: {
-                activityTargets: activityTargetsAfterUpdate,
+                [objectNameSingular === CoreObjectNameSingular.Task
+                  ? 'taskTargets'
+                  : objectNameSingular === CoreObjectNameSingular.Note
+                    ? 'noteTargets'
+                    : '']: activityTargetsAfterUpdate,
               },
             });
           } else {
@@ -246,6 +259,7 @@ export const ActivityTargetInlineCellEditMode = ({
       objectMetadataItemActivityTarget,
       relationPickerScopeId,
       upsertActivity,
+      objectNameSingular,
     ],
   );
 

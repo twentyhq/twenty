@@ -1,27 +1,10 @@
 import { Activity } from '@/activities/types/Activity';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { Comment } from '@/activities/types/Comment';
-import { WorkspaceMember } from '~/generated-metadata/graphql';
+import { Note } from '@/activities/types/Note';
+import { Task } from '@/activities/types/Task';
 
 export type ActivityForEditor = Pick<
   Activity,
-  | 'id'
-  | 'title'
-  | 'body'
-  | 'type'
-  | 'status'
-  | 'dueAt'
-  | 'updatedAt'
-  | '__typename'
-> & {
-  comments?: Comment[];
-} & {
-  assignee?: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
-} & {
-  activityTargets?: Array<
-    Pick<
-      ActivityTarget,
-      'id' | 'companyId' | 'personId' | 'createdAt' | 'updatedAt' | 'activity'
-    >
-  >;
-};
+  'id' | 'title' | 'body' | 'updatedAt' | '__typename'
+> &
+  Partial<Pick<Task, 'status' | 'dueAt' | 'assignee' | 'taskTargets'>> &
+  Partial<Pick<Note, 'noteTargets'>>;

@@ -2,10 +2,12 @@ import { Reference, useApolloClient } from '@apollo/client';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
-import { Activity, ActivityType } from '@/activities/types/Activity';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { NoteTarget } from '@/activities/types/NoteTarget';
+import { TaskTarget } from '@/activities/types/TaskTarget';
 import { makeActivityTargetsToCreateFromTargetableObjects } from '@/activities/utils/getActivityTargetsToCreateFromTargetableObjects';
+import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -20,10 +22,14 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export const useCreateActivityInCache = () => {
+export const useCreateActivityInCache = ({
+  objectNameSingular,
+}: {
+  objectNameSingular: CoreObjectNameSingular;
+}) => {
   const { createManyRecordsInCache: createManyActivityTargetsInCache } =
-    useCreateManyRecordsInCache<ActivityTarget>({
-      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+    useCreateManyRecordsInCache<TaskTarget | NoteTarget>({
+      objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
     });
 
   const cache = useApolloClient().cache;
@@ -38,12 +44,12 @@ export const useCreateActivityInCache = () => {
 
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.Activity,
+      objectNameSingular,
     });
 
   const { objectMetadataItem: objectMetadataItemActivityTarget } =
     useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+      objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
     });
 
   const createOneActivityInCache = useCreateOneRecordInCache<Activity>({
@@ -53,11 +59,9 @@ export const useCreateActivityInCache = () => {
   const createActivityInCache = useRecoilCallback(
     ({ snapshot, set }) =>
       ({
-        type,
         targetObject,
         customAssignee,
       }: {
-        type: ActivityType;
         targetObject?: ActivityTargetableObject;
         customAssignee?: WorkspaceMember;
       }) => {
@@ -65,14 +69,13 @@ export const useCreateActivityInCache = () => {
 
         const createdActivityInCache = createOneActivityInCache({
           id: activityId,
-          __typename: 'Activity',
+          __typename: objectNameSingular,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           author: currentWorkspaceMemberRecord,
           authorId: currentWorkspaceMemberRecord?.id,
           assignee: customAssignee ?? currentWorkspaceMemberRecord,
           assigneeId: customAssignee?.id ?? currentWorkspaceMemberRecord?.id,
-          type,
         });
 
         if (isUndefinedOrNull(createdActivityInCache)) {
@@ -179,6 +182,7 @@ export const useCreateActivityInCache = () => {
       objectMetadataItemActivityTarget,
       cache,
       objectMetadataItemActivity,
+      objectNameSingular,
     ],
   );
 

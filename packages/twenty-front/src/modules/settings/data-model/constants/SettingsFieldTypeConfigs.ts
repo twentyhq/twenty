@@ -17,7 +17,7 @@ import {
   IconTags,
   IconTextSize,
   IconTwentyStar,
-  IconUser
+  IconUser,
 } from 'twenty-ui';
 
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';

@@ -18,6 +18,7 @@ import {
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
@@ -49,7 +50,9 @@ export const TaskGroups = ({
     targetableObjects: targetableObjects ?? [],
   });
 
-  const openCreateActivity = useOpenCreateActivityDrawer();
+  const openCreateActivity = useOpenCreateActivityDrawer({
+    objectNameSingular: CoreObjectNameSingular.Task,
+  });
 
   const { activeTabIdState } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
@@ -90,7 +93,6 @@ export const TaskGroups = ({
           variant={'secondary'}
           onClick={() =>
             openCreateActivity({
-              type: 'TASK',
               targetableObjects: targetableObjects ?? [],
             })
           }

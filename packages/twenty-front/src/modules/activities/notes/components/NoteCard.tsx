@@ -1,7 +1,5 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { IconComment } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
@@ -67,14 +65,6 @@ const StyledFooter = styled.div`
   width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
-const StyledCommentIcon = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  margin-left: ${({ theme }) => theme.spacing(2)};
-`;
-
 export const NoteCard = ({
   note,
   isSingleNote,
@@ -82,7 +72,6 @@ export const NoteCard = ({
   note: Note;
   isSingleNote: boolean;
 }) => {
-  const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer({
     objectNameSingular: CoreObjectNameSingular.Note,
   });
@@ -103,13 +92,11 @@ export const NoteCard = ({
           <StyledCardContent>{body}</StyledCardContent>
         </StyledCardDetailsContainer>
         <StyledFooter>
-          <ActivityTargetsInlineCell activity={note} readonly />
-          {note.comments && note.comments.length > 0 && (
-            <StyledCommentIcon>
-              <IconComment size={theme.icon.size.md} />
-              {note.comments.length}
-            </StyledCommentIcon>
-          )}
+          <ActivityTargetsInlineCell
+            activity={note}
+            objectNameSingular={CoreObjectNameSingular.Note}
+            readonly
+          />
         </StyledFooter>
       </StyledCard>
     </FieldContext.Provider>

@@ -6,6 +6,7 @@ import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 
@@ -27,7 +28,9 @@ describe('useOpenCreateActivityDrawer', () => {
   it('works as expected', async () => {
     const { result } = renderHook(
       () => {
-        const openActivityRightDrawer = useOpenCreateActivityDrawer();
+        const openActivityRightDrawer = useOpenCreateActivityDrawer({
+          objectNameSingular: CoreObjectNameSingular.Note,
+        });
         const viewableRecordId = useRecoilValue(viewableRecordIdState);
         const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
         const setObjectMetadataItems = useSetRecoilState(
@@ -53,7 +56,6 @@ describe('useOpenCreateActivityDrawer', () => {
     expect(result.current.viewableRecordId).toBeNull();
     await act(async () => {
       result.current.openActivityRightDrawer({
-        type: 'NOTE',
         targetableObjects: [],
       });
     });

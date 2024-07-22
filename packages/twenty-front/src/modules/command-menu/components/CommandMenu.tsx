@@ -170,7 +170,7 @@ export const CommandMenu = () => {
 
   const { records: notes } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: CoreObjectNameSingular.Note,
+    objectNameSingular: CoreObjectNameSingular.Activity,
     filter: commandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${commandMenuSearch}%` } },

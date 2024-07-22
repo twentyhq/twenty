@@ -16,18 +16,20 @@ import { isDefined } from '~/utils/isDefined';
 
 export const ActivityEditorEffect = ({
   activityId,
+  objectNameSingular,
 }: {
   activityId: string;
+  objectNameSingular: CoreObjectNameSingular;
 }) => {
   const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
     RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
   );
 
   const { upsertActivity } = useUpsertActivity({
-    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectNameSingular,
   });
   const deleteRecordFromCache = useDeleteRecordFromCache({
-    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectNameSingular,
   });
 
   const upsertActivityCallback = useRecoilCallback(

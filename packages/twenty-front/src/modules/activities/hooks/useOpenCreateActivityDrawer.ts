@@ -6,7 +6,6 @@ import { activityTargetableEntityArrayState } from '@/activities/states/activity
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
-import { ActivityType } from '@/activities/types/Activity';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
@@ -14,15 +13,22 @@ import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPage
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
-export const useOpenCreateActivityDrawer = () => {
+export const useOpenCreateActivityDrawer = ({
+  objectNameSingular,
+}: {
+  objectNameSingular: CoreObjectNameSingular;
+}) => {
   const { openRightDrawer } = useRightDrawer();
 
   const setHotkeyScope = useSetHotkeyScope();
 
-  const { createActivityInCache } = useCreateActivityInCache();
+  const { createActivityInCache } = useCreateActivityInCache({
+    objectNameSingular,
+  });
 
   const setActivityTargetableEntityArray = useSetRecoilState(
     activityTargetableEntityArrayState,
@@ -45,16 +51,13 @@ export const useOpenCreateActivityDrawer = () => {
   );
 
   const openCreateActivityDrawer = async ({
-    type,
     targetableObjects,
     customAssignee,
   }: {
-    type: ActivityType;
     targetableObjects: ActivityTargetableObject[];
     customAssignee?: WorkspaceMember;
   }) => {
     const { createdActivityInCache } = createActivityInCache({
-      type,
       targetObject: targetableObjects[0],
       customAssignee,
     });
@@ -64,7 +67,7 @@ export const useOpenCreateActivityDrawer = () => {
     setIsCreatingActivity(true);
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setViewableRecordId(createdActivityInCache.id);
-    setViewableRecordNameSingular('activity');
+    setViewableRecordNameSingular(objectNameSingular);
     setActivityTargetableEntityArray(targetableObjects ?? []);
 
     openRightDrawer(RightDrawerPages.ViewRecord);

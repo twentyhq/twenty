@@ -1,10 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  IconCalendar,
-  IconComment,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui';
+import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
@@ -112,15 +108,11 @@ export const TaskRow = ({ task }: { task: Activity }) => {
         </StyledTaskTitle>
         <StyledTaskBody>
           <OverflowingTextWithTooltip text={body} />
-          {task.comments && task.comments.length > 0 && (
-            <StyledCommentIcon>
-              <IconComment size={theme.icon.size.md} />
-            </StyledCommentIcon>
-          )}
         </StyledTaskBody>
       </StyledLeftSideContainer>
       <StyledRightSideContainer>
         <ActivityTargetsInlineCell
+          objectNameSingular={CoreObjectNameSingular.Task}
           activity={task}
           showLabel={false}
           maxWidth={200}

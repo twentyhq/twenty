@@ -21,6 +21,7 @@ type ActivityTargetsInlineCellProps = {
   showLabel?: boolean;
   maxWidth?: number;
   readonly?: boolean;
+  objectNameSingular: CoreObjectNameSingular;
 };
 
 export const ActivityTargetsInlineCell = ({
@@ -28,6 +29,7 @@ export const ActivityTargetsInlineCell = ({
   showLabel = true,
   maxWidth,
   readonly,
+  objectNameSingular,
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } =
     useActivityTargetObjectRecords(activity);
@@ -70,6 +72,7 @@ export const ActivityTargetsInlineCell = ({
                 <ActivityTargetInlineCellEditMode
                   activity={activity}
                   activityTargetWithTargetRecords={activityTargetObjectRecords}
+                  objectNameSingular={objectNameSingular}
                 />
               }
               label="Relations"

@@ -1,5 +1,6 @@
 import { Activity } from '@/activities/types/Activity';
+import { NoteTarget } from '@/activities/types/NoteTarget';
 
 export type Note = Activity & {
-  type: 'NOTE';
+  noteTargets: NoteTarget[];
 };

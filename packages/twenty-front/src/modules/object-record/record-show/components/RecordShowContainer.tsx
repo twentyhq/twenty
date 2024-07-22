@@ -2,7 +2,8 @@ import groupBy from 'lodash.groupby';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
-import { Activity } from '@/activities/types/Activity';
+import { Note } from '@/activities/types/Note';
+import { Task } from '@/activities/types/Task';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -225,7 +226,10 @@ export const RecordShowContainer = ({
                       }}
                     >
                       <ActivityTargetsInlineCell
-                        activity={recordFromStore as Activity}
+                        objectNameSingular={
+                          objectNameSingular as CoreObjectNameSingular
+                        }
+                        activity={recordFromStore as Task | Note}
                         showLabel={true}
                         maxWidth={200}
                       />

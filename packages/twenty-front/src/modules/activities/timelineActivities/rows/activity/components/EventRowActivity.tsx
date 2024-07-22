@@ -20,12 +20,9 @@ const StyledLinkedActivity = styled.span`
 export const EventRowActivity = ({
   event,
   authorFullName,
-}: EventRowActivityProps) => {
+  objectNameSingular,
+}: EventRowActivityProps & { objectNameSingular: CoreObjectNameSingular }) => {
   const [, eventAction] = event.name.split('.');
-
-  const openActivityRightDrawer = useOpenActivityRightDrawer({
-    objectNameSingular: CoreObjectNameSingular.Activity, // TODO
-  });
 
   if (!event.linkedRecordId) {
     throw new Error('Could not find linked record id for event');
@@ -34,6 +31,10 @@ export const EventRowActivity = ({
   const [activityInStore] = useRecoilState(
     recordStoreFamilyState(event.linkedRecordId),
   );
+
+  const openActivityRightDrawer = useOpenActivityRightDrawer({
+    objectNameSingular,
+  });
 
   return (
     <>

@@ -1,49 +1,8 @@
-import { Activity } from '@/activities/types/Activity';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { Comment } from '@/activities/types/Comment';
-import { Company } from '@/companies/types/Company';
-import { Person } from '@/people/types/Person';
+import { Note } from '@/activities/types/Note';
+import { Task } from '@/activities/types/Task';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
-type MockedActivity = Pick<
-  Activity,
-  | 'id'
-  | 'createdAt'
-  | 'updatedAt'
-  | '__typename'
-  | 'type'
-  | 'body'
-  | 'title'
-  | 'authorId'
-  | 'dueAt'
-  | 'status'
-  | 'reminderAt'
-  | 'assigneeId'
-> & {
-  author: WorkspaceMember;
-  assignee: WorkspaceMember;
-  comments: Comment[];
-  activityTargets: Array<
-    Pick<
-      ActivityTarget,
-      | 'id'
-      | '__typename'
-      | 'createdAt'
-      | 'updatedAt'
-      | 'activityId'
-      | 'personId'
-      | 'companyId'
-      | 'targetObjectNameSingular'
-    > & {
-      activity: Pick<Activity, 'id' | 'createdAt' | 'updatedAt' | '__typename'>;
-      person?: Pick<Person, 'id' | 'name' | 'avatarUrl' | '__typename'> | null;
-      company?: Pick<
-        Company,
-        'id' | 'name' | 'domainName' | '__typename'
-      > | null;
-    }
-  >;
-};
+type MockedActivity = Partial<Task | Note>;
 
 const workspaceMember: WorkspaceMember = {
   __typename: 'WorkspaceMember',
@@ -66,18 +25,12 @@ export const mockedTasks: Array<MockedActivity> = [
     id: 'c554852c-b28a-4307-a41d-a7a0fdde3386',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
-    reminderAt: null,
     title: 'My very first task',
-    type: 'TASK',
     body: null,
     dueAt: '2023-04-26T10:12:42.33625+00:00',
     status: null,
-    author: workspaceMember,
     assignee: workspaceMember,
     assigneeId: workspaceMember.id,
-    authorId: workspaceMember.id,
-    comments: [],
-    activityTargets: [],
     __typename: 'Activity',
   },
 ];
@@ -87,17 +40,12 @@ export const mockedActivities: Array<MockedActivity> = [
     id: '3ecaa1be-aac7-463a-a38e-64078dd451d5',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
-    reminderAt: null,
     title: 'My very first note',
-    type: 'NOTE',
     body: null,
     dueAt: '2023-04-26T10:12:42.33625+00:00',
     status: null,
-    author: workspaceMember,
     assignee: workspaceMember,
     assigneeId: workspaceMember.id,
-    authorId: workspaceMember.id,
-    comments: [],
     activityTargets: [
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb300',
@@ -152,20 +100,12 @@ export const mockedActivities: Array<MockedActivity> = [
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    reminderAt: null,
     title: 'Another note',
     body: null,
-    type: 'NOTE',
     status: null,
     dueAt: '2029-08-26T10:12:42.33625+00:00',
-    author: {
-      ...workspaceMember,
-      colorScheme: 'Dark',
-    },
     assignee: { ...workspaceMember, colorScheme: 'Dark' },
     assigneeId: workspaceMember.id,
-    authorId: workspaceMember.id,
-    comments: [],
     activityTargets: [
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb278t',

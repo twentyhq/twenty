@@ -21,10 +21,12 @@ export const useUpsertActivity = ({
   );
 
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
-    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectNameSingular,
   });
 
-  const { createActivityInDB } = useCreateActivityInDB();
+  const { createActivityInDB } = useCreateActivityInDB({
+    objectNameSingular,
+  });
 
   const [, setIsUpsertingActivityInDB] = useRecoilState(
     isUpsertingActivityInDBState,
