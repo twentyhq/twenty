@@ -11,6 +11,7 @@ import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPag
 import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useEffect, useState } from 'react';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useRecordShowPagePagination = (
@@ -99,7 +100,15 @@ export const useRecordShowPagePagination = (
     recordGqlFields,
   });
 
-  const totalCount = Math.max(totalCountBefore ?? 0, totalCountAfter ?? 0);
+  const [totalCount, setTotalCount] = useState(
+    Math.max(totalCountBefore ?? 0, totalCountAfter ?? 0),
+  );
+
+  useEffect(() => {
+    if (totalCountBefore !== undefined || totalCountAfter !== undefined) {
+      setTotalCount(Math.max(totalCountBefore ?? 0, totalCountAfter ?? 0));
+    }
+  }, [totalCountBefore, totalCountAfter]);
 
   const loading = loadingRecordAfter || loadingRecordBefore || loadingCursor;
 
