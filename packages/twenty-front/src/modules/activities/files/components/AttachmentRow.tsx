@@ -12,7 +12,7 @@ import {
 import { EditableField } from '@/ui/field/input/components/EditableField';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { IconCalendar } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
@@ -58,8 +58,8 @@ const StyledLink = styled.a`
 export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const theme = useTheme();
   const [isEditing, setIsEditing] = useState(false);
-  const [newName, setNewName] = useState(attachment.name);
   const inputRef = useRef<HTMLInputElement>(null);
+
   const fieldContext = useMemo(
     () => ({ recoilScopeId: attachment?.id ?? '' }),
     [attachment?.id],
@@ -77,7 +77,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     objectNameSingular: CoreObjectNameSingular.Attachment,
   });
 
-  const handleUpdate = () => {
+  const handleUpdate = (newName: Attachment['name']) => {
     updateOneAttachment({
       idToUpdate: attachment.id,
       updateOneRecordInput: { name: newName },
@@ -89,20 +89,6 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     setIsEditing(true);
   };
 
-  const handleInputChange = (text: string) => {
-    setNewName(text);
-  };
-
-  const handleInputBlur = () => {
-    handleUpdate();
-  };
-  useEffect(() => {
-    if (Boolean(isEditing) && Boolean(inputRef.current)) {
-      inputRef?.current?.focus();
-      inputRef?.current?.select();
-    }
-  }, [isEditing]);
-
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
       <StyledRow>
@@ -111,14 +97,8 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           {isEditing ? (
             <EditableField
               ref={inputRef}
-              value={newName}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleUpdate();
-                }
-              }}
+              initialValue={attachment.name}
+              onUpdate={(newName) => handleUpdate(newName)}
               autoFocus
               fullWidth
             />

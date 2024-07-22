@@ -5,7 +5,9 @@ import {
   ForwardedRef,
   forwardRef,
   InputHTMLAttributes,
+  useEffect,
   useRef,
+  useState,
 } from 'react';
 import { IconComponent } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
@@ -40,7 +42,6 @@ const StyledInput = styled.input<
       error ? theme.border.color.danger : theme.border.color.editable};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) => `0 0 4px ${theme.boxShadow.editable}`};
-
   box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
@@ -51,14 +52,12 @@ const StyledInput = styled.input<
   outline: none;
   padding: ${({ theme }) => theme.spacing(0, 2, 0, 2)};
   width: 100%;
-
   &::placeholder,
   &::-webkit-input-placeholder {
     color: ${({ theme }) => theme.font.color.light};
     font-family: ${({ theme }) => theme.font.family};
     font-weight: ${({ theme }) => theme.font.weight.medium};
   }
-
   &:disabled {
     color: ${({ theme }) => theme.font.color.tertiary};
   }
@@ -71,21 +70,22 @@ export type EditableFieldComponentProps = Omit<
   className?: string;
   label?: string;
   onChange?: (text: string) => void;
+  onUpdate?: (value: string) => void;
   fullWidth?: boolean;
   error?: string;
   noErrorHelper?: boolean;
   RightIcon?: IconComponent;
   LeftIcon?: IconComponent;
-  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   onBlur?: FocusEventHandler<HTMLInputElement>;
+  initialValue: string;
 };
 
 const EditableFieldComponent = (
   {
     className,
     label,
-    value,
     onChange,
+    onUpdate,
     onFocus,
     onBlur,
     fullWidth,
@@ -97,16 +97,45 @@ const EditableFieldComponent = (
     tabIndex,
     autoComplete,
     maxLength,
-    onKeyDown,
+    initialValue,
   }: EditableFieldComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
 ): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
   const combinedRef = useCombinedRefs(ref, inputRef);
+  const [inputValue, setInputValue] = useState(initialValue);
+  const [isInitiallyFocused, setIsInitiallyFocused] = useState(false);
+
+  useEffect(() => {
+    setInputValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
+    if (
+      Boolean(autoFocus) &&
+      Boolean(inputRef.current) &&
+      Boolean(!isInitiallyFocused)
+    ) {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+      setIsInitiallyFocused(true);
+    }
+  }, [autoFocus, isInitiallyFocused]);
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const text = event.target.value;
+    setInputValue(text);
+    onChange?.(text);
+  };
+
+  const handleInputBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    onBlur?.(event);
+    onUpdate?.(inputValue);
+  };
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      onKeyDown?.(event); // Trigger the passed in onKeyDown function
+      onUpdate?.(inputValue);
     }
   };
   return (
@@ -118,17 +147,15 @@ const EditableFieldComponent = (
           ref={combinedRef}
           tabIndex={tabIndex ?? 0}
           onFocus={onFocus}
-          onBlur={onBlur}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            onChange?.(event.target.value);
-          }}
+          onBlur={handleInputBlur}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           {...{
             autoFocus,
             disabled,
             placeholder,
             required,
-            value,
+            value: inputValue,
             maxLength,
             error,
           }}
