@@ -18,6 +18,7 @@ const generateRandomAmountMicros = () => {
 const generateOpportunities = (companies) => {
   return companies.map((company) => ({
     id: v4(),
+    name: company.name,
     amountAmountMicros: generateRandomAmountMicros(),
     amountCurrencyCode: 'USD',
     closeDate: new Date(),

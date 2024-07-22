@@ -1,8 +1,27 @@
-import { EntityManager, EntityTarget, ObjectLiteral } from 'typeorm';
+import {
+  DataSource,
+  EntityManager,
+  EntityTarget,
+  ObjectLiteral,
+  QueryRunner,
+} from 'typeorm';
+
+import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 export class WorkspaceEntityManager extends EntityManager {
+  private readonly internalContext: WorkspaceInternalContext;
+
+  constructor(
+    internalContext: WorkspaceInternalContext,
+    connection: DataSource,
+    queryRunner?: QueryRunner,
+  ) {
+    super(connection, queryRunner);
+    this.internalContext = internalContext;
+  }
+
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
   ): WorkspaceRepository<Entity> {
@@ -14,6 +33,7 @@ export class WorkspaceEntityManager extends EntityManager {
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
+      this.internalContext,
       target,
       this,
       this.queryRunner,

@@ -463,6 +463,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
+      if (objectMetadata.labelIdentifierFieldMetadataId === fieldMetadata.id) {
+        throw new FieldMetadataException(
+          'Cannot delete, please update the label identifier field first',
+          FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+        );
+      }
+
       await fieldMetadataRepository.delete(fieldMetadata.id);
 
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {

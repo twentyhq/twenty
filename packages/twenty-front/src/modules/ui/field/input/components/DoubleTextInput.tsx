@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import {
   ChangeEvent,
   ClipboardEvent,
@@ -5,7 +6,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
@@ -21,7 +21,7 @@ const StyledContainer = styled.div`
   justify-content: space-between;
 
   input {
-    width: ${({ theme }) => theme.spacing(24)};
+    width: 100%;
   }
 
   & > input:last-child {

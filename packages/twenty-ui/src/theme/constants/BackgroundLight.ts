@@ -11,6 +11,8 @@ export const BACKGROUND_LIGHT = {
   secondary: GRAY_SCALE.gray10,
   tertiary: GRAY_SCALE.gray15,
   quaternary: GRAY_SCALE.gray20,
+  invertedPrimary: GRAY_SCALE.gray60,
+  invertedSecondary: GRAY_SCALE.gray50,
   danger: COLOR.red10,
   transparent: {
     primary: RGBA(GRAY_SCALE.gray0, 0.5),
