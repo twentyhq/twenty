@@ -1,14 +1,21 @@
 import { Injectable } from '@nestjs/common';
 
+import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import {
+  ConnectedAccountKeys,
+  ConnectedAccountKeyValueType,
+} from 'src/modules/connected-account/types/connected-account-key-value.type';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import {
-  MessageChannelWorkspaceEntity,
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
@@ -18,6 +25,8 @@ export class MessagingChannelSyncStatusService {
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
+    private readonly keyValuePairService: KeyValuePairService<ConnectedAccountKeyValueType>,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async scheduleFullMessageListFetch(
@@ -160,5 +169,42 @@ export class MessagingChannelSyncStatusService {
       MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
       workspaceId,
     );
+
+    await this.addToAccountsToReconnect(messageChannelId, workspaceId);
+  }
+
+  private async addToAccountsToReconnect(
+    messageChannelId: string,
+    workspaceId: string,
+  ) {
+    // TODO: Replace this with the ORM
+    const messageChannel = await this.messageChannelRepository.getById(
+      messageChannelId,
+      workspaceId,
+    );
+
+    const connectedAccountId = messageChannel.connectedAccountId;
+
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
+      );
+
+    const connectedAccount = await connectedAccountRepository.findOne({
+      where: {
+        id: connectedAccountId,
+      },
+      relations: ['accountOwner'],
+    });
+
+    if (!connectedAccount) {
+      return;
+    }
+
+    await this.keyValuePairService.set({
+      userId: connectedAccount.accountOwner.userId,
+      key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
+      value: [connectedAccount.id],
+    });
   }
 }
