@@ -9,6 +9,8 @@ import { RecordInlineCellValue } from '@/object-record/record-inline-cell/compon
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
+import { useRecordInlineCellContext } from './RecordInlineCellContext';
+
 const StyledIconContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -78,22 +80,29 @@ export type RecordInlineCellContainerProps = {
 };
 
 // TODO: refactor props drilling with a RecordInlineCellContext
-export const RecordInlineCellContainer = ({
-  readonly,
-  IconLabel,
-  label,
-  labelWidth,
-  showLabel,
-  buttonIcon,
-  editModeContent,
-  displayModeContent,
-  customEditHotkeyScope,
-  editModeContentOnly,
-  isDisplayModeFixHeight,
-  disableHoverEffect,
-  loading = false,
-  isCentered,
-}: RecordInlineCellContainerProps) => {
+export const RecordInlineCellContainer = () => {
+
+  const context = useRecordInlineCellContext();
+  if (!context) {
+    return;
+  }
+  const {
+    readonly,
+    IconLabel,
+    label,
+    labelWidth,
+    showLabel,
+    buttonIcon,
+    editModeContent,
+    displayModeContent,
+    customEditHotkeyScope,
+    editModeContentOnly,
+    isDisplayModeFixHeight,
+    disableHoverEffect,
+    loading,
+    isCentered,
+  } = context;
+
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
   const { setIsFocused } = useFieldFocus();
@@ -146,20 +155,18 @@ export const RecordInlineCellContainer = ({
       )}
       <StyledValueContainer>
         <RecordInlineCellValue
-          {...{
-            displayModeContent,
-            customEditHotkeyScope,
-            disableHoverEffect,
-            editModeContent,
-            editModeContentOnly,
-            isDisplayModeFixHeight,
-            buttonIcon,
-            label,
-            loading,
-            readonly,
-            showLabel,
-            isCentered,
-          }}
+          displayModeContent={displayModeContent}
+          customEditHotkeyScope={customEditHotkeyScope}
+          disableHoverEffect={disableHoverEffect}
+          editModeContent={editModeContent}
+          editModeContentOnly={editModeContentOnly}
+          isDisplayModeFixHeight={isDisplayModeFixHeight}
+          buttonIcon={buttonIcon}
+          label={label}
+          loading={loading}
+          readonly={readonly}
+          showLabel={showLabel}
+          isCentered={isCentered}
         />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>
