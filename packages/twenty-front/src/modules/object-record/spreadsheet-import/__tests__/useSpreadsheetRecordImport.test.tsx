@@ -1,11 +1,11 @@
-import { ReactNode } from 'react';
 import { gql } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { spreadsheetImportState } from '@/spreadsheet-import/states/spreadsheetImportState';
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportState';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
 import { useSpreadsheetRecordImport } from '../useSpreadsheetRecordImport';
@@ -105,18 +105,26 @@ describe('useSpreadsheetCompanyImport', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
-        const spreadsheetImport = useRecoilValue(spreadsheetImportState);
+        const spreadsheetImportDialog = useRecoilValue(
+          spreadsheetImportDialogState,
+        );
         const { openRecordSpreadsheetImport } = useSpreadsheetRecordImport(
           CoreObjectNameSingular.Company,
         );
-        return { openRecordSpreadsheetImport, spreadsheetImport };
+        return {
+          openRecordSpreadsheetImport,
+          spreadsheetImportDialog,
+        };
       },
       {
         wrapper: Wrapper,
       },
     );
 
-    const { spreadsheetImport, openRecordSpreadsheetImport } = result.current;
+    const {
+      spreadsheetImportDialog: spreadsheetImport,
+      openRecordSpreadsheetImport,
+    } = result.current;
 
     expect(spreadsheetImport.isOpen).toBe(false);
     expect(spreadsheetImport.options).toBeNull();
@@ -125,7 +133,7 @@ describe('useSpreadsheetCompanyImport', () => {
       openRecordSpreadsheetImport();
     });
 
-    const { spreadsheetImport: updatedImport } = result.current;
+    const { spreadsheetImportDialog: updatedImport } = result.current;
 
     expect(updatedImport.isOpen).toBe(true);
     expect(updatedImport.options).toHaveProperty('onSubmit');

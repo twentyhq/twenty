@@ -4,14 +4,14 @@ import {
   buildFieldMapping,
   useBuildAvailableFieldsArray,
 } from '@/object-record/spreadsheet-import/util/fieldsUtil';
-import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
+import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { SpreadsheetOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
-  const { openSpreadsheetImport } = useSpreadsheetImport<any>();
+  const { openSpreadsheetImport } = useOpenSpreadsheetImportDialog<any>();
   const { enqueueSnackBar } = useSnackBar();
 
   const { objectMetadataItem } = useObjectMetadataItem({

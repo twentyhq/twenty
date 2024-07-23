@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRecoilState } from 'recoil';
 
-import { spreadsheetImportState } from '@/spreadsheet-import/states/spreadsheetImportState';
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 
 import { SpreadsheetImport } from './SpreadsheetImport';
 
@@ -11,7 +11,7 @@ export const SpreadsheetImportProvider = (
   props: SpreadsheetImportProviderProps,
 ) => {
   const [spreadsheetImport, setSpreadsheetImport] = useRecoilState(
-    spreadsheetImportState,
+    spreadsheetImportDialogState,
   );
 
   const handleClose = () => {

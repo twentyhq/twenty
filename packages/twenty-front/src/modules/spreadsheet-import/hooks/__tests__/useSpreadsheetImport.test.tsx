@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilState } from 'recoil';
 
-import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
-import { spreadsheetImportState } from '@/spreadsheet-import/states/spreadsheetImportState';
+import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportState';
 import { StepType } from '@/spreadsheet-import/steps/components/UploadFlow';
 import { RawData, SpreadsheetOptions } from '@/spreadsheet-import/types';
 
@@ -43,8 +43,8 @@ describe('useSpreadsheetImport', () => {
   it('should set isOpen to true, and update the options in the Recoil state', async () => {
     const { result } = renderHook(
       () => ({
-        useSpreadsheetImport: useSpreadsheetImport<SpreadsheetKey>(),
-        spreadsheetImportState: useRecoilState(spreadsheetImportState)[0],
+        useSpreadsheetImport: useOpenSpreadsheetImportDialog<SpreadsheetKey>(),
+        spreadsheetImportState: useRecoilState(spreadsheetImportDialogState)[0],
       }),
       {
         wrapper: Wrapper,
