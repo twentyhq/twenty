@@ -1,9 +1,11 @@
 import styled from '@emotion/styled';
 
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useDropDownTopPosition } from '@/ui/layout/dropdown/hooks/useDropDownTopPosition';
 
 const StyledDropdownMenuItemsExternalContainer = styled.div<{
   hasMaxHeight?: boolean;
+  top: number | undefined;
 }>`
   --padding: ${({ theme }) => theme.spacing(1)};
 
@@ -13,9 +15,9 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   flex-direction: column;
   gap: 2px;
   height: 100%;
-  max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '188px' : 'none')};
-  overflow-y: auto;
-
+  max-height: ${({ hasMaxHeight, top }) =>
+    hasMaxHeight ? '188px' : `calc(100vh - ${String(top)}px - 63px)`};
+  overflow-y: scroll;
   padding: var(--padding);
 
   width: calc(100% - 2 * var(--padding));
@@ -42,8 +44,14 @@ export const DropdownMenuItemsContainer = ({
   children: React.ReactNode;
   hasMaxHeight?: boolean;
 }) => {
+  const { dropDownTopPosition, dropdownRef } = useDropDownTopPosition();
+
   return (
-    <StyledDropdownMenuItemsExternalContainer hasMaxHeight={hasMaxHeight}>
+    <StyledDropdownMenuItemsExternalContainer
+      top={dropDownTopPosition}
+      ref={dropdownRef}
+      hasMaxHeight={hasMaxHeight}
+    >
       {hasMaxHeight ? (
         <StyledScrollWrapper>
           <StyledDropdownMenuItemsInternalContainer>
