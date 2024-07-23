@@ -8,8 +8,6 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   CalendarEventListFetchJob,
@@ -40,8 +38,6 @@ import {
 export class GoogleAPIsService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    @InjectWorkspaceDatasource()
-    private readonly workspaceDataSource: WorkspaceDataSource,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
@@ -89,67 +85,67 @@ export class GoogleAPIsService {
         'calendarChannel',
       );
 
-    await this.workspaceDataSource.transaction(
-      async (manager: EntityManager) => {
-        if (!existingAccountId) {
-          await this.connectedAccountRepository.create(
-            {
-              id: newOrExistingConnectedAccountId,
-              handle,
-              provider: ConnectedAccountProvider.GOOGLE,
-              accessToken: input.accessToken,
-              refreshToken: input.refreshToken,
-              accountOwnerId: workspaceMemberId,
-            },
-            workspaceId,
-            manager,
-          );
+    const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
-          await this.messageChannelRepository.create(
+    await workspaceDataSource.transaction(async (manager: EntityManager) => {
+      if (!existingAccountId) {
+        await this.connectedAccountRepository.create(
+          {
+            id: newOrExistingConnectedAccountId,
+            handle,
+            provider: ConnectedAccountProvider.GOOGLE,
+            accessToken: input.accessToken,
+            refreshToken: input.refreshToken,
+            accountOwnerId: workspaceMemberId,
+          },
+          workspaceId,
+          manager,
+        );
+
+        await this.messageChannelRepository.create(
+          {
+            id: v4(),
+            connectedAccountId: newOrExistingConnectedAccountId,
+            type: MessageChannelType.EMAIL,
+            handle,
+            visibility:
+              messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
+            syncStatus: MessageChannelSyncStatus.ONGOING,
+          },
+          workspaceId,
+          manager,
+        );
+
+        if (isCalendarEnabled) {
+          await calendarChannelRepository.save(
             {
               id: v4(),
               connectedAccountId: newOrExistingConnectedAccountId,
-              type: MessageChannelType.EMAIL,
               handle,
               visibility:
-                messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
-              syncStatus: MessageChannelSyncStatus.ONGOING,
+                calendarVisibility ||
+                CalendarChannelVisibility.SHARE_EVERYTHING,
             },
-            workspaceId,
-            manager,
-          );
-
-          if (isCalendarEnabled) {
-            await calendarChannelRepository.save(
-              {
-                id: v4(),
-                connectedAccountId: newOrExistingConnectedAccountId,
-                handle,
-                visibility:
-                  calendarVisibility ||
-                  CalendarChannelVisibility.SHARE_EVERYTHING,
-              },
-              {},
-              manager,
-            );
-          }
-        } else {
-          await this.connectedAccountRepository.updateAccessTokenAndRefreshToken(
-            input.accessToken,
-            input.refreshToken,
-            newOrExistingConnectedAccountId,
-            workspaceId,
-            manager,
-          );
-
-          await this.messageChannelRepository.resetSync(
-            newOrExistingConnectedAccountId,
-            workspaceId,
+            {},
             manager,
           );
         }
-      },
-    );
+      } else {
+        await this.connectedAccountRepository.updateAccessTokenAndRefreshToken(
+          input.accessToken,
+          input.refreshToken,
+          newOrExistingConnectedAccountId,
+          workspaceId,
+          manager,
+        );
+
+        await this.messageChannelRepository.resetSync(
+          newOrExistingConnectedAccountId,
+          workspaceId,
+          manager,
+        );
+      }
+    });
 
     if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
       const messageChannels =
