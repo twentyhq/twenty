@@ -71,6 +71,7 @@ export {
   IconDotsVertical,
   IconDownload,
   IconEditCircle,
+  IconExternalLink,
   IconEye,
   IconEyeOff,
   IconFile,

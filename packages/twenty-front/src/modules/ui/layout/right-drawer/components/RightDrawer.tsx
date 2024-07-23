@@ -1,7 +1,7 @@
-import { useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useRef } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -16,7 +16,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
 import { useRightDrawer } from '../hooks/useRightDrawer';
-import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerHotkeyScope } from '../types/RightDrawerHotkeyScope';
@@ -49,7 +48,6 @@ export const RightDrawer = () => {
 
   const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
 
-  const isRightDrawerExpanded = useRecoilValue(isRightDrawerExpandedState);
   const [, setIsRightDrawerAnimationCompleted] = useRecoilState(
     isRightDrawerAnimationCompletedState,
   );
@@ -101,7 +99,7 @@ export const RightDrawer = () => {
   const isMobile = useIsMobile();
 
   const rightDrawerWidth = isRightDrawerOpen
-    ? isMobile || isRightDrawerExpanded
+    ? isMobile
       ? '100%'
       : theme.rightDrawerWidth
     : '0';

@@ -4,6 +4,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Chip, ChipAccent, ChipSize, useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RightDrawerTopBarCloseButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarCloseButton';
 import { RightDrawerTopBarExpandButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarExpandButton';
@@ -61,6 +63,8 @@ export const RightDrawerTopBar = ({ page }: { page: RightDrawerPages }) => {
     viewableRecordNameSingularState,
   );
 
+  const viewableRecordId = useRecoilValue(viewableRecordIdState);
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: viewableRecordNameSingular ?? 'company',
   });
@@ -100,8 +104,15 @@ export const RightDrawerTopBar = ({ page }: { page: RightDrawerPages }) => {
         {!isMobile && !isRightDrawerMinimized && (
           <RightDrawerTopBarMinimizeButton />
         )}
+
         {!isMobile && !isRightDrawerMinimized && (
-          <RightDrawerTopBarExpandButton />
+          <RightDrawerTopBarExpandButton
+            to={
+              getBasePathToShowPage({
+                objectNameSingular: viewableRecordNameSingular ?? '',
+              }) + viewableRecordId
+            }
+          />
         )}
         <RightDrawerTopBarCloseButton />
       </StyledTopBarWrapper>
