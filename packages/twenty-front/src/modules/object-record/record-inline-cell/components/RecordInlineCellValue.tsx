@@ -30,6 +30,10 @@ const StyledClickableContainer = styled.div<{
 `;
 
 export const RecordInlineCellValue = () => {
+  const context = useRecordInlineCellContext();
+  if (!context) {
+    return null;
+  }
   const {
     displayModeContent,
     customEditHotkeyScope,
@@ -43,7 +47,7 @@ export const RecordInlineCellValue = () => {
     showLabel,
     label,
     isCentered,
-  } = useRecordInlineCellContext();
+  } = context;
   
   const { isFocused } = useFieldFocus();
 
@@ -67,6 +71,8 @@ export const RecordInlineCellValue = () => {
       {editModeContentOnly ? (
         <StyledClickableContainer readonly={readonly} isCentered={isCentered}>
           <RecordInlineCellDisplayMode
+            disableHoverEffect={disableHoverEffect}
+            isDisplayModeFixHeight={isDisplayModeFixHeight}
             isHovered={isFocused}
             emptyPlaceholder={showLabel ? 'Empty' : label}
           >
@@ -80,8 +86,12 @@ export const RecordInlineCellValue = () => {
           isCentered={isCentered}
         >
           <RecordInlineCellDisplayMode
+            disableHoverEffect={disableHoverEffect}
+            isDisplayModeFixHeight={isDisplayModeFixHeight}
             isHovered={isFocused}
             emptyPlaceholder={showLabel ? 'Empty' : label}
+            buttonIcon={buttonIcon}
+            editModeContentOnly={editModeContentOnly}
           >
             {displayModeContent}
           </RecordInlineCellDisplayMode>
