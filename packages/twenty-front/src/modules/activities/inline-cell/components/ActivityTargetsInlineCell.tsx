@@ -53,7 +53,7 @@ export const ActivityTargetsInlineCell = ({
     useFieldContext({
       objectNameSingular: objectNameSingular,
       objectRecordId: activity.id,
-      fieldMetadataName: getJoinObjectNameSingular(objectNameSingular) + 's', // TODO: do something clearner
+      fieldMetadataName: getJoinObjectNameSingular(objectNameSingular) + 's', // TODO: do something cleaner!!!!
       fieldPosition: 3,
       overridenIsFieldEmpty: activityTargetObjectRecords.length === 0,
     });
