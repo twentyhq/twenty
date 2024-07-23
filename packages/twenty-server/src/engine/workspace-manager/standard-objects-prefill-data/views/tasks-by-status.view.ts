@@ -5,17 +5,20 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const tasksAllView = async (
+export const tasksByStatusView = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
   return {
-    name: 'All Tasks',
+    name: 'By status',
     objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.task].id,
-    type: 'table',
+    type: 'kanban',
     key: null,
     position: 0,
-    icon: 'IconCheckbox',
-    kanbanFieldMetadataId: '',
+    icon: 'IconLayoutKanban',
+    kanbanFieldMetadataId:
+      objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
+        TASK_STANDARD_FIELD_IDS.status
+      ],
     filters: [] /* [
       {
         fieldMetadataId:

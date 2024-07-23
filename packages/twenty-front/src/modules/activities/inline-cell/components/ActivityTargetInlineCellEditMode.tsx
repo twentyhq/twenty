@@ -177,18 +177,30 @@ export const ActivityTargetInlineCellEditMode = ({
           const fieldNameWithIdSuffix = getActivityTargetObjectFieldIdName({
             nameSingular: record.objectMetadataItem.nameSingular,
           });
+          console.log('record.record');
+          console.log(record.record);
+          console.log(fieldName);
+
           const newActivityTarget = prefillRecord<NoteTarget | TaskTarget>({
             objectMetadataItem: objectMetadataItemActivityTarget,
             input: {
               id: newActivityTargetId,
-              activityId: activity.id,
-              activity,
+              taskId:
+                objectNameSingular === CoreObjectNameSingular.Task
+                  ? activity.id
+                  : null,
+              noteId:
+                objectNameSingular === CoreObjectNameSingular.Note
+                  ? activity.id
+                  : null,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
               [fieldName]: record.record,
               [fieldNameWithIdSuffix]: recordId,
             },
           });
+          console.log('yo');
+          console.log(newActivityTarget);
 
           activityTargetsAfterUpdate.push(newActivityTarget);
 

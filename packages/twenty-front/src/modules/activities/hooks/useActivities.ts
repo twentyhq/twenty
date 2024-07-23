@@ -41,7 +41,10 @@ export const useActivities = <T extends Task | Note>({
       activityTargets
         ? [
             ...activityTargets
-              .map((activityTarget) => activityTarget.activityId)
+              .map(
+                (activityTarget) =>
+                  activityTarget.taskId ?? activityTarget.noteId,
+              )
               .filter(isNonEmptyString),
           ].sort(sortByAscString)
         : [],

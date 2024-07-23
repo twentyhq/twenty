@@ -8,6 +8,7 @@ import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/compo
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
+import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -52,7 +53,7 @@ export const ActivityTargetsInlineCell = ({
     useFieldContext({
       objectNameSingular: objectNameSingular,
       objectRecordId: activity.id,
-      fieldMetadataName: 'activityTargets',
+      fieldMetadataName: getJoinObjectNameSingular(objectNameSingular) + 's', // TODO: do something clearner
       fieldPosition: 3,
       overridenIsFieldEmpty: activityTargetObjectRecords.length === 0,
     });
