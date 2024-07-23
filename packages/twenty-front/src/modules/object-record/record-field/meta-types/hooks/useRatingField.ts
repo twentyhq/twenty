@@ -16,14 +16,14 @@ export const useRatingField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldRatingValue | null>(
+  const [fieldValue, setFieldValue] = useRecoilState<FieldRatingValue>(
     recordStoreFamilySelector({
       recordId: entityId,
       fieldName: fieldName,
     }),
   );
 
-  const rating = fieldValue ?? 'RATING_1';
+  const rating = fieldValue ?? null;
 
   return {
     fieldDefinition,

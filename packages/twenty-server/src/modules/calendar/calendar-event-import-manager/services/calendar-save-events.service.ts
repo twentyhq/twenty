@@ -119,7 +119,10 @@ export class CalendarSaveEventsService {
     const savedCalendarEventParticipantsToEmit: CalendarEventParticipantWorkspaceEntity[] =
       [];
 
-    await this.workspaceDataSource?.transaction(async (transactionManager) => {
+    const workspaceDataSource =
+      await this.twentyORMManager.getWorkspaceDatasource();
+
+    await workspaceDataSource?.transaction(async (transactionManager) => {
       await calendarEventRepository.save(eventsToSave, {}, transactionManager);
 
       await calendarEventRepository.save(
