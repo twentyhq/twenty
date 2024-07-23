@@ -9,6 +9,7 @@ import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-wo
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { UpdateMessageChannelVisibilityEnumCommand } from 'src/database/commands/upgrade-version/0-20/0-20-update-message-channel-visibility-enum.command';
 import { UpgradeTo0_22CommandModule } from 'src/database/commands/upgrade-version/0-22/0-22-upgrade-version.module';
+import { UpgradeTo0_23CommandModule } from 'src/database/commands/upgrade-version/0-23/0-23-upgrade-version.module';
 import { WorkspaceAddTotalCountCommand } from 'src/database/commands/workspace-add-total-count.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -47,6 +48,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     WorkspaceCacheVersionModule,
     // Upgrades
     UpgradeTo0_22CommandModule,
+    UpgradeTo0_23CommandModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

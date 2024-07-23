@@ -10,8 +10,9 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
   const computeCacheKey = (serverContext: any) => {
     const workspaceId = serverContext.req.workspace?.id ?? 'anonymous';
     const cacheVersion = serverContext.req.cacheVersion ?? '0';
+    const operationName = getOperationName(serverContext);
 
-    return `${workspaceId}:${cacheVersion}`;
+    return `cachedOperations:${operationName}:${workspaceId}:${cacheVersion}`;
   };
 
   const getOperationName = (serverContext: any) =>
@@ -43,6 +44,10 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
 
       if (!cachedResponse) {
         const responseBody = await response.json();
+
+        if (responseBody.errors) {
+          return;
+        }
 
         config.cacheSetter(cacheKey, responseBody);
       }

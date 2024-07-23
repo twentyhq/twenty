@@ -59,6 +59,7 @@ export enum MessageChannelContactAutoCreationPolicy {
   labelPlural: 'Message Channels',
   description: 'Message Channels',
   icon: 'IconMessage',
+  labelIdentifierStandardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.handle,
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()

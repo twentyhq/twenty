@@ -4,24 +4,24 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Stripe from 'stripe';
 import { Not, Repository } from 'typeorm';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import {
   BillingSubscription,
   SubscriptionInterval,
   SubscriptionStatus,
 } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { assert } from 'src/utils/assert';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { assert } from 'src/utils/assert';
 
 export enum AvailableProduct {
   BasePlan = 'base-plan',
@@ -219,6 +219,7 @@ export class BillingWorkspaceService {
 
   async computeCheckoutSessionURL(
     user: User,
+    workspace: Workspace,
     priceId: string,
     successUrlPath?: string,
   ): Promise<string> {
@@ -228,7 +229,7 @@ export class BillingWorkspaceService {
       : frontBaseUrl;
 
     const quantity =
-      (await this.userWorkspaceService.getWorkspaceMemberCount()) || 1;
+      (await this.userWorkspaceService.getUserCount(workspace.id)) || 1;
 
     const stripeCustomerId = (
       await this.billingSubscriptionRepository.findOneBy({

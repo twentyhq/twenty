@@ -8,19 +8,24 @@ export const combinedViewFilters = (
   const toCreateViewFilters = toUpsertViewFilters.filter(
     (toUpsertViewFilter) =>
       !viewFilters.some(
-        (viewFilter) => viewFilter.id === toUpsertViewFilter.id,
+        (viewFilter) =>
+          viewFilter.fieldMetadataId === toUpsertViewFilter.fieldMetadataId,
       ),
   );
 
   const toUpdateViewFilters = toUpsertViewFilters.filter((toUpsertViewFilter) =>
-    viewFilters.some((viewFilter) => viewFilter.id === toUpsertViewFilter.id),
+    viewFilters.some(
+      (viewFilter) =>
+        viewFilter.fieldMetadataId === toUpsertViewFilter.fieldMetadataId,
+    ),
   );
 
   const combinedViewFilters = viewFilters
     .filter((viewFilter) => !toDeleteViewFilterIds.includes(viewFilter.id))
     .map((viewFilter) => {
       const toUpdateViewFilter = toUpdateViewFilters.find(
-        (toUpdateViewFilter) => toUpdateViewFilter.id === viewFilter.id,
+        (toUpdateViewFilter) =>
+          toUpdateViewFilter.fieldMetadataId === viewFilter.fieldMetadataId,
       );
 
       return toUpdateViewFilter ?? viewFilter;

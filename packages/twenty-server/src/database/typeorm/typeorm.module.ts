@@ -29,9 +29,7 @@ const coreTypeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
       useFactory: coreTypeORMFactory,
       name: 'core',
     }),
-    TwentyORMModule.register({
-      workspaceEntities: ['dist/src/**/*.workspace-entity{.ts,.js}'],
-    }),
+    TwentyORMModule.register({}),
     EnvironmentModule,
   ],
   providers: [TypeORMService],

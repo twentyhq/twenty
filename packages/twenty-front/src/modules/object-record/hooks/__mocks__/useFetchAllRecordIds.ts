@@ -16,6 +16,7 @@ export const query = gql`
       }
       pageInfo {
         hasNextPage
+        hasPreviousPage
         startCursor
         endCursor
       }
