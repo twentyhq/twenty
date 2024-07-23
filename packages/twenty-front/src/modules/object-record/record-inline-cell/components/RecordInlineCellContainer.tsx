@@ -82,9 +82,6 @@ export type RecordInlineCellContainerProps = {
 export const RecordInlineCellContainer = () => {
 
   const context = useRecordInlineCellContext();
-  if (!context) {
-    return;
-  }
   const {
     readonly,
     IconLabel,

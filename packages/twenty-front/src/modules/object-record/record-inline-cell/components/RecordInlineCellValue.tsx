@@ -31,9 +31,6 @@ const StyledClickableContainer = styled.div<{
 
 export const RecordInlineCellValue = () => {
   const context = useRecordInlineCellContext();
-  if (!context) {
-    return null;
-  }
   const {
     displayModeContent,
     customEditHotkeyScope,

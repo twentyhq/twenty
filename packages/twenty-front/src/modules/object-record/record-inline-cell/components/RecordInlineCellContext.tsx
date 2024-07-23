@@ -21,6 +21,10 @@ export type RecordInlineCellContextProps = {
 
 export const RecordInlineCellContext = createContext<RecordInlineCellContextProps | undefined>(undefined);
 
-export const useRecordInlineCellContext = (): RecordInlineCellContextProps | undefined => {
-  return useContext(RecordInlineCellContext);
+export const useRecordInlineCellContext = (): RecordInlineCellContextProps => {
+  const context = useContext(RecordInlineCellContext);
+  if (!context) {
+    throw new Error('RecordInlineCellContextProps is not defined properly inside the custom hook useRecordInlineCellContext');
+  }
+  return context;
 };
