@@ -1,4 +1,5 @@
 import { Note } from '@/activities/types/Note';
+import { NoteTarget } from '@/activities/types/NoteTarget';
 import { Task } from '@/activities/types/Task';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
@@ -46,7 +47,7 @@ export const mockedActivities: Array<MockedActivity> = [
     status: null,
     assignee: workspaceMember,
     assigneeId: workspaceMember.id,
-    activityTargets: [
+    noteTargets: [
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb300',
         createdAt: '2023-04-26T10:12:42.33625+00:00',
@@ -61,14 +62,14 @@ export const mockedActivities: Array<MockedActivity> = [
           domainName: 'airbnb.com',
         },
         person: null,
-        activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
-        activity: {
+        noteId: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
+        note: {
           __typename: 'Activity',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
           createdAt: '2023-04-26T10:12:42.33625+00:00',
           updatedAt: '2023-04-26T10:23:42.33625+00:00',
         },
-        __typename: 'ActivityTarget',
+        __typename: 'NoteTarget',
       },
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb301',
@@ -84,17 +85,17 @@ export const mockedActivities: Array<MockedActivity> = [
           domainName: 'aircall.io',
         },
         person: null,
-        activityId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
-        activity: {
-          __typename: 'Activity',
+        noteId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
+        note: {
+          __typename: 'Note',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb231',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
-        __typename: 'ActivityTarget',
+        __typename: 'NoteTarget',
       },
-    ],
-    __typename: 'Activity',
+    ] as Array<NoteTarget>,
+    // __typename: 'Note',
   },
   {
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
@@ -106,7 +107,7 @@ export const mockedActivities: Array<MockedActivity> = [
     dueAt: '2029-08-26T10:12:42.33625+00:00',
     assignee: { ...workspaceMember, colorScheme: 'Dark' },
     assigneeId: workspaceMember.id,
-    activityTargets: [
+    noteTargets: [
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb278t',
         createdAt: '2023-04-26T10:12:42.33625+00:00',
@@ -124,14 +125,14 @@ export const mockedActivities: Array<MockedActivity> = [
         },
         company: null,
         companyId: null,
-        activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
-        activity: {
+        noteId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
+        note: {
           __typename: 'Activity',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
           createdAt: '2023-04-26T10:12:42.33625+00:00',
           updatedAt: '2023-04-26T10:23:42.33625+00:00',
         },
-        __typename: 'ActivityTarget',
+        __typename: 'NoteTarget',
       },
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb279t',
@@ -150,16 +151,16 @@ export const mockedActivities: Array<MockedActivity> = [
           },
           avatarUrl: '',
         },
-        activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
-        activity: {
+        noteId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
+        note: {
           __typename: 'Activity',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
-        __typename: 'ActivityTarget',
+        __typename: 'NoteTarget',
       },
-    ],
+    ] as Array<NoteTarget>,
     __typename: 'Activity',
   },
 ];

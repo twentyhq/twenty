@@ -8,6 +8,7 @@ import { Note } from '@/activities/types/Note';
 import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ActivityTargetableObject } from '../../types/ActivityTargetableEntity';
 
 export const useNotes = (targetableObject: ActivityTargetableObject) => {
@@ -22,7 +23,8 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
     [],
   );
 
-  const { activities, loading } = useActivities({
+  const { activities, loading } = useActivities<Note>({
+    objectNameSingular: CoreObjectNameSingular.Note,
     activitiesFilters: notesQueryVariables.filter ?? {},
     activitiesOrderByVariables: notesQueryVariables.orderBy ?? [{}],
     targetableObjects: [targetableObject],

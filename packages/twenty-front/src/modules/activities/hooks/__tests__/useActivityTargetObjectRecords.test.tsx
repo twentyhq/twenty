@@ -7,6 +7,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
@@ -135,6 +136,7 @@ describe('useActivityTargetObjectRecords', () => {
 
         const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
           getRecordFromRecordNode({ recordNode: activityNode as any }),
+          CoreObjectNameSingular.Task,
         );
 
         return {

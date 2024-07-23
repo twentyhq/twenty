@@ -32,8 +32,10 @@ export const ActivityTargetsInlineCell = ({
   readonly,
   objectNameSingular,
 }: ActivityTargetsInlineCellProps) => {
-  const { activityTargetObjectRecords } =
-    useActivityTargetObjectRecords(activity);
+  const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
+    activity,
+    objectNameSingular,
+  );
   const { closeInlineCell } = useInlineCell();
 
   const { fieldDefinition } = useContext(FieldContext);
@@ -48,7 +50,7 @@ export const ActivityTargetsInlineCell = ({
 
   const { FieldContextProvider: ActivityTargetsContextProvider } =
     useFieldContext({
-      objectNameSingular: CoreObjectNameSingular.Activity,
+      objectNameSingular: objectNameSingular,
       objectRecordId: activity.id,
       fieldMetadataName: 'activityTargets',
       fieldPosition: 3,

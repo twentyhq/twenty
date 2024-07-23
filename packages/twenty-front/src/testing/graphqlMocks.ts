@@ -271,11 +271,11 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           activities: {
-            edges: mockedActivities.map(({ activityTargets, ...rest }) => ({
+            edges: mockedActivities.map(({ noteTargets, ...rest }) => ({
               node: {
                 ...rest,
-                activityTargets: {
-                  edges: activityTargets.map((t) => ({ node: t })),
+                noteTargets: {
+                  edges: noteTargets.map((t) => ({ node: t })),
                 },
                 attachments: {
                   edges: [],

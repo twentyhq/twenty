@@ -4,8 +4,14 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 
 export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatureFactory =
-  ({ objectMetadataItems }: { objectMetadataItems: ObjectMetadataItem[] }) => ({
-    objectNameSingular: CoreObjectNameSingular.Activity,
+  ({
+    objectMetadataItems,
+    objectNameSingular,
+  }: {
+    objectNameSingular: CoreObjectNameSingular;
+    objectMetadataItems: ObjectMetadataItem[];
+  }) => ({
+    objectNameSingular: objectNameSingular,
     variables: {},
     fields: {
       id: true,

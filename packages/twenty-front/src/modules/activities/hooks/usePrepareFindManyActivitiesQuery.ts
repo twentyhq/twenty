@@ -2,8 +2,9 @@ import { useApolloClient } from '@apollo/client';
 
 import { findActivitiesOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivitiesOperationSignatureFactory';
 import { Activity } from '@/activities/types/Activity';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { NoteTarget } from '@/activities/types/NoteTarget';
+import { TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -64,8 +65,10 @@ export const usePrepareFindManyActivitiesQuery = ({
       cache,
     });
 
-    const activityTargets: ActivityTarget[] =
-      targetableObjectRecord?.activityTargets ?? [];
+    const activityTargets: (TaskTarget | NoteTarget)[] =
+      targetableObjectRecord?.taskTargets ??
+      targetableObjectRecord?.noteTargets ??
+      [];
 
     const activityTargetIds = [
       ...new Set(
@@ -107,7 +110,10 @@ export const usePrepareFindManyActivitiesQuery = ({
     });
 
     const FIND_ACTIVITIES_OPERATION_SIGNATURE =
-      findActivitiesOperationSignatureFactory({ objectMetadataItems });
+      findActivitiesOperationSignatureFactory({
+        objectNameSingular,
+        objectMetadataItems,
+      });
 
     upsertFindManyActivitiesInCache({
       objectRecordsToOverwrite: filteredActivities,

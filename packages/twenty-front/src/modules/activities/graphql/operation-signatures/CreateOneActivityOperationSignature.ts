@@ -19,7 +19,7 @@ export const CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE: Record<
     },
   },
   [CoreObjectNameSingular.Task]: {
-    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectNameSingular: CoreObjectNameSingular.Task,
     variables: {},
     fields: {
       id: true,

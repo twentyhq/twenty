@@ -20,16 +20,14 @@ const mockActivityTarget = {
 };
 
 const mockActivity = {
-  __typename: 'Activity',
+  __typename: 'Note',
   updatedAt: '2021-08-03T19:20:06.000Z',
   createdAt: '2021-08-03T19:20:06.000Z',
   status: 'DONE',
   reminderAt: '2021-08-03T19:20:06.000Z',
   title: 'title',
-  authorId: '1',
   body: 'body',
   dueAt: '2021-08-03T19:20:06.000Z',
-  type: 'type',
   assigneeId: '1',
   id: '234',
 };

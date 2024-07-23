@@ -8,6 +8,8 @@ import { currentIncompleteTaskQueryVariablesState } from '@/activities/tasks/sta
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timelineActivities/constants/FindManyTimelineActivitiesOrderBy';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { Task } from '@/activities/types/Task';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { parseDate } from '~/utils/date-utils';
@@ -109,13 +111,15 @@ export const useTasks = ({
 
   const { activities: completeTasksData, loading: completeTasksLoading } =
     useActivities({
+      objectNameSingular: CoreObjectNameSingular.Task,
       targetableObjects,
       activitiesFilters: completedQueryVariables.filter ?? {},
       activitiesOrderByVariables: completedQueryVariables.orderBy ?? [{}],
     });
 
   const { activities: incompleteTaskData, loading: incompleteTasksLoading } =
-    useActivities({
+    useActivities<Task>({
+      objectNameSingular: CoreObjectNameSingular.Task,
       targetableObjects,
       activitiesFilters: incompleteQueryVariables.filter ?? {},
       activitiesOrderByVariables: incompleteQueryVariables.orderBy ?? [{}],
