@@ -8,6 +8,7 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
 
 export const sleep = (ms: number) =>
@@ -57,6 +58,10 @@ export const useTableData = ({
     tableRowIdsState,
     hasUserSelectedAllRowsState,
   } = useRecordTableStates(recordIndexId);
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const columns = useRecoilValue(visibleTableColumnsSelector());
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
@@ -181,6 +186,7 @@ export const useTableData = ({
     inflight,
     isDownloading,
     pageCount,
+    objectMetadataItem,
     records,
     totalCount,
     columns,

@@ -1,7 +1,11 @@
-import { useMemo } from 'react';
 import { json2csv } from 'json-2-csv';
+import { useMemo } from 'react';
 
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import {
+  FieldCurrencyValue,
+  FieldMetadata,
+} from '@/object-record/record-field/types/FieldMetadata';
 import {
   useTableData,
   UseTableDataOptions,
@@ -9,6 +13,7 @@ import {
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from '~/generated/graphql';
+import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -66,15 +71,19 @@ export const generateCsv: GenerateExport = ({
         .filter(isDefined)
         .join(' '),
     };
+
     const fieldsWithSubFields = rows.find((row) => {
       const fieldValue = (row as any)[column.field];
+
       const hasSubFields =
         fieldValue &&
         typeof fieldValue === 'object' &&
         !Array.isArray(fieldValue);
+
       return hasSubFields;
     });
 
+    // TODO: use a function to convert nested fields like currency to something ok like amountMicros
     if (isDefined(fieldsWithSubFields)) {
       const nestedFieldsWithoutTypename = Object.keys(
         (fieldsWithSubFields as any)[column.field],
@@ -84,8 +93,10 @@ export const generateCsv: GenerateExport = ({
           field: `${column.field}.${key}`,
           title: `${column.title} ${key[0].toUpperCase() + key.slice(1)}`,
         }));
+
       return nestedFieldsWithoutTypename;
     }
+
     return [column];
   });
 
@@ -138,12 +149,39 @@ export const useExportTableData = ({
   pageSize = 30,
   recordIndexId,
 }: UseExportTableDataOptions) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const downloadCsv = useMemo(
     () =>
-      (rows: ObjectRecord[], columns: ColumnDefinition<FieldMetadata>[]) => {
-        csvDownloader(filename, { rows, columns });
+      (records: ObjectRecord[], columns: ColumnDefinition<FieldMetadata>[]) => {
+        const recordsProcessedForExport = records.map((record) => {
+          const currencyFields = objectMetadataItem.fields.filter(
+            (field) => field.type === FieldMetadataType.Currency,
+          );
+
+          const processedRecord = {
+            ...record,
+          };
+
+          for (const currencyField of currencyFields) {
+            if (isDefined(record[currencyField.name])) {
+              processedRecord[currencyField.name] = {
+                amountMicros: convertCurrencyMicrosToCurrencyAmount(
+                  record[currencyField.name].amountMicros,
+                ),
+                currencyCode: record[currencyField.name].currencyCode,
+              } satisfies FieldCurrencyValue;
+            }
+          }
+
+          return processedRecord;
+        });
+
+        csvDownloader(filename, { rows: recordsProcessedForExport, columns });
       },
-    [filename],
+    [filename, objectMetadataItem],
   );
 
   const { getTableData: download, progress } = useTableData({

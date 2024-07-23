@@ -5,7 +5,7 @@ import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
+import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 
 const castToString = (value: any) => {
   return (value as string) ?? '';
@@ -47,12 +47,14 @@ export const buildRecordFromImportedStructuredRow = (
       case FieldMetadataType.Currency:
         if (
           isDefined(
-            importedStructuredRow[`${amountMicrosLabel} (${field.name})`] ||
-              importedStructuredRow[`${currencyCodeLabel} (${field.name})`],
+            importedStructuredRow[`${amountMicrosLabel} (${field.name})`],
+          ) ||
+          isDefined(
+            importedStructuredRow[`${currencyCodeLabel} (${field.name})`],
           )
         ) {
           recordToBuild[field.name] = {
-            amountMicros: convertCurrencyMicrosToCurrencyAmount(
+            amountMicros: convertCurrencyAmountToCurrencyMicros(
               Number(
                 importedStructuredRow[`${amountMicrosLabel} (${field.name})`],
               ),
@@ -64,7 +66,6 @@ export const buildRecordFromImportedStructuredRow = (
         }
         break;
       case FieldMetadataType.Address: {
-        // TODO: check if validaction has been made to allow casting as string
         if (
           isDefined(
             importedStructuredRow[`${addressStreet1Label} (${field.name})`] ||
