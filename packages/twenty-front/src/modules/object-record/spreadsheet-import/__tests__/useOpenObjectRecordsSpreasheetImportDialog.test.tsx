@@ -6,8 +6,8 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
+import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
 import { useOpenObjectRecordsSpreasheetImportDialog } from '../hooks/useOpenObjectRecordsSpreasheetImportDialog';
 
 const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
@@ -62,7 +62,6 @@ const companyMocks = [
       variables: {
         data: [
           {
-            address: 'test',
             domainName: 'example.com',
             employees: 0,
             idealCustomerProfile: true,
@@ -94,13 +93,16 @@ const fakeCsv = () => {
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider mocks={companyMocks} addTypename={false}>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+      <SnackBarManagerScopeInternalContext.Provider
+        value={{ scopeId: 'snack-bar-manager' }}
+      >
         {children}
-      </SnackBarProviderScope>
+      </SnackBarManagerScopeInternalContext.Provider>
     </MockedProvider>
   </RecoilRoot>
 );
 
+// TODO: improve object metadata item seeds to have more field types to add tests on composite fields here
 describe('useSpreadsheetCompanyImport', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
@@ -155,7 +157,6 @@ describe('useSpreadsheetCompanyImport', () => {
               name: 'Example Company',
               domainName: 'example.com',
               idealCustomerProfile: true,
-              address: 'test',
               employees: '0',
             },
           ],
@@ -167,7 +168,6 @@ describe('useSpreadsheetCompanyImport', () => {
               domainName: 'example.com',
               __index: 'cbc3985f-dde9-46d1-bae2-c124141700ac',
               idealCustomerProfile: true,
-              address: 'test',
               employees: '0',
             },
           ],
