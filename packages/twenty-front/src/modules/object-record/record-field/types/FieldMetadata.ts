@@ -5,7 +5,6 @@ import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLi
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { WithNarrowedStringLiteralProperty } from '~/types/WithNarrowedStringLiteralProperty';
 
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
 
 export type FieldUuidMetadata = {
@@ -200,23 +199,3 @@ export type FieldRelationValue<
 
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
-
-export type FieldValueTypeByType = {
-  [FieldMetadataType.Text]: FieldTextValue;
-  [FieldMetadataType.Uuid]: FieldUUidValue;
-  [FieldMetadataType.DateTime]: FieldDateTimeValue;
-  [FieldMetadataType.Date]: FieldDateValue;
-  [FieldMetadataType.Number]: FieldNumberValue;
-  [FieldMetadataType.Boolean]: FieldBooleanValue;
-  [FieldMetadataType.Phone]: FieldPhoneValue;
-  [FieldMetadataType.Email]: FieldEmailValue;
-  [FieldMetadataType.Link]: FieldLinkValue;
-  [FieldMetadataType.Links]: FieldLinksValue;
-  [FieldMetadataType.Currency]: FieldCurrencyValue;
-  [FieldMetadataType.FullName]: FieldFullNameValue;
-  [FieldMetadataType.Address]: FieldAddressValue;
-  [FieldMetadataType.Rating]: FieldRatingValue;
-  [FieldMetadataType.Select]: FieldSelectValue;
-  [FieldMetadataType.MultiSelect]: FieldMultiSelectValue;
-  [FieldMetadataType.RawJson]: FieldJsonValue;
-};
