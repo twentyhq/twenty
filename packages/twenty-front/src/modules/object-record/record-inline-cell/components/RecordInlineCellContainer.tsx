@@ -81,14 +81,13 @@ export type RecordInlineCellContainerProps = {
 
 export const RecordInlineCellContainer = () => {
 
-  const context = useRecordInlineCellContext();
   const {
     readonly,
     IconLabel,
     label,
     labelWidth,
     showLabel,
-  } = context;
+  } = useRecordInlineCellContext();
 
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
