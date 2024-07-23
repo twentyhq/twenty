@@ -15,13 +15,15 @@ export class TwentyORMGlobalManager {
     workspaceId: string,
     objectMetadataName: string,
   ): Promise<WorkspaceRepository<T>> {
-    const workspaceDataSource =
-      await this.workspaceDataSourceFactory.create(workspaceId);
+    const workspaceDataSource = await this.workspaceDataSourceFactory.create(
+      workspaceId,
+      null,
+    );
 
     return workspaceDataSource.getRepository<T>(objectMetadataName);
   }
 
   async getDataSourceForWorkspace(workspaceId: string) {
-    return this.workspaceDataSourceFactory.create(workspaceId);
+    return this.workspaceDataSourceFactory.create(workspaceId, null);
   }
 }
