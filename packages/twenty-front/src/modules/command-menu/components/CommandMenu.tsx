@@ -36,7 +36,7 @@ import { Note } from '@/activities/types/Note';
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 
-export const StyledDialog = styled.div`
+const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border-left: 1px solid ${({ theme }) => theme.border.color.medium};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
@@ -51,7 +51,7 @@ export const StyledDialog = styled.div`
   z-index: 1000;
 `;
 
-export const StyledInput = styled.input`
+const StyledInput = styled.input`
   background: ${({ theme }) => theme.background.secondary};
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -79,20 +79,20 @@ const StyledCancelText = styled.span`
   top: 0;
 `;
 
-export const StyledList = styled.div`
+const StyledList = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   overscroll-behavior: contain;
   transition: 100ms ease;
   transition-property: height;
 `;
 
-export const StyledInnerList = styled.div`
+const StyledInnerList = styled.div`
   padding-left: ${({ theme }) => theme.spacing(1)};
   padding-right: ${({ theme }) => theme.spacing(1)};
   width: calc(100% - ${({ theme }) => theme.spacing(2)});
 `;
 
-export const StyledEmpty = styled.div`
+const StyledEmpty = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
   display: flex;

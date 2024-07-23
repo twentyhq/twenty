@@ -2,7 +2,7 @@ import { Activity } from '@/activities/types/Activity';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 
-export type ActivityStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
+type ActivityStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
 
 export type Task = Activity & {
   assignee: Pick<

@@ -47,6 +47,7 @@ export const RichTextEditor = ({
   objectNameSingular,
 }: RichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
+
   const cache = useApolloClient().cache;
   const activity = activityInStore as Task | Note | null;
 

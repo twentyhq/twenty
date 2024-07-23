@@ -96,10 +96,11 @@ export const ShowPageRightContainer = ({
       title: 'Content',
       Icon: IconNotes,
       hide:
-        targetableObject.targetObjectNameSingular !==
+        loading ||
+        (targetableObject.targetObjectNameSingular !==
           CoreObjectNameSingular.Note &&
-        targetableObject.targetObjectNameSingular !==
-          CoreObjectNameSingular.Task,
+          targetableObject.targetObjectNameSingular !==
+            CoreObjectNameSingular.Task),
     },
     {
       id: 'timeline',

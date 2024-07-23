@@ -29,7 +29,7 @@ export const useRefreshShowPageFindManyActivitiesQueries = ({
       prepareFindManyActivitiesQuery({
         targetableObject: objectShowPageTargetableObject,
         additionalFilter: {
-          status: { is: 'TODO' },
+          status: { eq: 'TODO' },
         },
       });
       prepareFindManyActivitiesQuery({
