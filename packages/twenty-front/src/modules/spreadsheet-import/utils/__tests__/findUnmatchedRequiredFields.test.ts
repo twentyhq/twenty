@@ -23,8 +23,14 @@ const ageField: Field<'Age'> = {
   },
 };
 const validations: FieldValidationDefinition[] = [{ rule: 'required' }];
-const nameFieldWithValidations: Field<'Name'> = { ...nameField, fieldValidationDefinitions: validations };
-const ageFieldWithValidations: Field<'Age'> = { ...ageField, fieldValidationDefinitions: validations };
+const nameFieldWithValidations: Field<'Name'> = {
+  ...nameField,
+  fieldValidationDefinitions: validations,
+};
+const ageFieldWithValidations: Field<'Age'> = {
+  ...ageField,
+  fieldValidationDefinitions: validations,
+};
 
 type ColumnValues = 'Name' | 'Age';
 

@@ -183,7 +183,12 @@ describe('addErrorsAndRunHooks', () => {
   it('should not add errors for unique field with empty values if allowEmpty is true', () => {
     const result = addErrorsAndRunHooks(
       [{ country: '' }, { country: '' }],
-      [{ ...uniqueField, fieldValidationDefinitions: [{ rule: 'unique', allowEmpty: true }] }],
+      [
+        {
+          ...uniqueField,
+          fieldValidationDefinitions: [{ rule: 'unique', allowEmpty: true }],
+        },
+      ],
     );
 
     expect(result[0].__errors).toBeUndefined();

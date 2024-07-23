@@ -10,12 +10,12 @@ type SpreadsheetImportProviderProps = React.PropsWithChildren;
 export const SpreadsheetImportProvider = (
   props: SpreadsheetImportProviderProps,
 ) => {
-  const [spreadsheetImport, setSpreadsheetImport] = useRecoilState(
+  const [spreadsheetImportDialog, setSpreadsheetImportDialog] = useRecoilState(
     spreadsheetImportDialogState,
   );
 
   const handleClose = () => {
-    setSpreadsheetImport({
+    setSpreadsheetImportDialog({
       isOpen: false,
       options: null,
     });
@@ -24,12 +24,12 @@ export const SpreadsheetImportProvider = (
   return (
     <>
       {props.children}
-      {spreadsheetImport.isOpen && spreadsheetImport.options && (
+      {spreadsheetImportDialog.isOpen && spreadsheetImportDialog.options && (
         <SpreadsheetImport
           isOpen={true}
           onClose={handleClose}
           // eslint-disable-next-line react/jsx-props-no-spreading
-          {...spreadsheetImport.options}
+          {...spreadsheetImportDialog.options}
         />
       )}
     </>
