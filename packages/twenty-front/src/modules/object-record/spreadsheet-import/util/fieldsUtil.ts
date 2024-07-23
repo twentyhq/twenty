@@ -3,7 +3,7 @@ import { IconComponent, useIcons } from 'twenty-ui';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getSpreadSheetValidation } from '@/object-record/spreadsheet-import/util/getSpreadSheetValidation';
-import { Data, Validation } from '@/spreadsheet-import/types';
+import { ImportedStructuredRow, Validation } from '@/spreadsheet-import/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { convertCurrencyMicrosToCurrency } from '~/utils/convert-currency-amount';
 import { isDefined } from '~/utils/isDefined';
@@ -134,7 +134,7 @@ export const useBuildAvailableFieldsArray = (fields: FieldMetadataItem[]) => {
 };
 
 export const buildFieldMapping = (
-  record: Data<any>,
+  record: ImportedStructuredRow<any>,
   fields: FieldMetadataItem[],
 ) => {
   const fieldMapping: Record<string, any> = {};

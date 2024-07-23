@@ -123,30 +123,33 @@ describe('useSpreadsheetCompanyImport', () => {
       },
     );
 
-    const {
-      spreadsheetImportDialog: spreadsheetImport,
-      openRecordSpreadsheetImport,
-    } = result.current;
+    const { spreadsheetImportDialog, openRecordSpreadsheetImport } =
+      result.current;
 
-    expect(spreadsheetImport.isOpen).toBe(false);
-    expect(spreadsheetImport.options).toBeNull();
+    expect(spreadsheetImportDialog.isOpen).toBe(false);
+    expect(spreadsheetImportDialog.options).toBeNull();
 
     await act(async () => {
       openRecordSpreadsheetImport();
     });
 
-    const { spreadsheetImportDialog: updatedImport } = result.current;
+    const { spreadsheetImportDialog: spreadsheetImportDialogAfterOpen } =
+      result.current;
 
-    expect(updatedImport.isOpen).toBe(true);
-    expect(updatedImport.options).toHaveProperty('onSubmit');
-    expect(updatedImport.options?.onSubmit).toBeInstanceOf(Function);
-    expect(updatedImport.options).toHaveProperty('fields');
-    expect(Array.isArray(updatedImport.options?.fields)).toBe(true);
+    expect(spreadsheetImportDialogAfterOpen.isOpen).toBe(true);
+    expect(spreadsheetImportDialogAfterOpen.options).toHaveProperty('onSubmit');
+    expect(spreadsheetImportDialogAfterOpen.options?.onSubmit).toBeInstanceOf(
+      Function,
+    );
+    expect(spreadsheetImportDialogAfterOpen.options).toHaveProperty('fields');
+    expect(
+      Array.isArray(spreadsheetImportDialogAfterOpen.options?.fields),
+    ).toBe(true);
 
     act(() => {
-      updatedImport.options?.onSubmit(
+      spreadsheetImportDialogAfterOpen.options?.onSubmit(
         {
-          validData: [
+          validStructuredRows: [
             {
               id: companyId,
               name: 'Example Company',
@@ -156,8 +159,8 @@ describe('useSpreadsheetCompanyImport', () => {
               employees: '0',
             },
           ],
-          invalidData: [],
-          all: [
+          invalidStructuredRows: [],
+          allStructuredRows: [
             {
               id: companyId,
               name: 'Example Company',

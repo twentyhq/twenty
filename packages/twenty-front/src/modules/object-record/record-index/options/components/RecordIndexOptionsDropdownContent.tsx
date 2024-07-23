@@ -114,9 +114,8 @@ export const RecordIndexOptionsDropdownContent = ({
       ? handleBoardFieldVisibilityChange
       : handleColumnVisibilityChange;
 
-  const {
-    openObjectRecordsSpreasheetImportDialog: openRecordSpreadsheetImport,
-  } = useOpenObjectRecordsSpreasheetImportDialog(objectNameSingular);
+  const { openObjectRecordsSpreasheetImportDialog } =
+    useOpenObjectRecordsSpreasheetImportDialog(objectNameSingular);
 
   const { progress, download } = useExportTableData({
     delayMs: 100,
@@ -136,7 +135,7 @@ export const RecordIndexOptionsDropdownContent = ({
             hasSubMenu
           />
           <MenuItem
-            onClick={() => openRecordSpreadsheetImport()}
+            onClick={() => openObjectRecordsSpreasheetImportDialog()}
             LeftIcon={IconFileImport}
             text="Import"
           />

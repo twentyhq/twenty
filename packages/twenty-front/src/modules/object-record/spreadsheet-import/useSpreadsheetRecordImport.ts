@@ -48,7 +48,7 @@ export const useOpenObjectRecordsSpreasheetImportDialog = (
     openSpreadsheetImportDialog({
       ...options,
       onSubmit: async (data) => {
-        const createInputs = data.validData.map((record) => {
+        const createInputs = data.validStructuredRows.map((record) => {
           const fieldMapping: Record<string, any> = buildFieldMapping(
             record,
             fields,

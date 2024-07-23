@@ -145,8 +145,8 @@ export const mockRsiValues = mockComponentBehaviourForTypes({
       }),
     );
     return {
-      headerValues: hData,
-      data,
+      headerRow: hData,
+      importedRows: data,
     };
   },
   // Runs after column matching and on entry change, more performant

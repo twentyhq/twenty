@@ -10,7 +10,10 @@ export const defaultSpreadsheetImportProps: Partial<
   allowInvalidSubmit: true,
   autoMapDistance: 2,
   uploadStepHook: async (value) => value,
-  selectHeaderStepHook: async (headerValues, data) => ({ headerValues, data }),
+  selectHeaderStepHook: async (headerValues, data) => ({
+    headerRow: headerValues,
+    importedRows: data,
+  }),
   matchColumnsStepHook: async (table) => table,
   dateFormat: 'yyyy-mm-dd', // ISO 8601,
   parseRaw: true,

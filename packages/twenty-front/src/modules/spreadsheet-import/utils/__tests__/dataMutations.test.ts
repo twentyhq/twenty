@@ -1,6 +1,6 @@
 import {
-  Data,
   Field,
+  ImportedStructuredRow,
   Info,
   RowHook,
   TableHook,
@@ -8,7 +8,7 @@ import {
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 
 describe('addErrorsAndRunHooks', () => {
-  type FullData = Data<'name' | 'age' | 'country'>;
+  type FullData = ImportedStructuredRow<'name' | 'age' | 'country'>;
   const requiredField: Field<'name'> = {
     key: 'name',
     label: 'Name',
@@ -63,8 +63,11 @@ describe('addErrorsAndRunHooks', () => {
     fieldType: { type: 'input' },
   };
 
-  const validData: Data<'name' | 'age'> = { name: 'John', age: '30' };
-  const dataWithoutNameAndInvalidAge: Data<'name' | 'age'> = {
+  const validData: ImportedStructuredRow<'name' | 'age'> = {
+    name: 'John',
+    age: '30',
+  };
+  const dataWithoutNameAndInvalidAge: ImportedStructuredRow<'name' | 'age'> = {
     name: '',
     age: 'Invalid',
   };
@@ -74,7 +77,7 @@ describe('addErrorsAndRunHooks', () => {
     country: 'Brazil',
   };
 
-  const data: Data<'name' | 'age'>[] = [
+  const data: ImportedStructuredRow<'name' | 'age'>[] = [
     validData,
     dataWithoutNameAndInvalidAge,
   ];

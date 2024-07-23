@@ -3,7 +3,7 @@ import { ReadonlyDeep } from 'type-fest';
 
 import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { StepState } from '@/spreadsheet-import/steps/components/UploadFlow';
-import { Meta } from '@/spreadsheet-import/steps/components/ValidationStep/types';
+import { ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
 export type SpreadsheetImportDialogOptions<Key extends string> = {
   // Is modal visible.
@@ -13,24 +13,27 @@ export type SpreadsheetImportDialogOptions<Key extends string> = {
   // Field description for requested data
   fields: Fields<Key>;
   // Runs after file upload step, receives and returns raw sheet data
-  uploadStepHook?: (data: RawData[]) => Promise<RawData[]>;
+  uploadStepHook?: (importedRows: ImportedRow[]) => Promise<ImportedRow[]>;
   // Runs after header selection step, receives and returns raw sheet data
   selectHeaderStepHook?: (
-    headerValues: RawData,
-    data: RawData[],
-  ) => Promise<{ headerValues: RawData; data: RawData[] }>;
+    headerRow: ImportedRow,
+    importedRows: ImportedRow[],
+  ) => Promise<{ headerRow: ImportedRow; importedRows: ImportedRow[] }>;
   // Runs once before validation step, used for data mutations and if you want to change how columns were matched
   matchColumnsStepHook?: (
-    table: Data<Key>[],
-    rawData: RawData[],
+    importedStructuredRows: ImportedStructuredRow<Key>[],
+    importedRows: ImportedRow[],
     columns: Columns<Key>,
-  ) => Promise<Data<Key>[]>;
+  ) => Promise<ImportedStructuredRow<Key>[]>;
   // Runs after column matching and on entry change
   rowHook?: RowHook<Key>;
   // Runs after column matching and on entry change
   tableHook?: TableHook<Key>;
   // Function called after user finishes the flow
-  onSubmit: (data: Result<Key>, file: File) => Promise<void>;
+  onSubmit: (
+    validationResult: ImportValidationResult<Key>,
+    file: File,
+  ) => Promise<void>;
   // Allows submitting with errors. Default: true
   allowInvalidSubmit?: boolean;
   // Theme configuration passed to underlying Chakra-UI
@@ -55,9 +58,9 @@ export type SpreadsheetImportDialogOptions<Key extends string> = {
   selectHeader?: boolean;
 };
 
-export type RawData = Array<string | undefined>;
+export type ImportedRow = Array<string | undefined>;
 
-export type Data<T extends string> = {
+export type ImportedStructuredRow<T extends string> = {
   [key in T]: string | boolean | undefined;
 };
 
@@ -145,14 +148,15 @@ export type FunctionValidation = {
 };
 
 export type RowHook<T extends string> = (
-  row: Data<T>,
+  row: ImportedStructuredRow<T>,
   addError: (fieldKey: T, error: Info) => void,
-  table: Data<T>[],
-) => Data<T>;
+  table: ImportedStructuredRow<T>[],
+) => ImportedStructuredRow<T>;
+
 export type TableHook<T extends string> = (
-  table: Data<T>[],
+  table: ImportedStructuredRow<T>[],
   addError: (rowIndex: number, fieldKey: T, error: Info) => void,
-) => Data<T>[];
+) => ImportedStructuredRow<T>[];
 
 export type ErrorLevel = 'info' | 'warning' | 'error';
 
@@ -161,8 +165,9 @@ export type Info = {
   level: ErrorLevel;
 };
 
-export type Result<T extends string> = {
-  validData: Data<T>[];
-  invalidData: Data<T>[];
-  all: (Data<T> & Meta)[];
+export type ImportValidationResult<T extends string> = {
+  validStructuredRows: ImportedStructuredRow<T>[];
+  invalidStructuredRows: ImportedStructuredRow<T>[];
+  allStructuredRows: (ImportedStructuredRow<T> &
+    ImportedStructuredRowMetadata)[];
 };

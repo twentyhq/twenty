@@ -3,11 +3,11 @@ import { v4 } from 'uuid';
 
 import {
   Errors,
-  Meta,
+  ImportedStructuredRowMetadata,
 } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 import {
-  Data,
   Fields,
+  ImportedStructuredRow,
   Info,
   RowHook,
   TableHook,
@@ -16,11 +16,11 @@ import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const addErrorsAndRunHooks = <T extends string>(
-  data: (Data<T> & Partial<Meta>)[],
+  data: (ImportedStructuredRow<T> & Partial<ImportedStructuredRowMetadata>)[],
   fields: Fields<T>,
   rowHook?: RowHook<T>,
   tableHook?: TableHook<T>,
-): (Data<T> & Meta)[] => {
+): (ImportedStructuredRow<T> & ImportedStructuredRowMetadata)[] => {
   const errors: Errors = {};
 
   const addHookError = (rowIndex: number, fieldKey: T, error: Info) => {
@@ -140,7 +140,8 @@ export const addErrorsAndRunHooks = <T extends string>(
     if (!('__index' in value)) {
       value.__index = v4();
     }
-    const newValue = value as Data<T> & Meta;
+    const newValue = value as ImportedStructuredRow<T> &
+      ImportedStructuredRowMetadata;
 
     if (isDefined(errors[index])) {
       return { ...newValue, __errors: errors[index] };
