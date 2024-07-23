@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilState } from 'recoil';
 
-import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
-import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportState';
+import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { StepType } from '@/spreadsheet-import/steps/components/UploadFlow';
 import {
   ImportedRow,
@@ -62,7 +62,7 @@ describe('useSpreadsheetImport', () => {
       options: null,
     });
     act(() => {
-      result.current.useSpreadsheetImport.openSpreadsheetImport(
+      result.current.useSpreadsheetImport.openSpreadsheetImportDialog(
         mockedSpreadsheetOptions,
       );
     });

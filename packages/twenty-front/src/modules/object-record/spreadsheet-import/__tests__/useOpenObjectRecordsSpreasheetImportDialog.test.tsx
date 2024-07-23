@@ -8,7 +8,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
-import { useOpenObjectRecordsSpreasheetImportDialog } from '../useSpreadsheetRecordImport';
+import { useOpenObjectRecordsSpreasheetImportDialog } from '../hooks/useOpenObjectRecordsSpreasheetImportDialog';
 
 const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
 

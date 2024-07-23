@@ -12,7 +12,7 @@ describe('addErrorsAndRunHooks', () => {
   const requiredField: Field<'name'> = {
     key: 'name',
     label: 'Name',
-    validations: [{ rule: 'required' }],
+    fieldValidationDefinitions: [{ rule: 'required' }],
     icon: null,
     fieldType: { type: 'input' },
   };
@@ -20,7 +20,7 @@ describe('addErrorsAndRunHooks', () => {
   const regexField: Field<'age'> = {
     key: 'age',
     label: 'Age',
-    validations: [
+    fieldValidationDefinitions: [
       { rule: 'regex', value: '\\d+', errorMessage: 'Regex error' },
     ],
     icon: null,
@@ -30,7 +30,7 @@ describe('addErrorsAndRunHooks', () => {
   const uniqueField: Field<'country'> = {
     key: 'country',
     label: 'Country',
-    validations: [{ rule: 'unique' }],
+    fieldValidationDefinitions: [{ rule: 'unique' }],
     icon: null,
     fieldType: { type: 'input' },
   };
@@ -38,7 +38,7 @@ describe('addErrorsAndRunHooks', () => {
   const functionValidationFieldTrue: Field<'email'> = {
     key: 'email',
     label: 'Email',
-    validations: [
+    fieldValidationDefinitions: [
       {
         rule: 'function',
         isValid: () => true,
@@ -52,7 +52,7 @@ describe('addErrorsAndRunHooks', () => {
   const functionValidationFieldFalse: Field<'email'> = {
     key: 'email',
     label: 'Email',
-    validations: [
+    fieldValidationDefinitions: [
       {
         rule: 'function',
         isValid: () => false,
@@ -183,7 +183,7 @@ describe('addErrorsAndRunHooks', () => {
   it('should not add errors for unique field with empty values if allowEmpty is true', () => {
     const result = addErrorsAndRunHooks(
       [{ country: '' }, { country: '' }],
-      [{ ...uniqueField, validations: [{ rule: 'unique', allowEmpty: true }] }],
+      [{ ...uniqueField, fieldValidationDefinitions: [{ rule: 'unique', allowEmpty: true }] }],
     );
 
     expect(result[0].__errors).toBeUndefined();

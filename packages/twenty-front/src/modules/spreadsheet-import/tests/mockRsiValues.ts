@@ -16,7 +16,7 @@ const fields = [
       type: 'input',
     },
     example: 'Stephanie',
-    validations: [
+    fieldValidationDefinitions: [
       {
         rule: 'required',
         errorMessage: 'Name is required',
@@ -32,7 +32,7 @@ const fields = [
       type: 'input',
     },
     example: 'McDonald',
-    validations: [
+    fieldValidationDefinitions: [
       {
         rule: 'unique',
         errorMessage: 'Last name must be unique',
@@ -50,7 +50,7 @@ const fields = [
       type: 'input',
     },
     example: '23',
-    validations: [
+    fieldValidationDefinitions: [
       {
         rule: 'regex',
         value: '^\\d+$',
@@ -72,7 +72,7 @@ const fields = [
       ],
     },
     example: 'Team one',
-    validations: [
+    fieldValidationDefinitions: [
       {
         rule: 'required',
         errorMessage: 'Team is required',

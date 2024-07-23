@@ -1,9 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
-import {
-  buildFieldMapping,
-  useBuildAvailableFieldsArray,
-} from '@/object-record/spreadsheet-import/util/fieldsUtil';
+import { useBuildAvailableFieldsForImport } from '@/object-record/spreadsheet-import/hooks/useBuildAvailableFieldsForImport';
+import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/util/buildRecordFromImportedStructuredRow';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -20,24 +18,11 @@ export const useOpenObjectRecordsSpreasheetImportDialog = (
     objectNameSingular,
   });
 
-  const fields = objectMetadataItem.fields
-    .filter(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.isActive &&
-        (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
-        fieldMetadataItem.name !== 'createdAt' &&
-        (fieldMetadataItem.type !== FieldMetadataType.Relation ||
-          fieldMetadataItem.toRelationMetadata),
-    )
-    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
-      fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
-    );
-
-  const availableFields = useBuildAvailableFieldsArray(fields);
-
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular,
   });
+
+  const { buildAvailableFieldsForImport } = useBuildAvailableFieldsForImport();
 
   const openObjectRecordsSpreasheetImportDialog = (
     options?: Omit<
@@ -45,14 +30,32 @@ export const useOpenObjectRecordsSpreasheetImportDialog = (
       'fields' | 'isOpen' | 'onClose'
     >,
   ) => {
+    const availableFieldMetadataItems = objectMetadataItem.fields
+      .filter(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.isActive &&
+          (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
+          fieldMetadataItem.name !== 'createdAt' &&
+          (fieldMetadataItem.type !== FieldMetadataType.Relation ||
+            fieldMetadataItem.toRelationMetadata),
+      )
+      .sort((fieldMetadataItemA, fieldMetadataItemB) =>
+        fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
+      );
+
+    const availableFields = buildAvailableFieldsForImport(
+      availableFieldMetadataItems,
+    );
+
     openSpreadsheetImportDialog({
       ...options,
       onSubmit: async (data) => {
         const createInputs = data.validStructuredRows.map((record) => {
-          const fieldMapping: Record<string, any> = buildFieldMapping(
-            record,
-            fields,
-          );
+          const fieldMapping: Record<string, any> =
+            buildRecordFromImportedStructuredRow(
+              record,
+              availableFieldMetadataItems,
+            );
 
           return fieldMapping;
         });

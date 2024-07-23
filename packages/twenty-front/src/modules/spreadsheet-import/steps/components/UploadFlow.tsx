@@ -231,7 +231,7 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
       }
       return (
         <ValidationStep
-          importedStructuredRows={state.data}
+          initialData={state.data}
           importedColumns={state.importedColumns}
           file={uploadedFile}
           onSubmitStart={() =>

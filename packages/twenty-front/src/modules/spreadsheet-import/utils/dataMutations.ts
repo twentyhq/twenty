@@ -41,8 +41,8 @@ export const addErrorsAndRunHooks = <T extends string>(
   }
 
   fields.forEach((field) => {
-    field.validations?.forEach((validation) => {
-      switch (validation.rule) {
+    field.fieldValidationDefinitions?.forEach((fieldValidationDefinition) => {
+      switch (fieldValidationDefinition.rule) {
         case 'unique': {
           const values = data.map((entry) => entry[field.key as T]);
 
@@ -51,7 +51,7 @@ export const addErrorsAndRunHooks = <T extends string>(
 
           values.forEach((value) => {
             if (
-              validation.allowEmpty === true &&
+              fieldValidationDefinition.allowEmpty === true &&
               (isUndefinedOrNull(value) || value === '' || !value)
             ) {
               // If allowEmpty is set, we will not validate falsy fields such as undefined or empty string.
@@ -70,8 +70,10 @@ export const addErrorsAndRunHooks = <T extends string>(
               errors[index] = {
                 ...errors[index],
                 [field.key]: {
-                  level: validation.level || 'error',
-                  message: validation.errorMessage || 'Field must be unique',
+                  level: fieldValidationDefinition.level || 'error',
+                  message:
+                    fieldValidationDefinition.errorMessage ||
+                    'Field must be unique',
                 },
               };
             }
@@ -88,8 +90,10 @@ export const addErrorsAndRunHooks = <T extends string>(
               errors[index] = {
                 ...errors[index],
                 [field.key]: {
-                  level: validation.level || 'error',
-                  message: validation.errorMessage || 'Field is required',
+                  level: fieldValidationDefinition.level || 'error',
+                  message:
+                    fieldValidationDefinition.errorMessage ||
+                    'Field is required',
                 },
               };
             }
@@ -97,7 +101,10 @@ export const addErrorsAndRunHooks = <T extends string>(
           break;
         }
         case 'regex': {
-          const regex = new RegExp(validation.value, validation.flags);
+          const regex = new RegExp(
+            fieldValidationDefinition.value,
+            fieldValidationDefinition.flags,
+          );
           data.forEach((entry, index) => {
             const value = entry[field.key]?.toString();
 
@@ -105,10 +112,10 @@ export const addErrorsAndRunHooks = <T extends string>(
               errors[index] = {
                 ...errors[index],
                 [field.key]: {
-                  level: validation.level || 'error',
+                  level: fieldValidationDefinition.level || 'error',
                   message:
-                    validation.errorMessage ||
-                    `Field did not match the regex /${validation.value}/${validation.flags} `,
+                    fieldValidationDefinition.errorMessage ||
+                    `Field did not match the regex /${fieldValidationDefinition.value}/${fieldValidationDefinition.flags} `,
                 },
               };
             }
@@ -119,12 +126,17 @@ export const addErrorsAndRunHooks = <T extends string>(
           data.forEach((entry, index) => {
             const value = entry[field.key]?.toString();
 
-            if (isNonEmptyString(value) && !validation.isValid(value)) {
+            if (
+              isNonEmptyString(value) &&
+              !fieldValidationDefinition.isValid(value)
+            ) {
               errors[index] = {
                 ...errors[index],
                 [field.key]: {
-                  level: validation.level || 'error',
-                  message: validation.errorMessage || 'Field is invalid',
+                  level: fieldValidationDefinition.level || 'error',
+                  message:
+                    fieldValidationDefinition.errorMessage ||
+                    'Field is invalid',
                 },
               };
             }

@@ -79,7 +79,7 @@ export type Field<T extends string> = {
   // Alternate labels used for fields' auto-matching, e.g. "fname" -> "firstName"
   alternateMatches?: string[];
   // Validations used for field entries
-  validations?: Validation[];
+  fieldValidationDefinitions?: FieldValidationDefinition[];
   // Field entry component, default: Input
   fieldType: Checkbox | Select | Input;
   // UI-facing values shown to user as field examples pre-upload phase
@@ -113,11 +113,19 @@ export type Input = {
   type: 'input';
 };
 
-export type Validation =
+export type FieldValidationDefinition =
   | RequiredValidation
   | UniqueValidation
   | RegexValidation
-  | FunctionValidation;
+  | FunctionValidation
+  | ObjectValidation;
+
+export type ObjectValidation = {
+  rule: 'object';
+  isValid: (objectValue: any) => boolean;
+  errorMessage: string;
+  level?: ErrorLevel;
+};
 
 export type RequiredValidation = {
   rule: 'required';
