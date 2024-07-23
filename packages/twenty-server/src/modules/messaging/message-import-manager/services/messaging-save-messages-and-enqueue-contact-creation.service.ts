@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
@@ -14,7 +12,6 @@ import {
   CreateCompanyAndContactJob,
   CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
-import { MessagingMessageService } from 'src/modules/messaging/common/services/messaging-message.service';
 import {
   MessageChannelContactAutoCreationPolicy,
   MessageChannelWorkspaceEntity,
@@ -25,6 +22,7 @@ import {
   Participant,
   ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
+import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { isGroupEmail } from 'src/utils/is-group-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
@@ -37,8 +35,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 

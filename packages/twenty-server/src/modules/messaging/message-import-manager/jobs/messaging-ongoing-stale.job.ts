@@ -6,11 +6,11 @@ import { Process } from 'src/engine/integrations/message-queue/decorators/proces
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import {
-  MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
+    MessageChannelSyncStage,
+    MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessagingChannelSyncStatusService } from 'src/modules/messaging/message-import-manager/services/messaging-channel-sync-status.service';
 import { isSyncStale } from 'src/modules/messaging/message-import-manager/utils/is-sync-stale.util';
 
 export type MessagingOngoingStaleJobData = {

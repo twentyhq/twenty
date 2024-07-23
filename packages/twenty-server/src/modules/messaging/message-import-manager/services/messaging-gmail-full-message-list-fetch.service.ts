@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
-import { gmail_v1 } from 'googleapis';
 import { GaxiosResponse } from 'gaxios';
+import { gmail_v1 } from 'googleapis';
+import { EntityManager } from 'typeorm';
 
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
@@ -13,15 +13,15 @@ import { MessageChannelMessageAssociationRepository } from 'src/modules/messagin
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
+import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
+import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
+import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter';
+import { MessagingChannelSyncStatusService } from 'src/modules/messaging/message-import-manager/services/messaging-channel-sync-status.service';
 import {
   GmailError,
   MessagingErrorHandlingService,
-} from 'src/modules/messaging/common/services/messaging-error-handling.service';
-import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
-import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
-import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
-import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
+} from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
 
 @Injectable()
 export class MessagingGmailFullMessageListFetchService {
