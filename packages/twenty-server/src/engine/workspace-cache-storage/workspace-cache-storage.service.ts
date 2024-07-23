@@ -7,11 +7,10 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 
 @Injectable()
-export class WorkspaceSchemaStorageService {
+export class WorkspaceCacheStorageService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.WorkspaceSchema)
     private readonly workspaceSchemaCache: CacheStorageService,
-
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {}
 
@@ -56,6 +55,21 @@ export class WorkspaceSchemaStorageService {
     return this.workspaceSchemaCache.get<ObjectMetadataEntity[]>(
       `objectMetadataCollection:${workspaceId}`,
     );
+  }
+
+  async getObjectMetadata(
+    workspaceId: string,
+    predicate: (objectMetadata: ObjectMetadataEntity) => boolean,
+  ): Promise<ObjectMetadataEntity | undefined> {
+    const objectMetadataCollection = await this.workspaceSchemaCache.get<
+      ObjectMetadataEntity[]
+    >(`objectMetadataCollection:${workspaceId}`);
+
+    if (!objectMetadataCollection) {
+      return;
+    }
+
+    return objectMetadataCollection.find(predicate);
   }
 
   setTypeDefs(workspaceId: string, typeDefs: string): Promise<void> {

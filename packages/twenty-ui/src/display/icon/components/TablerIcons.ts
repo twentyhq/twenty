@@ -108,6 +108,7 @@ export {
   IconLink,
   IconLinkOff,
   IconList,
+  IconListCheck,
   IconListNumbers,
   IconLock,
   IconLockOpen,
@@ -163,4 +164,5 @@ export {
   IconWand,
   IconWorld,
   IconX,
+  IconMoodSmile,
 } from '@tabler/icons-react';

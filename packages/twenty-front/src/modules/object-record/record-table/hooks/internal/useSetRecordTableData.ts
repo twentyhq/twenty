@@ -24,17 +24,18 @@ export const useSetRecordTableData = ({
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends ObjectRecord>(newEntityArray: T[], totalCount?: number) => {
-        for (const entity of newEntityArray) {
+      <T extends ObjectRecord>(newRecords: T[], totalCount?: number) => {
+        for (const record of newRecords) {
           // TODO: refactor with scoped state later
-          const currentEntity = snapshot
-            .getLoadable(recordStoreFamilyState(entity.id))
+          const currentRecord = snapshot
+            .getLoadable(recordStoreFamilyState(record.id))
             .getValue();
 
-          if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
-            set(recordStoreFamilyState(entity.id), entity);
+          if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
+            set(recordStoreFamilyState(record.id), record);
           }
         }
+
         const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState);
 
         const hasUserSelectedAllRows = getSnapshotValue(
@@ -42,7 +43,7 @@ export const useSetRecordTableData = ({
           hasUserSelectedAllRowsState,
         );
 
-        const entityIds = newEntityArray.map((entity) => entity.id);
+        const entityIds = newRecords.map((entity) => entity.id);
 
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
           set(tableRowIdsState, entityIds);
