@@ -2,16 +2,19 @@ import { Logger } from '@nestjs/common';
 
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { IsNull, Not, QueryRunner } from 'typeorm';
+import { QueryRunner } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { activitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all.view';
+import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
+import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
+import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
 import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
-import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
 
 interface UpdateActivitiesCommandOptions {
   workspaceId?: string;
@@ -64,45 +67,10 @@ export class UpdateActivitiesCommand extends CommandRunner {
       queryRunner: QueryRunner;
       schema: string;
     }): Promise<void> => {
-      const activityRepository =
-        await this.twentyORMManager.getRepositoryForWorkspace(
-          workspaceId,
-          ActivityWorkspaceEntity,
-        );
-
-      // Migrate type field to enum
-      await activityRepository.update(
-        { typeDeprecated: 'Task' },
-        {
-          type: 'TASK',
-        },
-      );
-
-      await activityRepository.update(
-        { typeDeprecated: 'Note' },
-        {
-          type: 'NOTE',
-        },
-      );
-
-      // Converting body from text to rich text
-      await activityRepository.update(
-        { body: '' },
-        {
-          body: null,
-        },
-      );
-
-      // Introducing status and deprecating completedAt
-      await activityRepository.update(
-        { completedAt: Not(IsNull()) },
-        {
-          status: 'DONE',
-        },
-      );
-
-      // Backfill positions
-      const activitiesToUpdate = await activityRepository.find({
+      /*********************** 
+      // Transfer Activities to NOTE + Tasks
+      ***********************/
+      /* const activitiesToUpdate = await activityRepository.find({
         where: [{ position: IsNull() }],
         order: { createdAt: 'ASC' },
       });
@@ -112,9 +80,11 @@ export class UpdateActivitiesCommand extends CommandRunner {
 
         activity.position = i;
         await activityRepository.save(activity);
-      }
+      }*/
 
+      /*********************** 
       // Create missing views
+      ***********************/
       const objectMetadata =
         await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
@@ -130,14 +100,24 @@ export class UpdateActivitiesCommand extends CommandRunner {
         schema;
 
         return acc;
-      }, {});
+      }, {}) as Record<string, ObjectMetadataEntity>;
 
-      const viewDefinitions = [await activitiesAllView(objectMetadataMap)];
+      const viewDefinitions = [
+        await notesAllView(objectMetadataMap),
+        await tasksAllView(objectMetadataMap),
+        await tasksByStatusView(objectMetadataMap),
+      ];
 
-      const createdViews = await queryRunner.manager
+      const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({
+        ...viewDefinition,
+        id: v4(),
+      }));
+
+      await queryRunner.manager
         .createQueryBuilder()
         .insert()
         .into(`${schema}.view`, [
+          'id',
           'name',
           'objectMetadataId',
           'type',
@@ -147,8 +127,9 @@ export class UpdateActivitiesCommand extends CommandRunner {
           'kanbanFieldMetadataId',
         ])
         .values(
-          viewDefinitions.map(
+          viewDefinitionsWithId.map(
             ({
+              id,
               name,
               objectMetadataId,
               type,
@@ -157,6 +138,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
               icon,
               kanbanFieldMetadataId,
             }) => ({
+              id,
               name,
               objectMetadataId,
               type,
@@ -170,13 +152,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
         .returning('*')
         .execute();
 
-      const viewIdMap = createdViews.raw.reduce((acc, view) => {
-        acc[view.name] = view.id;
-
-        return acc;
-      }, {});
-
-      for (const viewDefinition of viewDefinitions) {
+      for (const viewDefinition of viewDefinitionsWithId) {
         if (viewDefinition.fields && viewDefinition.fields.length > 0) {
           await queryRunner.manager
             .createQueryBuilder()
@@ -194,7 +170,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
                 position: field.position,
                 isVisible: field.isVisible,
                 size: field.size,
-                viewId: viewIdMap[viewDefinition.name],
+                viewId: viewDefinition.id,
               })),
             )
             .execute();
@@ -217,17 +193,17 @@ export class UpdateActivitiesCommand extends CommandRunner {
                 displayValue: filter.displayValue,
                 operand: filter.operand,
                 value: filter.value,
-                viewId: viewIdMap[viewDefinition.name],
+                viewId: viewDefinition.id,
               })),
             )
             .execute();
         }
+
+        await this.workspaceCacheVersionService.incrementVersion(workspaceId);
       }
 
-      await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+      return this.sharedBoilerplate(_passedParam, options, updateActivities);
     };
-
-    return this.sharedBoilerplate(_passedParam, options, updateActivities);
   }
 
   // This is an attempt to do something more generic that could be reused in every command
