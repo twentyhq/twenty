@@ -37,7 +37,9 @@ export const useGetAvailableFieldsForKanban = () => {
       navigate(
         `/settings/objects/${getObjectSlug(
           objectMetadataItem,
-        )}/new-field/step-2?fieldType=${FieldMetadataType.Select}`,
+        )}/new-field/step-2?fieldType=${
+          FieldMetadataType.Select
+        }&navigateBack=true`,
       );
     } else {
       navigate(`/settings/objects`);

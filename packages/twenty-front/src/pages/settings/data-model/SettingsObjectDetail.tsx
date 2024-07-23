@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
@@ -33,7 +32,6 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -43,11 +41,6 @@ const StyledDiv = styled.div`
 
 export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const setNavigationMemorizedUrl = useSetRecoilState(
-    navigationMemorizedUrlState,
-  );
-  setNavigationMemorizedUrl(location.pathname);
 
   const { objectSlug = '' } = useParams();
   const { findActiveObjectMetadataItemBySlug } =

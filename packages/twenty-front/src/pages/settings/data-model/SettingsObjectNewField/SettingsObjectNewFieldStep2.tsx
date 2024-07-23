@@ -5,7 +5,6 @@ import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -30,7 +29,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -48,11 +46,11 @@ const StyledSettingsObjectFieldTypeSelect = styled(
 `;
 
 export const SettingsObjectNewFieldStep2 = () => {
-  const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
   const [searchParams] = useSearchParams();
   const fieldType = searchParams.get('fieldType');
+  const navigateBack = searchParams.get('navigateBack');
   const { enqueueSnackBar } = useSnackBar();
 
   const { findActiveObjectMetadataItemBySlug } =
@@ -150,7 +148,11 @@ export const SettingsObjectNewFieldStep2 = () => {
         });
       }
 
-      navigate(navigationMemorizedUrl, { replace: true });
+      if (navigateBack?.toLowerCase() === 'true') {
+        navigate(-1);
+      } else {
+        navigate(`/settings/objects/${objectSlug}`);
+      }
 
       // TODO: fix optimistic update logic
       // Forcing a refetch for now but it's not ideal
@@ -198,7 +200,10 @@ export const SettingsObjectNewFieldStep2 = () => {
                 <SaveAndCancelButtons
                   isSaveDisabled={!canSave}
                   isCancelDisabled={isSubmitting}
-                  onCancel={() => navigate(navigationMemorizedUrl, { replace: true })}
+                  onCancel={() => {
+                    if (navigateBack?.toLowerCase() === 'true') navigate(-1);
+                    else navigate(`/settings/objects/${objectSlug}`);
+                  }}
                   onSave={formConfig.handleSubmit(handleSave)}
                 />
               )}
