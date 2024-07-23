@@ -20,7 +20,7 @@ export const getLabelIdentifierFieldValue = (
     objectNameSingular === CoreObjectNameSingular.NoteTarget ||
     objectNameSingular === CoreObjectNameSingular.TaskTarget
   ) {
-    return record.activity?.title;
+    return record.note?.title ?? record.task?.title;
   }
 
   if (isDefined(labelIdentifierFieldMetadataItem?.name)) {

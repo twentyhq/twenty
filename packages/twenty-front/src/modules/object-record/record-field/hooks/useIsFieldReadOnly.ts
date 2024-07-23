@@ -8,6 +8,7 @@ export const useIsFieldReadOnly = () => {
 
   return (
     fieldDefinition.type === FieldMetadataType.RichText ||
-    fieldDefinition.metadata.fieldName === 'activityTargets'
+    fieldDefinition.metadata.fieldName === 'noteTargets' ||
+    fieldDefinition.metadata.fieldName === 'taskTargets' // TODO: do something cleaner
   );
 };
