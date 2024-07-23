@@ -6,7 +6,6 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   ConnectedAccountKeys,
   ConnectedAccountKeyValueType,
@@ -170,42 +169,36 @@ export class MessagingChannelSyncStatusService {
       workspaceId,
     );
 
-    await this.addToAccountsToReconnect(messageChannelId, workspaceId);
+    await this.addToAccountsToReconnect(messageChannelId);
   }
 
-  private async addToAccountsToReconnect(
-    messageChannelId: string,
-    workspaceId: string,
-  ) {
-    // TODO: Replace this with the ORM
-    const messageChannel = await this.messageChannelRepository.getById(
-      messageChannelId,
-      workspaceId,
-    );
-
-    const connectedAccountId = messageChannel.connectedAccountId;
-
-    const connectedAccountRepository =
-      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
-        'connectedAccount',
+  private async addToAccountsToReconnect(messageChannelId: string) {
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
       );
 
-    const connectedAccount = await connectedAccountRepository.findOne({
+    const messageChannel = await messageChannelRepository.findOne({
       where: {
-        id: connectedAccountId,
+        id: messageChannelId,
       },
       relations: {
-        accountOwner: true,
+        connectedAccount: {
+          accountOwner: true,
+        },
       },
     });
 
-    if (!connectedAccount) {
+    if (!messageChannel) {
       return;
     }
 
+    const userId = messageChannel.connectedAccount.accountOwner.userId;
+    const connectedAccountId = messageChannel.connectedAccount.id;
+
     const accountsToReconnect =
       (await this.keyValuePairService.get({
-        userId: connectedAccount.accountOwner.userId,
+        userId,
         key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
       })) ?? [];
 
@@ -216,7 +209,7 @@ export class MessagingChannelSyncStatusService {
     accountsToReconnect.push(connectedAccountId);
 
     await this.keyValuePairService.set({
-      userId: connectedAccount.accountOwner.userId,
+      userId,
       key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
       value: accountsToReconnect,
     });
