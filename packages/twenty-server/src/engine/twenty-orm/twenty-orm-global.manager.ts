@@ -1,4 +1,4 @@
-import { Injectable, Optional, Type } from '@nestjs/common';
+import { Injectable, Type } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ObjectLiteral, Repository } from 'typeorm';
@@ -6,8 +6,6 @@ import { ObjectLiteral, Repository } from 'typeorm';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -16,11 +14,8 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
-export class TwentyORMManager {
+export class TwentyORMGlobalManager {
   constructor(
-    @Optional()
-    @InjectWorkspaceDatasource()
-    private readonly workspaceDataSource: WorkspaceDataSource | null,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -28,36 +23,6 @@ export class TwentyORMManager {
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
     private readonly entitySchemaFactory: EntitySchemaFactory,
   ) {}
-
-  async getRepository<T extends ObjectLiteral>(
-    objectMetadataName: string,
-  ): Promise<WorkspaceRepository<T>>;
-
-  async getRepository<T extends ObjectLiteral>(
-    entityClass: Type<T>,
-  ): Promise<WorkspaceRepository<T>>;
-
-  async getRepository<T extends ObjectLiteral>(
-    entityClassOrobjectMetadataName: Type<T> | string,
-  ): Promise<WorkspaceRepository<T>> {
-    let objectMetadataName: string;
-
-    if (typeof entityClassOrobjectMetadataName === 'string') {
-      objectMetadataName = entityClassOrobjectMetadataName;
-    } else {
-      objectMetadataName = convertClassNameToObjectMetadataName(
-        entityClassOrobjectMetadataName.name,
-      );
-    }
-
-    if (!this.workspaceDataSource) {
-      throw new Error('Workspace data source not found');
-    }
-
-    const workspaceId = this.workspaceDataSource.getWorkspaceId();
-
-    return this.buildRepositoryForWorkspace<T>(workspaceId, objectMetadataName);
-  }
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
     workspaceId: string,
@@ -86,16 +51,6 @@ export class TwentyORMManager {
     }
 
     return this.buildRepositoryForWorkspace<T>(workspaceId, objectMetadataName);
-  }
-
-  async getWorkspaceDatasource() {
-    if (!this.workspaceDataSource) {
-      throw new Error('Workspace data source not found');
-    }
-
-    const workspaceId = this.workspaceDataSource.getWorkspaceId();
-
-    return this.buildDatasourceForWorkspace(workspaceId);
   }
 
   async buildDatasourceForWorkspace(workspaceId: string) {

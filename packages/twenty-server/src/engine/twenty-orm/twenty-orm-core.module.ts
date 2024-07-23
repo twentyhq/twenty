@@ -25,6 +25,7 @@ import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-sche
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { CacheManager } from 'src/engine/twenty-orm/storage/cache-manager.storage';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { TWENTY_ORM_WORKSPACE_DATASOURCE } from 'src/engine/twenty-orm/twenty-orm.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
@@ -48,12 +49,14 @@ export const workspaceDataSourceCacheInstance =
   providers: [
     ...entitySchemaFactories,
     TwentyORMManager,
+    TwentyORMGlobalManager,
     LoadServiceWithWorkspaceContext,
   ],
   exports: [
     EntitySchemaFactory,
     TwentyORMManager,
     LoadServiceWithWorkspaceContext,
+    TwentyORMGlobalManager,
   ],
 })
 export class TwentyORMCoreModule

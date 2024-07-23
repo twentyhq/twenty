@@ -1,10 +1,10 @@
 import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 interface RelationDetails {
   relationType: RelationType;
@@ -31,7 +31,7 @@ export async function determineRelationDetails(
     toObjectMetadata = await workspaceCacheStorageService.getObjectMetadata(
       workspaceId,
       (objectMetadata) =>
-        objectMetadata.id === relationMetadata.toObjectMetadataId,
+        objectMetadata.id === relationMetadata.fromObjectMetadataId,
     );
   }
 
