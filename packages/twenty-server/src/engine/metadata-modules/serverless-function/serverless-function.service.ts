@@ -24,6 +24,7 @@ import { FileStorageService } from 'src/engine/integrations/file-storage/file-st
 import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function-from-file.input';
+import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -67,15 +68,62 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     return this.serverlessService.execute(functionToExecute, payload);
   }
 
+  async updateOneServerlessFunction(
+    serverlessFunctionInput: UpdateServerlessFunctionInput,
+    workspaceId: string,
+  ) {
+    const existingServerlessFunction =
+      await this.serverlessFunctionRepository.findOne({
+        where: { id: serverlessFunctionInput.id },
+      });
+
+    if (!existingServerlessFunction) {
+      throw new ServerlessFunctionException(
+        `Function does not exist`,
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const codeHasChanged =
+      serverlessFunctionCreateHash(serverlessFunctionInput.code) !==
+      existingServerlessFunction.sourceCodeHash;
+
+    await super.updateOne(existingServerlessFunction.id, {
+      name: serverlessFunctionInput.name,
+      description: serverlessFunctionInput.description,
+      sourceCodeHash: serverlessFunctionCreateHash(
+        serverlessFunctionInput.code,
+      ),
+    });
+
+    if (codeHasChanged) {
+      const fileFolder = join(
+        FileFolder.ServerlessFunction,
+        workspaceId,
+        existingServerlessFunction.id,
+      );
+
+      await this.fileStorageService.write({
+        file: serverlessFunctionInput.code,
+        name: SOURCE_FILE_NAME,
+        mimeType: undefined,
+        folder: fileFolder,
+      });
+
+      await this.serverlessService.build(existingServerlessFunction);
+    }
+
+    return await this.findById(existingServerlessFunction.id);
+  }
+
   async createOneServerlessFunction(
     serverlessFunctionInput: CreateServerlessFunctionFromFileInput,
     code: FileUpload | string,
     workspaceId: string,
   ) {
-    const { name, description } = serverlessFunctionInput;
     const existingServerlessFunction =
       await this.serverlessFunctionRepository.findOne({
-        where: { name, description, workspaceId },
+        where: { name: serverlessFunctionInput.name, workspaceId },
       });
 
     if (existingServerlessFunction) {

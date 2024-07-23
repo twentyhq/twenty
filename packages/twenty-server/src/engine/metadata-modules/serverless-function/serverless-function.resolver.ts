@@ -13,6 +13,7 @@ import { ServerlessFunctionExecutionResultDto } from 'src/engine/metadata-module
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function-from-file.input';
+import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
@@ -20,6 +21,22 @@ export class ServerlessFunctionResolver {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
   ) {}
+
+  @Mutation(() => ServerlessFunctionDto)
+  async updateOneServerlessFunction(
+    @Args('input')
+    input: UpdateServerlessFunctionInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    try {
+      return await this.serverlessFunctionService.updateOneServerlessFunction(
+        input,
+        workspaceId,
+      );
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
 
   @Mutation(() => ServerlessFunctionDto)
   async createOneServerlessFunction(
