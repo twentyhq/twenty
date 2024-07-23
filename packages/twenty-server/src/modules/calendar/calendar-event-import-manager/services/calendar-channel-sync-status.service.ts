@@ -164,10 +164,13 @@ export class CalendarChannelSyncStatusService {
       syncStage: CalendarChannelSyncStage.FAILED,
     });
 
-    await this.addToAccountsToReconnect(calendarChannelId);
+    await this.addToAccountsToReconnect(calendarChannelId, workspaceId);
   }
 
-  private async addToAccountsToReconnect(calendarChannelId: string) {
+  private async addToAccountsToReconnect(
+    calendarChannelId: string,
+    workspaceId: string,
+  ) {
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
@@ -194,6 +197,7 @@ export class CalendarChannelSyncStatusService {
     const accountsToReconnect =
       (await this.keyValuePairService.get({
         userId,
+        workspaceId,
         key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
       })) ?? [];
 
@@ -205,6 +209,7 @@ export class CalendarChannelSyncStatusService {
 
     await this.keyValuePairService.set({
       userId,
+      workspaceId,
       key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
       value: accountsToReconnect,
     });

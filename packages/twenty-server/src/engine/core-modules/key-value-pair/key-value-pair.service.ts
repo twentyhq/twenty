@@ -67,4 +67,20 @@ export class KeyValuePairService<TYPE> {
       indexPredicate,
     });
   }
+
+  async delete<K extends keyof TYPE>({
+    userId,
+    workspaceId,
+    key,
+  }: {
+    userId?: string;
+    workspaceId?: string;
+    key: K;
+  }) {
+    await this.keyValuePairRepository.delete({
+      userId,
+      workspaceId,
+      key: key as string,
+    });
+  }
 }

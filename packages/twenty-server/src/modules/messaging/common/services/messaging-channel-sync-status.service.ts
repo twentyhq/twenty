@@ -169,10 +169,13 @@ export class MessagingChannelSyncStatusService {
       workspaceId,
     );
 
-    await this.addToAccountsToReconnect(messageChannelId);
+    await this.addToAccountsToReconnect(messageChannelId, workspaceId);
   }
 
-  private async addToAccountsToReconnect(messageChannelId: string) {
+  private async addToAccountsToReconnect(
+    messageChannelId: string,
+    workspaceId: string,
+  ) {
     const messageChannelRepository =
       await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
         'messageChannel',
@@ -199,6 +202,7 @@ export class MessagingChannelSyncStatusService {
     const accountsToReconnect =
       (await this.keyValuePairService.get({
         userId,
+        workspaceId,
         key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
       })) ?? [];
 
@@ -210,6 +214,7 @@ export class MessagingChannelSyncStatusService {
 
     await this.keyValuePairService.set({
       userId,
+      workspaceId,
       key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
       value: accountsToReconnect,
     });
