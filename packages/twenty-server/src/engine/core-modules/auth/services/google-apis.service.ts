@@ -134,8 +134,8 @@ export class GoogleAPIsService {
           );
 
           const workspaceMemberRepository =
-            await this.twentyORMManager.getRepository(
-              WorkspaceMemberWorkspaceEntity,
+            await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+              'workspaceMember',
             );
 
           const workspaceMember = await workspaceMemberRepository.findOneOrFail(

@@ -21,9 +21,9 @@ export class ConnectedAccountListener {
     const workspaceMemberId = payload.properties.before.accountOwnerId;
     const workspaceId = payload.workspaceId;
     const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
-        WorkspaceMemberWorkspaceEntity,
+        'workspaceMember',
       );
     const workspaceMember = await workspaceMemberRepository.findOneOrFail({
       where: { id: workspaceMemberId },
