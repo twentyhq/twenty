@@ -56,7 +56,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.linkedinLink,
-    type: FieldMetadataType.LINK,
+    type: FieldMetadataType.LINKS,
     label: 'Linkedin',
     description: 'Contact’s Linkedin account',
     icon: 'IconBrandLinkedin',
@@ -66,7 +66,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.xLink,
-    type: FieldMetadataType.LINK,
+    type: FieldMetadataType.LINKS,
     label: 'X',
     description: 'Contact’s X/Twitter account',
     icon: 'IconBrandX',
