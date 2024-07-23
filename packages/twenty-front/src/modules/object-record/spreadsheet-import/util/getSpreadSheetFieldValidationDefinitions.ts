@@ -28,7 +28,7 @@ export const getSpreadSheetFieldValidationDefinitions = (
               typeof lastName === 'string'
             );
           },
-          errorMessage: fieldName + ' must be a number',
+          errorMessage: fieldName + ' must be a full name',
           level: 'error',
         },
       ];

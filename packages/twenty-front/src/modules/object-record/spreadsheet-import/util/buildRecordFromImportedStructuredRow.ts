@@ -5,11 +5,8 @@ import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { castToString } from '~/utils/castToString';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
-
-const castToString = (value: any) => {
-  return (value as string) ?? '';
-};
 
 export const buildRecordFromImportedStructuredRow = (
   importedStructuredRow: ImportedStructuredRow<any>,

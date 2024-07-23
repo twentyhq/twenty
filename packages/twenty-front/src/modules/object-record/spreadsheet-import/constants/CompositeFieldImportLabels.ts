@@ -3,18 +3,18 @@ import {
   FieldCurrencyValue,
   FieldFullNameValue,
 } from '@/object-record/record-field/types/FieldMetadata';
-import { CompositeTypeLabels } from '@/object-record/spreadsheet-import/types/CompositeFieldLabels';
+import { CompositeFieldLabels } from '@/object-record/spreadsheet-import/types/CompositeFieldLabels';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const COMPOSITE_FIELD_IMPORT_LABELS = {
   [FieldMetadataType.FullName]: {
     firstNameLabel: 'First Name',
     lastNameLabel: 'Last Name',
-  } satisfies CompositeTypeLabels<FieldFullNameValue>,
+  } satisfies CompositeFieldLabels<FieldFullNameValue>,
   [FieldMetadataType.Currency]: {
     currencyCodeLabel: 'Currency Code',
     amountMicrosLabel: 'Amount',
-  } satisfies CompositeTypeLabels<FieldCurrencyValue>,
+  } satisfies CompositeFieldLabels<FieldCurrencyValue>,
   [FieldMetadataType.Address]: {
     addressStreet1Label: 'Address 1',
     addressStreet2Label: 'Address 2',
@@ -24,5 +24,5 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
     addressCountryLabel: 'Country',
     addressLatLabel: 'Latitude',
     addressLngLabel: 'Longitude',
-  } satisfies CompositeTypeLabels<FieldAddressValue>,
+  } satisfies CompositeFieldLabels<FieldAddressValue>,
 };

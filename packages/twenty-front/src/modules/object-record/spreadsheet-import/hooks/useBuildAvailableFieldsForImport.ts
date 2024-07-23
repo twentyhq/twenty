@@ -69,7 +69,6 @@ export const useBuildAvailableFieldsForImport = () => {
           fieldType: {
             type: 'input',
           },
-          // TODO: Should we add a validation function for the Currency code type ?
           fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
             fieldMetadataItem.type,
             `${currencyCodeLabel} (${fieldMetadataItem.label})`,

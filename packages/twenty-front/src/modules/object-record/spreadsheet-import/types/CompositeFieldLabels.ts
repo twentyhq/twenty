@@ -1,5 +1,5 @@
-import { KeyOfCompositeType } from '@/object-record/spreadsheet-import/types/KeyOfCompositeType';
+import { KeyOfCompositeField } from '@/object-record/spreadsheet-import/types/KeyOfCompositeField';
 
-export type CompositeTypeLabels<T> = {
-  [key in `${KeyOfCompositeType<T>}Label`]: string;
+export type CompositeFieldLabels<T> = {
+  [key in `${KeyOfCompositeField<T>}Label`]: string;
 };

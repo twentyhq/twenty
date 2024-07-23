@@ -5,13 +5,13 @@ import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/
 import { StepState } from '@/spreadsheet-import/steps/components/UploadFlow';
 import { ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
-export type SpreadsheetImportDialogOptions<Key extends string> = {
+export type SpreadsheetImportDialogOptions<FieldNames extends string> = {
   // Is modal visible.
   isOpen: boolean;
   // callback when RSI is closed before final submit
   onClose: () => void;
   // Field description for requested data
-  fields: Fields<Key>;
+  fields: Fields<FieldNames>;
   // Runs after file upload step, receives and returns raw sheet data
   uploadStepHook?: (importedRows: ImportedRow[]) => Promise<ImportedRow[]>;
   // Runs after header selection step, receives and returns raw sheet data
@@ -21,17 +21,17 @@ export type SpreadsheetImportDialogOptions<Key extends string> = {
   ) => Promise<{ headerRow: ImportedRow; importedRows: ImportedRow[] }>;
   // Runs once before validation step, used for data mutations and if you want to change how columns were matched
   matchColumnsStepHook?: (
-    importedStructuredRows: ImportedStructuredRow<Key>[],
+    importedStructuredRows: ImportedStructuredRow<FieldNames>[],
     importedRows: ImportedRow[],
-    columns: Columns<Key>,
-  ) => Promise<ImportedStructuredRow<Key>[]>;
+    columns: Columns<FieldNames>,
+  ) => Promise<ImportedStructuredRow<FieldNames>[]>;
   // Runs after column matching and on entry change
-  rowHook?: RowHook<Key>;
+  rowHook?: RowHook<FieldNames>;
   // Runs after column matching and on entry change
-  tableHook?: TableHook<Key>;
+  tableHook?: TableHook<FieldNames>;
   // Function called after user finishes the flow
   onSubmit: (
-    validationResult: ImportValidationResult<Key>,
+    validationResult: ImportValidationResult<FieldNames>,
     file: File,
   ) => Promise<void>;
   // Allows submitting with errors. Default: true
