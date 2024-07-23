@@ -5,13 +5,13 @@ import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/
 import { StepState } from '@/spreadsheet-import/steps/components/UploadFlow';
 import { Meta } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
-export type SpreadsheetOptions<Keys extends string> = {
+export type SpreadsheetImportDialogOptions<Key extends string> = {
   // Is modal visible.
   isOpen: boolean;
   // callback when RSI is closed before final submit
   onClose: () => void;
   // Field description for requested data
-  fields: Fields<Keys>;
+  fields: Fields<Key>;
   // Runs after file upload step, receives and returns raw sheet data
   uploadStepHook?: (data: RawData[]) => Promise<RawData[]>;
   // Runs after header selection step, receives and returns raw sheet data
@@ -21,16 +21,16 @@ export type SpreadsheetOptions<Keys extends string> = {
   ) => Promise<{ headerValues: RawData; data: RawData[] }>;
   // Runs once before validation step, used for data mutations and if you want to change how columns were matched
   matchColumnsStepHook?: (
-    table: Data<Keys>[],
+    table: Data<Key>[],
     rawData: RawData[],
-    columns: Columns<Keys>,
-  ) => Promise<Data<Keys>[]>;
+    columns: Columns<Key>,
+  ) => Promise<Data<Key>[]>;
   // Runs after column matching and on entry change
-  rowHook?: RowHook<Keys>;
+  rowHook?: RowHook<Key>;
   // Runs after column matching and on entry change
-  tableHook?: TableHook<Keys>;
+  tableHook?: TableHook<Key>;
   // Function called after user finishes the flow
-  onSubmit: (data: Result<Keys>, file: File) => Promise<void>;
+  onSubmit: (data: Result<Key>, file: File) => Promise<void>;
   // Allows submitting with errors. Default: true
   allowInvalidSubmit?: boolean;
   // Theme configuration passed to underlying Chakra-UI

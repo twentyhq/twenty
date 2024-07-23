@@ -19,7 +19,7 @@ import {
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
-import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
+import { useOpenObjectRecordsSpreasheetImportDialog } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -114,8 +114,9 @@ export const RecordIndexOptionsDropdownContent = ({
       ? handleBoardFieldVisibilityChange
       : handleColumnVisibilityChange;
 
-  const { openRecordSpreadsheetImport } =
-    useSpreadsheetRecordImport(objectNameSingular);
+  const {
+    openObjectRecordsSpreasheetImportDialog: openRecordSpreadsheetImport,
+  } = useOpenObjectRecordsSpreasheetImportDialog(objectNameSingular);
 
   const { progress, download } = useExportTableData({
     delayMs: 100,

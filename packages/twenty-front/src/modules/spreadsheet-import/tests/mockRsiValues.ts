@@ -1,6 +1,9 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
 import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Fields, SpreadsheetOptions } from '@/spreadsheet-import/types';
+import {
+  Fields,
+  SpreadsheetImportDialogOptions,
+} from '@/spreadsheet-import/types';
 import { sleep } from '~/utils/sleep';
 
 const fields = [
@@ -117,7 +120,7 @@ export const importedColums: Columns<string> = [
 ];
 
 const mockComponentBehaviourForTypes = <T extends string>(
-  props: SpreadsheetOptions<T>,
+  props: SpreadsheetImportDialogOptions<T>,
 ) => props;
 
 export const mockRsiValues = mockComponentBehaviourForTypes({

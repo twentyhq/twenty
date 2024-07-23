@@ -1,7 +1,7 @@
 import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/Providers';
 import { Steps } from '@/spreadsheet-import/steps/components/Steps';
-import { SpreadsheetOptions as SpreadsheetImportProps } from '@/spreadsheet-import/types';
+import { SpreadsheetImportDialogOptions as SpreadsheetImportProps } from '@/spreadsheet-import/types';
 
 export const defaultSpreadsheetImportProps: Partial<
   SpreadsheetImportProps<any>

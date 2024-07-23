@@ -4,14 +4,14 @@ import { RecoilRoot, useRecoilState } from 'recoil';
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportState';
 import { StepType } from '@/spreadsheet-import/steps/components/UploadFlow';
-import { RawData, SpreadsheetOptions } from '@/spreadsheet-import/types';
+import { RawData, SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>{children}</RecoilRoot>
 );
 type SpreadsheetKey = 'spreadsheet_key';
 
-export const mockedSpreadsheetOptions: SpreadsheetOptions<SpreadsheetKey> = {
+export const mockedSpreadsheetOptions: SpreadsheetImportDialogOptions<SpreadsheetKey> = {
   isOpen: true,
   onClose: () => {},
   fields: [],

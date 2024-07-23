@@ -4,28 +4,34 @@ import {
   buildFieldMapping,
   useBuildAvailableFieldsArray,
 } from '@/object-record/spreadsheet-import/util/fieldsUtil';
-import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
-import { SpreadsheetOptions } from '@/spreadsheet-import/types';
+import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
+import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
-  const { openSpreadsheetImport } = useOpenSpreadsheetImportDialog<any>();
+export const useOpenObjectRecordsSpreasheetImportDialog = (
+  objectNameSingular: string,
+) => {
+  const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog<any>();
   const { enqueueSnackBar } = useSnackBar();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
   const fields = objectMetadataItem.fields
     .filter(
-      (x) =>
-        x.isActive &&
-        (!x.isSystem || x.name === 'id') &&
-        x.name !== 'createdAt' &&
-        (x.type !== FieldMetadataType.Relation || x.toRelationMetadata),
+      (fieldMetadataItem) =>
+        fieldMetadataItem.isActive &&
+        (!fieldMetadataItem.isSystem || fieldMetadataItem.name === 'id') &&
+        fieldMetadataItem.name !== 'createdAt' &&
+        (fieldMetadataItem.type !== FieldMetadataType.Relation ||
+          fieldMetadataItem.toRelationMetadata),
     )
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
+      fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
+    );
 
   const availableFields = useBuildAvailableFieldsArray(fields);
 
@@ -33,10 +39,13 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
     objectNameSingular,
   });
 
-  const openRecordSpreadsheetImport = (
-    options?: Omit<SpreadsheetOptions<any>, 'fields' | 'isOpen' | 'onClose'>,
+  const openObjectRecordsSpreasheetImportDialog = (
+    options?: Omit<
+      SpreadsheetImportDialogOptions<any>,
+      'fields' | 'isOpen' | 'onClose'
+    >,
   ) => {
-    openSpreadsheetImport({
+    openSpreadsheetImportDialog({
       ...options,
       onSubmit: async (data) => {
         const createInputs = data.validData.map((record) => {
@@ -44,8 +53,10 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
             record,
             fields,
           );
+
           return fieldMapping;
         });
+
         try {
           await createManyRecords(createInputs, true);
         } catch (error: any) {
@@ -58,5 +69,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
     });
   };
 
-  return { openRecordSpreadsheetImport };
+  return {
+    openObjectRecordsSpreasheetImportDialog,
+  };
 };

@@ -5,10 +5,10 @@ import { ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportState';
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
-import { useSpreadsheetRecordImport } from '../useSpreadsheetRecordImport';
+import { useOpenObjectRecordsSpreasheetImportDialog } from '../useSpreadsheetRecordImport';
 
 const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
 
@@ -108,7 +108,9 @@ describe('useSpreadsheetCompanyImport', () => {
         const spreadsheetImportDialog = useRecoilValue(
           spreadsheetImportDialogState,
         );
-        const { openRecordSpreadsheetImport } = useSpreadsheetRecordImport(
+        const {
+          openObjectRecordsSpreasheetImportDialog: openRecordSpreadsheetImport,
+        } = useOpenObjectRecordsSpreasheetImportDialog(
           CoreObjectNameSingular.Company,
         );
         return {
