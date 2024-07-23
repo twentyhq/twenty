@@ -136,7 +136,6 @@ export const useRecordActionBar = ({
               accent: 'danger',
               onClick: () => {
                 setIsDeleteRecordsModalOpen(true);
-                handleDeleteClick();
               },
               ConfirmationModal: (
                 <ConfirmationModal

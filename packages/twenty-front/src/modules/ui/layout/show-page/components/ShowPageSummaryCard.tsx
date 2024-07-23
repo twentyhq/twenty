@@ -52,6 +52,8 @@ const StyledTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   justify-content: center;
+
+  width: 100%;
 `;
 
 const StyledAvatarWrapper = styled.div`
