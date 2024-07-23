@@ -1,11 +1,8 @@
 import { json2csv } from 'json-2-csv';
 import { useMemo } from 'react';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import {
-  FieldCurrencyValue,
-  FieldMetadata,
-} from '@/object-record/record-field/types/FieldMetadata';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { useProcessRecordsForCSVExport } from '@/object-record/record-index/options/hooks/useProcessRecordsForCSVExport';
 import {
   useTableData,
   UseTableDataOptions,
@@ -13,7 +10,6 @@ import {
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from '~/generated/graphql';
-import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -83,7 +79,6 @@ export const generateCsv: GenerateExport = ({
       return hasSubFields;
     });
 
-    // TODO: use a function to convert nested fields like currency to something ok like amountMicros
     if (isDefined(fieldsWithSubFields)) {
       const nestedFieldsWithoutTypename = Object.keys(
         (fieldsWithSubFields as any)[column.field],
@@ -149,39 +144,17 @@ export const useExportTableData = ({
   pageSize = 30,
   recordIndexId,
 }: UseExportTableDataOptions) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { processRecordsForCSVExport } =
+    useProcessRecordsForCSVExport(objectNameSingular);
 
   const downloadCsv = useMemo(
     () =>
       (records: ObjectRecord[], columns: ColumnDefinition<FieldMetadata>[]) => {
-        const recordsProcessedForExport = records.map((record) => {
-          const currencyFields = objectMetadataItem.fields.filter(
-            (field) => field.type === FieldMetadataType.Currency,
-          );
-
-          const processedRecord = {
-            ...record,
-          };
-
-          for (const currencyField of currencyFields) {
-            if (isDefined(record[currencyField.name])) {
-              processedRecord[currencyField.name] = {
-                amountMicros: convertCurrencyMicrosToCurrencyAmount(
-                  record[currencyField.name].amountMicros,
-                ),
-                currencyCode: record[currencyField.name].currencyCode,
-              } satisfies FieldCurrencyValue;
-            }
-          }
-
-          return processedRecord;
-        });
+        const recordsProcessedForExport = processRecordsForCSVExport(records);
 
         csvDownloader(filename, { rows: recordsProcessedForExport, columns });
       },
-    [filename, objectMetadataItem],
+    [filename, processRecordsForCSVExport],
   );
 
   const { getTableData: download, progress } = useTableData({
