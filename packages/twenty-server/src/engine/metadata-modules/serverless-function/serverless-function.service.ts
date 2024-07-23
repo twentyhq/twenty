@@ -68,13 +68,33 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     return this.serverlessService.execute(functionToExecute, payload);
   }
 
+  async deleteOneServerlessFunction(id: string, workspaceId: string) {
+    const existingServerlessFunction =
+      await this.serverlessFunctionRepository.findOne({
+        where: { id, workspaceId },
+      });
+
+    if (!existingServerlessFunction) {
+      throw new ServerlessFunctionException(
+        `Function does not exist`,
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    await super.deleteOne(id);
+
+    await this.serverlessService.delete(existingServerlessFunction);
+
+    return existingServerlessFunction;
+  }
+
   async updateOneServerlessFunction(
     serverlessFunctionInput: UpdateServerlessFunctionInput,
     workspaceId: string,
   ) {
     const existingServerlessFunction =
       await this.serverlessFunctionRepository.findOne({
-        where: { id: serverlessFunctionInput.id },
+        where: { id: serverlessFunctionInput.id, workspaceId },
       });
 
     if (!existingServerlessFunction) {

@@ -28,6 +28,12 @@ export class LocalDriver
     this.fileStorageService = options.fileStorageService;
   }
 
+  async delete(serverlessFunction: ServerlessFunctionEntity) {
+    await this.fileStorageService.delete({
+      folderPath: this.getFolderPath(serverlessFunction),
+    });
+  }
+
   async build(serverlessFunction: ServerlessFunctionEntity) {
     const javascriptCode = await this.getCompiledCode(
       serverlessFunction,

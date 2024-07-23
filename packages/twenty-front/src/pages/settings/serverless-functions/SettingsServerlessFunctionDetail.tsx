@@ -166,6 +166,7 @@ export const SettingsServerlessFunctionDetail = () => {
           <SettingsServerlessFunctionSettingsTab
             formValues={formValues}
             setFormValues={setFormValues}
+            serverlessFunctionId={serverlessFunctionId}
           />
         );
       default:

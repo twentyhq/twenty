@@ -8,8 +8,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { useCreateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useCreateOneServerlessFunction';
 import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
-import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { useServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
+import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functions/components/SettingsServerlessFunctionNewForm';
 
 export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ export const SettingsServerlessFunctionsNew = () => {
             onSave={handleSave}
           />
         </SettingsHeaderContainer>
-        <SettingsServerlessFunctionSettingsTab
+        <SettingsServerlessFunctionNewForm
           formValues={formValues}
           setFormValues={setFormValues}
         />

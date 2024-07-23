@@ -1,53 +1,65 @@
 import { H2Title } from 'twenty-ui';
 import { Section } from '@/ui/layout/section/components/Section';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { TextArea } from '@/ui/input/components/TextArea';
-import styled from '@emotion/styled';
 import {
   ServerlessFunctionFormValues,
   SetServerlessFunctionFormValues,
 } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
-
-const StyledInputsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
-`;
+import { Button } from '@/ui/input/button/components/Button';
+import { useState } from 'react';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functions/components/SettingsServerlessFunctionNewForm';
+import { useDeleteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useDeleteOneServerlessFunction';
+import { useNavigate } from 'react-router-dom';
 
 export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
   setFormValues,
+  serverlessFunctionId,
 }: {
   formValues: ServerlessFunctionFormValues;
   setFormValues: SetServerlessFunctionFormValues;
+  serverlessFunctionId: string;
 }) => {
+  const navigate = useNavigate();
+  const [isDeleteFunctionModalOpen, setIsDeleteFunctionModalOpen] =
+    useState(false);
+  const { deleteOneServerlessFunction } = useDeleteOneServerlessFunction();
+
+  const deleteFunction = async () => {
+    await deleteOneServerlessFunction({ id: serverlessFunctionId });
+    navigate('/settings/functions');
+  };
   return (
-    <Section>
-      <H2Title title="About" description="Name and set your function" />
-      <StyledInputsContainer>
-        <TextInput
-          placeholder="Name"
-          fullWidth
-          value={formValues.name}
-          onChange={(value) => {
-            setFormValues((prevState) => ({
-              ...prevState,
-              name: value,
-            }));
-          }}
+    <>
+      <SettingsServerlessFunctionNewForm
+        formValues={formValues}
+        setFormValues={setFormValues}
+      />
+      <Section>
+        <H2Title title="Danger zone" description="Delete this function" />
+        <Button
+          accent="danger"
+          onClick={() => setIsDeleteFunctionModalOpen(true)}
+          variant="secondary"
+          size="small"
+          title="Delete function"
         />
-        <TextArea
-          placeholder="Description"
-          minRows={4}
-          value={formValues.description}
-          onChange={(value) => {
-            setFormValues((prevState) => ({
-              ...prevState,
-              description: value,
-            }));
-          }}
-        />
-      </StyledInputsContainer>
-    </Section>
+      </Section>
+      <ConfirmationModal
+        confirmationValue={formValues.name}
+        confirmationPlaceholder={formValues.name ?? ''}
+        isOpen={isDeleteFunctionModalOpen}
+        setIsOpen={setIsDeleteFunctionModalOpen}
+        title="Function Deletion"
+        subtitle={
+          <>
+            This action cannot be undone. This will permanently delete your
+            function. <br /> Please type in the function name to confirm.
+          </>
+        }
+        onConfirmClick={deleteFunction}
+        deleteButtonText="Delete function"
+      />
+    </>
   );
 };

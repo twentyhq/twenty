@@ -282,6 +282,11 @@ export type DeleteOneRelationInput = {
   id: Scalars['UUID']['input'];
 };
 
+export type DeleteServerlessFunctionInput = {
+  /** The id of the function. */
+  id: Scalars['ID']['input'];
+};
+
 /** Schema update on a table */
 export enum DistantTableUpdate {
   ColumnsAdded = 'COLUMNS_ADDED',
@@ -423,6 +428,7 @@ export type Mutation = {
   deleteOneObject: Object;
   deleteOneRelation: Relation;
   deleteOneRemoteServer: RemoteServer;
+  deleteOneServerlessFunction: ServerlessFunction;
   deleteUser: User;
   disablePostgresProxy: PostgresCredentials;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -539,6 +545,11 @@ export type MutationDeleteOneRelationArgs = {
 
 export type MutationDeleteOneRemoteServerArgs = {
   input: RemoteServerIdInput;
+};
+
+
+export type MutationDeleteOneServerlessFunctionArgs = {
+  input: DeleteServerlessFunctionInput;
 };
 
 

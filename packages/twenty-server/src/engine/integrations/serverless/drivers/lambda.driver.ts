@@ -7,6 +7,7 @@ import {
   InvokeCommand,
   GetFunctionCommand,
   UpdateFunctionCodeCommand,
+  DeleteFunctionCommand,
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
@@ -43,6 +44,18 @@ export class LambdaDriver
     this.lambdaRole = role;
     this.fileStorageService = options.fileStorageService;
     this.buildDirectoryManagerService = options.buildDirectoryManagerService;
+  }
+
+  async delete(serverlessFunction: ServerlessFunctionEntity) {
+    try {
+      const deleteFunctionCommand = new DeleteFunctionCommand({
+        FunctionName: serverlessFunction.id,
+      });
+
+      await this.lambdaClient.send(deleteFunctionCommand);
+    } catch {
+      return;
+    }
   }
 
   async build(serverlessFunction: ServerlessFunctionEntity) {
