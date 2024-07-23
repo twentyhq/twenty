@@ -46,6 +46,7 @@ export const opportunityPrefillDemoData = async (
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',
+      'name',
       'amountAmountMicros',
       'amountCurrencyCode',
       'closeDate',
