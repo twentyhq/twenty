@@ -56,47 +56,7 @@ export class TwentyORMManager {
 
     const workspaceId = this.workspaceDataSource.getWorkspaceId();
 
-    let objectMetadataCollection =
-      await this.workspaceCacheStorageService.getObjectMetadataCollection(
-        workspaceId,
-      );
-
-    if (!objectMetadataCollection) {
-      objectMetadataCollection = await this.objectMetadataRepository.find({
-        where: { workspaceId },
-        relations: [
-          'fields.object',
-          'fields',
-          'fields.fromRelationMetadata',
-          'fields.toRelationMetadata',
-          'fields.fromRelationMetadata.toObjectMetadata',
-        ],
-      });
-
-      await this.workspaceCacheStorageService.setObjectMetadataCollection(
-        workspaceId,
-        objectMetadataCollection,
-      );
-    }
-
-    const objectMetadata = objectMetadataCollection.find(
-      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
-    );
-
-    if (!objectMetadata) {
-      throw new Error('Object metadata not found');
-    }
-
-    const entitySchema = await this.entitySchemaFactory.create(
-      workspaceId,
-      objectMetadata,
-    );
-
-    if (!entitySchema) {
-      throw new Error('Entity schema not found');
-    }
-
-    return this.workspaceDataSource.getRepository<T>(entitySchema);
+    return this.buildRepositoryForWorkspace<T>(workspaceId, objectMetadataName);
   }
 
   async getRepositoryForWorkspace<T extends ObjectLiteral>(
@@ -115,9 +75,6 @@ export class TwentyORMManager {
   ): Promise<
     WorkspaceRepository<T> | WorkspaceRepository<CustomWorkspaceEntity>
   > {
-    const cacheVersion =
-      await this.workspaceCacheVersionService.getVersion(workspaceId);
-
     let objectMetadataName: string;
 
     if (typeof entityClassOrobjectMetadataName === 'string') {
@@ -127,6 +84,23 @@ export class TwentyORMManager {
         entityClassOrobjectMetadataName.name,
       );
     }
+
+    return this.buildRepositoryForWorkspace<T>(workspaceId, objectMetadataName);
+  }
+
+  async getWorkspaceDatasource() {
+    if (!this.workspaceDataSource) {
+      throw new Error('Workspace data source not found');
+    }
+
+    const workspaceId = this.workspaceDataSource.getWorkspaceId();
+
+    return this.buildDatasourceForWorkspace(workspaceId);
+  }
+
+  async buildDatasourceForWorkspace(workspaceId: string) {
+    const cacheVersion =
+      await this.workspaceCacheVersionService.getVersion(workspaceId);
 
     let objectMetadataCollection =
       await this.workspaceCacheStorageService.getObjectMetadataCollection(
@@ -157,7 +131,7 @@ export class TwentyORMManager {
       ),
     );
 
-    const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
+    return await workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${cacheVersion}`,
       async () => {
         const workspaceDataSource =
@@ -167,28 +141,19 @@ export class TwentyORMManager {
       },
       (dataSource) => dataSource.destroy(),
     );
+  }
 
-    const objectMetadata = objectMetadataCollection.find(
-      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
-    );
-
-    if (!objectMetadata) {
-      throw new Error('Object metadata not found');
-    }
-
-    const entitySchema = await this.entitySchemaFactory.create(
-      workspaceId,
-      objectMetadata,
-    );
+  async buildRepositoryForWorkspace<T extends ObjectLiteral>(
+    workspaceId: string,
+    objectMetadataName: string,
+  ) {
+    const workspaceDataSource =
+      await this.buildDatasourceForWorkspace(workspaceId);
 
     if (!workspaceDataSource) {
       throw new Error('Workspace data source not found');
     }
 
-    if (!entitySchema) {
-      throw new Error('Entity schema not found');
-    }
-
-    return workspaceDataSource.getRepository<T>(entitySchema);
+    return workspaceDataSource.getRepository<T>(objectMetadataName);
   }
 }

@@ -218,6 +218,7 @@ export const SettingsDataModelFieldSelectForm = ({
                   <>
                     {options.map((option, index) => (
                       <DraggableItem
+                        isInsideScrollableContainer
                         key={option.id}
                         draggableId={option.id}
                         index={index}
