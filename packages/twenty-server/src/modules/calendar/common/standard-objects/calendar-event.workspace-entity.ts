@@ -137,7 +137,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceLink,
-    type: FieldMetadataType.LINK,
+    type: FieldMetadataType.LINKS,
     label: 'Meet Link',
     description: 'Meet Link',
     icon: 'IconLink',
