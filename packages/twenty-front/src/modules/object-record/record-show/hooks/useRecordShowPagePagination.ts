@@ -1,4 +1,3 @@
-/* eslint-disable @nx/workspace-no-navigate-prefer-link */
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
