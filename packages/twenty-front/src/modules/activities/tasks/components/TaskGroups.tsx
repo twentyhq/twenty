@@ -18,7 +18,9 @@ import {
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
+import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import groupBy from 'lodash.groupby';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
@@ -34,19 +36,10 @@ type TaskGroupsProps = {
 };
 
 export const TaskGroups = ({
-  filterDropdownId,
   targetableObjects,
   showAddButton,
 }: TaskGroupsProps) => {
-  const {
-    todayOrPreviousTasks,
-    upcomingTasks,
-    unscheduledTasks,
-    completedTasks,
-    incompleteTasksLoading,
-    completeTasksLoading,
-  } = useTasks({
-    filterDropdownId: filterDropdownId,
+  const { tasks, tasksLoading } = useTasks({
     targetableObjects: targetableObjects ?? [],
   });
 
@@ -58,15 +51,12 @@ export const TaskGroups = ({
   const activeTabId = useRecoilValue(activeTabIdState);
 
   const isLoading =
-    (activeTabId !== 'done' && incompleteTasksLoading) ||
-    (activeTabId === 'done' && completeTasksLoading);
+    (activeTabId !== 'done' && tasksLoading) ||
+    (activeTabId === 'done' && tasksLoading);
 
   const isTasksEmpty =
-    (activeTabId !== 'done' &&
-      todayOrPreviousTasks?.length === 0 &&
-      upcomingTasks?.length === 0 &&
-      unscheduledTasks?.length === 0) ||
-    (activeTabId === 'done' && completedTasks?.length === 0);
+    (activeTabId !== 'done' && tasks?.length === 0) ||
+    (activeTabId === 'done' && tasks?.length === 0);
 
   if (isLoading && isTasksEmpty) {
     return <SkeletonLoader />;
@@ -103,48 +93,19 @@ export const TaskGroups = ({
 
   return (
     <StyledContainer>
-      {activeTabId === 'done' ? (
-        <TaskList
-          tasks={completedTasks ?? []}
-          button={
-            showAddButton && (
-              <AddTaskButton activityTargetableObjects={targetableObjects} />
-            )
-          }
-        />
-      ) : (
-        <>
+      {Object.entries(groupBy(tasks, ({ status }) => status)).map(
+        ([status, tasksByStatus]: [string, Task[]]) => (
           <TaskList
-            title="Today"
-            tasks={todayOrPreviousTasks ?? []}
+            key={status}
+            title={status}
+            tasks={tasksByStatus}
             button={
               showAddButton && (
                 <AddTaskButton activityTargetableObjects={targetableObjects} />
               )
             }
           />
-          <TaskList
-            title="Upcoming"
-            tasks={upcomingTasks ?? []}
-            button={
-              showAddButton &&
-              !todayOrPreviousTasks?.length && (
-                <AddTaskButton activityTargetableObjects={targetableObjects} />
-              )
-            }
-          />
-          <TaskList
-            title="Unscheduled"
-            tasks={unscheduledTasks ?? []}
-            button={
-              showAddButton &&
-              !todayOrPreviousTasks?.length &&
-              !upcomingTasks?.length && (
-                <AddTaskButton activityTargetableObjects={targetableObjects} />
-              )
-            }
-          />
-        </>
+        ),
       )}
     </StyledContainer>
   );

@@ -70,15 +70,6 @@ export const tasksByStatusView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.body
-          ],
-        position: 5,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
             BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
           ],
         position: 6,
