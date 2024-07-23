@@ -4,7 +4,6 @@ import { ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
@@ -32,13 +31,11 @@ describe('useOpenCreateActivityDrawer', () => {
           objectNameSingular: CoreObjectNameSingular.Note,
         });
         const viewableRecordId = useRecoilValue(viewableRecordIdState);
-        const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
         const setObjectMetadataItems = useSetRecoilState(
           objectMetadataItemsState,
         );
         return {
           openActivityRightDrawer,
-          activityIdInDrawer,
           viewableRecordId,
           setObjectMetadataItems,
         };
@@ -52,14 +49,12 @@ describe('useOpenCreateActivityDrawer', () => {
       result.current.setObjectMetadataItems(mockObjectMetadataItems);
     });
 
-    expect(result.current.activityIdInDrawer).toBeNull();
     expect(result.current.viewableRecordId).toBeNull();
     await act(async () => {
       result.current.openActivityRightDrawer({
         targetableObjects: [],
       });
     });
-    expect(result.current.activityIdInDrawer).toBe(mockUUID);
     expect(result.current.viewableRecordId).toBe(mockUUID);
   });
 });

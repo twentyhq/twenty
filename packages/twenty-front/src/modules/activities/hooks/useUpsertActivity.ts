@@ -1,8 +1,7 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
 import { useRefreshShowPageFindManyActivitiesQueries } from '@/activities/hooks/useRefreshShowPageFindManyActivitiesQueries';
-import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { objectShowPageTargetableObjectState } from '@/activities/timelineActivities/states/objectShowPageTargetableObjectIdState';
@@ -17,9 +16,7 @@ export const useUpsertActivity = ({
 }: {
   objectNameSingular: CoreObjectNameSingular;
 }) => {
-  const [isActivityInCreateMode, setIsActivityInCreateMode] = useRecoilState(
-    isActivityInCreateModeState,
-  );
+  const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
 
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<
     Task | Note
@@ -34,8 +31,6 @@ export const useUpsertActivity = ({
   const [, setIsUpsertingActivityInDB] = useRecoilState(
     isUpsertingActivityInDBState,
   );
-
-  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState);
 
   const objectShowPageTargetableObject = useRecoilValue(
     objectShowPageTargetableObjectState,
@@ -63,9 +58,6 @@ export const useUpsertActivity = ({
       }
 
       await createActivityInDB(activityToCreate);
-
-      setActivityIdInDrawer(activityToCreate.id);
-      setIsActivityInCreateMode(false);
     } else {
       await updateOneActivity?.({
         idToUpdate: activity.id,

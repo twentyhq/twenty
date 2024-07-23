@@ -1,9 +1,7 @@
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useCreateActivityInCache } from '@/activities/hooks/useCreateActivityInCache';
-import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
-import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
@@ -38,13 +36,9 @@ export const useOpenCreateActivityDrawer = ({
     viewableRecordNameSingularState,
   );
 
-  const setIsCreatingActivity = useSetRecoilState(isActivityInCreateModeState);
-
   const setTemporaryActivityForEditor = useSetRecoilState(
     temporaryActivityForEditorState,
   );
-
-  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState);
 
   const [, setIsUpsertingActivityInDB] = useRecoilState(
     isUpsertingActivityInDBState,
@@ -62,9 +56,7 @@ export const useOpenCreateActivityDrawer = ({
       customAssignee,
     });
 
-    setActivityIdInDrawer(createdActivityInCache.id);
     setTemporaryActivityForEditor(createdActivityInCache);
-    setIsCreatingActivity(true);
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setViewableRecordId(createdActivityInCache.id);
     setViewableRecordNameSingular(objectNameSingular);
