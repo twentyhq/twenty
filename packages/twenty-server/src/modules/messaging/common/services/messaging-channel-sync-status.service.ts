@@ -194,17 +194,31 @@ export class MessagingChannelSyncStatusService {
       where: {
         id: connectedAccountId,
       },
-      relations: ['accountOwner'],
+      relations: {
+        accountOwner: true,
+      },
     });
 
     if (!connectedAccount) {
       return;
     }
 
+    const accountsToReconnect =
+      (await this.keyValuePairService.get({
+        userId: connectedAccount.accountOwner.userId,
+        key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
+      })) ?? [];
+
+    if (accountsToReconnect.includes(connectedAccountId)) {
+      return;
+    }
+
+    accountsToReconnect.push(connectedAccountId);
+
     await this.keyValuePairService.set({
       userId: connectedAccount.accountOwner.userId,
       key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
-      value: [connectedAccount.id],
+      value: accountsToReconnect,
     });
   }
 }

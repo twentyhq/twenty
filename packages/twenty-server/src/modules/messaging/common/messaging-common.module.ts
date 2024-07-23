@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant-manager/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
@@ -32,6 +33,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
       MessageThreadWorkspaceEntity,
     ]),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    KeyValuePairModule,
   ],
   providers: [
     MessagingMessageService,
