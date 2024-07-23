@@ -6,7 +6,7 @@ import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderCon
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { useNavigate } from 'react-router-dom';
 
-import { useCreateOneServerlessFunctionItem } from '@/settings/serverless-functions/hooks/useCreateOneServerlessFunctionItem';
+import { useCreateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useCreateOneServerlessFunction';
 import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { useServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
@@ -15,11 +15,10 @@ export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigate();
   const [formValues, setFormValues] = useServerlessFunctionFormValues();
 
-  const { createOneServerlessFunctionItem } =
-    useCreateOneServerlessFunctionItem();
+  const { createOneServerlessFunction } = useCreateOneServerlessFunction();
 
   const handleSave = async () => {
-    const newServerlessFunction = await createOneServerlessFunctionItem({
+    const newServerlessFunction = await createOneServerlessFunction({
       name: formValues.name,
       description: formValues.description,
       code: DEFAULT_CODE,
@@ -33,7 +32,7 @@ export const SettingsServerlessFunctionsNew = () => {
     );
   };
 
-  const canSave = !!formValues.name && createOneServerlessFunctionItem;
+  const canSave = !!formValues.name && createOneServerlessFunction;
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">

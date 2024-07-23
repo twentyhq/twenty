@@ -445,6 +445,7 @@ export type Mutation = {
   updateOneField: Field;
   updateOneObject: Object;
   updateOneRemoteServer: RemoteServer;
+  updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
   updateWorkspace: Workspace;
   uploadFile: Scalars['String']['output'];
@@ -554,7 +555,7 @@ export type MutationExchangeAuthorizationCodeArgs = {
 
 
 export type MutationExecuteOneServerlessFunctionArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['UUID']['input'];
   payload?: InputMaybe<Scalars['JSON']['input']>;
 };
 
@@ -626,6 +627,11 @@ export type MutationUpdateOneObjectArgs = {
 
 export type MutationUpdateOneRemoteServerArgs = {
   input: UpdateRemoteServerInput;
+};
+
+
+export type MutationUpdateOneServerlessFunctionArgs = {
+  input: UpdateServerlessFunctionInput;
 };
 
 
@@ -1177,6 +1183,14 @@ export type UpdateRemoteServerInput = {
   label?: InputMaybe<Scalars['String']['input']>;
   schema?: InputMaybe<Scalars['String']['input']>;
   userMappingOptions?: InputMaybe<UserMappingOptionsUpdateInput>;
+};
+
+export type UpdateServerlessFunctionInput = {
+  code: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  /** Id of the serverless function to execute */
+  id: Scalars['UUID']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type UpdateWorkspaceInput = {

@@ -1,10 +1,16 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconCode, IconSettings, IconPlayerPlay,IconTestPipe } from 'twenty-ui';
+import {
+  H2Title,
+  IconCode,
+  IconSettings,
+  IconPlayerPlay,
+  IconTestPipe,
+} from 'twenty-ui';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
-import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetServerlessFunction';
+import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import styled from '@emotion/styled';
@@ -18,10 +24,11 @@ import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-f
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { useServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
-import { useExecuteServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteServerlessFunction';
+import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteOneServerlessFunction';
 import { Button } from '@/ui/input/button/components/Button';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
 
 export const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -39,17 +46,41 @@ export const SettingsServerlessFunctionDetail = () => {
   const activeTabId = useRecoilValue(activeTabIdState);
   const { serverlessFunction } =
     useGetOneServerlessFunction(serverlessFunctionId);
-  const { executeOneServerlessFunction } = useExecuteServerlessFunction();
+  const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
+  const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const [savedCode, setSavedCode] = useState<string>('');
   const [formValues, setFormValues] = useServerlessFunctionFormValues();
 
-  const handleSave = () => {};
+  const handleSave = async () => {
+    try {
+      const result = await updateOneServerlessFunction({
+        id: serverlessFunction.id,
+        name: formValues.name || '',
+        description: formValues.description || '',
+        code: formValues.code || '',
+      });
+      setFormValues((prevState) => ({
+        ...prevState,
+        name: result?.data?.updateOneServerlessFunction?.name,
+        description: result?.data?.updateOneServerlessFunction?.description,
+        code: result?.data?.updateOneServerlessFunction?.code,
+      }));
+    } catch (err) {
+      enqueueSnackBar(
+        (err as Error)?.message || 'An error occurred while updating function',
+        {
+          variant: SnackBarVariant.Error,
+        },
+      );
+    }
+  };
 
   const handleExecute = async () => {
     if (!isDefined(formValues.input)) {
       setActiveTabId('test');
       return;
     }
+    await handleSave();
     try {
       const result = await executeOneServerlessFunction(
         serverlessFunction.id,
@@ -65,7 +96,7 @@ export const SettingsServerlessFunctionDetail = () => {
       }));
     } catch (err) {
       enqueueSnackBar(
-        (err as Error)?.message || 'An error occurred while updating password',
+        (err as Error)?.message || 'An error occurred while executing function',
         {
           variant: SnackBarVariant.Error,
         },

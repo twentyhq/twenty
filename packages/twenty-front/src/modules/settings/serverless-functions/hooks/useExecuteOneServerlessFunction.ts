@@ -2,7 +2,7 @@ import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetada
 import { ApolloClient, useMutation } from '@apollo/client';
 import { EXECUTE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/executeOneServerlessFunction';
 
-export const useExecuteServerlessFunction = () => {
+export const useExecuteOneServerlessFunction = () => {
   const apolloMetadataClient = useApolloMetadataClient();
   const [mutate] = useMutation(EXECUTE_ONE_SERVERLESS_FUNCTION, {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),

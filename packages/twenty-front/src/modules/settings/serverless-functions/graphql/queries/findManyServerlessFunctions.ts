@@ -7,6 +7,7 @@ export const FIND_MANY_SERVERLESS_FUNCTIONS = gql`
         node {
           id
           name
+          description
           sourceCodeHash
           sourceCodeFullPath
           runtime
