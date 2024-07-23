@@ -78,6 +78,9 @@ export const SettingsDataModelObjectSettingsFormCard = ({
       <CardContent>
         <SettingsDataModelObjectIdentifiersForm
           objectMetadataItem={objectMetadataItem}
+          defaultLabelIdentifierFieldMetadataId={
+            labelIdentifierFieldMetadataItem?.id
+          }
         />
       </CardContent>
     </Card>

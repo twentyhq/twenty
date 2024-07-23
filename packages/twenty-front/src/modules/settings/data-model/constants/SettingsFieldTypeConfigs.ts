@@ -41,18 +41,17 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.Text]: {
     label: 'Text',
     Icon: IconTextSize,
-    defaultValue:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
+    defaultValue: 'Text',
   },
   [FieldMetadataType.Numeric]: {
     label: 'Numeric',
     Icon: IconNumbers,
-    defaultValue: 2000,
+    defaultValue: 12345,
   },
   [FieldMetadataType.Number]: {
     label: 'Number',
     Icon: IconNumbers,
-    defaultValue: 2000,
+    defaultValue: 12345,
   },
   [FieldMetadataType.Link]: {
     label: 'Link',

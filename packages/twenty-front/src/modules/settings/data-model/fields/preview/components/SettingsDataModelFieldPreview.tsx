@@ -59,7 +59,6 @@ export const SettingsDataModelFieldPreview = ({
   withFieldLabel = true,
 }: SettingsDataModelFieldPreviewProps) => {
   const theme = useTheme();
-
   const { getIcon } = useIcons();
   const FieldIcon = getIcon(fieldMetadataItem.icon);
 
@@ -96,7 +95,10 @@ export const SettingsDataModelFieldPreview = ({
   return (
     <>
       {previewRecord ? (
-        <SettingsDataModelSetRecordEffect record={previewRecord} />
+        <SettingsDataModelSetRecordEffect
+          fieldName={fieldName}
+          record={previewRecord}
+        />
       ) : (
         <SettingsDataModelSetFieldValueEffect
           entityId={entityId}
