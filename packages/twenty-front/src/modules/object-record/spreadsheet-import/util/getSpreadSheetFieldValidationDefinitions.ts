@@ -1,14 +1,37 @@
 import { isValidPhoneNumber } from 'libphonenumber-js';
 
-import { isValidUuid } from '@/object-record/spreadsheet-import/util/isValidUuid';
-import { Validation } from '@/spreadsheet-import/types';
+import { FieldValidationDefinition } from '@/spreadsheet-import/types';
+import { isDefined } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isValidUuid } from '~/utils/isValidUuid';
 
-export const getSpreadSheetValidation = (
+export const getSpreadSheetFieldValidationDefinitions = (
   type: FieldMetadataType,
   fieldName: string,
-): Validation[] => {
+): FieldValidationDefinition[] => {
   switch (type) {
+    case FieldMetadataType.FullName:
+      return [
+        {
+          rule: 'object',
+          isValid: ({
+            firstName,
+            lastName,
+          }: {
+            firstName: string;
+            lastName: string;
+          }) => {
+            return (
+              isDefined(firstName) &&
+              isDefined(lastName) &&
+              typeof firstName === 'string' &&
+              typeof lastName === 'string'
+            );
+          },
+          errorMessage: fieldName + ' must be a full name',
+          level: 'error',
+        },
+      ];
     case FieldMetadataType.Number:
       return [
         {
