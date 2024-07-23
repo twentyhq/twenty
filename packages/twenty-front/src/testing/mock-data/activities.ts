@@ -3,7 +3,7 @@ import { NoteTarget } from '@/activities/types/NoteTarget';
 import { Task } from '@/activities/types/Task';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
-type MockedActivity = Partial<Task | Note>;
+type MockedActivity = Partial<Task | Note> & { __typename?: string };
 
 const workspaceMember: WorkspaceMember = {
   __typename: 'WorkspaceMember',
@@ -32,7 +32,8 @@ export const mockedTasks: Array<MockedActivity> = [
     status: null,
     assignee: workspaceMember,
     assigneeId: workspaceMember.id,
-    __typename: 'Activity',
+    taskTargets: [],
+    __typename: 'Task',
   },
 ];
 
@@ -103,10 +104,6 @@ export const mockedActivities: Array<MockedActivity> = [
     updatedAt: new Date().toISOString(),
     title: 'Another note',
     body: null,
-    status: null,
-    dueAt: '2029-08-26T10:12:42.33625+00:00',
-    assignee: { ...workspaceMember, colorScheme: 'Dark' },
-    assigneeId: workspaceMember.id,
     noteTargets: [
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb278t',
@@ -127,7 +124,7 @@ export const mockedActivities: Array<MockedActivity> = [
         companyId: null,
         noteId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
         note: {
-          __typename: 'Activity',
+          __typename: 'Note',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
           createdAt: '2023-04-26T10:12:42.33625+00:00',
           updatedAt: '2023-04-26T10:23:42.33625+00:00',
@@ -153,7 +150,7 @@ export const mockedActivities: Array<MockedActivity> = [
         },
         noteId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
         note: {
-          __typename: 'Activity',
+          __typename: 'Note',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -161,6 +158,6 @@ export const mockedActivities: Array<MockedActivity> = [
         __typename: 'NoteTarget',
       },
     ] as Array<NoteTarget>,
-    __typename: 'Activity',
+    __typename: 'Note',
   },
 ];

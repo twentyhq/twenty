@@ -13,4 +13,5 @@ export type Task = Activity & {
   status: ActivityStatus | null;
   dueAt: string | null;
   taskTargets: TaskTarget[];
+  __typename: 'Task';
 };

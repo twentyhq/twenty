@@ -6,7 +6,6 @@ import { useActivities } from '@/activities/hooks/useActivities';
 import { currentCompletedTaskQueryVariablesState } from '@/activities/tasks/states/currentCompletedTaskQueryVariablesState';
 import { currentIncompleteTaskQueryVariablesState } from '@/activities/tasks/states/currentIncompleteTaskQueryVariablesState';
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timelineActivities/constants/FindManyTimelineActivitiesOrderBy';
-import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -46,8 +45,7 @@ export const useTasks = ({
     () =>
       ({
         filter: {
-          status: { is: 'DONE' },
-          type: { eq: 'TASK' },
+          status: { eq: 'DONE' },
           ...assigneeIdFilter,
         },
         orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
@@ -60,7 +58,6 @@ export const useTasks = ({
       ({
         filter: {
           status: { is: 'TODO' },
-          type: { eq: 'TASK' },
           ...assigneeIdFilter,
         },
         orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
@@ -110,7 +107,7 @@ export const useTasks = ({
   ]);
 
   const { activities: completeTasksData, loading: completeTasksLoading } =
-    useActivities({
+    useActivities<Task>({
       objectNameSingular: CoreObjectNameSingular.Task,
       targetableObjects,
       activitiesFilters: completedQueryVariables.filter ?? {},
@@ -150,10 +147,10 @@ export const useTasks = ({
   const completedTasks = completeTasksData;
 
   return {
-    todayOrPreviousTasks: (todayOrPreviousTasks ?? []) as Activity[],
-    upcomingTasks: (upcomingTasks ?? []) as Activity[],
-    unscheduledTasks: (unscheduledTasks ?? []) as Activity[],
-    completedTasks: (completedTasks ?? []) as Activity[],
+    todayOrPreviousTasks: (todayOrPreviousTasks ?? []) as Task[],
+    upcomingTasks: (upcomingTasks ?? []) as Task[],
+    unscheduledTasks: (unscheduledTasks ?? []) as Task[],
+    completedTasks: (completedTasks ?? []) as Task[],
     completeTasksLoading,
     incompleteTasksLoading,
   };

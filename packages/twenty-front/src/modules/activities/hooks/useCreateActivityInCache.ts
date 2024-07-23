@@ -2,9 +2,10 @@ import { Reference, useApolloClient } from '@apollo/client';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
-import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { Note } from '@/activities/types/Note';
 import { NoteTarget } from '@/activities/types/NoteTarget';
+import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { makeActivityTargetsToCreateFromTargetableObjects } from '@/activities/utils/getActivityTargetsToCreateFromTargetableObjects';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
@@ -52,7 +53,7 @@ export const useCreateActivityInCache = ({
       objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
     });
 
-  const createOneActivityInCache = useCreateOneRecordInCache<Activity>({
+  const createOneActivityInCache = useCreateOneRecordInCache<Task | Note>({
     objectMetadataItem: objectMetadataItemActivity,
   });
 

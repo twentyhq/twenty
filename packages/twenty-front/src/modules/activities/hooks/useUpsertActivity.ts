@@ -6,7 +6,8 @@ import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerS
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { objectShowPageTargetableObjectState } from '@/activities/timelineActivities/states/objectShowPageTargetableObjectIdState';
-import { Activity } from '@/activities/types/Activity';
+import { Note } from '@/activities/types/Note';
+import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDefined } from '~/utils/isDefined';
@@ -20,7 +21,9 @@ export const useUpsertActivity = ({
     isActivityInCreateModeState,
   );
 
-  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
+  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<
+    Task | Note
+  >({
     objectNameSingular,
   });
 
@@ -45,12 +48,12 @@ export const useUpsertActivity = ({
     activity,
     input,
   }: {
-    activity: Activity;
-    input: Partial<Activity>;
+    activity: Task | Note;
+    input: Partial<Task | Note>;
   }) => {
     setIsUpsertingActivityInDB(true);
     if (isActivityInCreateMode) {
-      const activityToCreate: Activity = {
+      const activityToCreate: Partial<Task | Note> = {
         ...activity,
         ...input,
       };

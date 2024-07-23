@@ -1,9 +1,10 @@
 import { useApolloClient } from '@apollo/client';
 
 import { findActivitiesOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivitiesOperationSignatureFactory';
-import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { Note } from '@/activities/types/Note';
 import { NoteTarget } from '@/activities/types/NoteTarget';
+import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -44,7 +45,7 @@ export const usePrepareFindManyActivitiesQuery = ({
   }: {
     additionalFilter?: Record<string, unknown>;
     targetableObject: ActivityTargetableObject;
-    shouldActivityBeExcluded?: (activityTarget: Activity) => boolean;
+    shouldActivityBeExcluded?: (activityTarget: Task | Note) => boolean;
   }) => {
     const targetableObjectMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -78,7 +79,7 @@ export const usePrepareFindManyActivitiesQuery = ({
       ),
     ];
 
-    const activities: Activity[] = activityTargetIds
+    const activities: (Task | Note)[] = activityTargetIds
       .map((activityTargetId) => {
         const activityTarget = activityTargets.find(
           (activityTarget) => activityTarget.id === activityTargetId,
@@ -88,7 +89,7 @@ export const usePrepareFindManyActivitiesQuery = ({
           return undefined;
         }
 
-        return getActivityFromCache<Activity>(activityTarget.activityId);
+        return getActivityFromCache<Task | Note>(activityTarget.activityId);
       })
       .filter(isDefined);
 

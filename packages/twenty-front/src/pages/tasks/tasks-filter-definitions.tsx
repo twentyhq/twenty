@@ -1,9 +1,9 @@
 import { IconUserCircle } from 'twenty-ui';
 
-import { Activity } from '@/activities/types/Activity';
+import { Task } from '@/activities/types/Task';
 import { FilterDefinitionByEntity } from '@/object-record/object-filter-dropdown/types/FilterDefinitionByEntity';
 
-export const tasksFilterDefinitions: FilterDefinitionByEntity<Activity>[] = [
+export const tasksFilterDefinitions: FilterDefinitionByEntity<Task>[] = [
   {
     fieldMetadataId: 'assigneeId',
     label: 'Assignee',

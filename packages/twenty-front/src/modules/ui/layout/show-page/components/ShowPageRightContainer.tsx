@@ -16,7 +16,6 @@ import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
-import { TimelineActivitiesQueryEffect } from '@/activities/timelineActivities/components/TimelineActivitiesQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
@@ -155,9 +154,9 @@ export const ShowPageRightContainer = ({
       case 'timeline':
         return (
           <>
-            <TimelineActivitiesQueryEffect
+            {/*<TimelineActivitiesQueryEffect
               targetableObject={targetableObject}
-            />
+            />*/}
             <TimelineActivities targetableObject={targetableObject} />
           </>
         );

@@ -6,7 +6,8 @@ import { activityTitleFamilyState } from '@/activities/states/activityTitleFamil
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
-import { Activity } from '@/activities/types/Activity';
+import { Note } from '@/activities/types/Note';
+import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -52,7 +53,7 @@ export const ActivityEditorEffect = ({
           .getLoadable(recordStoreFamilyState(activityId))
           .getValue();
 
-        const activity = activityFromStore as Activity | null;
+        const activity = activityFromStore as (Task | Note) | null;
 
         const activityTitle = snapshot
           .getLoadable(activityTitleFamilyState({ activityId }))

@@ -16,9 +16,7 @@ jest.mock('recoil', () => {
     ...actualRecoil,
     useRecoilState: jest.fn(() => {
       const mockCurrentNotesQueryVariables = {
-        filter: {
-          type: { eq: 'NOTE' },
-        },
+        filter: {},
         orderBy: 'mockOrderBy',
       };
       return [mockCurrentNotesQueryVariables, jest.fn()];

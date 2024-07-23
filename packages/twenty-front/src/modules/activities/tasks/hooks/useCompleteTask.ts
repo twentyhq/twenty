@@ -1,13 +1,11 @@
 import { useCallback } from 'react';
 
-import { Activity } from '@/activities/types/Activity';
+import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
-type Task = Pick<Activity, 'id' | 'status'>;
-
 export const useCompleteTask = (task: Task) => {
-  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
+  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Task>({
     objectNameSingular: CoreObjectNameSingular.Task,
   });
 

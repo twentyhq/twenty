@@ -8,8 +8,8 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
     objectMetadataItems,
     objectNameSingular,
   }: {
-    objectNameSingular: CoreObjectNameSingular;
     objectMetadataItems: ObjectMetadataItem[];
+    objectNameSingular: CoreObjectNameSingular;
   }) => ({
     objectNameSingular: objectNameSingular,
     variables: {},

@@ -59,7 +59,10 @@ export const useActivities = <T extends Task | Note>({
   };
 
   const FIND_ACTIVITIES_OPERATION_SIGNATURE =
-    findActivitiesOperationSignatureFactory({ objectMetadataItems });
+    findActivitiesOperationSignatureFactory({
+      objectMetadataItems,
+      objectNameSingular,
+    });
 
   const { records: activities, loading: loadingActivities } =
     useFindManyRecords<Task | Note>({
