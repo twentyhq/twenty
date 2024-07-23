@@ -183,9 +183,9 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
             });
 
             const viewFieldRepository =
-              await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+              await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFieldWorkspaceEntity>(
                 workspaceId,
-                ViewFieldWorkspaceEntity,
+                'viewField',
               );
             const viewFieldsWithDeprecatedField =
               await viewFieldRepository.find({
