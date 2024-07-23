@@ -6,6 +6,8 @@ import {
 } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
 import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import styled from '@emotion/styled';
+import { useEffect, useState } from 'react';
+import { useTheme } from '@emotion/react';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -20,6 +22,19 @@ export const SettingsServerlessFunctionTestTab = ({
   formValues: ServerlessFunctionFormValues;
   setFormValues: SetServerlessFunctionFormValues;
 }) => {
+  const theme = useTheme();
+  const [language, setLanguage] = useState('txt');
+  const [resultHeight, setResultHeight] = useState(64);
+  useEffect(() => {
+    try {
+      JSON.parse(formValues.output || '');
+      setLanguage('json');
+      setResultHeight(300);
+    } catch {
+      setLanguage('plaintext');
+      setResultHeight(64);
+    }
+  }, [formValues.output]);
   return (
     <Section>
       <H2Title
@@ -40,14 +55,15 @@ export const SettingsServerlessFunctionTestTab = ({
         />
         <CodeEditor
           value={formValues.output}
-          height={300}
+          height={resultHeight}
           onChange={(value) => {
             setFormValues((prevState) => ({
               ...prevState,
               output: value,
             }));
           }}
-          defaultLanguage={'json'}
+          defaultLanguage="plaintext"
+          language={language}
           options={{ readOnly: true, domReadOnly: true }}
         />
       </StyledInputsContainer>

@@ -21,7 +21,7 @@ export const useServerlessFunctionFormValues = (): [
     description: '',
     code: '',
     input: '{}',
-    output: '{}',
+    output: 'Enter an input above then press "run Function"',
   });
 
   return [formValues, setFormValues];

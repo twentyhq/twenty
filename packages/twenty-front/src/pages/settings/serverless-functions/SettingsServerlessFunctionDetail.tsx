@@ -51,6 +51,11 @@ export const SettingsServerlessFunctionDetail = () => {
   const [savedCode, setSavedCode] = useState<string>('');
   const [formValues, setFormValues] = useServerlessFunctionFormValues();
 
+  const canSave =
+    savedCode !== formValues.code ||
+    serverlessFunction.name !== formValues.name ||
+    serverlessFunction.description !== formValues.description;
+
   const handleSave = async () => {
     try {
       const result = await updateOneServerlessFunction({
@@ -80,7 +85,9 @@ export const SettingsServerlessFunctionDetail = () => {
       setActiveTabId('test');
       return;
     }
-    await handleSave();
+    if (canSave) {
+      await handleSave();
+    }
     try {
       const result = await executeOneServerlessFunction(
         serverlessFunction.id,
@@ -165,11 +172,6 @@ export const SettingsServerlessFunctionDetail = () => {
         return <></>;
     }
   };
-
-  const canSave =
-    savedCode !== formValues.code ||
-    serverlessFunction.name !== formValues.name ||
-    serverlessFunction.description !== formValues.description;
 
   return (
     serverlessFunction.name && (

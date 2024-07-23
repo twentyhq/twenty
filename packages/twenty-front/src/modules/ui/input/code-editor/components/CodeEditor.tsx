@@ -25,6 +25,7 @@ export const CodeEditor = ({
   value = DEFAULT_CODE,
   onChange = () => {},
   defaultLanguage = 'typescript',
+  language = 'typescript',
   height = 500,
   options = undefined,
 }: CodeEditorProps) => {
@@ -52,6 +53,7 @@ export const CodeEditor = ({
     <StyledEditor
       height={height}
       defaultLanguage={defaultLanguage}
+      language={language}
       value={value}
       onMount={handleEditorDidMount}
       onChange={onChange}
