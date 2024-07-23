@@ -1,4 +1,5 @@
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
@@ -17,6 +18,9 @@ export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
   propsObjectRecordId: string,
 ) => {
+  const [currentRecordNumber, setCurrentRecordNumber] = useState(1);
+  const [stableTotalCount, setStableTotalCount] = useState(0);
+  const [isChangingPage, setIsChangingPage] = useState(false);
   const {
     objectNameSingular: paramObjectNameSingular,
     objectRecordId: paramObjectRecordId,
@@ -101,6 +105,12 @@ export const useRecordShowPagePagination = (
 
   const totalCount = Math.max(totalCountBefore ?? 0, totalCountAfter ?? 0);
 
+  useEffect(() => {
+    if (totalCount > 0 && totalCount !== stableTotalCount) {
+      setStableTotalCount(totalCount);
+    }
+  }, [totalCount, stableTotalCount]);
+
   const loading = loadingRecordAfter || loadingRecordBefore || loadingCursor;
 
   const isThereARecordBefore = recordsBefore.length > 0;
@@ -109,17 +119,60 @@ export const useRecordShowPagePagination = (
   const recordBefore = recordsBefore[0];
   const recordAfter = recordsAfter[0];
 
-  const navigateToPreviousRecord = () => {
-    navigate(
-      buildShowPageURL(objectNameSingular, recordBefore.id, viewIdQueryParam),
-    );
-  };
+  const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({
+    objectNamePlural: objectMetadataItem.namePlural,
+    fieldVariables: {
+      filter,
+      orderBy,
+    },
+  });
 
-  const navigateToNextRecord = () => {
-    navigate(
-      buildShowPageURL(objectNameSingular, recordAfter.id, viewIdQueryParam),
-    );
-  };
+  const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);
+
+  useEffect(() => {
+    if (rankInView !== -1) {
+      setCurrentRecordNumber(rankInView + 1);
+    }
+  }, [rankInView]);
+
+  useEffect(() => {
+    if (!loading) {
+      setIsChangingPage(false);
+    }
+  }, [loading]);
+
+  const navigateToPreviousRecord = useCallback(() => {
+    if (isThereARecordBefore) {
+      setIsChangingPage(true);
+      setCurrentRecordNumber((prev) => Math.max(1, prev - 1));
+      navigate(
+        buildShowPageURL(objectNameSingular, recordBefore.id, viewIdQueryParam),
+      );
+    }
+  }, [
+    isThereARecordBefore,
+    objectNameSingular,
+    recordBefore,
+    viewIdQueryParam,
+    navigate,
+  ]);
+
+  const navigateToNextRecord = useCallback(() => {
+    if (isThereARecordAfter) {
+      setIsChangingPage(true);
+      setCurrentRecordNumber((prev) => Math.min(stableTotalCount, prev + 1));
+      navigate(
+        buildShowPageURL(objectNameSingular, recordAfter.id, viewIdQueryParam),
+      );
+    }
+  }, [
+    isThereARecordAfter,
+    objectNameSingular,
+    recordAfter,
+    viewIdQueryParam,
+    navigate,
+    stableTotalCount,
+  ]);
 
   const navigateToIndexView = () => {
     const indexTableURL = buildIndexTablePageURL(
@@ -132,28 +185,18 @@ export const useRecordShowPagePagination = (
     navigate(indexTableURL);
   };
 
-  const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({
-    objectNamePlural: objectMetadataItem.namePlural,
-    fieldVariables: {
-      filter,
-      orderBy,
-    },
-  });
-
-  const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);
-
-  const rankFoundInFiew = rankInView > -1;
+  const rankFoundInView = rankInView > -1;
 
   const objectLabel = capitalize(objectMetadataItem.namePlural);
 
-  const viewNameWithCount = rankFoundInFiew
-    ? `${rankInView + 1} of ${totalCount} in ${objectLabel}`
-    : `${objectLabel} (${totalCount})`;
+  const viewNameWithCount = rankFoundInView
+    ? `${currentRecordNumber} of ${stableTotalCount} in ${objectLabel}`
+    : `${objectLabel} (${stableTotalCount})`;
 
   return {
     viewName: viewNameWithCount,
     hasPreviousRecord: isThereARecordBefore,
-    isLoadingPagination: loading,
+    isLoadingPagination: loading && !isChangingPage,
     hasNextRecord: isThereARecordAfter,
     navigateToPreviousRecord,
     navigateToNextRecord,
