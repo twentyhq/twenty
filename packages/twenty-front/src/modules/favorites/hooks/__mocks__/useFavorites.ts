@@ -92,8 +92,8 @@ export const mocks = [
             person {
               __typename
               xLink {
-                label
-                url
+                primaryLinkLabel
+                primaryLinkUrl
               }
               id
               createdAt
@@ -106,8 +106,8 @@ export const mocks = [
               }
               phone
               linkedinLink {
-                label
-                url
+                primaryLinkLabel
+                primaryLinkUrl
               }
               updatedAt
               avatarUrl
@@ -132,12 +132,12 @@ export const mocks = [
             company {
               __typename
               xLink {
-                label
-                url
+                primaryLinkLabel
+                primaryLinkUrl
               }
               linkedinLink {
-                label
-                url
+                primaryLinkLabel
+                primaryLinkUrl
               }
               domainName
               annualRecurringRevenue {
@@ -218,8 +218,7 @@ export const mocks = [
             person {
               __typename
               xLink {
-                label
-                url
+                primaryLinkUrl
               }
               id
               createdAt
@@ -232,8 +231,7 @@ export const mocks = [
               }
               phone
               linkedinLink {
-                label
-                url
+                primaryLinkUrl
               }
               updatedAt
               avatarUrl
@@ -258,12 +256,10 @@ export const mocks = [
             company {
               __typename
               xLink {
-                label
-                url
+                primaryLinkUrl
               }
               linkedinLink {
-                label
-                url
+                primaryLinkUrl
               }
               domainName
               annualRecurringRevenue {

@@ -63,12 +63,12 @@ export const query = gql`
           company {
             id
             xLink {
-              label
-              url
+              primaryLinkLabel
+              primaryLinkUrl
             }
             linkedinLink {
-              label
-              url
+              primaryLinkLabel
+              primaryLinkUrl
             }
             domainName
             annualRecurringRevenue {
@@ -106,7 +106,6 @@ export const query = gql`
             edges {
               node {
                 id
-                id
                 companyId
                 createdAt
                 personId
@@ -139,8 +138,8 @@ export const query = gql`
           }
           phone
           linkedinLink {
-            label
-            url
+            primaryLinkLabel
+            primaryLinkUrl
           }
           updatedAt
           avatarUrl
