@@ -5,6 +5,7 @@ import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -29,6 +30,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -46,6 +48,7 @@ const StyledSettingsObjectFieldTypeSelect = styled(
 `;
 
 export const SettingsObjectNewFieldStep2 = () => {
+  const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
   const [searchParams] = useSearchParams();
@@ -147,7 +150,7 @@ export const SettingsObjectNewFieldStep2 = () => {
         });
       }
 
-      navigate(`/settings/objects/${objectSlug}`);
+      navigate(navigationMemorizedUrl, { replace: true });
 
       // TODO: fix optimistic update logic
       // Forcing a refetch for now but it's not ideal
@@ -195,7 +198,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                 <SaveAndCancelButtons
                   isSaveDisabled={!canSave}
                   isCancelDisabled={isSubmitting}
-                  onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+                  onCancel={() => navigate(navigationMemorizedUrl, { replace: true })}
                   onSave={formConfig.handleSubmit(handleSave)}
                 />
               )}
