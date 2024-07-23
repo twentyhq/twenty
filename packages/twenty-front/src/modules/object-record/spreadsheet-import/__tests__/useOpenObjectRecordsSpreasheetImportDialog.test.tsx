@@ -1,14 +1,14 @@
-import { ReactNode } from 'react';
 import { gql } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { spreadsheetImportState } from '@/spreadsheet-import/states/spreadsheetImportState';
-import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 
-import { useSpreadsheetRecordImport } from '../useSpreadsheetRecordImport';
+import { SnackBarManagerScopeInternalContext } from '@/ui/feedback/snack-bar-manager/scopes/scope-internal-context/SnackBarManagerScopeInternalContext';
+import { useOpenObjectRecordsSpreasheetImportDialog } from '../hooks/useOpenObjectRecordsSpreasheetImportDialog';
 
 const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
 
@@ -62,7 +62,6 @@ const companyMocks = [
       variables: {
         data: [
           {
-            address: 'test',
             domainName: 'example.com',
             employees: 0,
             idealCustomerProfile: true,
@@ -94,67 +93,81 @@ const fakeCsv = () => {
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider mocks={companyMocks} addTypename={false}>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+      <SnackBarManagerScopeInternalContext.Provider
+        value={{ scopeId: 'snack-bar-manager' }}
+      >
         {children}
-      </SnackBarProviderScope>
+      </SnackBarManagerScopeInternalContext.Provider>
     </MockedProvider>
   </RecoilRoot>
 );
 
+// TODO: improve object metadata item seeds to have more field types to add tests on composite fields here
 describe('useSpreadsheetCompanyImport', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
-        const spreadsheetImport = useRecoilValue(spreadsheetImportState);
-        const { openRecordSpreadsheetImport } = useSpreadsheetRecordImport(
+        const spreadsheetImportDialog = useRecoilValue(
+          spreadsheetImportDialogState,
+        );
+        const {
+          openObjectRecordsSpreasheetImportDialog: openRecordSpreadsheetImport,
+        } = useOpenObjectRecordsSpreasheetImportDialog(
           CoreObjectNameSingular.Company,
         );
-        return { openRecordSpreadsheetImport, spreadsheetImport };
+        return {
+          openRecordSpreadsheetImport,
+          spreadsheetImportDialog,
+        };
       },
       {
         wrapper: Wrapper,
       },
     );
 
-    const { spreadsheetImport, openRecordSpreadsheetImport } = result.current;
+    const { spreadsheetImportDialog, openRecordSpreadsheetImport } =
+      result.current;
 
-    expect(spreadsheetImport.isOpen).toBe(false);
-    expect(spreadsheetImport.options).toBeNull();
+    expect(spreadsheetImportDialog.isOpen).toBe(false);
+    expect(spreadsheetImportDialog.options).toBeNull();
 
     await act(async () => {
       openRecordSpreadsheetImport();
     });
 
-    const { spreadsheetImport: updatedImport } = result.current;
+    const { spreadsheetImportDialog: spreadsheetImportDialogAfterOpen } =
+      result.current;
 
-    expect(updatedImport.isOpen).toBe(true);
-    expect(updatedImport.options).toHaveProperty('onSubmit');
-    expect(updatedImport.options?.onSubmit).toBeInstanceOf(Function);
-    expect(updatedImport.options).toHaveProperty('fields');
-    expect(Array.isArray(updatedImport.options?.fields)).toBe(true);
+    expect(spreadsheetImportDialogAfterOpen.isOpen).toBe(true);
+    expect(spreadsheetImportDialogAfterOpen.options).toHaveProperty('onSubmit');
+    expect(spreadsheetImportDialogAfterOpen.options?.onSubmit).toBeInstanceOf(
+      Function,
+    );
+    expect(spreadsheetImportDialogAfterOpen.options).toHaveProperty('fields');
+    expect(
+      Array.isArray(spreadsheetImportDialogAfterOpen.options?.fields),
+    ).toBe(true);
 
     act(() => {
-      updatedImport.options?.onSubmit(
+      spreadsheetImportDialogAfterOpen.options?.onSubmit(
         {
-          validData: [
+          validStructuredRows: [
             {
               id: companyId,
               name: 'Example Company',
               domainName: 'example.com',
               idealCustomerProfile: true,
-              address: 'test',
               employees: '0',
             },
           ],
-          invalidData: [],
-          all: [
+          invalidStructuredRows: [],
+          allStructuredRows: [
             {
               id: companyId,
               name: 'Example Company',
               domainName: 'example.com',
               __index: 'cbc3985f-dde9-46d1-bae2-c124141700ac',
               idealCustomerProfile: true,
-              address: 'test',
               employees: '0',
             },
           ],

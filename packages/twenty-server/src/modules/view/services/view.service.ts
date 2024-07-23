@@ -4,7 +4,6 @@ import { isDefined } from 'class-validator';
 import isEmpty from 'lodash.isempty';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
 @Injectable()
 export class ViewService {
@@ -29,7 +28,7 @@ export class ViewService {
     const viewFieldRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
-        ViewFieldWorkspaceEntity,
+        'viewField',
       );
 
     for (const viewId of viewsIds) {
@@ -71,7 +70,7 @@ export class ViewService {
     const viewFieldRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
-        ViewFieldWorkspaceEntity,
+        'viewField',
       );
     const viewsWithField = await viewFieldRepository.find({
       where: {
