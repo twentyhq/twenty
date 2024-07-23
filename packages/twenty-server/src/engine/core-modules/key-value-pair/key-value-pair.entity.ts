@@ -47,7 +47,7 @@ export class KeyValuePair {
   user: Relation<User>;
 
   @Column({ nullable: true })
-  userId: string;
+  userId: string | null;
 
   @ManyToOne(() => Workspace, (workspace) => workspace.keyValuePairs, {
     onDelete: 'CASCADE',
@@ -56,7 +56,7 @@ export class KeyValuePair {
   workspace: Relation<Workspace>;
 
   @Column({ nullable: true })
-  workspaceId: string;
+  workspaceId: string | null;
 
   @Field(() => String)
   @Column({ nullable: false, type: 'text' })

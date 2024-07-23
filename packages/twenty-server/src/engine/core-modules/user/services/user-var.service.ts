@@ -7,6 +7,7 @@ import {
   KeyValuePair,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { formatUserVars } from 'src/engine/core-modules/user/utils/format-user-vars.util';
 
 @Injectable()
 export class UserVarService {
@@ -15,46 +16,31 @@ export class UserVarService {
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
   ) {}
 
-  private async getWorkspaceUserVar(
-    workspaceId: string,
-  ): Promise<Map<string, any>> {
-    const workspaceKeyValuePairs = await this.keyValuePairRepository.find({
-      select: ['key', 'value'],
-      where: {
-        userId: IsNull(),
-        workspaceId,
-        type: KeyValuePairType.USER_VAR,
-      },
-    });
-
-    return new Map<string, any>(
-      workspaceKeyValuePairs.map(({ key, value }) => [key, value]),
-    );
-  }
-
-  private async getUserVar(userId: string): Promise<Map<string, any>> {
-    const userKeyValuePair = await this.keyValuePairRepository.find({
-      select: ['key', 'value'],
-      where: {
-        userId,
-        type: KeyValuePairType.USER_VAR,
-      },
-    });
-
-    return new Map<string, any>(
-      userKeyValuePair.map(({ key, value }) => [key, value]),
-    );
-  }
-
-  async getUserVars(
+  public async getUserVars(
     userId: string,
     workspaceId: string,
   ): Promise<Map<string, any>> {
-    const workspaceVar = await this.getWorkspaceUserVar(workspaceId);
-    const userVar = await this.getUserVar(userId);
+    const userVars = await this.keyValuePairRepository.find({
+      select: ['key', 'value', 'userId', 'workspaceId'],
+      where: [
+        {
+          userId,
+          workspaceId,
+          type: KeyValuePairType.USER_VAR,
+        },
+        {
+          userId,
+          workspaceId: IsNull(),
+          type: KeyValuePairType.USER_VAR,
+        },
+        {
+          userId: IsNull(),
+          workspaceId,
+          type: KeyValuePairType.USER_VAR,
+        },
+      ],
+    });
 
-    const userVars = new Map<string, any>([...workspaceVar, ...userVar]);
-
-    return userVars;
+    return formatUserVars(userVars);
   }
 }
