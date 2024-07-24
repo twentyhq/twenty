@@ -1,7 +1,7 @@
-import { useMemo, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronDown, IconComponent } from 'twenty-ui';
+import { useMemo, useRef, useState } from 'react';
+import { IconChevronDown, IconComponent, Nullable } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -30,7 +30,7 @@ export type SelectProps<Value extends string | number | null> = {
   onChange?: (value: Value) => void;
   onBlur?: () => void;
   options: SelectOption<Value>[];
-  value?: Value;
+  value?: Nullable<Value>;
   withSearchInput?: boolean;
 };
 
