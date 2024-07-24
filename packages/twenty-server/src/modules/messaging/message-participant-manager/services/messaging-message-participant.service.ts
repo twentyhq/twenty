@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-import { EntityManager } from 'typeorm';
+import { Any, EntityManager } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/calendar-event-import-manager/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
 import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
@@ -11,6 +12,7 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 import { ParticipantWithMessageId } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class MessagingMessageParticipantService {
@@ -21,6 +23,7 @@ export class MessagingMessageParticipantService {
     @InjectObjectMetadataRepository(PersonWorkspaceEntity)
     private readonly personRepository: PersonRepository,
     private readonly eventEmitter: EventEmitter2,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async updateMessageParticipantsAfterPeopleCreation(
@@ -98,37 +101,132 @@ export class MessagingMessageParticipantService {
 
     if (participants.length === 0) return [];
 
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."messageParticipant" ("messageId", "role", "handle", "displayName") VALUES ${valuesString} RETURNING *`,
-      flattenedValues,
+    const messageParticipants =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `INSERT INTO ${dataSourceSchema}."messageParticipant" ("messageId", "role", "handle", "displayName") VALUES ${valuesString} RETURNING *`,
+        flattenedValues,
+        workspaceId,
+        transactionManager,
+      );
+
+    await this.matchMessageParticipants(
+      messageParticipants,
       workspaceId,
       transactionManager,
     );
+
+    return messageParticipants;
   }
 
-  public async matchMessageParticipants(
+  private async matchMessageParticipants(
+    messageParticipants: MessageParticipantWorkspaceEntity[],
     workspaceId: string,
-    email: string,
+    transactionManager?: any,
+  ) {
+    const uniqueParticipantsHandles = [
+      ...new Set(messageParticipants.map((participant) => participant.handle)),
+    ];
+
+    const messageParticipantRepository =
+      await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
+        'messageParticipant',
+      );
+
+    const personRepository =
+      await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
+        'person',
+      );
+
+    const persons = await personRepository.find(
+      {
+        where: {
+          email: Any(uniqueParticipantsHandles),
+        },
+      },
+      transactionManager,
+    );
+
+    const workspaceMemberRepository =
+      await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        'workspaceMember',
+      );
+
+    const workspaceMembers = await workspaceMemberRepository.find(
+      {
+        where: {
+          userEmail: Any(uniqueParticipantsHandles),
+        },
+      },
+      transactionManager,
+    );
+
+    for (const handle of uniqueParticipantsHandles) {
+      const person = persons.find((person) => person.email === handle);
+
+      const workspaceMember = workspaceMembers.find(
+        (workspaceMember) => workspaceMember.userEmail === handle,
+      );
+
+      await messageParticipantRepository.update(
+        {
+          handle,
+        },
+        {
+          personId: person?.id,
+          workspaceMemberId: workspaceMember?.id,
+        },
+        transactionManager,
+      );
+    }
+
+    this.eventEmitter.emit(`messageParticipant.matched`, {
+      workspaceId,
+      workspaceMemberId: null,
+      messageParticipants,
+    });
+  }
+
+  public async matchMessageParticipantAfterPersonOrWorkspaceMemberCreation(
+    handle: string,
+    workspaceId: string,
     personId?: string,
     workspaceMemberId?: string,
   ) {
-    const messageParticipantsToUpdate =
-      await this.messageParticipantRepository.getByHandles(
-        [email],
-        workspaceId,
+    const messageParticipantRepository =
+      await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
+        'messageParticipant',
       );
+
+    const messageParticipantsToUpdate = await messageParticipantRepository.find(
+      {
+        where: {
+          handle,
+        },
+      },
+    );
 
     const messageParticipantIdsToUpdate = messageParticipantsToUpdate.map(
       (participant) => participant.id,
     );
 
     if (personId) {
+      await messageParticipantRepository.update(
+        {
+          id: Any(messageParticipantIdsToUpdate),
+        },
+        {
+          person: {
+            id: personId,
+          },
+        },
+      );
+
       const updatedMessageParticipants =
-        await this.messageParticipantRepository.updateParticipantsPersonIdAndReturn(
-          messageParticipantIdsToUpdate,
-          personId,
-          workspaceId,
-        );
+        await messageParticipantRepository.find({
+          where: {
+            id: Any(messageParticipantIdsToUpdate),
+          },
+        });
 
       this.eventEmitter.emit(`messageParticipant.matched`, {
         workspaceId,
@@ -136,11 +234,17 @@ export class MessagingMessageParticipantService {
         messageParticipants: updatedMessageParticipants,
       });
     }
+
     if (workspaceMemberId) {
-      await this.messageParticipantRepository.updateParticipantsWorkspaceMemberId(
-        messageParticipantIdsToUpdate,
-        workspaceMemberId,
-        workspaceId,
+      await messageParticipantRepository.update(
+        {
+          id: Any(messageParticipantIdsToUpdate),
+        },
+        {
+          workspaceMember: {
+            id: workspaceMemberId,
+          },
+        },
       );
     }
   }
