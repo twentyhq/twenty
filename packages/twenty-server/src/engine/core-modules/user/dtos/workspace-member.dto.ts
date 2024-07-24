@@ -4,9 +4,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
-  WorkspaceMemberColorSchemeEnum,
   WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberLocaleEnum,
   WorkspaceMemberTimeFormatEnum,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -27,14 +25,14 @@ export class WorkspaceMember {
   @Field(() => FullName)
   name: FullName;
 
-  @Field(() => WorkspaceMemberColorSchemeEnum)
-  colorScheme: WorkspaceMemberColorSchemeEnum;
+  @Field({ nullable: true })
+  colorScheme: string;
 
   @Field({ nullable: true })
   avatarUrl: string;
 
-  @Field(() => WorkspaceMemberLocaleEnum)
-  locale: WorkspaceMemberLocaleEnum;
+  @Field({ nullable: true })
+  locale: string;
 
   @Field({ nullable: false })
   timeZone: string;
