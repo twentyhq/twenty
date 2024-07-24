@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { getCompanyDomainName } from 'src/utils/getCompanyDomainName';
 
 export type CompanyToCreate = {
   id: string;
@@ -71,7 +72,7 @@ export class CompanyRepository {
       VALUES ($1, $2, $3, $4, $5)`,
       [
         companyToCreate.id,
-        companyToCreate.domainName,
+        getCompanyDomainName(companyToCreate.domainName),
         companyToCreate.name ?? '',
         companyToCreate.city ?? '',
         lastCompanyPosition + 1,

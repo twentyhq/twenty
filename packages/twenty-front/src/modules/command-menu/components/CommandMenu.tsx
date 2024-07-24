@@ -33,6 +33,7 @@ import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command, CommandType } from '../types/Command';
 
+import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 
@@ -402,7 +403,7 @@ export const CommandMenu = () => {
                               placeholderColorSeed={company.id}
                               placeholder={company.name}
                               avatarUrl={getLogoUrlFromDomainName(
-                                company.domainName,
+                                getCompanyDomainName(company),
                               )}
                             />
                           )}

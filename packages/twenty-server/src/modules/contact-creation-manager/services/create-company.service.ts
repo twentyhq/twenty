@@ -52,7 +52,7 @@ export class CreateCompanyService {
         },
       ) => ({
         ...acc,
-        [company.domainName]: company.id,
+        [getCompanyDomainName(company)]: company.id,
       }),
       {},
     );
@@ -61,7 +61,7 @@ export class CreateCompanyService {
       (domainName) =>
         !existingCompanies.some(
           (company: { domainName: string }) =>
-            company.domainName === domainName,
+            getCompanyDomainName(company) === domainName,
         ),
     );
 

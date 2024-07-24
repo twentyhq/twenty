@@ -10,6 +10,10 @@ type FieldMetadataDefaultSettings = {
   isForeignKey?: boolean;
 };
 
+type FieldMetadataLinksSettings = {
+  isDomain?: boolean;
+};
+
 type FieldMetadataNumberSettings = {
   dataType: NumberDataType;
 };
@@ -21,9 +25,11 @@ type FieldMetadataSettingsMapping = {
 type SettingsByFieldMetadata<T extends FieldMetadataType | 'default'> =
   T extends keyof FieldMetadataSettingsMapping
     ? FieldMetadataSettingsMapping[T] & FieldMetadataDefaultSettings
-    : T extends 'default'
-      ? FieldMetadataDefaultSettings
-      : never;
+    : T extends FieldMetadataType.LINKS
+      ? FieldMetadataLinksSettings & FieldMetadataDefaultSettings
+      : T extends 'default'
+        ? FieldMetadataDefaultSettings
+        : never;
 
 export type FieldMetadataSettings<
   T extends FieldMetadataType | 'default' = 'default',
