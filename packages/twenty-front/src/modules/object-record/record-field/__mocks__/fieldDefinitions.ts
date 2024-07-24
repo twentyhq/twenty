@@ -64,7 +64,7 @@ export const linkFieldDefinition: FieldDefinition<FieldLinkMetadata> = {
   label: 'LinkedIn URL',
   iconName: 'url',
   type: FieldMetadataType.Link,
-  defaultValue: { label: '', url: '' },
+  defaultValue: { url: '', label: '' },
   metadata: {
     fieldName: 'linkedInURL',
     placeHolder: 'https://linkedin.com/user',
