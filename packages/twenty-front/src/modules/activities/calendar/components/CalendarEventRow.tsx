@@ -14,8 +14,10 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
-import { CalendarChannelVisibility } from '~/generated/graphql';
+import {
+  CalendarChannelVisibility,
+  TimelineCalendarEvent,
+} from '~/generated/graphql';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isDefined } from '~/utils/isDefined';
 
