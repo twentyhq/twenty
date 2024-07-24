@@ -34,12 +34,12 @@ export class WorkspaceMember {
   @Field({ nullable: true })
   locale: string;
 
-  @Field({ nullable: false })
+  @Field({ nullable: true })
   timeZone: string;
 
-  @Field(() => WorkspaceMemberDateFormatEnum)
+  @Field(() => WorkspaceMemberDateFormatEnum, { nullable: true })
   dateFormat: WorkspaceMemberDateFormatEnum;
 
-  @Field(() => WorkspaceMemberTimeFormatEnum)
+  @Field(() => WorkspaceMemberTimeFormatEnum, { nullable: true })
   timeFormat: WorkspaceMemberTimeFormatEnum;
 }
