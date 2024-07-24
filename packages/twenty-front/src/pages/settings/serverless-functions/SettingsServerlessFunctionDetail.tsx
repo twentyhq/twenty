@@ -68,7 +68,6 @@ export const SettingsServerlessFunctionDetail = () => {
         ...prevState,
         name: result?.data?.updateOneServerlessFunction?.name,
         description: result?.data?.updateOneServerlessFunction?.description,
-        code: result?.data?.updateOneServerlessFunction?.code,
       }));
     } catch (err) {
       enqueueSnackBar(

@@ -7,7 +7,6 @@ import {
 import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import { useTheme } from '@emotion/react';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -22,8 +21,7 @@ export const SettingsServerlessFunctionTestTab = ({
   formValues: ServerlessFunctionFormValues;
   setFormValues: SetServerlessFunctionFormValues;
 }) => {
-  const theme = useTheme();
-  const [language, setLanguage] = useState('txt');
+  const [language, setLanguage] = useState('plaintext');
   const [resultHeight, setResultHeight] = useState(64);
   useEffect(() => {
     try {
@@ -51,7 +49,7 @@ export const SettingsServerlessFunctionTestTab = ({
               input: value,
             }));
           }}
-          defaultLanguage={'json'}
+          language={'json'}
         />
         <CodeEditor
           value={formValues.output}
@@ -62,7 +60,6 @@ export const SettingsServerlessFunctionTestTab = ({
               output: value,
             }));
           }}
-          defaultLanguage="plaintext"
           language={language}
           options={{ readOnly: true, domReadOnly: true }}
         />
