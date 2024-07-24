@@ -20,7 +20,7 @@ interface MigrateMessageChannelSyncStatusEnumCommandOptions {
 
 @Command({
   name: 'migrate-0.23:update-message-channel-sync-status-enum',
-  description: 'Update messageChannel syncStatus',
+  description: 'Migrate messageChannel syncStatus enum',
 })
 export class MigrateMessageChannelSyncStatusEnumCommand extends CommandRunner {
   private readonly logger = new Logger(
