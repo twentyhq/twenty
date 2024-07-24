@@ -225,6 +225,7 @@ export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
               id: tmpNewLinksField.id,
               workspaceId: tmpNewLinksField.workspaceId,
               name: `${fieldName}`,
+              isCustom: false,
             });
 
             this.logger.log(
