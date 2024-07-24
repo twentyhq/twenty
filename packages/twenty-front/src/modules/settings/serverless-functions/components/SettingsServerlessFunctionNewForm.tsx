@@ -17,9 +17,11 @@ const StyledInputsContainer = styled.div`
 export const SettingsServerlessFunctionNewForm = ({
   formValues,
   setFormValues,
+  handleSave,
 }: {
   formValues: ServerlessFunctionFormValues;
   setFormValues: SetServerlessFunctionFormValues;
+  handleSave?: () => void;
 }) => {
   return (
     <Section>
@@ -28,7 +30,9 @@ export const SettingsServerlessFunctionNewForm = ({
         <TextInput
           placeholder="Name"
           fullWidth
+          focused
           value={formValues.name}
+          onInputEnter={handleSave}
           onChange={(value) => {
             setFormValues((prevState) => ({
               ...prevState,

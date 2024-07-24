@@ -10,6 +10,7 @@ import { useCreateOneServerlessFunction } from '@/settings/serverless-functions/
 import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
 import { useServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
 import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functions/components/SettingsServerlessFunctionNewForm';
+import { isDefined } from '~/utils/isDefined';
 
 export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export const SettingsServerlessFunctionsNew = () => {
       code: DEFAULT_CODE,
     });
 
-    if (!newServerlessFunction) {
+    if (!isDefined(newServerlessFunction?.data)) {
       return;
     }
     navigate(
@@ -55,6 +56,7 @@ export const SettingsServerlessFunctionsNew = () => {
         <SettingsServerlessFunctionNewForm
           formValues={formValues}
           setFormValues={setFormValues}
+          handleSave={handleSave}
         />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

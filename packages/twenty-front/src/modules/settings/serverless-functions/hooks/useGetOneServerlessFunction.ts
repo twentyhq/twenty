@@ -18,6 +18,6 @@ export const useGetOneServerlessFunction = (id: string) => {
     },
   });
   return {
-    serverlessFunction: data?.serverlessFunction || {},
+    serverlessFunction: data?.serverlessFunction || null,
   };
 };

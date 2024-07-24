@@ -15,10 +15,12 @@ export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
   setFormValues,
   serverlessFunctionId,
+  handleSave,
 }: {
   formValues: ServerlessFunctionFormValues;
   setFormValues: SetServerlessFunctionFormValues;
   serverlessFunctionId: string;
+  handleSave?: () => void;
 }) => {
   const navigate = useNavigate();
   const [isDeleteFunctionModalOpen, setIsDeleteFunctionModalOpen] =
@@ -34,6 +36,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
       <SettingsServerlessFunctionNewForm
         formValues={formValues}
         setFormValues={setFormValues}
+        handleSave={handleSave}
       />
       <Section>
         <H2Title title="Danger zone" description="Delete this function" />

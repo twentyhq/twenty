@@ -46,20 +46,20 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const canSave =
     savedCode !== formValues.code ||
-    serverlessFunction.name !== formValues.name ||
-    serverlessFunction.description !== formValues.description;
+    serverlessFunction?.name !== formValues.name ||
+    serverlessFunction?.description !== formValues.description;
 
   const handleSave = async () => {
     try {
       const result = await updateOneServerlessFunction({
-        id: serverlessFunction.id,
+        id: serverlessFunction?.id,
         name: formValues.name || '',
         description: formValues.description || '',
         code: formValues.code || '',
       });
       setFormValues((prevState) => ({
         ...prevState,
-        name: result?.data?.updateOneServerlessFunction?.name,
+        name: result?.data?.updateOneServerlessFunction?.name || '',
         description: result?.data?.updateOneServerlessFunction?.description,
       }));
     } catch (err) {
@@ -82,7 +82,7 @@ export const SettingsServerlessFunctionDetail = () => {
     }
     try {
       const result = await executeOneServerlessFunction(
-        serverlessFunction.id,
+        serverlessFunction?.id,
         JSON.parse(formValues.input),
       );
       setFormValues((prevState) => ({
@@ -111,7 +111,7 @@ export const SettingsServerlessFunctionDetail = () => {
   useEffect(() => {
     const getFileContent = async () => {
       const resp = await fetch(
-        getFileAbsoluteURI(serverlessFunction.sourceCodeFullPath),
+        getFileAbsoluteURI(serverlessFunction?.sourceCodeFullPath),
       );
       if (resp.status !== 200) {
         throw new Error('Network response was not ok');
@@ -121,8 +121,8 @@ export const SettingsServerlessFunctionDetail = () => {
         setFormValues((prevState) => ({
           ...prevState,
           code: result,
-          name: serverlessFunction.name,
-          description: serverlessFunction.description,
+          name: serverlessFunction?.name || '',
+          description: serverlessFunction?.description,
         }));
       }
     };
@@ -161,6 +161,7 @@ export const SettingsServerlessFunctionDetail = () => {
             formValues={formValues}
             setFormValues={setFormValues}
             serverlessFunctionId={serverlessFunctionId}
+            handleSave={handleSave}
           />
         );
       default:
@@ -169,14 +170,14 @@ export const SettingsServerlessFunctionDetail = () => {
   };
 
   return (
-    serverlessFunction.name && (
+    serverlessFunction?.name && (
       <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
         <SettingsPageContainer>
           <SettingsHeaderContainer>
             <Breadcrumb
               links={[
                 { children: 'Functions', href: '/settings/functions' },
-                { children: `${serverlessFunction.name}` },
+                { children: `${serverlessFunction?.name}` },
               ]}
             />
             <SaveAndCancelButtons
@@ -188,7 +189,7 @@ export const SettingsServerlessFunctionDetail = () => {
             />
           </SettingsHeaderContainer>
           <Section>
-            <StyledH2Title title={serverlessFunction.name} />
+            <StyledH2Title title={serverlessFunction?.name} />
           </Section>
           <Section>
             <TabList tabListId={TAB_LIST_COMPONENT_ID} tabs={tabs} />
