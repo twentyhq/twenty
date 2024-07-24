@@ -54,6 +54,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 
 import {
   PGGraphQLMutation,
@@ -70,6 +71,7 @@ export class WorkspaceQueryRunnerService {
   private readonly logger = new Logger(WorkspaceQueryRunnerService.name);
 
   constructor(
+    private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
@@ -428,10 +430,19 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { userId, workspaceId, objectMetadataItem } = options;
+    const repository = await this.twentyORMManager.getRepository(
+      objectMetadataItem.nameSingular,
+    );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
 
+    const existingRecords = await repository.find({
+      where: { id: { in: args.filter?.id?.in } },
+    });
+    const mappedRecords = new Map(
+      existingRecords.map((record) => [record.id, record]),
+    );
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_AFFECTED_RECORDS',
     );
@@ -463,6 +474,30 @@ export class WorkspaceQueryRunnerService {
       CallWebhookJobsJobOperation.update,
       options,
     );
+
+    parsedResults.forEach((record) => {
+      const existingRecord = mappedRecords.get(record.id);
+
+      if (!existingRecord) {
+        this.logger.warn(
+          `Record with id ${record.id} not found in the database`,
+        );
+
+        return;
+      }
+
+      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
+        name: `${objectMetadataItem.nameSingular}.updated`,
+        workspaceId,
+        userId,
+        recordId: existingRecord.id,
+        objectMetadata: objectMetadataItem,
+        properties: {
+          before: this.removeNestedProperties(existingRecord as Record),
+          after: this.removeNestedProperties(record),
+        },
+      } satisfies ObjectRecordUpdateEvent<any>);
+    });
 
     // TODO: check - NO EVENT SENT?
     // OK I spent 2 hours trying to implement before/after diff and
@@ -524,7 +559,7 @@ export class WorkspaceQueryRunnerService {
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         properties: {
-          before: [this.removeNestedProperties(record)],
+          before: this.removeNestedProperties(record),
         },
       } satisfies ObjectRecordDeleteEvent<any>);
     });
@@ -537,6 +572,9 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
+    const repository = await this.twentyORMManager.getRepository(
+      objectMetadataItem.nameSingular,
+    );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
@@ -546,19 +584,9 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    // TODO START: remove this awful patch and use our upcoming custom ORM is developed
-    const deletedWorkspaceMember = await this.handleDeleteWorkspaceMember(
-      args.id,
-      workspaceId,
-      objectMetadataItem,
-    );
-
-    const deletedBlocklistItem = await this.handleDeleteBlocklistItem(
-      args.id,
-      workspaceId,
-      objectMetadataItem,
-    );
-    // TODO END
+    const existingRecord = await repository.findOne({
+      where: { id: args.id },
+    });
 
     await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
@@ -592,8 +620,7 @@ export class WorkspaceQueryRunnerService {
       objectMetadata: objectMetadataItem,
       properties: {
         before: {
-          ...(deletedWorkspaceMember ?? {}),
-          ...(deletedBlocklistItem ?? {}),
+          ...(existingRecord ?? {}),
           ...this.removeNestedProperties(parsedResults?.[0]),
         },
       },
