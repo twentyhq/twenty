@@ -21,7 +21,7 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 export enum MessageChannelSyncStatus {
   NOT_SYNCED = 'NOT_SYNCED',
   ONGOING = 'ONGOING',
-  ACTIVE = 'ACTIVE', // Updated from COMPLETED to ACTIVE
+  ACTIVE = 'ACTIVE',
   FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
   FAILED_UNKNOWN = 'FAILED_UNKNOWN',
 }
