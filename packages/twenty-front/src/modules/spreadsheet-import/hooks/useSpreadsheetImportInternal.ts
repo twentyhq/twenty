@@ -3,12 +3,12 @@ import { SetRequired } from 'type-fest';
 
 import { RsiContext } from '@/spreadsheet-import/components/Providers';
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
-import { SpreadsheetOptions } from '@/spreadsheet-import/types';
+import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 
 export const useSpreadsheetImportInternal = <T extends string>() =>
   useContext<
     SetRequired<
-      SpreadsheetOptions<T>,
+      SpreadsheetImportDialogOptions<T>,
       keyof typeof defaultSpreadsheetImportProps
     >
   >(RsiContext);

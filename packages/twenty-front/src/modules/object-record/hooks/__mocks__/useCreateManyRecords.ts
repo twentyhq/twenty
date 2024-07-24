@@ -7,8 +7,9 @@ export const query = gql`
     createPeople(data: $data, upsert: $upsert) {
       __typename
       xLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       id
       createdAt
@@ -21,8 +22,9 @@ export const query = gql`
       }
       phone
       linkedinLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       updatedAt
       avatarUrl
@@ -44,8 +46,9 @@ export const variables = { data };
 export const responseData = {
   __typeName: '',
   xLink: {
-    label: '',
-    url: '',
+    primaryLinkUrl: '',
+    primaryLinkLabel: '',
+    secondaryLinks: null,
   },
   createdAt: '',
   city: '',
@@ -57,8 +60,9 @@ export const responseData = {
   },
   phone: '',
   linkedinLink: {
-    label: '',
-    url: '',
+    primaryLinkUrl: '',
+    primaryLinkLabel: '',
+    secondaryLinks: null,
   },
   updatedAt: '',
   avatarUrl: '',

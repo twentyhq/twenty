@@ -34,8 +34,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: 'zdf',
             xLink: {
               __typename: 'Link',
-              label: 'asd',
-              url: 'asd.com',
+              primaryLinkLabel: 'asd',
+              primaryLinkUrl: 'asd.com',
             },
             name: {
               __typename: 'FullName',
@@ -46,8 +46,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: 'asd',
-              url: 'asd.com',
+              primaryLinkLabel: 'asd',
+              primaryLinkUrl: 'asd.com',
             },
           },
         },
@@ -61,8 +61,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'qonto',
-      url: 'https://www.linkedin.com/company/qonto',
+      primaryLinkLabel: 'qonto',
+      primaryLinkUrl: 'https://www.linkedin.com/company/qonto',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -71,8 +71,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -143,8 +143,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -155,8 +155,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -173,8 +173,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -185,8 +185,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -203,8 +203,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -215,8 +215,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -233,8 +233,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -245,8 +245,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -263,8 +263,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -275,8 +275,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -290,8 +290,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'google',
-      url: 'https://www.linkedin.com/company/google',
+      primaryLinkLabel: 'google',
+      primaryLinkUrl: 'https://www.linkedin.com/company/google',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -300,8 +300,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -347,8 +347,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -359,8 +359,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -377,8 +377,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -389,8 +389,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -404,8 +404,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'facebook',
-      url: 'https://www.linkedin.com/company/facebook',
+      primaryLinkLabel: 'facebook',
+      primaryLinkUrl: 'https://www.linkedin.com/company/facebook',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -434,8 +434,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -477,8 +477,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'netflix',
-      url: 'https://www.linkedin.com/company/netflix',
+      primaryLinkLabel: 'netflix',
+      primaryLinkUrl: 'https://www.linkedin.com/company/netflix',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -487,8 +487,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -534,8 +534,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -546,8 +546,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -564,8 +564,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -576,8 +576,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -594,8 +594,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -606,8 +606,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -621,8 +621,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'microsoft',
-      url: 'https://www.linkedin.com/company/microsoft',
+      primaryLinkLabel: 'microsoft',
+      primaryLinkUrl: 'https://www.linkedin.com/company/microsoft',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -670,8 +670,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -712,8 +712,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'libeo',
-      url: 'https://www.linkedin.com/company/libeo',
+      primaryLinkLabel: 'libeo',
+      primaryLinkUrl: 'https://www.linkedin.com/company/libeo',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -722,8 +722,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -765,8 +765,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'airbnb',
-      url: 'https://www.linkedin.com/company/airbnb',
+      primaryLinkLabel: 'airbnb',
+      primaryLinkUrl: 'https://www.linkedin.com/company/airbnb',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -775,8 +775,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -819,8 +819,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'claap',
-      url: 'https://www.linkedin.com/company/claap',
+      primaryLinkLabel: 'claap',
+      primaryLinkUrl: 'https://www.linkedin.com/company/claap',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -829,8 +829,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -877,8 +877,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -889,8 +889,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -904,8 +904,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'algolia',
-      url: 'https://www.linkedin.com/company/algolia',
+      primaryLinkLabel: 'algolia',
+      primaryLinkUrl: 'https://www.linkedin.com/company/algolia',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -914,8 +914,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -960,8 +960,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -972,8 +972,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -987,8 +987,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'samsung',
-      url: 'https://www.linkedin.com/company/samsung',
+      primaryLinkLabel: 'samsung',
+      primaryLinkUrl: 'https://www.linkedin.com/company/samsung',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -997,8 +997,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -1041,8 +1041,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'hasura',
-      url: 'https://www.linkedin.com/company/hasura',
+      primaryLinkLabel: 'hasura',
+      primaryLinkUrl: 'https://www.linkedin.com/company/hasura',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -1051,8 +1051,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -1092,8 +1092,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'wework',
-      url: 'https://www.linkedin.com/company/wework',
+      primaryLinkLabel: 'wework',
+      primaryLinkUrl: 'https://www.linkedin.com/company/wework',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -1102,8 +1102,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -1150,8 +1150,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: '',
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -1162,8 +1162,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -1180,8 +1180,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -1192,8 +1192,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -1207,8 +1207,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'linkedin',
-      url: 'https://www.linkedin.com/company/linkedin',
+      primaryLinkLabel: 'linkedin',
+      primaryLinkUrl: 'https://www.linkedin.com/company/linkedin',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -1237,8 +1237,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',

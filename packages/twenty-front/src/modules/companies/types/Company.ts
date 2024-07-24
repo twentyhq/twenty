@@ -9,8 +9,16 @@ export type Company = {
   address: string;
   accountOwnerId?: string | null;
   position?: number;
-  linkedinLink: { __typename?: 'Link'; url: string; label: string };
-  xLink?: { __typename?: 'Link'; url: string; label: string };
+  linkedinLink: {
+    __typename?: 'Links';
+    primaryLinkUrl: string;
+    primaryLinkLabel: string;
+  };
+  xLink?: {
+    __typename?: 'Links';
+    primaryLinkUrl: string;
+    primaryLinkLabel: string;
+  };
   annualRecurringRevenue: {
     __typename?: 'Currency';
     amountMicros: number | null;

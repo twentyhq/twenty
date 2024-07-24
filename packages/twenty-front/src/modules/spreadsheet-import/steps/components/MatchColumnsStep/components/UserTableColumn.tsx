@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { RawData } from '@/spreadsheet-import/types';
+import { ImportedRow } from '@/spreadsheet-import/types';
 import { isDefined } from '~/utils/isDefined';
 
 import { Column } from '../MatchColumnsStep';
@@ -31,20 +31,22 @@ const StyledExample = styled.span`
 
 type UserTableColumnProps<T extends string> = {
   column: Column<T>;
-  entries: RawData;
+  importedRow: ImportedRow;
 };
 
 export const UserTableColumn = <T extends string>({
   column,
-  entries,
+  importedRow,
 }: UserTableColumnProps<T>) => {
   const { header } = column;
-  const entry = entries.find(isDefined);
+  const firstDefinedValue = importedRow.find(isDefined);
 
   return (
     <StyledContainer>
       <StyledValue>{header}</StyledValue>
-      {entry && <StyledExample>{`ex: ${entry}`}</StyledExample>}
+      {firstDefinedValue && (
+        <StyledExample>{`ex: ${firstDefinedValue}`}</StyledExample>
+      )}
     </StyledContainer>
   );
 };
