@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
 import { gql } from '@apollo/client';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -25,8 +25,9 @@ const query = gql`
     updatePerson(id: $idToUpdate, data: $input) {
       __typename
       xLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       id
       createdAt
@@ -39,8 +40,9 @@ const query = gql`
       }
       phone
       linkedinLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       updatedAt
       avatarUrl

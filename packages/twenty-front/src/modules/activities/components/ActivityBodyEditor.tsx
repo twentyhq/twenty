@@ -1,7 +1,7 @@
-import { ClipboardEvent, useCallback, useMemo } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { useCreateBlockNote } from '@blocknote/react';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
+import { ClipboardEvent, useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
@@ -29,8 +29,9 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { getFileType } from '../files/utils/getFileType';
 
-import '@blocknote/react/style.css';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
+import '@blocknote/core/fonts/inter.css';
+import '@blocknote/mantine/style.css';
 
 type ActivityBodyEditorProps = {
   activityId: string;

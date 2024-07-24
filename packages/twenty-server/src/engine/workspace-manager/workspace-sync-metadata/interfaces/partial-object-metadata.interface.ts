@@ -1,9 +1,9 @@
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 import {
   ComputedPartialFieldMetadata,
   PartialComputedFieldMetadata,
   PartialFieldMetadata,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 export type PartialWorkspaceEntity = Omit<
   ObjectMetadataInterface,
@@ -14,6 +14,8 @@ export type PartialWorkspaceEntity = Omit<
   workspaceId: string;
   dataSourceId: string;
   fields: (PartialFieldMetadata | PartialComputedFieldMetadata)[];
+  labelIdentifierStandardId?: string | null;
+  imageIdentifierStandardId?: string | null;
 };
 
 export type ComputedPartialWorkspaceEntity = Omit<
