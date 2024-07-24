@@ -54,6 +54,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
     const errorsDuringSync: string[] = [];
 
     for (const workspaceId of workspaceIds) {
+      this.logger.log(`Running workspace sync for workspace: ${workspaceId}`);
       try {
         const issues =
           await this.workspaceHealthService.healthCheck(workspaceId);

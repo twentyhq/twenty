@@ -9,8 +9,9 @@ const expectedQueryTemplate = `
     createPeople(data: $data, upsert: $upsert) {
       __typename
       xLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       id
       createdAt
@@ -23,8 +24,9 @@ const expectedQueryTemplate = `
       }
       phone
       linkedinLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       updatedAt
       avatarUrl
