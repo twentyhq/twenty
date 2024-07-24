@@ -1,9 +1,6 @@
 import { H2Title } from 'twenty-ui';
 import { Section } from '@/ui/layout/section/components/Section';
-import {
-  ServerlessFunctionFormValues,
-  SetServerlessFunctionFormValues,
-} from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
+import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
 import { Button } from '@/ui/input/button/components/Button';
 import { useState } from 'react';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -13,14 +10,12 @@ import { useNavigate } from 'react-router-dom';
 
 export const SettingsServerlessFunctionSettingsTab = ({
   formValues,
-  setFormValues,
   serverlessFunctionId,
-  handleSave,
+  onChange,
 }: {
   formValues: ServerlessFunctionFormValues;
-  setFormValues: SetServerlessFunctionFormValues;
   serverlessFunctionId: string;
-  handleSave?: () => void;
+  onChange: (key: string) => (value: string | undefined) => void;
 }) => {
   const navigate = useNavigate();
   const [isDeleteFunctionModalOpen, setIsDeleteFunctionModalOpen] =
@@ -35,8 +30,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
     <>
       <SettingsServerlessFunctionNewForm
         formValues={formValues}
-        setFormValues={setFormValues}
-        handleSave={handleSave}
+        onChange={onChange}
       />
       <Section>
         <H2Title title="Danger zone" description="Delete this function" />

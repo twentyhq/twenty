@@ -3,10 +3,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import styled from '@emotion/styled';
-import {
-  ServerlessFunctionFormValues,
-  SetServerlessFunctionFormValues,
-} from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
+import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -16,12 +13,10 @@ const StyledInputsContainer = styled.div`
 
 export const SettingsServerlessFunctionNewForm = ({
   formValues,
-  setFormValues,
-  handleSave,
+  onChange,
 }: {
   formValues: ServerlessFunctionFormValues;
-  setFormValues: SetServerlessFunctionFormValues;
-  handleSave?: () => void;
+  onChange: (key: string) => (value: string | undefined) => void;
 }) => {
   return (
     <Section>
@@ -32,24 +27,13 @@ export const SettingsServerlessFunctionNewForm = ({
           fullWidth
           focused
           value={formValues.name}
-          onInputEnter={handleSave}
-          onChange={(value) => {
-            setFormValues((prevState) => ({
-              ...prevState,
-              name: value,
-            }));
-          }}
+          onChange={onChange('name')}
         />
         <TextArea
           placeholder="Description"
           minRows={4}
           value={formValues.description}
-          onChange={(value) => {
-            setFormValues((prevState) => ({
-              ...prevState,
-              description: value,
-            }));
-          }}
+          onChange={onChange('description')}
         />
       </StyledInputsContainer>
     </Section>

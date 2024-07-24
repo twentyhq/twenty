@@ -1,10 +1,7 @@
 import { H2Title, IconPlayerPlay } from 'twenty-ui';
 import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import { Section } from '@/ui/layout/section/components/Section';
-import {
-  ServerlessFunctionFormValues,
-  SetServerlessFunctionFormValues,
-} from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
+import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
 import { Button } from '@/ui/input/button/components/Button';
 import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
 import styled from '@emotion/styled';
@@ -16,12 +13,12 @@ const StyledTabList = styled(TabList)`
 
 export const SettingsServerlessFunctionCodeEditorTab = ({
   formValues,
-  setFormValues,
   handleExecute,
+  onChange,
 }: {
   formValues: ServerlessFunctionFormValues;
-  setFormValues: SetServerlessFunctionFormValues;
   handleExecute: () => void;
+  onChange: (key: string) => (value: string | undefined) => void;
 }) => {
   const HeaderButton = (
     <Button
@@ -55,12 +52,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
       />
       <CodeEditor
         value={formValues.code}
-        onChange={(value) => {
-          setFormValues((prevState) => ({
-            ...prevState,
-            code: value,
-          }));
-        }}
+        onChange={onChange('code')}
         header={Header}
       />
     </Section>

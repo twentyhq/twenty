@@ -17,7 +17,6 @@ export const SettingsServerlessFunctionsNew = () => {
   const [formValues, setFormValues] = useServerlessFunctionFormValues();
 
   const { createOneServerlessFunction } = useCreateOneServerlessFunction();
-
   const handleSave = async () => {
     const newServerlessFunction = await createOneServerlessFunction({
       name: formValues.name,
@@ -31,6 +30,15 @@ export const SettingsServerlessFunctionsNew = () => {
     navigate(
       `/settings/functions/${newServerlessFunction.data.createOneServerlessFunction.id}`,
     );
+  };
+
+  const onChange = (key: string) => {
+    return (value: string) => {
+      setFormValues((prevState) => ({
+        ...prevState,
+        [key]: value,
+      }));
+    };
   };
 
   const canSave = !!formValues.name && createOneServerlessFunction;
@@ -55,8 +63,7 @@ export const SettingsServerlessFunctionsNew = () => {
         </SettingsHeaderContainer>
         <SettingsServerlessFunctionNewForm
           formValues={formValues}
-          setFormValues={setFormValues}
-          handleSave={handleSave}
+          onChange={onChange}
         />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

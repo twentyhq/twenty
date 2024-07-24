@@ -25,7 +25,7 @@ type CodeEditorProps = EditorProps & { header: React.ReactNode };
 
 export const CodeEditor = ({
   value = DEFAULT_CODE,
-  onChange = () => {},
+  onChange,
   language = 'typescript',
   height = 500,
   options = undefined,

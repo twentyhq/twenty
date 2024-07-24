@@ -1,5 +1,6 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconCode, IconSettings, IconTestPipe } from 'twenty-ui';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { IconCode, IconSettings, IconTestPipe } from 'twenty-ui';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
@@ -7,10 +8,7 @@ import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderCon
 import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
 import { isDefined } from '~/utils/isDefined';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useRecoilValue } from 'recoil';
@@ -22,17 +20,13 @@ import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
+import { useDebouncedCallback } from 'use-debounce';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
-
-const StyledH2Title = styled(H2Title)`
-  margin-bottom: 0;
-`;
 
 export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
-  const navigate = useNavigate();
   const { activeTabIdState, setActiveTabId } = useTabList(
     TAB_LIST_COMPONENT_ID,
   );
@@ -49,7 +43,7 @@ export const SettingsServerlessFunctionDetail = () => {
     serverlessFunction?.name !== formValues.name ||
     serverlessFunction?.description !== formValues.description;
 
-  const handleSave = async () => {
+  const save = async () => {
     try {
       const result = await updateOneServerlessFunction({
         id: serverlessFunction?.id,
@@ -70,6 +64,18 @@ export const SettingsServerlessFunctionDetail = () => {
         },
       );
     }
+  };
+
+  const handleSave = useDebouncedCallback(save, 500);
+
+  const onChange = (key: string) => {
+    return async (value: string | undefined) => {
+      setFormValues((prevState) => ({
+        ...prevState,
+        [key]: value,
+      }));
+      await handleSave();
+    };
   };
 
   const handleExecute = async () => {
@@ -143,8 +149,8 @@ export const SettingsServerlessFunctionDetail = () => {
         return (
           <SettingsServerlessFunctionCodeEditorTab
             formValues={formValues}
-            setFormValues={setFormValues}
             handleExecute={handleExecute}
+            onChange={onChange}
           />
         );
       case 'test':
@@ -159,9 +165,8 @@ export const SettingsServerlessFunctionDetail = () => {
         return (
           <SettingsServerlessFunctionSettingsTab
             formValues={formValues}
-            setFormValues={setFormValues}
             serverlessFunctionId={serverlessFunctionId}
-            handleSave={handleSave}
+            onChange={onChange}
           />
         );
       default:
@@ -179,13 +184,6 @@ export const SettingsServerlessFunctionDetail = () => {
                 { children: 'Functions', href: '/settings/functions' },
                 { children: `${serverlessFunction?.name}` },
               ]}
-            />
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              onCancel={() => {
-                navigate('/settings/functions');
-              }}
-              onSave={handleSave}
             />
           </SettingsHeaderContainer>
           <Section>
