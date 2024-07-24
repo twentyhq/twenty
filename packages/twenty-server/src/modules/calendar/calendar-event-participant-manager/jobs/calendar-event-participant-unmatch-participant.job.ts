@@ -1,8 +1,8 @@
 import { Scope } from '@nestjs/common';
 
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 
 export type CalendarEventParticipantUnmatchParticipantJobData = {
@@ -25,10 +25,9 @@ export class CalendarEventParticipantUnmatchParticipantJob {
   async handle(
     data: CalendarEventParticipantUnmatchParticipantJobData,
   ): Promise<void> {
-    const { workspaceId, email, personId, workspaceMemberId } = data;
+    const { email, personId, workspaceMemberId } = data;
 
-    await this.calendarEventParticipantService.unmatchCalendarEventParticipants(
-      workspaceId,
+    await this.calendarEventParticipantService.unmatchCalendarEventParticipant(
       email,
       personId,
       workspaceMemberId,

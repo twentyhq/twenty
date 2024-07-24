@@ -27,17 +27,15 @@ export class CalendarEventParticipantMatchParticipantJob {
   async handle(
     data: CalendarEventParticipantMatchParticipantJobData,
   ): Promise<void> {
-    const { workspaceId, email, personId, workspaceMemberId } = data;
+    const { workspaceId, email } = data;
 
     if (!this.workspaceService.isWorkspaceActivated(workspaceId)) {
       return;
     }
 
-    await this.calendarEventParticipantService.matchCalendarEventParticipants(
-      workspaceId,
+    await this.calendarEventParticipantService.matchCalendarEventParticipant(
       email,
-      personId,
-      workspaceMemberId,
+      workspaceId,
     );
   }
 }

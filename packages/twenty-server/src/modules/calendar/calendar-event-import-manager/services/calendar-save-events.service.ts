@@ -135,6 +135,7 @@ export class CalendarSaveEventsService {
       await this.calendarEventParticipantService.upsertAndDeleteCalendarEventParticipants(
         participantsToSave,
         participantsToUpdate,
+        workspaceId,
         transactionManager,
       );
     });

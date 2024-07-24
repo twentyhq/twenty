@@ -99,7 +99,7 @@ export class MessagingMessageParticipantService {
     if (participants.length === 0) return [];
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ${valuesString} RETURNING *`,
+      `INSERT INTO ${dataSourceSchema}."messageParticipant" ("messageId", "role", "handle", "displayName") VALUES ${valuesString} RETURNING *`,
       flattenedValues,
       workspaceId,
       transactionManager,
