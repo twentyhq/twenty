@@ -5,12 +5,16 @@ import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus'
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { RecordInlineCellContainerProps } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
+import { RecordInlineCellContextProps, useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
     RecordInlineCellDisplayModeProps,
-    'disableHoverEffect' | 'isDisplayModeFixHeight' | 'isHovered'
+    'isHovered'
+  > & Pick<
+    RecordInlineCellContextProps,
+    'isDisplayModeFixHeight' | 'disableHoverEffect'
   >
 >`
   align-items: center;
@@ -54,22 +58,22 @@ const StyledEmptyField = styled.div`
 `;
 
 type RecordInlineCellDisplayModeProps = {
-  disableHoverEffect?: boolean;
-  isDisplayModeFixHeight?: boolean;
+  // disableHoverEffect?: boolean;
+  // isDisplayModeFixHeight?: boolean;
   isHovered?: boolean;
   emptyPlaceholder?: string;
 } & Pick<RecordInlineCellContainerProps, 'buttonIcon' | 'editModeContentOnly'>;
 
 export const RecordInlineCellDisplayMode = ({
   children,
-  disableHoverEffect,
-  isDisplayModeFixHeight,
+  // disableHoverEffect,
+  // isDisplayModeFixHeight,
   emptyPlaceholder = 'Empty',
   isHovered,
-  buttonIcon,
   editModeContentOnly,
 }: React.PropsWithChildren<RecordInlineCellDisplayModeProps>) => {
   const { isFocused } = useFieldFocus();
+  const { isDisplayModeFixHeight, disableHoverEffect, buttonIcon } = useRecordInlineCellContext();
   const isDisplayModeContentEmpty = useIsFieldEmpty();
   const showEditButton =
     buttonIcon &&
@@ -84,8 +88,6 @@ export const RecordInlineCellDisplayMode = ({
   return (
     <>
       <StyledRecordInlineCellNormalModeOuterContainer
-        disableHoverEffect={disableHoverEffect}
-        isDisplayModeFixHeight={isDisplayModeFixHeight}
         isHovered={isHovered}
       >
         <StyledRecordInlineCellNormalModeInnerContainer>
