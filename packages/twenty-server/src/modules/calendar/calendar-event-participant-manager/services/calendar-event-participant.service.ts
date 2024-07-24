@@ -112,12 +112,17 @@ export class CalendarEventParticipantService {
       transactionManager,
     );
 
-    await this.matchCalendarEventParticipants(participantsToSave, workspaceId);
+    await this.matchCalendarEventParticipants(
+      participantsToSave,
+      workspaceId,
+      transactionManager,
+    );
   }
 
   public async matchCalendarEventParticipants(
     calendarEventParticipants: CalendarEventParticipantWithCalendarEventId[],
     workspaceId: string,
+    transactionManager?: any,
   ) {
     const uniqueParticipantsHandles = [
       ...new Set(
@@ -135,22 +140,28 @@ export class CalendarEventParticipantService {
         'person',
       );
 
-    const persons = await personRepository.find({
-      where: {
-        email: Any(uniqueParticipantsHandles),
+    const persons = await personRepository.find(
+      {
+        where: {
+          email: Any(uniqueParticipantsHandles),
+        },
       },
-    });
+      transactionManager,
+    );
 
     const workspaceMemberRepository =
       await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
       );
 
-    const workspaceMembers = await workspaceMemberRepository.find({
-      where: {
-        userEmail: Any(uniqueParticipantsHandles),
+    const workspaceMembers = await workspaceMemberRepository.find(
+      {
+        where: {
+          userEmail: Any(uniqueParticipantsHandles),
+        },
       },
-    });
+      transactionManager,
+    );
 
     for (const handle of uniqueParticipantsHandles) {
       const person = persons.find((person) => person.email === handle);
@@ -167,6 +178,7 @@ export class CalendarEventParticipantService {
           personId: person?.id,
           workspaceMemberId: workspaceMember?.id,
         },
+        transactionManager,
       );
     }
 
