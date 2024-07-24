@@ -14,7 +14,7 @@ import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/worksp
 import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
-interface UpdateMessageChannelSyncStatusEnumCommandOptions {
+interface MigrateMessageChannelSyncStatusEnumCommandOptions {
   workspaceId?: string;
 }
 
@@ -22,9 +22,9 @@ interface UpdateMessageChannelSyncStatusEnumCommandOptions {
   name: 'migrate-0.23:update-message-channel-sync-status-enum',
   description: 'Update messageChannel syncStatus',
 })
-export class UpdateMessageChannelSyncStatusEnumCommand extends CommandRunner {
+export class MigrateMessageChannelSyncStatusEnumCommand extends CommandRunner {
   private readonly logger = new Logger(
-    UpdateMessageChannelSyncStatusEnumCommand.name,
+    MigrateMessageChannelSyncStatusEnumCommand.name,
   );
   constructor(
     private readonly workspaceStatusService: WorkspaceStatusService,
@@ -50,7 +50,7 @@ export class UpdateMessageChannelSyncStatusEnumCommand extends CommandRunner {
 
   async run(
     _passedParam: string[],
-    options: UpdateMessageChannelSyncStatusEnumCommandOptions,
+    options: MigrateMessageChannelSyncStatusEnumCommandOptions,
   ): Promise<void> {
     let workspaceIds: string[] = [];
 
