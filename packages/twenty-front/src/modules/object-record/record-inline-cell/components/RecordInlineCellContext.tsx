@@ -11,7 +11,7 @@ export type RecordInlineCellContextProps = {
   buttonIcon?: IconComponent;
   editModeContent?: ReactElement;
   editModeContentOnly?: boolean;
-  displayModeContent: ReactElement;
+  displayModeContent?: ReactElement;
   customEditHotkeyScope?: HotkeyScope;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
@@ -19,9 +19,26 @@ export type RecordInlineCellContextProps = {
   isCentered?: boolean;
 };
 
-export const RecordInlineCellContext = createContext<RecordInlineCellContextProps | undefined>(undefined);
+const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
+  readonly: false,
+  IconLabel: undefined,
+  label: "",
+  labelWidth: 0,
+  showLabel: false,
+  buttonIcon: undefined,
+  editModeContent: undefined,
+  editModeContentOnly: false,
+  displayModeContent: undefined,
+  customEditHotkeyScope: undefined,
+  isDisplayModeFixHeight: false,
+  disableHoverEffect: false,
+  loading: false,
+  isCentered: false,
+}
 
-export const useRecordInlineCellContext = (): RecordInlineCellContextProps | undefined => {
+export const RecordInlineCellContext = createContext<RecordInlineCellContextProps>(defaultRecordInlineCellContextProp);
+
+export const useRecordInlineCellContext = (): RecordInlineCellContextProps => {
   const context = useContext(RecordInlineCellContext);
   return context;
 };
