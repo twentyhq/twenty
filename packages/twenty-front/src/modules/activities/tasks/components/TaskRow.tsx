@@ -20,7 +20,9 @@ const StyledContainer = styled.div`
   display: inline-flex;
   height: ${({ theme }) => theme.spacing(12)};
   min-width: calc(100% - ${({ theme }) => theme.spacing(8)});
+  max-width: calc(100% - ${({ theme }) => theme.spacing(8)});
   padding: 0 ${({ theme }) => theme.spacing(4)};
+  overflow: hidden;
 
   &:last-child {
     border-bottom: 0;
@@ -30,6 +32,9 @@ const StyledContainer = styled.div`
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
+  max-width: 100%;
+  flex: 1;
+  overflow: hidden;
 `;
 
 const StyledTaskTitle = styled.div<{
@@ -39,6 +44,9 @@ const StyledTaskTitle = styled.div<{
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: 0 ${({ theme }) => theme.spacing(2)};
   text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const StyledDueDate = styled.div<{
@@ -63,6 +71,8 @@ const StyledPlaceholder = styled.div`
 
 const StyledLeftSideContainer = styled.div`
   display: flex;
+  flex: 1;
+  overflow: hidden;
 `;
 
 const StyledCheckboxContainer = styled.div`
