@@ -49,6 +49,7 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
   const relationPickerSearchFilter = useRecoilValue(
     relationPickerSearchFilterState,
   );
+
   const { filteredSelectedObjectRecords, loading, objectRecordsToSelect } =
     useMultiObjectSearch({
       searchFilterValue: relationPickerSearchFilter,
