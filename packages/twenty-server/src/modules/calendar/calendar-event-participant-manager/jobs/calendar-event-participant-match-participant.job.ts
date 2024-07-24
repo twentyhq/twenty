@@ -33,7 +33,7 @@ export class CalendarEventParticipantMatchParticipantJob {
       return;
     }
 
-    await this.calendarEventParticipantService.matchCalendarEventParticipantAfterContactCreation(
+    await this.calendarEventParticipantService.matchCalendarEventParticipantAfterPersonOrWorkspaceMemberCreation(
       email,
       workspaceId,
       personId,

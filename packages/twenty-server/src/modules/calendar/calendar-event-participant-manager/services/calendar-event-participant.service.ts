@@ -119,7 +119,7 @@ export class CalendarEventParticipantService {
     );
   }
 
-  public async matchCalendarEventParticipants(
+  private async matchCalendarEventParticipants(
     calendarEventParticipants: CalendarEventParticipantWithCalendarEventId[],
     workspaceId: string,
     transactionManager?: any,
@@ -189,7 +189,7 @@ export class CalendarEventParticipantService {
     });
   }
 
-  public async matchCalendarEventParticipantAfterContactCreation(
+  public async matchCalendarEventParticipantAfterPersonOrWorkspaceMemberCreation(
     handle: string,
     workspaceId: string,
     personId?: string,
