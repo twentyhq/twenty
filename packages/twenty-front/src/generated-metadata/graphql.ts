@@ -397,6 +397,13 @@ export type LinkMetadata = {
   url: Scalars['String']['output'];
 };
 
+export type LinksMetadata = {
+  __typename?: 'LinksMetadata';
+  primaryLinkLabel: Scalars['String']['output'];
+  primaryLinkUrl: Scalars['String']['output'];
+  secondaryLinks?: Maybe<Array<LinkMetadata>>;
+};
+
 export type LoginToken = {
   __typename?: 'LoginToken';
   loginToken: AuthToken;
@@ -1059,7 +1066,7 @@ export type Telemetry = {
 
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
-  conferenceLink: LinkMetadata;
+  conferenceLink: LinksMetadata;
   conferenceSolution: Scalars['String']['output'];
   description: Scalars['String']['output'];
   endsAt: Scalars['DateTime']['output'];
@@ -1228,10 +1235,6 @@ export type User = {
   lastName: Scalars['String']['output'];
   onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']['output']>;
-  /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
-  passwordResetToken?: Maybe<Scalars['String']['output']>;
-  /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
-  passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']['output']>;
   supportUserHash?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   workspaceMember?: Maybe<WorkspaceMember>;
