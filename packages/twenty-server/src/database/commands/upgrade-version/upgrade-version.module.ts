@@ -2,13 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
-import { AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand } from 'src/database/commands/upgrade-version/0-22/0-22-add-new-address-field-to-views-with-deprecated-address.command';
-import { FixObjectMetadataIdStandardIdCommand } from 'src/database/commands/upgrade-version/0-22/0-22-fix-object-metadata-id-standard-id.command';
-import { UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand } from 'src/database/commands/upgrade-version/0-22/0-22-update-boolean-fields-null-default-values-and-null-values.command';
-import { UpdateMessageChannelSyncStageEnumCommand } from 'src/database/commands/upgrade-version/0-22/0-22-update-message-channel-sync-stage-enum.command';
-import { UpdateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/upgrade-version/0-22/0-22-update-message-channel-sync-status-enum.command';
-import { UpgradeTo0_22Command } from 'src/database/commands/upgrade-version/0-22/0-22-upgrade-version.command';
-import { UpdateActivitiesCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-activities.command';
 import { UpgradeVersionCommand } from 'src/database/commands/upgrade-version/upgrade-version.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -46,20 +39,6 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     DataSeedDemoWorkspaceModule,
     WorkspaceCacheVersionModule,
   ],
-  providers: [
-    // general
-    UpgradeVersionCommand,
-
-    // 0.22 (legacy)
-    UpgradeTo0_22Command,
-    FixObjectMetadataIdStandardIdCommand,
-    UpdateBooleanFieldsNullDefaultValuesAndNullValuesCommand,
-    UpdateMessageChannelSyncStatusEnumCommand,
-    UpdateMessageChannelSyncStageEnumCommand,
-    AddNewAddressFieldToViewsWithDeprecatedAddressFieldCommand,
-
-    // 0.23
-    UpdateActivitiesCommand,
-  ],
+  providers: [UpgradeVersionCommand],
 })
 export class UpgradeVersionModule {}
