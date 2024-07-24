@@ -1,8 +1,6 @@
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import {
-  WorkspaceMemberColorSchemeEnum,
   WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberLocaleEnum,
   WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
@@ -13,12 +11,12 @@ export const mockWorkspaceMembers = [
       firstName: 'Jane',
       lastName: 'Doe',
     },
-    locale: WorkspaceMemberLocaleEnum.Fr,
+    locale: 'en',
     avatarUrl: '',
     createdAt: '2023-12-18T09:51:19.645Z',
     updatedAt: '2023-12-18T09:51:19.645Z',
     userId: '20202020-7169-42cf-bc47-1cfef15264b8',
-    colorScheme: WorkspaceMemberColorSchemeEnum.Light,
+    colorScheme: 'Light',
     timeZone: detectTimeZone(),
     dateFormat: WorkspaceMemberDateFormatEnum.MonthFirst,
     timeFormat: WorkspaceMemberTimeFormatEnum.Hour_24,
@@ -29,12 +27,12 @@ export const mockWorkspaceMembers = [
       firstName: 'John',
       lastName: 'Wick',
     },
-    locale: WorkspaceMemberLocaleEnum.Fr,
+    locale: 'en',
     avatarUrl: '',
     createdAt: '2023-12-18T09:51:19.645Z',
     updatedAt: '2023-12-18T09:51:19.645Z',
     userId: '20202020-3957-4908-9c36-2929a23f8357',
-    colorScheme: WorkspaceMemberColorSchemeEnum.Dark,
+    colorScheme: 'Dark',
     timeZone: detectTimeZone(),
     dateFormat: WorkspaceMemberDateFormatEnum.MonthFirst,
     timeFormat: WorkspaceMemberTimeFormatEnum.Hour_24,

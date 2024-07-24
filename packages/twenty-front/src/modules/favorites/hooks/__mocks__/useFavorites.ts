@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import { AvatarType } from 'twenty-ui';
 
-import { WorkspaceMemberColorSchemeEnum, WorkspaceMemberDateFormatEnum, WorkspaceMemberLocaleEnum, WorkspaceMemberTimeFormatEnum } from '~/generated/graphql';
+import { WorkspaceMemberDateFormatEnum, WorkspaceMemberTimeFormatEnum } from '~/generated/graphql';
 
 export const mockId = '8f3b2121-f194-4ba4-9fbf-2d5a37126806';
 export const favoriteId = 'f088c8c9-05d2-4276-b065-b863cc7d0b33';
@@ -324,8 +324,8 @@ export const mockWorkspaceMember = {
     lastName: 'Last',
   },
   avatarUrl: '',
-  locale: WorkspaceMemberLocaleEnum.Fr,
-  colorScheme: WorkspaceMemberColorSchemeEnum.Dark,
+  locale: 'en',
+  colorScheme: 'Dark',
   createdAt: '',
   updatedAt: '',
   userId: '1',

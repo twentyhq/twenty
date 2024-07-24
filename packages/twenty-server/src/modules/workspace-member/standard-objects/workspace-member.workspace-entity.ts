@@ -62,7 +62,7 @@ registerEnumType(WorkspaceMemberLocaleEnum, {
   description: 'The language code as per region',
 });
 
-registerEnumType(WorkspaceMemberColorSchemeEnum, {
+registerEnumType({
   name: 'WorkspaceMemberColorSchemeEnum',
   description: 'Appearance as Light, Dark or system as default',
 });

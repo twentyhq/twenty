@@ -1,11 +1,11 @@
 import { EntityManager } from 'typeorm';
 
+import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_TWENTY_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
 import {
   WorkspaceMemberColorSchemeEnum,
   WorkspaceMemberLocaleEnum,

@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -10,8 +10,7 @@ import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import {
   WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberLocaleEnum,
-  WorkspaceMemberTimeFormatEnum,
+  WorkspaceMemberTimeFormatEnum
 } from '~/generated/graphql';
 
 import {
@@ -77,7 +76,7 @@ describe('useFilteredSearchEntityQuery', () => {
         setCurrentWorkspaceMember({
           id: '32219445-f587-4c40-b2b1-6d3205ed96da',
           name: { firstName: 'John', lastName: 'Connor' },
-          locale: WorkspaceMemberLocaleEnum.Fr,
+          locale: 'en',
           timeZone: 'system',
           dateFormat: WorkspaceMemberDateFormatEnum.System,
           timeFormat: WorkspaceMemberTimeFormatEnum.System,

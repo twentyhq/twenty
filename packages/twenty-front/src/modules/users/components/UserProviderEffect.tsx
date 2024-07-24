@@ -12,7 +12,8 @@ import { getDateFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatD
 import { getTimeFormatFromWorkspaceEnum } from '@/workspace-member/utils/formatTimeLabel';
 import {
   useGetCurrentUserQuery,
-  WorkspaceMemberColorSchemeEnum,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -52,18 +53,21 @@ export const UserProviderEffect = () => {
     if (isDefined(workspaceMember)) {
       setCurrentWorkspaceMember({
         ...workspaceMember,
-        colorScheme:
-          (workspaceMember.colorScheme as WorkspaceMemberColorSchemeEnum) ??
-          WorkspaceMemberColorSchemeEnum.Light,
+        colorScheme: workspaceMember.colorScheme ?? 'Light',
       });
 
+      const timeZone = workspaceMember.timeZone ?? detectTimeZone();
+
+      const dateFormat =
+        workspaceMember.dateFormat ?? WorkspaceMemberDateFormatEnum.System;
+
+      const timeFormat =
+        workspaceMember.timeFormat ?? WorkspaceMemberTimeFormatEnum.System;
+
       setDateTimeFormat({
-        timeZone:
-          workspaceMember.timeZone === 'system'
-            ? detectTimeZone()
-            : workspaceMember.timeZone,
-        dateFormat: getDateFormatFromWorkspaceEnum(workspaceMember.dateFormat),
-        timeFormat: getTimeFormatFromWorkspaceEnum(workspaceMember.timeFormat),
+        timeZone: timeZone,
+        dateFormat: getDateFormatFromWorkspaceEnum(dateFormat),
+        timeFormat: getTimeFormatFromWorkspaceEnum(timeFormat),
       });
     }
 

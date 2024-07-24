@@ -1,7 +1,7 @@
-import { useCallback, useState } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useCallback, useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { H2Title } from 'twenty-ui';
@@ -22,10 +22,7 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import {
-  OnboardingStatus,
-  WorkspaceMemberColorSchemeEnum,
-} from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`
@@ -101,7 +98,7 @@ export const CreateProfile = () => {
               firstName: data.firstName,
               lastName: data.lastName,
             },
-            colorScheme: WorkspaceMemberColorSchemeEnum.System,
+            colorScheme: 'System',
           },
         });
 
@@ -113,7 +110,7 @@ export const CreateProfile = () => {
                 firstName: data.firstName,
                 lastName: data.lastName,
               },
-              colorScheme: WorkspaceMemberColorSchemeEnum.System,
+              colorScheme: 'System',
             };
           }
           return current;

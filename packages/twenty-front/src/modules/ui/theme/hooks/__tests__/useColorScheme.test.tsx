@@ -5,10 +5,8 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-  WorkspaceMemberColorSchemeEnum,
   WorkspaceMemberDateFormatEnum,
-  WorkspaceMemberLocaleEnum,
-  WorkspaceMemberTimeFormatEnum,
+  WorkspaceMemberTimeFormatEnum
 } from '~/generated/graphql';
 
 const updateOneRecordMock = jest.fn();
@@ -29,7 +27,7 @@ const workspaceMember: Omit<
     firstName: 'firstName',
     lastName: 'lastName',
   },
-  locale: WorkspaceMemberLocaleEnum.Fr,
+  locale: 'en',
   timeZone: 'system',
   dateFormat: WorkspaceMemberDateFormatEnum.System,
   timeFormat: WorkspaceMemberTimeFormatEnum.System,
@@ -57,7 +55,7 @@ describe('useColorScheme', () => {
     expect(result.current.colorScheme).toBe('SYSTEM');
 
     await act(async () => {
-      await result.current.setColorScheme(WorkspaceMemberColorSchemeEnum.Dark);
+      await result.current.setColorScheme('Dark');
     });
 
     // FIXME: For some reason, the color gets unset

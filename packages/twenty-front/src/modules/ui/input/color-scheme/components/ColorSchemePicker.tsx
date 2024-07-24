@@ -1,7 +1,4 @@
-import React from 'react';
 import styled from '@emotion/styled';
-
-import { WorkspaceMemberColorSchemeEnum } from '~/generated/graphql';
 
 import { ColorSchemeCard } from './ColorSchemeCard';
 
@@ -26,9 +23,9 @@ const StyledLabel = styled.span`
 `;
 
 export type ColorSchemePickerProps = {
-  value: WorkspaceMemberColorSchemeEnum;
+  value: string;
   className?: string;
-  onChange: (value: WorkspaceMemberColorSchemeEnum) => void;
+  onChange: (value: string) => void;
 };
 
 export const ColorSchemePicker = ({
@@ -39,25 +36,25 @@ export const ColorSchemePicker = ({
   <StyledContainer className={className}>
     <StyledCardContainer>
       <ColorSchemeCard
-        onClick={() => onChange(WorkspaceMemberColorSchemeEnum.Light)}
+        onClick={() => onChange('Light')}
         variant="Light"
-        selected={value === WorkspaceMemberColorSchemeEnum.Light}
+        selected={value === 'Light'}
       />
       <StyledLabel>Light</StyledLabel>
     </StyledCardContainer>
     <StyledCardContainer>
       <ColorSchemeCard
-        onClick={() => onChange(WorkspaceMemberColorSchemeEnum.Dark)}
+        onClick={() => onChange('Dark')}
         variant="Dark"
-        selected={value === WorkspaceMemberColorSchemeEnum.Dark}
+        selected={value === 'Dark'}
       />
       <StyledLabel>Dark</StyledLabel>
     </StyledCardContainer>
     <StyledCardContainer>
       <ColorSchemeCard
-        onClick={() => onChange(WorkspaceMemberColorSchemeEnum.System)}
+        onClick={() => onChange('System')}
         variant="System"
-        selected={value === WorkspaceMemberColorSchemeEnum.System}
+        selected={value === 'System'}
       />
       <StyledLabel>System settings</StyledLabel>
     </StyledCardContainer>

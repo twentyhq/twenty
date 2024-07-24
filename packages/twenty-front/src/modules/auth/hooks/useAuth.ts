@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
+import { useCallback } from 'react';
 import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
@@ -32,7 +32,8 @@ import {
   useCheckUserExistsLazyQuery,
   useSignUpMutation,
   useVerifyMutation,
-  WorkspaceMemberColorSchemeEnum,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -102,25 +103,30 @@ export const useAuth = () => {
 
       const user = verifyResult.data?.verify.user;
       let workspaceMember = null;
+
       setCurrentUser(user);
       if (isDefined(user.workspaceMember)) {
         workspaceMember = {
           ...user.workspaceMember,
-          colorScheme: user.workspaceMember
-            ?.colorScheme as WorkspaceMemberColorSchemeEnum,
+          colorScheme: user.workspaceMember?.colorScheme as string,
         };
+
         setCurrentWorkspaceMember(workspaceMember);
+
+        const timeZone = user.workspaceMember.timeZone ?? detectTimeZone();
+
+        const dateFormat =
+          user.workspaceMember.dateFormat ??
+          WorkspaceMemberDateFormatEnum.System;
+
+        const timeFormat =
+          user.workspaceMember.timeFormat ??
+          WorkspaceMemberTimeFormatEnum.System;
+
         setDateTimeFormat({
-          timeZone:
-            user.workspaceMember.timeZone !== 'system'
-              ? user.workspaceMember.timeZone
-              : detectTimeZone(),
-          dateFormat: getDateFormatFromWorkspaceEnum(
-            user.workspaceMember.dateFormat,
-          ),
-          timeFormat: getTimeFormatFromWorkspaceEnum(
-            user.workspaceMember.timeFormat,
-          ),
+          timeZone: timeZone,
+          dateFormat: getDateFormatFromWorkspaceEnum(dateFormat),
+          timeFormat: getTimeFormatFromWorkspaceEnum(timeFormat),
         });
       }
       const workspace = user.defaultWorkspace ?? null;
