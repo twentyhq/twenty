@@ -112,14 +112,76 @@ export class CalendarEventParticipantService {
       transactionManager,
     );
 
-    for (const participant of participantsToSave) {
-      this.matchCalendarEventParticipant(participant.handle, workspaceId);
-    }
+    await this.matchCalendarEventParticipants(participantsToSave, workspaceId);
   }
 
-  public async matchCalendarEventParticipant(
+  public async matchCalendarEventParticipants(
+    calendarEventParticipants: CalendarEventParticipantWithCalendarEventId[],
+    workspaceId: string,
+  ) {
+    const uniqueParticipantsHandles = [
+      ...new Set(
+        calendarEventParticipants.map((participant) => participant.handle),
+      ),
+    ];
+
+    const calendarEventParticipantRepository =
+      await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+        'calendarEventParticipant',
+      );
+
+    const personRepository =
+      await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
+        'person',
+      );
+
+    const persons = await personRepository.find({
+      where: {
+        email: Any(uniqueParticipantsHandles),
+      },
+    });
+
+    const workspaceMemberRepository =
+      await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        'workspaceMember',
+      );
+
+    const workspaceMembers = await workspaceMemberRepository.find({
+      where: {
+        userEmail: Any(uniqueParticipantsHandles),
+      },
+    });
+
+    for (const handle of uniqueParticipantsHandles) {
+      const person = persons.find((person) => person.email === handle);
+
+      const workspaceMember = workspaceMembers.find(
+        (workspaceMember) => workspaceMember.userEmail === handle,
+      );
+
+      await calendarEventParticipantRepository.update(
+        {
+          handle,
+        },
+        {
+          personId: person?.id,
+          workspaceMemberId: workspaceMember?.id,
+        },
+      );
+    }
+
+    this.eventEmitter.emit(`calendarEventParticipant.matched`, {
+      workspaceId,
+      workspaceMemberId: null,
+      calendarEventParticipants,
+    });
+  }
+
+  public async matchCalendarEventParticipantAfterContactCreation(
     handle: string,
     workspaceId: string,
+    personId?: string,
+    workspaceMemberId?: string,
   ) {
     const calendarEventParticipantRepository =
       await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
@@ -136,25 +198,14 @@ export class CalendarEventParticipantService {
     const calendarEventParticipantIdsToUpdate =
       calendarEventParticipantsToUpdate.map((participant) => participant.id);
 
-    const personRepository =
-      await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
-        'person',
-      );
-
-    const person = await personRepository.findOne({
-      where: {
-        email: handle,
-      },
-    });
-
-    if (person) {
+    if (personId) {
       await calendarEventParticipantRepository.update(
         {
           id: Any(calendarEventParticipantIdsToUpdate),
         },
         {
           person: {
-            id: person.id,
+            id: personId,
           },
         },
       );
@@ -173,25 +224,14 @@ export class CalendarEventParticipantService {
       });
     }
 
-    const workspaceMemberRepository =
-      await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        'workspaceMember',
-      );
-
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: {
-        userEmail: handle,
-      },
-    });
-
-    if (workspaceMember) {
+    if (workspaceMemberId) {
       await calendarEventParticipantRepository.update(
         {
           id: Any(calendarEventParticipantIdsToUpdate),
         },
         {
           workspaceMember: {
-            id: workspaceMember.id,
+            id: workspaceMemberId,
           },
         },
       );
