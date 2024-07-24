@@ -1,4 +1,4 @@
-import { COLOR } from '@ui/theme';
+import { COLOR } from './Colors';
 
 export const CODE_LIGHT = {
   text: {
