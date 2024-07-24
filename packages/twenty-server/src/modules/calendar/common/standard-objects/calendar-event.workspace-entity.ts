@@ -1,6 +1,6 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
+import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -143,7 +143,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconLink',
   })
   @WorkspaceIsNullable()
-  conferenceLink: LinkMetadata;
+  conferenceLink: LinksMetadata;
 
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.recurringEventExternalId,

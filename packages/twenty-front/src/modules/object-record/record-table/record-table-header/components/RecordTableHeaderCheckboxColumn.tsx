@@ -4,16 +4,23 @@ import { useRecoilValue } from 'recoil';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { Checkbox } from '@/ui/input/components/Checkbox';
-import { useTheme } from '@emotion/react';
 
 const StyledContainer = styled.div`
   align-items: center;
-
   display: flex;
   height: 32px;
-
   justify-content: center;
   background-color: ${({ theme }) => theme.background.primary};
+`;
+
+const StyledColumnHeaderCell = styled.th`
+  background-color: ${({ theme }) => theme.background.primary};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-right: transparent;
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  max-width: 30px;
+  min-width: 30px;
+  width: 30px;
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
@@ -36,19 +43,8 @@ export const RecordTableHeaderCheckboxColumn = () => {
     }
   };
 
-  const theme = useTheme();
-
   return (
-    <th
-      style={{
-        borderBottom: `1px solid ${theme.border.color.light}`,
-        borderTop: `1px solid ${theme.border.color.light}`,
-        width: 30,
-        minWidth: 30,
-        maxWidth: 30,
-        borderRight: 'transparent',
-      }}
-    >
+    <StyledColumnHeaderCell>
       <StyledContainer>
         <Checkbox
           checked={checked}
@@ -56,6 +52,6 @@ export const RecordTableHeaderCheckboxColumn = () => {
           indeterminate={indeterminate}
         />
       </StyledContainer>
-    </th>
+    </StyledColumnHeaderCell>
   );
 };
