@@ -6,7 +6,6 @@ import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.mod
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant-manager/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
 import { MessagingFetchByBatchesService } from 'src/modules/messaging/common/services/messaging-fetch-by-batch.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
@@ -34,7 +33,6 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
     MessagingTelemetryService,
     MessagingChannelSyncStatusService,
     MessagingFetchByBatchesService,
-    AddPersonIdAndWorkspaceMemberIdService,
   ],
   exports: [
     MessagingTelemetryService,
