@@ -54,7 +54,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 import {
   PGGraphQLMutation,
@@ -71,7 +71,7 @@ export class WorkspaceQueryRunnerService {
   private readonly logger = new Logger(WorkspaceQueryRunnerService.name);
 
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
@@ -372,14 +372,22 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        objectMetadataItem.nameSingular,
+      );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
 
-    const existingRecord = await this.findOne(
-      { filter: { id: { eq: args.id } } } as FindOneResolverArgs,
-      options,
-    );
+    const existingRecord = await repository.findOne({
+      where: { id: args.id },
+    });
+
+    if (!existingRecord) {
+      throw new NotFoundError(`Object with id ${args.id} not found`);
+    }
 
     const query = await this.workspaceQueryBuilderFactory.updateOne(
       args,
@@ -414,7 +422,7 @@ export class WorkspaceQueryRunnerService {
       name: `${objectMetadataItem.nameSingular}.updated`,
       workspaceId,
       userId,
-      recordId: (existingRecord as Record).id,
+      recordId: existingRecord.id,
       objectMetadata: objectMetadataItem,
       properties: {
         before: this.removeNestedProperties(existingRecord as Record),
@@ -430,9 +438,11 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { userId, workspaceId, objectMetadataItem } = options;
-    const repository = await this.twentyORMManager.getRepository(
-      objectMetadataItem.nameSingular,
-    );
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        objectMetadataItem.nameSingular,
+      );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
@@ -572,9 +582,11 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
-    const repository = await this.twentyORMManager.getRepository(
-      objectMetadataItem.nameSingular,
-    );
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        objectMetadataItem.nameSingular,
+      );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
