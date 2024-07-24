@@ -1,11 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  H2Title,
-  IconCode,
-  IconSettings,
-  IconPlayerPlay,
-  IconTestPipe,
-} from 'twenty-ui';
+import { H2Title, IconCode, IconSettings, IconTestPipe } from 'twenty-ui';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
@@ -25,12 +19,11 @@ import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-fun
 import { useServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
 import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteOneServerlessFunction';
-import { Button } from '@/ui/input/button/components/Button';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
 
-export const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
+const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
 const StyledH2Title = styled(H2Title)`
   margin-bottom: 0;
@@ -151,6 +144,7 @@ export const SettingsServerlessFunctionDetail = () => {
           <SettingsServerlessFunctionCodeEditorTab
             formValues={formValues}
             setFormValues={setFormValues}
+            handleExecute={handleExecute}
           />
         );
       case 'test':
@@ -158,6 +152,7 @@ export const SettingsServerlessFunctionDetail = () => {
           <SettingsServerlessFunctionTestTab
             formValues={formValues}
             setFormValues={setFormValues}
+            handleExecute={handleExecute}
           />
         );
       case 'settings':
@@ -197,16 +192,6 @@ export const SettingsServerlessFunctionDetail = () => {
           </Section>
           <Section>
             <TabList tabListId={TAB_LIST_COMPONENT_ID} tabs={tabs} />
-          </Section>
-          <Section>
-            <Button
-              title="Run function"
-              variant="primary"
-              accent="blue"
-              size="small"
-              Icon={IconPlayerPlay}
-              onClick={handleExecute}
-            />
           </Section>
           {renderActiveTabContent()}
         </SettingsPageContainer>

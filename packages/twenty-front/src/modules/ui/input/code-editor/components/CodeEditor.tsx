@@ -16,10 +16,12 @@ export const DEFAULT_CODE = `export const handler = async (
 
 const StyledEditor = styled(Editor)`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-top: none;
+  border-radius: 0 0 ${({ theme }) => theme.border.radius.sm}
+    ${({ theme }) => theme.border.radius.sm};
 `;
 
-type CodeEditorProps = EditorProps;
+type CodeEditorProps = EditorProps & { header: React.ReactNode };
 
 export const CodeEditor = ({
   value = DEFAULT_CODE,
@@ -27,6 +29,7 @@ export const CodeEditor = ({
   language = 'typescript',
   height = 500,
   options = undefined,
+  header,
 }: CodeEditorProps) => {
   const theme = useTheme();
   const handleEditorDidMount = (
@@ -49,23 +52,26 @@ export const CodeEditor = ({
     };
   }, []);
   return (
-    <StyledEditor
-      height={height}
-      language={language}
-      value={value}
-      onMount={handleEditorDidMount}
-      onChange={onChange}
-      options={{
-        ...options,
-        overviewRulerLanes: 0,
-        scrollbar: {
-          vertical: 'hidden',
-          horizontal: 'hidden',
-        },
-        minimap: {
-          enabled: false,
-        },
-      }}
-    />
+    <div>
+      {header}
+      <StyledEditor
+        height={height}
+        language={language}
+        value={value}
+        onMount={handleEditorDidMount}
+        onChange={onChange}
+        options={{
+          ...options,
+          overviewRulerLanes: 0,
+          scrollbar: {
+            vertical: 'hidden',
+            horizontal: 'hidden',
+          },
+          minimap: {
+            enabled: false,
+          },
+        }}
+      />
+    </div>
   );
 };

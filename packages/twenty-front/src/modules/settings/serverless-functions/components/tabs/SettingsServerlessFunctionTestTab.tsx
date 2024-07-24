@@ -1,4 +1,4 @@
-import { H2Title } from 'twenty-ui';
+import { H2Title, IconPlayerPlay } from 'twenty-ui';
 import { Section } from '@/ui/layout/section/components/Section';
 import {
   ServerlessFunctionFormValues,
@@ -7,6 +7,9 @@ import {
 import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
+import { Button } from '@/ui/input/button/components/Button';
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -17,12 +20,38 @@ const StyledInputsContainer = styled.div`
 export const SettingsServerlessFunctionTestTab = ({
   formValues,
   setFormValues,
+  handleExecute,
 }: {
   formValues: ServerlessFunctionFormValues;
   setFormValues: SetServerlessFunctionFormValues;
+  handleExecute: () => void;
 }) => {
   const [language, setLanguage] = useState('plaintext');
   const [resultHeight, setResultHeight] = useState(64);
+
+  const InputHeaderButton = (
+    <Button
+      title="Run Function"
+      variant="primary"
+      accent="blue"
+      size="small"
+      Icon={IconPlayerPlay}
+      onClick={handleExecute}
+    />
+  );
+
+  const InputHeader = (
+    <CoreEditorHeader title={'Input'} rightNodes={[InputHeaderButton]} />
+  );
+
+  const OutputHeaderButton = (
+    <LightCopyIconButton copyText={formValues.output || ''} />
+  );
+
+  const OutputHeader = (
+    <CoreEditorHeader title={'Output'} rightNodes={[OutputHeaderButton]} />
+  );
+
   useEffect(() => {
     try {
       JSON.parse(formValues.output || '');
@@ -33,6 +62,7 @@ export const SettingsServerlessFunctionTestTab = ({
       setResultHeight(64);
     }
   }, [formValues.output]);
+
   return (
     <Section>
       <H2Title
@@ -50,6 +80,7 @@ export const SettingsServerlessFunctionTestTab = ({
             }));
           }}
           language={'json'}
+          header={InputHeader}
         />
         <CodeEditor
           value={formValues.output}
@@ -62,6 +93,7 @@ export const SettingsServerlessFunctionTestTab = ({
           }}
           language={language}
           options={{ readOnly: true, domReadOnly: true }}
+          header={OutputHeader}
         />
       </StyledInputsContainer>
     </Section>

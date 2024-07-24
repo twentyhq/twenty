@@ -1,18 +1,52 @@
-import { H2Title } from 'twenty-ui';
+import { H2Title, IconPlayerPlay } from 'twenty-ui';
 import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import { Section } from '@/ui/layout/section/components/Section';
 import {
   ServerlessFunctionFormValues,
   SetServerlessFunctionFormValues,
 } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
+import { Button } from '@/ui/input/button/components/Button';
+import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
+import styled from '@emotion/styled';
+import { TabList } from '@/ui/layout/tab/components/TabList';
+
+const StyledTabList = styled(TabList)`
+  border-bottom: none;
+`;
 
 export const SettingsServerlessFunctionCodeEditorTab = ({
   formValues,
   setFormValues,
+  handleExecute,
 }: {
   formValues: ServerlessFunctionFormValues;
   setFormValues: SetServerlessFunctionFormValues;
+  handleExecute: () => void;
 }) => {
+  const HeaderButton = (
+    <Button
+      title="Test"
+      variant="primary"
+      accent="blue"
+      size="small"
+      Icon={IconPlayerPlay}
+      onClick={handleExecute}
+    />
+  );
+
+  const TAB_LIST_COMPONENT_ID = 'serverless-function-editor';
+
+  const HeaderTabList = (
+    <StyledTabList
+      tabListId={TAB_LIST_COMPONENT_ID}
+      tabs={[{ id: 'index.ts', title: 'index.ts' }]}
+    />
+  );
+
+  const Header = (
+    <CoreEditorHeader leftNodes={[HeaderTabList]} rightNodes={[HeaderButton]} />
+  );
+
   return (
     <Section>
       <H2Title
@@ -27,6 +61,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
             code: value,
           }));
         }}
+        header={Header}
       />
     </Section>
   );
