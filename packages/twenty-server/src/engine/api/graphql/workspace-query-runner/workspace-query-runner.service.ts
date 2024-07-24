@@ -509,12 +509,6 @@ export class WorkspaceQueryRunnerService {
       } satisfies ObjectRecordUpdateEvent<any>);
     });
 
-    // TODO: check - NO EVENT SENT?
-    // OK I spent 2 hours trying to implement before/after diff and
-    // figured out why it hasn't been implement
-    // Doing a findMany in that context is very hard as long as we don't
-    // have a proper ORM. Let's come back to this once we do (target end of April 24?)
-
     return parsedResults;
   }
 
