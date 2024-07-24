@@ -189,9 +189,6 @@ export const SettingsServerlessFunctionDetail = () => {
             />
           </SettingsHeaderContainer>
           <Section>
-            <StyledH2Title title={serverlessFunction?.name} />
-          </Section>
-          <Section>
             <TabList tabListId={TAB_LIST_COMPONENT_ID} tabs={tabs} />
           </Section>
           {renderActiveTabContent()}
