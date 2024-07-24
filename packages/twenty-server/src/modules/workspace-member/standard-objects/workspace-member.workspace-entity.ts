@@ -106,79 +106,21 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.colorScheme,
-    type: FieldMetadataType.SELECT,
+    type: FieldMetadataType.TEXT,
     label: 'Color Scheme',
     description: 'Preferred color scheme',
     icon: 'IconColorSwatch',
-    options: [
-      {
-        value: WorkspaceMemberColorSchemeEnum.LIGHT,
-        label: 'Light',
-        position: 0,
-        color: 'turquoise',
-      },
-      {
-        value: WorkspaceMemberColorSchemeEnum.DARK,
-        label: 'Dark',
-        position: 1,
-        color: 'red',
-      },
-      {
-        value: WorkspaceMemberColorSchemeEnum.SYSTEM,
-        label: 'System',
-        position: 2,
-        color: 'purple',
-      },
-    ],
-    defaultValue: `'${WorkspaceMemberColorSchemeEnum.LIGHT}'`,
+    defaultValue: "'Light'",
   })
   colorScheme: string;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale,
-    type: FieldMetadataType.SELECT,
+    type: FieldMetadataType.TEXT,
     label: 'Language',
     description: 'Preferred language',
     icon: 'IconLanguage',
-    options: [
-      {
-        value: WorkspaceMemberLocaleEnum.NL,
-        label: 'Dutch',
-        position: 0,
-        color: 'grey',
-      },
-      {
-        value: WorkspaceMemberLocaleEnum.FR,
-        label: 'French',
-        position: 1,
-        color: 'grey',
-      },
-      {
-        value: WorkspaceMemberLocaleEnum.DE,
-        label: 'German',
-        position: 2,
-        color: 'grey',
-      },
-      {
-        value: WorkspaceMemberLocaleEnum.IT,
-        label: 'Italian',
-        position: 3,
-        color: 'grey',
-      },
-      {
-        value: WorkspaceMemberLocaleEnum.PT,
-        label: 'Portuguese',
-        position: 4,
-        color: 'grey',
-      },
-      {
-        value: WorkspaceMemberLocaleEnum.ES,
-        label: 'Spanish',
-        position: 5,
-        color: 'grey',
-      },
-    ],
-    defaultValue: `'${WorkspaceMemberLocaleEnum.FR}'`,
+    defaultValue: "'en'",
   })
   locale: string;
 
