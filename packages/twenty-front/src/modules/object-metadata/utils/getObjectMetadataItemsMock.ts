@@ -703,7 +703,7 @@ export const getObjectMetadataItemsMock = () => {
         {
           __typename: 'field',
           id: '20202020-a3a7-4f63-9303-10226f6055be',
-          type: 'LINK',
+          type: 'LINKS',
           name: 'xLink',
           label: 'X',
           description: 'Contact’s X/Twitter account',
@@ -984,7 +984,7 @@ export const getObjectMetadataItemsMock = () => {
         {
           __typename: 'field',
           id: '20202020-dcf6-445a-b543-37e55de43c25',
-          type: 'LINK',
+          type: 'LINKS',
           name: 'linkedinLink',
           label: 'Linkedin',
           description: 'Contact’s Linkedin account',
@@ -2847,7 +2847,7 @@ export const getObjectMetadataItemsMock = () => {
         {
           __typename: 'field',
           id: '20202020-46e3-479a-b8f4-77137c74daa6',
-          type: 'LINK',
+          type: 'LINKS',
           name: 'xLink',
           label: 'X',
           description: 'The company Twitter/X account',
@@ -2894,7 +2894,7 @@ export const getObjectMetadataItemsMock = () => {
         {
           __typename: 'field',
           id: '20202020-a61d-4b78-b998-3fd88b4f73a1',
-          type: 'LINK',
+          type: 'LINKS',
           name: 'linkedinLink',
           label: 'Linkedin',
           description: 'The company Linkedin account',

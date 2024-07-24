@@ -25,12 +25,12 @@ describe('getDisplayNameFromParticipant', () => {
       avatarUrl: '',
       jobTitle: '',
       linkedinLink: {
-        url: '',
-        label: '',
+        primaryLinkUrl: '',
+        primaryLinkLabel: '',
       },
       xLink: {
-        url: '',
-        label: '',
+        primaryLinkUrl: '',
+        primaryLinkLabel: '',
       },
       city: '',
       email: '',

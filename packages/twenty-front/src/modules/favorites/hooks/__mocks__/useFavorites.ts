@@ -92,8 +92,9 @@ export const mocks = [
             person {
               __typename
               xLink {
-                label
-                url
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
               }
               id
               createdAt
@@ -106,8 +107,9 @@ export const mocks = [
               }
               phone
               linkedinLink {
-                label
-                url
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
               }
               updatedAt
               avatarUrl
@@ -132,12 +134,14 @@ export const mocks = [
             company {
               __typename
               xLink {
-                label
-                url
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
               }
               linkedinLink {
-                label
-                url
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
               }
               domainName
               annualRecurringRevenue {
@@ -218,8 +222,9 @@ export const mocks = [
             person {
               __typename
               xLink {
-                label
-                url
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
               }
               id
               createdAt
@@ -232,8 +237,9 @@ export const mocks = [
               }
               phone
               linkedinLink {
-                label
-                url
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
               }
               updatedAt
               avatarUrl
@@ -258,12 +264,14 @@ export const mocks = [
             company {
               __typename
               xLink {
-                label
-                url
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
               }
               linkedinLink {
-                label
-                url
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
               }
               domainName
               annualRecurringRevenue {
