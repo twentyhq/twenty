@@ -10,6 +10,7 @@ import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useCompleteTask } from '../hooks/useCompleteTask';
 
 const StyledContainer = styled.div`
@@ -88,6 +89,13 @@ export const TaskRow = ({ task }: { task: Task }) => {
   const body = getActivitySummary(task.body);
   const { completeTask } = useCompleteTask(task);
 
+  const { FieldContextProvider: TaskTargetsContextProvider } = useFieldContext({
+    objectNameSingular: CoreObjectNameSingular.Task,
+    objectRecordId: task.id,
+    fieldMetadataName: 'taskTargets',
+    fieldPosition: 0,
+  });
+
   return (
     <StyledContainer
       onClick={() => {
@@ -114,13 +122,17 @@ export const TaskRow = ({ task }: { task: Task }) => {
         </StyledTaskBody>
       </StyledLeftSideContainer>
       <StyledRightSideContainer>
-        <ActivityTargetsInlineCell
-          objectNameSingular={CoreObjectNameSingular.Task}
-          activity={task}
-          showLabel={false}
-          maxWidth={200}
-          readonly
-        />
+        {TaskTargetsContextProvider && (
+          <TaskTargetsContextProvider>
+            <ActivityTargetsInlineCell
+              objectNameSingular={CoreObjectNameSingular.Task}
+              activity={task}
+              showLabel={false}
+              maxWidth={200}
+              readonly
+            />
+          </TaskTargetsContextProvider>
+        )}
         <StyledDueDate
           isPast={
             !!task.dueAt && hasDatePassed(task.dueAt) && task.status === 'TODO'

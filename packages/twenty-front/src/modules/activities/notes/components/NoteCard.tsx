@@ -1,15 +1,11 @@
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import {
-  FieldContext,
-  GenericFieldContextType,
-} from '@/object-record/record-field/contexts/FieldContext';
+import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
@@ -77,28 +73,32 @@ export const NoteCard = ({
   });
   const body = getActivityPreview(note.body);
 
-  const fieldContext = useMemo(
-    () => ({ recoilScopeId: note?.id ?? '' }),
-    [note?.id],
-  );
+  const { FieldContextProvider: NoteTargetsContextProvider } = useFieldContext({
+    objectNameSingular: CoreObjectNameSingular.Note,
+    objectRecordId: note.id,
+    fieldMetadataName: 'noteTargets',
+    fieldPosition: 0,
+  });
 
   return (
-    <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
-      <StyledCard isSingleNote={isSingleNote}>
-        <StyledCardDetailsContainer
-          onClick={() => openActivityRightDrawer(note.id)}
-        >
-          <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
-          <StyledCardContent>{body}</StyledCardContent>
-        </StyledCardDetailsContainer>
-        <StyledFooter>
-          <ActivityTargetsInlineCell
-            activity={note}
-            objectNameSingular={CoreObjectNameSingular.Note}
-            readonly
-          />
-        </StyledFooter>
-      </StyledCard>
-    </FieldContext.Provider>
+    <StyledCard isSingleNote={isSingleNote}>
+      <StyledCardDetailsContainer
+        onClick={() => openActivityRightDrawer(note.id)}
+      >
+        <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
+        <StyledCardContent>{body}</StyledCardContent>
+      </StyledCardDetailsContainer>
+      <StyledFooter>
+        {NoteTargetsContextProvider && (
+          <NoteTargetsContextProvider>
+            <ActivityTargetsInlineCell
+              activity={note}
+              objectNameSingular={CoreObjectNameSingular.Note}
+              readonly
+            />
+          </NoteTargetsContextProvider>
+        )}
+      </StyledFooter>
+    </StyledCard>
   );
 };

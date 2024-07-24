@@ -38,14 +38,28 @@ export const findActivitiesOperationSignatureFactory: RecordGqlOperationSignatur
       dueAt: true,
       reminderAt: true,
       type: true,
-      activityTargets: {
-        id: true,
-        __typename: true,
-        createdAt: true,
-        updatedAt: true,
-        activity: true,
-        activityId: true,
-        ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
-      },
+      ...(objectNameSingular === CoreObjectNameSingular.Note
+        ? {
+            noteTargets: {
+              id: true,
+              __typename: true,
+              createdAt: true,
+              updatedAt: true,
+              note: true,
+              noteId: true,
+              ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
+            },
+          }
+        : {
+            taskTargets: {
+              id: true,
+              __typename: true,
+              createdAt: true,
+              updatedAt: true,
+              task: true,
+              taskId: true,
+              ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
+            },
+          }),
     },
   });
