@@ -57,11 +57,9 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.cacheStorage.setPop(
+    await this.cacheStorage.del(
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
     );
-
-    // TODO: remove nextPageToken from cache
 
     await this.messageChannelRepository.resetSyncCursor(
       messageChannelId,
@@ -126,7 +124,7 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.cacheStorage.setPop(
+    await this.cacheStorage.del(
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
     );
 
@@ -147,7 +145,7 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.cacheStorage.setPop(
+    await this.cacheStorage.del(
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
     );
 

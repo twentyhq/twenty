@@ -1,7 +1,7 @@
-import React, { ReactElement, useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { AppTooltip, IconComponent } from 'twenty-ui';
+import { ReactElement, useContext } from 'react';
+import { AppTooltip, IconComponent, TooltipDelay } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
@@ -52,6 +52,8 @@ const StyledInlineCellBaseContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 
   user-select: none;
+
+  justify-content: center;
 `;
 
 export const StyledSkeletonDiv = styled.div`
@@ -69,12 +71,13 @@ export type RecordInlineCellContainerProps = {
   editModeContentOnly?: boolean;
   displayModeContent: ReactElement;
   customEditHotkeyScope?: HotkeyScope;
-  isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
   loading?: boolean;
+  isCentered?: boolean;
 };
 
+// TODO: refactor props drilling with a RecordInlineCellContext
 export const RecordInlineCellContainer = ({
   readonly,
   IconLabel,
@@ -85,11 +88,11 @@ export const RecordInlineCellContainer = ({
   editModeContent,
   displayModeContent,
   customEditHotkeyScope,
-  isDisplayModeContentEmpty,
   editModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
   loading = false,
+  isCentered,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
@@ -136,6 +139,7 @@ export const RecordInlineCellContainer = ({
               noArrow
               place="bottom"
               positionStrategy="fixed"
+              delay={TooltipDelay.shortDelay}
             />
           )}
         </StyledLabelAndIconContainer>
@@ -148,13 +152,13 @@ export const RecordInlineCellContainer = ({
             disableHoverEffect,
             editModeContent,
             editModeContentOnly,
-            isDisplayModeContentEmpty,
             isDisplayModeFixHeight,
             buttonIcon,
             label,
             loading,
             readonly,
             showLabel,
+            isCentered,
           }}
         />
       </StyledValueContainer>

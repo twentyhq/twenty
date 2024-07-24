@@ -1,24 +1,16 @@
-import { Injectable } from '@nestjs/common';
-
-import { WorkspacePreQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-pre-query-hook.interface';
+import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { CommentRepository } from 'src/modules/activity/repositories/comment.repository';
+import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
-import { AttachmentRepository } from 'src/modules/attachment/repositories/attachment.repository';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 
-@Injectable()
+@WorkspaceQueryHook(`workspaceMember.deleteOne`)
 export class WorkspaceMemberDeleteOnePreQueryHook
-  implements WorkspacePreQueryHook
+  implements WorkspaceQueryHookInstance
 {
-  constructor(
-    @InjectObjectMetadataRepository(AttachmentWorkspaceEntity)
-    private readonly attachmentRepository: AttachmentRepository,
-    @InjectObjectMetadataRepository(CommentWorkspaceEntity)
-    private readonly commentRepository: CommentRepository,
-  ) {}
+  constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   // There is no need to validate the user's access to the workspace member since we don't have permission yet.
   async execute(
@@ -26,16 +18,24 @@ export class WorkspaceMemberDeleteOnePreQueryHook
     workspaceId: string,
     payload: DeleteOneResolverArgs,
   ): Promise<void> {
-    const workspaceMemberId = payload.id;
+    const attachmentRepository =
+      await this.twentyORMManager.getRepository<AttachmentWorkspaceEntity>(
+        'attachment',
+      );
 
-    await this.attachmentRepository.deleteByAuthorId(
-      workspaceMemberId,
-      workspaceId,
-    );
+    const commentRepository =
+      await this.twentyORMManager.getRepository<CommentWorkspaceEntity>(
+        'comment',
+      );
 
-    await this.commentRepository.deleteByAuthorId(
-      workspaceMemberId,
-      workspaceId,
-    );
+    const authorId = payload.id;
+
+    await attachmentRepository.delete({
+      authorId,
+    });
+
+    await commentRepository.delete({
+      authorId,
+    });
   }
 }

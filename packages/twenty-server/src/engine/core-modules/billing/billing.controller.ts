@@ -11,9 +11,9 @@ import {
 import { Response } from 'express';
 
 import {
-  BillingService,
+  BillingWorkspaceService,
   WebhookEvent,
-} from 'src/engine/core-modules/billing/billing.service';
+} from 'src/engine/core-modules/billing/billing.workspace-service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
 
 @Controller('billing')
@@ -22,7 +22,7 @@ export class BillingController {
 
   constructor(
     private readonly stripeService: StripeService,
-    private readonly billingService: BillingService,
+    private readonly billingWorkspaceService: BillingWorkspaceService,
   ) {}
 
   @Post('/webhooks')
@@ -42,7 +42,7 @@ export class BillingController {
     );
 
     if (event.type === WebhookEvent.SETUP_INTENT_SUCCEEDED) {
-      await this.billingService.handleUnpaidInvoices(event.data);
+      await this.billingWorkspaceService.handleUnpaidInvoices(event.data);
     }
 
     if (
@@ -58,7 +58,7 @@ export class BillingController {
         return;
       }
 
-      await this.billingService.upsertBillingSubscription(
+      await this.billingWorkspaceService.upsertBillingSubscription(
         workspaceId,
         event.data,
       );

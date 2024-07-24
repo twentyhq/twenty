@@ -1,5 +1,9 @@
 import { defaultSpreadsheetImportProps } from '@/spreadsheet-import/provider/components/SpreadsheetImport';
-import { Fields, SpreadsheetOptions } from '@/spreadsheet-import/types';
+import { Columns } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
+import {
+  Fields,
+  SpreadsheetImportDialogOptions,
+} from '@/spreadsheet-import/types';
 import { sleep } from '~/utils/sleep';
 
 const fields = [
@@ -12,7 +16,7 @@ const fields = [
       type: 'input',
     },
     example: 'Stephanie',
-    validations: [
+    fieldValidationDefinitions: [
       {
         rule: 'required',
         errorMessage: 'Name is required',
@@ -28,7 +32,7 @@ const fields = [
       type: 'input',
     },
     example: 'McDonald',
-    validations: [
+    fieldValidationDefinitions: [
       {
         rule: 'unique',
         errorMessage: 'Last name must be unique',
@@ -46,7 +50,7 @@ const fields = [
       type: 'input',
     },
     example: '23',
-    validations: [
+    fieldValidationDefinitions: [
       {
         rule: 'regex',
         value: '^\\d+$',
@@ -68,7 +72,7 @@ const fields = [
       ],
     },
     example: 'Team one',
-    validations: [
+    fieldValidationDefinitions: [
       {
         rule: 'required',
         errorMessage: 'Team is required',
@@ -88,8 +92,35 @@ const fields = [
   },
 ] as Fields<string>;
 
+export const importedColums: Columns<string> = [
+  {
+    header: 'Name',
+    index: 0,
+    type: 2,
+    value: 'name',
+  },
+  {
+    header: 'Surname',
+    index: 1,
+    type: 2,
+    value: 'surname',
+  },
+  {
+    header: 'Age',
+    index: 2,
+    type: 2,
+    value: 'age',
+  },
+  {
+    header: 'Team',
+    index: 3,
+    type: 2,
+    value: 'team',
+  },
+];
+
 const mockComponentBehaviourForTypes = <T extends string>(
-  props: SpreadsheetOptions<T>,
+  props: SpreadsheetImportDialogOptions<T>,
 ) => props;
 
 export const mockRsiValues = mockComponentBehaviourForTypes({
@@ -114,8 +145,8 @@ export const mockRsiValues = mockComponentBehaviourForTypes({
       }),
     );
     return {
-      headerValues: hData,
-      data,
+      headerRow: hData,
+      importedRows: data,
     };
   },
   // Runs after column matching and on entry change, more performant

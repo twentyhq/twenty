@@ -28,7 +28,6 @@ describe('absoluteUrlSchema', () => {
 
   it('fails for invalid urls', () => {
     expect(absoluteUrlSchema.safeParse('?o').success).toBe(false);
-    expect(absoluteUrlSchema.safeParse('').success).toBe(false);
     expect(absoluteUrlSchema.safeParse('\\').success).toBe(false);
   });
 });

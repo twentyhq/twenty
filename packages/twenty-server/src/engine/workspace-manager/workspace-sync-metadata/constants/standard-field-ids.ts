@@ -67,10 +67,14 @@ export const CALENDAR_CHANNEL_STANDARD_FIELD_IDS = {
   handle: '20202020-1d08-420a-9aa7-22e0f298232d',
   visibility: '20202020-1b07-4796-9f01-d626bab7ca4d',
   isContactAutoCreationEnabled: '20202020-50fb-404b-ba28-369911a3793a',
+  contactAutoCreationPolicy: '20202020-b55d-447d-b4df-226319058775',
   isSyncEnabled: '20202020-fe19-4818-8854-21f7b1b43395',
   syncCursor: '20202020-bac2-4852-a5cb-7a7898992b70',
   calendarChannelEventAssociations: '20202020-afb0-4a9f-979f-2d5087d71d09',
   throttleFailureCount: '20202020-525c-4b76-b9bd-0dd57fd11d61',
+  syncStatus: '20202020-7116-41da-8b4b-035975c4eb6a',
+  syncStage: '20202020-6246-42e6-b5cd-003bd921782c',
+  syncStageStartedAt: '20202020-a934-46f1-a8e7-9568b1e3a53e',
 };
 
 export const CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS = {
@@ -110,7 +114,8 @@ export const COMMENT_STANDARD_FIELD_IDS = {
 export const COMPANY_STANDARD_FIELD_IDS = {
   name: '20202020-4d99-4e2e-a84c-4a27837b1ece',
   domainName: '20202020-0c28-43d8-8ba5-3659924d3489',
-  address: '20202020-a82a-4ee2-96cc-a18a3259d953',
+  address_deprecated: '20202020-a82a-4ee2-96cc-a18a3259d953',
+  address: '20202020-c5ce-4adc-b7b6-9c0979fc55e7',
   employees: '20202020-8965-464a-8a75-74bafc152a0b',
   linkedinLink: '20202020-ebeb-4beb-b9ad-6848036fb451',
   xLink: '20202020-6f64-4fd9-9580-9c1991c7d8c3',
@@ -136,6 +141,7 @@ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   authFailedAt: '20202020-d268-4c6b-baff-400d402b430a',
   messageChannels: '20202020-24f7-4362-8468-042204d1e445',
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
+  handleAliases: '20202020-8a3d-46be-814f-6228af16c47b',
 };
 
 export const EVENT_STANDARD_FIELD_IDS = {
@@ -152,6 +158,7 @@ export const AUDIT_LOGS_STANDARD_FIELD_IDS = {
   properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
   context: '20202020-b9d1-4058-9a75-7469cab5ca8c',
   objectName: '20202020-76ba-4c47-b7e5-96034005d00a',
+  objectMetadataId: '20202020-127b-409d-9864-0ec44aa9ed98',
   recordId: '20202020-c578-4acf-bf94-eb53b035cea2',
   workspaceMember: '20202020-6e96-4300-b3f5-67a707147385',
 };
@@ -202,6 +209,9 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   connectedAccount: '20202020-49a2-44a4-b470-282c0440d15d',
   type: '20202020-ae95-42d9-a3f1-797a2ea22122',
   isContactAutoCreationEnabled: '20202020-fabd-4f14-b7c6-3310f6d132c6',
+  contactAutoCreationPolicy: '20202020-fc0e-4ba6-b259-a66ca89cfa38',
+  excludeNonProfessionalEmails: '20202020-1df5-445d-b4f3-2413ad178431',
+  excludeGroupEmails: '20202020-45a0-4be4-9164-5820a6a109fb',
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
   isSyncEnabled: '20202020-d9a6-48e9-990b-b97fdf22e8dd',
   syncCursor: '20202020-79d1-41cf-b738-bcf5ed61e256',
@@ -241,7 +251,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   name: '20202020-8609-4f65-a2d9-44009eb422b5',
   amount: '20202020-583e-4642-8533-db761d5fa82f',
   closeDate: '20202020-527e-44d6-b1ac-c4158d307b97',
-  probability: '20202020-69d4-45f3-9703-690b09fafcf0',
+  probabilityDeprecated: '20202020-69d4-45f3-9703-690b09fafcf0',
   stage: '20202020-6f76-477d-8551-28cd65b2b4b9',
   position: '20202020-806d-493a-bbc6-6313e62958e2',
   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',

@@ -3,12 +3,6 @@ import { v4 } from 'uuid';
 
 const tableName = 'opportunity';
 
-const getRandomProbability = () => {
-  const firstDigit = Math.floor(Math.random() * 9) + 1;
-
-  return firstDigit / 10;
-};
-
 const getRandomStage = () => {
   const stages = ['NEW', 'SCREENING', 'MEETING', 'PROPOSAL', 'CUSTOMER'];
 
@@ -24,11 +18,11 @@ const generateRandomAmountMicros = () => {
 const generateOpportunities = (companies) => {
   return companies.map((company) => ({
     id: v4(),
+    name: company.name,
     amountAmountMicros: generateRandomAmountMicros(),
     amountCurrencyCode: 'USD',
     closeDate: new Date(),
     stage: getRandomStage(),
-    probability: getRandomProbability(),
     pointOfContactId: company.personId,
     companyId: company.id,
   }));
@@ -52,11 +46,11 @@ export const opportunityPrefillDemoData = async (
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',
+      'name',
       'amountAmountMicros',
       'amountCurrencyCode',
       'closeDate',
       'stage',
-      'probability',
       'pointOfContactId',
       'companyId',
       'position',

@@ -5,14 +5,15 @@ import { RecoilRoot } from 'recoil';
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 
 const expectedQueryTemplate = `
-  query FindDuplicatePerson($id: ID!) {
-    personDuplicates(id: $id) {
+  query FindDuplicatePerson($ids: [ID!]!) {
+    personDuplicates(ids: $ids) {
       edges {
         node {
           __typename
           xLink {
-            label
-            url
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
           }
           id
           createdAt
@@ -25,8 +26,9 @@ const expectedQueryTemplate = `
           }
           phone
           linkedinLink {
-            label
-            url
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
           }
          updatedAt
           avatarUrl
@@ -39,7 +41,6 @@ const expectedQueryTemplate = `
         startCursor
         endCursor
       }
-      totalCount
      }
     }
 `.replace(/\s/g, '');

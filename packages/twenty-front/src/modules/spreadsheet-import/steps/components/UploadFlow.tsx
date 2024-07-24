@@ -1,10 +1,10 @@
-import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useCallback, useState } from 'react';
 import { WorkBook } from 'xlsx-ugnis';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { RawData } from '@/spreadsheet-import/types';
+import { ImportedRow } from '@/spreadsheet-import/types';
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { CircularProgressBar } from '@/ui/feedback/progress-bar/components/CircularProgressBar';
@@ -12,7 +12,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
-import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
+import { Columns, MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
@@ -42,16 +42,17 @@ export type StepState =
     }
   | {
       type: StepType.selectHeader;
-      data: RawData[];
+      data: ImportedRow[];
     }
   | {
       type: StepType.matchColumns;
-      data: RawData[];
-      headerValues: RawData;
+      data: ImportedRow[];
+      headerValues: ImportedRow;
     }
   | {
       type: StepType.validateData;
       data: any[];
+      importedColumns: Columns<string>;
     }
   | {
       type: StepType.loading;
@@ -130,10 +131,8 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
                   // Automatically select first row as header
                   const trimmedData = mappedWorkbook.slice(1);
 
-                  const { data, headerValues } = await selectHeaderStepHook(
-                    mappedWorkbook[0],
-                    trimmedData,
-                  );
+                  const { importedRows: data, headerRow: headerValues } =
+                    await selectHeaderStepHook(mappedWorkbook[0], trimmedData);
 
                   setState({
                     type: StepType.matchColumns,
@@ -185,12 +184,11 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
     case StepType.selectHeader:
       return (
         <SelectHeaderStep
-          data={state.data}
+          importedRows={state.data}
           onContinue={async (...args) => {
             try {
-              const { data, headerValues } = await selectHeaderStepHook(
-                ...args,
-              );
+              const { importedRows: data, headerRow: headerValues } =
+                await selectHeaderStepHook(...args);
               setState({
                 type: StepType.matchColumns,
                 data,
@@ -216,6 +214,7 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
               setState({
                 type: StepType.validateData,
                 data,
+                importedColumns: columns,
               });
               setPreviousState(state);
               nextStep();
@@ -233,6 +232,7 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
       return (
         <ValidationStep
           initialData={state.data}
+          importedColumns={state.importedColumns}
           file={uploadedFile}
           onSubmitStart={() =>
             setState({

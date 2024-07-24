@@ -6,8 +6,8 @@ export const fieldValue = [
     domainName: 'google.com',
     xLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     name: 'Google',
     annualRecurringRevenue: {
@@ -25,8 +25,8 @@ export const fieldValue = [
     updatedAt: '2024-05-01T13:16:29.046Z',
     linkedinLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
   },
   {
@@ -34,8 +34,8 @@ export const fieldValue = [
     domainName: 'airbnb.com',
     xLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     name: 'Airbnb',
     annualRecurringRevenue: {
@@ -53,33 +53,27 @@ export const fieldValue = [
     updatedAt: '2024-05-01T13:16:29.046Z',
     linkedinLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
   },
 ];
 
-export const relationFromManyFieldDisplayMock = {
-  entityId: '20202020-2d40-4e49-8df4-9c6a049191df',
-  relationEntityId: '20202020-c21e-4ec2-873b-de4264d89025',
+export const otherPersonMock = {
   entityValue: {
     __typename: 'Person',
     asd: '',
-    city: 'Seattle',
+    city: 'Paris',
     jobTitle: '',
-    name: {
-      __typename: 'FullName',
-      firstName: 'Lorie',
-      lastName: 'Vladim',
-    },
+    name: 'John Doe',
     createdAt: '2024-05-01T13:16:29.046Z',
     company: {
       __typename: 'Company',
       domainName: 'google.com',
       xLink: {
         __typename: 'Link',
-        label: '',
-        url: '',
+        primaryLinkLabel: '',
+        primaryLinkUrl: '',
       },
       name: 'Google',
       annualRecurringRevenue: {
@@ -97,8 +91,64 @@ export const relationFromManyFieldDisplayMock = {
       updatedAt: '2024-05-01T13:16:29.046Z',
       linkedinLink: {
         __typename: 'Link',
-        label: '',
-        url: '',
+        primaryLinkLabel: '',
+        primaryLinkUrl: '',
+      },
+    },
+    id: 'd3e70589-c449-4e64-8268-065640fdaff0',
+    email: 'john.doe@google.com',
+    phone: '+33744332211',
+    linkedinLink: {
+      __typename: 'Link',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
+    },
+    xLink: {
+      __typename: 'Link',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
+    },
+    tEst: '',
+    position: 14,
+  },
+};
+
+export const relationFromManyFieldDisplayMock = {
+  entityId: '20202020-2d40-4e49-8df4-9c6a049191df',
+  relationEntityId: '20202020-c21e-4ec2-873b-de4264d89025',
+  entityValue: {
+    __typename: 'Person',
+    asd: '',
+    city: 'Seattle',
+    jobTitle: '',
+    name: 'Lorie Vladim',
+    createdAt: '2024-05-01T13:16:29.046Z',
+    company: {
+      __typename: 'Company',
+      domainName: 'google.com',
+      xLink: {
+        __typename: 'Link',
+        primaryLinkLabel: '',
+        primaryLinkUrl: '',
+      },
+      name: 'Google',
+      annualRecurringRevenue: {
+        __typename: 'Currency',
+        amountMicros: null,
+        currencyCode: '',
+      },
+      employees: null,
+      accountOwnerId: null,
+      address: '',
+      idealCustomerProfile: false,
+      createdAt: '2024-05-01T13:16:29.046Z',
+      id: '20202020-c21e-4ec2-873b-de4264d89025',
+      position: 6,
+      updatedAt: '2024-05-01T13:16:29.046Z',
+      linkedinLink: {
+        __typename: 'Link',
+        primaryLinkLabel: '',
+        primaryLinkUrl: '',
       },
     },
     id: '20202020-2d40-4e49-8df4-9c6a049191df',
@@ -106,13 +156,13 @@ export const relationFromManyFieldDisplayMock = {
     phone: '+33788901235',
     linkedinLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     xLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     tEst: '',
     position: 15,
@@ -122,8 +172,8 @@ export const relationFromManyFieldDisplayMock = {
     domainName: 'microsoft.com',
     xLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     name: 'Microsoft',
     annualRecurringRevenue: {
@@ -141,13 +191,13 @@ export const relationFromManyFieldDisplayMock = {
     updatedAt: '2024-05-01T13:16:29.046Z',
     linkedinLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
   },
   fieldDefinition: {
     fieldMetadataId: '4e79f0b7-d100-4e89-a07b-315a710b8059',
-    label: 'Company',
+    primaryLinkLabel: 'Company',
     metadata: {
       fieldName: 'company',
       placeHolder: 'Company',

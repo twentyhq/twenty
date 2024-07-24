@@ -4,14 +4,15 @@ import { getPeopleMock } from '~/testing/mock-data/people';
 const peopleMock = getPeopleMock();
 
 export const query = gql`
-  query FindDuplicatePerson($id: ID!) {
-    personDuplicates(id: $id) {
+  query FindDuplicatePerson($ids: [ID!]!) {
+    personDuplicates(ids: $ids) {
       edges {
         node {
           __typename
           xLink {
-            label
-            url
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
           }
           id
           createdAt
@@ -24,8 +25,9 @@ export const query = gql`
           }
           phone
           linkedinLink {
-            label
-            url
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
           }
           updatedAt
           avatarUrl
@@ -38,32 +40,32 @@ export const query = gql`
         startCursor
         endCursor
       }
-      totalCount
     }
   }
 `;
 
 export const variables = {
-  id: '6205681e-7c11-40b4-9e32-f523dbe54590',
+  ids: ['6205681e-7c11-40b4-9e32-f523dbe54590'],
 };
 
 export const responseData = {
-  personDuplicates: {
-    edges: [
-      {
-        node: {  ...peopleMock[0], updatedAt: '' },
-        cursor: 'cursor1',
+  personDuplicates: [
+    {
+      edges: [
+        {
+          node: { ...peopleMock[0], updatedAt: '' },
+          cursor: 'cursor1',
+        },
+        {
+          node: { ...peopleMock[1], updatedAt: '' },
+          cursor: 'cursor2',
+        },
+      ],
+      pageInfo: {
+        hasNextPage: false,
+        startCursor: 'cursor1',
+        endCursor: 'cursor2',
       },
-      {
-        node: { ...peopleMock[1], updatedAt: '' },
-        cursor: 'cursor2',
-      },
-    ],
-    pageInfo: {
-      hasNextPage: false,
-      startCursor: 'cursor1',
-      endCursor: 'cursor2',
     },
-    totalCount: 2,
-  },
+  ],
 };

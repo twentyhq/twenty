@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useMemo } from 'react';
 import {
   ColorSample,
   IconCheck,
@@ -13,6 +13,7 @@ import {
 import { v4 } from 'uuid';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/select/utils/getOptionValueFromLabel';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -30,6 +31,7 @@ type SettingsDataModelFieldSelectFormOptionRowProps = {
   onRemove?: () => void;
   onSetAsDefault?: () => void;
   onRemoveAsDefault?: () => void;
+  onInputEnter?: () => void;
   option: FieldMetadataItemOption;
   focused?: boolean;
 };
@@ -63,11 +65,10 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   onRemove,
   onSetAsDefault,
   onRemoveAsDefault,
+  onInputEnter,
   option,
   focused,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const theme = useTheme();
 
   const dropdownIds = useMemo(() => {
@@ -83,11 +84,9 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
     dropdownIds.actions,
   );
 
-  useEffect(() => {
-    if (focused === true) {
-      inputRef.current?.focus();
-    }
-  }, [focused]);
+  const handleInputEnter = () => {
+    onInputEnter?.();
+  };
 
   return (
     <StyledRow className={className}>
@@ -122,8 +121,6 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         }
       />
       <StyledOptionInput
-        ref={inputRef}
-        disableHotkeys
         value={option.label}
         onChange={(label) =>
           onChange({
@@ -132,7 +129,10 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
             value: getOptionValueFromLabel(label),
           })
         }
+        focused={focused}
         RightIcon={isDefault ? IconCheck : undefined}
+        maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+        onInputEnter={handleInputEnter}
       />
       <Dropdown
         dropdownId={dropdownIds.actions}

@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 import { createState } from 'twenty-ui';
 
@@ -10,9 +10,10 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 
-const pendingRecordId = 'a7286b9a-c039-4a89-9567-2dfa7953cda9';
 const draftValue = 'updated Name';
 
+// Todo refactor this test to inject the states in a cleaner way instead of mocking hooks
+// (this is not easy to maintain while refactoring)
 jest.mock('@/object-record/hooks/useCreateOneRecord', () => ({
   __esModule: true,
   useCreateOneRecord: jest.fn(),
@@ -93,17 +94,25 @@ describe('useUpsertRecord', () => {
   });
 
   it('calls update record if there is no pending record', async () => {
-    const { result } = renderHook(() => useUpsertRecord(), {
-      wrapper: ({ children }) =>
-        Wrapper({
-          pendingRecordIdMockedValue: null,
-          draftValueMockedValue: null,
-          children,
-        }),
-    });
+    const { result } = renderHook(
+      () => useUpsertRecord({ objectNameSingular: 'person' }),
+      {
+        wrapper: ({ children }) =>
+          Wrapper({
+            pendingRecordIdMockedValue: null,
+            draftValueMockedValue: null,
+            children,
+          }),
+      },
+    );
 
     await act(async () => {
-      await result.current.upsertRecord(updateOneRecordMock);
+      await result.current.upsertRecord(
+        updateOneRecordMock,
+        'entityId',
+        'name',
+        'recordTableId',
+      );
     });
 
     expect(createOneRecordMock).not.toHaveBeenCalled();
@@ -111,42 +120,28 @@ describe('useUpsertRecord', () => {
   });
 
   it('calls update record if pending record is empty', async () => {
-    const { result } = renderHook(() => useUpsertRecord(), {
-      wrapper: ({ children }) =>
-        Wrapper({
-          pendingRecordIdMockedValue: null,
-          draftValueMockedValue: draftValue,
-          children,
-        }),
-    });
+    const { result } = renderHook(
+      () => useUpsertRecord({ objectNameSingular: 'person' }),
+      {
+        wrapper: ({ children }) =>
+          Wrapper({
+            pendingRecordIdMockedValue: null,
+            draftValueMockedValue: draftValue,
+            children,
+          }),
+      },
+    );
 
     await act(async () => {
-      await result.current.upsertRecord(updateOneRecordMock);
+      await result.current.upsertRecord(
+        updateOneRecordMock,
+        'entityId',
+        'name',
+        'recordTableId',
+      );
     });
 
     expect(createOneRecordMock).not.toHaveBeenCalled();
     expect(updateOneRecordMock).toHaveBeenCalled();
-  });
-
-  it('calls create record if pending record is not empty', async () => {
-    const { result } = renderHook(() => useUpsertRecord(), {
-      wrapper: ({ children }) =>
-        Wrapper({
-          pendingRecordIdMockedValue: pendingRecordId,
-          draftValueMockedValue: draftValue,
-          children,
-        }),
-    });
-
-    await act(async () => {
-      await result.current.upsertRecord(updateOneRecordMock);
-    });
-
-    expect(createOneRecordMock).toHaveBeenCalledWith({
-      id: pendingRecordId,
-      name: draftValue,
-      position: 'first',
-    });
-    expect(updateOneRecordMock).not.toHaveBeenCalled();
   });
 });

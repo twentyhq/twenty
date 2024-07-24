@@ -24,7 +24,7 @@ export const Default = () => (
     <Providers values={mockRsiValues}>
       <ModalWrapper isOpen={true} onClose={() => null}>
         <SelectHeaderStep
-          data={headerSelectionTableFields}
+          importedRows={headerSelectionTableFields}
           onContinue={() => Promise.resolve()}
           onBack={() => Promise.resolve()}
         />

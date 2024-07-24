@@ -1,4 +1,4 @@
-import { ObjectType, Field, HideField } from '@nestjs/graphql';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
 import {
   Authorize,
@@ -72,9 +72,9 @@ export class ObjectMetadataDTO {
   @Field()
   updatedAt: Date;
 
-  @Field({ nullable: true })
-  labelIdentifierFieldMetadataId?: string;
+  @Field(() => String, { nullable: true })
+  labelIdentifierFieldMetadataId?: string | null;
 
-  @Field({ nullable: true })
-  imageIdentifierFieldMetadataId?: string;
+  @Field(() => String, { nullable: true })
+  imageIdentifierFieldMetadataId?: string | null;
 }

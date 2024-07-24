@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { graphql, HttpResponse } from 'msw';
 
-import { OnboardingStep } from '~/generated/graphql';
+import { OnboardingStatus } from '~/generated/graphql';
 import { AppPath } from '~/modules/types/AppPath';
 import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
@@ -12,7 +12,7 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
+import { mockedOnboardingUserData } from '~/testing/mock-data/users';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Onboarding/SyncEmails',
@@ -25,10 +25,7 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
           return HttpResponse.json({
             data: {
-              currentUser: {
-                ...mockedOnboardingUsersData[0],
-                onboardingStep: OnboardingStep.SyncEmail,
-              },
+              currentUser: mockedOnboardingUserData(OnboardingStatus.SyncEmail),
             },
           });
         }),

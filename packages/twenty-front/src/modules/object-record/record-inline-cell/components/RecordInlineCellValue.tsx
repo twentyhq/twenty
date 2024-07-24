@@ -4,15 +4,23 @@ import styled from '@emotion/styled';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordInlineCellContainerProps } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { RecordInlineCellDisplayMode } from '@/object-record/record-inline-cell/components/RecordInlineCellDisplayMode';
-import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { RecordInlineCellSkeletonLoader } from '@/object-record/record-inline-cell/components/RecordInlineCellSkeletonLoader';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 
-const StyledClickableContainer = styled.div<{ readonly?: boolean }>`
+const StyledClickableContainer = styled.div<{
+  readonly?: boolean;
+  isCentered?: boolean;
+}>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
+
+  ${({ isCentered }) =>
+    isCentered === true &&
+    `
+      justify-content: center;
+    `};
 
   ${({ readonly }) =>
     !readonly &&
@@ -27,7 +35,6 @@ type RecordInlineCellValueProps = Pick<
   | 'customEditHotkeyScope'
   | 'editModeContent'
   | 'editModeContentOnly'
-  | 'isDisplayModeContentEmpty'
   | 'isDisplayModeFixHeight'
   | 'disableHoverEffect'
   | 'readonly'
@@ -35,6 +42,7 @@ type RecordInlineCellValueProps = Pick<
   | 'loading'
   | 'showLabel'
   | 'label'
+  | 'isCentered'
 >;
 
 export const RecordInlineCellValue = ({
@@ -43,13 +51,13 @@ export const RecordInlineCellValue = ({
   disableHoverEffect,
   editModeContent,
   editModeContentOnly,
-  isDisplayModeContentEmpty,
   isDisplayModeFixHeight,
   readonly,
   buttonIcon,
   loading,
   showLabel,
   label,
+  isCentered,
 }: RecordInlineCellValueProps) => {
   const { isFocused } = useFieldFocus();
 
@@ -61,13 +69,6 @@ export const RecordInlineCellValue = ({
     }
   };
 
-  const showEditButton =
-    buttonIcon &&
-    !isInlineCellInEditMode &&
-    isFocused &&
-    !editModeContentOnly &&
-    !isDisplayModeContentEmpty;
-
   if (loading === true) {
     return <RecordInlineCellSkeletonLoader />;
   }
@@ -78,10 +79,9 @@ export const RecordInlineCellValue = ({
         <RecordInlineCellEditMode>{editModeContent}</RecordInlineCellEditMode>
       )}
       {editModeContentOnly ? (
-        <StyledClickableContainer readonly={readonly}>
+        <StyledClickableContainer readonly={readonly} isCentered={isCentered}>
           <RecordInlineCellDisplayMode
             disableHoverEffect={disableHoverEffect}
-            isDisplayModeContentEmpty={isDisplayModeContentEmpty}
             isDisplayModeFixHeight={isDisplayModeFixHeight}
             isHovered={isFocused}
             emptyPlaceholder={showLabel ? 'Empty' : label}
@@ -93,17 +93,18 @@ export const RecordInlineCellValue = ({
         <StyledClickableContainer
           readonly={readonly}
           onClick={handleDisplayModeClick}
+          isCentered={isCentered}
         >
           <RecordInlineCellDisplayMode
             disableHoverEffect={disableHoverEffect}
-            isDisplayModeContentEmpty={isDisplayModeContentEmpty}
             isDisplayModeFixHeight={isDisplayModeFixHeight}
             isHovered={isFocused}
             emptyPlaceholder={showLabel ? 'Empty' : label}
+            buttonIcon={buttonIcon}
+            editModeContentOnly={editModeContentOnly}
           >
             {displayModeContent}
           </RecordInlineCellDisplayMode>
-          {showEditButton && <RecordInlineCellButton Icon={buttonIcon} />}
         </StyledClickableContainer>
       )}
     </>

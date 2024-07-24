@@ -26,6 +26,13 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
+export type AisqlQueryResult = {
+  __typename?: 'AISQLQueryResult';
+  queryFailedErrorMessage?: Maybe<Scalars['String']['output']>;
+  sqlQuery: Scalars['String']['output'];
+  sqlQueryResult?: Maybe<Scalars['String']['output']>;
+};
+
 export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
@@ -34,6 +41,11 @@ export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean']['output'];
+};
+
+export type ApiConfig = {
+  __typename?: 'ApiConfig';
+  mutationMaximumAffectedRecords: Scalars['Float']['output'];
 };
 
 export type ApiKeyToken = {
@@ -98,8 +110,8 @@ export type Billing = {
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   id: Scalars['UUID']['output'];
-  interval?: Maybe<Scalars['String']['output']>;
-  status: Scalars['String']['output'];
+  interval?: Maybe<SubscriptionInterval>;
+  status: SubscriptionStatus;
 };
 
 export type BillingSubscriptionFilter = {
@@ -136,12 +148,13 @@ export type Captcha = {
 };
 
 export enum CaptchaDriverType {
-  GoogleRecatpcha = 'GoogleRecatpcha',
+  GoogleRecaptcha = 'GoogleRecaptcha',
   Turnstile = 'Turnstile'
 }
 
 export type ClientConfig = {
   __typename?: 'ClientConfig';
+  api: ApiConfig;
   authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
@@ -327,7 +340,6 @@ export enum FieldMetadataType {
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
   Position = 'POSITION',
-  Probability = 'PROBABILITY',
   Rating = 'RATING',
   RawJson = 'RAW_JSON',
   Relation = 'RELATION',
@@ -340,6 +352,7 @@ export enum FileFolder {
   Attachment = 'Attachment',
   PersonPicture = 'PersonPicture',
   ProfilePicture = 'ProfilePicture',
+  ServerlessFunction = 'ServerlessFunction',
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
@@ -392,14 +405,18 @@ export type Mutation = {
   createOneObject: Object;
   createOneRelation: Relation;
   createOneRemoteServer: RemoteServer;
+  createOneServerlessFunction: ServerlessFunction;
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRelation: Relation;
   deleteOneRemoteServer: RemoteServer;
   deleteUser: User;
+  disablePostgresProxy: PostgresCredentials;
   emailPasswordResetLink: EmailPasswordResetLink;
+  enablePostgresProxy: PostgresCredentials;
   exchangeAuthorizationCode: ExchangeAuthCode;
+  executeOneServerlessFunction: ServerlessFunctionExecutionResult;
   generateApiKeyToken: ApiKeyToken;
   generateJWT: AuthTokens;
   generateTransientToken: TransientToken;
@@ -451,7 +468,7 @@ export type MutationChallengeArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
-  recurringInterval: Scalars['String']['input'];
+  recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -478,6 +495,12 @@ export type MutationCreateOneRelationArgs = {
 
 export type MutationCreateOneRemoteServerArgs = {
   input: CreateRemoteServerInput;
+};
+
+
+export type MutationCreateOneServerlessFunctionArgs = {
+  file: Scalars['Upload']['input'];
+  name: Scalars['String']['input'];
 };
 
 
@@ -510,6 +533,12 @@ export type MutationExchangeAuthorizationCodeArgs = {
   authorizationCode: Scalars['String']['input'];
   clientSecret?: InputMaybe<Scalars['String']['input']>;
   codeVerifier?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationExecuteOneServerlessFunctionArgs = {
+  name: Scalars['String']['input'];
+  payload?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 
@@ -636,10 +665,14 @@ export type ObjectFieldsConnection = {
   pageInfo: PageInfo;
 };
 
-/** Onboarding step */
-export enum OnboardingStep {
+/** Onboarding status */
+export enum OnboardingStatus {
+  Completed = 'COMPLETED',
   InviteTeam = 'INVITE_TEAM',
-  SyncEmail = 'SYNC_EMAIL'
+  PlanRequired = 'PLAN_REQUIRED',
+  ProfileCreation = 'PROFILE_CREATION',
+  SyncEmail = 'SYNC_EMAIL',
+  WorkspaceActivation = 'WORKSPACE_ACTIVATION'
 }
 
 export type OnboardingStepSuccess = {
@@ -660,10 +693,18 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['ConnectionCursor']['output']>;
 };
 
+export type PostgresCredentials = {
+  __typename?: 'PostgresCredentials';
+  id: Scalars['UUID']['output'];
+  password: Scalars['String']['output'];
+  user: Scalars['String']['output'];
+  workspaceId: Scalars['String']['output'];
+};
+
 export type ProductPriceEntity = {
   __typename?: 'ProductPriceEntity';
   created: Scalars['Float']['output'];
-  recurringInterval: Scalars['String']['output'];
+  recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String']['output'];
   unitAmount: Scalars['Float']['output'];
 };
@@ -688,6 +729,8 @@ export type Query = {
   findManyRemoteServersByType: Array<RemoteServer>;
   findOneRemoteServerById: RemoteServer;
   findWorkspaceFromInviteHash: Workspace;
+  getAISQLQuery: AisqlQueryResult;
+  getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -697,6 +740,8 @@ export type Query = {
   objects: ObjectConnection;
   relation: Relation;
   relations: RelationConnection;
+  serverlessFunction: ServerlessFunction;
+  serverlessFunctions: ServerlessFunctionConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
 };
 
@@ -745,6 +790,11 @@ export type QueryFindOneRemoteServerByIdArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String']['input'];
+};
+
+
+export type QueryGetAisqlQueryArgs = {
+  text: Scalars['String']['input'];
 };
 
 
@@ -799,6 +849,18 @@ export type QueryRelationArgs = {
 
 export type QueryRelationsArgs = {
   paging?: CursorPaging;
+};
+
+
+export type QueryServerlessFunctionArgs = {
+  id: Scalars['UUID']['input'];
+};
+
+
+export type QueryServerlessFunctionsArgs = {
+  filter?: ServerlessFunctionFilter;
+  paging?: CursorPaging;
+  sorting?: Array<ServerlessFunctionSort>;
 };
 
 
@@ -895,6 +957,26 @@ export type Sentry = {
   release?: Maybe<Scalars['String']['output']>;
 };
 
+export type ServerlessFunctionConnection = {
+  __typename?: 'ServerlessFunctionConnection';
+  /** Array of edges. */
+  edges: Array<ServerlessFunctionEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+};
+
+export type ServerlessFunctionExecutionResult = {
+  __typename?: 'ServerlessFunctionExecutionResult';
+  /** Execution result in JSON format */
+  result: Scalars['JSON']['output'];
+};
+
+/** SyncStatus of the serverlessFunction */
+export enum ServerlessFunctionSyncStatus {
+  NotReady = 'NOT_READY',
+  Ready = 'READY'
+}
+
 export type SessionEntity = {
   __typename?: 'SessionEntity';
   url?: Maybe<Scalars['String']['output']>;
@@ -910,6 +992,24 @@ export enum SortDirection {
 export enum SortNulls {
   NullsFirst = 'NULLS_FIRST',
   NullsLast = 'NULLS_LAST'
+}
+
+export enum SubscriptionInterval {
+  Day = 'Day',
+  Month = 'Month',
+  Week = 'Week',
+  Year = 'Year'
+}
+
+export enum SubscriptionStatus {
+  Active = 'Active',
+  Canceled = 'Canceled',
+  Incomplete = 'Incomplete',
+  IncompleteExpired = 'IncompleteExpired',
+  PastDue = 'PastDue',
+  Paused = 'Paused',
+  Trialing = 'Trialing',
+  Unpaid = 'Unpaid'
 }
 
 export type Support = {
@@ -1084,7 +1184,7 @@ export type User = {
   firstName: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   lastName: Scalars['String']['output'];
-  onboardingStep?: Maybe<OnboardingStep>;
+  onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']['output']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetToken?: Maybe<Scalars['String']['output']>;
@@ -1163,8 +1263,8 @@ export type Workspace = {
   id: Scalars['UUID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
-  subscriptionStatus: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
 };
 
 
@@ -1306,6 +1406,39 @@ export type RelationEdge = {
   /** The node containing the relation */
   node: Relation;
 };
+
+export type ServerlessFunction = {
+  __typename?: 'serverlessFunction';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  name: Scalars['String']['output'];
+  syncStatus: ServerlessFunctionSyncStatus;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ServerlessFunctionEdge = {
+  __typename?: 'serverlessFunctionEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']['output'];
+  /** The node containing the serverlessFunction */
+  node: ServerlessFunction;
+};
+
+export type ServerlessFunctionFilter = {
+  and?: InputMaybe<Array<ServerlessFunctionFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  or?: InputMaybe<Array<ServerlessFunctionFilter>>;
+};
+
+export type ServerlessFunctionSort = {
+  direction: SortDirection;
+  field: ServerlessFunctionSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum ServerlessFunctionSortFields {
+  Id = 'id'
+}
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
 
