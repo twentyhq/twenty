@@ -6,6 +6,7 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 import { SettingsServerlessFunctionsFieldItemTableRow } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsFieldItemTableRow';
 import { ServerlessFunction } from '~/generated-metadata/graphql';
+import { SettingsServerlessFunctionsTableEmpty } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTableEmpty';
 
 const StyledTableRow = styled(TableRow)`
   grid-template-columns: 312px 132px 68px;
@@ -18,23 +19,29 @@ const StyledTableBody = styled(TableBody)`
 export const SettingsServerlessFunctionsTable = () => {
   const { serverlessFunctions } = useGetManyServerlessFunctions();
   return (
-    <Table>
-      <StyledTableRow>
-        <TableHeader>Name</TableHeader>
-        <TableHeader>Runtime</TableHeader>
-        <TableHeader></TableHeader>
-      </StyledTableRow>
-      {!!serverlessFunctions.length && (
-        <StyledTableBody>
-          {serverlessFunctions.map((serverlessFunction: ServerlessFunction) => (
-            <SettingsServerlessFunctionsFieldItemTableRow
-              key={serverlessFunction.id}
-              serverlessFunction={serverlessFunction}
-              to={`/settings/functions/${serverlessFunction.id}`}
-            />
-          ))}
-        </StyledTableBody>
+    <>
+      {serverlessFunctions.length ? (
+        <Table>
+          <StyledTableRow>
+            <TableHeader>Name</TableHeader>
+            <TableHeader>Runtime</TableHeader>
+            <TableHeader></TableHeader>
+          </StyledTableRow>
+          <StyledTableBody>
+            {serverlessFunctions.map(
+              (serverlessFunction: ServerlessFunction) => (
+                <SettingsServerlessFunctionsFieldItemTableRow
+                  key={serverlessFunction.id}
+                  serverlessFunction={serverlessFunction}
+                  to={`/settings/functions/${serverlessFunction.id}`}
+                />
+              ),
+            )}
+          </StyledTableBody>
+        </Table>
+      ) : (
+        <SettingsServerlessFunctionsTableEmpty />
       )}
-    </Table>
+    </>
   );
 };
