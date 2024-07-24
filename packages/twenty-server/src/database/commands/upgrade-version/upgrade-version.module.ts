@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
+import { UpdateActivitiesCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-activities.command';
 import { UpgradeVersionCommand } from 'src/database/commands/upgrade-version/upgrade-version.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -39,6 +40,6 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     DataSeedDemoWorkspaceModule,
     WorkspaceCacheVersionModule,
   ],
-  providers: [UpgradeVersionCommand],
+  providers: [UpgradeVersionCommand, UpdateActivitiesCommand],
 })
 export class UpgradeVersionModule {}

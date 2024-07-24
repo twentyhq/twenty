@@ -1,9 +1,8 @@
-import { Note } from '@/activities/types/Note';
-import { NoteTarget } from '@/activities/types/NoteTarget';
 import { Task } from '@/activities/types/Task';
+import { TaskTarget } from '@/activities/types/TaskTarget';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
-type MockedActivity = Partial<Task | Note> & { __typename?: string };
+type MockedTask = Partial<Task> & { __typename?: string };
 
 const workspaceMember: WorkspaceMember = {
   __typename: 'WorkspaceMember',
@@ -21,7 +20,7 @@ const workspaceMember: WorkspaceMember = {
   colorScheme: 'Light',
 };
 
-export const mockedTasks: Array<MockedActivity> = [
+export const mockedTasks: Array<MockedTask> = [
   {
     id: 'c554852c-b28a-4307-a41d-a7a0fdde3386',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
@@ -37,7 +36,7 @@ export const mockedTasks: Array<MockedActivity> = [
   },
 ];
 
-export const mockedActivities: Array<MockedActivity> = [
+export const mockedActivities: Array<MockedTask> = [
   {
     id: '3ecaa1be-aac7-463a-a38e-64078dd451d5',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
@@ -48,7 +47,7 @@ export const mockedActivities: Array<MockedActivity> = [
     status: null,
     assignee: workspaceMember,
     assigneeId: workspaceMember.id,
-    noteTargets: [
+    taskTargets: [
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb300',
         createdAt: '2023-04-26T10:12:42.33625+00:00',
@@ -63,14 +62,14 @@ export const mockedActivities: Array<MockedActivity> = [
           domainName: 'airbnb.com',
         },
         person: null,
-        noteId: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
-        note: {
-          __typename: 'Activity',
+        taskId: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
+        task: {
+          __typename: 'Task',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
           createdAt: '2023-04-26T10:12:42.33625+00:00',
           updatedAt: '2023-04-26T10:23:42.33625+00:00',
         },
-        __typename: 'NoteTarget',
+        __typename: 'TaskTarget',
       },
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb301',
@@ -86,17 +85,16 @@ export const mockedActivities: Array<MockedActivity> = [
           domainName: 'aircall.io',
         },
         person: null,
-        noteId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
-        note: {
-          __typename: 'Note',
+        taskId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
+        task: {
+          __typename: 'Task',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb231',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
-        __typename: 'NoteTarget',
+        __typename: 'TaskTarget',
       },
-    ] as Array<NoteTarget>,
-    // __typename: 'Note',
+    ] as Array<TaskTarget>,
   },
   {
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
@@ -104,7 +102,7 @@ export const mockedActivities: Array<MockedActivity> = [
     updatedAt: new Date().toISOString(),
     title: 'Another note',
     body: null,
-    noteTargets: [
+    taskTargets: [
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb278t',
         createdAt: '2023-04-26T10:12:42.33625+00:00',
@@ -122,14 +120,14 @@ export const mockedActivities: Array<MockedActivity> = [
         },
         company: null,
         companyId: null,
-        noteId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
-        note: {
+        taskId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
+        task: {
           __typename: 'Note',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
           createdAt: '2023-04-26T10:12:42.33625+00:00',
           updatedAt: '2023-04-26T10:23:42.33625+00:00',
         },
-        __typename: 'NoteTarget',
+        __typename: 'TaskTarget',
       },
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb279t',
@@ -148,16 +146,16 @@ export const mockedActivities: Array<MockedActivity> = [
           },
           avatarUrl: '',
         },
-        noteId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
-        note: {
-          __typename: 'Note',
+        taskId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
+        task: {
+          __typename: 'Task',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
-        __typename: 'NoteTarget',
+        __typename: 'TaskTarget',
       },
-    ] as Array<NoteTarget>,
-    __typename: 'Note',
+    ] as Array<TaskTarget>,
+    __typename: 'Task',
   },
 ];

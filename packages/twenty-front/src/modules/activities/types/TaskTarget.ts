@@ -9,10 +9,11 @@ export type TaskTarget = {
   updatedAt: string;
   companyId?: string | null;
   personId?: string | null;
-  note: Pick<Task, 'id' | 'createdAt' | 'updatedAt' | '__typename'>;
+  taskId: string | null;
+  task: Pick<Task, 'id' | 'createdAt' | 'updatedAt' | '__typename'>;
   person?: Pick<Person, 'id' | 'name' | 'avatarUrl' | '__typename'> | null;
   company?: Pick<Company, 'id' | 'name' | 'domainName' | '__typename'> | null;
   assignee?: Partial<WorkspaceMember>;
   [key: string]: any;
-  __typename: 'ActivityTarget';
+  __typename: 'TaskTarget';
 };
