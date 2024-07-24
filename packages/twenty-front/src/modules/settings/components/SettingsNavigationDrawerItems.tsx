@@ -24,11 +24,15 @@ import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/com
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { IconFunction } from '@tabler/icons-react';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
 
   const billing = useRecoilValue(billingState);
+  const isFunctionSettingsEnabled = useIsFeatureEnabled(
+    'IS_FUNCTION_SETTINGS_ENABLED',
+  );
 
   return (
     <>
@@ -98,11 +102,13 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.Developers}
           Icon={IconCode}
         />
-        <SettingsNavigationDrawerItem
-          label="Functions"
-          path={SettingsPath.ServerlessFunctions}
-          Icon={IconFunction}
-        />
+        {isFunctionSettingsEnabled && (
+          <SettingsNavigationDrawerItem
+            label="Functions"
+            path={SettingsPath.ServerlessFunctions}
+            Icon={IconFunction}
+          />
+        )}
         <SettingsNavigationDrawerItem
           label="Integrations"
           path={SettingsPath.Integrations}
