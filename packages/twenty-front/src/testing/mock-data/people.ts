@@ -65,8 +65,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: 'twitter.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'twitter.com',
           },
           testLinks: {
             __typename: 'Links',
@@ -94,8 +94,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -110,8 +110,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: 'singlelink.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'singlelink.com',
           },
           bestCompany: {
             __typename: 'Company',
@@ -128,8 +128,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 13,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -138,8 +138,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
           company: {
@@ -157,8 +157,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 1,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -167,8 +167,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -200,8 +200,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: 'twitter.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'twitter.com',
           },
           testLinks: {
             __typename: 'Links',
@@ -209,8 +209,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             primaryLinkLabel: '',
             secondaryLinks: [
               {
-                url: 'https://paris.com',
-                label: '',
+                primaryLinkUrl: 'https://paris.com',
+                primaryLinkLabel: '',
               },
             ],
           },
@@ -221,8 +221,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -237,8 +237,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -255,8 +255,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 1,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -265,8 +265,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -298,8 +298,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: 'twitter.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'twitter.com',
           },
           testLinks: {
             __typename: 'Links',
@@ -314,8 +314,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -330,8 +330,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -348,8 +348,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 3,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -358,8 +358,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -391,8 +391,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: 'twitter.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'twitter.com',
           },
           testLinks: {
             __typename: 'Links',
@@ -407,8 +407,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -423,8 +423,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -441,8 +441,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 3,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -451,8 +451,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -484,8 +484,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: 'twitter.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'twitter.com',
           },
           testLinks: {
             __typename: 'Links',
@@ -500,8 +500,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -516,8 +516,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -534,8 +534,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 4,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -544,8 +544,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -577,8 +577,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: 'twitter.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'twitter.com',
           },
           testLinks: {
             __typename: 'Links',
@@ -593,8 +593,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -609,8 +609,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -627,8 +627,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 4,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -637,8 +637,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -670,8 +670,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: 'twitter.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'twitter.com',
           },
           testLinks: {
             __typename: 'Links',
@@ -686,8 +686,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -702,8 +702,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -720,8 +720,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 4,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -730,8 +730,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -763,8 +763,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: 'twitter.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'twitter.com',
           },
           testLinks: {
             __typename: 'Links',
@@ -779,8 +779,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -795,8 +795,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -813,8 +813,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 5,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -823,8 +823,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -856,8 +856,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           testLinks: {
             __typename: 'Links',
@@ -872,8 +872,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -888,8 +888,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -906,8 +906,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 5,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -916,8 +916,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -949,8 +949,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           testLinks: {
             __typename: 'Links',
@@ -965,8 +965,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -981,8 +981,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -999,8 +999,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 5,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -1009,8 +1009,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -1042,8 +1042,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: 'twitter.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'twitter.com',
           },
           testLinks: {
             __typename: 'Links',
@@ -1058,8 +1058,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -1074,8 +1074,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -1092,8 +1092,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 6,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -1102,8 +1102,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -1135,8 +1135,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           testLinks: {
             __typename: 'Links',
@@ -1151,8 +1151,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -1167,8 +1167,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -1185,8 +1185,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 6,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -1195,8 +1195,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -1228,8 +1228,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           testLinks: {
             __typename: 'Links',
@@ -1244,8 +1244,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -1260,8 +1260,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -1278,8 +1278,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 6,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -1288,8 +1288,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -1321,8 +1321,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: 'twitter.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'twitter.com',
           },
           testLinks: {
             __typename: 'Links',
@@ -1337,8 +1337,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -1353,8 +1353,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -1371,8 +1371,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 6,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -1381,8 +1381,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
@@ -1414,8 +1414,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           xLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           testLinks: {
             __typename: 'Links',
@@ -1430,8 +1430,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           linkedinLink: {
             __typename: 'Link',
-            label: '',
-            url: 'linkedin.com',
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'linkedin.com',
           },
           testAddress: {
             __typename: 'Address',
@@ -1446,8 +1446,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           },
           testLink: {
             __typename: 'Link',
-            label: '',
-            url: '',
+            primaryLinkLabel: '',
+            primaryLinkUrl: '',
           },
           company: {
             __typename: 'Company',
@@ -1464,8 +1464,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             position: 6,
             linkedinLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
             annualRecurringRevenue: {
               __typename: 'Currency',
@@ -1474,8 +1474,8 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             },
             xLink: {
               __typename: 'Link',
-              label: '',
-              url: '',
+              primaryLinkLabel: '',
+              primaryLinkUrl: '',
             },
           },
         },
