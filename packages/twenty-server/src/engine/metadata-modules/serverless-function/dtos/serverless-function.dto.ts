@@ -26,7 +26,7 @@ registerEnumType(ServerlessFunctionSyncStatus, {
   description: 'SyncStatus of the serverlessFunction',
 });
 
-@ObjectType('serverlessFunction')
+@ObjectType('ServerlessFunction')
 @Authorize({
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.user?.workspace?.id },
