@@ -280,6 +280,13 @@ export type LinkMetadata = {
   url: Scalars['String'];
 };
 
+export type LinksMetadata = {
+  __typename?: 'LinksMetadata';
+  primaryLinkLabel: Scalars['String'];
+  primaryLinkUrl: Scalars['String'];
+  secondaryLinks?: Maybe<Array<LinkMetadata>>;
+};
+
 export type LoginToken = {
   __typename?: 'LoginToken';
   loginToken: AuthToken;
@@ -752,7 +759,7 @@ export type Telemetry = {
 
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
-  conferenceLink: LinkMetadata;
+  conferenceLink: LinksMetadata;
   conferenceSolution: Scalars['String'];
   description: Scalars['String'];
   endsAt: Scalars['DateTime'];
@@ -884,10 +891,6 @@ export type User = {
   lastName: Scalars['String'];
   onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']>;
-  /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
-  passwordResetToken?: Maybe<Scalars['String']>;
-  /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
-  passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']>;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
@@ -1088,8 +1091,12 @@ export type RelationEdge = {
 export type ServerlessFunction = {
   __typename?: 'serverlessFunction';
   createdAt: Scalars['DateTime'];
+  description: Scalars['String'];
   id: Scalars['UUID'];
   name: Scalars['String'];
+  runtime: Scalars['String'];
+  sourceCodeFullPath: Scalars['String'];
+  sourceCodeHash: Scalars['String'];
   syncStatus: ServerlessFunctionSyncStatus;
   updatedAt: Scalars['DateTime'];
 };
