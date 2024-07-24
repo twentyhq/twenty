@@ -62,11 +62,6 @@ registerEnumType(WorkspaceMemberLocaleEnum, {
   description: 'The language code as per region',
 });
 
-registerEnumType({
-  name: 'WorkspaceMemberColorSchemeEnum',
-  description: 'Appearance as Light, Dark or system as default',
-});
-
 registerEnumType(WorkspaceMemberTimeFormatEnum, {
   name: 'WorkspaceMemberTimeFormatEnum',
   description: 'Time time as Military, Standard or system as default',
