@@ -33,7 +33,7 @@ export const SettingsServerlessFunctionsNew = () => {
   };
 
   const onChange = (key: string) => {
-    return (value: string) => {
+    return (value: string | undefined) => {
       setFormValues((prevState) => ({
         ...prevState,
         [key]: value,
