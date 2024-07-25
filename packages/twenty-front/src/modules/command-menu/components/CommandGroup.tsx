@@ -1,5 +1,5 @@
-import React from 'react';
 import styled from '@emotion/styled';
+import React from 'react';
 
 const StyledGroup = styled.div`
   align-items: center;
@@ -10,7 +10,6 @@ const StyledGroup = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(2)};
-  text-transform: uppercase;
   user-select: none;
 `;
 

@@ -33,6 +33,7 @@ import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command, CommandType } from '../types/Command';
 
+import { ModalCloseButton } from '@/spreadsheet-import/components/ModalCloseButton';
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 
@@ -61,22 +62,15 @@ export const StyledInput = styled.input`
   margin: 0;
   outline: none;
   height: 24px;
-  padding: ${({ theme }) => theme.spacing(4)};
+  padding-top: ${({ theme }) => theme.spacing(4)};
+  padding-bottom: ${({ theme }) => theme.spacing(4)};
+  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-right: ${({ theme }) => theme.spacing(4)};
   width: ${({ theme }) => `calc(100% - ${theme.spacing(10)})`};
 
   &::placeholder {
     color: ${({ theme }) => theme.font.color.light};
   }
-`;
-
-const StyledCancelText = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-right: 12px;
-  margin-top: 6px;
-  position: absolute;
-  right: 0;
-  top: 0;
 `;
 
 export const StyledList = styled.div`
@@ -89,6 +83,7 @@ export const StyledList = styled.div`
 export const StyledInnerList = styled.div`
   padding-left: ${({ theme }) => theme.spacing(1)};
   padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
   width: calc(100% - ${({ theme }) => theme.spacing(2)});
 `;
 
@@ -287,7 +282,7 @@ export const CommandMenu = () => {
             placeholder="Search"
             onChange={handleSearchChange}
           />
-          {!isMobile && <StyledCancelText>Esc to cancel</StyledCancelText>}
+          {!isMobile && <ModalCloseButton onClose={closeCommandMenu} />}
           <StyledList>
             <ScrollWrapper>
               <StyledInnerList>
