@@ -1,7 +1,9 @@
 import { isString } from '@sniptt/guards';
 
+import { Company } from '@/companies/types/Company';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { isFieldRelationToOneValue } from '@/object-record/record-field/types/guards/isFieldRelationToOneValue';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -48,12 +50,17 @@ export const sanitizeRecordInput = ({
   );
   if (
     objectMetadataItem.nameSingular !== CoreObjectNameSingular.Company ||
-    !isString(filteredResultRecord.domainName)
+    !(
+      isDefined(filteredResultRecord.domainName) &&
+      isString(getCompanyDomainName(filteredResultRecord as Company))
+    )
   )
     return filteredResultRecord;
 
   return {
     ...filteredResultRecord,
-    domainName: getUrlHostName(filteredResultRecord.domainName),
+    domainName: getUrlHostName(
+      getCompanyDomainName(filteredResultRecord as Company),
+    ),
   };
 };

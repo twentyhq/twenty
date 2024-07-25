@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { getCompanyDomainName } from 'src/utils/getCompanyDomainName';
 
 export type CompanyToCreate = {
   id: string;
@@ -21,6 +20,7 @@ export class CompanyRepository {
   public async getExistingCompaniesByDomainNames(
     domainNames: string[],
     workspaceId: string,
+    companyDomainNameColumnName: string,
     transactionManager?: EntityManager,
   ): Promise<{ id: string; domainName: string }[]> {
     const dataSourceSchema =
@@ -28,7 +28,7 @@ export class CompanyRepository {
 
     const existingCompanies =
       await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT id, "domainName" FROM ${dataSourceSchema}.company WHERE "domainName" = ANY($1)`,
+        `SELECT id, "${companyDomainNameColumnName}" AS "domainName" FROM ${dataSourceSchema}.company WHERE "${companyDomainNameColumnName}" = ANY($1)`,
         [domainNames],
         workspaceId,
         transactionManager,
@@ -57,6 +57,7 @@ export class CompanyRepository {
   public async createCompany(
     workspaceId: string,
     companyToCreate: CompanyToCreate,
+    companyDomainNameColumnName,
     transactionManager?: EntityManager,
   ): Promise<void> {
     const dataSourceSchema =
@@ -68,11 +69,11 @@ export class CompanyRepository {
     );
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}.company (id, "domainName", name, "addressAddressCity", position)
+      `INSERT INTO ${dataSourceSchema}.company (id, "${companyDomainNameColumnName}", name, "addressAddressCity", position)
       VALUES ($1, $2, $3, $4, $5)`,
       [
         companyToCreate.id,
-        getCompanyDomainName(companyToCreate.domainName),
+        'https://' + companyToCreate.domainName,
         companyToCreate.name ?? '',
         companyToCreate.city ?? '',
         lastCompanyPosition + 1,

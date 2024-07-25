@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { MigrateDomainNameFromTextToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-domain-to-links.command';
 import { MigrateLinkFieldsToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-link-fields-to-links.command';
 import { UpgradeTo0_23Command } from 'src/database/commands/upgrade-version/0-23/0-23-upgrade-version.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -25,6 +26,10 @@ import { ViewModule } from 'src/modules/view/view.module';
     TypeORMModule,
     ViewModule,
   ],
-  providers: [MigrateLinkFieldsToLinksCommand, UpgradeTo0_23Command],
+  providers: [
+    MigrateLinkFieldsToLinksCommand,
+    MigrateDomainNameFromTextToLinksCommand,
+    UpgradeTo0_23Command,
+  ],
 })
 export class UpgradeTo0_23CommandModule {}

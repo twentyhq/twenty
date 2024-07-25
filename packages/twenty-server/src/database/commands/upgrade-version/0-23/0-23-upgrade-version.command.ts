@@ -1,5 +1,6 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
+import { MigrateDomainNameFromTextToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-domain-to-links.command';
 import { MigrateLinkFieldsToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-link-fields-to-links.command';
 
 interface Options {
@@ -13,6 +14,7 @@ interface Options {
 export class UpgradeTo0_23Command extends CommandRunner {
   constructor(
     private readonly migrateLinkFieldsToLinks: MigrateLinkFieldsToLinksCommand,
+    private readonly migrateDomainNameFromTextToLinks: MigrateDomainNameFromTextToLinksCommand,
   ) {
     super();
   }
@@ -29,5 +31,6 @@ export class UpgradeTo0_23Command extends CommandRunner {
 
   async run(_passedParam: string[], options: Options): Promise<void> {
     await this.migrateLinkFieldsToLinks.run(_passedParam, options);
+    await this.migrateDomainNameFromTextToLinks.run(_passedParam, options);
   }
 }
