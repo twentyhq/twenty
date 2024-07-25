@@ -11,7 +11,7 @@ import { TabList } from '@/ui/layout/tab/components/TabList';
 import { isDefined } from '~/utils/isDefined';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab';
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { useServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
@@ -21,6 +21,9 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
 import { useDebouncedCallback } from 'use-debounce';
+import { SettingsServerlessFunctionTestTabEffect } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTabEffect';
+import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
+import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -37,6 +40,12 @@ export const SettingsServerlessFunctionDetail = () => {
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const [savedCode, setSavedCode] = useState<string>('');
   const [formValues, setFormValues] = useServerlessFunctionFormValues();
+  const setSettingsServerlessFunctionOutput = useSetRecoilState(
+    settingsServerlessFunctionOutputState,
+  );
+  const settingsServerlessFunctionInput = useRecoilValue(
+    settingsServerlessFunctionInputState,
+  );
 
   const canSave =
     savedCode !== formValues.code ||
@@ -86,26 +95,21 @@ export const SettingsServerlessFunctionDetail = () => {
   };
 
   const handleExecute = async () => {
-    if (!isDefined(formValues.input)) {
-      setActiveTabId('test');
-      return;
-    }
     if (canSave) {
       await handleSave();
     }
     try {
       const result = await executeOneServerlessFunction(
         serverlessFunction?.id,
-        JSON.parse(formValues.input),
+        JSON.parse(settingsServerlessFunctionInput),
       );
-      setFormValues((prevState) => ({
-        ...prevState,
-        output: JSON.stringify(
+      setSettingsServerlessFunctionOutput(
+        JSON.stringify(
           result?.data?.executeOneServerlessFunction?.result,
           null,
           4,
         ),
-      }));
+      );
     } catch (err) {
       enqueueSnackBar(
         (err as Error)?.message || 'An error occurred while executing function',
@@ -113,10 +117,7 @@ export const SettingsServerlessFunctionDetail = () => {
           variant: SnackBarVariant.Error,
         },
       );
-      setFormValues((prevState) => ({
-        ...prevState,
-        output: JSON.stringify(err, null, 4),
-      }));
+      setSettingsServerlessFunctionOutput(JSON.stringify(err, null, 4));
     }
     setActiveTabId('test');
   };
@@ -169,11 +170,10 @@ export const SettingsServerlessFunctionDetail = () => {
         );
       case 'test':
         return (
-          <SettingsServerlessFunctionTestTab
-            formValues={formValues}
-            setFormValues={setFormValues}
-            handleExecute={handleExecute}
-          />
+          <>
+            <SettingsServerlessFunctionTestTabEffect />
+            <SettingsServerlessFunctionTestTab handleExecute={handleExecute} />
+          </>
         );
       case 'settings':
         return (

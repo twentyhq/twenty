@@ -84,8 +84,8 @@ import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 import { SettingsServerlessFunctions } from '~/pages/settings/serverless-functions/SettingsServerlessFunctions';
 import { SettingsServerlessFunctionsNew } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew';
-import { SettingsServerlessFunctionDetail } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { SettingsServerlessFunctionDetailWrapper } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetailWrapper';
 
 const ProvidersThatNeedRouterContext = () => {
   const { pathname } = useLocation();
@@ -272,7 +272,7 @@ const createRouter = (
                     />
                     <Route
                       path={SettingsPath.ServerlessFunctionDetail}
-                      element={<SettingsServerlessFunctionDetail />}
+                      element={<SettingsServerlessFunctionDetailWrapper />}
                     />
                   </>
                 )}

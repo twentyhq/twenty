@@ -23,7 +23,7 @@ const StyledEditor = styled(Editor)`
 
 type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
   header: React.ReactNode;
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
 };
 
 export const CodeEditor = ({
@@ -62,7 +62,7 @@ export const CodeEditor = ({
         language={language}
         value={value}
         onMount={handleEditorDidMount}
-        onChange={(value?: string) => value && onChange(value)}
+        onChange={(value?: string) => value && onChange?.(value)}
         options={{
           ...options,
           overviewRulerLanes: 0,

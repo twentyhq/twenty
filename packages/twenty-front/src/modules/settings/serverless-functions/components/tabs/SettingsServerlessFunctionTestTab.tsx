@@ -1,15 +1,15 @@
 import { H2Title, IconPlayerPlay } from 'twenty-ui';
 import { Section } from '@/ui/layout/section/components/Section';
-import {
-  ServerlessFunctionFormValues,
-  SetServerlessFunctionFormValues,
-} from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
+
 import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
 import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
 import { Button } from '@/ui/input/button/components/Button';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
+import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
+import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -18,16 +18,18 @@ const StyledInputsContainer = styled.div`
 `;
 
 export const SettingsServerlessFunctionTestTab = ({
-  formValues,
-  setFormValues,
   handleExecute,
 }: {
-  formValues: ServerlessFunctionFormValues;
-  setFormValues: SetServerlessFunctionFormValues;
   handleExecute: () => void;
 }) => {
-  const [language, setLanguage] = useState('plaintext');
-  const [resultHeight, setResultHeight] = useState(64);
+  const settingsServerlessFunctionCodeEditorOutputParams = useRecoilValue(
+    settingsServerlessFunctionCodeEditorOutputParamsState,
+  );
+  const settingsServerlessFunctionOutput = useRecoilValue(
+    settingsServerlessFunctionOutputState,
+  );
+  const [settingsServerlessFunctionInput, setSettingsServerlessFunctionInput] =
+    useRecoilState(settingsServerlessFunctionInputState);
 
   const InputHeaderButton = (
     <Button
@@ -45,23 +47,12 @@ export const SettingsServerlessFunctionTestTab = ({
   );
 
   const OutputHeaderButton = (
-    <LightCopyIconButton copyText={formValues.output} />
+    <LightCopyIconButton copyText={settingsServerlessFunctionOutput} />
   );
 
   const OutputHeader = (
     <CoreEditorHeader title={'Output'} rightNodes={[OutputHeaderButton]} />
   );
-
-  useEffect(() => {
-    try {
-      JSON.parse(formValues.output);
-      setLanguage('json');
-      setResultHeight(300);
-    } catch {
-      setLanguage('plaintext');
-      setResultHeight(64);
-    }
-  }, [formValues.output]);
 
   return (
     <Section>
@@ -71,27 +62,16 @@ export const SettingsServerlessFunctionTestTab = ({
       />
       <StyledInputsContainer>
         <CodeEditor
-          value={formValues.input}
+          value={settingsServerlessFunctionInput}
           height={200}
-          onChange={(value: string) => {
-            setFormValues((prevState) => ({
-              ...prevState,
-              input: value,
-            }));
-          }}
+          onChange={setSettingsServerlessFunctionInput}
           language={'json'}
           header={InputHeader}
         />
         <CodeEditor
-          value={formValues.output}
-          height={resultHeight}
-          onChange={(value: string) => {
-            setFormValues((prevState) => ({
-              ...prevState,
-              output: value,
-            }));
-          }}
-          language={language}
+          value={settingsServerlessFunctionOutput}
+          height={settingsServerlessFunctionCodeEditorOutputParams.height}
+          language={settingsServerlessFunctionCodeEditorOutputParams.language}
           options={{ readOnly: true, domReadOnly: true }}
           header={OutputHeader}
         />

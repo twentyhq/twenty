@@ -4,8 +4,6 @@ export type ServerlessFunctionFormValues = {
   name: string;
   description: string;
   code: string;
-  input: string;
-  output: string;
 };
 
 export type SetServerlessFunctionFormValues = Dispatch<
@@ -20,8 +18,6 @@ export const useServerlessFunctionFormValues = (): [
     name: '',
     description: '',
     code: '',
-    input: '{}',
-    output: 'Enter an input above then press "run Function"',
   });
 
   return [formValues, setFormValues];
