@@ -12528,6 +12528,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@revertdotdev/revert-react@npm:^0.0.21":
+  version: 0.0.21
+  resolution: "@revertdotdev/revert-react@npm:0.0.21"
+  peerDependencies:
+    react: ">=16.x"
+    react-dom: ">=16.x"
+  checksum: bd97830487754511e544514e2cec8ca845005ce3a52a0ba7764038fd1d1e39834b3235b5c7e51366dbda4e928f37600ad6ae72df2f4d359e6f17f66db656fec4
+  languageName: node
+  linkType: hard
+
 "@rollup/pluginutils@npm:^4.1.2":
   version: 4.2.1
   resolution: "@rollup/pluginutils@npm:4.2.1"
@@ -49091,6 +49101,7 @@ __metadata:
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch"
     "@nx/js": "npm:18.3.3"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
+    "@revertdotdev/revert-react": "npm:^0.0.21"
     "@types/lodash.differencewith": "npm:^4.5.9"
     "@types/lodash.isempty": "npm:^4.4.7"
     "@types/lodash.isequal": "npm:^4.5.8"
