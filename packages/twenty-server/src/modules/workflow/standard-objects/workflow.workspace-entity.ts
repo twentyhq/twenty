@@ -21,9 +21,6 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow-version.workspace-entity';
 
-@WorkspaceGate({
-  featureFlag: FeatureFlagKeys.IsWorkflowEnabled,
-})
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflow,
   namePlural: 'workflows',
@@ -32,6 +29,9 @@ import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/standard-ob
   description: 'A workflow',
   icon: 'IconSettingsAutomation',
   labelIdentifierStandardId: WORKFLOW_STANDARD_FIELD_IDS.name,
+})
+@WorkspaceGate({
+  featureFlag: FeatureFlagKeys.IsWorkflowEnabled,
 })
 export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
