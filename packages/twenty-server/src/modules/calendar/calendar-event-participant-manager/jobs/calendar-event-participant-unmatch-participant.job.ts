@@ -27,7 +27,7 @@ export class CalendarEventParticipantUnmatchParticipantJob {
   ): Promise<void> {
     const { email, personId, workspaceMemberId } = data;
 
-    await this.calendarEventParticipantService.unmatchCalendarEventParticipant(
+    await this.calendarEventParticipantService.unmatchCalendarEventParticipants(
       email,
       personId,
       workspaceMemberId,

@@ -189,7 +189,7 @@ export class CalendarEventParticipantService {
     });
   }
 
-  public async matchCalendarEventParticipantAfterPersonOrWorkspaceMemberCreation(
+  public async matchCalendarEventParticipantsAfterPersonOrWorkspaceMemberCreation(
     handle: string,
     workspaceId: string,
     personId?: string,
@@ -250,7 +250,7 @@ export class CalendarEventParticipantService {
     }
   }
 
-  public async unmatchCalendarEventParticipant(
+  public async unmatchCalendarEventParticipants(
     handle: string,
     personId?: string,
     workspaceMemberId?: string,

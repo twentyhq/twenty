@@ -25,7 +25,7 @@ export class MessageParticipantMatchParticipantJob {
   async handle(data: MessageParticipantMatchParticipantJobData): Promise<void> {
     const { workspaceId, email, personId, workspaceMemberId } = data;
 
-    await this.messageParticipantService.matchMessageParticipantAfterPersonOrWorkspaceMemberCreation(
+    await this.messageParticipantService.matchMessageParticipantsAfterPersonOrWorkspaceMemberCreation(
       workspaceId,
       email,
       personId,

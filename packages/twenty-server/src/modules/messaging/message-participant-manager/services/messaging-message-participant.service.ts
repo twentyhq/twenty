@@ -116,7 +116,7 @@ export class MessagingMessageParticipantService {
     });
   }
 
-  public async matchMessageParticipantAfterPersonOrWorkspaceMemberCreation(
+  public async matchMessageParticipantsAfterPersonOrWorkspaceMemberCreation(
     handle: string,
     workspaceId: string,
     personId?: string,
