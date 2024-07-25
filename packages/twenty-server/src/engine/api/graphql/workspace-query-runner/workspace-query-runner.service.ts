@@ -643,7 +643,9 @@ export class WorkspaceQueryRunnerService {
       );
     } catch (error) {
       if (isQueryTimeoutError(error)) {
-        throw new RequestTimeoutException(error.message);
+        throw new RequestTimeoutException(
+          'The SQL request took too long to process, resulting in a query read timeout. To resolve this issue, consider modifying your query by reducing the depth of relationships or limiting the number of records being fetched.',
+        );
       }
 
       throw error;
