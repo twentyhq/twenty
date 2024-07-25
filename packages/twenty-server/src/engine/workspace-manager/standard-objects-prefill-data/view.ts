@@ -2,10 +2,11 @@ import { EntityManager } from 'typeorm';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { viewCompanyFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-company-fields';
-import { viewPersonFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-person-fields';
 import { viewOpportunityFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-opportunity-fields';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { viewPersonFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-person-fields';
+import { viewWorkflowFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-workflow-fields';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const viewPrefillData = async (
   entityManager: EntityManager,
@@ -64,6 +65,15 @@ export const viewPrefillData = async (
             OPPORTUNITY_STANDARD_FIELD_IDS.stage
           ],
       },
+      {
+        name: 'All Workflows',
+        objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.workflow].id,
+        type: 'table',
+        key: 'INDEX',
+        position: 0,
+        icon: 'IconSettingsAutomation',
+        kanbanFieldMetadataId: '',
+      },
     ])
     .returning('*')
     .execute();
@@ -92,6 +102,7 @@ export const viewPrefillData = async (
         objectMetadataMap,
       ),
       ...viewOpportunityFields(viewIdMap['By Stage'], objectMetadataMap),
+      ...viewWorkflowFields(viewIdMap['All Workflows'], objectMetadataMap),
     ])
     .execute();
 };
