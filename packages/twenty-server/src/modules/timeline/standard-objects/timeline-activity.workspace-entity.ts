@@ -1,5 +1,6 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -7,6 +8,7 @@ import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-en
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -160,10 +162,16 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKeys.IsWorkflowEnabled,
+  })
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('workflow')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKeys.IsWorkflowEnabled,
+  })
   workflowId: string | null;
 
   @WorkspaceDynamicRelation({

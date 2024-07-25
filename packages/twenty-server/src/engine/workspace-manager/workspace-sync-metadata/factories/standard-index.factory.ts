@@ -46,8 +46,14 @@ export class StandardIndexFactory {
       return [];
     }
 
-    const workspaceIndexMetadataArgsCollection =
-      metadataArgsStorage.filterIndexes(target);
+    const workspaceIndexMetadataArgsCollection = metadataArgsStorage
+      .filterIndexes(target)
+      .filter((workspaceIndexMetadataArgs) => {
+        return !isGatedAndNotEnabled(
+          workspaceIndexMetadataArgs.gate,
+          workspaceFeatureFlagsMap,
+        );
+      });
 
     return workspaceIndexMetadataArgsCollection.map(
       (workspaceIndexMetadataArgs) => {
