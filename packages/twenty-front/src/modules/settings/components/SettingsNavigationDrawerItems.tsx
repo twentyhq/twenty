@@ -33,6 +33,7 @@ export const SettingsNavigationDrawerItems = () => {
   const isFunctionSettingsEnabled = useIsFeatureEnabled(
     'IS_FUNCTION_SETTINGS_ENABLED',
   );
+  const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
 
   return (
     <>
@@ -114,6 +115,13 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.Integrations}
           Icon={IconApps}
         />
+        {isCRMMigrationEnabled && (
+          <SettingsNavigationDrawerItem
+            label="CRM Migration"
+            path={SettingsPath.CRMMigration}
+            Icon={IconCode}
+          />
+        )}
       </NavigationDrawerSection>
 
       <NavigationDrawerSection>
