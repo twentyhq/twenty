@@ -55,7 +55,7 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
     objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ): Promise<ObjectMetadataEntity[]> {
     return await objectMetadataRepository.find({
-      where: { workspaceId, isCustom: false },
+      where: { workspaceId, isCustom: false, isRemote: false },
       relations: ['fields'],
     });
   }
