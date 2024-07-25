@@ -1,21 +1,26 @@
-import React from 'react';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import React from 'react';
 
 const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
   padding?: ModalPadding;
+  isMobile: boolean;
 }>`
   display: flex;
   flex-direction: column;
   background: ${({ theme }) => theme.background.primary};
   color: ${({ theme }) => theme.font.color.primary};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${({ theme, isMobile }) => {
+    if (isMobile) return `0`;
+    return theme.border.radius.md;
+  }};
   overflow: hidden;
-  max-height: 90vh;
   z-index: 10000; // should be higher than Backdrop's z-index
 
-  width: ${({ size, theme }) => {
+  width: ${({ isMobile, size, theme }) => {
+    if (isMobile) return theme.modal.size.fullscreen;
     switch (size) {
       case 'small':
         return theme.modal.size.sm;
@@ -28,7 +33,8 @@ const StyledModalDiv = styled(motion.div)<{
     }
   }};
 
-  padding: ${({ padding, theme }) => {
+  padding: ${({ isMobile, padding, theme }) => {
+    if (isMobile) return `0`;
     switch (padding) {
       case 'none':
         return theme.spacing(0);
@@ -42,6 +48,9 @@ const StyledModalDiv = styled(motion.div)<{
         return 'auto';
     }
   }};
+  height: ${({ isMobile, theme }) =>
+    isMobile ? theme.modal.size.fullscreen : 'auto'};
+  max-height: ${({ isMobile }) => (isMobile ? 'none' : '90vh')};
 `;
 
 const StyledHeader = styled.div`
@@ -145,7 +154,7 @@ export const ModalLayout = ({
   const stopEventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
-
+  const isMobile = useIsMobile();
   return (
     <StyledBackDrop onMouseDown={stopEventPropagation}>
       <StyledModalDiv
@@ -161,6 +170,7 @@ export const ModalLayout = ({
         layout
         variants={modalVariants}
         className={className}
+        isMobile={isMobile}
       >
         {children}
       </StyledModalDiv>

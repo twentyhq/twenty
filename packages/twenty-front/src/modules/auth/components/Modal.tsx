@@ -5,6 +5,7 @@ import { ModalLayout } from '@/ui/layout/modal/components/ModalLayout';
 
 const StyledContent = styled(ModalLayout.Content)`
   align-items: center;
+  justify-content: center;
 `;
 
 type AuthModalProps = { children: React.ReactNode };
