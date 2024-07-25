@@ -1616,7 +1616,7 @@ export const getObjectMetadataItemsMock = () => {
       icon: 'IconCheckbox',
       isCustom: false,
       isActive: true,
-      isSystem: true,
+      isSystem: false,
       createdAt: '2023-11-30T11:13:15.206Z',
       updatedAt: '2023-11-30T11:13:15.206Z',
       fields: [

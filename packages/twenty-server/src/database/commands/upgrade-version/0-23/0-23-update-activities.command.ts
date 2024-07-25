@@ -10,11 +10,17 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
 import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
+import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
+import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 interface UpdateActivitiesCommandOptions {
   workspaceId?: string;
@@ -41,6 +47,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super();
   }
@@ -70,23 +77,134 @@ export class UpdateActivitiesCommand extends CommandRunner {
       /*********************** 
       // Transfer Activities to NOTE + Tasks
       ***********************/
-      /* const activitiesToUpdate = await activityRepository.find({
-        where: [{ position: IsNull() }],
+
+      const activityRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ActivityWorkspaceEntity>(
+          workspaceId,
+          'activity',
+        );
+      const noteRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<NoteWorkspaceEntity>(
+          workspaceId,
+          'note',
+        );
+      const taskRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<TaskWorkspaceEntity>(
+          workspaceId,
+          'task',
+        );
+      const timelineActivityRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<TimelineActivityWorkspaceEntity>(
+          workspaceId,
+          'timelineActivity',
+        );
+      const attachmentRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<AttachmentWorkspaceEntity>(
+          workspaceId,
+          'attachment',
+        );
+
+      const objectMetadata =
+        await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
+
+      const noteObjectMetadataId = objectMetadata.find(
+        (object) => object.nameSingular === 'note',
+      )?.id;
+
+      const taskObjectMetadataId = objectMetadata.find(
+        (object) => object.nameSingular === 'task',
+      )?.id;
+
+      const activityObjectMetadataId = objectMetadata.find(
+        (object) => object.nameSingular === 'activity',
+      )?.id;
+
+      const activitiesToTransfer = await activityRepository.find({
         order: { createdAt: 'ASC' },
       });
 
-      for (let i = 0; i < activitiesToUpdate.length; i++) {
-        const activity = activitiesToUpdate[i];
+      for (let i = 0; i < activitiesToTransfer.length; i++) {
+        const activity = activitiesToTransfer[i];
 
-        activity.position = i;
-        await activityRepository.save(activity);
-      }*/
+        if (activity.type === 'Note') {
+          const note = noteRepository.create({
+            id: activity.id,
+            title: activity.title,
+            body: activity.body,
+            createdAt: activity.createdAt,
+            updatedAt: activity.updatedAt,
+            position: i,
+            noteTargets: activity.activityTargets.map((activityTarget) => {
+              const { activityId, ...activityTargetData } = activityTarget;
+
+              return {
+                noteId: activityId,
+                ...activityTargetData,
+              };
+            }),
+          });
+
+          await noteRepository.save(note);
+
+          await timelineActivityRepository.update(
+            {
+              linkedObjectMetadataId: activityObjectMetadataId,
+              linkedRecordId: activity.id,
+            },
+            {
+              linkedObjectMetadataId: noteObjectMetadataId,
+            },
+          );
+
+          await attachmentRepository.update(
+            {
+              activityId: activity.id,
+            },
+            {
+              activityId: null,
+              noteId: activity.id,
+            },
+          );
+        } else if (activity.type === 'Task') {
+          const task = taskRepository.create({
+            id: activity.id,
+            title: activity.title,
+            body: activity.body,
+            status: activity.completedAt ? 'DONE' : 'TODO',
+            dueAt: activity.dueAt,
+            assigneeId: activity.assigneeId,
+            position: i,
+            createdAt: activity.createdAt,
+            updatedAt: activity.updatedAt,
+          });
+
+          await taskRepository.save(task);
+          await timelineActivityRepository.update(
+            {
+              linkedObjectMetadataId: activityObjectMetadataId,
+              linkedRecordId: activity.id,
+            },
+            {
+              linkedObjectMetadataId: taskObjectMetadataId,
+            },
+          );
+          await attachmentRepository.update(
+            {
+              activityId: activity.id,
+            },
+            {
+              activityId: null,
+              taskId: activity.id,
+            },
+          );
+        } else {
+          throw new Error(`Unknown activity type: ${activity.type}`);
+        }
+      }
 
       /*********************** 
       // Create missing views
       ***********************/
-      const objectMetadata =
-        await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
       const objectMetadataMap = objectMetadata.reduce((acc, object) => {
         acc[object.standardId ?? ''] = {
@@ -97,7 +215,6 @@ export class UpdateActivitiesCommand extends CommandRunner {
             return acc;
           }, {}),
         };
-        schema;
 
         return acc;
       }, {}) as Record<string, ObjectMetadataEntity>;
@@ -201,9 +318,9 @@ export class UpdateActivitiesCommand extends CommandRunner {
 
         await this.workspaceCacheVersionService.incrementVersion(workspaceId);
       }
-
-      return this.sharedBoilerplate(_passedParam, options, updateActivities);
     };
+
+    return this.sharedBoilerplate(_passedParam, options, updateActivities);
   }
 
   // This is an attempt to do something more generic that could be reused in every command
