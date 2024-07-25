@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { EntityManager } from 'typeorm';
 
@@ -33,7 +32,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
-    private readonly eventEmitter: EventEmitter2,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 

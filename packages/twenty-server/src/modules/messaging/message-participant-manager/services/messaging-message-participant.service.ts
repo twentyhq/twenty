@@ -26,7 +26,7 @@ export class MessagingMessageParticipantService {
         'messageParticipant',
       );
 
-    const messageParticipants = await messageParticipantRepository.save(
+    const savedParticipants = await messageParticipantRepository.save(
       participants.map((participant) => {
         return {
           messageId: participant.messageId,
@@ -40,7 +40,7 @@ export class MessagingMessageParticipantService {
     );
 
     await this.matchMessageParticipants(
-      messageParticipants,
+      savedParticipants,
       workspaceId,
       transactionManager,
     );
@@ -51,6 +51,9 @@ export class MessagingMessageParticipantService {
     workspaceId: string,
     transactionManager?: any,
   ) {
+    const participantIds = messageParticipants.map(
+      (participant) => participant.id,
+    );
     const uniqueParticipantsHandles = [
       ...new Set(messageParticipants.map((participant) => participant.handle)),
     ];
@@ -97,6 +100,7 @@ export class MessagingMessageParticipantService {
 
       await messageParticipantRepository.update(
         {
+          id: Any(participantIds),
           handle,
         },
         {
@@ -107,10 +111,20 @@ export class MessagingMessageParticipantService {
       );
     }
 
+    const matchedMessageParticipants = await messageParticipantRepository.find(
+      {
+        where: {
+          id: Any(participantIds),
+          handle: Any(uniqueParticipantsHandles),
+        },
+      },
+      transactionManager,
+    );
+
     this.eventEmitter.emit(`messageParticipant.matched`, {
       workspaceId,
       workspaceMemberId: null,
-      messageParticipants,
+      messageParticipants: matchedMessageParticipants,
     });
   }
 

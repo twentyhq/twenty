@@ -106,24 +106,27 @@ export class CalendarEventParticipantService {
 
     participantsToSave.push(...newCalendarEventParticipants);
 
-    await calendarEventParticipantRepository.save(
+    const savedParticipants = await calendarEventParticipantRepository.save(
       participantsToSave,
       {},
       transactionManager,
     );
 
     await this.matchCalendarEventParticipants(
-      participantsToSave,
+      savedParticipants,
       workspaceId,
       transactionManager,
     );
   }
 
   private async matchCalendarEventParticipants(
-    calendarEventParticipants: CalendarEventParticipantWithCalendarEventId[],
+    calendarEventParticipants: CalendarEventParticipantWorkspaceEntity[],
     workspaceId: string,
     transactionManager?: any,
   ) {
+    const participantIds = calendarEventParticipants.map(
+      (participant) => participant.id,
+    );
     const uniqueParticipantsHandles = [
       ...new Set(
         calendarEventParticipants.map((participant) => participant.handle),
@@ -172,6 +175,7 @@ export class CalendarEventParticipantService {
 
       await calendarEventParticipantRepository.update(
         {
+          id: Any(participantIds),
           handle,
         },
         {
@@ -182,10 +186,21 @@ export class CalendarEventParticipantService {
       );
     }
 
+    const matchedCalendarEventParticipants =
+      await calendarEventParticipantRepository.find(
+        {
+          where: {
+            id: Any(participantIds),
+            handle: Any(uniqueParticipantsHandles),
+          },
+        },
+        transactionManager,
+      );
+
     this.eventEmitter.emit(`calendarEventParticipant.matched`, {
       workspaceId,
       workspaceMemberId: null,
-      calendarEventParticipants,
+      messageParticipants: matchedCalendarEventParticipants,
     });
   }
 
