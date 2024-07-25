@@ -21,7 +21,7 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 export enum MessageChannelSyncStatus {
   NOT_SYNCED = 'NOT_SYNCED',
   ONGOING = 'ONGOING',
-  COMPLETED = 'COMPLETED',
+  ACTIVE = 'ACTIVE',
   FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
   FAILED_UNKNOWN = 'FAILED_UNKNOWN',
 }
@@ -234,25 +234,25 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
       {
         value: MessageChannelSyncStatus.NOT_SYNCED,
         label: 'Not Synced',
-        position: 4,
+        position: 2,
         color: 'blue',
       },
       {
-        value: MessageChannelSyncStatus.COMPLETED,
-        label: 'Completed',
-        position: 5,
+        value: MessageChannelSyncStatus.ACTIVE,
+        label: 'Active',
+        position: 3,
         color: 'green',
       },
       {
         value: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
         label: 'Failed Insufficient Permissions',
-        position: 6,
+        position: 4,
         color: 'red',
       },
       {
         value: MessageChannelSyncStatus.FAILED_UNKNOWN,
         label: 'Failed Unknown',
-        position: 7,
+        position: 5,
         color: 'red',
       },
     ],

@@ -110,7 +110,7 @@ export class MessagingChannelSyncStatusService {
   ) {
     await this.messageChannelRepository.updateSyncStatus(
       messageChannelId,
-      MessageChannelSyncStatus.COMPLETED,
+      MessageChannelSyncStatus.ACTIVE,
       workspaceId,
     );
 
