@@ -1,9 +1,9 @@
 import { Scope } from '@nestjs/common';
 
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 export type MessageParticipantUnmatchParticipantJobData = {
   workspaceId: string;
@@ -25,10 +25,9 @@ export class MessageParticipantUnmatchParticipantJob {
   async handle(
     data: MessageParticipantUnmatchParticipantJobData,
   ): Promise<void> {
-    const { workspaceId, email, personId, workspaceMemberId } = data;
+    const { email, personId, workspaceMemberId } = data;
 
     await this.messageParticipantService.unmatchMessageParticipants(
-      workspaceId,
       email,
       personId,
       workspaceMemberId,

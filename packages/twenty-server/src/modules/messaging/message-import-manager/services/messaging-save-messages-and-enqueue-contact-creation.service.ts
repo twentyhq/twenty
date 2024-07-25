@@ -6,7 +6,7 @@ import { EntityManager } from 'typeorm';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   CreateCompanyAndContactJob,
@@ -30,12 +30,12 @@ import { isWorkEmail } from 'src/utils/is-work-email';
 @Injectable()
 export class MessagingSaveMessagesAndEnqueueContactCreationService {
   constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   async saveMessagesAndEnqueueContactCreationJob(
@@ -44,14 +44,11 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
-
     const handleAliases = connectedAccount.handleAliases?.split(',') || [];
 
     let savedMessageParticipants: MessageParticipantWorkspaceEntity[] = [];
+
+    const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
     const participantsWithMessageId = await workspaceDataSource?.transaction(
       async (transactionManager: EntityManager) => {
