@@ -1,35 +1,35 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { EntityManager } from 'typeorm';
 
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunities';
-import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspace-members';
-import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_TWENTY_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
-import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/connected-account';
-import { seedMessage } from 'src/database/typeorm-seeds/workspace/messages';
-import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/message-channels';
-import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/message-channel-message-associations';
-import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/message-participants';
-import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-threads';
-import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
-import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
 import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
 import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
+import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
+import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
+import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/connected-account';
+import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/message-channel-message-associations';
+import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/message-channels';
+import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/message-participants';
+import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-threads';
+import { seedMessage } from 'src/database/typeorm-seeds/workspace/messages';
+import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunities';
+import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
+import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
+import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 // TODO: implement dry-run
 @Command({

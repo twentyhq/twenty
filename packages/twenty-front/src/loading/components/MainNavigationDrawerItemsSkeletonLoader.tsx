@@ -1,13 +1,15 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import styled from '@emotion/styled';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { BACKGROUND_LIGHT, GRAY_SCALE } from 'twenty-ui';
 
 const StyledSkeletonContainer = styled.div`
+  align-items: flex-start;
+
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-left: 12px;
-  margin-top: 8px;
+  min-width: 196px;
+  max-width: 196px;
 `;
 
 export const MainNavigationDrawerItemsSkeletonLoader = ({

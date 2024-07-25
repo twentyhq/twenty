@@ -127,7 +127,8 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
     const identifierFieldMetadata = objectMetadata.fields.find(
       (field) =>
         field.standardId ===
-        standardObjectMetadataMap[objectStandardId][standardIdFieldName],
+          standardObjectMetadataMap[objectStandardId][standardIdFieldName] &&
+        field.standardId !== null,
     );
 
     if (

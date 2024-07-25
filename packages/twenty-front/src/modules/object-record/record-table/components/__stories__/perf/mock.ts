@@ -861,6 +861,7 @@ export const mockPerformance = {
   fieldDefinition: {
     fieldMetadataId: '4e79f0b7-d100-4e89-a07b-315a710b8059',
     primaryLinkLabel: 'Company',
+    label: 'Company',
     metadata: {
       fieldName: 'company',
       placeHolder: 'Company',
