@@ -15,9 +15,6 @@ import { WORKFLOW_VERSION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manage
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow.workspace-entity';
 
-@WorkspaceGate({
-  featureFlag: FeatureFlagKeys.IsWorkflowEnabled,
-})
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowVersion,
   namePlural: 'workflowVersions',
@@ -26,6 +23,9 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/standard-objects/w
   description: 'A workflow version',
   icon: 'IconVersions',
   labelIdentifierStandardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
+})
+@WorkspaceGate({
+  featureFlag: FeatureFlagKeys.IsWorkflowEnabled,
 })
 @WorkspaceIsSystem()
 export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {

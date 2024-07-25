@@ -1,10 +1,12 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -96,10 +98,16 @@ export class ActivityTargetWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'activityTargets',
   })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKeys.IsWorkflowEnabled,
+  })
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('workflow')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKeys.IsWorkflowEnabled,
+  })
   workflowId: string | null;
 
   @WorkspaceDynamicRelation({
