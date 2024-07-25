@@ -1,10 +1,11 @@
-import { DateFormat } from '@/settings/accounts/constants/DateFormat';
+import { DateFormat } from '@/localization/constants/DateFormat';
 
-export const detectDateFormat = () => {
+export const detectDateFormat = (): DateFormat => {
   const date = new Date(Date.UTC(2012, 11, 9, 3, 0, 0));
   // 2012 - year
   // 11 - month
   // 9 - day
+
   const dateString = date.toLocaleString(navigator.language, {
     year: 'numeric',
     month: 'numeric',
@@ -13,12 +14,12 @@ export const detectDateFormat = () => {
 
   switch (dateString.charAt(0)) {
     case '1':
-      return DateFormat.MonthFirst;
+      return DateFormat.MONTH_FIRST;
     case '9':
-      return DateFormat.DayFirst;
+      return DateFormat.DAY_FIRST;
     case '2':
-      return DateFormat.YearFirst;
+      return DateFormat.YEAR_FIRST;
     default:
-      return DateFormat.MonthFirst;
+      return DateFormat.MONTH_FIRST;
   }
 };
