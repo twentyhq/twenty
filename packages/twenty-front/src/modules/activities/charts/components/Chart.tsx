@@ -35,17 +35,17 @@ export const Chart = (props: ChartProps) => {
     chartDataResponse?.chartData.chartResult &&
     JSON.parse(chartDataResponse.chartData.chartResult);
 
-  console.log('chartResult', chartResult);
-
   const loading: boolean = chartLoading || chartDataLoading;
 
   if (loading) return <SkeletonLoader />;
 
-  if (!chart || !chartResult) throw new Error('Could not load chart');
+  if (!chart) throw new Error('Could not load chart');
 
   if (!chart?.groupBy) {
     return <div>{chartResult?.[0].measure}</div>;
   }
+
+  if (!chartResult) return;
 
   return (
     <StyledChartContainer>
