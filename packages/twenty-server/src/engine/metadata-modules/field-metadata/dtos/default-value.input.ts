@@ -14,7 +14,6 @@ import {
 } from 'class-validator';
 
 import { IsQuotedString } from 'src/engine/metadata-modules/field-metadata/validators/is-quoted-string.validator';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export const fieldMetadataDefaultValueFunctionName = {
   UUID: 'uuid',
@@ -160,11 +159,6 @@ export class FieldMetadataDefaultCreatedBy {
   @ValidateIf((_object, value) => value !== null)
   @IsString()
   source: string;
-
-  @ValidateIf((_object, value) => value !== null)
-  @IsOptional()
-  @IsObject()
-  workspaceMember?: WorkspaceMemberWorkspaceEntity | null;
 
   @ValidateIf((_object, value) => value !== null)
   @IsOptional()

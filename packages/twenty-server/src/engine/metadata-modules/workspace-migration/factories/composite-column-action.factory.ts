@@ -48,8 +48,10 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
 
     for (const property of compositeType.properties) {
       if (property.type === FieldMetadataType.RELATION) {
-        // TODO: Find how we handle this
-        continue;
+        throw new WorkspaceMigrationException(
+          `Relation type not supported for composite columns`,
+          WorkspaceMigrationExceptionCode.INVALID_COMPOSITE_TYPE,
+        );
       }
 
       const columnName = computeCompositeColumnName(fieldMetadata, property);
@@ -117,8 +119,10 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
         alteredProperty.type === FieldMetadataType.RELATION ||
         currentProperty.type === FieldMetadataType.RELATION
       ) {
-        // TODO: Find how we handle this
-        continue;
+        throw new WorkspaceMigrationException(
+          `Relation type not supported for composite columns`,
+          WorkspaceMigrationExceptionCode.INVALID_COMPOSITE_TYPE,
+        );
       }
 
       const currentColumnName = computeCompositeColumnName(

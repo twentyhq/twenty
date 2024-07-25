@@ -4,7 +4,6 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export enum CreatedBySource {
   EMAIL = 'EMAIL',
@@ -29,12 +28,6 @@ export const createdByCompositeType: CompositeType = {
       })),
     } as CompositeProperty<FieldMetadataType.SELECT>,
     {
-      name: 'workspaceMember',
-      type: FieldMetadataType.RELATION,
-      hidden: false,
-      isRequired: false,
-    },
-    {
       name: 'workspaceMemberId',
       type: FieldMetadataType.UUID,
       hidden: false,
@@ -51,7 +44,6 @@ export const createdByCompositeType: CompositeType = {
 
 export type CreatedByMetadata = {
   source: CreatedBySource;
-  workspaceMember?: WorkspaceMemberWorkspaceEntity;
   workspaceMemberId?: string;
   name: string;
 };
