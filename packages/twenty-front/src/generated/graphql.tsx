@@ -275,6 +275,7 @@ export enum FieldMetadataType {
   Date = 'DATE',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
+  FieldPath = 'FIELD_PATH',
   FullName = 'FULL_NAME',
   Link = 'LINK',
   Links = 'LINKS',
@@ -1183,6 +1184,7 @@ export type ServerlessFunction = {
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
   name: Scalars['String'];
+  sourceCodeHash: Scalars['String'];
   syncStatus: ServerlessFunctionSyncStatus;
   updatedAt: Scalars['DateTime'];
 };

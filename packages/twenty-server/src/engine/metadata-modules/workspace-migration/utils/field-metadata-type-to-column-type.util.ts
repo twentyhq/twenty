@@ -36,6 +36,8 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
       return 'enum';
     case FieldMetadataType.RAW_JSON:
       return 'jsonb';
+    case FieldMetadataType.FIELD_PATH:
+      return 'text';
     default:
       throw new WorkspaceMigrationException(
         `Cannot convert ${fieldMetadataType} to column type.`,

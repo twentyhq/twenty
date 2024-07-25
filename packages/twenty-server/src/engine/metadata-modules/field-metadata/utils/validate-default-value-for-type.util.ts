@@ -6,23 +6,23 @@ import {
   FieldMetadataDefaultValue,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
+  FieldMetadataDefaultValueDate,
   FieldMetadataDefaultValueDateTime,
   FieldMetadataDefaultValueFullName,
-  FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueLink,
+  FieldMetadataDefaultValueLinks,
+  FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueNumber,
+  FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueStringArray,
-  FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueUuidFunction,
-  FieldMetadataDefaultValueDate,
-  FieldMetadataDefaultValueLinks,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 export const defaultValueValidatorsMap = {
@@ -50,6 +50,7 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.ADDRESS]: [FieldMetadataDefaultValueAddress],
   [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
   [FieldMetadataType.LINKS]: [FieldMetadataDefaultValueLinks],
+  [FieldMetadataType.FIELD_PATH]: [FieldMetadataDefaultValueStringArray],
 };
 
 type ValidationResult = {

@@ -189,6 +189,13 @@ const fieldRawJsonMock = {
   defaultValue: null,
 };
 
+const fieldfieldPathMock = {
+  name: 'fieldPath',
+  type: FieldMetadataType.FIELD_PATH,
+  isNullable: true,
+  defaultValue: null,
+};
+
 export const fields = [
   fieldUuidMock,
   fieldTextMock,
@@ -210,6 +217,7 @@ export const fields = [
   fieldPositionMock,
   fieldAddressMock,
   fieldRawJsonMock,
+  fieldfieldPathMock,
 ];
 
 export const objectMetadataItemMock = {

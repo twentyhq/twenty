@@ -40,6 +40,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
     FieldMetadataType.MultiSelect,
     FieldMetadataType.Position,
     FieldMetadataType.RawJson,
+    FieldMetadataType.FieldPath,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {

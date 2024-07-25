@@ -4,13 +4,14 @@ import {
   FieldMetadataDefaultValueCurrency,
   FieldMetadataDefaultValueDateTime,
   FieldMetadataDefaultValueFullName,
-  FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueLink,
-  FieldMetadataDefaultValueNumber,
-  FieldMetadataDefaultValueString,
-  FieldMetadataDefaultValueUuidFunction,
-  FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueLinks,
+  FieldMetadataDefaultValueNowFunction,
+  FieldMetadataDefaultValueNumber,
+  FieldMetadataDefaultValueRawJson,
+  FieldMetadataDefaultValueString,
+  FieldMetadataDefaultValueStringArray,
+  FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -44,6 +45,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
+  [FieldMetadataType.FIELD_PATH]: FieldMetadataDefaultValueStringArray;
 };
 
 export type FieldMetadataClassValidation =
