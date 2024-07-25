@@ -1,3 +1,5 @@
+import { isPlainObject } from '@nestjs/common/utils/shared.utils';
+
 import {
   DeepPartial,
   DeleteResult,
@@ -29,7 +31,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { isPlainObject } from 'src/utils/is-plain-object';
 
 export class WorkspaceRepository<
   Entity extends ObjectLiteral,
@@ -620,21 +621,31 @@ export class WorkspaceRepository<
       throw new Error('Object metadata name is missing');
     }
 
-    return this.internalContext.workspaceCacheStorage.getObjectMetadata(
-      this.internalContext.workspaceId,
-      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
-    );
-  }
-
-  private async getCompositeFieldMetadata(
-    objectMetadata?: ObjectMetadataEntity,
-  ) {
-    objectMetadata ??= await this.getObjectMetadataFromTarget();
+    const objectMetadata =
+      await this.internalContext.workspaceCacheStorage.getObjectMetadata(
+        this.internalContext.workspaceId,
+        (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
+      );
 
     if (!objectMetadata) {
-      throw new Error('Object metadata entity is missing');
+      const objectMetadataCollection =
+        await this.internalContext.workspaceCacheStorage.getObjectMetadataCollection(
+          this.internalContext.workspaceId,
+        );
+
+      throw new Error(
+        `Object metadata for object "${objectMetadataName}" is missing` +
+          `in workspace "${this.internalContext.workspaceId}" ` +
+          `with object metadata collection length: ${objectMetadataCollection?.length}`,
+      );
     }
 
+    return objectMetadata;
+  }
+
+  private async getCompositeFieldMetadataCollection(
+    objectMetadata: ObjectMetadataEntity,
+  ) {
     const compositeFieldMetadataCollection = objectMetadata.fields.filter(
       (fieldMetadata) => isCompositeFieldMetadataType(fieldMetadata.type),
     );
@@ -666,8 +677,11 @@ export class WorkspaceRepository<
         data.map((item) => this.formatData(item)),
       ) as Promise<T>;
     }
+
+    const objectMetadata = await this.getObjectMetadataFromTarget();
+
     const compositeFieldMetadataCollection =
-      await this.getCompositeFieldMetadata();
+      await this.getCompositeFieldMetadataCollection(objectMetadata);
     const compositeFieldMetadataMap = new Map(
       compositeFieldMetadataCollection.map((fieldMetadata) => [
         fieldMetadata.name,
@@ -738,7 +752,8 @@ export class WorkspaceRepository<
     }
 
     const compositeFieldMetadataCollection =
-      await this.getCompositeFieldMetadata(objectMetadata);
+      await this.getCompositeFieldMetadataCollection(objectMetadata);
+
     const compositeFieldMetadataMap = new Map(
       compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
         const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
