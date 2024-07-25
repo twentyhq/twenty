@@ -2,10 +2,10 @@ import { Dispatch, SetStateAction, useState } from 'react';
 
 export type ServerlessFunctionFormValues = {
   name: string;
-  description: string | undefined;
-  code: string | undefined;
-  input: string | undefined;
-  output: string | undefined;
+  description: string;
+  code: string;
+  input: string;
+  output: string;
 };
 
 export type SetServerlessFunctionFormValues = Dispatch<

@@ -21,7 +21,10 @@ const StyledEditor = styled(Editor)`
     ${({ theme }) => theme.border.radius.sm};
 `;
 
-type CodeEditorProps = EditorProps & { header: React.ReactNode };
+type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
+  header: React.ReactNode;
+  onChange: (value: string) => void;
+};
 
 export const CodeEditor = ({
   value = DEFAULT_CODE,
@@ -59,7 +62,7 @@ export const CodeEditor = ({
         language={language}
         value={value}
         onMount={handleEditorDidMount}
-        onChange={onChange}
+        onChange={(value?: string) => value && onChange(value)}
         options={{
           ...options,
           overviewRulerLanes: 0,

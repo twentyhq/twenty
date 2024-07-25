@@ -16,7 +16,7 @@ export const SettingsServerlessFunctionNewForm = ({
   onChange,
 }: {
   formValues: ServerlessFunctionFormValues;
-  onChange: (key: string) => (value: string | undefined) => void;
+  onChange: (key: string) => (value: string) => void;
 }) => {
   return (
     <Section>

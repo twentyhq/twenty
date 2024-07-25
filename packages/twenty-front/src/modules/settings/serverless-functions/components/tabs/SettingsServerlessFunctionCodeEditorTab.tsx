@@ -18,7 +18,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
 }: {
   formValues: ServerlessFunctionFormValues;
   handleExecute: () => void;
-  onChange: (key: string) => (value: string | undefined) => void;
+  onChange: (key: string) => (value: string) => void;
 }) => {
   const HeaderButton = (
     <Button

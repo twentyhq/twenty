@@ -15,7 +15,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
 }: {
   formValues: ServerlessFunctionFormValues;
   serverlessFunctionId: string;
-  onChange: (key: string) => (value: string | undefined) => void;
+  onChange: (key: string) => (value: string) => void;
 }) => {
   const navigate = useNavigate();
   const [isDeleteFunctionModalOpen, setIsDeleteFunctionModalOpen] =
@@ -44,7 +44,7 @@ export const SettingsServerlessFunctionSettingsTab = ({
       </Section>
       <ConfirmationModal
         confirmationValue={formValues.name}
-        confirmationPlaceholder={formValues.name ?? ''}
+        confirmationPlaceholder={formValues.name}
         isOpen={isDeleteFunctionModalOpen}
         setIsOpen={setIsDeleteFunctionModalOpen}
         title="Function Deletion"

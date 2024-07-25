@@ -45,16 +45,23 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const save = async () => {
     try {
-      const result = await updateOneServerlessFunction({
+      const { data } = await updateOneServerlessFunction({
         id: serverlessFunction?.id,
-        name: formValues.name || '',
-        description: formValues.description || '',
-        code: formValues.code || '',
+        name: formValues.name,
+        description: formValues.description,
+        code: formValues.code,
       });
+      const newState = {
+        ...(isDefined(data?.updateOneServerlessFunction?.name) && {
+          name: data?.updateOneServerlessFunction?.name,
+        }),
+        ...(isDefined(data?.updateOneServerlessFunction?.description) && {
+          description: data?.updateOneServerlessFunction?.description,
+        }),
+      };
       setFormValues((prevState) => ({
         ...prevState,
-        name: result?.data?.updateOneServerlessFunction?.name || '',
-        description: result?.data?.updateOneServerlessFunction?.description,
+        ...newState,
       }));
     } catch (err) {
       enqueueSnackBar(
@@ -124,11 +131,18 @@ export const SettingsServerlessFunctionDetail = () => {
       } else {
         const result = await resp.text();
         setSavedCode(result);
+        const newState = {
+          code: result,
+          ...(isDefined(serverlessFunction?.name) && {
+            name: serverlessFunction?.name,
+          }),
+          ...(isDefined(serverlessFunction?.description) && {
+            description: serverlessFunction?.description,
+          }),
+        };
         setFormValues((prevState) => ({
           ...prevState,
-          code: result,
-          name: serverlessFunction?.name || '',
-          description: serverlessFunction?.description,
+          ...newState,
         }));
       }
     };

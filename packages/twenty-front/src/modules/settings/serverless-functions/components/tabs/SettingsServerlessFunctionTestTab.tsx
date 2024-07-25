@@ -45,7 +45,7 @@ export const SettingsServerlessFunctionTestTab = ({
   );
 
   const OutputHeaderButton = (
-    <LightCopyIconButton copyText={formValues.output || ''} />
+    <LightCopyIconButton copyText={formValues.output} />
   );
 
   const OutputHeader = (
@@ -54,7 +54,7 @@ export const SettingsServerlessFunctionTestTab = ({
 
   useEffect(() => {
     try {
-      JSON.parse(formValues.output || '');
+      JSON.parse(formValues.output);
       setLanguage('json');
       setResultHeight(300);
     } catch {
@@ -73,7 +73,7 @@ export const SettingsServerlessFunctionTestTab = ({
         <CodeEditor
           value={formValues.input}
           height={200}
-          onChange={(value) => {
+          onChange={(value: string) => {
             setFormValues((prevState) => ({
               ...prevState,
               input: value,
@@ -85,7 +85,7 @@ export const SettingsServerlessFunctionTestTab = ({
         <CodeEditor
           value={formValues.output}
           height={resultHeight}
-          onChange={(value) => {
+          onChange={(value: string) => {
             setFormValues((prevState) => ({
               ...prevState,
               output: value,
