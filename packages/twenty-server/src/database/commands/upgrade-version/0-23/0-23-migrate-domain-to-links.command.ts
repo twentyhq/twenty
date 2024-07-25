@@ -10,8 +10,8 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
-    FieldMetadataEntity,
-    FieldMetadataType,
+  FieldMetadataEntity,
+  FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -138,6 +138,11 @@ export class MigrateDomainNameFromTextToLinksCommand extends CommandRunner {
               ...domainNameFieldWithoutId,
               type: FieldMetadataType.LINKS,
               name: `${fieldName}Tmp`,
+              defaultValue: {
+                primaryLinkUrl: domainNameField.defaultValue,
+                secondaryLinks: null,
+                primaryLinkLabel: "''",
+              },
             } satisfies CreateFieldInput);
 
           // Migrate data from domainName to primaryLinkUrl
