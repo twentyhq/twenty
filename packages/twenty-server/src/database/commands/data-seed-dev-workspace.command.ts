@@ -29,6 +29,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
+import { workflowPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/workflow';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 // TODO: implement dry-run
@@ -124,6 +125,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
               dataSourceMetadata.schema,
               workspaceId,
             );
+            await workflowPrefillData(entityManager, dataSourceMetadata.schema);
 
             if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
               await seedMessageThread(entityManager, dataSourceMetadata.schema);

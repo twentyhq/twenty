@@ -215,7 +215,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: PERSON_STANDARD_FIELD_IDS.timelineActivities,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Events',
-    description: 'Events linked to the company',
+    description: 'Events linked to the person',
     icon: 'IconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,

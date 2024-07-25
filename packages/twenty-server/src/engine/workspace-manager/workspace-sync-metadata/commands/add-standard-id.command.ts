@@ -62,6 +62,7 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_MESSAGING_ALIAS_FETCHING_ENABLED: true,
             IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED: true,
             IS_FREE_ACCESS_ENABLED: false,
+            IS_WORKFLOW_ENABLED: false,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
@@ -80,6 +81,7 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_MESSAGING_ALIAS_FETCHING_ENABLED: true,
           IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED: true,
           IS_FREE_ACCESS_ENABLED: false,
+          IS_WORKFLOW_ENABLED: false,
         },
       );
 

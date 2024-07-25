@@ -18,6 +18,7 @@ import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/a
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
@@ -132,6 +133,21 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('opportunity')
   opportunityId: string | null;
+
+  @WorkspaceRelation({
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.workflow,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Workflow',
+    description: 'Attachment workflow',
+    icon: 'IconSettingsAutomation',
+    inverseSideTarget: () => WorkflowWorkspaceEntity,
+    inverseSideFieldKey: 'attachments',
+  })
+  @WorkspaceIsNullable()
+  workflow: Relation<WorkflowWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('workflow')
+  workflowId: string | null;
 
   @WorkspaceDynamicRelation({
     type: RelationMetadataType.MANY_TO_ONE,
