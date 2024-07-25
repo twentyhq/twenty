@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { AxiosResponse } from 'axios';
-import planer from 'planer';
 import addressparser from 'addressparser';
+import { AxiosResponse } from 'axios';
 import { gmail_v1 } from 'googleapis';
+import planer from 'planer';
 
-import { assert, assertNotNull } from 'src/utils/assert';
+import { MessagingGmailFetchByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-by-batch.service';
 import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
-import { MessagingFetchByBatchesService } from 'src/modules/messaging/common/services/messaging-fetch-by-batch.service';
+import { assert, assertNotNull } from 'src/utils/assert';
 
 @Injectable()
 export class MessagingGmailFetchMessagesByBatchesService {
@@ -17,7 +17,7 @@ export class MessagingGmailFetchMessagesByBatchesService {
   );
 
   constructor(
-    private readonly fetchByBatchesService: MessagingFetchByBatchesService,
+    private readonly fetchByBatchesService: MessagingGmailFetchByBatchesService,
   ) {}
 
   async fetchAllMessages(

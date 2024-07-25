@@ -13,7 +13,7 @@ import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessagingGmailMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-gmail-messages-import.service';
+import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 
 export type MessagingMessagesImportJobData = {
   messageChannelId: string;
@@ -28,7 +28,7 @@ export class MessagingMessagesImportJob {
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    private readonly gmailFetchMessageContentFromCacheService: MessagingGmailMessagesImportService,
+    private readonly gmailFetchMessageContentFromCacheService: MessagingMessagesImportService,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     private readonly messagingTelemetryService: MessagingTelemetryService,

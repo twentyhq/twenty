@@ -26,14 +26,11 @@ import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 import { MessagingMessageImportManagerMessageChannelListener } from 'src/modules/messaging/message-import-manager/listeners/messaging-import-manager-message-channel.listener';
 import { MessagingErrorHandlingService } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
-import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messaging/message-import-manager/services/messaging-gmail-fetch-messages-by-batches.service';
-import { MessagingGmailFetchMessageIdsToExcludeService } from 'src/modules/messaging/message-import-manager/services/messaging-gmail-fetch-messages-ids-to-exclude.service';
-import { MessagingGmailFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-gmail-full-message-list-fetch.service';
-import { MessagingGmailHistoryService } from 'src/modules/messaging/message-import-manager/services/messaging-gmail-history.service';
-import { MessagingGmailMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-gmail-messages-import.service';
-import { MessagingGmailPartialMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-gmail-partial-message-list-fetch.service';
+import { MessagingFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-full-message-list-fetch.service';
 import { MessagingMessageThreadService } from 'src/modules/messaging/message-import-manager/services/messaging-message-thread.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
+import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
+import { MessagingPartialMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-partial-message-list-fetch.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 
@@ -68,12 +65,9 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     MessagingMessageService,
     MessagingMessageThreadService,
     MessagingErrorHandlingService,
-    MessagingGmailHistoryService,
-    MessagingGmailFetchMessagesByBatchesService,
-    MessagingGmailPartialMessageListFetchService,
-    MessagingGmailFullMessageListFetchService,
-    MessagingGmailMessagesImportService,
-    MessagingGmailFetchMessageIdsToExcludeService,
+    MessagingPartialMessageListFetchService,
+    MessagingFullMessageListFetchService,
+    MessagingMessagesImportService,
     MessagingSaveMessagesAndEnqueueContactCreationService,
   ],
   exports: [],
