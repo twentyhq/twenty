@@ -14,7 +14,6 @@ import { ConnectedAccountRepository } from 'src/modules/connected-account/reposi
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
-import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
@@ -24,6 +23,7 @@ import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messagi
 import { MessagingErrorHandlingService } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
+import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
 @Injectable()
 export class MessagingMessagesImportService {
