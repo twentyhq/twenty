@@ -26,14 +26,11 @@ const StyledAmount = styled.div`
 
 const StyledNumChildren = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.rounded};
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   height: 24px;
   justify-content: center;
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
-  margin-left: auto;
   width: 16px;
 `;
 
@@ -93,9 +90,7 @@ export const RecordBoardColumnHeader = () => {
           text={columnDefinition.title}
         />
         {!!boardColumnTotal && <StyledAmount>${boardColumnTotal}</StyledAmount>}
-        {!isHeaderHovered && (
-          <StyledNumChildren>{recordCount}</StyledNumChildren>
-        )}
+        <StyledNumChildren>{recordCount}</StyledNumChildren>
         {isHeaderHovered && columnDefinition.actions.length > 0 && (
           <StyledHeaderActions>
             <LightIconButton

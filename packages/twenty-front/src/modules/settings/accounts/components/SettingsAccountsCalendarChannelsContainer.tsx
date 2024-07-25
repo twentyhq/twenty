@@ -70,7 +70,8 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
       )}
       {calendarChannels.map((calendarChannel) => (
         <React.Fragment key={calendarChannel.id}>
-          {calendarChannel.id === activeTabId && (
+          {(calendarChannels.length === 1 ||
+            calendarChannel.id === activeTabId) && (
             <SettingsAccountsCalendarChannelDetails
               calendarChannel={calendarChannel}
             />

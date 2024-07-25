@@ -34,6 +34,13 @@ export const getOperandsForFilterType = (
         ViewFilterOperand.LessThan,
         ...emptyOperands,
       ];
+    case 'RATING':
+      return [
+        ViewFilterOperand.Is,
+        ViewFilterOperand.GreaterThan,
+        ViewFilterOperand.LessThan,
+        ...emptyOperands,
+      ];
     case 'RELATION':
       return [...relationOperands, ...emptyOperands];
     case 'SELECT':

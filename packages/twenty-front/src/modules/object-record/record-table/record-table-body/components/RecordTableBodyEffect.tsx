@@ -1,8 +1,10 @@
-import { useContext, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useContext, useEffect, useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
@@ -11,10 +13,13 @@ import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetch
 import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useScrollRestoration } from '~/hooks/useScrollRestoration';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useScrollToPosition } from '~/hooks/useScrollToPosition';
 
 export const RecordTableBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
+
+  const [hasInitializedScroll, setHasInitiazedScroll] = useState(false);
 
   const {
     fetchMoreRecords: fetchMoreObjects,
@@ -38,6 +43,7 @@ export const RecordTableBodyEffect = () => {
     isRecordTableScrolledTopComponentState,
   );
 
+  // TODO: move this outside because it might cause way too many re-renders for other hooks
   useEffect(() => {
     setIsRecordTableScrolledTop(scrollTop === 0);
     if (scrollTop > 0) {
@@ -76,10 +82,40 @@ export const RecordTableBodyEffect = () => {
     }
   }, [scrollLeft, setIsRecordTableScrolledLeft]);
 
-  const rowHeight = 32;
-  const viewportHeight = records.length * rowHeight;
+  const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilState(
+    lastShowPageRecordIdState,
+  );
 
-  useScrollRestoration(viewportHeight);
+  const { scrollToPosition } = useScrollToPosition();
+
+  useEffect(() => {
+    if (isNonEmptyString(lastShowPageRecordId) && !hasInitializedScroll) {
+      const isRecordAlreadyFetched = records.some(
+        (record) => record.id === lastShowPageRecordId,
+      );
+
+      if (isRecordAlreadyFetched) {
+        const recordPosition = records.findIndex(
+          (record) => record.id === lastShowPageRecordId,
+        );
+
+        const positionInPx = recordPosition * ROW_HEIGHT;
+
+        scrollToPosition(positionInPx);
+
+        setHasInitiazedScroll(true);
+      }
+    }
+  }, [
+    loading,
+    isFetchingMoreObjects,
+    lastShowPageRecordId,
+    fetchMoreObjects,
+    records,
+    scrollToPosition,
+    hasInitializedScroll,
+    setLastShowPageRecordId,
+  ]);
 
   useEffect(() => {
     if (!loading) {

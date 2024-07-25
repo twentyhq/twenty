@@ -1,7 +1,5 @@
-import { EntityChip } from 'twenty-ui';
-
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { useRelationToOneFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationToOneFieldDisplay';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const RelationToOneFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
@@ -17,12 +15,10 @@ export const RelationToOneFieldDisplay = () => {
   const recordChipData = generateRecordChipData(fieldValue);
 
   return (
-    <EntityChip
-      entityId={fieldValue.id}
-      name={recordChipData.name as any}
-      avatarType={recordChipData.avatarType}
-      avatarUrl={getImageAbsoluteURIOrBase64(recordChipData.avatarUrl) || ''}
-      linkToEntity={recordChipData.linkToShowPage}
+    <RecordChip
+      key={recordChipData.recordId}
+      objectNameSingular={recordChipData.objectNameSingular}
+      record={fieldValue}
     />
   );
 };

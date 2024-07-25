@@ -36,8 +36,8 @@ export const query = gql`
             }
           }
           xLink {
-            label
-            url
+            primaryLinkLabel
+            primaryLinkUrl
           }
           id
           pointOfContactForOpportunities {
@@ -63,12 +63,12 @@ export const query = gql`
           company {
             id
             xLink {
-              label
-              url
+              primaryLinkLabel
+              primaryLinkUrl
             }
             linkedinLink {
-              label
-              url
+              primaryLinkLabel
+              primaryLinkUrl
             }
             domainName
             annualRecurringRevenue {
@@ -139,8 +139,8 @@ export const query = gql`
           }
           phone
           linkedinLink {
-            label
-            url
+            primaryLinkLabel
+            primaryLinkUrl
           }
           updatedAt
           avatarUrl

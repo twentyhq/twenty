@@ -1,5 +1,5 @@
-import { CalendarChannelVisibility } from '~/generated/graphql';
 import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
+import { CalendarChannelVisibility } from '~/generated/graphql';
 
 export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
   {

@@ -5,8 +5,7 @@ import { IsNull } from 'typeorm';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
@@ -25,11 +24,8 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
     CalendarCreateCompanyAndContactAfterSyncJob.name,
   );
   constructor(
+    private readonly twentyORMManager: TwentyORMManager,
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
-    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
-    @InjectWorkspaceRepository(CalendarEventParticipantWorkspaceEntity)
-    private readonly calendarEventParticipantRepository: WorkspaceRepository<CalendarEventParticipantWorkspaceEntity>,
   ) {}
 
   @Process(CalendarCreateCompanyAndContactAfterSyncJob.name)
@@ -41,7 +37,12 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
     );
     const { workspaceId, calendarChannelId } = data;
 
-    const calendarChannel = await this.calendarChannelRepository.findOne({
+    const calendarChannelRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+        'calendarChannel',
+      );
+
+    const calendarChannel = await calendarChannelRepository.findOne({
       where: {
         id: calendarChannelId,
       },
@@ -67,8 +68,13 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
       );
     }
 
+    const calendarEventParticipantRepository =
+      await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+        'calendarEventParticipant',
+      );
+
     const calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId =
-      await this.calendarEventParticipantRepository.find({
+      await calendarEventParticipantRepository.find({
         where: {
           calendarEvent: {
             calendarChannelEventAssociations: {

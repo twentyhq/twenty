@@ -1,3 +1,3 @@
 export interface CompanyInteface {
-  linkedinLinkUrl?: string;
+  linkedinLinkPrimaryLinkUrl?: string;
 }

@@ -1,4 +1,8 @@
 import {
+  RULE_NAME as injectWorkspaceRepositoryName,
+  rule as injectWorkspaceRepository,
+} from './rules/inject-workspace-repository';
+import {
   rule as componentPropsNaming,
   RULE_NAME as componentPropsNamingName,
 } from './rules/component-props-naming';
@@ -88,5 +92,6 @@ module.exports = {
     [useRecoilCallbackHasDependencyArrayName]:
       useRecoilCallbackHasDependencyArray,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
+    [injectWorkspaceRepositoryName]: injectWorkspaceRepository,
   },
 };
