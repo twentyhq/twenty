@@ -16,7 +16,6 @@ import {
   MessageChannelContactAutoCreationPolicy,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import {
   GmailMessage,
   Participant,
@@ -45,8 +44,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     workspaceId: string,
   ) {
     const handleAliases = connectedAccount.handleAliases?.split(',') || [];
-
-    let savedMessageParticipants: MessageParticipantWorkspaceEntity[] = [];
 
     const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
@@ -107,22 +104,15 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             : [];
         });
 
-        savedMessageParticipants =
-          await this.messageParticipantService.saveMessageParticipants(
-            participantsWithMessageId,
-            workspaceId,
-            transactionManager,
-          );
+        await this.messageParticipantService.saveMessageParticipants(
+          participantsWithMessageId,
+          workspaceId,
+          transactionManager,
+        );
 
         return participantsWithMessageId;
       },
     );
-
-    this.eventEmitter.emit(`messageParticipant.matched`, {
-      workspaceId,
-      workspaceMemberId: connectedAccount.accountOwnerId,
-      messageParticipants: savedMessageParticipants,
-    });
 
     if (messageChannel.isContactAutoCreationEnabled) {
       const contactsToCreate = participantsWithMessageId.filter(

@@ -26,8 +26,8 @@ export class MessageParticipantMatchParticipantJob {
     const { workspaceId, email, personId, workspaceMemberId } = data;
 
     await this.messageParticipantService.matchMessageParticipantsAfterPersonOrWorkspaceMemberCreation(
-      workspaceId,
       email,
+      workspaceId,
       personId,
       workspaceMemberId,
     );

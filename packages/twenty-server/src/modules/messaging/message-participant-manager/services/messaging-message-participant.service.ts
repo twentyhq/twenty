@@ -20,7 +20,7 @@ export class MessagingMessageParticipantService {
     participants: ParticipantWithMessageId[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<MessageParticipantWorkspaceEntity[]> {
+  ): Promise<void> {
     const messageParticipantRepository =
       await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
         'messageParticipant',
@@ -44,8 +44,6 @@ export class MessagingMessageParticipantService {
       workspaceId,
       transactionManager,
     );
-
-    return messageParticipants;
   }
 
   private async matchMessageParticipants(
