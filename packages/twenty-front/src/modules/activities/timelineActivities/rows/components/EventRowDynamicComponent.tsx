@@ -58,7 +58,7 @@ export const EventRowDynamicComponent = ({
           authorFullName={authorFullName}
         />
       );
-    case 'task':
+    case 'linked-task':
       return (
         <EventRowActivity
           labelIdentifierValue={labelIdentifierValue}
@@ -69,7 +69,7 @@ export const EventRowDynamicComponent = ({
           objectNameSingular={CoreObjectNameSingular.Task}
         />
       );
-    case 'note':
+    case 'linked-note':
       return (
         <EventRowActivity
           labelIdentifierValue={labelIdentifierValue}
