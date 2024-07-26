@@ -12,6 +12,8 @@ import { ServerlessFunctionNewFormValues } from '@/settings/serverless-functions
 import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functions/components/SettingsServerlessFunctionNewForm';
 import { isDefined } from '~/utils/isDefined';
 import { useState } from 'react';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 
 export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigate();
@@ -34,7 +36,9 @@ export const SettingsServerlessFunctionsNew = () => {
       return;
     }
     navigate(
-      `/settings/functions/${newServerlessFunction.data.createOneServerlessFunction.id}`,
+      getSettingsPagePath(SettingsPath.ServerlessFunctions, {
+        id: newServerlessFunction.data.createOneServerlessFunction.id,
+      }),
     );
   };
 

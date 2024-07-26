@@ -7,6 +7,8 @@ import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/h
 import { SettingsServerlessFunctionsFieldItemTableRow } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsFieldItemTableRow';
 import { ServerlessFunction } from '~/generated-metadata/graphql';
 import { SettingsServerlessFunctionsTableEmpty } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsTableEmpty';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 
 const StyledTableRow = styled(TableRow)`
   grid-template-columns: 312px 132px 68px;
@@ -33,7 +35,9 @@ export const SettingsServerlessFunctionsTable = () => {
                 <SettingsServerlessFunctionsFieldItemTableRow
                   key={serverlessFunction.id}
                   serverlessFunction={serverlessFunction}
-                  to={`/settings/functions/${serverlessFunction.id}`}
+                  to={getSettingsPagePath(SettingsPath.ServerlessFunctions, {
+                    id: serverlessFunction.id,
+                  })}
                 />
               ),
             )}
