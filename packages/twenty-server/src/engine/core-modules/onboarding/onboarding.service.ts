@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -25,7 +26,7 @@ enum OnboardingStepKeys {
   INVITE_TEAM_ONBOARDING_STEP = 'INVITE_TEAM_ONBOARDING_STEP',
 }
 
-type OnboardingKeyValueType = {
+export type OnboardingKeyValueType = {
   [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStepValues;
   [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepValues;
 };
@@ -147,6 +148,7 @@ export class OnboardingService {
       workspaceId,
       key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
       value: OnboardingStepValues.SKIPPED,
+      type: KeyValuePairType.USER_VAR,
     });
   }
 
@@ -156,6 +158,7 @@ export class OnboardingService {
       workspaceId,
       key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
       value: OnboardingStepValues.SKIPPED,
+      type: KeyValuePairType.USER_VAR,
     });
   }
 }

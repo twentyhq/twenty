@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { UserVarService } from 'src/engine/core-modules/user/services/user-var.service';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
@@ -24,7 +24,7 @@ export class MessagingChannelSyncStatusService {
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly keyValuePairService: KeyValuePairService<ConnectedAccountKeyValueType>,
+    private readonly userVarService: UserVarService<ConnectedAccountKeyValueType>,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -200,7 +200,7 @@ export class MessagingChannelSyncStatusService {
     const connectedAccountId = messageChannel.connectedAccount.id;
 
     const accountsToReconnect =
-      (await this.keyValuePairService.get({
+      (await this.userVarService.get({
         userId,
         workspaceId,
         key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
@@ -212,7 +212,7 @@ export class MessagingChannelSyncStatusService {
 
     accountsToReconnect.push(connectedAccountId);
 
-    await this.keyValuePairService.set({
+    await this.userVarService.set({
       userId,
       workspaceId,
       key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,

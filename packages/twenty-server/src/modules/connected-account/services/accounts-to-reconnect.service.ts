@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { UserVarService } from 'src/engine/core-modules/user/services/user-var.service';
 import {
   ConnectedAccountKeys,
   ConnectedAccountKeyValueType,
@@ -9,7 +9,7 @@ import {
 @Injectable()
 export class AccountsToReconnectService {
   constructor(
-    private readonly keyValuePairService: KeyValuePairService<ConnectedAccountKeyValueType>,
+    private readonly userVarService: UserVarService<ConnectedAccountKeyValueType>,
   ) {}
 
   public async removeAccountToReconnect(
@@ -17,7 +17,7 @@ export class AccountsToReconnectService {
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    const accountsToReconnect = await this.keyValuePairService.get({
+    const accountsToReconnect = await this.userVarService.get({
       userId,
       workspaceId,
       key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
@@ -32,7 +32,7 @@ export class AccountsToReconnectService {
     );
 
     if (updatedAccountsToReconnect.length === 0) {
-      await this.keyValuePairService.delete({
+      await this.userVarService.delete({
         userId,
         workspaceId,
         key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
@@ -41,7 +41,7 @@ export class AccountsToReconnectService {
       return;
     }
 
-    await this.keyValuePairService.set({
+    await this.userVarService.set({
       userId,
       workspaceId,
       key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,

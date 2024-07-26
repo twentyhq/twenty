@@ -18,6 +18,7 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 import { SupportDriver } from 'src/engine/integrations/environment/interfaces/support.interface';
 
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { UserVarKeyValueType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
@@ -53,7 +54,7 @@ export class UserResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
     private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
-    private readonly userVarService: UserVarService,
+    private readonly userVarService: UserVarService<UserVarKeyValueType>,
   ) {}
 
   @Query(() => User)

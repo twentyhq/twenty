@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { UserVarService } from 'src/engine/core-modules/user/services/user-var.service';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
@@ -21,7 +21,7 @@ export class CalendarChannelSyncStatusService {
     private readonly twentyORMManager: TwentyORMManager,
     @InjectCacheStorage(CacheStorageNamespace.Calendar)
     private readonly cacheStorage: CacheStorageService,
-    private readonly keyValuePairService: KeyValuePairService<ConnectedAccountKeyValueType>,
+    private readonly userVarService: UserVarService<ConnectedAccountKeyValueType>,
   ) {}
 
   public async scheduleFullCalendarEventListFetch(calendarChannelId: string) {
@@ -195,7 +195,7 @@ export class CalendarChannelSyncStatusService {
     const connectedAccountId = calendarChannel.connectedAccount.id;
 
     const accountsToReconnect =
-      (await this.keyValuePairService.get({
+      (await this.userVarService.get({
         userId,
         workspaceId,
         key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
@@ -207,7 +207,7 @@ export class CalendarChannelSyncStatusService {
 
     accountsToReconnect.push(connectedAccountId);
 
-    await this.keyValuePairService.set({
+    await this.userVarService.set({
       userId,
       workspaceId,
       key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,

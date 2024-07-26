@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import {
+  KeyValuePair,
+  KeyValuePairType,
+} from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 export class KeyValuePairService<TYPE> {
   constructor(
@@ -36,11 +39,13 @@ export class KeyValuePairService<TYPE> {
     workspaceId,
     key,
     value,
+    type,
   }: {
     userId?: string;
     workspaceId?: string;
     key: K;
     value: TYPE[K];
+    type: KeyValuePairType;
   }) {
     if (!userId && !workspaceId) {
       throw new BadRequestException('userId and workspaceId are undefined');
@@ -50,6 +55,7 @@ export class KeyValuePairService<TYPE> {
       workspaceId,
       key: key as string,
       value: value as JSON,
+      type,
     };
 
     const conflictPaths = Object.keys(upsertData).filter(
