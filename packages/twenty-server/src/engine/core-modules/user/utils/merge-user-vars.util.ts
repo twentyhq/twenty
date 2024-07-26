@@ -1,6 +1,6 @@
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
-export const formatUserVars = (
+export const mergeUserVars = (
   userVars: Pick<KeyValuePair, 'key' | 'value' | 'userId' | 'workspaceId'>[],
 ): Map<string, JSON> => {
   const workspaceUserVarMap = new Map<string, any>();
@@ -19,11 +19,11 @@ export const formatUserVars = (
     }
   }
 
-  const formattedUserVars = new Map<string, any>([
+  const mergedUserVars = new Map<string, any>([
     ...workspaceUserVarMap,
     ...userUserVarMap,
     ...userWorkspaceUserVarMap,
   ]);
 
-  return formattedUserVars;
+  return mergedUserVars;
 };

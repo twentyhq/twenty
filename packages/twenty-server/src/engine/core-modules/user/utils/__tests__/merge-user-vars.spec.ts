@@ -1,7 +1,7 @@
-import { formatUserVars } from 'src/engine/core-modules/user/utils/format-user-vars.util';
+import { mergeUserVars } from 'src/engine/core-modules/user/utils/merge-user-vars.util';
 
-describe('formatUserVars', () => {
-  it('should format user vars correctly', () => {
+describe('mergeUserVars', () => {
+  it('should merge user vars correctly', () => {
     const userVars = [
       {
         key: 'key1',
@@ -23,9 +23,9 @@ describe('formatUserVars', () => {
       },
     ];
 
-    const formattedUserVars = formatUserVars(userVars);
+    const mergedUserVars = mergeUserVars(userVars);
 
-    expect(formattedUserVars).toEqual(
+    expect(mergedUserVars).toEqual(
       new Map([
         ['key1', JSON.parse('"value1"')],
         ['key2', JSON.parse('"value2"')],
@@ -34,12 +34,12 @@ describe('formatUserVars', () => {
     );
   });
 
-  it('should format user vars correctly when user vars are empty', () => {
+  it('should merge user vars correctly when user vars are empty', () => {
     const userVars = [];
 
-    const formattedUserVars = formatUserVars(userVars);
+    const mergedUserVars = mergeUserVars(userVars);
 
-    expect(formattedUserVars).toEqual(new Map());
+    expect(mergedUserVars).toEqual(new Map());
   });
 
   it('should overwrite user vars correctly', () => {
@@ -64,7 +64,7 @@ describe('formatUserVars', () => {
       },
     ];
 
-    const formattedUserVars1 = formatUserVars(userVars1);
+    const mergedUserVars1 = mergeUserVars(userVars1);
 
     const userVars2 = [
       {
@@ -81,7 +81,7 @@ describe('formatUserVars', () => {
       },
     ];
 
-    const formattedUserVars2 = formatUserVars(userVars2);
+    const mergedUserVars2 = mergeUserVars(userVars2);
 
     const userVars3 = [
       {
@@ -98,7 +98,7 @@ describe('formatUserVars', () => {
       },
     ];
 
-    const formattedUserVars3 = formatUserVars(userVars3);
+    const mergedUserVars3 = mergeUserVars(userVars3);
 
     const userVars4 = [
       {
@@ -115,22 +115,14 @@ describe('formatUserVars', () => {
       },
     ];
 
-    const formattedUserVars4 = formatUserVars(userVars4);
+    const mergedUserVars4 = mergeUserVars(userVars4);
 
-    expect(formattedUserVars1).toEqual(
-      new Map([['key', JSON.parse('"value1"')]]),
-    );
+    expect(mergedUserVars1).toEqual(new Map([['key', JSON.parse('"value1"')]]));
 
-    expect(formattedUserVars2).toEqual(
-      new Map([['key', JSON.parse('"value1"')]]),
-    );
+    expect(mergedUserVars2).toEqual(new Map([['key', JSON.parse('"value1"')]]));
 
-    expect(formattedUserVars3).toEqual(
-      new Map([['key', JSON.parse('"value2"')]]),
-    );
+    expect(mergedUserVars3).toEqual(new Map([['key', JSON.parse('"value2"')]]));
 
-    expect(formattedUserVars4).toEqual(
-      new Map([['key', JSON.parse('"value1"')]]),
-    );
+    expect(mergedUserVars4).toEqual(new Map([['key', JSON.parse('"value1"')]]));
   });
 });

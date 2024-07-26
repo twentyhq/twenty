@@ -7,7 +7,7 @@ import {
   KeyValuePair,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { formatUserVars } from 'src/engine/core-modules/user/utils/format-user-vars.util';
+import { mergeUserVars } from 'src/engine/core-modules/user/utils/merge-user-vars.util';
 
 @Injectable()
 export class UserVarService {
@@ -41,6 +41,6 @@ export class UserVarService {
       ],
     });
 
-    return formatUserVars(userVars);
+    return mergeUserVars(userVars);
   }
 }
