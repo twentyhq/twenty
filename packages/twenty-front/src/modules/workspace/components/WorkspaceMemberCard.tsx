@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -39,7 +38,7 @@ export const WorkspaceMemberCard = ({
 }: WorkspaceMemberCardProps) => (
   <StyledContainer>
     <Avatar
-      avatarUrl={getImageAbsoluteURI(workspaceMember.avatarUrl)}
+      avatarUrl={workspaceMember.avatarUrl}
       placeholderColorSeed={workspaceMember.id}
       placeholder={workspaceMember.name.firstName || ''}
       type="squared"

@@ -6,7 +6,6 @@ import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 export const MultipleRecordSelectDropdown = ({
   recordsToSelect,
@@ -69,7 +68,7 @@ export const MultipleRecordSelectDropdown = ({
           }
           avatar={
             <Avatar
-              avatarUrl={getImageAbsoluteURI(record.avatarUrl)}
+              avatarUrl={record.avatarUrl}
               placeholderColorSeed={record.id}
               placeholder={record.name}
               size="md"

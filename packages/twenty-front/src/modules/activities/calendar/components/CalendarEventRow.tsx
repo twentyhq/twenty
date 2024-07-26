@@ -16,7 +16,6 @@ import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 import { CalendarChannelVisibility } from '~/generated/graphql';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 import { isDefined } from '~/utils/isDefined';
 
 type CalendarEventRowProps = {
@@ -163,7 +162,7 @@ export const CalendarEventRow = ({
               key={[participant.workspaceMemberId, participant.displayName]
                 .filter(isDefined)
                 .join('-')}
-              avatarUrl={getImageAbsoluteURI(participant.avatarUrl)}
+              avatarUrl={participant.avatarUrl}
               placeholder={
                 participant.firstName && participant.lastName
                   ? `${participant.firstName} ${participant.lastName}`

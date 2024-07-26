@@ -6,7 +6,6 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -60,7 +59,7 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
     <StyledContainer>
       <StyledLeftContainer>
         <Avatar
-          avatarUrl={getImageAbsoluteURI(avatarUrl)}
+          avatarUrl={avatarUrl}
           size="md"
           placeholderColorSeed={author?.id}
           placeholder={authorName}
