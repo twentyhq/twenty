@@ -15,7 +15,6 @@ import { CalendarEventParticipantPersonListener } from 'src/modules/calendar/cal
 import { CalendarEventParticipantWorkspaceMemberListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant-workspace-member.listener';
 import { CalendarEventParticipantListener } from 'src/modules/calendar/calendar-event-participant-manager/listeners/calendar-event-participant.listener';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
-import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { ContactCreationManagerModule } from 'src/modules/contact-creation-manager/contact-creation-manager.module';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -31,7 +30,6 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
       'metadata',
     ),
     ContactCreationManagerModule,
-    CalendarCommonModule,
   ],
   providers: [
     ScopedWorkspaceContextFactory,
