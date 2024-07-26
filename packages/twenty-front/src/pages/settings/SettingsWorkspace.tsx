@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { H1Title, H2Title, IconSettings } from 'twenty-ui';
 
-import { InformationBanner } from '@/information-banner/InformationBanner';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { NameField } from '@/settings/workspace/components/NameField';
@@ -16,7 +15,7 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsWorkspace = () => (
   <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-    <InformationBanner />
+    
     <SettingsPageContainer>
       <StyledH1Title title="General" />
       <Section>

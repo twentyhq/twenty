@@ -6,7 +6,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconArchive, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
-import { InformationBanner } from '@/information-banner/InformationBanner';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
@@ -107,7 +106,7 @@ export const SettingsObjectEdit = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        <InformationBanner />
+        
         <SettingsPageContainer>
           <SettingsHeaderContainer>
             <Breadcrumb

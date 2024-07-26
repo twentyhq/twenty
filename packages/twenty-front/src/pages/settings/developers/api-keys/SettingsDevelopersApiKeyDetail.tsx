@@ -6,7 +6,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { H2Title, IconRepeat, IconSettings, IconTrash } from 'twenty-ui';
 
-import { InformationBanner } from '@/information-banner/InformationBanner';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -130,7 +129,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
     <>
       {apiKeyData?.name && (
         <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-          <InformationBanner />
+          
           <SettingsPageContainer>
             <SettingsHeaderContainer>
               <Breadcrumb

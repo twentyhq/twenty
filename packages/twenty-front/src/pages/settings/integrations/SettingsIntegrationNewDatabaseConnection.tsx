@@ -7,7 +7,6 @@ import { z } from 'zod';
 
 import { useCreateOneDatabaseConnection } from '@/databases/hooks/useCreateOneDatabaseConnection';
 import { getForeignDataWrapperType } from '@/databases/utils/getForeignDataWrapperType';
-import { InformationBanner } from '@/information-banner/InformationBanner';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -134,7 +133,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <InformationBanner />
+      
       <SettingsPageContainer>
         <FormProvider
           // eslint-disable-next-line react/jsx-props-no-spreading

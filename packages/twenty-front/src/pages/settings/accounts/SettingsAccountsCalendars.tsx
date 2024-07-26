@@ -1,6 +1,5 @@
 import { IconSettings } from 'twenty-ui';
 
-import { InformationBanner } from '@/information-banner/InformationBanner';
 import { SettingsAccountsCalendarChannelsContainer } from '@/settings/accounts/components/SettingsAccountsCalendarChannelsContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -12,7 +11,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 export const SettingsAccountsCalendars = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <InformationBanner />
+      
       <SettingsPageContainer>
         <Breadcrumb
           links={[

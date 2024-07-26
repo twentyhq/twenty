@@ -7,7 +7,6 @@ import { H1Title, IconSettings } from 'twenty-ui';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
-import { InformationBanner } from '@/information-banner/InformationBanner';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -102,7 +101,7 @@ export const Releases = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Releases">
-      <InformationBanner />
+      
       <SettingsPageContainer>
         <StyledH1Title title="Releases" />
         <ScrollWrapper>

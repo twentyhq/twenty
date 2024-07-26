@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
 
-import { InformationBanner } from '@/information-banner/InformationBanner';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
@@ -21,7 +20,7 @@ const StyledButtonContainer = styled.div`
 export const SettingsDevelopers = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <InformationBanner />
+      
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb links={[{ children: 'Developers' }]} />

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconSettings, IconTrash } from 'twenty-ui';
 
-import { InformationBanner } from '@/information-banner/InformationBanner';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -35,7 +34,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
     <>
       {webhookData?.targetUrl && (
         <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-          <InformationBanner />
+          
           <SettingsPageContainer>
             <SettingsHeaderContainer>
               <Breadcrumb

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { H2Title, IconSettings } from 'twenty-ui';
 
-import { InformationBanner } from '@/information-banner/InformationBanner';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -46,7 +45,7 @@ export const SettingsDevelopersWebhooksNew = () => {
   const canSave = !!formValues.targetUrl && createOneWebhook;
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <InformationBanner />
+      
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb

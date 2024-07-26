@@ -12,7 +12,6 @@ import {
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
-import { InformationBanner } from '@/information-banner/InformationBanner';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat';
@@ -147,7 +146,7 @@ export const SettingsBilling = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconCurrencyDollar} title="Billing">
-      <InformationBanner />
+      
       <SettingsPageContainer>
         <StyledH1Title title="Billing" />
         <SettingsBillingCoverImage />
