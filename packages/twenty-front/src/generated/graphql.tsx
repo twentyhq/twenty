@@ -234,6 +234,7 @@ export type FieldConnection = {
 export enum FieldMetadataType {
   Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
+  CreatedBy = 'CREATED_BY',
   Currency = 'CURRENCY',
   Date = 'DATE',
   DateTime = 'DATE_TIME',
@@ -278,6 +279,13 @@ export type LinkMetadata = {
   __typename?: 'LinkMetadata';
   label: Scalars['String'];
   url: Scalars['String'];
+};
+
+export type LinksMetadata = {
+  __typename?: 'LinksMetadata';
+  primaryLinkLabel: Scalars['String'];
+  primaryLinkUrl: Scalars['String'];
+  secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
 export type LoginToken = {
@@ -752,7 +760,7 @@ export type Telemetry = {
 
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
-  conferenceLink: LinkMetadata;
+  conferenceLink: LinksMetadata;
   conferenceSolution: Scalars['String'];
   description: Scalars['String'];
   endsAt: Scalars['DateTime'];
@@ -884,10 +892,6 @@ export type User = {
   lastName: Scalars['String'];
   onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']>;
-  /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
-  passwordResetToken?: Maybe<Scalars['String']>;
-  /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
-  passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']>;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
@@ -1090,6 +1094,7 @@ export type ServerlessFunction = {
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
   name: Scalars['String'];
+  sourceCodeHash: Scalars['String'];
   syncStatus: ServerlessFunctionSyncStatus;
   updatedAt: Scalars['DateTime'];
 };

@@ -22,8 +22,9 @@ export class MessageFindManyPreQueryHook implements WorkspaceQueryHookInstance {
   async execute(
     userId: string,
     workspaceId: string,
+    objectName: string,
     payload: FindManyResolverArgs,
-  ): Promise<void> {
+  ): Promise<FindManyResolverArgs> {
     if (!payload?.filter?.messageThreadId?.eq) {
       throw new BadRequestException('messageThreadId filter is required');
     }
@@ -43,5 +44,7 @@ export class MessageFindManyPreQueryHook implements WorkspaceQueryHookInstance {
       workspaceId,
       messageChannelMessageAssociations,
     );
+
+    return payload;
   }
 }

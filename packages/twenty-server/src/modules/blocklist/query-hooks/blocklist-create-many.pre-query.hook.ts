@@ -18,12 +18,15 @@ export class BlocklistCreateManyPreQueryHook
   async execute(
     userId: string,
     workspaceId: string,
+    objectName: string,
     payload: CreateManyResolverArgs<BlocklistItem>,
-  ): Promise<void> {
+  ): Promise<CreateManyResolverArgs<BlocklistItem>> {
     await this.blocklistValidationService.validateBlocklistForCreateMany(
       payload,
       userId,
       workspaceId,
     );
+
+    return payload;
   }
 }

@@ -23,8 +23,9 @@ export class CalendarEventFindManyPreQueryHook
   async execute(
     userId: string,
     workspaceId: string,
+    objectName: string,
     payload: FindManyResolverArgs,
-  ): Promise<void> {
+  ): Promise<FindManyResolverArgs> {
     if (!payload?.filter?.id?.eq) {
       throw new BadRequestException('id filter is required');
     }
@@ -51,5 +52,7 @@ export class CalendarEventFindManyPreQueryHook
       workspaceId,
       calendarChannelCalendarEventAssociations,
     );
+
+    return payload;
   }
 }

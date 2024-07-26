@@ -255,6 +255,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   probabilityDeprecated: '20202020-69d4-45f3-9703-690b09fafcf0',
   stage: '20202020-6f76-477d-8551-28cd65b2b4b9',
   position: '20202020-806d-493a-bbc6-6313e62958e2',
+  createdBy: '20202020-a63e-4a62-8e63-42a51828f831',
   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
   company: '20202020-cbac-457e-b565-adece5fc815f',
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
@@ -273,6 +274,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   city: '20202020-5243-4ffb-afc5-2c675da41346',
   avatarUrl: '20202020-b8a6-40df-961c-373dc5d2ec21',
   position: '20202020-fcd5-4231-aff5-fff583eaa0b1',
+  createdBy: '20202020-f6ab-4d98-af24-a3d5b664148a',
   company: '20202020-e2f3-448e-b34c-2d625f0025fd',
   pointOfContactForOpportunities: '20202020-911b-4a7d-b67b-918aa9a5b33a',
   activityTargets: '20202020-dee7-4b7f-b50a-1f50bd3be452',
@@ -348,6 +350,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   name: '20202020-ba07-4ffd-ba63-009491f5749c',
   position: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
+  createdBy: '20202020-be0e-4971-865b-32ca87cbb315',
   activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',
   favorites: '20202020-a4a7-4686-b296-1c6c3482ee21',
   attachments: '20202020-8d59-46ca-b7b2-73d167712134',

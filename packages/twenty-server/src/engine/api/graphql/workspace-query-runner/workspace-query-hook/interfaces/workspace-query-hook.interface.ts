@@ -4,6 +4,7 @@ export interface WorkspaceQueryHookInstance {
   execute(
     userId: string | undefined,
     workspaceId: string,
+    objectName: string,
     payload: ResolverArgs,
-  ): Promise<void>;
+  ): Promise<ResolverArgs>;
 }

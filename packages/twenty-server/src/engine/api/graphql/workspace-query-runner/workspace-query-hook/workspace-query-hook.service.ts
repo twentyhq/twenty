@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import merge from 'lodash.merge';
+
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage';
@@ -19,25 +21,32 @@ export class WorkspaceQueryHookService {
   >(
     userId: string | undefined,
     workspaceId: string,
+    // TODO: We should allow wildcard for object name
     objectName: string,
     methodName: T,
     payload: WorkspacePreQueryHookPayload<T>,
-  ): Promise<void> {
+  ): Promise<WorkspacePreQueryHookPayload<T>> {
     const key: WorkspaceQueryHookKey = `${objectName}.${methodName}`;
     const preHookInstances =
       this.workspaceQueryHookStorage.getWorkspaceQueryPreHookInstances(key);
 
     if (!preHookInstances) {
-      return;
+      return payload;
     }
 
     for (const preHookInstance of preHookInstances) {
-      await this.workspaceQueryHookExplorer.handleHook(
-        [userId, workspaceId, payload],
+      // Deep merge all return of handleHook into payload before returning it
+      const hookPayload = await this.workspaceQueryHookExplorer.handleHook(
+        [userId, workspaceId, objectName, payload],
         preHookInstance.instance,
         preHookInstance.host,
         preHookInstance.isRequestScoped,
       );
+
+      // TODO: Is it really a good idea ?
+      payload = merge(payload, hookPayload);
     }
+
+    return payload;
   }
 }

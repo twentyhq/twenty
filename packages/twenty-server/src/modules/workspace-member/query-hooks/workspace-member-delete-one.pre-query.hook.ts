@@ -16,8 +16,9 @@ export class WorkspaceMemberDeleteOnePreQueryHook
   async execute(
     userId: string,
     workspaceId: string,
+    objectName: string,
     payload: DeleteOneResolverArgs,
-  ): Promise<void> {
+  ): Promise<DeleteOneResolverArgs> {
     const attachmentRepository =
       await this.twentyORMManager.getRepository<AttachmentWorkspaceEntity>(
         'attachment',
@@ -37,5 +38,7 @@ export class WorkspaceMemberDeleteOnePreQueryHook
     await commentRepository.delete({
       authorId,
     });
+
+    return payload;
   }
 }

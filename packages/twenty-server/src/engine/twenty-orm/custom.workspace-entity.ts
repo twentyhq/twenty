@@ -14,6 +14,10 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WorkspaceCustomObject } from 'src/engine/twenty-orm/decorators/workspace-custom-object.decorator';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import {
+  CreatedBySource,
+  CreatedByMetadata,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 
 @WorkspaceCustomObject()
 export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
@@ -37,6 +41,19 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   position: number | null;
+
+  @WorkspaceField({
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.CREATED_BY,
+    label: 'Create by',
+    description: 'The creator of the record',
+    defaultValue: {
+      source: `'${CreatedBySource.MANUAL}'`,
+      name: "''",
+    },
+  })
+  @WorkspaceIsSystem()
+  createdBy: CreatedByMetadata;
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.activityTargets,

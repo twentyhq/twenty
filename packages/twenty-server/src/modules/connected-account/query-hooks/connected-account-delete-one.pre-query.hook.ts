@@ -20,8 +20,9 @@ export class ConnectedAccountDeleteOnePreQueryHook
   async execute(
     _userId: string,
     workspaceId: string,
+    objectName: string,
     payload: DeleteOneResolverArgs,
-  ): Promise<void> {
+  ): Promise<DeleteOneResolverArgs> {
     const connectedAccountId = payload.id;
 
     const messageChannelRepository =
@@ -42,5 +43,7 @@ export class ConnectedAccountDeleteOnePreQueryHook
         'workspaceId' | 'recordId'
       >);
     });
+
+    return payload;
   }
 }

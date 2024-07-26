@@ -104,7 +104,10 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
+    // TODO: Properly type this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    args = await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -151,7 +154,10 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
+    // TODO: Properly type this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    args = await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -213,7 +219,10 @@ export class WorkspaceQueryRunnerService {
       existingRecords,
     );
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
+    // TODO: Properly type this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    args = await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -255,13 +264,18 @@ export class WorkspaceQueryRunnerService {
       ResolverArgsType.CreateMany,
     )) as CreateManyResolverArgs<Record>;
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
+    // TODO: Properly type this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    args = await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
       'createMany',
       args,
     );
+
+    console.log('args', JSON.stringify(args, null, 2));
 
     const query = await this.workspaceQueryBuilderFactory.createMany(
       computedArgs,
@@ -384,7 +398,10 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
+    // TODO: Properly type this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    args = await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -440,7 +457,10 @@ export class WorkspaceQueryRunnerService {
       atMost: maximumRecordAffected,
     });
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
+    // TODO: Properly type this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    args = await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -492,7 +512,10 @@ export class WorkspaceQueryRunnerService {
       atMost: maximumRecordAffected,
     });
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
+    // TODO: Properly type this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    args = await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,
@@ -560,7 +583,10 @@ export class WorkspaceQueryRunnerService {
     );
     // TODO END
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
+    // TODO: Properly type this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    args = await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
       workspaceId,
       objectMetadataItem.nameSingular,

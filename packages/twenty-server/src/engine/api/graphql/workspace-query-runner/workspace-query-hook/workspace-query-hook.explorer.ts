@@ -73,7 +73,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
     instance: object,
     host: Module,
     isRequestScoped: boolean,
-  ) {
+  ): Promise<ReturnType<WorkspaceQueryHookInstance['execute']>> {
     const methodName = 'execute';
 
     if (isRequestScoped) {
@@ -97,9 +97,9 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         contextId,
       );
 
-      await contextInstance[methodName].call(contextInstance, ...payload);
+      return contextInstance[methodName].call(contextInstance, ...payload);
     } else {
-      await instance[methodName].call(instance, ...payload);
+      return instance[methodName].call(instance, ...payload);
     }
   }
 

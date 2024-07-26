@@ -24,6 +24,10 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import {
+  CreatedBySource,
+  CreatedByMetadata,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
@@ -121,6 +125,19 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   position: number | null;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.CREATED_BY,
+    label: 'Create by',
+    description: 'The creator of the record',
+    defaultValue: {
+      source: `'${CreatedBySource.MANUAL}'`,
+      name: "''",
+    },
+  })
+  @WorkspaceIsSystem()
+  createdBy: CreatedByMetadata;
 
   // Relations
   @WorkspaceRelation({

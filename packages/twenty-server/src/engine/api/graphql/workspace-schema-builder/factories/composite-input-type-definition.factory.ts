@@ -12,6 +12,7 @@ import {
   InputTypeDefinition,
   InputTypeDefinitionKind,
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
+import { computeCompositePropertyTarget } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-composite-property-target.util';
 
 import { InputTypeFactory } from './input-type.factory';
 
@@ -62,8 +63,12 @@ export class CompositeInputTypeDefinitionFactory {
         continue;
       }
 
+      const target = computeCompositePropertyTarget(
+        compositeType.type,
+        property,
+      );
       const type = this.inputTypeFactory.create(
-        property.name,
+        target,
         property.type,
         kind,
         options,
