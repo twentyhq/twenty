@@ -197,7 +197,7 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     const needsToUpdateSyncedAt =
-      syncStatus === MessageChannelSyncStatus.COMPLETED;
+      syncStatus === MessageChannelSyncStatus.ACTIVE;
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStatus" = $1 ${

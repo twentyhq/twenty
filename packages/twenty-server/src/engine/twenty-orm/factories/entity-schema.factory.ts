@@ -20,7 +20,6 @@ export class EntitySchemaFactory {
     objectMetadata: ObjectMetadataEntity,
   ): Promise<EntitySchema> {
     const columns = this.entitySchemaColumnFactory.create(
-      workspaceId,
       objectMetadata.fields,
     );
 
