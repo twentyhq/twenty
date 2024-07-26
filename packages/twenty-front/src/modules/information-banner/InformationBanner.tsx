@@ -1,11 +1,6 @@
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
-import { Button } from '@/ui/input/button/components/Button';
+import { InformationBannerAccountToReconnect } from '@/information-banner/InformationBannerReconnectAccount';
 import { useRecoilValue } from 'recoil';
-import { Banner, IconRefresh } from 'twenty-ui';
 
 export enum InformationBannerKeys {
   ACCOUNTS_TO_RECONNECT = 'ACCOUNTS_TO_RECONNECT',
@@ -17,31 +12,15 @@ export const InformationBanner = () => {
   const userVars = currentUser?.userVars;
 
   const accountIdsToReconnect =
-    userVars?.[InformationBannerKeys.ACCOUNTS_TO_RECONNECT] ?? [];
-
-  const accountToReconnect = useFindOneRecord<ConnectedAccount>({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    objectRecordId: accountIdsToReconnect[0],
-  });
-
-  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
-
-  if (!accountToReconnect?.record) {
-    return null;
-  }
+    userVars?.[InformationBannerKeys.ACCOUNTS_TO_RECONNECT] || [];
 
   return (
-    <Banner>
-      Sync lost with mailbox {accountToReconnect?.record?.handle}. Please
-      reconnect for updates:
-      <Button
-        variant="secondary"
-        title="Reconnect"
-        Icon={IconRefresh}
-        size="small"
-        inverted
-        onClick={() => triggerGoogleApisOAuth()}
-      />
-    </Banner>
+    <>
+      {accountIdsToReconnect.length > 0 && (
+        <InformationBannerAccountToReconnect
+          accountIdToReconnect={accountIdsToReconnect[0]}
+        />
+      )}
+    </>
   );
 };
