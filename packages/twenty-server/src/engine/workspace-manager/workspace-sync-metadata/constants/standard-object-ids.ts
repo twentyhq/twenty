@@ -34,5 +34,7 @@ export const STANDARD_OBJECT_IDS = {
   viewSort: '20202020-e46a-47a8-939a-e5d911f83531',
   view: '20202020-722e-4739-8e2c-0c372d661f49',
   webhook: '20202020-be4d-4e08-811d-0fffcd13ffd4',
-  workspaceMember: '20202020-3319-4234-a34c-82d5c0e881a6',
+  workflow: '20202020-62be-406c-b9ca-8caa50d51392',
+  workflowVersion: '20202020-d65d-4ab9-9344-d77bfb376a3d',
+  workspaceMember: '20202020-2632-4659-9540-567498166593',
 };

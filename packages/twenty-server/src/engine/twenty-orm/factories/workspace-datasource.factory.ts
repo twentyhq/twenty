@@ -28,23 +28,15 @@ export class WorkspaceDatasourceFactory {
     workspaceId: string,
     cacheVersion: string | null,
   ): Promise<WorkspaceDataSource> {
-    let dataSourceCacheVersion: string;
+    cacheVersion ??=
+      await this.workspaceCacheVersionService.getVersion(workspaceId);
 
-    if (cacheVersion) {
-      dataSourceCacheVersion = cacheVersion;
-    } else {
-      const cacheVersionFromDatabase =
-        await this.workspaceCacheVersionService.getVersion(workspaceId);
-
-      if (!cacheVersionFromDatabase) {
-        throw new Error('Cache version not found');
-      }
-
-      dataSourceCacheVersion = cacheVersionFromDatabase;
+    if (!cacheVersion) {
+      throw new Error('Cache version not found');
     }
 
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
-      `${workspaceId}-${dataSourceCacheVersion}`,
+      `${workspaceId}-${cacheVersion}`,
       async () => {
         const dataSourceMetadata =
           await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
@@ -58,7 +50,7 @@ export class WorkspaceDatasourceFactory {
         const latestCacheVersion =
           await this.workspaceCacheVersionService.getVersion(workspaceId);
 
-        if (latestCacheVersion !== dataSourceCacheVersion) {
+        if (latestCacheVersion !== cacheVersion) {
           throw new Error('Cache version mismatch');
         }
 

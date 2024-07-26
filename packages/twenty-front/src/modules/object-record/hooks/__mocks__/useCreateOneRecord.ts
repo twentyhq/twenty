@@ -5,8 +5,9 @@ export const query = gql`
     createPerson(data: $input) {
       __typename
       xLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       id
       createdAt
@@ -19,8 +20,9 @@ export const query = gql`
       }
       phone
       linkedinLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       updatedAt
       avatarUrl
@@ -34,8 +36,9 @@ export const responseData = {
     edges: [],
   },
   xLink: {
-    label: '',
-    url: '',
+    primaryLinkUrl: '',
+    primaryLinkLabel: '',
+    secondaryLinks: null,
   },
   pointOfContactForOpportunities: {
     edges: [],
@@ -62,8 +65,9 @@ export const responseData = {
   },
   phone: '',
   linkedinLink: {
-    label: '',
-    url: '',
+    primaryLinkUrl: '',
+    primaryLinkLabel: '',
+    secondaryLinks: null,
   },
   updatedAt: '',
   avatarUrl: '',

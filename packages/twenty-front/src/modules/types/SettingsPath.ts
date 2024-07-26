@@ -18,6 +18,7 @@ export enum SettingsPath {
   NewObject = 'objects/new',
   WorkspaceMembersPage = 'workspace-members',
   Workspace = 'workspace',
+  CRMMigration = 'crm-migration',
   Developers = 'developers',
   DevelopersNewApiKey = 'api-keys/new',
   DevelopersApiKeyDetail = 'api-keys/:apiKeyId',

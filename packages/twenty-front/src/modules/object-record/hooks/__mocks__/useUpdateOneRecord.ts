@@ -5,8 +5,9 @@ export const query = gql`
     updatePerson(id: $idToUpdate, data: $input) {
       __typename
       xLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       id
       createdAt
@@ -19,8 +20,9 @@ export const query = gql`
       }
       phone
       linkedinLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       updatedAt
       avatarUrl
@@ -32,8 +34,9 @@ export const query = gql`
 const basePerson = {
   id: '36abbb63-34ed-4a16-89f5-f549ac55d0f9',
   xLink: {
-    label: '',
-    url: '',
+    primaryLinkUrl: '',
+    primaryLinkLabel: '',
+    secondaryLinks: null,
   },
   createdAt: '',
   city: '',
@@ -45,8 +48,9 @@ const basePerson = {
   },
   phone: '',
   linkedinLink: {
-    label: '',
-    url: '',
+    primaryLinkUrl: '',
+    primaryLinkLabel: '',
+    secondaryLinks: null,
   },
   updatedAt: '',
   avatarUrl: '',

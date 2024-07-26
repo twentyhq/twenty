@@ -7,8 +7,9 @@ export const query = gql`
     executeQuickActionOnPerson(id: $idToExecuteQuickActionOn) {
       __typename
       xLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       id
       createdAt
@@ -21,8 +22,9 @@ export const query = gql`
       }
       phone
       linkedinLink {
-        label
-        url
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
       }
       updatedAt
       avatarUrl

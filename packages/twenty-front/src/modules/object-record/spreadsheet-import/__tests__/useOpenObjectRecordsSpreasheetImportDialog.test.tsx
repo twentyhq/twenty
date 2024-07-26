@@ -27,12 +27,14 @@ const companyMocks = [
           createCompanies(data: $data, upsert: $upsert) {
             __typename
             xLink {
-              label
-              url
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
             }
             linkedinLink {
-              label
-              url
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
             }
             domainName
             annualRecurringRevenue {
