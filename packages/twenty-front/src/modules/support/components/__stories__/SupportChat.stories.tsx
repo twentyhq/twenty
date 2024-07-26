@@ -1,6 +1,6 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { within, userEvent } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -48,5 +48,8 @@ export const Default: Story = {
   play: async () => {
     const canvas = within(document.body);
     expect(await canvas.findByText('Support')).toBeInTheDocument();
+    await userEvent.click(canvas.getByText('Support'));
+    expect(await canvas.findByText('Documentation')).toBeInTheDocument();
+    expect(await canvas.findByText('Talk to us')).toBeInTheDocument();
   },
 };
