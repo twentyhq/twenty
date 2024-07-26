@@ -84,6 +84,7 @@ export {
   IconFilter,
   IconFilterOff,
   IconFocusCentered,
+  IconFunction,
   IconForbid,
   IconGripVertical,
   IconH1,
