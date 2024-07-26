@@ -6,6 +6,7 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { userEvent, within } from '@storybook/test';
+import { sleep } from '~/utils/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/ServerlessFunctions/SettingsServerlessFunctionsNew',
@@ -23,6 +24,7 @@ export type Story = StoryObj<typeof SettingsServerlessFunctionsNew>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await sleep(100);
     await canvas.findByText('Functions');
     await canvas.findByText('New');
     await canvas.findByText('Name');

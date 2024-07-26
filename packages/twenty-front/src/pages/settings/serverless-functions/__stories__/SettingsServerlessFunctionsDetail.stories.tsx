@@ -8,6 +8,7 @@ import {
 import { within } from '@storybook/test';
 import { graphql, HttpResponse } from 'msw';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
+import { sleep } from '~/utils/sleep';
 
 const TEST_FILE_NAME = 'test-file.ts';
 
@@ -64,6 +65,7 @@ export type Story = StoryObj<typeof SettingsServerlessFunctionDetail>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await sleep(100);
     await canvas.findByText('Editor');
     await canvas.findByText('Test');
     await canvas.findByText('Settings');
