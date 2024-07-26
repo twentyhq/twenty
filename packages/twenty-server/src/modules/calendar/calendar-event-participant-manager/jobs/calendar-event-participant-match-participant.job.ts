@@ -35,7 +35,6 @@ export class CalendarEventParticipantMatchParticipantJob {
 
     await this.calendarEventParticipantService.matchCalendarEventParticipantsAfterPersonOrWorkspaceMemberCreation(
       email,
-      workspaceId,
       personId,
       workspaceMemberId,
     );

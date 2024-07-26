@@ -5,6 +5,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarCreateCompanyAndContactAfterSyncJob } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-create-company-and-contact-after-sync.job';
@@ -33,6 +34,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
     CalendarCommonModule,
   ],
   providers: [
+    ScopedWorkspaceContextFactory,
     CalendarEventParticipantService,
     CalendarCreateCompanyAndContactAfterSyncJob,
     CalendarEventParticipantMatchParticipantJob,

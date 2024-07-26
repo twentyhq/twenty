@@ -23,11 +23,10 @@ export class MessageParticipantMatchParticipantJob {
 
   @Process(MessageParticipantMatchParticipantJob.name)
   async handle(data: MessageParticipantMatchParticipantJobData): Promise<void> {
-    const { workspaceId, email, personId, workspaceMemberId } = data;
+    const { email, personId, workspaceMemberId } = data;
 
     await this.messageParticipantService.matchMessageParticipantsAfterPersonOrWorkspaceMemberCreation(
       email,
-      workspaceId,
       personId,
       workspaceMemberId,
     );

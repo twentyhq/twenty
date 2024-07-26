@@ -5,6 +5,7 @@ import { isDefined } from 'class-validator';
 import differenceWith from 'lodash.differencewith';
 import { Any } from 'typeorm';
 
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/calendar-event';
@@ -16,12 +17,12 @@ export class CalendarEventParticipantService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly eventEmitter: EventEmitter2,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   public async upsertAndDeleteCalendarEventParticipants(
     participantsToSave: CalendarEventParticipantWithCalendarEventId[],
     participantsToUpdate: CalendarEventParticipantWithCalendarEventId[],
-    workspaceId: string,
     transactionManager?: any,
   ): Promise<void> {
     const calendarEventParticipantRepository =
@@ -114,14 +115,12 @@ export class CalendarEventParticipantService {
 
     await this.matchCalendarEventParticipants(
       savedParticipants,
-      workspaceId,
       transactionManager,
     );
   }
 
   private async matchCalendarEventParticipants(
     calendarEventParticipants: CalendarEventParticipantWorkspaceEntity[],
-    workspaceId: string,
     transactionManager?: any,
   ) {
     const participantIds = calendarEventParticipants.map(
@@ -143,7 +142,7 @@ export class CalendarEventParticipantService {
         'person',
       );
 
-    const persons = await personRepository.find(
+    const people = await personRepository.find(
       {
         where: {
           email: Any(uniqueParticipantsHandles),
@@ -167,7 +166,7 @@ export class CalendarEventParticipantService {
     );
 
     for (const handle of uniqueParticipantsHandles) {
-      const person = persons.find((person) => person.email === handle);
+      const person = people.find((person) => person.email === handle);
 
       const workspaceMember = workspaceMembers.find(
         (workspaceMember) => workspaceMember.userEmail === handle,
@@ -197,6 +196,8 @@ export class CalendarEventParticipantService {
         transactionManager,
       );
 
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
     this.eventEmitter.emit(`calendarEventParticipant.matched`, {
       workspaceId,
       workspaceMemberId: null,
@@ -206,10 +207,11 @@ export class CalendarEventParticipantService {
 
   public async matchCalendarEventParticipantsAfterPersonOrWorkspaceMemberCreation(
     handle: string,
-    workspaceId: string,
     personId?: string,
     workspaceMemberId?: string,
   ) {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
     const calendarEventParticipantRepository =
       await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
         'calendarEventParticipant',

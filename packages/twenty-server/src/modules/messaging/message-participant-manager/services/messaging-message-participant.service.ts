@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Any, EntityManager } from 'typeorm';
 
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { ParticipantWithMessageId } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
@@ -14,11 +15,11 @@ export class MessagingMessageParticipantService {
   constructor(
     private readonly eventEmitter: EventEmitter2,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   public async saveMessageParticipants(
     participants: ParticipantWithMessageId[],
-    workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
     const messageParticipantRepository =
@@ -39,18 +40,15 @@ export class MessagingMessageParticipantService {
       transactionManager,
     );
 
-    await this.matchMessageParticipants(
-      savedParticipants,
-      workspaceId,
-      transactionManager,
-    );
+    await this.matchMessageParticipants(savedParticipants, transactionManager);
   }
 
   private async matchMessageParticipants(
     messageParticipants: MessageParticipantWorkspaceEntity[],
-    workspaceId: string,
     transactionManager?: any,
   ) {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
     const participantIds = messageParticipants.map(
       (participant) => participant.id,
     );
@@ -130,10 +128,11 @@ export class MessagingMessageParticipantService {
 
   public async matchMessageParticipantsAfterPersonOrWorkspaceMemberCreation(
     handle: string,
-    workspaceId: string,
     personId?: string,
     workspaceMemberId?: string,
   ) {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
     const messageParticipantRepository =
       await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
         'messageParticipant',

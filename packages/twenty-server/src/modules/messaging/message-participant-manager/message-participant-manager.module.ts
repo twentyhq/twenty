@@ -5,6 +5,7 @@ import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.mod
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
@@ -33,6 +34,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
     MessagingCommonModule,
   ],
   providers: [
+    ScopedWorkspaceContextFactory,
     MessagingMessageParticipantService,
     MessageParticipantMatchParticipantJob,
     MessageParticipantUnmatchParticipantJob,
