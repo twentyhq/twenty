@@ -27,6 +27,6 @@ export const Default: Story = {
     await sleep(100);
 
     await canvas.findByText('Functions');
-    await canvas.findByText('Add your first Function\n');
+    await canvas.findByText('Add your first Function');
   },
 };
