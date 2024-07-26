@@ -26,6 +26,7 @@ export enum FeatureFlagKeys {
   IsGoogleCalendarSyncV2Enabled = 'IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED',
   IsFreeAccessEnabled = 'IS_FREE_ACCESS_ENABLED',
   IsFunctionSettingsEnabled = 'IS_FUNCTION_SETTINGS_ENABLED',
+  IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
 }
 
 @Entity({ name: 'featureFlag', schema: 'core' })

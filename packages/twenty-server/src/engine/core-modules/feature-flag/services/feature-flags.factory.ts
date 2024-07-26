@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -15,9 +14,9 @@ export class FeatureFlagFactory {
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
-  async create(context: WorkspaceSyncContext): Promise<FeatureFlagMap> {
+  async create(workspaceId: string): Promise<FeatureFlagMap> {
     const workspaceFeatureFlags = await this.featureFlagRepository.find({
-      where: { workspaceId: context.workspaceId },
+      where: { workspaceId },
     });
 
     const workspaceFeatureFlagsMap = workspaceFeatureFlags.reduce(
