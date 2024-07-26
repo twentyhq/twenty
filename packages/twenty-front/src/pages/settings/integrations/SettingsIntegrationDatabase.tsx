@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { H2Title, IconSettings } from 'twenty-ui';
 
 import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
-import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
+import { InformationBanner } from '@/information-banner/InformationBanner';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
 import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionsListCard';

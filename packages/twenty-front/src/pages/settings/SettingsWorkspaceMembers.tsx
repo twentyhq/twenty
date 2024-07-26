@@ -5,10 +5,10 @@ import { H1Title, H2Title, IconSettings, IconTrash } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { InformationBanner } from '@/information-banner/InformationBanner';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';

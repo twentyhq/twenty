@@ -7,7 +7,7 @@ import { H1Title, IconSettings } from 'twenty-ui';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
-import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
+import { InformationBanner } from '@/information-banner/InformationBanner';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';

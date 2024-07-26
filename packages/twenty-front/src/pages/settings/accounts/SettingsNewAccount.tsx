@@ -1,6 +1,6 @@
 import { IconSettings } from 'twenty-ui';
 
-import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
+import { InformationBanner } from '@/information-banner/InformationBanner';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';

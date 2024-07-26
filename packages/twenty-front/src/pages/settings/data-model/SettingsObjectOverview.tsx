@@ -1,7 +1,7 @@
 import { ReactFlowProvider } from 'reactflow';
 import { IconSettings } from 'twenty-ui';
 
-import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
+import { InformationBanner } from '@/information-banner/InformationBanner';
 import { SettingsDataModelOverview } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverview';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 

@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
+import { InformationBanner } from '@/information-banner/InformationBanner';
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { H1Title, H2Title, IconSettings } from 'twenty-ui';
 
-import { InformationBanner } from '@/object-record/information-banner/InformationBanner';
+import { InformationBanner } from '@/information-banner/InformationBanner';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ColorSchemePicker } from '@/ui/input/color-scheme/components/ColorSchemePicker';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
