@@ -2,7 +2,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '04b2e9f5-0713-40a5-8216-82802401d33e',
-    domainName: 'qonto.com',
+    domainName: { primarlyLinkUrl: 'qonto.com', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 1400,
     name: 'Qonto',
@@ -112,7 +112,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '0d940997-c21e-4ec2-873b-de4264d89025',
-    domainName: 'google.com',
+    domainName: { primarlyLinkUrl: 'google.com', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 72_000,
     name: 'Google',
@@ -316,7 +316,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '118995f3-5d81-46d6-bf83-f7fd33ea6102',
-    domainName: 'facebook.com',
+    domainName: { primarlyLinkUrl: 'facebook.com', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 87_000,
     name: 'Facebook',
@@ -450,7 +450,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '1d3a1c6e-707e-44dc-a1d2-30030bf1a944',
-    domainName: 'netflix.com',
+    domainName: { primarlyLinkUrl: 'netflix.com', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 3_000,
     name: 'Netflix',
@@ -503,7 +503,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '460b6fb1-ed89-413a-b31a-962986e67bb4',
-    domainName: 'microsoft.com',
+    domainName: { primarlyLinkUrl: 'microsoft.com', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 221_000,
     name: 'Microsoft',
@@ -686,7 +686,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '7a93d1e5-3f74-492d-a101-2a70f50a1645',
-    domainName: 'libeo.io',
+    domainName: { primarlyLinkUrl: 'libeo.io', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 50,
     name: 'Libeo',
@@ -738,7 +738,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
-    domainName: 'airbnb.com',
+    domainName: { primarlyLinkUrl: 'airbnb.com', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 6_000,
     name: 'Airbnb',
@@ -791,7 +791,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '9d162de6-cfbf-4156-a790-e39854dcd4eb',
-    domainName: 'claap.io',
+    domainName: { primarlyLinkUrl: 'claap.io', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 7,
     name: 'Claap',
@@ -845,7 +845,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: 'a674fa6c-1455-4c57-afaf-dd5dc086361d',
-    domainName: 'algolia.com',
+    domainName: { primarlyLinkUrl: 'algolia.com', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 250,
     name: 'Algolia',
@@ -930,7 +930,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: 'a7bc68d5-f79e-40dd-bd06-c36e6abb4678',
-    domainName: 'samsung.com',
+    domainName: { primarlyLinkUrl: 'samsung.com', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 400_000,
     name: 'Samsung',
@@ -1013,7 +1013,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: 'aaffcfbd-f86b-419f-b794-02319abe8637',
-    domainName: 'hasura.io',
+    domainName: { primarlyLinkUrl: 'hasura.io', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 17_000,
     name: 'Hasura',
@@ -1067,7 +1067,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: 'f33dc242-5518-4553-9433-42d8eb82834b',
-    domainName: 'wework.com',
+    domainName: { primarlyLinkUrl: 'wework.com', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 2_000,
     name: 'Wework',
@@ -1118,7 +1118,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
-    domainName: 'linkedin.com',
+    domainName: { primarlyLinkUrl: 'linkedin.com', primaryLinkLabel: '' },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 20_000,
     name: 'Linkedin',

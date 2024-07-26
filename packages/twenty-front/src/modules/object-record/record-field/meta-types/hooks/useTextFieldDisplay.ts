@@ -6,6 +6,7 @@ import { FieldContext } from '../../contexts/FieldContext';
 
 export const useTextFieldDisplay = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  console.log('fieldDef', fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

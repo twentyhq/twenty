@@ -23,7 +23,10 @@ export const USER_QUERY_FRAGMENT = gql`
       id
       displayName
       logo
-      domainName
+      domainName {
+        primaryLinkUrl
+        primaryLinkLabel
+      }
       inviteHash
       allowImpersonation
       activationStatus
