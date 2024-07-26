@@ -27,6 +27,7 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
@@ -48,6 +49,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     private readonly objectMetadataService: ObjectMetadataService,
     @InjectCacheStorage(CacheStorageNamespace.WorkspaceSchema)
     private readonly workspaceSchemaCache: CacheStorageService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {
     super();
   }
@@ -56,6 +58,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     try {
       for (const workspaceId of this.workspaceIds) {
         await this.workspaceSchemaCache.flush();
+        await this.workspaceCacheVersionService.deleteVersion(workspaceId);
 
         await rawDataSource.initialize();
 
