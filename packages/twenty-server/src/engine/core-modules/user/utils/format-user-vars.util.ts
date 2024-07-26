@@ -10,9 +10,11 @@ export const formatUserVars = (
   for (const { key, value, userId, workspaceId } of userVars) {
     if (!userId && workspaceId) {
       workspaceUserVarMap.set(key, value);
-    } else if (userId && !workspaceId) {
+    }
+    if (userId && !workspaceId) {
       userUserVarMap.set(key, value);
-    } else if (userId && workspaceId) {
+    }
+    if (userId && workspaceId) {
       userWorkspaceUserVarMap.set(key, value);
     }
   }
