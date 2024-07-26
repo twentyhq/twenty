@@ -7,9 +7,9 @@ import { Repository } from 'typeorm';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 @Injectable()
 export class MessageParticipantListener {
@@ -25,9 +25,9 @@ export class MessageParticipantListener {
   public async handleMessageParticipantMatched(payload: {
     workspaceId: string;
     workspaceMemberId: string;
-    messageParticipants: MessageParticipantWorkspaceEntity[];
+    participants: MessageParticipantWorkspaceEntity[];
   }): Promise<void> {
-    const messageParticipants = payload.messageParticipants ?? [];
+    const messageParticipants = payload.participants ?? [];
 
     // TODO: move to a job?
 
