@@ -1,0 +1,6 @@
+#!/bin/sh
+branch_name=$(git symbolic-ref HEAD 2>/dev/null | awk -F/ '{print $NF}')
+if [ "$branch_name" = "main" ]; then
+    echo "Pushing directly from the main branch is not allowed. Please create a new branch."
+    exit 1
+fi

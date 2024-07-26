@@ -357,6 +357,7 @@
   "version": "0.2.1",
   "nx": {},
   "scripts": {
+    "postinstall": "sh scripts/setup-hooks.sh",
     "start": "npx nx run-many -t start -p twenty-server twenty-front"
   },
   "workspaces": {
