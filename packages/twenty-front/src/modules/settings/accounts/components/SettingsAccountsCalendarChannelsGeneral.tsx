@@ -51,8 +51,8 @@ export const SettingsAccountsCalendarChannelsGeneral = () => {
     startsAt: exampleStartDate.toISOString(),
     conferenceSolution: '',
     conferenceLink: {
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     description: '',
     isCanceled: false,
