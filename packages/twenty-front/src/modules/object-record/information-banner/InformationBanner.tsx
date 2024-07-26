@@ -7,7 +7,7 @@ import { Button } from '@/ui/input/button/components/Button';
 import { useRecoilValue } from 'recoil';
 import { Banner, IconRefresh } from 'twenty-ui';
 
-export enum ConnectedAccountKeys {
+export enum InformationBannerKeys {
   ACCOUNTS_TO_RECONNECT = 'ACCOUNTS_TO_RECONNECT',
 }
 
@@ -17,7 +17,7 @@ export const InformationBanner = () => {
   const userVars = currentUser?.userVars;
 
   const accountIdsToReconnect =
-    userVars?.[ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT] ?? [];
+    userVars?.[InformationBannerKeys.ACCOUNTS_TO_RECONNECT] ?? [];
 
   const accountToReconnect = useFindOneRecord<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
