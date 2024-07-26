@@ -55,6 +55,7 @@ import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
+import { SettingsCRMMigration } from '~/pages/settings/crm-migration/SettingsCRMMigration';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
@@ -81,6 +82,7 @@ import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const ProvidersThatNeedRouterContext = () => {
   const { pathname } = useLocation();
@@ -125,7 +127,10 @@ const ProvidersThatNeedRouterContext = () => {
   );
 };
 
-const createRouter = (isBillingEnabled?: boolean) =>
+const createRouter = (
+  isBillingEnabled?: boolean,
+  isCRMMigrationEnabled?: boolean,
+) =>
   createBrowserRouter(
     createRoutesFromElements(
       <Route
@@ -222,6 +227,12 @@ const createRouter = (isBillingEnabled?: boolean) =>
                   path={SettingsPath.Developers}
                   element={<SettingsDevelopers />}
                 />
+                {isCRMMigrationEnabled && (
+                  <Route
+                    path={SettingsPath.CRMMigration}
+                    element={<SettingsCRMMigration />}
+                  />
+                )}
                 <Route
                   path={AppPath.DevelopersCatchAll}
                   element={
@@ -292,6 +303,11 @@ const createRouter = (isBillingEnabled?: boolean) =>
 
 export const App = () => {
   const billing = useRecoilValue(billingState);
+  const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
 
-  return <RouterProvider router={createRouter(billing?.isBillingEnabled)} />;
+  return (
+    <RouterProvider
+      router={createRouter(billing?.isBillingEnabled, isCRMMigrationEnabled)}
+    />
+  );
 };

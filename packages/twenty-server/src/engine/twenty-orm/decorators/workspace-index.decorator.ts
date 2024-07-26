@@ -1,6 +1,7 @@
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
+import { TypedReflect } from 'src/utils/typed-reflect';
 
 export interface WorkspaceIndexOptions {
   columns?: string[];
@@ -16,6 +17,12 @@ export function WorkspaceIndex(
       throw new Error('Class level WorkspaceIndex should be used with columns');
     }
 
+    const gate = TypedReflect.getMetadata(
+      'workspace:gate-metadata-args',
+      target,
+      propertyKey.toString(),
+    );
+
     // TODO: handle composite field metadata types
 
     if (Array.isArray(columns) && columns.length > 0) {
@@ -26,6 +33,7 @@ export function WorkspaceIndex(
         ])}`,
         columns,
         target: target,
+        gate,
       });
 
       return;
@@ -38,6 +46,7 @@ export function WorkspaceIndex(
       ])}`,
       columns: [propertyKey.toString()],
       target: target.constructor,
+      gate,
     });
   };
 }

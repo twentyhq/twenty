@@ -6,10 +6,7 @@ import { Any } from 'typeorm';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -26,12 +23,7 @@ import {
 @Injectable()
 export class CalendarSaveEventsService {
   constructor(
-    @InjectWorkspaceRepository(CalendarEventWorkspaceEntity)
-    private readonly calendarEventRepository: WorkspaceRepository<CalendarEventWorkspaceEntity>,
-    @InjectWorkspaceRepository(CalendarChannelEventAssociationWorkspaceEntity)
-    private readonly calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>,
-    @InjectWorkspaceDatasource()
-    private readonly workspaceDataSource: WorkspaceDataSource,
+    private readonly twentyORMManager: TwentyORMManager,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -44,7 +36,12 @@ export class CalendarSaveEventsService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
-    const existingCalendarEvents = await this.calendarEventRepository.find({
+    const calendarEventRepository =
+      await this.twentyORMManager.getRepository<CalendarEventWorkspaceEntity>(
+        'calendarEvent',
+      );
+
+    const existingCalendarEvents = await calendarEventRepository.find({
       where: {
         iCalUID: Any(filteredEvents.map((event) => event.iCalUID as string)),
       },
@@ -77,8 +74,13 @@ export class CalendarSaveEventsService {
       existingEventsICalUIDs.includes(calendarEvent.iCalUID),
     );
 
+    const calendarChannelEventAssociationRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        'calendarChannelEventAssociation',
+      );
+
     const existingCalendarChannelEventAssociations =
-      await this.calendarChannelEventAssociationRepository.find({
+      await calendarChannelEventAssociationRepository.find({
         where: {
           eventExternalId: Any(
             calendarEventsWithIds.map((calendarEvent) => calendarEvent.id),
@@ -113,20 +115,18 @@ export class CalendarSaveEventsService {
     const savedCalendarEventParticipantsToEmit: CalendarEventParticipantWorkspaceEntity[] =
       [];
 
-    await this.workspaceDataSource?.transaction(async (transactionManager) => {
-      await this.calendarEventRepository.save(
-        eventsToSave,
-        {},
-        transactionManager,
-      );
+    const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
-      await this.calendarEventRepository.save(
+    await workspaceDataSource?.transaction(async (transactionManager) => {
+      await calendarEventRepository.save(eventsToSave, {}, transactionManager);
+
+      await calendarEventRepository.save(
         eventsToUpdate,
         {},
         transactionManager,
       );
 
-      await this.calendarChannelEventAssociationRepository.save(
+      await calendarChannelEventAssociationRepository.save(
         calendarChannelEventAssociationsToSave,
         {},
         transactionManager,

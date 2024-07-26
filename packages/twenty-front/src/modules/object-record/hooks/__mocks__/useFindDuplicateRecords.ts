@@ -10,8 +10,9 @@ export const query = gql`
         node {
           __typename
           xLink {
-            label
-            url
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
           }
           id
           createdAt
@@ -24,8 +25,9 @@ export const query = gql`
           }
           phone
           linkedinLink {
-            label
-            url
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
           }
           updatedAt
           avatarUrl

@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { Field, RawData } from '@/spreadsheet-import/types';
+import { Field, ImportedRow } from '@/spreadsheet-import/types';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
 import { getMatchedColumns } from '@/spreadsheet-import/utils/getMatchedColumns';
 import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableData';
@@ -46,9 +46,13 @@ const StyledColumn = styled.span`
 `;
 
 export type MatchColumnsStepProps<T extends string> = {
-  data: RawData[];
-  headerValues: RawData;
-  onContinue: (data: any[], rawData: RawData[], columns: Columns<T>) => void;
+  data: ImportedRow[];
+  headerValues: ImportedRow;
+  onContinue: (
+    data: any[],
+    rawData: ImportedRow[],
+    columns: Columns<T>,
+  ) => void;
   onBack: () => void;
 };
 
@@ -67,23 +71,27 @@ export type MatchedOptions<T> = {
 };
 
 type EmptyColumn = { type: ColumnType.empty; index: number; header: string };
+
 type IgnoredColumn = {
   type: ColumnType.ignored;
   index: number;
   header: string;
 };
+
 type MatchedColumn<T> = {
   type: ColumnType.matched;
   index: number;
   header: string;
   value: T;
 };
+
 type MatchedSwitchColumn<T> = {
   type: ColumnType.matchedCheckbox;
   index: number;
   header: string;
   value: T;
 };
+
 export type MatchedSelectColumn<T> = {
   type: ColumnType.matchedSelect;
   index: number;
@@ -91,6 +99,7 @@ export type MatchedSelectColumn<T> = {
   value: T;
   matchedOptions: Partial<MatchedOptions<T>>[];
 };
+
 export type MatchedSelectOptionsColumn<T> = {
   type: ColumnType.matchedSelectOptions;
   index: number;
@@ -271,7 +280,7 @@ export const MatchColumnsStep = <T extends string>({
           renderUserColumn={(columns, columnIndex) => (
             <UserTableColumn
               column={columns[columnIndex]}
-              entries={dataExample.map(
+              importedRow={dataExample.map(
                 (row) => row[columns[columnIndex].index],
               )}
             />

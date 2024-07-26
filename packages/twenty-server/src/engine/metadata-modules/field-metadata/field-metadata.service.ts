@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import isEmpty from 'lodash.isempty';
 import { DataSource, FindOneOptions, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -20,8 +22,12 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
-import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import {
+  computeColumnName,
+  computeCompositeColumnName,
+} from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import {
@@ -46,6 +52,7 @@ import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
 import {
   FieldMetadataEntity,
@@ -219,28 +226,38 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
         );
 
-        const existingViewFields = await workspaceQueryRunner?.query(
-          `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
+        if (!isEmpty(view)) {
+          const existingViewFields = (await workspaceQueryRunner?.query(
+            `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
       WHERE "viewId" = '${view[0].id}'`,
-        );
+          )) as ViewFieldWorkspaceEntity[];
 
-        const lastPosition = existingViewFields
-          .map((viewField) => viewField.position)
-          .reduce((acc, position) => {
-            if (position > acc) {
-              return position;
-            }
+          const createdFieldIsAlreadyInView = existingViewFields.some(
+            (existingViewField) =>
+              existingViewField.fieldMetadataId === createdFieldMetadata.id,
+          );
 
-            return acc;
-          }, -1);
+          if (!createdFieldIsAlreadyInView) {
+            const lastPosition = existingViewFields
+              .map((viewField) => viewField.position)
+              .reduce((acc, position) => {
+                if (position > acc) {
+                  return position;
+                }
 
-        await workspaceQueryRunner?.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."viewField"
+                return acc;
+              }, -1);
+
+            await workspaceQueryRunner?.query(
+              `INSERT INTO ${dataSourceMetadata.schema}."viewField"
     ("fieldMetadataId", "position", "isVisible", "size", "viewId")
     VALUES ('${createdFieldMetadata.id}', '${lastPosition + 1}', true, 180, '${
       view[0].id
     }')`,
-        );
+            );
+          }
+        }
+
         await workspaceQueryRunner.commitTransaction();
       } catch (error) {
         await workspaceQueryRunner.rollbackTransaction();
@@ -458,24 +475,63 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
+      if (objectMetadata.labelIdentifierFieldMetadataId === fieldMetadata.id) {
+        throw new FieldMetadataException(
+          'Cannot delete, please update the label identifier field first',
+          FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+        );
+      }
+
       await fieldMetadataRepository.delete(fieldMetadata.id);
 
-      await this.workspaceMigrationService.createCustomMigration(
-        generateMigrationName(`delete-${fieldMetadata.name}`),
-        workspaceId,
-        [
-          {
-            name: computeObjectTargetTable(objectMetadata),
-            action: WorkspaceMigrationTableActionType.ALTER,
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.DROP,
-                columnName: computeColumnName(fieldMetadata),
-              } satisfies WorkspaceMigrationColumnDrop,
-            ],
-          } satisfies WorkspaceMigrationTableAction,
-        ],
-      );
+      if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+
+        if (!compositeType) {
+          throw new Error(
+            `Composite type not found for field metadata type: ${fieldMetadata.type}`,
+          );
+        }
+
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(
+            `delete-${fieldMetadata.name}-composite-columns`,
+          ),
+          workspaceId,
+          [
+            {
+              name: computeObjectTargetTable(objectMetadata),
+              action: WorkspaceMigrationTableActionType.ALTER,
+              columns: compositeType.properties.map((property) => {
+                return {
+                  action: WorkspaceMigrationColumnActionType.DROP,
+                  columnName: computeCompositeColumnName(
+                    fieldMetadata.name,
+                    property,
+                  ),
+                } satisfies WorkspaceMigrationColumnDrop;
+              }),
+            } satisfies WorkspaceMigrationTableAction,
+          ],
+        );
+      } else {
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(`delete-${fieldMetadata.name}`),
+          workspaceId,
+          [
+            {
+              name: computeObjectTargetTable(objectMetadata),
+              action: WorkspaceMigrationTableActionType.ALTER,
+              columns: [
+                {
+                  action: WorkspaceMigrationColumnActionType.DROP,
+                  columnName: computeColumnName(fieldMetadata),
+                } satisfies WorkspaceMigrationColumnDrop,
+              ],
+            } satisfies WorkspaceMigrationTableAction,
+          ],
+        );
+      }
 
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
         workspaceId,

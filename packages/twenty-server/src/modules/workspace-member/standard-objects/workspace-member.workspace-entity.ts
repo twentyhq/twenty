@@ -34,6 +34,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   labelPlural: 'Workspace Members',
   description: 'A workspace member',
   icon: 'IconUserCircle',
+  labelIdentifierStandardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()

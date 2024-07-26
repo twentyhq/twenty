@@ -50,13 +50,15 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
 __typename
 xLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 linkedinLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 domainName
 annualRecurringRevenue
@@ -113,8 +115,9 @@ idealCustomerProfile
 __typename
 xLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 accountOwner
 {
@@ -128,8 +131,9 @@ id
 }
 linkedinLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 domainName
 annualRecurringRevenue
@@ -157,8 +161,9 @@ people
 __typename
 xLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 id
 createdAt
@@ -173,8 +178,9 @@ name
 phone
 linkedinLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 updatedAt
 avatarUrl
