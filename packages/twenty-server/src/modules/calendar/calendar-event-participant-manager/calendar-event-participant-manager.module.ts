@@ -5,7 +5,6 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
-import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarCreateCompanyAndContactAfterSyncJob } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-create-company-and-contact-after-sync.job';
@@ -17,6 +16,7 @@ import { CalendarEventParticipantListener } from 'src/modules/calendar/calendar-
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { ContactCreationManagerModule } from 'src/modules/contact-creation-manager/contact-creation-manager.module';
+import { MatchParticipantModule } from 'src/modules/match-participant/match-participant.module';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Module({
@@ -30,9 +30,9 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
       'metadata',
     ),
     ContactCreationManagerModule,
+    MatchParticipantModule,
   ],
   providers: [
-    ScopedWorkspaceContextFactory,
     CalendarEventParticipantService,
     CalendarCreateCompanyAndContactAfterSyncJob,
     CalendarEventParticipantMatchParticipantJob,

@@ -3,7 +3,8 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
+import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 export type MessageParticipantUnmatchParticipantJobData = {
   workspaceId: string;
@@ -18,7 +19,7 @@ export type MessageParticipantUnmatchParticipantJobData = {
 })
 export class MessageParticipantUnmatchParticipantJob {
   constructor(
-    private readonly messageParticipantService: MessagingMessageParticipantService,
+    private readonly matchParticipantService: MatchParticipantService<MessageParticipantWorkspaceEntity>,
   ) {}
 
   @Process(MessageParticipantUnmatchParticipantJob.name)
@@ -27,8 +28,9 @@ export class MessageParticipantUnmatchParticipantJob {
   ): Promise<void> {
     const { email, personId, workspaceMemberId } = data;
 
-    await this.messageParticipantService.unmatchMessageParticipants(
+    await this.matchParticipantService.unmatchParticipants(
       email,
+      'messageParticipant',
       personId,
       workspaceMemberId,
     );
