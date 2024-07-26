@@ -3,26 +3,30 @@ import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 import { isDefined } from '~/utils/isDefined';
 import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
 
-export type ServerlessFunctionFormValues = {
+export type ServerlessFunctionNewFormValues = {
   name: string;
   description: string;
+};
+
+export type ServerlessFunctionFormValues = ServerlessFunctionNewFormValues & {
   code: string;
 };
 
-export type SetServerlessFunctionFormValues = Dispatch<
+type SetServerlessFunctionFormValues = Dispatch<
   SetStateAction<ServerlessFunctionFormValues>
 >;
 
-export const useServerlessFunctionFormValues = (
+export const useServerlessFunctionUpdateFormState = (
   serverlessFunctionId: string,
 ): [ServerlessFunctionFormValues, SetServerlessFunctionFormValues] => {
-  const { serverlessFunction } =
-    useGetOneServerlessFunction(serverlessFunctionId);
   const [formValues, setFormValues] = useState<ServerlessFunctionFormValues>({
     name: '',
     description: '',
     code: '',
   });
+
+  const { serverlessFunction } =
+    useGetOneServerlessFunction(serverlessFunctionId);
 
   useEffect(() => {
     const getFileContent = async () => {

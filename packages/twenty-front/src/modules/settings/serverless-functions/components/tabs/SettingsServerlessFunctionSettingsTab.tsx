@@ -1,6 +1,6 @@
 import { H2Title } from 'twenty-ui';
 import { Section } from '@/ui/layout/section/components/Section';
-import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
+import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { Button } from '@/ui/input/button/components/Button';
 import { useState } from 'react';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';

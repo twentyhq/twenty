@@ -10,7 +10,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionCodeEditorTab';
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
-import { useServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
+import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
 import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteOneServerlessFunction';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -33,7 +33,7 @@ export const SettingsServerlessFunctionDetail = () => {
   const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const [formValues, setFormValues] =
-    useServerlessFunctionFormValues(serverlessFunctionId);
+    useServerlessFunctionUpdateFormState(serverlessFunctionId);
   const setSettingsServerlessFunctionOutput = useSetRecoilState(
     settingsServerlessFunctionOutputState,
   );

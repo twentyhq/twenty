@@ -8,13 +8,19 @@ import { useNavigate } from 'react-router-dom';
 
 import { useCreateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useCreateOneServerlessFunction';
 import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
-import { useServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
+import { ServerlessFunctionNewFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functions/components/SettingsServerlessFunctionNewForm';
 import { isDefined } from '~/utils/isDefined';
+import { useState } from 'react';
 
 export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigate();
-  const [formValues, setFormValues] = useServerlessFunctionFormValues();
+  const [formValues, setFormValues] = useState<ServerlessFunctionNewFormValues>(
+    {
+      name: '',
+      description: '',
+    },
+  );
 
   const { createOneServerlessFunction } = useCreateOneServerlessFunction();
   const handleSave = async () => {

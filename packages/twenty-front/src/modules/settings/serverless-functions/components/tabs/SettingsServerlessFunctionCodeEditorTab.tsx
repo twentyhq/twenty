@@ -1,7 +1,7 @@
 import { H2Title, IconPlayerPlay } from 'twenty-ui';
 import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import { Section } from '@/ui/layout/section/components/Section';
-import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/forms/useServerlessFunctionFormValues';
+import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { Button } from '@/ui/input/button/components/Button';
 import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
 import styled from '@emotion/styled';
