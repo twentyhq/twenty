@@ -14,7 +14,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SupportChat } from '@/support/components/SupportChat';
+import { SupportButton } from '@/support/components/SupportButton';
 import { AppPath } from '@/types/AppPath';
 import { Info } from '@/ui/display/info/components/Info';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -218,7 +218,7 @@ export const SettingsBilling = () => {
         )}
       </SettingsPageContainer>
       <StyledInvisibleChat>
-        <SupportChat />
+        <SupportButton />
       </StyledInvisibleChat>
       <ConfirmationModal
         isOpen={isSwitchingIntervalModalOpen}

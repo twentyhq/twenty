@@ -1,13 +1,10 @@
-import { IconHelpCircle } from 'twenty-ui';
-
-import { SupportChat } from '@/support/components/SupportChat';
+import { SupportButton } from '@/support/components/SupportButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { IconMessage } from '@tabler/icons-react';
-
+import { IconHelpCircle, IconMessage } from 'twenty-ui';
 
 export const SupportDropdown = () => {
   const dropdownId = `support-field-active-action-dropdown`;
@@ -15,22 +12,21 @@ export const SupportDropdown = () => {
   const { closeDropdown } = useDropdown(dropdownId);
 
   const handleTalkToUs = () => {
-    window.FrontChat?.('show')
+    window.FrontChat?.('show');
     closeDropdown();
   };
 
   const handleUserGuide = () => {
-    window.open('https://twenty.com/user-guide', '_blank')
+    window.open('https://twenty.com/user-guide', '_blank');
     closeDropdown();
   };
 
   return (
     <Dropdown
       dropdownId={dropdownId}
-      dropdownPlacement='top-start'
-      clickableComponent={
-        <SupportChat />
-      }
+      dropdownPlacement="top-start"
+      dropdownOffset={{ x: 0, y: -28 }}
+      clickableComponent={<SupportButton />}
       dropdownComponents={
         <DropdownMenu width="160px">
           <DropdownMenuItemsContainer>
