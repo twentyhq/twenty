@@ -1,6 +1,6 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { within, userEvent } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -14,11 +14,11 @@ import {
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
-import { SupportChat } from '../SupportChat';
+import { SupportDropdown } from '@/support/components/SupportDropdown';
 
-const meta: Meta<typeof SupportChat> = {
-  title: 'Modules/Support/SupportChat',
-  component: SupportChat,
+const meta: Meta<typeof SupportDropdown> = {
+  title: 'Modules/Support/SupportDropdown',
+  component: SupportDropdown,
   decorators: [
     (Story) => {
       const setCurrentUser = useSetRecoilState(currentUserState);
@@ -42,11 +42,16 @@ const meta: Meta<typeof SupportChat> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SupportChat>;
+type Story = StoryObj<typeof SupportDropdown>;
 
 export const Default: Story = {
   play: async () => {
     const canvas = within(document.body);
+
     expect(await canvas.findByText('Support')).toBeInTheDocument();
+    await userEvent.click(canvas.getByText('Support'));
+
+    expect(await canvas.findByText('Documentation')).toBeInTheDocument();
+    expect(await canvas.findByText('Talk to us')).toBeInTheDocument();
   },
 };

@@ -3,7 +3,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
-import { SupportChat } from '@/support/components/SupportChat';
+import { SupportDropdown } from '@/support/components/SupportDropdown';
 import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
 import {
   NavigationDrawer,
@@ -53,7 +53,7 @@ export const AppNavigationDrawer = ({
           undefined,
         title: currentWorkspace?.displayName ?? undefined,
         children: <MainNavigationDrawerItems />,
-        footer: <SupportChat />,
+        footer: <SupportDropdown />,
       };
 
   useEffect(() => {

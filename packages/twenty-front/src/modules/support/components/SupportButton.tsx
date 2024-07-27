@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconHelpCircle } from 'twenty-ui';
 
@@ -8,7 +8,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { SupportChatSkeletonLoader } from '@/support/components/SupportChatSkeletonLoader';
+import { SupportButtonSkeletonLoader } from '@/support/components/SupportButtonSkeletonLoader';
 import { Button } from '@/ui/input/button/components/Button';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { User } from '~/generated/graphql';
@@ -34,7 +34,7 @@ const insertScript = ({
   document.body.appendChild(script);
 };
 
-export const SupportChat = () => {
+export const SupportButton = () => {
   const currentUser = useRecoilValue(currentUserState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const supportChat = useRecoilValue(supportChatState);
@@ -102,7 +102,7 @@ export const SupportChat = () => {
   ]);
 
   if (loading) {
-    return <SupportChatSkeletonLoader />;
+    return <SupportButtonSkeletonLoader />;
   }
 
   return isFrontChatLoaded ? (

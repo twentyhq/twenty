@@ -1,7 +1,7 @@
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme } from '@emotion/react';
 
-export const SupportChatSkeletonLoader = () => {
+export const SupportButtonSkeletonLoader = () => {
   const theme = useTheme();
   return (
     <SkeletonTheme
