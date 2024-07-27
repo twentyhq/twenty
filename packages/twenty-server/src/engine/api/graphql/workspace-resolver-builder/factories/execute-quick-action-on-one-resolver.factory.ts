@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  Resolver,
-  FindOneResolverArgs,
-  ExecuteQuickActionOnOneResolverArgs,
-  DeleteOneResolverArgs,
-} from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
-import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
-import { WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
+import { WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
+import {
+  DeleteOneResolverArgs,
+  ExecuteQuickActionOnOneResolverArgs,
+  FindOneResolverArgs,
+  Resolver,
+} from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
+import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 import { QuickActionsService } from 'src/engine/core-modules/quick-actions/quick-actions.service';
 
@@ -30,15 +31,19 @@ export class ExecuteQuickActionOnOneResolverFactory
   ): Resolver<ExecuteQuickActionOnOneResolverArgs> {
     const internalContext = context;
 
-    return (_source, args, context, info) => {
-      return this.executeQuickActionOnOne(args, {
-        objectMetadataItem: internalContext.objectMetadataItem,
-        userId: internalContext.userId,
-        workspaceId: internalContext.workspaceId,
-        info,
-        fieldMetadataCollection: internalContext.fieldMetadataCollection,
-        objectMetadataCollection: internalContext.objectMetadataCollection,
-      });
+    return async (_source, args, context, info) => {
+      try {
+        return await this.executeQuickActionOnOne(args, {
+          objectMetadataItem: internalContext.objectMetadataItem,
+          userId: internalContext.userId,
+          workspaceId: internalContext.workspaceId,
+          info,
+          fieldMetadataCollection: internalContext.fieldMetadataCollection,
+          objectMetadataCollection: internalContext.objectMetadataCollection,
+        });
+      } catch (error) {
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+      }
     };
   }
 
