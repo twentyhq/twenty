@@ -28,11 +28,45 @@ export class WorkspaceDatasourceFactory {
     workspaceId: string,
     cacheVersion: string | null,
   ): Promise<WorkspaceDataSource> {
-    cacheVersion ??=
+    const desiredCacheVersion =
+      cacheVersion ??
+      (await this.workspaceCacheVersionService.getVersion(workspaceId));
+
+    if (!desiredCacheVersion) {
+      throw new Error('Cache version not found');
+    }
+
+    const latestCacheVersion =
       await this.workspaceCacheVersionService.getVersion(workspaceId);
 
-    if (!cacheVersion) {
-      throw new Error('Cache version not found');
+    if (latestCacheVersion !== desiredCacheVersion) {
+      throw new Error('Cache version mismatch');
+    }
+
+    let cachedObjectMetadataCollection =
+      await this.workspaceCacheStorageService.getObjectMetadataCollection(
+        workspaceId,
+      );
+
+    if (!cachedObjectMetadataCollection) {
+      const freshObjectMetadataCollection =
+        await this.objectMetadataRepository.find({
+          where: { workspaceId },
+          relations: [
+            'fields.object',
+            'fields',
+            'fields.fromRelationMetadata',
+            'fields.toRelationMetadata',
+            'fields.fromRelationMetadata.toObjectMetadata',
+          ],
+        });
+
+      await this.workspaceCacheStorageService.setObjectMetadataCollection(
+        workspaceId,
+        freshObjectMetadataCollection,
+      );
+
+      cachedObjectMetadataCollection = freshObjectMetadataCollection;
     }
 
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
@@ -47,38 +81,12 @@ export class WorkspaceDatasourceFactory {
           throw new Error('Data source metadata not found');
         }
 
-        const latestCacheVersion =
-          await this.workspaceCacheVersionService.getVersion(workspaceId);
-
-        if (latestCacheVersion !== cacheVersion) {
-          throw new Error('Cache version mismatch');
-        }
-
-        let objectMetadataCollection =
-          await this.workspaceCacheStorageService.getObjectMetadataCollection(
-            workspaceId,
-          );
-
-        if (!objectMetadataCollection) {
-          objectMetadataCollection = await this.objectMetadataRepository.find({
-            where: { workspaceId },
-            relations: [
-              'fields.object',
-              'fields',
-              'fields.fromRelationMetadata',
-              'fields.toRelationMetadata',
-              'fields.fromRelationMetadata.toObjectMetadata',
-            ],
-          });
-
-          await this.workspaceCacheStorageService.setObjectMetadataCollection(
-            workspaceId,
-            objectMetadataCollection,
-          );
+        if (!cachedObjectMetadataCollection) {
+          throw new Error('Object metadata collection not found');
         }
 
         const entities = await Promise.all(
-          objectMetadataCollection.map((objectMetadata) =>
+          cachedObjectMetadataCollection.map((objectMetadata) =>
             this.entitySchemaFactory.create(workspaceId, objectMetadata),
           ),
         );
