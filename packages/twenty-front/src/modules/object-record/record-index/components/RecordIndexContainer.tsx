@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
+import { InformationBanner } from '@/information-banner/InformationBanner';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
@@ -125,6 +126,7 @@ export const RecordIndexContainer = ({
 
   return (
     <StyledContainer>
+      <InformationBanner />
       <RecordFieldValueSelectorContextProvider>
         <SpreadsheetImportProvider>
           <StyledContainerWithPadding>

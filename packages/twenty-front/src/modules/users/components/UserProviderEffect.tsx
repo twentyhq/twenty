@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
