@@ -81,7 +81,10 @@ export class UserResolver {
       workspaceId: workspace?.id ?? user.defaultWorkspaceId,
     });
 
-    const userVarAllowList = ['SYNC_EMAIL_ONBOARDING_STEP'];
+    const userVarAllowList = [
+      'SYNC_EMAIL_ONBOARDING_STEP',
+      'ACCOUNTS_TO_RECONNECT',
+    ];
 
     const filteredMap = new Map(
       [...userVars].filter(([key]) => userVarAllowList.includes(key)),

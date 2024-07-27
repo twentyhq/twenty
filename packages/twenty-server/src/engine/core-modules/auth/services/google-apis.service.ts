@@ -133,6 +133,14 @@ export class GoogleAPIsService {
             manager,
           );
         }
+      } else {
+        await this.connectedAccountRepository.updateAccessTokenAndRefreshToken(
+          input.accessToken,
+          input.refreshToken,
+          newOrExistingConnectedAccountId,
+          workspaceId,
+          manager,
+        );
 
         const workspaceMemberRepository =
           await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
@@ -149,14 +157,6 @@ export class GoogleAPIsService {
           userId,
           workspaceId,
           newOrExistingConnectedAccountId,
-        );
-      } else {
-        await this.connectedAccountRepository.updateAccessTokenAndRefreshToken(
-          input.accessToken,
-          input.refreshToken,
-          newOrExistingConnectedAccountId,
-          workspaceId,
-          manager,
         );
 
         await this.messageChannelRepository.resetSync(
