@@ -101,7 +101,6 @@ export const Releases = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Releases">
-      
       <SettingsPageContainer>
         <StyledH1Title title="Releases" />
         <ScrollWrapper>

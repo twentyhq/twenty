@@ -34,7 +34,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
     <>
       {webhookData?.targetUrl && (
         <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-          
           <SettingsPageContainer>
             <SettingsHeaderContainer>
               <Breadcrumb

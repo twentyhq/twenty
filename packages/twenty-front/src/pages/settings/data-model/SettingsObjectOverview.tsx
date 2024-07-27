@@ -7,7 +7,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 export const SettingsObjectOverview = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      
       <ReactFlowProvider>
         <SettingsDataModelOverview />
       </ReactFlowProvider>

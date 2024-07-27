@@ -38,7 +38,6 @@ export const SettingsAccounts = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      
       <SettingsPageContainer>
         <Breadcrumb links={[{ children: 'Accounts' }]} />
 

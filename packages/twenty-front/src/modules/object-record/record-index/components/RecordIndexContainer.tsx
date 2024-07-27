@@ -170,7 +170,6 @@ export const RecordIndexContainer = ({
             />
           </StyledContainerWithPadding>
         </SpreadsheetImportProvider>
-
         <RecordIndexEventContext.Provider
           value={{
             onIndexIdentifierClick: handleIndexIdentifierClick,

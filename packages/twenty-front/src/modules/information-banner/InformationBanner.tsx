@@ -11,14 +11,14 @@ export const InformationBanner = () => {
 
   const userVars = currentUser?.userVars;
 
-  const accountIdToReconnect =
+  const firstAccountIdToReconnect =
     userVars?.[InformationBannerKeys.ACCOUNTS_TO_RECONNECT]?.[0];
 
   return (
     <>
-      {accountIdToReconnect && (
+      {firstAccountIdToReconnect && (
         <InformationBannerAccountToReconnect
-          accountIdToReconnect={accountIdToReconnect}
+          accountIdToReconnect={firstAccountIdToReconnect}
         />
       )}
     </>

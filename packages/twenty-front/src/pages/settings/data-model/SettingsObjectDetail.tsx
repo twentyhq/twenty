@@ -95,7 +95,6 @@ export const SettingsObjectDetail = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      
       <SettingsPageContainer>
         <Breadcrumb
           links={[

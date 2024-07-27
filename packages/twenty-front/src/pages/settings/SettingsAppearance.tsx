@@ -16,7 +16,6 @@ export const SettingsAppearance = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      
       <SettingsPageContainer>
         <StyledH1Title title="Appearance" />
         <Section>

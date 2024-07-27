@@ -129,7 +129,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
     <>
       {apiKeyData?.name && (
         <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-          
           <SettingsPageContainer>
             <SettingsHeaderContainer>
               <Breadcrumb

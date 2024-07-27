@@ -43,7 +43,6 @@ export const SettingsIntegrationDatabase = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      
       <SettingsPageContainer>
         <Breadcrumb
           links={[

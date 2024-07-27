@@ -8,7 +8,6 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsAccountsEmails = () => (
   <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-    
     <SettingsPageContainer>
       <Breadcrumb
         links={[

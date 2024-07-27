@@ -63,7 +63,6 @@ export const SettingsDevelopersApiKeysNew = () => {
   const canSave = !!formValues.name && createOneApiKey;
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb

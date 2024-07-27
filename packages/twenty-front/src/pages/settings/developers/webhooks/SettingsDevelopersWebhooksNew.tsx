@@ -45,7 +45,6 @@ export const SettingsDevelopersWebhooksNew = () => {
   const canSave = !!formValues.targetUrl && createOneWebhook;
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb

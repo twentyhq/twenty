@@ -146,7 +146,6 @@ export const SettingsBilling = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconCurrencyDollar} title="Billing">
-      
       <SettingsPageContainer>
         <StyledH1Title title="Billing" />
         <SettingsBillingCoverImage />

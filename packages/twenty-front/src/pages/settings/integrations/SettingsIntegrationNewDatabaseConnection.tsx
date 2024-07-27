@@ -133,7 +133,6 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      
       <SettingsPageContainer>
         <FormProvider
           // eslint-disable-next-line react/jsx-props-no-spreading

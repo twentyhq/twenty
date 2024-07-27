@@ -106,7 +106,6 @@ export const SettingsObjectEdit = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        
         <SettingsPageContainer>
           <SettingsHeaderContainer>
             <Breadcrumb

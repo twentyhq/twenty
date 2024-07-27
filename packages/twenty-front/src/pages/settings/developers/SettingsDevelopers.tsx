@@ -20,7 +20,6 @@ const StyledButtonContainer = styled.div`
 export const SettingsDevelopers = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb links={[{ children: 'Developers' }]} />
