@@ -19,10 +19,8 @@ export const SettingsDevelopersWebhooksNew = () => {
   const [formValues, setFormValues] = useState<{
     targetUrl: string;
     operation: string;
-    description: string;
   }>({
     targetUrl: '',
-    description: '',
     operation: '*.*',
   });
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -80,26 +78,6 @@ export const SettingsDevelopersWebhooksNew = () => {
               setFormValues((prevState) => ({
                 ...prevState,
                 targetUrl: value,
-              }));
-            }}
-            error={errorMessage}
-            fullWidth
-          />
-        </Section>
-        <Section>
-          <H2Title title="Description" description="An optional description" />
-          <TextInput
-            placeholder="Description"
-            value={formValues.description}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSave();
-              }
-            }}
-            onChange={(value) => {
-              setFormValues((prevState) => ({
-                ...prevState,
-                description: value,
               }));
             }}
             error={errorMessage}

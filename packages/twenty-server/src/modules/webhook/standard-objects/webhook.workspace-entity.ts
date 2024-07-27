@@ -41,8 +41,8 @@ export class WebhookWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WEBHOOK_STANDARD_FIELD_IDS.description,
     type: FieldMetadataType.TEXT,
     label: 'Description',
-    description: 'Webhook description',
+    description: undefined,
     icon: 'IconInfo',
   })
-  description: string;
+  description?: string;
 }
