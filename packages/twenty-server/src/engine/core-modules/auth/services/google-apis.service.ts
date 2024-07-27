@@ -132,26 +132,24 @@ export class GoogleAPIsService {
             {},
             manager,
           );
-
-          const workspaceMemberRepository =
-            await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              'workspaceMember',
-            );
-
-          const workspaceMember = await workspaceMemberRepository.findOneOrFail(
-            {
-              where: { id: workspaceMemberId },
-            },
-          );
-
-          const userId = workspaceMember.userId;
-
-          await this.accountsToReconnectService.removeAccountToReconnect(
-            userId,
-            workspaceId,
-            newOrExistingConnectedAccountId,
-          );
         }
+
+        const workspaceMemberRepository =
+          await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+          );
+
+        const workspaceMember = await workspaceMemberRepository.findOneOrFail({
+          where: { id: workspaceMemberId },
+        });
+
+        const userId = workspaceMember.userId;
+
+        await this.accountsToReconnectService.removeAccountToReconnect(
+          userId,
+          workspaceId,
+          newOrExistingConnectedAccountId,
+        );
       } else {
         await this.connectedAccountRepository.updateAccessTokenAndRefreshToken(
           input.accessToken,
