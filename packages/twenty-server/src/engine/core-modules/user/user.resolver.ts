@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { GraphQLJSONObject } from 'graphql-type-json';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
@@ -70,20 +71,23 @@ export class UserResolver {
     return user;
   }
 
-  @ResolveField(() => Array<Record<string, any>>)
+  @ResolveField(() => GraphQLJSONObject)
   async userVars(
     @Parent() user: User,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ): Promise<Array<Record<string, any>>> {
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Record<string, any>> {
     const userVars = await this.userVarService.getAll({
       userId: user.id,
-      workspaceId: workspaceId,
+      workspaceId: workspace?.id ?? user.defaultWorkspaceId,
     });
 
-    return Object.entries(userVars).map(([key, value]) => ({
-      key,
-      value,
-    }));
+    const userVarAllowList = ['SYNC_EMAIL_ONBOARDING_STEP'];
+
+    const filteredMap = new Map(
+      [...userVars].filter(([key]) => userVarAllowList.includes(key)),
+    );
+
+    return Object.fromEntries(filteredMap);
   }
 
   @ResolveField(() => WorkspaceMember, {

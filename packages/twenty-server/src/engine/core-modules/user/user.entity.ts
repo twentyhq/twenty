@@ -1,7 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { GraphQLJSONObject } from 'graphql-type-json';
 import {
   Column,
   CreateDateColumn,
@@ -106,7 +105,4 @@ export class User {
 
   @Field(() => OnboardingStatus, { nullable: true })
   onboardingStatus: OnboardingStatus;
-
-  @Field(() => GraphQLJSONObject, { nullable: true })
-  userVars: Record<string, any>;
 }

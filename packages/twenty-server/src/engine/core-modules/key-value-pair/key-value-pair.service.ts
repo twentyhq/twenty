@@ -26,7 +26,7 @@ export class KeyValuePairService<
     type: KeyValuePairType;
     key?: Extract<K, string>;
   }): Promise<Array<KeyValueTypesMap[K]>> {
-    return (await this.keyValuePairRepository.find({
+    const keyValuePairs = (await this.keyValuePairRepository.find({
       where: {
         ...(userId === undefined
           ? {}
@@ -42,6 +42,11 @@ export class KeyValuePairService<
         type,
       },
     })) as Array<KeyValueTypesMap[K]>;
+
+    return keyValuePairs.map((keyValuePair) => ({
+      ...keyValuePair,
+      value: keyValuePair.value ?? keyValuePair.textValueDeprecated,
+    }));
   }
 
   async set<K extends keyof KeyValueTypesMap>({
@@ -66,7 +71,9 @@ export class KeyValuePairService<
     };
 
     const conflictPaths = Object.keys(upsertData).filter(
-      (key) => key !== 'value' && upsertData[key] !== undefined,
+      (key) =>
+        ['userId', 'workspaceId', 'key'].includes(key) &&
+        upsertData[key] !== undefined,
     );
 
     const indexPredicate = !userId

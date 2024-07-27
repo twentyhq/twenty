@@ -42,9 +42,9 @@ export class UserVarsService<
       throw new Error(`Multiple values found for key ${key} at user level`);
     }
 
-    return mergeUserVars([...userVarUserLevel, ...userVarWorkspaceLevel])[
-      key as string
-    ];
+    return mergeUserVars([...userVarUserLevel, ...userVarWorkspaceLevel]).get(
+      key,
+    ) as KeyValueTypesMap[K];
   }
 
   public async getAll({

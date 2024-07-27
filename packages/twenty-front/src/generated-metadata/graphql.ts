@@ -20,6 +20,8 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: { input: any; output: any; }
+  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSONObject: { input: any; output: any; }
   /** A UUID scalar type */
   UUID: { input: any; output: any; }
   /** The `Upload` scalar type represents a file upload. */
@@ -379,6 +381,13 @@ export type LinkMetadata = {
   __typename?: 'LinkMetadata';
   label: Scalars['String']['output'];
   url: Scalars['String']['output'];
+};
+
+export type LinksMetadata = {
+  __typename?: 'LinksMetadata';
+  primaryLinkLabel: Scalars['String']['output'];
+  primaryLinkUrl: Scalars['String']['output'];
+  secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
 export type LoginToken = {
@@ -1025,7 +1034,7 @@ export type Telemetry = {
 
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
-  conferenceLink: LinkMetadata;
+  conferenceLink: LinksMetadata;
   conferenceSolution: Scalars['String']['output'];
   description: Scalars['String']['output'];
   endsAt: Scalars['DateTime']['output'];
@@ -1186,12 +1195,9 @@ export type User = {
   lastName: Scalars['String']['output'];
   onboardingStatus?: Maybe<OnboardingStatus>;
   passwordHash?: Maybe<Scalars['String']['output']>;
-  /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
-  passwordResetToken?: Maybe<Scalars['String']['output']>;
-  /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
-  passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']['output']>;
   supportUserHash?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
+  userVars: Scalars['JSONObject']['output'];
   workspaceMember?: Maybe<WorkspaceMember>;
   workspaces: Array<UserWorkspace>;
 };
@@ -1412,6 +1418,7 @@ export type ServerlessFunction = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['UUID']['output'];
   name: Scalars['String']['output'];
+  sourceCodeHash: Scalars['String']['output'];
   syncStatus: ServerlessFunctionSyncStatus;
   updatedAt: Scalars['DateTime']['output'];
 };
