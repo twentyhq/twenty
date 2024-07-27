@@ -58,7 +58,7 @@ export const computePgGraphQLError = (
   const errorMessage = error?.message;
 
   const mappedErrorKey = Object.keys(pgGraphQLErrorMapping).find(
-    (key) => errorMessage?.contains(key),
+    (key) => errorMessage?.includes(key),
   );
 
   const mappedError = mappedErrorKey
