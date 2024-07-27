@@ -3,10 +3,9 @@ import { Injectable } from '@nestjs/common';
 
 import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -26,7 +25,7 @@ enum OnboardingStepKeys {
   INVITE_TEAM_ONBOARDING_STEP = 'INVITE_TEAM_ONBOARDING_STEP',
 }
 
-export type OnboardingKeyValueType = {
+type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStepValues;
   [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepValues;
 };
@@ -38,7 +37,7 @@ export class OnboardingService {
     private readonly billingWorkspaceService: BillingWorkspaceService,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly keyValuePairService: KeyValuePairService<OnboardingKeyValueType>,
+    private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
@@ -87,7 +86,7 @@ export class OnboardingService {
   }
 
   private async isSyncEmailOnboardingStatus(user: User) {
-    const syncEmailValue = await this.keyValuePairService.get({
+    const syncEmailValue = await this.userVarsService.get({
       userId: user.id,
       workspaceId: user.defaultWorkspaceId,
       key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
@@ -103,7 +102,7 @@ export class OnboardingService {
   }
 
   private async isInviteTeamOnboardingStatus(workspace: Workspace) {
-    const inviteTeamValue = await this.keyValuePairService.get({
+    const inviteTeamValue = await this.userVarsService.get({
       workspaceId: workspace.id,
       key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
     });
@@ -144,21 +143,19 @@ export class OnboardingService {
   }
 
   async skipInviteTeamOnboardingStep(workspaceId: string) {
-    await this.keyValuePairService.set({
+    await this.userVarsService.set({
       workspaceId,
       key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
       value: OnboardingStepValues.SKIPPED,
-      type: KeyValuePairType.USER_VAR,
     });
   }
 
   async skipSyncEmailOnboardingStep(userId: string, workspaceId: string) {
-    await this.keyValuePairService.set({
+    await this.userVarsService.set({
       userId,
       workspaceId,
       key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
       value: OnboardingStepValues.SKIPPED,
-      type: KeyValuePairType.USER_VAR,
     });
   }
 }

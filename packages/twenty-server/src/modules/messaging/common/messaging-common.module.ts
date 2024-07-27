@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
@@ -21,7 +21,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
       MessageThreadWorkspaceEntity,
     ]),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
-    UserModule,
+    UserVarsModule,
   ],
   providers: [MessagingChannelSyncStatusService],
   exports: [MessagingChannelSyncStatusService],

@@ -7,7 +7,7 @@ export class MigrateKeyValueTypeToJsonb1721656106498
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."keyValuePair" DROP COLUMN "value"`,
+      `ALTER TABLE "core"."keyValuePair" RENAME COLUMN "value" TO "textValueDeprecated"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."keyValuePair" ADD "value" jsonb`,
@@ -19,7 +19,7 @@ export class MigrateKeyValueTypeToJsonb1721656106498
       `ALTER TABLE "core"."keyValuePair" DROP COLUMN "value"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."keyValuePair" ADD "value" text`,
+      `ALTER TABLE "core"."keyValuePair" RENAME COLUMN "textValueDeprecated" TO "value"`,
     );
   }
 }

@@ -15,20 +15,14 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { OnboardingKeyValueType } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ConnectedAccountKeyValueType } from 'src/modules/connected-account/types/connected-account-key-value.type';
 
 export enum KeyValuePairType {
   USER_VAR = 'USER_VAR',
   FEATURE_FLAG = 'FEATURE_FLAG',
   SYSTEM_VAR = 'SYSTEM_VAR',
 }
-
-export type UserVarKeyValueType =
-  | ConnectedAccountKeyValueType
-  | OnboardingKeyValueType;
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
 @ObjectType('KeyValuePair')
@@ -71,6 +65,10 @@ export class KeyValuePair {
   @Field(() => JSON, { nullable: true })
   @Column('jsonb', { nullable: true })
   value: JSON;
+
+  @Field(() => String)
+  @Column({ nullable: false, type: 'text' })
+  textValueDeprecated: string;
 
   @Field(() => KeyValuePairType)
   @Column({

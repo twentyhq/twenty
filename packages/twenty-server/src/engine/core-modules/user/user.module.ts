@@ -9,9 +9,8 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
-import { UserVarService } from 'src/engine/core-modules/user/services/user-var.service';
+import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -35,9 +34,9 @@ import { UserService } from './services/user.service';
     WorkspaceModule,
     OnboardingModule,
     TypeOrmModule.forFeature([KeyValuePair], 'core'),
-    KeyValuePairModule,
+    UserVarsModule,
   ],
-  exports: [UserService, UserVarService],
-  providers: [UserService, UserVarService, UserResolver, TypeORMService],
+  exports: [UserService],
+  providers: [UserService, UserResolver, TypeORMService],
 })
 export class UserModule {}

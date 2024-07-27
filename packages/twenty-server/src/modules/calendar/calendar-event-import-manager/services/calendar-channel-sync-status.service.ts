@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserVarService } from 'src/engine/core-modules/user/services/user-var.service';
+import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
@@ -11,8 +11,8 @@ import {
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import {
-  ConnectedAccountKeys,
   ConnectedAccountKeyValueType,
+  ConnectedAccountKeys,
 } from 'src/modules/connected-account/types/connected-account-key-value.type';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class CalendarChannelSyncStatusService {
     private readonly twentyORMManager: TwentyORMManager,
     @InjectCacheStorage(CacheStorageNamespace.Calendar)
     private readonly cacheStorage: CacheStorageService,
-    private readonly userVarService: UserVarService<ConnectedAccountKeyValueType>,
+    private readonly userVarsService: UserVarsService<ConnectedAccountKeyValueType>,
   ) {}
 
   public async scheduleFullCalendarEventListFetch(calendarChannelId: string) {
@@ -195,7 +195,7 @@ export class CalendarChannelSyncStatusService {
     const connectedAccountId = calendarChannel.connectedAccount.id;
 
     const accountsToReconnect =
-      (await this.userVarService.get({
+      (await this.userVarsService.get({
         userId,
         workspaceId,
         key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
@@ -207,7 +207,7 @@ export class CalendarChannelSyncStatusService {
 
     accountsToReconnect.push(connectedAccountId);
 
-    await this.userVarService.set({
+    await this.userVarsService.set({
       userId,
       workspaceId,
       key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,

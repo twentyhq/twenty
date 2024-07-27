@@ -1,25 +1,27 @@
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
-export const mergeUserVars = (
+export const mergeUserVars = <T>(
   userVars: Pick<KeyValuePair, 'key' | 'value' | 'userId' | 'workspaceId'>[],
-): Map<string, JSON> => {
-  const workspaceUserVarMap = new Map<string, any>();
-  const userUserVarMap = new Map<string, any>();
-  const userWorkspaceUserVarMap = new Map<string, any>();
+): Map<T, JSON> => {
+  const workspaceUserVarMap = new Map<T, JSON>();
+  const userUserVarMap = new Map<T, JSON>();
+  const userWorkspaceUserVarMap = new Map<T, JSON>();
 
   for (const { key, value, userId, workspaceId } of userVars) {
     if (!userId && workspaceId) {
-      workspaceUserVarMap.set(key, value);
+      workspaceUserVarMap.set(key as T, value);
     }
+
     if (userId && !workspaceId) {
-      userUserVarMap.set(key, value);
+      userUserVarMap.set(key as T, value);
     }
+
     if (userId && workspaceId) {
-      userWorkspaceUserVarMap.set(key, value);
+      userWorkspaceUserVarMap.set(key as T, value);
     }
   }
 
-  const mergedUserVars = new Map<string, any>([
+  const mergedUserVars = new Map<T, JSON>([
     ...workspaceUserVarMap,
     ...userUserVarMap,
     ...userWorkspaceUserVarMap,

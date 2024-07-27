@@ -18,12 +18,11 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 import { SupportDriver } from 'src/engine/integrations/environment/interfaces/support.interface';
 
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { UserVarKeyValueType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { UserVarService } from 'src/engine/core-modules/user/services/user-var.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -54,14 +53,11 @@ export class UserResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
     private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
-    private readonly userVarService: UserVarService<UserVarKeyValueType>,
+    private readonly userVarService: UserVarsService,
   ) {}
 
   @Query(() => User)
-  async currentUser(
-    @AuthUser() { id: userId }: User,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ): Promise<User> {
+  async currentUser(@AuthUser() { id: userId }: User): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -71,12 +67,23 @@ export class UserResolver {
 
     assert(user, 'User not found');
 
-    const userVars = await this.userVarService.getUserVars(userId, workspaceId);
+    return user;
+  }
 
-    return {
-      ...user,
-      userVars: Object.fromEntries(userVars),
-    };
+  @ResolveField(() => Array<Record<string, any>>)
+  async userVars(
+    @Parent() user: User,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ): Promise<Array<Record<string, any>>> {
+    const userVars = await this.userVarService.getAll({
+      userId: user.id,
+      workspaceId: workspaceId,
+    });
+
+    return Object.entries(userVars).map(([key, value]) => ({
+      key,
+      value,
+    }));
   }
 
   @ResolveField(() => WorkspaceMember, {

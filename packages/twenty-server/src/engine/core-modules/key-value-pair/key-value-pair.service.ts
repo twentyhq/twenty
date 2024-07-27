@@ -1,60 +1,67 @@
-import { BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 import {
   KeyValuePair,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
-export class KeyValuePairService<TYPE> {
+export class KeyValuePairService<
+  KeyValueTypesMap extends Record<string, any> = Record<string, any>,
+> {
   constructor(
     @InjectRepository(KeyValuePair, 'core')
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
   ) {}
 
-  async get<K extends keyof TYPE>({
+  async get<K extends keyof KeyValueTypesMap>({
     userId,
     workspaceId,
+    type,
     key,
   }: {
-    userId?: string;
-    workspaceId?: string;
-    key: K;
-  }): Promise<TYPE[K] | undefined> {
-    return (
-      await this.keyValuePairRepository.findOne({
-        where: {
-          userId,
-          workspaceId,
-          key: key as string,
-        },
-      })
-    )?.value as TYPE[K] | undefined;
+    userId?: string | null;
+    workspaceId?: string | null;
+    type: KeyValuePairType;
+    key?: Extract<K, string>;
+  }): Promise<Array<KeyValueTypesMap[K]>> {
+    return (await this.keyValuePairRepository.find({
+      where: {
+        ...(userId === undefined
+          ? {}
+          : userId === null
+            ? { userId: IsNull() }
+            : { userId }),
+        ...(workspaceId === undefined
+          ? {}
+          : workspaceId === null
+            ? { workspaceId: IsNull() }
+            : { workspaceId }),
+        ...(key === undefined ? {} : { key }),
+        type,
+      },
+    })) as Array<KeyValueTypesMap[K]>;
   }
 
-  async set<K extends keyof TYPE>({
+  async set<K extends keyof KeyValueTypesMap>({
     userId,
     workspaceId,
     key,
     value,
     type,
   }: {
-    userId?: string;
-    workspaceId?: string;
-    key: K;
-    value: TYPE[K];
+    userId?: string | null;
+    workspaceId?: string | null;
+    key: Extract<K, string>;
+    value: KeyValueTypesMap[K];
     type: KeyValuePairType;
   }) {
-    if (!userId && !workspaceId) {
-      throw new BadRequestException('userId and workspaceId are undefined');
-    }
     const upsertData = {
       userId,
       workspaceId,
-      key: key as string,
-      value: value as JSON,
+      key,
+      value,
       type,
     };
 
@@ -74,19 +81,30 @@ export class KeyValuePairService<TYPE> {
     });
   }
 
-  async delete<K extends keyof TYPE>({
+  async delete({
     userId,
     workspaceId,
+    type,
     key,
   }: {
-    userId?: string;
-    workspaceId?: string;
-    key: K;
+    userId?: string | null;
+    workspaceId?: string | null;
+    type: KeyValuePairType;
+    key: Extract<keyof KeyValueTypesMap, string>;
   }) {
     await this.keyValuePairRepository.delete({
-      userId,
-      workspaceId,
-      key: key as string,
+      ...(userId === undefined
+        ? {}
+        : userId === null
+          ? { userId: IsNull() }
+          : { userId }),
+      ...(workspaceId === undefined
+        ? {}
+        : workspaceId === null
+          ? { workspaceId: IsNull() }
+          : { workspaceId }),
+      type,
+      key,
     });
   }
 }
