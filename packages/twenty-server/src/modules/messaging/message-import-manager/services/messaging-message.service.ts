@@ -9,11 +9,11 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageThreadRepository } from 'src/modules/messaging/common/repositories/message-thread.repository';
 import { MessageRepository } from 'src/modules/messaging/common/repositories/message.repository';
-import { MessagingMessageThreadService } from 'src/modules/messaging/common/services/messaging-message-thread.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
+import { MessagingMessageThreadService } from 'src/modules/messaging/message-import-manager/services/messaging-message-thread.service';
 
 @Injectable()
 export class MessagingMessageService {

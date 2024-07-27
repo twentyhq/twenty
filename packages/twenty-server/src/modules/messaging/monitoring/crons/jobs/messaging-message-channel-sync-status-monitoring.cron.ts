@@ -1,19 +1,19 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository, In } from 'typeorm';
 import snakeCase from 'lodash.snakecase';
+import { In, Repository } from 'typeorm';
 
+import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageChannelSyncStatusMonitoringCronJob {

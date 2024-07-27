@@ -1,8 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator, IconRefresh } from 'twenty-ui';
 
-import { Button } from '@/ui/input/button/components/Button';
-
+import { ComponentDecorator } from '@ui/testing';
 import { Banner } from '../Banner';
 
 const meta: Meta<typeof Banner> = {
@@ -13,13 +11,6 @@ const meta: Meta<typeof Banner> = {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <Banner {...args}>
       Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
-      <Button
-        variant="secondary"
-        title="Reconnect"
-        Icon={IconRefresh}
-        size="small"
-        inverted
-      />
     </Banner>
   ),
   argTypes: {

@@ -4,8 +4,8 @@ import { CalendarChannelVisibility } from '~/generated/graphql';
 // TODO: use backend CalendarEvent type when ready
 export type CalendarEvent = {
   conferenceLink?: {
-    label: string;
-    url: string;
+    primaryLinkLabel: string;
+    primaryLinkUrl: string;
   };
   description?: string;
   endsAt?: string;
