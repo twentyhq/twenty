@@ -1,30 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   CreateCompanyAndContactJob,
   CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
-import { MessagingMessageService } from 'src/modules/messaging/common/services/messaging-message.service';
 import {
   MessageChannelContactAutoCreationPolicy,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import {
   GmailMessage,
   Participant,
   ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
+import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { isGroupEmail } from 'src/utils/is-group-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
@@ -32,14 +28,11 @@ import { isWorkEmail } from 'src/utils/is-work-email';
 @Injectable()
 export class MessagingSaveMessagesAndEnqueueContactCreationService {
   constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   async saveMessagesAndEnqueueContactCreationJob(
@@ -48,14 +41,9 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
-
     const handleAliases = connectedAccount.handleAliases?.split(',') || [];
 
-    let savedMessageParticipants: MessageParticipantWorkspaceEntity[] = [];
+    const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
     const participantsWithMessageId = await workspaceDataSource?.transaction(
       async (transactionManager: EntityManager) => {
@@ -114,22 +102,14 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             : [];
         });
 
-        savedMessageParticipants =
-          await this.messageParticipantService.saveMessageParticipants(
-            participantsWithMessageId,
-            workspaceId,
-            transactionManager,
-          );
+        await this.messageParticipantService.saveMessageParticipants(
+          participantsWithMessageId,
+          transactionManager,
+        );
 
         return participantsWithMessageId;
       },
     );
-
-    this.eventEmitter.emit(`messageParticipant.matched`, {
-      workspaceId,
-      workspaceMemberId: connectedAccount.accountOwnerId,
-      messageParticipants: savedMessageParticipants,
-    });
 
     if (messageChannel.isContactAutoCreationEnabled) {
       const contactsToCreate = participantsWithMessageId.filter(
