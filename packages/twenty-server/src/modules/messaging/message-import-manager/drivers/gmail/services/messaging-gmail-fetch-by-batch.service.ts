@@ -8,7 +8,7 @@ import { BatchQueries } from 'src/modules/messaging/message-import-manager/types
 import { createQueriesFromMessageIds } from 'src/modules/messaging/message-import-manager/utils/create-queries-from-message-ids.util';
 
 @Injectable()
-export class MessagingFetchByBatchesService {
+export class MessagingGmailFetchByBatchesService {
   constructor(private readonly httpService: HttpService) {}
 
   async fetchAllByBatches(

@@ -94,10 +94,6 @@ export const RecordIndexContainer = ({
 
         setTableColumns(newFieldDefinitions);
 
-        const newRecordIndexFieldDefinitions = newFieldDefinitions.filter(
-          (boardField) => !boardField.isLabelIdentifier,
-        );
-
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
           .getValue();
@@ -105,10 +101,10 @@ export const RecordIndexContainer = ({
         if (
           !isDeeplyEqual(
             existingRecordIndexFieldDefinitions,
-            newRecordIndexFieldDefinitions,
+            newFieldDefinitions,
           )
         ) {
-          set(recordIndexFieldDefinitionsState, newRecordIndexFieldDefinitions);
+          set(recordIndexFieldDefinitionsState, newFieldDefinitions);
         }
       },
     [columnDefinitions, setTableColumns],

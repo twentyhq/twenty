@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
-import { gmail_v1 } from 'googleapis';
 import { GaxiosResponse } from 'gaxios';
+import { gmail_v1 } from 'googleapis';
+import { EntityManager } from 'typeorm';
 
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
@@ -11,22 +11,22 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
+import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
+import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
+import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter';
 import {
   GmailError,
   MessagingErrorHandlingService,
-} from 'src/modules/messaging/common/services/messaging-error-handling.service';
-import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
-import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
-import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
-import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
+} from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
 
 @Injectable()
-export class MessagingGmailFullMessageListFetchService {
+export class MessagingFullMessageListFetchService {
   private readonly logger = new Logger(
-    MessagingGmailFullMessageListFetchService.name,
+    MessagingFullMessageListFetchService.name,
   );
 
   constructor(
@@ -56,12 +56,11 @@ export class MessagingGmailFullMessageListFetchService {
     const gmailClient: gmail_v1.Gmail =
       await this.gmailClientProvider.getGmailClient(connectedAccount);
 
-    const { error: gmailError } =
-      await this.fetchAllMessageIdsFromGmailAndStoreInCache(
-        gmailClient,
-        messageChannel.id,
-        workspaceId,
-      );
+    const { error: gmailError } = await this.fetchAllMessageIdsAndStoreInCache(
+      gmailClient,
+      messageChannel.id,
+      workspaceId,
+    );
 
     if (gmailError) {
       await this.gmailErrorHandlingService.handleGmailError(
@@ -90,7 +89,7 @@ export class MessagingGmailFullMessageListFetchService {
     );
   }
 
-  private async fetchAllMessageIdsFromGmailAndStoreInCache(
+  private async fetchAllMessageIdsAndStoreInCache(
     gmailClient: gmail_v1.Gmail,
     messageChannelId: string,
     workspaceId: string,
