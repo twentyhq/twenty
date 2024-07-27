@@ -1,4 +1,4 @@
-import { mergeUserVars } from 'src/engine/core-modules/user/utils/merge-user-vars.util';
+import { mergeUserVars } from 'src/engine/core-modules/user/user-vars/utils/merge-user-vars.util';
 
 describe('mergeUserVars', () => {
   it('should merge user vars correctly', () => {
