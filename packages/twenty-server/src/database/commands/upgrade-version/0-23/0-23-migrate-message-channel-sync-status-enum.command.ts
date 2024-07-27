@@ -12,19 +12,19 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
-import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
-interface UpdateMessageChannelSyncStageEnumCommandOptions {
+interface MigrateMessageChannelSyncStatusEnumCommandOptions {
   workspaceId?: string;
 }
 
 @Command({
-  name: 'migrate-0.22:update-message-channel-sync-stage-enum',
-  description: 'Update messageChannel syncStage',
+  name: 'migrate-0.23:update-message-channel-sync-status-enum',
+  description: 'Migrate messageChannel syncStatus enum',
 })
-export class UpdateMessageChannelSyncStageEnumCommand extends CommandRunner {
+export class MigrateMessageChannelSyncStatusEnumCommand extends CommandRunner {
   private readonly logger = new Logger(
-    UpdateMessageChannelSyncStageEnumCommand.name,
+    MigrateMessageChannelSyncStatusEnumCommand.name,
   );
   constructor(
     private readonly workspaceStatusService: WorkspaceStatusService,
@@ -50,7 +50,7 @@ export class UpdateMessageChannelSyncStageEnumCommand extends CommandRunner {
 
   async run(
     _passedParam: string[],
-    options: UpdateMessageChannelSyncStageEnumCommandOptions,
+    options: MigrateMessageChannelSyncStatusEnumCommandOptions,
   ): Promise<void> {
     let workspaceIds: string[] = [];
 
@@ -89,36 +89,39 @@ export class UpdateMessageChannelSyncStageEnumCommand extends CommandRunner {
 
             try {
               await queryRunner.query(
-                `ALTER TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStage_enum" RENAME TO "messageChannel_syncStage_enum_old"`,
+                `ALTER TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStatus_enum" RENAME TO "messageChannel_syncStatus_enum_old"`,
               );
               await queryRunner.query(
-                `CREATE TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStage_enum" AS ENUM (
-              'FULL_MESSAGE_LIST_FETCH_PENDING',
-              'PARTIAL_MESSAGE_LIST_FETCH_PENDING',
-              'MESSAGE_LIST_FETCH_ONGOING',
-              'MESSAGES_IMPORT_PENDING',
-              'MESSAGES_IMPORT_ONGOING',
-              'FAILED'
+                `CREATE TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStatus_enum" AS ENUM (
+                  'ONGOING',
+                  'NOT_SYNCED',
+                  'ACTIVE',
+                  'FAILED_INSUFFICIENT_PERMISSIONS',
+                  'FAILED_UNKNOWN'
             )`,
               );
 
               await queryRunner.query(
-                `ALTER TABLE "${dataSourceMetadata.schema}"."messageChannel" ALTER COLUMN "syncStage" DROP DEFAULT`,
+                `ALTER TABLE "${dataSourceMetadata.schema}"."messageChannel" ALTER COLUMN "syncStatus" DROP DEFAULT`,
               );
               await queryRunner.query(
-                `ALTER TABLE "${dataSourceMetadata.schema}"."messageChannel" ALTER COLUMN "syncStage" TYPE text`,
-              );
-
-              await queryRunner.query(
-                `ALTER TABLE "${dataSourceMetadata.schema}"."messageChannel" ALTER COLUMN "syncStage" TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStage_enum" USING "syncStage"::text::"${dataSourceMetadata.schema}"."messageChannel_syncStage_enum"`,
+                `ALTER TABLE "${dataSourceMetadata.schema}"."messageChannel" ALTER COLUMN "syncStatus" TYPE text`,
               );
 
               await queryRunner.query(
-                `ALTER TABLE "${dataSourceMetadata.schema}"."messageChannel" ALTER COLUMN "syncStage" SET DEFAULT 'FULL_MESSAGE_LIST_FETCH_PENDING'`,
+                `UPDATE "${dataSourceMetadata.schema}"."messageChannel" SET "syncStatus" = 'ACTIVE' WHERE "syncStatus" = 'COMPLETED'`,
               );
 
               await queryRunner.query(
-                `DROP TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStage_enum_old"`,
+                `ALTER TABLE "${dataSourceMetadata.schema}"."messageChannel" ALTER COLUMN "syncStatus" TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStatus_enum" USING "syncStatus"::text::"${dataSourceMetadata.schema}"."messageChannel_syncStatus_enum"`,
+              );
+
+              await queryRunner.query(
+                `ALTER TABLE "${dataSourceMetadata.schema}"."messageChannel" ALTER COLUMN "syncStatus" SET DEFAULT NULL`,
+              );
+
+              await queryRunner.query(
+                `DROP TYPE "${dataSourceMetadata.schema}"."messageChannel_syncStatus_enum_old"`,
               );
               await queryRunner.commitTransaction();
             } catch (error) {
@@ -148,19 +151,19 @@ export class UpdateMessageChannelSyncStageEnumCommand extends CommandRunner {
           continue;
         }
 
-        const syncStageFieldMetadata =
+        const syncStatusFieldMetadata =
           await this.fieldMetadataRepository.findOne({
             where: {
-              name: 'syncStage',
+              name: 'syncStatus',
               workspaceId,
               objectMetadataId: messageChannelObjectMetadata.id,
             },
           });
 
-        if (!syncStageFieldMetadata) {
+        if (!syncStatusFieldMetadata) {
           this.logger.log(
             chalk.yellow(
-              `Field metadata for syncStage not found in workspace ${workspaceId}`,
+              `Field metadata for syncStatus not found in workspace ${workspaceId}`,
             ),
           );
 
@@ -170,49 +173,42 @@ export class UpdateMessageChannelSyncStageEnumCommand extends CommandRunner {
         const newOptions = [
           {
             id: v4(),
-            value: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-            label: 'Full messages list fetch pending',
-            position: 0,
-            color: 'blue',
-          },
-          {
-            id: v4(),
-            value: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
-            label: 'Partial messages list fetch pending',
+            value: MessageChannelSyncStatus.ONGOING,
+            label: 'Ongoing',
             position: 1,
-            color: 'blue',
+            color: 'yellow',
           },
           {
             id: v4(),
-            value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
-            label: 'Messages list fetch ongoing',
+            value: MessageChannelSyncStatus.NOT_SYNCED,
+            label: 'Not Synced',
             position: 2,
-            color: 'orange',
-          },
-          {
-            id: v4(),
-            value: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
-            label: 'Messages import pending',
-            position: 3,
             color: 'blue',
           },
           {
             id: v4(),
-            value: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
-            label: 'Messages import ongoing',
-            position: 4,
-            color: 'orange',
+            value: MessageChannelSyncStatus.ACTIVE,
+            label: 'Active',
+            position: 3,
+            color: 'green',
           },
           {
             id: v4(),
-            value: MessageChannelSyncStage.FAILED,
-            label: 'Failed',
+            value: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+            label: 'Failed Insufficient Permissions',
+            position: 4,
+            color: 'red',
+          },
+          {
+            id: v4(),
+            value: MessageChannelSyncStatus.FAILED_UNKNOWN,
+            label: 'Failed Unknown',
             position: 5,
             color: 'red',
           },
         ];
 
-        await this.fieldMetadataRepository.update(syncStageFieldMetadata.id, {
+        await this.fieldMetadataRepository.update(syncStatusFieldMetadata.id, {
           options: newOptions,
         });
 

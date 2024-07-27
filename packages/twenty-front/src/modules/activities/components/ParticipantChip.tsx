@@ -40,6 +40,7 @@ const StyledChip = styled.div`
   height: 20px;
   box-sizing: border-box;
   white-space: nowrap;
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 type ParticipantChipVariant = 'default' | 'bold';
