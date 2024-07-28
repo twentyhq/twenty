@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Avatar, IconNotes, IconSparkles } from 'twenty-ui';
+import { Avatar, IconNotes, IconSparkles, IconX } from 'twenty-ui';
 
 import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
 import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
@@ -33,7 +33,7 @@ import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command, CommandType } from '../types/Command';
 
-import { ModalCloseButton } from '@/spreadsheet-import/components/ModalCloseButton';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 
@@ -52,25 +52,47 @@ export const StyledDialog = styled.div`
   z-index: 1000;
 `;
 
-export const StyledInput = styled.input`
-  background: ${({ theme }) => theme.background.secondary};
+export const StyledInputContainer = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 0;
-  color: ${({ theme }) => theme.font.color.primary};
+
+  display: flex;
   font-size: ${({ theme }) => theme.font.size.lg};
+  height: 56px;
+  margin: 0;
+  outline: none;
+  position: relative;
+
+  padding: 0 ${({ theme }) => theme.spacing(3)};
+`;
+
+export const StyledInput = styled.input`
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
   margin: 0;
   outline: none;
   height: 24px;
-  padding-top: ${({ theme }) => theme.spacing(4)};
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
-  padding-left: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(4)};
-  width: ${({ theme }) => `calc(100% - ${theme.spacing(10)})`};
+  padding: 0;
+  width: ${({ theme }) => `calc(100% - ${theme.spacing(8)})`};
 
   &::placeholder {
     color: ${({ theme }) => theme.font.color.light};
+    font-weight: ${({ theme }) => theme.font.weight.medium};
   }
+`;
+
+export const StyledCloseButtonContainer = styled.div`
+  align-items: center;
+  aspect-ratio: 1;
+  display: flex;
+  height: 32px;
+  justify-content: center;
 `;
 
 export const StyledList = styled.div`
@@ -276,13 +298,24 @@ export const CommandMenu = () => {
     <>
       {isCommandMenuOpened && (
         <StyledDialog ref={commandMenuRef}>
-          <StyledInput
-            autoFocus
-            value={commandMenuSearch}
-            placeholder="Search"
-            onChange={handleSearchChange}
-          />
-          {!isMobile && <ModalCloseButton onClose={closeCommandMenu} />}
+          <StyledInputContainer>
+            <StyledInput
+              autoFocus
+              value={commandMenuSearch}
+              placeholder="Search"
+              onChange={handleSearchChange}
+            />
+            {!isMobile && (
+              <StyledCloseButtonContainer>
+                <LightIconButton
+                  accent={'tertiary'}
+                  size={'medium'}
+                  Icon={IconX}
+                  onClick={closeCommandMenu}
+                />
+              </StyledCloseButtonContainer>
+            )}
+          </StyledInputContainer>
           <StyledList>
             <ScrollWrapper>
               <StyledInnerList>
