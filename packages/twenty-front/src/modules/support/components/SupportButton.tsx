@@ -18,6 +18,10 @@ const StyledButtonContainer = styled.div`
   display: flex;
 `;
 
+type SupportButtonProps = {
+  isClickAble?: boolean;
+};
+
 const insertScript = ({
   src,
   innerHTML,
@@ -34,7 +38,7 @@ const insertScript = ({
   document.body.appendChild(script);
 };
 
-export const SupportButton = () => {
+export const SupportButton = ({ isClickAble = true }: SupportButtonProps) => {
   const currentUser = useRecoilValue(currentUserState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const supportChat = useRecoilValue(supportChatState);
@@ -112,7 +116,7 @@ export const SupportButton = () => {
         size="small"
         title="Support"
         Icon={IconHelpCircle}
-        onClick={() => window.FrontChat?.('show')}
+        onClick={isClickAble ? () => window.FrontChat?.('show') : undefined}
       />
     </StyledButtonContainer>
   ) : null;
