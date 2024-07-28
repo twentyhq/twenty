@@ -37,7 +37,7 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 
-export const StyledDialog = styled.div`
+const StyledCommandMenu = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border-left: 1px solid ${({ theme }) => theme.border.color.medium};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
@@ -52,7 +52,7 @@ export const StyledDialog = styled.div`
   z-index: 1000;
 `;
 
-export const StyledInputContainer = styled.div`
+const StyledInputContainer = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: none;
@@ -69,7 +69,7 @@ export const StyledInputContainer = styled.div`
   padding: 0 ${({ theme }) => theme.spacing(3)};
 `;
 
-export const StyledInput = styled.input`
+const StyledInput = styled.input`
   border: none;
   border-radius: 0;
   background-color: transparent;
@@ -87,29 +87,28 @@ export const StyledInput = styled.input`
   }
 `;
 
-export const StyledCloseButtonContainer = styled.div`
+const StyledCloseButtonContainer = styled.div`
   align-items: center;
-  aspect-ratio: 1;
   display: flex;
   height: 32px;
   justify-content: center;
 `;
 
-export const StyledList = styled.div`
+const StyledList = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   overscroll-behavior: contain;
   transition: 100ms ease;
   transition-property: height;
 `;
 
-export const StyledInnerList = styled.div`
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
+const StyledInnerList = styled.div`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(1)};
-  width: calc(100% - ${({ theme }) => theme.spacing(2)});
+  width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
-export const StyledEmpty = styled.div`
+const StyledEmpty = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
@@ -297,7 +296,7 @@ export const CommandMenu = () => {
   return (
     <>
       {isCommandMenuOpened && (
-        <StyledDialog ref={commandMenuRef}>
+        <StyledCommandMenu ref={commandMenuRef}>
           <StyledInputContainer>
             <StyledInput
               autoFocus
@@ -455,7 +454,7 @@ export const CommandMenu = () => {
               </StyledInnerList>
             </ScrollWrapper>
           </StyledList>
-        </StyledDialog>
+        </StyledCommandMenu>
       )}
     </>
   );
