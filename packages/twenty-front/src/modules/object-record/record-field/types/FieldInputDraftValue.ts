@@ -51,6 +51,7 @@ export type FieldAddressDraftValue = {
   addressLng: number | null;
 };
 export type FieldJsonDraftValue = string;
+export type FieldFieldPathDraftValue = string[];
 
 export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
   ? FieldTextDraftValue

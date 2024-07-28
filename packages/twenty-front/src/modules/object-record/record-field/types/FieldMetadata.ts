@@ -159,7 +159,8 @@ export type FieldMetadata =
   | FieldMultiSelectMetadata
   | FieldTextMetadata
   | FieldUuidMetadata
-  | FieldAddressMetadata;
+  | FieldAddressMetadata
+  | FieldFieldPathMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
@@ -205,3 +206,5 @@ export type FieldRelationValue<
 
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
+
+export type FieldFieldPathValue = string[] | null;
