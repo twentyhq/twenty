@@ -33,6 +33,7 @@ export const FieldPathFieldInput = ({
     fieldValue,
     setFieldValue,
     hotkeyScope,
+    sourceObjectNameSingular,
   } = useFieldPathField();
 
   return (
@@ -43,6 +44,8 @@ export const FieldPathFieldInput = ({
         fieldDefinition={fieldDefinition}
         fieldValue={fieldValue}
         setFieldValue={setFieldValue}
+        hotkeyScope={hotkeyScope}
+        sourceObjectNameSingular={sourceObjectNameSingular}
       />
     </StyledContainer>
   );

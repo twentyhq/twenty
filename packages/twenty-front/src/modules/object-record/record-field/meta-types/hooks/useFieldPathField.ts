@@ -2,7 +2,10 @@ import { useContext } from 'react';
 import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldFieldPathValue } from '@/object-record/record-field/types/FieldMetadata';
+import {
+  FieldFieldPathValue,
+  FieldTextValue,
+} from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -29,6 +32,13 @@ export const useFieldPathField = () => {
     }),
   );
 
+  const sourceObjectNameSingular = useRecoilValue<FieldTextValue>(
+    recordStoreFamilySelector({
+      recordId: entityId,
+      fieldName: 'sourceObjectNameSingular',
+    }),
+  );
+
   const { setDraftValue, getDraftValueSelector } =
     useRecordFieldInput<FieldFieldPathValue>(`${entityId}-${fieldName}`);
 
@@ -43,5 +53,6 @@ export const useFieldPathField = () => {
     fieldValue,
     setFieldValue,
     hotkeyScope,
+    sourceObjectNameSingular,
   };
 };

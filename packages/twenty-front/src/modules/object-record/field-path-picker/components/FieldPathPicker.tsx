@@ -1,91 +1,82 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { FieldSelectItem } from '@/object-record/field-path-picker/components/FieldSelectItem';
+import { FIELD_PATH_PICKER_SELECTABLE_LIST_ID } from '@/object-record/field-path-picker/constants/FieldPathPickerSelectableListId';
+import { getViewFieldMetadataItems } from '@/object-record/field-path-picker/utils/getViewFieldMetadataItems';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldFieldPathDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import {
   FieldFieldPathValue,
   FieldMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import styled from '@emotion/styled';
 import { SetterOrUpdater } from 'recoil';
+
+const StyledContainer = styled.div`
+  background: ${({ theme }) => theme.background.primary};
+`;
 
 interface FieldPathPickerProps {
   draftValue?: FieldFieldPathValue | undefined;
-  setDraftValue?: SetterOrUpdater<FieldFieldPathDraftValue | undefined>;
+  setDraftValue: SetterOrUpdater<FieldFieldPathDraftValue | undefined>;
   fieldDefinition: FieldDefinition<FieldMetadata>;
   fieldValue: FieldFieldPathValue;
   setFieldValue: SetterOrUpdater<FieldFieldPathValue>;
+  hotkeyScope: string;
+  sourceObjectNameSingular?: string;
 }
 
 export const FieldPathPicker = (props: FieldPathPickerProps) => {
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
-  console.log('objectMetadataItems', objectMetadataItems);
 
-  const allFieldMetadataItems = objectMetadataItems.flatMap(
-    (objectMetadata) => objectMetadata.fields,
-  );
-
-  const loading = true;
   const noResult = false;
 
-  const selectableItemIds: any[] = [];
   const onSearchQueryChange = (e: any) => {};
-  const onFieldSelected = (e: any) => {};
+  const onFieldSelected = (fieldMetadataId: string) => {
+    props.setDraftValue([fieldMetadataId]);
+  };
 
   const sourceObjectMetadata = objectMetadataItems.find(
-    (objectMetadata) => objectMetadata.nameSingular === 'chart',
+    (objectMetadata) =>
+      objectMetadata.nameSingular === props.sourceObjectNameSingular,
   );
 
-  const selectableFieldMetadataItems = props.draftValue?.reduce(
-    (acc, fieldPathFieldMetadataId) => {
-      const fieldPathFieldMetadata = allFieldMetadataItems.find(
-        (fieldMetadata) => fieldMetadata.id === fieldPathFieldMetadataId,
-      );
-      if (!fieldPathFieldMetadata) throw new Error();
-      const { relationDefinition } = fieldPathFieldMetadata;
-      if (!relationDefinition) throw new Error();
+  if (!sourceObjectMetadata) return <div>No source object selected</div>;
 
-      const nextObjectMetadataId =
-        relationDefinition.sourceFieldMetadata.id === fieldPathFieldMetadataId
-          ? relationDefinition.targetObjectMetadata.id
-          : relationDefinition.sourceObjectMetadata.id;
-      const nextObjectMetadata = objectMetadataItems.find(
-        (objectMetadata) => objectMetadata.id === nextObjectMetadataId,
-      );
-      if (!nextObjectMetadata) throw new Error();
+  const selectableFieldMetadataItems = getViewFieldMetadataItems(
+    objectMetadataItems,
+    sourceObjectMetadata,
+    props.draftValue,
+  );
 
-      return nextObjectMetadata.fields;
-    },
-    sourceObjectMetadata?.fields,
+  const selectableItemIds = selectableFieldMetadataItems?.map(
+    (fieldMetadata) => fieldMetadata.id as string,
   );
 
   return (
-    <div>
+    <StyledContainer>
       <DropdownMenuSearchInput onChange={onSearchQueryChange} autoFocus />
       <DropdownMenuSeparator />
       <SelectableList
-        selectableListId="field-path-pick-list"
+        selectableListId={FIELD_PATH_PICKER_SELECTABLE_LIST_ID}
         selectableItemIdArray={selectableItemIds}
-        hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-        onEnter={(itemId: any) => {}}
+        hotkeyScope={props.hotkeyScope}
       >
-        {selectableFieldMetadataItems?.map((fieldMetadata) =>
-          loading ? (
-            <DropdownMenuSkeletonItem />
-          ) : noResult ? (
-            <MenuItem text="No result" />
-          ) : (
-            <SelectableItem itemId={fieldMetadata.id}>
-              {fieldMetadata.label}
-            </SelectableItem>
-          ),
+        {noResult ? (
+          <MenuItem text="No result" />
+        ) : (
+          selectableFieldMetadataItems?.map((fieldMetadata) => (
+            <FieldSelectItem
+              key={fieldMetadata.id}
+              fieldMetadata={fieldMetadata}
+              onSelect={onFieldSelected}
+            />
+          ))
         )}
       </SelectableList>
-    </div>
+    </StyledContainer>
   );
 };
