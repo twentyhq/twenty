@@ -32,11 +32,15 @@ export class UserVarsService<
       );
     }
 
-    const userVarUserLevel = await this.keyValuePairService.get({
-      type: KeyValuePairType.USER_VAR,
-      userId,
-      key,
-    });
+    let userVarUserLevel: any[] = [];
+
+    if (userId) {
+      userVarUserLevel = await this.keyValuePairService.get({
+        type: KeyValuePairType.USER_VAR,
+        userId,
+        key,
+      });
+    }
 
     if (userVarUserLevel.length > 1) {
       throw new Error(`Multiple values found for key ${key} at user level`);
@@ -60,10 +64,14 @@ export class UserVarsService<
       workspaceId,
     });
 
-    const userVarsUserLevel = await this.keyValuePairService.get({
-      type: KeyValuePairType.USER_VAR,
-      userId,
-    });
+    let userVarsUserLevel: any[] = [];
+
+    if (userId) {
+      userVarsUserLevel = await this.keyValuePairService.get({
+        type: KeyValuePairType.USER_VAR,
+        userId,
+      });
+    }
 
     return mergeUserVars<Extract<keyof KeyValueTypesMap, string>>([
       ...userVarsWorkspaceLevel,
