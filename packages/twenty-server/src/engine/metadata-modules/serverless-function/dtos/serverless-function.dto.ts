@@ -48,7 +48,7 @@ export class ServerlessFunctionDto {
   name: string;
 
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   description: string;
 
   @IsString()
