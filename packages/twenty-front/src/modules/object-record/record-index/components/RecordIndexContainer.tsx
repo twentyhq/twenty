@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
+import { InformationBanner } from '@/information-banner/InformationBanner';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
@@ -93,10 +94,6 @@ export const RecordIndexContainer = ({
 
         setTableColumns(newFieldDefinitions);
 
-        const newRecordIndexFieldDefinitions = newFieldDefinitions.filter(
-          (boardField) => !boardField.isLabelIdentifier,
-        );
-
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
           .getValue();
@@ -104,10 +101,10 @@ export const RecordIndexContainer = ({
         if (
           !isDeeplyEqual(
             existingRecordIndexFieldDefinitions,
-            newRecordIndexFieldDefinitions,
+            newFieldDefinitions,
           )
         ) {
-          set(recordIndexFieldDefinitionsState, newRecordIndexFieldDefinitions);
+          set(recordIndexFieldDefinitionsState, newFieldDefinitions);
         }
       },
     [columnDefinitions, setTableColumns],
@@ -129,6 +126,7 @@ export const RecordIndexContainer = ({
 
   return (
     <StyledContainer>
+      <InformationBanner />
       <RecordFieldValueSelectorContextProvider>
         <SpreadsheetImportProvider>
           <StyledContainerWithPadding>

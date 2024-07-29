@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -19,7 +20,6 @@ import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event
 import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
-import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -51,8 +51,8 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     GoogleCalendarDriverModule,
     BillingModule,
     RefreshAccessTokenManagerModule,
-    CalendarCommonModule,
     CalendarEventParticipantManagerModule,
+    UserVarsModule,
   ],
   providers: [
     CalendarChannelSyncStatusService,

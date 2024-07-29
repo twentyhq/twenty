@@ -6,14 +6,14 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessagingGmailMessagesImportService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-messages-import.service';
-import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
+import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
 export type MessagingMessagesImportJobData = {
   messageChannelId: string;
@@ -28,7 +28,7 @@ export class MessagingMessagesImportJob {
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    private readonly gmailFetchMessageContentFromCacheService: MessagingGmailMessagesImportService,
+    private readonly gmailFetchMessageContentFromCacheService: MessagingMessagesImportService,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     private readonly messagingTelemetryService: MessagingTelemetryService,

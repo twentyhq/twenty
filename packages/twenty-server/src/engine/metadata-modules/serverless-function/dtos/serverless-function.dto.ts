@@ -26,7 +26,7 @@ registerEnumType(ServerlessFunctionSyncStatus, {
   description: 'SyncStatus of the serverlessFunction',
 });
 
-@ObjectType('serverlessFunction')
+@ObjectType('ServerlessFunction')
 @Authorize({
   authorize: (context: any) => ({
     workspaceId: { eq: context?.req?.user?.workspace?.id },
@@ -48,9 +48,23 @@ export class ServerlessFunctionDto {
   name: string;
 
   @IsString()
+  @Field()
+  description: string;
+
+  @IsString()
   @IsNotEmpty()
   @Field()
   sourceCodeHash: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  sourceCodeFullPath: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  runtime: string;
 
   @IsEnum(ServerlessFunctionSyncStatus)
   @IsNotEmpty()

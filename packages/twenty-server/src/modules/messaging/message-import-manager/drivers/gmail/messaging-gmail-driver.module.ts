@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -9,24 +10,22 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
-import { RefreshAccessTokenManagerModule } from 'src/modules/connected-account/refresh-access-token-manager/refresh-access-token-manager.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
+import { MessagingGmailFetchByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-by-batch.service';
 import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-by-batches.service';
 import { MessagingGmailFetchMessageIdsToExcludeService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-ids-to-exclude.service';
-import { MessagingGmailFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-full-message-list-fetch.service';
 import { MessagingGmailHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-history.service';
-import { MessagingGmailMessagesImportService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-messages-import.service';
-import { MessagingGmailPartialMessageListFetchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-partial-message-list-fetch.service';
-import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 
 @Module({
   imports: [
-    RefreshAccessTokenManagerModule,
+    HttpModule.register({
+      baseURL: 'https://www.googleapis.com/batch/gmail/v1',
+    }),
     EnvironmentModule,
     ObjectMetadataRepositoryModule.forFeature([
       ConnectedAccountWorkspaceEntity,
@@ -45,20 +44,15 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
   providers: [
     MessagingGmailClientProvider,
     MessagingGmailHistoryService,
+    MessagingGmailFetchByBatchesService,
     MessagingGmailFetchMessagesByBatchesService,
-    MessagingGmailPartialMessageListFetchService,
-    MessagingGmailFullMessageListFetchService,
-    MessagingGmailMessagesImportService,
     MessagingGmailFetchMessageIdsToExcludeService,
-    MessagingSaveMessagesAndEnqueueContactCreationService,
   ],
   exports: [
     MessagingGmailClientProvider,
     MessagingGmailHistoryService,
+    MessagingGmailFetchByBatchesService,
     MessagingGmailFetchMessagesByBatchesService,
-    MessagingGmailPartialMessageListFetchService,
-    MessagingGmailFullMessageListFetchService,
-    MessagingGmailMessagesImportService,
     MessagingGmailFetchMessageIdsToExcludeService,
   ],
 })

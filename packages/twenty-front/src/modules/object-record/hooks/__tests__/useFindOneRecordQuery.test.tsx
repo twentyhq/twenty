@@ -9,8 +9,9 @@ query FindOnePerson($objectRecordId: ID!) {
   person(filter: { id: { eq: $objectRecordId } }) {
     __typename
     xLink {
-      label
-      url
+      primaryLinkUrl
+      primaryLinkLabel
+      secondaryLinks
     }
     id
     createdAt
@@ -23,8 +24,9 @@ query FindOnePerson($objectRecordId: ID!) {
     }
     phone
     linkedinLink {
-      label
-      url
+      primaryLinkUrl
+      primaryLinkLabel
+      secondaryLinks
     }
     updatedAt
     avatarUrl

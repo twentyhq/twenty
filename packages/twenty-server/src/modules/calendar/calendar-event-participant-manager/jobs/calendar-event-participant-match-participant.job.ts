@@ -4,7 +4,8 @@ import { WorkspaceService } from 'src/engine/core-modules/workspace/services/wor
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
 
 export type CalendarEventParticipantMatchParticipantJobData = {
   workspaceId: string;
@@ -19,8 +20,8 @@ export type CalendarEventParticipantMatchParticipantJobData = {
 })
 export class CalendarEventParticipantMatchParticipantJob {
   constructor(
-    private readonly calendarEventParticipantService: CalendarEventParticipantService,
     private readonly workspaceService: WorkspaceService,
+    private readonly matchParticipantService: MatchParticipantService<CalendarEventParticipantWorkspaceEntity>,
   ) {}
 
   @Process(CalendarEventParticipantMatchParticipantJob.name)
@@ -33,9 +34,9 @@ export class CalendarEventParticipantMatchParticipantJob {
       return;
     }
 
-    await this.calendarEventParticipantService.matchCalendarEventParticipants(
-      workspaceId,
+    await this.matchParticipantService.matchParticipantsAfterPersonOrWorkspaceMemberCreation(
       email,
+      'calendarEventParticipant',
       personId,
       workspaceMemberId,
     );

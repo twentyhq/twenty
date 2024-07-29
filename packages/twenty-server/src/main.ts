@@ -1,20 +1,20 @@
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 import * as Sentry from '@sentry/node';
-import { graphqlUploadExpress } from 'graphql-upload';
+import '@sentry/tracing';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
-import '@sentry/tracing';
+import { graphqlUploadExpress } from 'graphql-upload';
 
 import { ApplyCorsToExceptions } from 'src/utils/apply-cors-to-exceptions';
 
 import { AppModule } from './app.module';
 
-import { generateFrontConfig } from './utils/generate-front-config';
 import { settings } from './engine/constants/settings';
 import { LoggerService } from './engine/integrations/logger/logger.service';
+import { generateFrontConfig } from './utils/generate-front-config';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

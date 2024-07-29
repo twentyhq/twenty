@@ -2,13 +2,17 @@ import {
   Columns,
   ColumnType,
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { Data, Fields, RawData } from '@/spreadsheet-import/types';
+import {
+  Fields,
+  ImportedRow,
+  ImportedStructuredRow,
+} from '@/spreadsheet-import/types';
 
 import { normalizeCheckboxValue } from './normalizeCheckboxValue';
 
 export const normalizeTableData = <T extends string>(
   columns: Columns<T>,
-  data: RawData[],
+  data: ImportedRow[],
   fields: Fields<T>,
 ) =>
   data.map((row) =>
@@ -63,5 +67,5 @@ export const normalizeTableData = <T extends string>(
         default:
           return acc;
       }
-    }, {} as Data<T>),
+    }, {} as ImportedStructuredRow<T>),
   );
