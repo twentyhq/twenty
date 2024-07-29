@@ -11,66 +11,43 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { WORKFLOW_VERSION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow.workspace-entity';
 
-export enum WorkflowVersionTriggerType {
-  INTERNAL_EVENT = 'INTERNAL_EVENT',
-}
-
-export type WorkflowInternalEventTrigger = {
-  type: WorkflowVersionTriggerType.INTERNAL_EVENT;
-  settings: {
-    eventName: string;
-    triggerName: string;
-  };
-};
-
-export type WorkflowVersionTrigger = WorkflowInternalEventTrigger;
-
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.workflowVersion,
-  namePlural: 'workflowVersions',
-  labelSingular: 'WorkflowVersion',
-  labelPlural: 'WorkflowVersions',
-  description: 'A workflow version',
-  icon: 'IconVersions',
-  labelIdentifierStandardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
+  standardId: STANDARD_OBJECT_IDS.workflowEventListener,
+  namePlural: 'workflowEventListeners',
+  labelSingular: 'WorkflowEventListener',
+  labelPlural: 'WorkflowEventListeners',
+  description: 'A workflow event listener',
+  icon: 'IconPhoneCheck',
+  labelIdentifierStandardId:
+    WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,
 })
 @WorkspaceGate({
   featureFlag: FeatureFlagKeys.IsWorkflowEnabled,
 })
 @WorkspaceIsSystem()
-export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
+export class WorkflowEventListenerWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
+    standardId: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,
     type: FieldMetadataType.TEXT,
     label: 'Name',
-    description: 'The workflow version name',
-    icon: 'IconVersions',
+    description: 'The workflow event listener name',
+    icon: 'IconPhoneCheck',
   })
-  name: string;
-
-  @WorkspaceField({
-    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.trigger,
-    type: FieldMetadataType.RAW_JSON,
-    label: 'Version trigger',
-    description: 'Json object to provide trigger',
-    icon: 'IconPlayerPlay',
-  })
-  @WorkspaceIsNullable()
-  trigger: JSON | null;
+  eventName: string;
 
   // Relations
   @WorkspaceRelation({
-    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.workflow,
+    standardId: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.workflow,
     type: RelationMetadataType.MANY_TO_ONE,
     label: 'Workflow',
-    description: 'WorkflowVersion workflow',
+    description: 'WorkflowEventListener workflow',
     icon: 'IconSettingsAutomation',
     inverseSideTarget: () => WorkflowWorkspaceEntity,
-    inverseSideFieldKey: 'versions',
+    inverseSideFieldKey: 'eventListeners',
   })
   @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity>;

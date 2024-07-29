@@ -327,10 +327,16 @@ export const WEBHOOK_STANDARD_FIELD_IDS = {
   operation: '20202020-15b7-458e-bf30-74770a54410c',
 };
 
+export const WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS = {
+  eventName: '20202020-7318-4cf8-a6ac-2de75e3fd97d',
+  workflow: '20202020-4082-4641-8569-dc08d5365002',
+};
+
 export const WORKFLOW_STANDARD_FIELD_IDS = {
   name: '20202020-b3d3-478f-acc0-5d901e725b20',
   publishedVersionId: '20202020-326a-4fba-8639-3456c0a169e8',
   versions: '20202020-9432-416e-8f3c-27ee3153d099',
+  eventListeners: '20202020-0229-4c66-832e-035c67579a38',
   position: '20202020-39b0-4d8c-8c5f-33c2326deb5f',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   activityTargets: '20202020-9d65-445a-899d-1c6f1cf3a9ab',
