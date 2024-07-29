@@ -38,7 +38,6 @@ const insertScript = ({
   document.body.appendChild(script);
 };
 
-
 export const SupportButton = ({ isClickable = true }: SupportButtonProps) => {
   const currentUser = useRecoilValue(currentUserState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
