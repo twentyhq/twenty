@@ -56,7 +56,6 @@
     "@types/lodash.upperfirst": "^4.3.7",
     "@types/react": "^18.2.39",
     "rimraf": "^5.0.5",
-    "storybook-addon-mock": "^5.0.0",
     "typescript": "5.3.3"
   },
   "engines": {
