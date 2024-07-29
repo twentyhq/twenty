@@ -14,5 +14,5 @@ export const generateGraphQLErrorFromError = (error: Error) => {
     graphqlError.extensions['response'] = error.message;
   }
 
-  return error;
+  return graphqlError;
 };
