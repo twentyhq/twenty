@@ -1,11 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Avatar, AvatarType } from '@ui/display/avatar/components/Avatar';
+import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { AvatarGroup } from '@ui/display/avatar/components/AvatarGroup';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { Nullable } from '@ui/utilities/types/Nullable';
 
+import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { Chip, ChipVariant } from './Chip';
 
 const N_AVATARS_THRESHOLD = 3;
