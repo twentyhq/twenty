@@ -6,7 +6,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { useUploadProfilePictureMutation } from '~/generated/graphql';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -101,7 +100,7 @@ export const ProfilePictureUploader = () => {
 
   return (
     <ImageInput
-      picture={getImageAbsoluteURIOrBase64(currentWorkspaceMember?.avatarUrl)}
+      picture={currentWorkspaceMember?.avatarUrl}
       onUpload={handleUpload}
       onRemove={handleRemove}
       onAbort={handleAbort}

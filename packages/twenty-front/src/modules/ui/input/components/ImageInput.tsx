@@ -1,9 +1,10 @@
-import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import React, { useMemo } from 'react';
 import { IconFileUpload, IconTrash, IconUpload, IconX } from 'twenty-ui';
 
 import { Button } from '@/ui/input/button/components/Button';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
@@ -105,16 +106,18 @@ export const ImageInput = ({
     hiddenFileInput.current?.click();
   };
 
+  const pictureURI = useMemo(() => getImageAbsoluteURI(picture), [picture]);
+
   return (
     <StyledContainer className={className}>
       <StyledPicture
-        withPicture={!!picture}
+        withPicture={!!pictureURI}
         disabled={disabled}
         onClick={onUploadButtonClick}
       >
-        {picture ? (
+        {pictureURI ? (
           <img
-            src={picture || '/images/default-profile-picture.png'}
+            src={pictureURI || '/images/default-profile-picture.png'}
             alt="profile"
           />
         ) : (
@@ -139,7 +142,7 @@ export const ImageInput = ({
               onClick={onAbort}
               variant="secondary"
               title="Abort"
-              disabled={!picture || disabled}
+              disabled={!pictureURI || disabled}
               fullWidth
             />
           ) : (
@@ -157,7 +160,7 @@ export const ImageInput = ({
             onClick={onRemove}
             variant="secondary"
             title="Remove"
-            disabled={!picture || disabled}
+            disabled={!pictureURI || disabled}
             fullWidth
           />
         </StyledButtonContainer>
