@@ -8,6 +8,8 @@ import {
   FieldFieldPathValue,
   FieldMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -27,6 +29,7 @@ interface FieldPathPickerProps {
   setFieldValue: SetterOrUpdater<FieldFieldPathValue>;
   hotkeyScope: string;
   sourceObjectNameSingular?: string;
+  onClickOutside: any;
 }
 
 export const FieldPathPicker = (props: FieldPathPickerProps) => {
@@ -57,26 +60,30 @@ export const FieldPathPicker = (props: FieldPathPickerProps) => {
   );
 
   return (
-    <StyledContainer>
-      <DropdownMenuSearchInput onChange={onSearchQueryChange} autoFocus />
-      <DropdownMenuSeparator />
-      <SelectableList
-        selectableListId={FIELD_PATH_PICKER_SELECTABLE_LIST_ID}
-        selectableItemIdArray={selectableItemIds}
-        hotkeyScope={props.hotkeyScope}
-      >
-        {noResult ? (
-          <MenuItem text="No result" />
-        ) : (
-          selectableFieldMetadataItems?.map((fieldMetadata) => (
-            <FieldSelectItem
-              key={fieldMetadata.id}
-              fieldMetadata={fieldMetadata}
-              onSelect={onFieldSelected}
-            />
-          ))
-        )}
-      </SelectableList>
-    </StyledContainer>
+    <DropdownMenu data-select-disable>
+      <StyledContainer>
+        <DropdownMenuSearchInput onChange={onSearchQueryChange} autoFocus />
+        <DropdownMenuSeparator />
+        <DropdownMenuItemsContainer hasMaxHeight>
+          <SelectableList
+            selectableListId={FIELD_PATH_PICKER_SELECTABLE_LIST_ID}
+            selectableItemIdArray={selectableItemIds}
+            hotkeyScope={props.hotkeyScope}
+          >
+            {noResult ? (
+              <MenuItem text="No result" />
+            ) : (
+              selectableFieldMetadataItems?.map((fieldMetadata) => (
+                <FieldSelectItem
+                  key={fieldMetadata.id}
+                  fieldMetadata={fieldMetadata}
+                  onSelect={onFieldSelected}
+                />
+              ))
+            )}
+          </SelectableList>
+        </DropdownMenuItemsContainer>
+      </StyledContainer>
+    </DropdownMenu>
   );
 };
