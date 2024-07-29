@@ -19,7 +19,10 @@ import {
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { assert } from 'src/utils/assert';
 
@@ -329,5 +332,24 @@ export class BillingWorkspaceService {
       workspaceId,
       key: FeatureFlagKeys.IsFreeAccessEnabled,
     });
+
+    if (
+      data.object.status === SubscriptionStatus.Canceled ||
+      data.object.status === SubscriptionStatus.Unpaid
+    ) {
+      await this.workspaceRepository.update(workspaceId, {
+        activationStatus: WorkspaceActivationStatus.INACTIVE,
+      });
+    }
+
+    if (
+      data.object.status === SubscriptionStatus.Active ||
+      data.object.status === SubscriptionStatus.Trialing ||
+      data.object.status === SubscriptionStatus.PastDue
+    ) {
+      await this.workspaceRepository.update(workspaceId, {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      });
+    }
   }
 }
