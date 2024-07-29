@@ -1,14 +1,14 @@
-import { SettingsServerlessFunctionDetail } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail';
-import { graphqlMocks } from '~/testing/graphqlMocks';
+import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
 import { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/test';
+import { graphql, http, HttpResponse } from 'msw';
+import { SettingsServerlessFunctionDetail } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail';
 import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { graphql, http, HttpResponse } from 'msw';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
-import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
-import { within } from '@storybook/test';
+import { graphqlMocks } from '~/testing/graphqlMocks';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 import { sleep } from '~/utils/sleep';
 
 const SOURCE_CODE_FULL_PATH =
@@ -46,12 +46,9 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
-        http.get(
-          getImageAbsoluteURIOrBase64(SOURCE_CODE_FULL_PATH) || '',
-          () => {
-            return HttpResponse.text(DEFAULT_CODE);
-          },
-        ),
+        http.get(getImageAbsoluteURI(SOURCE_CODE_FULL_PATH) || '', () => {
+          return HttpResponse.text(DEFAULT_CODE);
+        }),
       ],
     },
   },
