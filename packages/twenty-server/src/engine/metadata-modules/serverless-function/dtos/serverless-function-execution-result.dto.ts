@@ -4,7 +4,7 @@ import { IsObject } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 
 @ObjectType('ServerlessFunctionExecutionResult')
-export class ServerlessFunctionExecutionResultDTO {
+export class ServerlessFunctionExecutionResultDto {
   @IsObject()
   @Field(() => graphqlTypeJson, {
     description: 'Execution result in JSON format',
