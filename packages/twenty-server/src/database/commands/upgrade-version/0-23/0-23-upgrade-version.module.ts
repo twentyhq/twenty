@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { MigrateLinkFieldsToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-link-fields-to-links.command';
 import { MigrateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-message-channel-sync-status-enum.command';
+import { SetWorkspaceActivationStatusCommand } from 'src/database/commands/upgrade-version/0-23/0-23-set-workspace-activation-status.command';
 import { UpgradeTo0_23Command } from 'src/database/commands/upgrade-version/0-23/0-23-upgrade-version.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -29,6 +30,7 @@ import { ViewModule } from 'src/modules/view/view.module';
   providers: [
     MigrateLinkFieldsToLinksCommand,
     MigrateMessageChannelSyncStatusEnumCommand,
+    SetWorkspaceActivationStatusCommand,
     UpgradeTo0_23Command,
   ],
 })

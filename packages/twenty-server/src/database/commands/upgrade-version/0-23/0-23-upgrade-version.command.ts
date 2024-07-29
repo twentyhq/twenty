@@ -2,6 +2,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { MigrateLinkFieldsToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-link-fields-to-links.command';
 import { MigrateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-message-channel-sync-status-enum.command';
+import { SetWorkspaceActivationStatusCommand } from 'src/database/commands/upgrade-version/0-23/0-23-set-workspace-activation-status.command';
 
 interface Options {
   workspaceId?: string;
@@ -15,6 +16,7 @@ export class UpgradeTo0_23Command extends CommandRunner {
   constructor(
     private readonly migrateLinkFieldsToLinks: MigrateLinkFieldsToLinksCommand,
     private readonly migrateMessageChannelSyncStatusEnumCommand: MigrateMessageChannelSyncStatusEnumCommand,
+    private readonly setWorkspaceActivationStatusCommand: SetWorkspaceActivationStatusCommand,
   ) {
     super();
   }
@@ -35,5 +37,6 @@ export class UpgradeTo0_23Command extends CommandRunner {
       _passedParam,
       options,
     );
+    await this.setWorkspaceActivationStatusCommand.run(_passedParam, options);
   }
 }
