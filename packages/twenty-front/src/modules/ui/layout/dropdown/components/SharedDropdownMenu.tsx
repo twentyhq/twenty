@@ -18,7 +18,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const SharedDropdownMenu = ({
   messageThreadMembers,
@@ -66,10 +65,10 @@ export const SharedDropdownMenu = ({
             variant={ChipVariant.Highlighted}
             leftComponent={
               <Avatar
-                avatarUrl={getImageAbsoluteURIOrBase64(
-                  messageThreadMembersAvatarUrls?.[0],
-                )}
-                entityId={messageThreadMembers?.[0].workspaceMember.id}
+                avatarUrl={messageThreadMembersAvatarUrls?.[0]}
+                placeholderColorSeed={
+                  messageThreadMembers?.[0].workspaceMember.id
+                }
                 placeholder={messageThreadMembersNames?.[0]}
                 size="md"
                 type={'rounded'}
@@ -104,10 +103,8 @@ export const SharedDropdownMenu = ({
                 }
                 avatar={
                   <Avatar
-                    avatarUrl={getImageAbsoluteURIOrBase64(
-                      member.workspaceMember.avatarUrl,
-                    )}
-                    entityId={member.workspaceMember.id}
+                    avatarUrl={member.workspaceMember.avatarUrl}
+                    placeholderColorSeed={member.workspaceMember.id}
                     placeholder={member.workspaceMember.name.firstName}
                     size="md"
                     type={'rounded'}
