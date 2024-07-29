@@ -634,7 +634,7 @@ export class WorkspaceRepository<
         );
 
       throw new Error(
-        `Object metadata for object "${objectMetadataName}" is missing` +
+        `Object metadata for object "${objectMetadataName}" is missing ` +
           `in workspace "${this.internalContext.workspaceId}" ` +
           `with object metadata collection length: ${objectMetadataCollection?.length}`,
       );

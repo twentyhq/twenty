@@ -1,9 +1,10 @@
-import { JSX } from 'react';
 import styled from '@emotion/styled';
+import { JSX } from 'react';
 import { IconComponent } from 'twenty-ui';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { InformationBanner } from '@/information-banner/InformationBanner';
 import { PageBody } from './PageBody';
 import { PageHeader } from './PageHeader';
 
@@ -32,7 +33,10 @@ export const SubMenuTopBarContainer = ({
   return (
     <StyledContainer isMobile={isMobile} className={className}>
       {isMobile && <PageHeader title={title} Icon={Icon} />}
-      <PageBody>{children}</PageBody>
+      <PageBody>
+        <InformationBanner />
+        {children}
+      </PageBody>
     </StyledContainer>
   );
 };
