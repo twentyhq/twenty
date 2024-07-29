@@ -59,7 +59,7 @@ export const UserProviderEffect = () => {
       // TODO: factorize
       setDateTimeFormat({
         timeZone:
-          workspaceMember.timeZone && workspaceMember.timeZone !== 'system'
+          workspaceMember.timeZone && workspaceMember.timeZone !== 'browser'
             ? workspaceMember.timeZone
             : detectTimeZone(),
         dateFormat: isDefined(workspaceMember.dateFormat)
@@ -87,6 +87,7 @@ export const UserProviderEffect = () => {
     setWorkspaces,
     queryData?.currentUser,
     setIsCurrentUserLoaded,
+    setDateTimeFormat,
   ]);
 
   return <></>;

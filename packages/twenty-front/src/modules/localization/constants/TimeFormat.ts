@@ -1,5 +1,5 @@
 export enum TimeFormat {
-  SYSTEM = 'SYSTEM',
+  BROWSER = 'SYSTEM',
   HOUR_24 = 'HH:mm',
   HOUR_12 = 'h:mm aa',
 }

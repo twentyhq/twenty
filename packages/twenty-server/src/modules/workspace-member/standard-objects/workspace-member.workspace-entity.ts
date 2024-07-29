@@ -30,27 +30,27 @@ import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/a
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 export enum WorkspaceMemberDateFormatEnum {
-  SYSTEM = 'SYSTEM',
+  BROWSER = 'BROWSER',
   MONTH_FIRST = 'MONTH_FIRST',
   DAY_FIRST = 'DAY_FIRST',
   YEAR_FIRST = 'YEAR_FIRST',
 }
 
 export enum WorkspaceMemberTimeFormatEnum {
-  SYSTEM = 'SYSTEM',
+  BROWSER = 'BROWSER',
   HOUR_12 = 'HOUR_12',
   HOUR_24 = 'HOUR_24',
 }
 
 registerEnumType(WorkspaceMemberTimeFormatEnum, {
   name: 'WorkspaceMemberTimeFormatEnum',
-  description: 'Time time as Military, Standard or system as default',
+  description: 'Time time as Military, Standard or browser as default',
 });
 
 registerEnumType(WorkspaceMemberDateFormatEnum, {
   name: 'WorkspaceMemberDateFormatEnum',
   description:
-    'Date format as Month first, Day first, Year first or system as default',
+    'Date format as Month first, Day first, Year first or browser as default',
 });
 
 @WorkspaceEntity({
@@ -273,7 +273,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
     type: FieldMetadataType.TEXT,
     label: 'Time zone',
-    defaultValue: "'system'",
+    defaultValue: "'browser'",
     description: 'User time zone',
     icon: 'IconTimezone',
   })
@@ -287,8 +287,8 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalendarEvent',
     options: [
       {
-        value: WorkspaceMemberDateFormatEnum.SYSTEM,
-        label: 'System',
+        value: WorkspaceMemberDateFormatEnum.BROWSER,
+        label: 'Browser',
         position: 0,
         color: 'turquoise',
       },
@@ -311,7 +311,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'sky',
       },
     ],
-    defaultValue: `'${WorkspaceMemberDateFormatEnum.SYSTEM}'`,
+    defaultValue: `'${WorkspaceMemberDateFormatEnum.BROWSER}'`,
   })
   dateFormat: string;
 
@@ -323,8 +323,8 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconClock2',
     options: [
       {
-        value: WorkspaceMemberTimeFormatEnum.SYSTEM,
-        label: 'System',
+        value: WorkspaceMemberTimeFormatEnum.BROWSER,
+        label: 'Browser',
         position: 0,
         color: 'sky',
       },
@@ -341,7 +341,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'purple',
       },
     ],
-    defaultValue: `'${WorkspaceMemberTimeFormatEnum.SYSTEM}'`,
+    defaultValue: `'${WorkspaceMemberTimeFormatEnum.BROWSER}'`,
   })
   timeFormat: string;
 }

@@ -120,7 +120,7 @@ export const useAuth = () => {
         // TODO: factorize with UserProviderEffect
         setDateTimeFormat({
           timeZone:
-            workspaceMember.timeZone && workspaceMember.timeZone !== 'system'
+            workspaceMember.timeZone && workspaceMember.timeZone !== 'browser'
               ? workspaceMember.timeZone
               : detectTimeZone(),
           dateFormat: isDefined(user.workspaceMember.dateFormat)
