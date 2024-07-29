@@ -30,13 +30,13 @@ export const createdByCompositeType: CompositeType = {
     {
       name: 'workspaceMemberId',
       type: FieldMetadataType.UUID,
-      hidden: false,
+      hidden: 'input',
       isRequired: false,
     },
     {
       name: 'name',
       type: FieldMetadataType.TEXT,
-      hidden: false,
+      hidden: 'input',
       isRequired: true,
     },
   ],

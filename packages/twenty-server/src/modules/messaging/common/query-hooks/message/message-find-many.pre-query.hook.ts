@@ -8,6 +8,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { CanAccessMessageThreadService } from 'src/modules/messaging/common/query-hooks/message/can-access-message-thread.service';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @WorkspaceQueryHook(`message.findMany`)
 export class MessageFindManyPreQueryHook implements WorkspaceQueryHookInstance {
@@ -20,8 +21,7 @@ export class MessageFindManyPreQueryHook implements WorkspaceQueryHookInstance {
   ) {}
 
   async execute(
-    userId: string,
-    workspaceId: string,
+    authContext: AuthContext,
     objectName: string,
     payload: FindManyResolverArgs,
   ): Promise<FindManyResolverArgs> {
@@ -29,10 +29,14 @@ export class MessageFindManyPreQueryHook implements WorkspaceQueryHookInstance {
       throw new BadRequestException('messageThreadId filter is required');
     }
 
+    if (!authContext.user?.id) {
+      throw new BadRequestException('User id is required');
+    }
+
     const messageChannelMessageAssociations =
       await this.messageChannelMessageAssociationService.getByMessageThreadId(
         payload?.filter?.messageThreadId?.eq,
-        workspaceId,
+        authContext.workspace.id,
       );
 
     if (messageChannelMessageAssociations.length === 0) {
@@ -40,8 +44,8 @@ export class MessageFindManyPreQueryHook implements WorkspaceQueryHookInstance {
     }
 
     await this.canAccessMessageThreadService.canAccessMessageThread(
-      userId,
-      workspaceId,
+      authContext.user.id,
+      authContext.workspace.id,
       messageChannelMessageAssociations,
     );
 

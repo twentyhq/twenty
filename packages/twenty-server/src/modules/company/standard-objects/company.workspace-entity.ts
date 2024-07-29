@@ -143,7 +143,6 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
       name: "''",
     },
   })
-  @WorkspaceIsSystem()
   createdBy: CreatedByMetadata;
 
   // Relations

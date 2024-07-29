@@ -136,7 +136,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
       name: "''",
     },
   })
-  @WorkspaceIsSystem()
   createdBy: CreatedByMetadata;
 
   // Relations

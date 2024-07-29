@@ -90,7 +90,7 @@ export class WorkspaceQueryRunnerService {
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<Record> | undefined> {
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
     const start = performance.now();
 
     const computedArgs = (await this.queryRunnerArgsFactory.create(
@@ -108,14 +108,13 @@ export class WorkspaceQueryRunnerService {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     args = await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
+      authContext,
       objectMetadataItem.nameSingular,
       'findMany',
       args,
     );
 
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
     const end = performance.now();
 
     this.logger.log(
@@ -141,7 +140,7 @@ export class WorkspaceQueryRunnerService {
     if (!args.filter || Object.keys(args.filter).length === 0) {
       throw new BadRequestException('Missing filter argument');
     }
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
 
     const computedArgs = (await this.queryRunnerArgsFactory.create(
       args,
@@ -158,14 +157,13 @@ export class WorkspaceQueryRunnerService {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     args = await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
+      authContext,
       objectMetadataItem.nameSingular,
       'findOne',
       args,
     );
 
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
     const parsedResult = await this.parseResult<IConnection<Record>>(
       result,
       objectMetadataItem,
@@ -191,7 +189,7 @@ export class WorkspaceQueryRunnerService {
       );
     }
 
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
 
     const computedArgs = (await this.queryRunnerArgsFactory.create(
       args,
@@ -205,7 +203,7 @@ export class WorkspaceQueryRunnerService {
       existingRecords = await this.duplicateService.findExistingRecords(
         computedArgs.ids,
         objectMetadataItem,
-        workspaceId,
+        authContext.workspace.id,
       );
 
       if (!existingRecords || existingRecords.length === 0) {
@@ -223,14 +221,13 @@ export class WorkspaceQueryRunnerService {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     args = await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
+      authContext,
       objectMetadataItem.nameSingular,
       'findDuplicates',
       computedArgs,
     );
 
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
 
     return this.parseResult<IConnection<TRecord>>(
       result,
@@ -244,7 +241,7 @@ export class WorkspaceQueryRunnerService {
     args: CreateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
@@ -258,22 +255,21 @@ export class WorkspaceQueryRunnerService {
       }
     });
 
+    // TODO: Properly type this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    args = await this.workspaceQueryHookService.executePreQueryHooks(
+      authContext,
+      objectMetadataItem.nameSingular,
+      'createMany',
+      args,
+    );
+
     const computedArgs = (await this.queryRunnerArgsFactory.create(
       args,
       options,
       ResolverArgsType.CreateMany,
     )) as CreateManyResolverArgs<Record>;
-
-    // TODO: Properly type this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    args = await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
-      objectMetadataItem.nameSingular,
-      'createMany',
-      args,
-    );
 
     console.log('args', JSON.stringify(args, null, 2));
 
@@ -282,7 +278,9 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    const result = await this.execute(query, workspaceId);
+    console.log('QUERY: ', query);
+
+    const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
@@ -301,8 +299,8 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
         name: `${objectMetadataItem.nameSingular}.created`,
-        workspaceId,
-        userId,
+        workspaceId: authContext.workspace.id,
+        userId: authContext.user?.id,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         properties: {
@@ -327,7 +325,7 @@ export class WorkspaceQueryRunnerService {
         ? await this.duplicateService.findExistingRecords(
             ids as string[],
             options.objectMetadataItem,
-            options.workspaceId,
+            options.authContext.workspace.id,
           )
         : [];
 
@@ -383,7 +381,7 @@ export class WorkspaceQueryRunnerService {
     args: UpdateOneResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
@@ -402,14 +400,13 @@ export class WorkspaceQueryRunnerService {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     args = await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
+      authContext,
       objectMetadataItem.nameSingular,
       'updateOne',
       args,
     );
 
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
@@ -427,8 +424,8 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
       name: `${objectMetadataItem.nameSingular}.updated`,
-      workspaceId,
-      userId,
+      workspaceId: authContext.workspace.id,
+      userId: authContext.user?.id,
       recordId: (existingRecord as Record).id,
       objectMetadata: objectMetadataItem,
       properties: {
@@ -444,7 +441,7 @@ export class WorkspaceQueryRunnerService {
     args: UpdateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { userId, workspaceId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
@@ -461,14 +458,13 @@ export class WorkspaceQueryRunnerService {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     args = await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
+      authContext,
       objectMetadataItem.nameSingular,
       'updateMany',
       args,
     );
 
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
@@ -500,7 +496,7 @@ export class WorkspaceQueryRunnerService {
     args: DeleteManyResolverArgs<Filter>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
@@ -516,14 +512,13 @@ export class WorkspaceQueryRunnerService {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     args = await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
+      authContext,
       objectMetadataItem.nameSingular,
       'deleteMany',
       args,
     );
 
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
@@ -542,8 +537,8 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
         name: `${objectMetadataItem.nameSingular}.deleted`,
-        workspaceId,
-        userId,
+        workspaceId: authContext.workspace.id,
+        userId: authContext.user?.id,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         properties: {
@@ -559,7 +554,7 @@ export class WorkspaceQueryRunnerService {
     args: DeleteOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
@@ -572,13 +567,13 @@ export class WorkspaceQueryRunnerService {
     // TODO START: remove this awful patch and use our upcoming custom ORM is developed
     const deletedWorkspaceMember = await this.handleDeleteWorkspaceMember(
       args.id,
-      workspaceId,
+      authContext.workspace.id,
       objectMetadataItem,
     );
 
     const deletedBlocklistItem = await this.handleDeleteBlocklistItem(
       args.id,
-      workspaceId,
+      authContext.workspace.id,
       objectMetadataItem,
     );
     // TODO END
@@ -587,14 +582,13 @@ export class WorkspaceQueryRunnerService {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     args = await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
+      authContext,
       objectMetadataItem.nameSingular,
       'deleteOne',
       args,
     );
 
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
@@ -612,8 +606,8 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
       name: `${objectMetadataItem.nameSingular}.deleted`,
-      workspaceId,
-      userId,
+      workspaceId: authContext.workspace.id,
+      userId: authContext.user?.id,
       recordId: args.id,
       objectMetadata: objectMetadataItem,
       properties: {
@@ -769,7 +763,7 @@ export class WorkspaceQueryRunnerService {
         CallWebhookJobsJob.name,
         {
           record: jobData,
-          workspaceId: options.workspaceId,
+          workspaceId: options.authContext.workspace.id,
           operation,
           objectMetadataItem: options.objectMetadataItem,
         },

@@ -111,7 +111,6 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
       name: "''",
     },
   })
-  @WorkspaceIsSystem()
   createdBy: CreatedByMetadata;
 
   @WorkspaceRelation({

@@ -52,7 +52,6 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
       name: "''",
     },
   })
-  @WorkspaceIsSystem()
   createdBy: CreatedByMetadata;
 
   @WorkspaceRelation({
