@@ -125,13 +125,17 @@ describe('isRecordMatchingFilter', () => {
 
       const companyMockNotInFilter = {
         ...companiesMock[0],
-        domainName:
-          getCompanyDomainName(companyMockInFilter as Company) + 'Different',
+        domainName: {
+          primaryLinkUrl:
+            getCompanyDomainName(companyMockInFilter as Company) + 'Different',
+        },
       };
 
       const filter = {
         domainName: {
-          eq: getCompanyDomainName(companyMockInFilter as Company),
+          primaryLinkUrl: {
+            eq: getCompanyDomainName(companyMockInFilter as Company),
+          },
         },
       };
 
@@ -235,7 +239,9 @@ describe('isRecordMatchingFilter', () => {
         and: [
           {
             domainName: {
-              eq: getCompanyDomainName(companyMockInFilter as Company),
+              primaryLinkUrl: {
+                eq: getCompanyDomainName(companyMockInFilter as Company),
+              },
             },
           },
           {
@@ -324,8 +330,10 @@ describe('isRecordMatchingFilter', () => {
 
       const companyMockNotInFilter = {
         ...companiesMock[0],
-        domainName:
-          getCompanyDomainName(companyMockInFilter as Company) + 'Different',
+        domainName: {
+          primaryLinkUrl:
+            getCompanyDomainName(companyMockInFilter as Company) + 'Different',
+        },
         employees: 5,
         name: companyMockInFilter.name + 'Different',
       };
@@ -334,7 +342,9 @@ describe('isRecordMatchingFilter', () => {
         and: [
           {
             domainName: {
-              eq: getCompanyDomainName(companyMockInFilter as Company),
+              primaryLinkUrl: {
+                eq: getCompanyDomainName(companyMockInFilter as Company),
+              },
             },
           },
           {
@@ -490,14 +500,16 @@ describe('isRecordMatchingFilter', () => {
       const companyMockNotInFilter = {
         ...companiesMock[0],
         name: companyMockInFilter.name + 'Different',
-        domainName: companyMockInFilter.name + 'Different',
+        domainName: { primaryLinkUrl: companyMockInFilter.name + 'Different' },
       };
 
       const filter = {
         or: {
           name: { eq: companyMockInFilter.name },
           domainName: {
-            eq: getCompanyDomainName(companyMockInFilter as Company),
+            primaryLinkUrl: {
+              eq: getCompanyDomainName(companyMockInFilter as Company),
+            },
           },
         },
       };
