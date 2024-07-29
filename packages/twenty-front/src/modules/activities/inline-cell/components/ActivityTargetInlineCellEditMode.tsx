@@ -10,7 +10,6 @@ import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { getActivityTargetObjectFieldName } from '@/activities/utils/getActivityTargetObjectFieldName';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
@@ -163,9 +162,7 @@ export const ActivityTargetInlineCellEditMode = ({
           );
 
           const newActivityTargetId = v4();
-          const fieldName = getActivityTargetObjectFieldName({
-            nameSingular: record.objectMetadataItem.nameSingular,
-          });
+          const fieldName = record.objectMetadataItem.nameSingular;
           const fieldNameWithIdSuffix = getActivityTargetObjectFieldIdName({
             nameSingular: record.objectMetadataItem.nameSingular,
           });
