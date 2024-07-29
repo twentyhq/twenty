@@ -10,7 +10,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: 'OLINDA SAS. 18 rue de Navarin, 75009 Paris',
+    address: {
+      addressStreet1: 'OLINDA SAS',
+      addressStreet2: '18 rue de Navarin',
+      addressCity: 'Paris',
+      addressPostcode: '75009',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -29,8 +34,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: 'zdf',
             xLink: {
               __typename: 'Link',
-              label: 'asd',
-              url: 'asd.com',
+              primaryLinkLabel: 'asd',
+              primaryLinkUrl: 'asd.com',
             },
             name: {
               __typename: 'FullName',
@@ -41,8 +46,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: 'asd',
-              url: 'asd.com',
+              primaryLinkLabel: 'asd',
+              primaryLinkUrl: 'asd.com',
             },
           },
         },
@@ -56,8 +61,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'qonto',
-      url: 'https://www.linkedin.com/company/qonto',
+      primaryLinkLabel: 'qonto',
+      primaryLinkUrl: 'https://www.linkedin.com/company/qonto',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -66,8 +71,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -115,7 +120,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '1600 Amphitheatre Pkwy, Mountain View, CA 94043',
+    address: {
+      addressStreet1: '1600 Amphitheatre Pkwy',
+      addressStreet2: 'Mountain View',
+      addressState: 'CA',
+      addressPostcode: '94043',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -133,8 +143,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -145,8 +155,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -163,8 +173,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -175,8 +185,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -193,8 +203,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -205,8 +215,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -223,8 +233,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -235,8 +245,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -253,8 +263,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -265,8 +275,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -280,8 +290,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'google',
-      url: 'https://www.linkedin.com/company/google',
+      primaryLinkLabel: 'google',
+      primaryLinkUrl: 'https://www.linkedin.com/company/google',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -290,8 +300,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -314,7 +324,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '1 Hacker Way, Menlo Park, CA 94025',
+    address: {
+      addressStreet1: '1 Hacker Way',
+      addressStreet2: 'Menlo Park',
+      addressState: 'CA',
+      addressPostcode: '94025',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -332,8 +347,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -344,8 +359,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -362,8 +377,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -374,8 +389,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -389,8 +404,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'facebook',
-      url: 'https://www.linkedin.com/company/facebook',
+      primaryLinkLabel: 'facebook',
+      primaryLinkUrl: 'https://www.linkedin.com/company/facebook',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -400,7 +415,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '53f66647-0543-4cc2-9f96-95cc699960f2',
-            probability: '0.5',
             pointOfContactId: '93c72d2e-f517-42fd-80ae-14173b3b70ae',
             stage: 'NEW',
             amount: {
@@ -420,8 +434,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -444,7 +458,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '121 Albright Way, Los Gatos, CA 95032',
+    address: {
+      addressStreet1: '121 Albright Way',
+      addressStreet2: 'Los Gatos',
+      addressState: 'CA',
+      addressPostcode: '95032',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -458,8 +477,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'netflix',
-      url: 'https://www.linkedin.com/company/netflix',
+      primaryLinkLabel: 'netflix',
+      primaryLinkUrl: 'https://www.linkedin.com/company/netflix',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -468,8 +487,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -492,7 +511,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '1 Microsoft Way, Redmond, WA 98052',
+    address: {
+      addressStreet1: '1 Microsoft Way',
+      addressStreet2: 'Redmond',
+      addressState: 'WA',
+      addressPostcode: '98052',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -510,8 +534,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -522,8 +546,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -540,8 +564,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -552,8 +576,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -570,8 +594,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -582,8 +606,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -597,8 +621,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'microsoft',
-      url: 'https://www.linkedin.com/company/microsoft',
+      primaryLinkLabel: 'microsoft',
+      primaryLinkUrl: 'https://www.linkedin.com/company/microsoft',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -608,7 +632,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '81ab695d-2f89-406f-90ea-180f433b2445',
-            probability: '0.5',
             stage: 'NEW',
             pointOfContactId: '9b324a88-6784-4449-afdf-dc62cb8702f2',
             amount: {
@@ -628,7 +651,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '9b059852-35b1-4045-9cde-42f715148954',
-            probability: '0.5',
             stage: 'NEW',
             pointOfContactId: '98406e26-80f1-4dff-b570-a74942528de3',
             amount: {
@@ -648,8 +670,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -672,7 +694,11 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '42 Rue de Paradis, 75010 Paris',
+    address: {
+      addressStreet1: '42 rue de paradis',
+      addressCity: 'Paris',
+      addressPostcode: '75010',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -686,8 +712,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'libeo',
-      url: 'https://www.linkedin.com/company/libeo',
+      primaryLinkLabel: 'libeo',
+      primaryLinkUrl: 'https://www.linkedin.com/company/libeo',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -696,8 +722,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -720,7 +746,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '888 Brannan Street San Francisco, CA 94103',
+    address: {
+      addressStreet1: '888 Brannan Street',
+      addressCity: 'San Francisco',
+      addressState: 'CA',
+      addressPostcode: '75010',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -734,8 +765,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'airbnb',
-      url: 'https://www.linkedin.com/company/airbnb',
+      primaryLinkLabel: 'airbnb',
+      primaryLinkUrl: 'https://www.linkedin.com/company/airbnb',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -744,8 +775,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -768,7 +799,13 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '901 Fifth Avenue; Suite 1200; Seattle, WA 98164',
+    address: {
+      addressStreet1: '901 Fifth Avenue',
+      addressStreet2: 'Suite 1200',
+      addressCity: 'Seattle',
+      addressState: 'WA',
+      addressPostcode: '98164',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -782,8 +819,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'claap',
-      url: 'https://www.linkedin.com/company/claap',
+      primaryLinkLabel: 'claap',
+      primaryLinkUrl: 'https://www.linkedin.com/company/claap',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -792,8 +829,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -816,7 +853,13 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '3790 El Camino Real, Unit 518, Palo Alto, CA 94306',
+    address: {
+      addressStreet1: '3790 El Camino Real',
+      addressStreet2: 'Unit 518',
+      addressCity: 'Palo Alto',
+      addressState: 'CA',
+      addressPostcode: '94306',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -834,8 +877,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -846,8 +889,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -861,8 +904,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'algolia',
-      url: 'https://www.linkedin.com/company/algolia',
+      primaryLinkLabel: 'algolia',
+      primaryLinkUrl: 'https://www.linkedin.com/company/algolia',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -871,8 +914,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -895,7 +938,11 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '129, Samsung-ro, Yeongtong-gu, Suwon-si, Gyeonggi-do',
+    address: {
+      addressStreet1: '129, Samsung-ro',
+      addressStreet2: 'Yeongtong-gu, Suwon-si',
+      addressCity: 'Gyeonggi-do',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -913,8 +960,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -925,8 +972,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -940,8 +987,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'samsung',
-      url: 'https://www.linkedin.com/company/samsung',
+      primaryLinkLabel: 'samsung',
+      primaryLinkUrl: 'https://www.linkedin.com/company/samsung',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -950,8 +997,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -974,7 +1021,13 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '576 Folsom St., Floor 3, San Francisco, CA 94105',
+    address: {
+      addressStreet1: '576 Folsom St.',
+      addressStreet2: 'Floor 3',
+      addressCity: 'San Francisco',
+      addressState: 'CA',
+      addressPostcode: '94105',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -988,8 +1041,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'hasura',
-      url: 'https://www.linkedin.com/company/hasura',
+      primaryLinkLabel: 'hasura',
+      primaryLinkUrl: 'https://www.linkedin.com/company/hasura',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -998,8 +1051,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -1022,7 +1075,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '575 Lexington Ave 16th Floor, New York',
+    address: {
+      addressStreet1: '575 Lexington Ave 16th Floor',
+      addressCity: 'New York',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -1036,8 +1092,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'wework',
-      url: 'https://www.linkedin.com/company/wework',
+      primaryLinkLabel: 'wework',
+      primaryLinkUrl: 'https://www.linkedin.com/company/wework',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -1046,8 +1102,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -1070,7 +1126,13 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       __typename: 'FavoriteConnection',
       edges: [],
     },
-    address: '315 Montgomery St, 13th Fl. San Francisco, CA 94104',
+    address: {
+      addressStreet1: '315 Montgomery St',
+      addressStreet2: '13th Fl.',
+      addressCity: 'San Francisco',
+      addressState: 'CA',
+      addressPostcode: '94104',
+    },
     accountOwner: null,
     people: {
       __typename: 'PersonConnection',
@@ -1088,8 +1150,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: '',
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -1100,8 +1162,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -1118,8 +1180,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             jobTitle: null,
             xLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
             name: {
               __typename: 'FullName',
@@ -1130,8 +1192,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
               __typename: 'Link',
-              label: null,
-              url: null,
+              primaryLinkLabel: null,
+              primaryLinkUrl: null,
             },
           },
         },
@@ -1145,8 +1207,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     idealCustomerProfile: null,
     linkedinLink: {
       __typename: 'Link',
-      label: 'linkedin',
-      url: 'https://www.linkedin.com/company/linkedin',
+      primaryLinkLabel: 'linkedin',
+      primaryLinkUrl: 'https://www.linkedin.com/company/linkedin',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -1156,7 +1218,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
           node: {
             __typename: 'Opportunity',
             id: '7c887ee3-be10-412b-a663-16bd3c2228e1',
-            probability: '0.5',
             stage: 'NEW',
             pointOfContactId: '86083141-1c0e-494c-a1b6-85b1c6fefaa5',
             amount: {
@@ -1176,8 +1237,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     accountOwnerId: null,
     xLink: {
       __typename: 'Link',
-      label: null,
-      url: null,
+      primaryLinkLabel: null,
+      primaryLinkUrl: null,
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',

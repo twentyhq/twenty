@@ -2,8 +2,9 @@ import { AvatarType } from 'twenty-ui';
 
 export type RecordChipData = {
   recordId: string;
-  name: string | number;
+  name: string;
   avatarType: AvatarType;
   avatarUrl: string;
-  linkToShowPage: string;
+  isLabelIdentifier: boolean;
+  objectNameSingular: string;
 };

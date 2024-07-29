@@ -1,40 +1,88 @@
 import { Injectable } from '@nestjs/common';
 
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { MessageThreadRepository } from 'src/modules/messaging/common/repositories/message-thread.repository';
-import { MessageRepository } from 'src/modules/messaging/common/repositories/message.repository';
+import { EntityManager } from 'typeorm';
+
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { deleteUsingPagination } from 'src/modules/messaging/message-cleaner/utils/delete-using-pagination.util';
 
 @Injectable()
 export class MessagingMessageCleanerService {
-  constructor(
-    @InjectObjectMetadataRepository(MessageWorkspaceEntity)
-    private readonly messageRepository: MessageRepository,
-    @InjectObjectMetadataRepository(MessageThreadWorkspaceEntity)
-    private readonly messageThreadRepository: MessageThreadRepository,
-  ) {}
+  constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async cleanWorkspaceThreads(workspaceId: string) {
+    const messageThreadRepository =
+      await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
+        'messageThread',
+      );
+
+    const messageRepository =
+      await this.twentyORMManager.getRepository<MessageWorkspaceEntity>(
+        'message',
+      );
+
     await deleteUsingPagination(
       workspaceId,
       500,
-      this.messageRepository.getNonAssociatedMessageIdsPaginated.bind(
-        this.messageRepository,
-      ),
-      this.messageRepository.deleteByIds.bind(this.messageRepository),
+      async (
+        limit: number,
+        offset: number,
+        workspaceId: string,
+        transactionManager?: EntityManager,
+      ) => {
+        const nonAssociatedMessages = await messageRepository.find(
+          {
+            where: {
+              messageChannelMessageAssociations: [],
+            },
+            take: limit,
+            skip: offset,
+            relations: ['messageChannelMessageAssociations'],
+          },
+          transactionManager,
+        );
+
+        return nonAssociatedMessages.map(({ id }) => id);
+      },
+      async (
+        ids: string[],
+        workspaceId: string,
+        transactionManager?: EntityManager,
+      ) => {
+        await messageRepository.delete(ids, transactionManager);
+      },
     );
 
     await deleteUsingPagination(
       workspaceId,
       500,
-      this.messageThreadRepository.getOrphanThreadIdsPaginated.bind(
-        this.messageThreadRepository,
-      ),
-      this.messageThreadRepository.deleteByIds.bind(
-        this.messageThreadRepository,
-      ),
+      async (
+        limit: number,
+        offset: number,
+        workspaceId: string,
+        transactionManager?: EntityManager,
+      ) => {
+        const orphanThreads = await messageThreadRepository.find(
+          {
+            where: {
+              messages: [],
+            },
+            take: limit,
+            skip: offset,
+          },
+          transactionManager,
+        );
+
+        return orphanThreads.map(({ id }) => id);
+      },
+      async (
+        ids: string[],
+        workspaceId: string,
+        transactionManager?: EntityManager,
+      ) => {
+        await messageThreadRepository.delete(ids, transactionManager);
+      },
     );
   }
 }

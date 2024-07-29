@@ -6,25 +6,25 @@ import {
   YogaDriverConfig,
   YogaDriverServerContext,
 } from '@graphql-yoga/nestjs';
-import { GraphQLSchema, GraphQLError } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
-import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-import { GraphQLSchemaWithContext, YogaInitialContext } from 'graphql-yoga';
 import * as Sentry from '@sentry/node';
+import { GraphQLError, GraphQLSchema } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
+import { GraphQLSchemaWithContext, YogaInitialContext } from 'graphql-yoga';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
+import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { JwtData } from 'src/engine/core-modules/auth/types/jwt-data.type';
+import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
+import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
+import { useSentryTracing } from 'src/engine/integrations/exception-handler/hooks/use-sentry-tracing';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { useExceptionHandler } from 'src/engine/integrations/exception-handler/hooks/use-exception-handler.hook';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
-import { JwtData } from 'src/engine/core-modules/auth/types/jwt-data.type';
-import { useSentryTracing } from 'src/engine/integrations/exception-handler/hooks/use-sentry-tracing';
 
 export interface GraphQLContext extends YogaDriverServerContext<'express'> {
   user?: User;
@@ -52,7 +52,7 @@ export class GraphQLConfigService
           return context.req.user?.id ?? context.req.ip ?? 'anonymous';
         },
       }),
-      useExceptionHandler({
+      useGraphQLErrorHandlerHook({
         exceptionHandlerService: this.exceptionHandlerService,
       }),
     ];

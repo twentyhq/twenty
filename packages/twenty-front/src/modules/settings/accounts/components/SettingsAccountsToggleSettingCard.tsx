@@ -1,22 +1,24 @@
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 import { Toggle } from '@/ui/input/components/Toggle';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
-type SettingsAccountsToggleSettingCardProps = {
-  cardMedia: ReactNode;
+type Parameter = {
   value: boolean;
-  onToggle: (value: boolean) => void;
   title: string;
+  description: string;
+  onToggle: (value: boolean) => void;
+};
+
+type SettingsAccountsToggleSettingCardProps = {
+  parameters: Parameter[];
 };
 
 const StyledCardContent = styled(CardContent)`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
-  padding: ${({ theme }) => theme.spacing(2, 4)};
   cursor: pointer;
 
   &:hover {
@@ -24,23 +26,37 @@ const StyledCardContent = styled(CardContent)`
   }
 `;
 
-const StyledTitle = styled.span`
+const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-right: auto;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledDescription = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
+const StyledToggle = styled(Toggle)`
+  margin-left: auto;
 `;
 
 export const SettingsAccountsToggleSettingCard = ({
-  cardMedia,
-  value,
-  onToggle,
-  title,
+  parameters,
 }: SettingsAccountsToggleSettingCardProps) => (
   <Card rounded>
-    <StyledCardContent onClick={() => onToggle(!value)}>
-      {cardMedia}
-      <StyledTitle>{title}</StyledTitle>
-      <Toggle value={value} onChange={onToggle} />
-    </StyledCardContent>
+    {parameters.map((parameter, index) => (
+      <StyledCardContent
+        key={index}
+        divider={index < parameters.length - 1}
+        onClick={() => parameter.onToggle(!parameter.value)}
+      >
+        <div>
+          <StyledTitle>{parameter.title}</StyledTitle>
+          <StyledDescription>{parameter.description}</StyledDescription>
+        </div>
+        <StyledToggle value={parameter.value} onChange={parameter.onToggle} />
+      </StyledCardContent>
+    ))}
   </Card>
 );

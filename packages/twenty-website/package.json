@@ -1,6 +1,6 @@
 {
   "name": "twenty-website",
-  "version": "0.20.0",
+  "version": "0.22.0",
   "private": true,
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-website node ../../node_modules/nx/bin/nx.js",
@@ -14,6 +14,7 @@
     "database:generate:pg": "npx drizzle-kit generate:pg --config=src/database/drizzle-posgres.config.ts"
   },
   "dependencies": {
+    "next-runtime-env": "^3.2.2",
     "postgres": "^3.4.3"
   }
 }

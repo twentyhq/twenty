@@ -41,7 +41,7 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsContactCreationForSentAndReceivedEmailsEnabled,
+        key: FeatureFlagKeys.IsMessagingAliasFetchingEnabled,
         workspaceId: workspaceId,
         value: true,
       },
@@ -49,6 +49,16 @@ export const seedFeatureFlags = async (
         key: FeatureFlagKeys.IsGoogleCalendarSyncV2Enabled,
         workspaceId: workspaceId,
         value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsFunctionSettingsEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsWorkflowEnabled,
+        workspaceId: workspaceId,
+        value: false,
       },
     ])
     .execute();

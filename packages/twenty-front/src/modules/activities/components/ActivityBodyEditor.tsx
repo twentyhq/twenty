@@ -1,7 +1,7 @@
-import { ClipboardEvent, useCallback, useMemo } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { useCreateBlockNote } from '@blocknote/react';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
+import { ClipboardEvent, useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
@@ -23,14 +23,15 @@ import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDraw
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { getFileType } from '../files/utils/getFileType';
 
-import '@blocknote/react/style.css';
+import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
+import '@blocknote/core/fonts/inter.css';
+import '@blocknote/mantine/style.css';
 
 type ActivityBodyEditorProps = {
   activityId: string;
@@ -126,9 +127,7 @@ export const ActivityBodyEditor = ({
     if (!result?.data?.uploadFile) {
       throw new Error("Couldn't upload Image");
     }
-    const imageUrl =
-      REACT_APP_SERVER_BASE_URL + '/files/' + result?.data?.uploadFile;
-    return imageUrl;
+    return getFileAbsoluteURI(result.data.uploadFile);
   };
 
   const handlePersistBody = useCallback(

@@ -1,32 +1,33 @@
+import { UseGuards } from '@nestjs/common';
 import {
-  Resolver,
-  Query,
   Args,
   Mutation,
-  ResolveField,
   Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { assert } from 'src/utils/assert';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
+import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
-import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
 import { SendInviteLinkInput } from 'src/engine/core-modules/workspace/dtos/send-invite-link.input';
+import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
+import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { assert } from 'src/utils/assert';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { Workspace } from './workspace.entity';
 
@@ -38,8 +39,9 @@ export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly fileUploadService: FileUploadService,
-    private readonly billingService: BillingService,
+    private readonly billingWorkspaceService: BillingWorkspaceService,
   ) {}
 
   @Query(() => Workspace)
@@ -116,13 +118,20 @@ export class WorkspaceResolver {
     return this.workspaceCacheVersionService.getVersion(workspace.id);
   }
 
-  @ResolveField(() => BillingSubscription)
+  @ResolveField(() => BillingSubscription, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription | null> {
-    return this.billingService.getCurrentBillingSubscription({
+    return this.billingWorkspaceService.getCurrentBillingSubscription({
       workspaceId: workspace.id,
     });
+  }
+
+  @ResolveField(() => Number)
+  async workspaceMembersCount(
+    @Parent() workspace: Workspace,
+  ): Promise<number | undefined> {
+    return await this.userWorkspaceService.getUserCount(workspace.id);
   }
 
   @Mutation(() => SendInviteLink)

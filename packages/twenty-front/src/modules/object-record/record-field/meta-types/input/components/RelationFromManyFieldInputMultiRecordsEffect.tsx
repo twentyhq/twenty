@@ -112,7 +112,9 @@ export const RelationFromManyFieldInputMultiRecordsEffect = () => {
 
   useEffect(() => {
     setObjectRecordMultiSelectCheckedRecordsIds(
-      fieldValue.map((fieldValueItem: EntityForSelect) => fieldValueItem.id),
+      fieldValue
+        ? fieldValue.map((fieldValueItem: EntityForSelect) => fieldValueItem.id)
+        : [],
     );
   }, [fieldValue, setObjectRecordMultiSelectCheckedRecordsIds]);
 

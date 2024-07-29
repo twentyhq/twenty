@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  RequestTimeoutException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntityManager, Repository } from 'typeorm';
@@ -17,6 +13,10 @@ import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-
 import { STRIPE_DISTANT_TABLES } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/utils/stripe-distant-tables.util';
 import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
+import {
+  DistantTableException,
+  DistantTableExceptionCode,
+} from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.exception';
 
 @Injectable()
 export class DistantTableService {
@@ -64,7 +64,10 @@ export class DistantTableService {
     tableName?: string,
   ): Promise<DistantTables> {
     if (!remoteServer.schema) {
-      throw new BadRequestException('Remote server schema is not defined');
+      throw new DistantTableException(
+        'Remote server schema is not defined',
+        DistantTableExceptionCode.INTERNAL_SERVER_ERROR,
+      );
     }
 
     const tmpSchemaId = v4();
@@ -116,8 +119,9 @@ export class DistantTableService {
       return distantTables;
     } catch (error) {
       if (isQueryTimeoutError(error)) {
-        throw new RequestTimeoutException(
+        throw new DistantTableException(
           `Could not find distant tables: ${error.message}`,
+          DistantTableExceptionCode.TIMEOUT_ERROR,
         );
       }
 
@@ -132,8 +136,9 @@ export class DistantTableService {
       case RemoteServerType.STRIPE_FDW:
         return STRIPE_DISTANT_TABLES;
       default:
-        throw new BadRequestException(
+        throw new DistantTableException(
           `Type ${remoteServer.foreignDataWrapperType} does not have a static schema.`,
+          DistantTableExceptionCode.INTERNAL_SERVER_ERROR,
         );
     }
   }

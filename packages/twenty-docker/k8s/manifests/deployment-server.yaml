@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: twentycrm-server
+  name: twentycrm-server
+  namespace: twentycrm
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: twentycrm-server
+  template:
+    metadata:
+      labels:
+        app: twentycrm-server
+    spec:
+      volumes:
+      - name: twentycrm-server-data
+        persistentVolumeClaim:
+          claimName: twentycrm-server-pvc
+      containers:
+      - env:
+        - name: PORT
+          value: 3000
+        - name: SERVER_URL
+          value: "https://crm.example.com:443"
+        - name: PG_DATABASE_URL
+          value: "postgres://twenty:twenty@twenty-db.twentycrm.svc.cluster.local/default"
+        - name: ENABLE_DB_MIGRATIONS
+          value: "true"
+        - name: SIGN_IN_PREFILLED
+          value: "true"
+        - name: STORAGE_TYPE
+          value: "local"
+        - name: ACCESS_TOKEN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tokens
+              key: accessToken
+        - name: LOGIN_TOKEN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tokens
+              key: loginToken
+        - name: REFRESH_TOKEN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tokens
+              key: refreshToken
+        - name: FILE_TOKEN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: tokens
+              key: fileToken
+      - image: twentycrm/twenty:latest
+        imagePullPolicy: Always
+        name: twentycrm
+        ports:
+        - containerPort: 3000
+          name: http-tcp
+          protocol: TCP    
+        resources: 
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1000m"
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /app/.local-storage
+          name: twentycrm-server-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

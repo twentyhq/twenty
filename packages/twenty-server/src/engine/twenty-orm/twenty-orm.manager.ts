@@ -1,47 +1,44 @@
-import { Injectable, Type } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { ObjectLiteral } from 'typeorm';
 
-import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
-import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-literal.storage';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 @Injectable()
 export class TwentyORMManager {
   constructor(
-    @InjectWorkspaceDatasource()
-    private readonly workspaceDataSource: WorkspaceDataSource,
-    private readonly entitySchemaFactory: EntitySchemaFactory,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
-  getRepository<T extends ObjectLiteral>(
-    entityClass: Type<T>,
-  ): WorkspaceRepository<T> {
-    const entitySchema = this.entitySchemaFactory.create(entityClass);
-
-    return this.workspaceDataSource.getRepository<T>(entitySchema);
-  }
-
-  async getRepositoryForWorkspace<T extends ObjectLiteral>(
-    workspaceId: string,
-    entityClass: Type<T>,
+  async getRepository<T extends ObjectLiteral>(
+    objectMetadataName: string,
   ): Promise<WorkspaceRepository<T>> {
-    const entities = ObjectLiteralStorage.getAllEntitySchemas();
-    const workspaceDataSource = await this.workspaceDataSourceFactory.create(
-      entities,
-      workspaceId,
-    );
+    const { workspaceId, cacheVersion } =
+      this.scopedWorkspaceContextFactory.create();
 
-    if (!workspaceDataSource) {
-      throw new Error('Workspace data source not found');
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
     }
 
-    const entitySchema = this.entitySchemaFactory.create(entityClass);
+    const workspaceDataSource = await this.workspaceDataSourceFactory.create(
+      workspaceId,
+      cacheVersion,
+    );
 
-    return workspaceDataSource.getRepository<T>(entitySchema);
+    return workspaceDataSource.getRepository<T>(objectMetadataName);
+  }
+
+  async getDatasource() {
+    const { workspaceId, cacheVersion } =
+      this.scopedWorkspaceContextFactory.create();
+
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
+    }
+
+    return this.workspaceDataSourceFactory.create(workspaceId, cacheVersion);
   }
 }

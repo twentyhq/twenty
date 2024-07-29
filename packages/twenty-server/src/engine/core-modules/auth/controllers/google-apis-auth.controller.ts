@@ -9,14 +9,14 @@ import {
 
 import { Response } from 'express';
 
-import { GoogleAPIsProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/google-apis-provider-enabled.guard';
-import { GoogleAPIsOauthGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth.guard';
-import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/strategies/google-apis.auth.strategy';
+import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
+import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-exchange-code-for-token.guard';
+import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 
 @Controller('auth/google-apis')
 export class GoogleAPIsAuthController {
@@ -29,14 +29,14 @@ export class GoogleAPIsAuthController {
   ) {}
 
   @Get()
-  @UseGuards(GoogleAPIsProviderEnabledGuard, GoogleAPIsOauthGuard)
+  @UseGuards(GoogleAPIsOauthRequestCodeGuard)
   async googleAuth() {
     // As this method is protected by Google Auth guard, it will trigger Google SSO flow
     return;
   }
 
   @Get('get-access-token')
-  @UseGuards(GoogleAPIsProviderEnabledGuard, GoogleAPIsOauthGuard)
+  @UseGuards(GoogleAPIsOauthExchangeCodeForTokenGuard)
   async googleAuthGetAccessToken(
     @Req() req: GoogleAPIsRequest,
     @Res() res: Response,
@@ -44,7 +44,7 @@ export class GoogleAPIsAuthController {
     const { user } = req;
 
     const {
-      email,
+      emails,
       accessToken,
       refreshToken,
       transientToken,
@@ -68,6 +68,8 @@ export class GoogleAPIsAuthController {
       throw new Error('Workspace not found');
     }
 
+    const handle = emails[0].value;
+
     const googleAPIsServiceInstance =
       await this.loadServiceWithWorkspaceContext.load(
         this.googleAPIsService,
@@ -75,7 +77,7 @@ export class GoogleAPIsAuthController {
       );
 
     await googleAPIsServiceInstance.refreshGoogleRefreshToken({
-      handle: email,
+      handle,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
       accessToken,

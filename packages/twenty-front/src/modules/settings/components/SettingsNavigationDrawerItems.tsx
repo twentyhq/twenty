@@ -13,6 +13,7 @@ import {
   IconSettings,
   IconUserCircle,
   IconUsers,
+  IconFunction,
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -23,11 +24,16 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
 
   const billing = useRecoilValue(billingState);
+  const isFunctionSettingsEnabled = useIsFeatureEnabled(
+    'IS_FUNCTION_SETTINGS_ENABLED',
+  );
+  const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
 
   return (
     <>
@@ -97,11 +103,25 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.Developers}
           Icon={IconCode}
         />
+        {isFunctionSettingsEnabled && (
+          <SettingsNavigationDrawerItem
+            label="Functions"
+            path={SettingsPath.ServerlessFunctions}
+            Icon={IconFunction}
+          />
+        )}
         <SettingsNavigationDrawerItem
           label="Integrations"
           path={SettingsPath.Integrations}
           Icon={IconApps}
         />
+        {isCRMMigrationEnabled && (
+          <SettingsNavigationDrawerItem
+            label="CRM Migration"
+            path={SettingsPath.CRMMigration}
+            Icon={IconCode}
+          />
+        )}
       </NavigationDrawerSection>
 
       <NavigationDrawerSection>

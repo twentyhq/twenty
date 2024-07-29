@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import gql from 'graphql-tag';
+import { ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useActivityTargetsForTargetableObject } from '@/activities/hooks/useActivityTargetsForTargetableObject';
@@ -58,6 +58,7 @@ const mocks: MockedResponse[] = [
             }
             pageInfo {
               hasNextPage
+              hasPreviousPage
               startCursor
               endCursor
             }
@@ -67,8 +68,9 @@ const mocks: MockedResponse[] = [
       `,
       variables: {
         filter: { personId: { eq: '1234' } },
-        limit: undefined,
         orderBy: undefined,
+        lastCursor: undefined,
+        limit: undefined,
       },
     },
     result: jest.fn(() => ({

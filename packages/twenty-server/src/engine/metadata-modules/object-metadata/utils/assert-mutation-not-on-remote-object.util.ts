@@ -1,11 +1,17 @@
-import { BadRequestException } from '@nestjs/common';
-
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
 export const assertMutationNotOnRemoteObject = (
   objectMetadataItem: ObjectMetadataInterface,
 ) => {
   if (objectMetadataItem.isRemote) {
-    throw new BadRequestException('Remote objects are read-only');
+    throw new ObjectMetadataException(
+      'Remote objects are read-only',
+      ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
+    );
   }
 };

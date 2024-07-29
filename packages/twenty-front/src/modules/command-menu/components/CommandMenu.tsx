@@ -1,10 +1,12 @@
-import { useMemo, useRef } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useMemo, useRef } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Avatar, IconNotes } from 'twenty-ui';
+import { Avatar, IconNotes, IconSparkles, IconX } from 'twenty-ui';
 
+import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
+import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -21,6 +23,7 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
@@ -30,10 +33,11 @@ import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
 import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command, CommandType } from '../types/Command';
 
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 
-export const StyledDialog = styled.div`
+const StyledCommandMenu = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border-left: 1px solid ${({ theme }) => theme.border.color.medium};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
@@ -48,48 +52,63 @@ export const StyledDialog = styled.div`
   z-index: 1000;
 `;
 
-export const StyledInput = styled.input`
-  background: ${({ theme }) => theme.background.secondary};
+const StyledInputContainer = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 0;
-  color: ${({ theme }) => theme.font.color.primary};
+
+  display: flex;
   font-size: ${({ theme }) => theme.font.size.lg};
+  height: 56px;
+  margin: 0;
+  outline: none;
+  position: relative;
+
+  padding: 0 ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledInput = styled.input`
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
   margin: 0;
   outline: none;
   height: 24px;
-  padding: ${({ theme }) => theme.spacing(4)};
-  width: ${({ theme }) => `calc(100% - ${theme.spacing(10)})`};
+  padding: 0;
+  width: ${({ theme }) => `calc(100% - ${theme.spacing(8)})`};
 
   &::placeholder {
     color: ${({ theme }) => theme.font.color.light};
+    font-weight: ${({ theme }) => theme.font.weight.medium};
   }
 `;
 
-const StyledCancelText = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-right: 12px;
-  margin-top: 6px;
-  position: absolute;
-  right: 0;
-  top: 0;
+const StyledCloseButtonContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 32px;
+  justify-content: center;
 `;
 
-export const StyledList = styled.div`
+const StyledList = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   overscroll-behavior: contain;
   transition: 100ms ease;
   transition-property: height;
 `;
 
-export const StyledInnerList = styled.div`
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  width: calc(100% - ${({ theme }) => theme.spacing(2)});
+const StyledInnerList = styled.div`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
-export const StyledEmpty = styled.div`
+const StyledEmpty = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
@@ -248,8 +267,27 @@ export const CommandMenu = () => {
     callback: closeCommandMenu,
   });
 
-  const selectableItemIds = matchingCreateCommand
+  const isCopilotEnabled = useIsFeatureEnabled('IS_COPILOT_ENABLED');
+  const setCopilotQuery = useSetRecoilState(copilotQueryState);
+  const openCopilotRightDrawer = useOpenCopilotRightDrawer();
+
+  const copilotCommand: Command = {
+    id: 'copilot',
+    to: '', // TODO
+    Icon: IconSparkles,
+    label: 'Open Copilot',
+    type: CommandType.Navigate,
+    onCommandClick: () => {
+      setCopilotQuery(commandMenuSearch);
+      openCopilotRightDrawer();
+    },
+  };
+
+  const copilotCommands: Command[] = isCopilotEnabled ? [copilotCommand] : [];
+
+  const selectableItemIds = copilotCommands
     .map((cmd) => cmd.id)
+    .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people.map((person) => person.id))
     .concat(companies.map((company) => company.id))
@@ -258,14 +296,25 @@ export const CommandMenu = () => {
   return (
     <>
       {isCommandMenuOpened && (
-        <StyledDialog ref={commandMenuRef}>
-          <StyledInput
-            autoFocus
-            value={commandMenuSearch}
-            placeholder="Search"
-            onChange={handleSearchChange}
-          />
-          {!isMobile && <StyledCancelText>Esc to cancel</StyledCancelText>}
+        <StyledCommandMenu ref={commandMenuRef}>
+          <StyledInputContainer>
+            <StyledInput
+              autoFocus
+              value={commandMenuSearch}
+              placeholder="Search"
+              onChange={handleSearchChange}
+            />
+            {!isMobile && (
+              <StyledCloseButtonContainer>
+                <LightIconButton
+                  accent={'tertiary'}
+                  size={'medium'}
+                  Icon={IconX}
+                  onClick={closeCommandMenu}
+                />
+              </StyledCloseButtonContainer>
+            )}
+          </StyledInputContainer>
           <StyledList>
             <ScrollWrapper>
               <StyledInnerList>
@@ -275,6 +324,7 @@ export const CommandMenu = () => {
                   hotkeyScope={AppHotkeyScope.CommandMenu}
                   onEnter={(itemId) => {
                     const command = [
+                      ...copilotCommands,
                       ...commandMenuCommands,
                       ...otherCommands,
                     ].find((cmd) => cmd.id === itemId);
@@ -292,6 +342,22 @@ export const CommandMenu = () => {
                     !activities.length && (
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
+                  {isCopilotEnabled && (
+                    <CommandGroup heading="Copilot">
+                      <SelectableItem itemId={copilotCommand.id}>
+                        <CommandMenuItem
+                          id={copilotCommand.id}
+                          Icon={copilotCommand.Icon}
+                          label={`${copilotCommand.label} ${
+                            commandMenuSearch.length > 2
+                              ? `"${commandMenuSearch}"`
+                              : ''
+                          }`}
+                          onClick={copilotCommand.onCommandClick}
+                        />
+                      </SelectableItem>
+                    </CommandGroup>
+                  )}
                   <CommandGroup heading="Create">
                     {matchingCreateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>
@@ -338,7 +404,7 @@ export const CommandMenu = () => {
                             <Avatar
                               type="rounded"
                               avatarUrl={null}
-                              entityId={person.id}
+                              placeholderColorSeed={person.id}
                               placeholder={
                                 person.name.firstName +
                                 ' ' +
@@ -360,7 +426,7 @@ export const CommandMenu = () => {
                           to={`object/company/${company.id}`}
                           Icon={() => (
                             <Avatar
-                              entityId={company.id}
+                              placeholderColorSeed={company.id}
                               placeholder={company.name}
                               avatarUrl={getLogoUrlFromDomainName(
                                 company.domainName,
@@ -388,7 +454,7 @@ export const CommandMenu = () => {
               </StyledInnerList>
             </ScrollWrapper>
           </StyledList>
-        </StyledDialog>
+        </StyledCommandMenu>
       )}
     </>
   );

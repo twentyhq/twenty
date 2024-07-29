@@ -1,19 +1,18 @@
-import { InjectRepository } from '@nestjs/typeorm';
+/* eslint-disable @nx/workspace-inject-workspace-repository */
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -21,8 +20,6 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectWorkspaceRepository(WorkspaceMemberWorkspaceEntity)
-    private readonly workspaceMemberRepository: WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private eventEmitter: EventEmitter2,
@@ -58,9 +55,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
         ("nameFirstName", "nameLastName", "colorScheme", "userId", "userEmail", "avatarUrl")
-        VALUES ('${user.firstName}', '${user.lastName}', 'Light', '${
-          user.id
-        }', '${user.email}', '${user.defaultAvatarUrl ?? ''}')`,
+        VALUES ($1, $2, 'Light', $3, $4, $5)`,
+      [
+        user.firstName,
+        user.lastName,
+        user.id,
+        user.email,
+        user.defaultAvatarUrl ?? '',
+      ],
     );
     const workspaceMember = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId"='${user.id}'`,
@@ -101,13 +103,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     });
   }
 
-  public async getWorkspaceMemberCount(): Promise<number | undefined> {
-    // TODO: to refactor, this could happen today for the first signup since the workspace does not exist yet
-    if (!this.workspaceMemberRepository) {
-      return undefined;
-    }
-
-    return await this.workspaceMemberRepository.count();
+  public async getUserCount(workspaceId): Promise<number | undefined> {
+    return await this.userWorkspaceRepository.countBy({
+      workspaceId,
+    });
   }
 
   async checkUserWorkspaceExists(

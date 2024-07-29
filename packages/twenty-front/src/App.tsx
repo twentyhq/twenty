@@ -53,10 +53,9 @@ import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
-import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/SettingsAccountsCalendarsSettings';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
-import { SettingsAccountsEmailsInboxSettings } from '~/pages/settings/accounts/SettingsAccountsEmailsInboxSettings';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
+import { SettingsCRMMigration } from '~/pages/settings/crm-migration/SettingsCRMMigration';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
@@ -83,6 +82,10 @@ import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { SettingsServerlessFunctions } from '~/pages/settings/serverless-functions/SettingsServerlessFunctions';
+import { SettingsServerlessFunctionsNew } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { SettingsServerlessFunctionDetailWrapper } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetailWrapper';
 
 const ProvidersThatNeedRouterContext = () => {
   const { pathname } = useLocation();
@@ -127,7 +130,11 @@ const ProvidersThatNeedRouterContext = () => {
   );
 };
 
-const createRouter = (isBillingEnabled?: boolean) =>
+const createRouter = (
+  isBillingEnabled?: boolean,
+  isCRMMigrationEnabled?: boolean,
+  isServerlessFunctionSettingsEnabled?: boolean,
+) =>
   createBrowserRouter(
     createRoutesFromElements(
       <Route
@@ -181,16 +188,8 @@ const createRouter = (isBillingEnabled?: boolean) =>
                   element={<SettingsAccountsCalendars />}
                 />
                 <Route
-                  path={SettingsPath.AccountsCalendarsSettings}
-                  element={<SettingsAccountsCalendarsSettings />}
-                />
-                <Route
                   path={SettingsPath.AccountsEmails}
                   element={<SettingsAccountsEmails />}
-                />
-                <Route
-                  path={SettingsPath.AccountsEmailsInboxSettings}
-                  element={<SettingsAccountsEmailsInboxSettings />}
                 />
                 <Route
                   path={SettingsPath.Billing}
@@ -232,6 +231,12 @@ const createRouter = (isBillingEnabled?: boolean) =>
                   path={SettingsPath.Developers}
                   element={<SettingsDevelopers />}
                 />
+                {isCRMMigrationEnabled && (
+                  <Route
+                    path={SettingsPath.CRMMigration}
+                    element={<SettingsCRMMigration />}
+                  />
+                )}
                 <Route
                   path={AppPath.DevelopersCatchAll}
                   element={
@@ -255,6 +260,22 @@ const createRouter = (isBillingEnabled?: boolean) =>
                     </Routes>
                   }
                 />
+                {isServerlessFunctionSettingsEnabled && (
+                  <>
+                    <Route
+                      path={SettingsPath.ServerlessFunctions}
+                      element={<SettingsServerlessFunctions />}
+                    />
+                    <Route
+                      path={SettingsPath.NewServerlessFunction}
+                      element={<SettingsServerlessFunctionsNew />}
+                    />
+                    <Route
+                      path={SettingsPath.ServerlessFunctionDetail}
+                      element={<SettingsServerlessFunctionDetailWrapper />}
+                    />
+                  </>
+                )}
                 <Route
                   path={SettingsPath.Integrations}
                   element={<SettingsIntegrations />}
@@ -302,6 +323,18 @@ const createRouter = (isBillingEnabled?: boolean) =>
 
 export const App = () => {
   const billing = useRecoilValue(billingState);
+  const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
+  const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
+    'IS_FUNCTION_SETTINGS_ENABLED',
+  );
 
-  return <RouterProvider router={createRouter(billing?.isBillingEnabled)} />;
+  return (
+    <RouterProvider
+      router={createRouter(
+        billing?.isBillingEnabled,
+        isCRMMigrationEnabled,
+        isServerlessFunctionSettingsEnabled,
+      )}
+    />
+  );
 };

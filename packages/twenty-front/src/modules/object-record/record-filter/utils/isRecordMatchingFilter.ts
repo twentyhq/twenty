@@ -143,6 +143,7 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.Email:
       case FieldMetadataType.Phone:
       case FieldMetadataType.Select:
+      case FieldMetadataType.Rating:
       case FieldMetadataType.MultiSelect:
       case FieldMetadataType.Text: {
         return isMatchingStringFilter({

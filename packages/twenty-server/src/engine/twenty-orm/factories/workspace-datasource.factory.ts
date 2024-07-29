@@ -1,59 +1,128 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntitySchema } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { DataSourceStorage } from 'src/engine/twenty-orm/storage/data-source.storage';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
+import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
+import { workspaceDataSourceCacheInstance } from 'src/engine/twenty-orm/twenty-orm-core.module';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class WorkspaceDatasourceFactory {
   constructor(
     private readonly dataSourceService: DataSourceService,
     private readonly environmentService: EnvironmentService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    private readonly entitySchemaFactory: EntitySchemaFactory,
   ) {}
 
   public async create(
-    entities: EntitySchema[],
     workspaceId: string,
-  ): Promise<WorkspaceDataSource | null> {
-    const storedWorkspaceDataSource =
-      DataSourceStorage.getDataSource(workspaceId);
+    cacheVersion: string | null,
+  ): Promise<WorkspaceDataSource> {
+    const desiredCacheVersion =
+      cacheVersion ??
+      (await this.workspaceCacheVersionService.getVersion(workspaceId));
 
-    if (storedWorkspaceDataSource) {
-      return storedWorkspaceDataSource;
+    if (!desiredCacheVersion) {
+      throw new Error('Cache version not found');
     }
 
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
+    const latestCacheVersion =
+      await this.workspaceCacheVersionService.getVersion(workspaceId);
+
+    if (latestCacheVersion !== desiredCacheVersion) {
+      throw new Error('Cache version mismatch');
+    }
+
+    let cachedObjectMetadataCollection =
+      await this.workspaceCacheStorageService.getObjectMetadataCollection(
         workspaceId,
       );
 
-    if (!dataSourceMetadata) {
-      return null;
+    if (!cachedObjectMetadataCollection) {
+      const freshObjectMetadataCollection =
+        await this.objectMetadataRepository.find({
+          where: { workspaceId },
+          relations: [
+            'fields.object',
+            'fields',
+            'fields.fromRelationMetadata',
+            'fields.toRelationMetadata',
+            'fields.fromRelationMetadata.toObjectMetadata',
+          ],
+        });
+
+      await this.workspaceCacheStorageService.setObjectMetadataCollection(
+        workspaceId,
+        freshObjectMetadataCollection,
+      );
+
+      cachedObjectMetadataCollection = freshObjectMetadataCollection;
     }
 
-    const workspaceDataSource = new WorkspaceDataSource({
-      url:
-        dataSourceMetadata.url ??
-        this.environmentService.get('PG_DATABASE_URL'),
-      type: 'postgres',
-      logging: this.environmentService.get('DEBUG_MODE')
-        ? ['query', 'error']
-        : ['error'],
-      schema: dataSourceMetadata.schema,
-      entities,
-      ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
-        ? {
-            rejectUnauthorized: false,
-          }
-        : undefined,
-    });
+    const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
+      `${workspaceId}-${cacheVersion}`,
+      async () => {
+        const dataSourceMetadata =
+          await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
+            workspaceId,
+          );
 
-    await workspaceDataSource.initialize();
+        if (!dataSourceMetadata) {
+          throw new Error('Data source metadata not found');
+        }
 
-    DataSourceStorage.setDataSource(workspaceId, workspaceDataSource);
+        if (!cachedObjectMetadataCollection) {
+          throw new Error('Object metadata collection not found');
+        }
+
+        const entities = await Promise.all(
+          cachedObjectMetadataCollection.map((objectMetadata) =>
+            this.entitySchemaFactory.create(workspaceId, objectMetadata),
+          ),
+        );
+        const workspaceDataSource = new WorkspaceDataSource(
+          {
+            workspaceId,
+            workspaceCacheStorage: this.workspaceCacheStorageService,
+          },
+          {
+            url:
+              dataSourceMetadata.url ??
+              this.environmentService.get('PG_DATABASE_URL'),
+            type: 'postgres',
+            logging: this.environmentService.get('DEBUG_MODE')
+              ? ['query', 'error']
+              : ['error'],
+            schema: dataSourceMetadata.schema,
+            entities,
+            ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
+              ? {
+                  rejectUnauthorized: false,
+                }
+              : undefined,
+          },
+        );
+
+        await workspaceDataSource.initialize();
+
+        return workspaceDataSource;
+      },
+      (dataSource) => dataSource.destroy(),
+    );
+
+    if (!workspaceDataSource) {
+      throw new Error('Workspace data source not found');
+    }
 
     return workspaceDataSource;
   }

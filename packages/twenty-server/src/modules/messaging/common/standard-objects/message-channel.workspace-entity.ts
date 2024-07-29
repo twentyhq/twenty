@@ -5,29 +5,23 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MESSAGE_CHANNEL_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
-import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 export enum MessageChannelSyncStatus {
-  // TO BE DEPRECATED
-  PENDING = 'PENDING',
-  SUCCEEDED = 'SUCCEEDED',
-  FAILED = 'FAILED',
-
-  // NEW STATUSES
   NOT_SYNCED = 'NOT_SYNCED',
   ONGOING = 'ONGOING',
-  COMPLETED = 'COMPLETED',
+  ACTIVE = 'ACTIVE',
   FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
   FAILED_UNKNOWN = 'FAILED_UNKNOWN',
 }
@@ -65,6 +59,7 @@ export enum MessageChannelContactAutoCreationPolicy {
   labelPlural: 'Message Channels',
   description: 'Message Channels',
   icon: 'IconMessage',
+  labelIdentifierStandardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.handle,
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
@@ -230,26 +225,6 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Sync status',
     icon: 'IconStatusChange',
     options: [
-      // TO BE DEPRECATED: PENDING, SUCCEEDED, FAILED
-      {
-        value: MessageChannelSyncStatus.PENDING,
-        label: 'Pending',
-        position: 0,
-        color: 'blue',
-      },
-      {
-        value: MessageChannelSyncStatus.SUCCEEDED,
-        label: 'Succeeded',
-        position: 2,
-        color: 'green',
-      },
-      {
-        value: MessageChannelSyncStatus.FAILED,
-        label: 'Failed',
-        position: 3,
-        color: 'red',
-      },
-      // NEW STATUSES
       {
         value: MessageChannelSyncStatus.ONGOING,
         label: 'Ongoing',
@@ -259,25 +234,25 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
       {
         value: MessageChannelSyncStatus.NOT_SYNCED,
         label: 'Not Synced',
-        position: 4,
+        position: 2,
         color: 'blue',
       },
       {
-        value: MessageChannelSyncStatus.COMPLETED,
-        label: 'Completed',
-        position: 5,
+        value: MessageChannelSyncStatus.ACTIVE,
+        label: 'Active',
+        position: 3,
         color: 'green',
       },
       {
         value: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
         label: 'Failed Insufficient Permissions',
-        position: 6,
+        position: 4,
         color: 'red',
       },
       {
         value: MessageChannelSyncStatus.FAILED_UNKNOWN,
         label: 'Failed Unknown',
-        position: 7,
+        position: 5,
         color: 'red',
       },
     ],

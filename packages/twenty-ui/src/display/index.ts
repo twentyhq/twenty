@@ -1,10 +1,14 @@
 export * from './avatar/components/Avatar';
 export * from './avatar/components/AvatarGroup';
 export * from './avatar/components/states/isInvalidAvatarUrlState';
+export * from './avatar/constants/AvatarPropertiesBySize';
+export * from './avatar/types/AvatarSize';
+export * from './avatar/types/AvatarType';
+export * from './banner/components/Banner';
 export * from './checkmark/components/AnimatedCheckmark';
 export * from './checkmark/components/Checkmark';
+export * from './chip/components/AvatarChip';
 export * from './chip/components/Chip';
-export * from './chip/components/EntityChip';
 export * from './chip/components/MultiChip';
 export * from './color/components/ColorSample';
 export * from './icon/components/IconAddressBook';
@@ -25,3 +29,4 @@ export * from './tooltip/OverflowingTextWithTooltip';
 export * from './typography/components/H1Title';
 export * from './typography/components/H2Title';
 export * from './typography/components/H3Title';
+

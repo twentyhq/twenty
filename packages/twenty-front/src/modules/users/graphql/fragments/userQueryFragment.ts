@@ -39,6 +39,7 @@ export const USER_QUERY_FRAGMENT = gql`
         status
         interval
       }
+      workspaceMembersCount
     }
     workspaces {
       workspace {
@@ -48,5 +49,6 @@ export const USER_QUERY_FRAGMENT = gql`
         domainName
       }
     }
+    userVars
   }
 `;

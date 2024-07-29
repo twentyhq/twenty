@@ -7,7 +7,6 @@ import {
   FieldSelectMetadata,
   FieldTextMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
-import { type } from 'os';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   mockedCompanyObjectMetadataItem,
@@ -44,6 +43,7 @@ export const selectFieldDefinition: FieldDefinition<FieldSelectMetadata> = {
   metadata: {
     fieldName: 'accountOwner',
     options: [{ label: 'Elon Musk', color: 'blue', value: 'userId' }],
+    isNullable: true,
   },
 };
 
@@ -64,7 +64,7 @@ export const linkFieldDefinition: FieldDefinition<FieldLinkMetadata> = {
   label: 'LinkedIn URL',
   iconName: 'url',
   type: FieldMetadataType.Link,
-  defaultValue: { label: '', url: '' },
+  defaultValue: { url: '', label: '' },
   metadata: {
     fieldName: 'linkedInURL',
     placeHolder: 'https://linkedin.com/user',

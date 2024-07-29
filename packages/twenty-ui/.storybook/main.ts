@@ -16,15 +16,6 @@ const config: StorybookConfig = {
     name: '@storybook/react-vite',
     options: {},
   },
-  build: {
-    test: {
-      disableMDXEntries: true,
-      disabledAddons: [
-        '@storybook/addon-docs',
-        '@storybook/addon-essentials/docs',
-      ],
-    },
-  },
 };
 
 export default config;

@@ -1,6 +1,6 @@
-import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
+import ReactDatePicker from 'react-datepicker';
 import { Key } from 'ts-key-enum';
 import {
   IconCalendarX,
@@ -298,7 +298,7 @@ const StyledCustomDatePickerHeader = styled.div`
 `;
 
 export type InternalDatePickerProps = {
-  date: Date;
+  date: Date | null;
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date | null) => void;
   clearable?: boolean;
@@ -372,30 +372,29 @@ export const InternalDatePicker = ({
   };
 
   const handleChangeMonth = (month: number) => {
-    const newDate = new Date(date);
+    const newDate = new Date(internalDate);
     newDate.setMonth(month);
     onChange?.(newDate);
   };
 
   const handleChangeYear = (year: number) => {
-    const newDate = new Date(date);
+    const newDate = new Date(internalDate);
     newDate.setFullYear(year);
     onChange?.(newDate);
   };
 
-  const dateWithoutTime = DateTime.fromJSDate(date)
+  const dateWithoutTime = DateTime.fromJSDate(internalDate)
     .toLocal()
     .set({
-      day: date.getUTCDate(),
-      month: date.getUTCMonth() + 1,
-      year: date.getUTCFullYear(),
+      day: internalDate.getUTCDate(),
+      month: internalDate.getUTCMonth() + 1,
+      year: internalDate.getUTCFullYear(),
       hour: 0,
       minute: 0,
       second: 0,
       millisecond: 0,
     })
     .toJSDate();
-
   const dateToUse = isDateTimeInput ? date : dateWithoutTime;
 
   return (
@@ -404,9 +403,11 @@ export const InternalDatePicker = ({
         <ReactDatePicker
           open={true}
           selected={dateToUse}
-          openToDate={dateToUse}
+          openToDate={isDefined(dateToUse) ? dateToUse : undefined}
           disabledKeyboardNavigation
           onChange={(newDate) => {
+            newDate?.setHours(internalDate.getUTCHours());
+            newDate?.setUTCMinutes(internalDate.getUTCMinutes());
             onChange?.(newDate);
           }}
           customInput={
@@ -440,13 +441,13 @@ export const InternalDatePicker = ({
                   options={months}
                   disableBlur
                   onChange={handleChangeMonth}
-                  value={date.getUTCMonth()}
+                  value={internalDate.getUTCMonth()}
                   fullWidth
                 />
                 <Select
                   dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
                   onChange={handleChangeYear}
-                  value={date.getUTCFullYear()}
+                  value={internalDate.getUTCFullYear()}
                   options={years}
                   disableBlur
                   fullWidth

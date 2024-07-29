@@ -11,20 +11,10 @@ import {
   mockedUserData,
 } from '~/testing/mock-data/users';
 
-jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
-  useFindManyRecords: jest.fn(),
-}));
-const setupMockWorkspaceMembers = (withManyWorkspaceMembers = false) => {
-  jest
-    .requireMock('@/object-record/hooks/useFindManyRecords')
-    .useFindManyRecords.mockReturnValue({
-      records: withManyWorkspaceMembers ? [{}, {}] : [{}],
-    });
-};
-
 const renderHooks = (
   onboardingStatus: OnboardingStatus,
   withCurrentBillingSubscription: boolean,
+  withOneWorkspaceMember = true,
 ) => {
   const { result } = renderHook(
     () => {
@@ -49,6 +39,7 @@ const renderHooks = (
       currentBillingSubscription: withCurrentBillingSubscription
         ? { id: v4(), status: SubscriptionStatus.Active }
         : undefined,
+      workspaceMembersCount: withOneWorkspaceMember ? 1 : 2,
     });
   });
   act(() => {
@@ -59,29 +50,38 @@ const renderHooks = (
 
 describe('useSetNextOnboardingStatus', () => {
   it('should set next onboarding status for ProfileCreation', () => {
-    setupMockWorkspaceMembers();
     const nextOnboardingStatus = renderHooks(
       OnboardingStatus.ProfileCreation,
       false,
+      true,
     );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.SyncEmail);
   });
 
   it('should set next onboarding status for SyncEmail', () => {
-    setupMockWorkspaceMembers();
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.SyncEmail, false);
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.SyncEmail,
+      false,
+      true,
+    );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.InviteTeam);
   });
 
-  it('should skip invite when workspaceMembers exist', () => {
-    setupMockWorkspaceMembers(true);
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.SyncEmail, true);
+  it('should skip invite when more than 1 workspaceMember exist', () => {
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.SyncEmail,
+      true,
+      false,
+    );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.Completed);
   });
 
   it('should set next onboarding status for Completed', () => {
-    setupMockWorkspaceMembers();
-    const nextOnboardingStatus = renderHooks(OnboardingStatus.InviteTeam, true);
+    const nextOnboardingStatus = renderHooks(
+      OnboardingStatus.InviteTeam,
+      true,
+      true,
+    );
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.Completed);
   });
 });

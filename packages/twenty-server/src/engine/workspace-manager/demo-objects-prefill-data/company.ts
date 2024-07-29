@@ -12,9 +12,9 @@ export const companyPrefillDemoData = async (
     .into(`${schemaName}.company`, [
       'name',
       'domainName',
-      'address',
+      'addressAddressCity',
       'employees',
-      'linkedinLinkUrl',
+      'linkedinLinkPrimaryLinkUrl',
       'position',
     ])
     .orIgnore()

@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import console from 'console';
@@ -56,6 +51,10 @@ import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -121,7 +120,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
 
     if (!objectMetadata) {
-      throw new NotFoundException('Object does not exist');
+      throw new ObjectMetadataException(
+        'Object does not exist',
+        ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
     }
 
     // DELETE RELATIONS
@@ -159,8 +161,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       objectMetadataInput.nameSingular.toLowerCase() ===
       objectMetadataInput.namePlural.toLowerCase()
     ) {
-      throw new BadRequestException(
+      throw new ObjectMetadataException(
         'The singular and plural name cannot be the same for an object',
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
       );
     }
 
@@ -186,7 +189,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
 
     if (objectAlreadyExists) {
-      throw new ConflictException('Object already exists');
+      throw new ObjectMetadataException(
+        'Object already exists',
+        ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
+      );
     }
 
     const isCustom = !objectMetadataInput.isRemote;
@@ -372,18 +378,25 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceId: string,
     options: FindOneOptions<ObjectMetadataEntity>,
   ): Promise<ObjectMetadataEntity> {
-    return this.objectMetadataRepository.findOneOrFail({
-      relations: [
-        'fields',
-        'fields.fromRelationMetadata',
-        'fields.toRelationMetadata',
-      ],
-      ...options,
-      where: {
-        ...options.where,
-        workspaceId,
-      },
-    });
+    try {
+      return this.objectMetadataRepository.findOneOrFail({
+        relations: [
+          'fields',
+          'fields.fromRelationMetadata',
+          'fields.toRelationMetadata',
+        ],
+        ...options,
+        where: {
+          ...options.where,
+          workspaceId,
+        },
+      });
+    } catch (error) {
+      throw new ObjectMetadataException(
+        'Object does not exist',
+        ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
   }
 
   public async findManyWithinWorkspace(

@@ -1,19 +1,15 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  RequestTimeoutException,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import isEmpty from 'lodash.isempty';
+import { DataSource } from 'typeorm';
 
-import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import {
   Record as IRecord,
   RecordFilter,
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import {
   CreateManyResolverArgs,
   CreateOneResolverArgs,
@@ -29,36 +25,40 @@ import {
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { WorkspaceQueryBuilderFactory } from 'src/engine/api/graphql/workspace-query-builder/workspace-query-builder.factory';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
+import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import {
   CallWebhookJobsJob,
   CallWebhookJobsJobData,
   CallWebhookJobsJobOperation,
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook-jobs.job';
-import { parseResult } from 'src/engine/api/graphql/workspace-query-runner/utils/parse-result.util';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
-import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
-import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
-import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
-import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
-import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
-import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { parseResult } from 'src/engine/api/graphql/workspace-query-runner/utils/parse-result.util';
+import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
+import {
+  WorkspaceQueryRunnerException,
+  WorkspaceQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
   PGGraphQLMutation,
   PGGraphQLResult,
 } from './interfaces/pg-graphql.interface';
+import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
   PgGraphQLConfig,
   computePgGraphQLError,
@@ -69,6 +69,7 @@ export class WorkspaceQueryRunnerService {
   private readonly logger = new Logger(WorkspaceQueryRunnerService.name);
 
   constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
@@ -135,7 +136,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     if (!args.filter || Object.keys(args.filter).length === 0) {
-      throw new BadRequestException('Missing filter argument');
+      throw new WorkspaceQueryRunnerException(
+        'Missing filter argument',
+        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
     }
     const { workspaceId, userId, objectMetadataItem } = options;
 
@@ -173,14 +177,16 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<TRecord> | undefined> {
     if (!args.data && !args.ids) {
-      throw new BadRequestException(
+      throw new WorkspaceQueryRunnerException(
         'You have to provide either "data" or "id" argument',
+        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
 
     if (!args.ids && isEmpty(args.data)) {
-      throw new BadRequestException(
+      throw new WorkspaceQueryRunnerException(
         'The "data" condition can not be empty when ID input not provided',
+        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
 
@@ -202,7 +208,10 @@ export class WorkspaceQueryRunnerService {
       );
 
       if (!existingRecords || existingRecords.length === 0) {
-        throw new NotFoundError(`Object with id ${args.ids} not found`);
+        throw new WorkspaceQueryRunnerException(
+          `Object with id ${args.ids} not found`,
+          WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND,
+        );
       }
     }
 
@@ -369,14 +378,25 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        objectMetadataItem.nameSingular,
+      );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
 
-    const existingRecord = await this.findOne(
-      { filter: { id: { eq: args.id } } } as FindOneResolverArgs,
-      options,
-    );
+    const existingRecord = await repository.findOne({
+      where: { id: args.id },
+    });
+
+    if (!existingRecord) {
+      throw new WorkspaceQueryRunnerException(
+        `Object with id ${args.id} not found`,
+        WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND,
+      );
+    }
 
     const query = await this.workspaceQueryBuilderFactory.updateOne(
       args,
@@ -411,7 +431,7 @@ export class WorkspaceQueryRunnerService {
       name: `${objectMetadataItem.nameSingular}.updated`,
       workspaceId,
       userId,
-      recordId: (existingRecord as Record).id,
+      recordId: existingRecord.id,
       objectMetadata: objectMetadataItem,
       properties: {
         before: this.removeNestedProperties(existingRecord as Record),
@@ -427,10 +447,21 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { userId, workspaceId, objectMetadataItem } = options;
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        objectMetadataItem.nameSingular,
+      );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
 
+    const existingRecords = await repository.find({
+      where: { id: { in: args.filter?.id?.in } },
+    });
+    const mappedRecords = new Map(
+      existingRecords.map((record) => [record.id, record]),
+    );
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_AFFECTED_RECORDS',
     );
@@ -463,11 +494,29 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    // TODO: check - NO EVENT SENT?
-    // OK I spent 2 hours trying to implement before/after diff and
-    // figured out why it hasn't been implement
-    // Doing a findMany in that context is very hard as long as we don't
-    // have a proper ORM. Let's come back to this once we do (target end of April 24?)
+    parsedResults.forEach((record) => {
+      const existingRecord = mappedRecords.get(record.id);
+
+      if (!existingRecord) {
+        this.logger.warn(
+          `Record with id ${record.id} not found in the database`,
+        );
+
+        return;
+      }
+
+      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
+        name: `${objectMetadataItem.nameSingular}.updated`,
+        workspaceId,
+        userId,
+        recordId: existingRecord.id,
+        objectMetadata: objectMetadataItem,
+        properties: {
+          before: this.removeNestedProperties(existingRecord as Record),
+          after: this.removeNestedProperties(record),
+        },
+      } satisfies ObjectRecordUpdateEvent<any>);
+    });
 
     return parsedResults;
   }
@@ -523,7 +572,7 @@ export class WorkspaceQueryRunnerService {
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         properties: {
-          before: [this.removeNestedProperties(record)],
+          before: this.removeNestedProperties(record),
         },
       } satisfies ObjectRecordDeleteEvent<any>);
     });
@@ -536,6 +585,11 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        objectMetadataItem.nameSingular,
+      );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
@@ -545,19 +599,9 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    // TODO START: remove this awful patch and use our upcoming custom ORM is developed
-    const deletedWorkspaceMember = await this.handleDeleteWorkspaceMember(
-      args.id,
-      workspaceId,
-      objectMetadataItem,
-    );
-
-    const deletedBlocklistItem = await this.handleDeleteBlocklistItem(
-      args.id,
-      workspaceId,
-      objectMetadataItem,
-    );
-    // TODO END
+    const existingRecord = await repository.findOne({
+      where: { id: args.id },
+    });
 
     await this.workspaceQueryHookService.executePreQueryHooks(
       userId,
@@ -591,8 +635,7 @@ export class WorkspaceQueryRunnerService {
       objectMetadata: objectMetadataItem,
       properties: {
         before: {
-          ...(deletedWorkspaceMember ?? {}),
-          ...(deletedBlocklistItem ?? {}),
+          ...(existingRecord ?? {}),
           ...this.removeNestedProperties(parsedResults?.[0]),
         },
       },
@@ -607,6 +650,7 @@ export class WorkspaceQueryRunnerService {
     if (!record) {
       return;
     }
+
     const sanitizedRecord = {};
 
     for (const [key, value] of Object.entries(record)) {
@@ -614,10 +658,46 @@ export class WorkspaceQueryRunnerService {
         continue;
       }
 
+      if (key === '__typename') {
+        continue;
+      }
+
       sanitizedRecord[key] = value;
     }
 
     return sanitizedRecord;
+  }
+
+  async executeSQL(
+    workspaceDataSource: DataSource,
+    workspaceId: string,
+    sqlQuery: string,
+    parameters?: any[],
+  ) {
+    try {
+      return await workspaceDataSource?.transaction(
+        async (transactionManager) => {
+          await transactionManager.query(`
+          SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
+            workspaceId,
+          )};
+        `);
+
+          const results = transactionManager.query(sqlQuery, parameters);
+
+          return results;
+        },
+      );
+    } catch (error) {
+      if (isQueryTimeoutError(error)) {
+        throw new WorkspaceQueryRunnerException(
+          'The SQL request took too long to process, resulting in a query read timeout. To resolve this issue, consider modifying your query by reducing the depth of relationships or limiting the number of records being fetched.',
+          WorkspaceQueryRunnerExceptionCode.QUERY_TIMEOUT,
+        );
+      }
+
+      throw error;
+    }
   }
 
   async execute(
@@ -629,30 +709,12 @@ export class WorkspaceQueryRunnerService {
         workspaceId,
       );
 
-    try {
-      return await workspaceDataSource?.transaction(
-        async (transactionManager) => {
-          await transactionManager.query(`
-          SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
-            workspaceId,
-          )};
-        `);
-
-          const results = transactionManager.query<PGGraphQLResult>(
-            `SELECT graphql.resolve($1);`,
-            [query],
-          );
-
-          return results;
-        },
-      );
-    } catch (error) {
-      if (isQueryTimeoutError(error)) {
-        throw new RequestTimeoutException(error.message);
-      }
-
-      throw error;
-    }
+    return this.executeSQL(
+      workspaceDataSource,
+      workspaceId,
+      `SELECT graphql.resolve($1);`,
+      [query],
+    );
   }
 
   private async parseResult<Result>(
@@ -681,7 +743,10 @@ export class WorkspaceQueryRunnerService {
       ['update', 'deleteFrom'].includes(command) &&
       !result.affectedCount
     ) {
-      throw new BadRequestException('No rows were affected.');
+      throw new WorkspaceQueryRunnerException(
+        'No rows were affected.',
+        WorkspaceQueryRunnerExceptionCode.NO_ROWS_AFFECTED,
+      );
     }
 
     if (errors && errors.length > 0) {
