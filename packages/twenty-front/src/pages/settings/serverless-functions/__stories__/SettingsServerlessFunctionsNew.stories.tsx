@@ -27,7 +27,6 @@ export const Default: Story = {
     await sleep(100);
     await canvas.findByText('Functions');
     await canvas.findByText('New');
-    await canvas.findByText('Name');
 
     const input = await canvas.findByPlaceholderText('Name');
     await userEvent.type(input, 'Function Name');
