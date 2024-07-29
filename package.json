@@ -327,7 +327,6 @@
     "source-map-support": "^0.5.20",
     "storybook": "^7.6.3",
     "storybook-addon-cookie": "^3.2.0",
-    "storybook-addon-mock": "^5.0.0",
     "storybook-addon-pseudo-states": "^2.1.2",
     "storybook-dark-mode": "^4.0.1",
     "supertest": "^6.1.3",

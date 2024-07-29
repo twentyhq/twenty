@@ -40,7 +40,6 @@ const config: StorybookConfig = {
     'storybook-dark-mode',
     'storybook-addon-cookie',
     'storybook-addon-pseudo-states',
-    'storybook-addon-mock',
   ],
   framework: {
     name: '@storybook/react-vite',
