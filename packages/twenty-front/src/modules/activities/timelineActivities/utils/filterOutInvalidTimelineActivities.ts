@@ -1,16 +1,16 @@
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-export const filterOutInvalidEvents = (
-  events: TimelineActivity[],
+export const filterOutInvalidTimelineActivities = (
+  timelineActivities: TimelineActivity[],
   mainObjectMetadataItem: ObjectMetadataItem,
 ): TimelineActivity[] => {
   const fieldMetadataItemMap = new Map(
     mainObjectMetadataItem.fields.map((field) => [field.name, field]),
   );
 
-  return events.filter((event) => {
-    const diff = event.properties?.diff;
+  return timelineActivities.filter((timelineActivity) => {
+    const diff = timelineActivity.properties?.diff;
     const canSkipValidation = !diff;
 
     if (canSkipValidation) {
@@ -25,8 +25,8 @@ export const filterOutInvalidEvents = (
       return false;
     }
 
-    event.properties = {
-      ...event.properties,
+    timelineActivity.properties = {
+      ...timelineActivity.properties,
       diff: Object.fromEntries(validDiffEntries),
     };
 

@@ -1,9 +1,9 @@
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
-import { filterOutInvalidEvents } from '@/activities/timelineActivities/utils/filterOutInvalidEvents';
+import { filterOutInvalidTimelineActivities } from '@/activities/timelineActivities/utils/filterOutInvalidTimelineActivities';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-describe('filterOutInvalidEvents', () => {
-  it('should filter out events with deleted fields from the properties diff', () => {
+describe('filterOutInvalidTimelineActivities', () => {
+  it('should filter out TimelineActivities with deleted fields from the properties diff', () => {
     const events = [
       {
         id: '1',
@@ -31,7 +31,7 @@ describe('filterOutInvalidEvents', () => {
       fields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
     } as ObjectMetadataItem;
 
-    const filteredEvents = filterOutInvalidEvents(
+    const filteredEvents = filterOutInvalidTimelineActivities(
       events,
       mainObjectMetadataItem,
     );
@@ -59,7 +59,7 @@ describe('filterOutInvalidEvents', () => {
     ]);
   });
 
-  it('should return an empty array if all events have deleted fields in the properties diff', () => {
+  it('should return an empty array if all TimelineActivities have deleted fields in the properties diff', () => {
     const events = [
       {
         id: '1',
@@ -83,7 +83,7 @@ describe('filterOutInvalidEvents', () => {
       fields: [{ name: 'field1' }, { name: 'field2' }],
     } as ObjectMetadataItem;
 
-    const filteredEvents = filterOutInvalidEvents(
+    const filteredEvents = filterOutInvalidTimelineActivities(
       events,
       mainObjectMetadataItem,
     );
@@ -91,7 +91,7 @@ describe('filterOutInvalidEvents', () => {
     expect(filteredEvents).toEqual([]);
   });
 
-  it('should return the same events if there are no properties diffs', () => {
+  it('should return the same TimelineActivities if there are no properties diffs', () => {
     const events = [
       {
         id: '1',
@@ -107,7 +107,7 @@ describe('filterOutInvalidEvents', () => {
       fields: [{ name: 'field1' }, { name: 'field2' }],
     } as ObjectMetadataItem;
 
-    const filteredEvents = filterOutInvalidEvents(
+    const filteredEvents = filterOutInvalidTimelineActivities(
       events,
       mainObjectMetadataItem,
     );

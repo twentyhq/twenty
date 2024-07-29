@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 
 import { EventsGroup } from '@/activities/timelineActivities/components/EventsGroup';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
-import { filterOutInvalidEvents } from '@/activities/timelineActivities/utils/filterOutInvalidEvents';
+import { filterOutInvalidTimelineActivities } from '@/activities/timelineActivities/utils/filterOutInvalidTimelineActivities';
 import { groupEventsByMonth } from '@/activities/timelineActivities/utils/groupEventsByMonth';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -34,7 +34,10 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
     objectNameSingular: targetableObject.targetObjectNameSingular,
   }).objectMetadataItem;
 
-  const filteredEvents = filterOutInvalidEvents(events, mainObjectMetadataItem);
+  const filteredEvents = filterOutInvalidTimelineActivities(
+    events,
+    mainObjectMetadataItem,
+  );
 
   const groupedEvents = groupEventsByMonth(filteredEvents);
 
