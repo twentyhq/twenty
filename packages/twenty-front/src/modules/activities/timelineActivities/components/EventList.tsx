@@ -3,11 +3,10 @@ import { ReactElement } from 'react';
 
 import { EventsGroup } from '@/activities/timelineActivities/components/EventsGroup';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
+import { filterOutInvalidEvents } from '@/activities/timelineActivities/utils/filterOutInvalidEvents';
 import { groupEventsByMonth } from '@/activities/timelineActivities/utils/groupEventsByMonth';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 type EventListProps = {
@@ -29,44 +28,6 @@ const StyledTimelineContainer = styled.div`
 
   width: calc(100% - ${({ theme }) => theme.spacing(8)});
 `;
-
-const filterOutInvalidEvents = (
-  events: TimelineActivity[],
-  mainObjectMetadataItem: ObjectMetadataItem,
-) => {
-  const fieldMetadataItemMap: Record<string, FieldMetadataItem> =
-    mainObjectMetadataItem.fields.reduce(
-      (acc, field) => ({ ...acc, [field.name]: field }),
-      {},
-    );
-
-  const filteredEvents = events.reduce(
-    (acc: TimelineActivity[], event: TimelineActivity) => {
-      const { properties } = event;
-      const diff: Record<string, { before: any; after: any }> =
-        properties?.diff ?? {};
-
-      const diffEntriesWithoutDeletedFields = Object.entries(diff).filter(
-        ([diffKey, _diffValue]) => fieldMetadataItemMap[diffKey],
-      );
-
-      if (diffEntriesWithoutDeletedFields.length > 0) {
-        acc.push({
-          ...event,
-          properties: {
-            ...properties,
-            diff: Object.fromEntries(diffEntriesWithoutDeletedFields),
-          },
-        });
-      }
-
-      return acc;
-    },
-    [],
-  );
-
-  return filteredEvents;
-};
 
 export const EventList = ({ events, targetableObject }: EventListProps) => {
   const mainObjectMetadataItem = useObjectMetadataItem({
