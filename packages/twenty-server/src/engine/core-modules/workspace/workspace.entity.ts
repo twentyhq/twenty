@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField, UnPagedRelation } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -24,6 +24,10 @@ export enum WorkspaceActivationStatus {
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
 }
+
+registerEnumType(WorkspaceActivationStatus, {
+  name: 'WorkspaceActivationStatus',
+});
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
@@ -92,7 +96,7 @@ export class Workspace {
   @Field({ nullable: true })
   workspaceMembersCount: number;
 
-  @Field()
+  @Field(() => WorkspaceActivationStatus)
   @Column({
     type: 'enum',
     enum: WorkspaceActivationStatus,

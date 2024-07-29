@@ -100,7 +100,7 @@ export class WorkspaceResolver {
     return this.workspaceService.deleteWorkspace(id);
   }
 
-  @ResolveField(() => String)
+  @ResolveField(() => WorkspaceActivationStatus)
   async activationStatus(
     @Parent() workspace: Workspace,
   ): Promise<WorkspaceActivationStatus> {
