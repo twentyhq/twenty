@@ -210,6 +210,10 @@ export const RecordBoardCard = () => {
     return null;
   }
 
+  const visibleFieldDefinitionsFiltered = visibleFieldDefinitions.filter(
+    (boardField) => !boardField.isLabelIdentifier,
+  );
+
   return (
     <StyledBoardCardWrapper onContextMenu={handleContextMenu}>
       <RecordValueSetterEffect recordId={recordId} />
@@ -252,7 +256,7 @@ export const RecordBoardCard = () => {
             isOpen={!isCardInCompactMode || !isCompactModeActive}
             initial={false}
           >
-            {visibleFieldDefinitions.map((fieldDefinition) => (
+            {visibleFieldDefinitionsFiltered.map((fieldDefinition) => (
               <PreventSelectOnClickContainer
                 key={fieldDefinition.fieldMetadataId}
               >

@@ -18,6 +18,7 @@ import {
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import {
   ConnectedAccountProvider,
   ConnectedAccountWorkspaceEntity,
@@ -33,6 +34,7 @@ import {
   MessagingMessageListFetchJob,
   MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -47,6 +49,7 @@ export class GoogleAPIsService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
+    private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
   async refreshGoogleRefreshToken(input: {
@@ -137,6 +140,23 @@ export class GoogleAPIsService {
           newOrExistingConnectedAccountId,
           workspaceId,
           manager,
+        );
+
+        const workspaceMemberRepository =
+          await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+          );
+
+        const workspaceMember = await workspaceMemberRepository.findOneOrFail({
+          where: { id: workspaceMemberId },
+        });
+
+        const userId = workspaceMember.userId;
+
+        await this.accountsToReconnectService.removeAccountToReconnect(
+          userId,
+          workspaceId,
+          newOrExistingConnectedAccountId,
         );
 
         await this.messageChannelRepository.resetSync(

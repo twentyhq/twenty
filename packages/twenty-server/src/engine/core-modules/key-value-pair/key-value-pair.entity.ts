@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
@@ -12,11 +13,16 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+
+export enum KeyValuePairType {
+  USER_VAR = 'USER_VAR',
+  FEATURE_FLAG = 'FEATURE_FLAG',
+  SYSTEM_VAR = 'SYSTEM_VAR',
+}
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
 @ObjectType('KeyValuePair')
@@ -41,7 +47,7 @@ export class KeyValuePair {
   user: Relation<User>;
 
   @Column({ nullable: true })
-  userId: string;
+  userId: string | null;
 
   @ManyToOne(() => Workspace, (workspace) => workspace.keyValuePairs, {
     onDelete: 'CASCADE',
@@ -50,15 +56,28 @@ export class KeyValuePair {
   workspace: Relation<Workspace>;
 
   @Column({ nullable: true })
-  workspaceId: string;
+  workspaceId: string | null;
 
   @Field(() => String)
   @Column({ nullable: false, type: 'text' })
   key: string;
 
-  @Field(() => String, { nullable: true })
-  @Column({ nullable: true, type: 'text' })
-  value: string;
+  @Field(() => JSON, { nullable: true })
+  @Column('jsonb', { nullable: true })
+  value: JSON;
+
+  @Field(() => String)
+  @Column({ nullable: false, type: 'text' })
+  textValueDeprecated: string;
+
+  @Field(() => KeyValuePairType)
+  @Column({
+    type: 'enum',
+    enum: Object.values(KeyValuePairType),
+    nullable: false,
+    default: KeyValuePairType.USER_VAR,
+  })
+  type: KeyValuePairType;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

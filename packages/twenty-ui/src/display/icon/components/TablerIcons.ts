@@ -116,6 +116,7 @@ export {
   IconMailCog,
   IconMap,
   IconMaximize,
+  IconMessage,
   IconMinus,
   IconMoneybag,
   IconMouse2,
