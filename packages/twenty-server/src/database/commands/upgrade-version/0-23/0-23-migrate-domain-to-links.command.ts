@@ -153,13 +153,6 @@ export class MigrateDomainNameFromTextToLinksCommand extends CommandRunner {
             dataSourceMetadata,
           });
 
-          // Backfill primaryLinkLabel with empty string
-          await this.backfillColumnWithEmptyString({
-            targetColumnName: `${tmpNewDomainLinksField.name}PrimaryLinkLabel`,
-            workspaceQueryRunner,
-            dataSourceMetadata,
-          });
-
           // Duplicate initial domainName text field's views behaviour for new domainName field
           await this.viewService.removeFieldFromViews({
             workspaceId: workspaceId,
@@ -302,21 +295,7 @@ export class MigrateDomainNameFromTextToLinksCommand extends CommandRunner {
     dataSourceMetadata: DataSourceEntity;
   }) {
     await workspaceQueryRunner.query(
-      `UPDATE "${dataSourceMetadata.schema}"."company" SET "${targetColumnName}" = CASE WHEN "${sourceColumnName}" LIKE 'https://%' THEN "${sourceColumnName}" ELSE 'https://' || "${sourceColumnName}" END;`,
-    );
-  }
-
-  private async backfillColumnWithEmptyString({
-    targetColumnName,
-    workspaceQueryRunner,
-    dataSourceMetadata,
-  }: {
-    targetColumnName: string;
-    workspaceQueryRunner: QueryRunner;
-    dataSourceMetadata: DataSourceEntity;
-  }) {
-    await workspaceQueryRunner.query(
-      `UPDATE "${dataSourceMetadata.schema}"."company" SET "${targetColumnName}" = '';`,
+      `UPDATE "${dataSourceMetadata.schema}"."company" SET "${targetColumnName}" = CASE WHEN "${sourceColumnName}" LIKE 'http%' THEN "${sourceColumnName}" ELSE 'https://' || "${sourceColumnName}" END;`,
     );
   }
 }

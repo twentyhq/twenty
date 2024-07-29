@@ -28,7 +28,7 @@ export class CompanyRepository {
 
     const existingCompanies =
       await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT id, "${companyDomainNameColumnName}" AS "domainName" FROM ${dataSourceSchema}.company WHERE "${companyDomainNameColumnName}" = ANY($1)`,
+        `SELECT id, "${companyDomainNameColumnName}" AS "domainName" FROM ${dataSourceSchema}.company WHERE REGEXP_REPLACE("${companyDomainNameColumnName}", '^https?://', '') = ANY($1)`,
         [domainNames],
         workspaceId,
         transactionManager,

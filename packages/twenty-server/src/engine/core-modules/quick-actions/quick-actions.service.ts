@@ -161,7 +161,7 @@ export class QuickActionsService {
     }
 
     const enrichedData = await this.intelligenceService.enrichCompany(
-      getCompanyNameFromDomainName(getCompanyDomainName(company.domainName)),
+      getCompanyNameFromDomainName(getCompanyDomainName(company)),
     );
 
     await this.workspaceQueryRunnunerService.execute(
