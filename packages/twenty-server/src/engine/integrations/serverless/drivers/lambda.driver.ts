@@ -8,6 +8,7 @@ import {
   GetFunctionCommand,
   UpdateFunctionCodeCommand,
   DeleteFunctionCommand,
+  ResourceNotFoundException,
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
@@ -46,15 +47,36 @@ export class LambdaDriver
     this.buildDirectoryManagerService = options.buildDirectoryManagerService;
   }
 
-  async delete(serverlessFunction: ServerlessFunctionEntity) {
+  private async checkFunctionExists(
+    serverlessFunctionId: string,
+  ): Promise<boolean> {
     try {
+      const getFunctionCommand = new GetFunctionCommand({
+        FunctionName: serverlessFunctionId,
+      });
+
+      await this.lambdaClient.send(getFunctionCommand);
+
+      return true;
+    } catch (error) {
+      if (error instanceof ResourceNotFoundException) {
+        return false;
+      }
+      throw error;
+    }
+  }
+
+  async delete(serverlessFunction: ServerlessFunctionEntity) {
+    const functionExists = await this.checkFunctionExists(
+      serverlessFunction.id,
+    );
+
+    if (functionExists) {
       const deleteFunctionCommand = new DeleteFunctionCommand({
         FunctionName: serverlessFunction.id,
       });
 
       await this.lambdaClient.send(deleteFunctionCommand);
-    } catch {
-      return;
     }
   }
 
@@ -75,19 +97,11 @@ export class LambdaDriver
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    let existingFunction = true;
+    const functionExists = await this.checkFunctionExists(
+      serverlessFunction.id,
+    );
 
-    try {
-      const getFunctionCommand = new GetFunctionCommand({
-        FunctionName: serverlessFunction.id,
-      });
-
-      await this.lambdaClient.send(getFunctionCommand);
-    } catch {
-      existingFunction = false;
-    }
-
-    if (!existingFunction) {
+    if (!functionExists) {
       const params: CreateFunctionCommandInput = {
         Code: {
           ZipFile: await fs.promises.readFile(lambdaZipPath),
