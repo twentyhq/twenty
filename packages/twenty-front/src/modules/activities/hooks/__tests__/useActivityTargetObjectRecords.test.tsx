@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
 import { gql, InMemoryCache } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
@@ -45,7 +45,11 @@ const activityNode = {
           company: {
             id: '89bb825c-171e-4bcc-9cf7-43448d6fb280',
             name: 'Airbnb',
-            domainName: 'airbnb.com',
+            domainName: {
+              primaryLinkUrl: 'https://www.airbnb.com',
+              primaryLinkLabel: '',
+              secondaryLinks: null,
+            },
           },
           person: null,
           activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
@@ -90,7 +94,11 @@ cache.writeFragment({
             company {
               id
               name
-              domainName
+              domainName {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
             }
             person
             activityId

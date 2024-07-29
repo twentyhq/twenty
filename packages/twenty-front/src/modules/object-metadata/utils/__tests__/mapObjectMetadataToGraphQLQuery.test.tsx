@@ -61,6 +61,11 @@ linkedinLink
   secondaryLinks
 }
 domainName
+{
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
+}
 annualRecurringRevenue
 {
   amountMicros

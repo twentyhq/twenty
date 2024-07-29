@@ -61,6 +61,11 @@ linkedinLink
   secondaryLinks
 }
 domainName
+{
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
+}
 annualRecurringRevenue
 {
   amountMicros
@@ -95,7 +100,11 @@ idealCustomerProfile
         people: true,
         xLink: true,
         linkedinLink: true,
-        domainName: true,
+        domainName: {
+          primaryLinkUrl: true,
+          primaryLinkLabel: true,
+          secondaryLinks: true,
+        },
         annualRecurringRevenue: true,
         createdAt: true,
         address: { addressStreet1: true },
@@ -136,6 +145,11 @@ linkedinLink
   secondaryLinks
 }
 domainName
+{
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
+}
 annualRecurringRevenue
 {
   amountMicros
