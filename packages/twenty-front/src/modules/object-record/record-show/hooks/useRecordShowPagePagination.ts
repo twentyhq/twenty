@@ -11,7 +11,7 @@ import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPag
 import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useRecordShowPagePagination = (
@@ -60,55 +60,47 @@ export const useRecordShowPagePagination = (
 
   const cursorFromRequest = currentRecordsPageInfo?.endCursor;
 
-  const {
-    loading: loadingRecordBefore,
-    records: recordsBefore,
-    totalCount: totalCountBefore,
-  } = useFindManyRecords({
-    skip: loadingCursor,
-    fetchPolicy: 'network-only',
-    filter,
-    orderBy,
-    cursorFilter: isNonEmptyString(cursorFromRequest)
-      ? {
-          cursorDirection: 'before',
-          cursor: cursorFromRequest,
-          limit: 1,
-        }
-      : undefined,
-    objectNameSingular,
-    recordGqlFields,
-  });
+  const [totalCount, setTotalCount] = useState<number>(0);
 
-  const {
-    loading: loadingRecordAfter,
-    records: recordsAfter,
-    totalCount: totalCountAfter,
-  } = useFindManyRecords({
-    skip: loadingCursor,
-    filter,
-    fetchPolicy: 'network-only',
-    orderBy,
-    cursorFilter: cursorFromRequest
-      ? {
-          cursorDirection: 'after',
-          cursor: cursorFromRequest,
-          limit: 1,
-        }
-      : undefined,
-    objectNameSingular,
-    recordGqlFields,
-  });
+  const { loading: loadingRecordBefore, records: recordsBefore } =
+    useFindManyRecords({
+      skip: loadingCursor,
+      fetchPolicy: 'network-only',
+      filter,
+      orderBy,
+      cursorFilter: isNonEmptyString(cursorFromRequest)
+        ? {
+            cursorDirection: 'before',
+            cursor: cursorFromRequest,
+            limit: 1,
+          }
+        : undefined,
+      objectNameSingular,
+      recordGqlFields,
+      onCompleted: (_, pagination) => {
+        setTotalCount(pagination?.totalCount ?? 0);
+      },
+    });
 
-  const [totalCount, setTotalCount] = useState(
-    Math.max(totalCountBefore ?? 0, totalCountAfter ?? 0),
-  );
-
-  useEffect(() => {
-    if (totalCountBefore !== undefined || totalCountAfter !== undefined) {
-      setTotalCount(Math.max(totalCountBefore ?? 0, totalCountAfter ?? 0));
-    }
-  }, [totalCountBefore, totalCountAfter]);
+  const { loading: loadingRecordAfter, records: recordsAfter } =
+    useFindManyRecords({
+      skip: loadingCursor,
+      filter,
+      fetchPolicy: 'network-only',
+      orderBy,
+      cursorFilter: cursorFromRequest
+        ? {
+            cursorDirection: 'after',
+            cursor: cursorFromRequest,
+            limit: 1,
+          }
+        : undefined,
+      objectNameSingular,
+      recordGqlFields,
+      onCompleted: (_, pagination) => {
+        setTotalCount(pagination?.totalCount ?? 0);
+      },
+    });
 
   const loading = loadingRecordAfter || loadingRecordBefore || loadingCursor;
 
