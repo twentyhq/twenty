@@ -277,8 +277,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'User time zone',
     icon: 'IconTimezone',
   })
-  @WorkspaceIsNullable()
-  timeZone: string | null;
+  timeZone: string;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
@@ -314,8 +313,7 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: `'${WorkspaceMemberDateFormatEnum.SYSTEM}'`,
   })
-  @WorkspaceIsNullable()
-  dateFormat: string | null;
+  dateFormat: string;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
@@ -345,6 +343,5 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: `'${WorkspaceMemberTimeFormatEnum.SYSTEM}'`,
   })
-  @WorkspaceIsNullable()
-  timeFormat: string | null;
+  timeFormat: string;
 }

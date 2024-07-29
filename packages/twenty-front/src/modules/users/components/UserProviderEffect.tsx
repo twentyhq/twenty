@@ -59,8 +59,8 @@ export const UserProviderEffect = () => {
       // TODO: factorize
       setDateTimeFormat({
         timeZone:
-          workspaceMember.timeZone !== 'system'
-            ? workspaceMember.timeZone ?? detectTimeZone()
+          workspaceMember.timeZone && workspaceMember.timeZone !== 'system'
+            ? workspaceMember.timeZone
             : detectTimeZone(),
         dateFormat: isDefined(workspaceMember.dateFormat)
           ? getDateFormatFromWorkspaceDateFormat(workspaceMember.dateFormat)

@@ -1,25 +1,17 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
 
 export const detectDateFormat = (): DateFormat => {
-  const date = new Date(Date.UTC(2012, 11, 9, 3, 0, 0));
-  // 2012 - year
-  // 11 - month
-  // 9 - day
+  const date = new Date();
+  const formatter = new Intl.DateTimeFormat(navigator.language);
+  const parts = formatter.formatToParts(date);
 
-  const dateString = date.toLocaleString(navigator.language, {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  });
+  const partOrder = parts
+    .filter((part) => ['year', 'month', 'day'].includes(part.type))
+    .map((part) => part.type);
 
-  switch (dateString.charAt(0)) {
-    case '1':
-      return DateFormat.MONTH_FIRST;
-    case '9':
-      return DateFormat.DAY_FIRST;
-    case '2':
-      return DateFormat.YEAR_FIRST;
-    default:
-      return DateFormat.MONTH_FIRST;
-  }
+  if (partOrder[0] === 'month') return DateFormat.MONTH_FIRST;
+  if (partOrder[0] === 'day') return DateFormat.DAY_FIRST;
+  if (partOrder[0] === 'year') return DateFormat.YEAR_FIRST;
+
+  return DateFormat.MONTH_FIRST;
 };
