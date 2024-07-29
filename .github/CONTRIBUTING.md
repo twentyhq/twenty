@@ -42,35 +42,39 @@ Therefore, ensure you are assigned to an issue before beginning work on it.
 git clone https://github.com/yourusername/twenty.git
 cd twenty
 ```
+3. **Create a New Branch:** Create a new branch for your changes instead of using the main branch.
+
+```shell
+git checkout -b your-branch-name
+```
+
+4. **Make Changes:** Make your desired changes and ensure that your code adheres to Twenty's coding standards.
 
 
-3. **Make Changes:** Make your desired changes and ensure that your code adheres to Twenty's coding standards.
+5. **Test Locally:** Test your changes locally to ensure they work as expected.
 
 
-4. **Test Locally:** Test your changes locally to ensure they work as expected.
-
-
-5. **Commit Changes:** Commit your changes with a clear and concise commit message.
+6. **Commit Changes:** Commit your changes with a clear and concise commit message.
 
 
 ```shell
 git commit -m "Add your detailed description here"
 ```
-6. **Push Changes:** Push your changes to your forked repository.
+7. **Push Changes:** Push your changes to your forked repository.
 
 
 ```shell
-git push origin branch-name
+git push origin your-branch-name
 ```
 
 
-7. **Create a Pull Request:** Go to the original Twenty repository and create a pull request. Please provide a detailed description of your changes. To have your pull request accepted, you must sign a CLA.
+8. **Create a Pull Request:** Go to the original Twenty repository and create a pull request. Please provide a detailed description of your changes. To have your pull request accepted, you must sign a CLA.
 
 
-8. **Code Review:** Your pull request will undergo a code review. Note that you might need to make any necessary adjustments based on feedback.
+9. **Code Review:** Your pull request will undergo a code review. Note that you might need to make any necessary adjustments based on feedback.
 
 
-9. **Merge:** Once approved, maintainers will merge your pull request into the main repository.
+10. **Merge:** Once approved, maintainers will merge your pull request into the main repository.
 
 
 <br>

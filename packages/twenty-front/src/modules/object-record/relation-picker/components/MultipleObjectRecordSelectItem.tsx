@@ -10,7 +10,6 @@ import { SelectableItem } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isDefined } from '~/utils/isDefined';
 
 export const StyledSelectableItem = styled(SelectableItem)`
@@ -65,7 +64,7 @@ export const MultipleObjectRecordSelectItem = ({
         selected={selected}
         avatar={
           <Avatar
-            avatarUrl={getImageAbsoluteURIOrBase64(recordIdentifier.avatarUrl)}
+            avatarUrl={recordIdentifier.avatarUrl}
             placeholderColorSeed={objectRecordId}
             placeholder={recordIdentifier.name}
             size="md"

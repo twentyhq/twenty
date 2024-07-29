@@ -55,7 +55,7 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
     objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ): Promise<ObjectMetadataEntity[]> {
     return await objectMetadataRepository.find({
-      where: { workspaceId, isCustom: false },
+      where: { workspaceId, isCustom: false, isRemote: false },
       relations: ['fields'],
     });
   }
@@ -127,7 +127,8 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
     const identifierFieldMetadata = objectMetadata.fields.find(
       (field) =>
         field.standardId ===
-        standardObjectMetadataMap[objectStandardId][standardIdFieldName],
+          standardObjectMetadataMap[objectStandardId][standardIdFieldName] &&
+        field.standardId !== null,
     );
 
     if (

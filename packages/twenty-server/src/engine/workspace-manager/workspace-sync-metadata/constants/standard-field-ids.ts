@@ -10,6 +10,7 @@ export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
   person: '20202020-4afd-4ae7-99c2-de57d795a93f',
   company: '20202020-7cc0-44a1-8068-f11171fdd02e',
   opportunity: '20202020-1fc2-4af1-8c91-7901ee0fd38b',
+  workflow: '20202020-a63d-40d0-b24d-ddcc1347d583',
   custom: '20202020-7f21-442f-94be-32462281b1ca',
 };
 
@@ -42,6 +43,7 @@ export const ATTACHMENT_STANDARD_FIELD_IDS = {
   person: '20202020-0158-4aa2-965c-5cdafe21ffa2',
   company: '20202020-ceab-4a28-b546-73b06b4c08d5',
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
+  workflow: '20202020-0906-4dc3-b26f-edc951c7ab82',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
 };
 
@@ -180,6 +182,7 @@ export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   person: '20202020-c414-45b9-a60a-ac27aa96229f',
   company: '20202020-04ad-4221-a744-7a8278a5ce21',
   opportunity: '20202020-7664-4a35-a3df-580d389fd527',
+  workflow: '20202020-9e59-4030-aa27-55abd676c3c8',
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
@@ -192,6 +195,7 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   person: '20202020-c428-4f40-b6f3-86091511c41c',
   company: '20202020-cff5-4682-8bf9-069169e08279',
   opportunity: '20202020-dabc-48e1-8318-2781a2b32aa2',
+  workflow: '20202020-b11b-4dc8-999a-6bd0a947b463',
   custom: '20202020-855a-4bc8-9861-79deef37011f',
 };
 
@@ -321,6 +325,23 @@ export const VIEW_STANDARD_FIELD_IDS = {
 export const WEBHOOK_STANDARD_FIELD_IDS = {
   targetUrl: '20202020-1229-45a8-8cf4-85c9172aae12',
   operation: '20202020-15b7-458e-bf30-74770a54410c',
+};
+
+export const WORKFLOW_STANDARD_FIELD_IDS = {
+  name: '20202020-b3d3-478f-acc0-5d901e725b20',
+  publishedVersionId: '20202020-326a-4fba-8639-3456c0a169e8',
+  versions: '20202020-9432-416e-8f3c-27ee3153d099',
+  position: '20202020-39b0-4d8c-8c5f-33c2326deb5f',
+  favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
+  activityTargets: '20202020-9d65-445a-899d-1c6f1cf3a9ab',
+  attachments: '20202020-ea95-4d4d-81cd-9921740316b8',
+  timelineActivities: '20202020-dd79-492a-9d11-58333ed0f71a',
+};
+
+export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
+  name: '20202020-a12f-4cca-9937-a2e40cc65509',
+  workflow: '20202020-afa3-46c3-91b0-0631ca6aa1c8',
+  trigger: '20202020-4eae-43e7-86e0-212b41a30b48',
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {

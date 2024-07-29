@@ -13,6 +13,7 @@ import {
   IconSettings,
   IconUserCircle,
   IconUsers,
+  IconFunction,
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -29,6 +30,9 @@ export const SettingsNavigationDrawerItems = () => {
   const { signOut } = useAuth();
 
   const billing = useRecoilValue(billingState);
+  const isFunctionSettingsEnabled = useIsFeatureEnabled(
+    'IS_FUNCTION_SETTINGS_ENABLED',
+  );
   const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
 
   return (
@@ -99,6 +103,13 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.Developers}
           Icon={IconCode}
         />
+        {isFunctionSettingsEnabled && (
+          <SettingsNavigationDrawerItem
+            label="Functions"
+            path={SettingsPath.ServerlessFunctions}
+            Icon={IconFunction}
+          />
+        )}
         <SettingsNavigationDrawerItem
           label="Integrations"
           path={SettingsPath.Integrations}

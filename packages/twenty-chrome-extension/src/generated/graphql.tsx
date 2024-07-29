@@ -3077,8 +3077,8 @@ export type MessageChannelSyncStageEnumFilter = {
 
 /** Sync status */
 export enum MessageChannelSyncStatusEnum {
-  /** Completed */
-  Completed = 'COMPLETED',
+  /** Active */
+  Active = 'ACTIVE',
   /** Failed */
   Failed = 'FAILED',
   /** Failed Insufficient Permissions */
