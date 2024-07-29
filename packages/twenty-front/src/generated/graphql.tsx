@@ -692,12 +692,33 @@ export type Sentry = {
   release?: Maybe<Scalars['String']>;
 };
 
+export type ServerlessFunction = {
+  __typename?: 'ServerlessFunction';
+  createdAt: Scalars['DateTime'];
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  runtime: Scalars['String'];
+  sourceCodeFullPath: Scalars['String'];
+  sourceCodeHash: Scalars['String'];
+  syncStatus: ServerlessFunctionSyncStatus;
+  updatedAt: Scalars['DateTime'];
+};
+
 export type ServerlessFunctionConnection = {
   __typename?: 'ServerlessFunctionConnection';
   /** Array of edges. */
   edges: Array<ServerlessFunctionEdge>;
   /** Paging information */
   pageInfo: PageInfo;
+};
+
+export type ServerlessFunctionEdge = {
+  __typename?: 'ServerlessFunctionEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the ServerlessFunction */
+  node: ServerlessFunction;
 };
 
 export type ServerlessFunctionExecutionResult = {
@@ -1088,24 +1109,6 @@ export type RelationEdge = {
   cursor: Scalars['ConnectionCursor'];
   /** The node containing the relation */
   node: Relation;
-};
-
-export type ServerlessFunction = {
-  __typename?: 'serverlessFunction';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  name: Scalars['String'];
-  sourceCodeHash: Scalars['String'];
-  syncStatus: ServerlessFunctionSyncStatus;
-  updatedAt: Scalars['DateTime'];
-};
-
-export type ServerlessFunctionEdge = {
-  __typename?: 'serverlessFunctionEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the serverlessFunction */
-  node: ServerlessFunction;
 };
 
 export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };

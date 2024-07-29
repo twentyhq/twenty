@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import {
   NestjsQueryGraphQLModule,
@@ -14,6 +15,7 @@ import { ServerlessFunctionResolver } from 'src/engine/metadata-modules/serverle
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { ServerlessFunctionDto } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
           [ServerlessFunctionEntity],
           'metadata',
         ),
+        TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
       ],
       services: [ServerlessFunctionService],
       resolvers: [

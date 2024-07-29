@@ -18,6 +18,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { Key } from 'ts-key-enum';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
@@ -85,7 +86,7 @@ export const SettingsDevelopersApiKeysNew = () => {
             placeholder="E.g. backoffice integration"
             value={formValues.name}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') {
+              if (e.key === Key.Enter) {
                 handleSave();
               }
             }}
