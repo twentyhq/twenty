@@ -15,7 +15,7 @@ import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/conne
 import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/message-channel-message-associations';
 import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/message-channels';
 import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/message-participants';
-import { seedMessageThreadMember } from 'src/database/typeorm-seeds/workspace/message-thread-members';
+import { seedMessageThreadSubscribers } from 'src/database/typeorm-seeds/workspace/message-thread-subscribers';
 import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-threads';
 import { seedMessage } from 'src/database/typeorm-seeds/workspace/messages';
 import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunities';
@@ -135,7 +135,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
                 entityManager,
                 dataSourceMetadata.schema,
               );
-              await seedMessageThreadMember(
+              await seedMessageThreadSubscribers(
                 entityManager,
                 dataSourceMetadata.schema,
               );

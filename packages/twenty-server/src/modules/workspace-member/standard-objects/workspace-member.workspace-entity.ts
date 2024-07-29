@@ -24,7 +24,7 @@ import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/com
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
-import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-members.workspace-entity';
+import { MessageThreadSubscriberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-subscriber.workspace-entity';
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
@@ -138,10 +138,10 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Message Threads',
     description: 'Message Threads linked to the workspace member',
     icon: 'IconMessage',
-    inverseSideTarget: () => MessageThreadMemberWorkspaceEntity,
+    inverseSideTarget: () => MessageThreadSubscriberWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  messageThreadMember: Relation<MessageThreadMemberWorkspaceEntity[]>;
+  messageThreadMember: Relation<MessageThreadSubscriberWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,

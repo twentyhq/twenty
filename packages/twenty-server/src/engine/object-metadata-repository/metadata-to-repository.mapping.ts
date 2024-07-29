@@ -4,7 +4,6 @@ import { ConnectedAccountRepository } from 'src/modules/connected-account/reposi
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
-import { MessageThreadMemberRepository } from 'src/modules/messaging/common/repositories/message-thread-member.repository';
 import { MessageThreadRepository } from 'src/modules/messaging/common/repositories/message-thread.repository';
 import { MessageRepository } from 'src/modules/messaging/common/repositories/message.repository';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
@@ -23,7 +22,6 @@ export const metadataToRepositoryMapping = {
   MessageWorkspaceEntity: MessageRepository,
   MessageParticipantWorkspaceEntity: MessageParticipantRepository,
   MessageThreadWorkspaceEntity: MessageThreadRepository,
-  MessageThreadMemberWorkspaceEntity: MessageThreadMemberRepository,
   PersonWorkspaceEntity: PersonRepository,
   TimelineActivityWorkspaceEntity: TimelineActivityRepository,
   WorkspaceMemberWorkspaceEntity: WorkspaceMemberRepository,

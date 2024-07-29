@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import styled from '@emotion/styled';
+import { useEffect, useMemo } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
@@ -9,7 +9,6 @@ import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMe
 import { IntermediaryMessages } from '@/activities/emails/right-drawer/components/IntermediaryMessages';
 import { useRightDrawerEmailThread } from '@/activities/emails/right-drawer/hooks/useRightDrawerEmailThread';
 import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
-import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
@@ -24,23 +23,24 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-const getVisibleMessages = (messages: EmailThreadMessageType[]) =>
-  messages.filter(({ messageParticipants }) => {
-    const from = messageParticipants.find(
-      (participant) => participant.role === 'from',
-    );
-    const receivers = messageParticipants.filter(
-      (participant) => participant.role !== 'from',
-    );
-    return from && receivers.length > 0;
-  });
-
 export const RightDrawerEmailThread = () => {
   const setMessageThread = useSetRecoilState(messageThreadState);
 
   const { thread, messages, fetchMoreMessages, loading } =
     useRightDrawerEmailThread();
-  const visibleMessages = getVisibleMessages(messages);
+
+  const visibleMessages = useMemo(() => {
+    return messages.filter(({ messageParticipants }) => {
+      const from = messageParticipants.find(
+        (participant) => participant.role === 'from',
+      );
+      const receivers = messageParticipants.filter(
+        (participant) => participant.role !== 'from',
+      );
+      return from && receivers.length > 0;
+    });
+  }, [messages]);
+
   useEffect(() => {
     if (!visibleMessages[0]?.messageThread) {
       return;

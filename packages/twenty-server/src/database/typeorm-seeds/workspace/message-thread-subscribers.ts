@@ -1,15 +1,15 @@
 import { EntityManager } from 'typeorm';
 
-const tableName = 'messageThreadMember';
+const tableName = 'messageThreadSubscriber';
 
-export const DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS = {
-  MESSAGE_THREAD_MEMBER_1: '20202020-cc69-44ef-a82c-600c0dbf39ba',
-  MESSAGE_THREAD_MEMBER_2: '20202020-d80e-4a13-b10b-72ba09082668',
-  MESSAGE_THREAD_MEMBER_3: '20202020-e6ec-4c8a-b431-0901eaf395a9',
-  MESSAGE_THREAD_MEMBER_4: '20202020-1455-4c57-afaf-dd5dc086361d',
-  MESSAGE_THREAD_MEMBER_5: '20202020-f79e-40dd-bd06-c36e6abb4678',
-  MESSAGE_THREAD_MEMBER_6: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
-  MESSAGE_THREAD_MEMBER_7: '20202020-c21e-4ec2-873b-de4264d89025',
+export const DEV_SEED_MESSAGE_THREAD_SUBSCRIBERS_IDS = {
+  MESSAGE_THREAD_SUBSCRIBER_1: '20202020-cc69-44ef-a82c-600c0dbf39ba',
+  MESSAGE_THREAD_SUBSCRIBER_2: '20202020-d80e-4a13-b10b-72ba09082668',
+  MESSAGE_THREAD_SUBSCRIBER_3: '20202020-e6ec-4c8a-b431-0901eaf395a9',
+  MESSAGE_THREAD_SUBSCRIBER_4: '20202020-1455-4c57-afaf-dd5dc086361d',
+  MESSAGE_THREAD_SUBSCRIBER_5: '20202020-f79e-40dd-bd06-c36e6abb4678',
+  MESSAGE_THREAD_SUBSCRIBER_6: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
+  MESSAGE_THREAD_SUBSCRIBER_7: '20202020-c21e-4ec2-873b-de4264d89025',
 };
 
 export const DEV_SEED_MESSAGE_THREAD_IDS = {
@@ -25,7 +25,7 @@ export const DEV_SEED_USER_IDS = {
   JONY: '20202020-77d5-4cb6-b60a-f4a835a85d61',
 };
 
-export const seedMessageThreadMember = async (
+export const seedMessageThreadSubscribers = async (
   entityManager: EntityManager,
   schemaName: string,
 ) => {
@@ -43,7 +43,7 @@ export const seedMessageThreadMember = async (
     .orIgnore()
     .values([
       {
-        id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_1,
+        id: DEV_SEED_MESSAGE_THREAD_SUBSCRIBERS_IDS.MESSAGE_THREAD_SUBSCRIBER_1,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -51,7 +51,7 @@ export const seedMessageThreadMember = async (
         workspaceMemberId: DEV_SEED_USER_IDS.PHIL,
       },
       {
-        id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_2,
+        id: DEV_SEED_MESSAGE_THREAD_SUBSCRIBERS_IDS.MESSAGE_THREAD_SUBSCRIBER_2,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -59,7 +59,7 @@ export const seedMessageThreadMember = async (
         workspaceMemberId: DEV_SEED_USER_IDS.JONY,
       },
       {
-        id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_3,
+        id: DEV_SEED_MESSAGE_THREAD_SUBSCRIBERS_IDS.MESSAGE_THREAD_SUBSCRIBER_3,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -67,7 +67,7 @@ export const seedMessageThreadMember = async (
         workspaceMemberId: DEV_SEED_USER_IDS.TIM,
       },
       {
-        id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_4,
+        id: DEV_SEED_MESSAGE_THREAD_SUBSCRIBERS_IDS.MESSAGE_THREAD_SUBSCRIBER_4,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -75,7 +75,7 @@ export const seedMessageThreadMember = async (
         workspaceMemberId: DEV_SEED_USER_IDS.JONY,
       },
       {
-        id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_5,
+        id: DEV_SEED_MESSAGE_THREAD_SUBSCRIBERS_IDS.MESSAGE_THREAD_SUBSCRIBER_5,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -83,7 +83,7 @@ export const seedMessageThreadMember = async (
         workspaceMemberId: DEV_SEED_USER_IDS.TIM,
       },
       {
-        id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_6,
+        id: DEV_SEED_MESSAGE_THREAD_SUBSCRIBERS_IDS.MESSAGE_THREAD_SUBSCRIBER_6,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -91,7 +91,7 @@ export const seedMessageThreadMember = async (
         workspaceMemberId: DEV_SEED_USER_IDS.PHIL,
       },
       {
-        id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_7,
+        id: DEV_SEED_MESSAGE_THREAD_SUBSCRIBERS_IDS.MESSAGE_THREAD_SUBSCRIBER_7,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,

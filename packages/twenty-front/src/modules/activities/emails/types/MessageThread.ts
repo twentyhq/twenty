@@ -1,7 +1,6 @@
-import { MessageThreadMember } from '@/activities/emails/types/MessageThreadMember';
+import { MessageThreadSubscriber } from '@/activities/emails/types/MessageThreadSubscriber';
 
 export type MessageThread = {
   id: string;
-  everyone: boolean;
-  messageThreadMember: MessageThreadMember[];
+  subscribers?: MessageThreadSubscriber[];
 };

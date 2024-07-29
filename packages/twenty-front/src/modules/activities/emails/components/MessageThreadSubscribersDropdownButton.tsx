@@ -6,11 +6,10 @@ import {
   ChipVariant,
   IconChevronDown,
   IconPlus,
-  IconUserCircle,
   MultiChip,
 } from 'twenty-ui';
 
-import { MessageThreadMember } from '@/activities/emails/types/MessageThreadMember';
+import { MessageThreadSubscriber } from '@/activities/emails/types/MessageThreadSubscriber';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -18,21 +17,22 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
+import { isNonEmptyString } from '@sniptt/guards';
 
-export const SharedDropdownMenu = ({
-  messageThreadMembers,
-  label = '',
-  everyone = false,
+export const MessageThreadSubscribersDropdownButton = ({
+  messageThreadSubscribers,
+  label,
 }: {
-  messageThreadMembers: MessageThreadMember[] | null;
-  label?: string;
-  everyone?: boolean;
+  messageThreadSubscribers: MessageThreadSubscriber[];
+  label: string;
 }) => {
-  const messageThreadMembersAvatarUrls = messageThreadMembers?.map(
-    (member) => member.workspaceMember.avatarUrl,
-  );
+  const messageThreadMembersAvatarUrls = messageThreadSubscribers
+    .map((member) => member.workspaceMember.avatarUrl)
+    .filter(isNonEmptyString);
 
-  const messageThreadMembersNames = messageThreadMembers?.map(
+  const firstAvatarUrl = messageThreadMembersAvatarUrls[0];
+
+  const messageThreadMembersNames = messageThreadSubscribers.map(
     (member) => member.workspaceMember?.name.firstName,
   );
 
@@ -52,22 +52,15 @@ export const SharedDropdownMenu = ({
     <Dropdown
       dropdownId={'message-thread-share'}
       clickableComponent={
-        everyone ? (
+        messageThreadSubscribers?.length === 1 ? (
           <Chip
-            label="Everyone"
-            variant={ChipVariant.Highlighted}
-            leftComponent={<IconUserCircle size={theme.icon.size.md} />}
-            rightComponent={<IconChevronDown size={theme.icon.size.sm} />}
-          />
-        ) : messageThreadMembers?.length === 1 ? (
-          <Chip
-            label={label}
+            label={label ?? ''}
             variant={ChipVariant.Highlighted}
             leftComponent={
               <Avatar
-                avatarUrl={messageThreadMembersAvatarUrls?.[0]}
+                avatarUrl={firstAvatarUrl}
                 placeholderColorSeed={
-                  messageThreadMembers?.[0].workspaceMember.id
+                  messageThreadSubscribers?.[0].workspaceMember.id
                 }
                 placeholder={messageThreadMembersNames?.[0]}
                 size="md"
@@ -78,19 +71,16 @@ export const SharedDropdownMenu = ({
           />
         ) : (
           <MultiChip
-            names={messageThreadMembersNames ?? []}
+            names={messageThreadMembersNames}
             RightIcon={IconChevronDown}
-            avatarUrls={
-              (messageThreadMembersAvatarUrls?.filter(Boolean) as string[]) ??
-              []
-            }
+            avatarUrls={messageThreadMembersAvatarUrls}
           />
         )
       }
       dropdownComponents={
         <DropdownMenu width="160px" z-index={offset(1)}>
           <DropdownMenuItemsContainer>
-            {messageThreadMembers?.map((member) => (
+            {messageThreadSubscribers?.map((member) => (
               <MenuItemSelectAvatar
                 key={member.workspaceMember.id}
                 selected={false}

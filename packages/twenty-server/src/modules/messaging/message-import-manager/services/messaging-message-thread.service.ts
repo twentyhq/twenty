@@ -4,18 +4,19 @@ import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageThreadRepository } from 'src/modules/messaging/common/repositories/message-thread.repository';
 import { MessageRepository } from 'src/modules/messaging/common/repositories/message.repository';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { MessageThreadSubscriberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-subscriber.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { MessageThreadMemberRepository } from 'src/modules/messaging/common/repositories/message-thread-member.repository';
-import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-members.workspace-entity';
 
 @Injectable()
 export class MessagingMessageThreadService {
   constructor(
+    private readonly twentyORMManager: TwentyORMManager,
     @InjectObjectMetadataRepository(
       MessageChannelMessageAssociationWorkspaceEntity,
     )
@@ -24,25 +25,24 @@ export class MessagingMessageThreadService {
     private readonly messageRepository: MessageRepository,
     @InjectObjectMetadataRepository(MessageThreadWorkspaceEntity)
     private readonly messageThreadRepository: MessageThreadRepository,
-    @InjectObjectMetadataRepository(MessageThreadMemberWorkspaceEntity)
-    private readonly messageThreadMemberRepository: MessageThreadMemberRepository,
   ) {}
 
   public async saveMessageThreadMember(
     messageThreadId: string,
     workspaceMemberId: string,
-    workspaceId: string,
-    manager: EntityManager,
   ) {
     const id = v4();
 
-    await this.messageThreadMemberRepository.insert(
+    const messageThreadSubscriberRepository =
+      await this.twentyORMManager.getRepository<MessageThreadSubscriberWorkspaceEntity>(
+        'messageThreadSubscriber',
+      );
+
+    await messageThreadSubscriberRepository.insert({
       id,
       messageThreadId,
       workspaceMemberId,
-      workspaceId,
-      manager,
-    );
+    });
   }
 
   public async saveMessageThreadOrReturnExistingMessageThread(

@@ -1,46 +1,23 @@
+import { MessageThreadSubscribersDropdownButton } from '@/activities/emails/components/MessageThreadSubscribersDropdownButton';
 import { MessageThread } from '@/activities/emails/types/MessageThread';
-import { SharedDropdownMenu } from '@/ui/layout/dropdown/components/SharedDropdownMenu';
 
 export const EmailThreadMembersChip = ({
   messageThread,
 }: {
-  messageThread: MessageThread | null;
+  messageThread: MessageThread;
 }) => {
-  const renderChip = () => {
-    if (!messageThread) {
-      return null;
-    }
-    const isEveryone = messageThread?.everyone;
-    const numberOfMessageThreadMembers =
-      messageThread.messageThreadMember.length;
-    switch (isEveryone) {
-      case false:
-        if (numberOfMessageThreadMembers === 1) {
-          return (
-            <SharedDropdownMenu
-              label="Private"
-              messageThreadMembers={messageThread.messageThreadMember}
-            />
-          );
-        } else {
-          return (
-            <SharedDropdownMenu
-              messageThreadMembers={messageThread.messageThreadMember}
-            />
-          );
-        }
-      case true:
-        return (
-          <SharedDropdownMenu
-            label="Everyone"
-            messageThreadMembers={messageThread.messageThreadMember}
-            everyone={true}
-          />
-        );
-      default:
-        return null;
-    }
-  };
+  const subscribers = messageThread.subscribers ?? [];
 
-  return <>{renderChip()} </>;
+  const numberOfMessageThreadSubscribers = subscribers.length;
+
+  const shouldShowPrivateLabel = numberOfMessageThreadSubscribers === 1;
+
+  const label = shouldShowPrivateLabel ? 'Private' : '';
+
+  return (
+    <MessageThreadSubscribersDropdownButton
+      label={label}
+      messageThreadSubscribers={subscribers}
+    />
+  );
 };

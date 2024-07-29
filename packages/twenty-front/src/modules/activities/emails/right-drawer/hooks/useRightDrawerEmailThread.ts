@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory';
 import { EmailThread } from '@/activities/emails/types/EmailThread';
-import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
+import { EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
@@ -20,7 +20,9 @@ export const useRightDrawerEmailThread = () => {
     recordGqlFields: {
       id: true,
     },
-    onCompleted: (record) => upsertRecords([record]),
+    onCompleted: (record) => {
+      upsertRecords([record]);
+    },
   });
 
   const FETCH_ALL_MESSAGES_OPERATION_SIGNATURE =
@@ -32,7 +34,7 @@ export const useRightDrawerEmailThread = () => {
     records: messages,
     loading,
     fetchMoreRecords,
-  } = useFindManyRecords<EmailThreadMessageType>({
+  } = useFindManyRecords<EmailThreadMessage>({
     limit: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.limit,
     filter: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.filter,
     objectNameSingular:

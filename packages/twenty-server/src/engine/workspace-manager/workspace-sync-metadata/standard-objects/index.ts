@@ -14,7 +14,7 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
-import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-members.workspace-entity';
+import { MessageThreadSubscriberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-subscriber.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
@@ -60,7 +60,7 @@ export const standardObjectMetadataDefinitions = [
   WorkflowVersionWorkspaceEntity,
   WorkspaceMemberWorkspaceEntity,
   MessageThreadWorkspaceEntity,
-  MessageThreadMemberWorkspaceEntity,
+  MessageThreadSubscriberWorkspaceEntity,
   MessageWorkspaceEntity,
   MessageChannelWorkspaceEntity,
   MessageParticipantWorkspaceEntity,
