@@ -50,6 +50,7 @@ export const FieldPathFieldInput = ({
     hotkeyScope,
     inputValue: () => {},
   });
+
   return (
     <StyledContainer ref={wrapperRef}>
       <FieldPathPicker

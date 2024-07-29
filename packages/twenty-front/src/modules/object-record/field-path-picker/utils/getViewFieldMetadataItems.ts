@@ -1,4 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isSelectableFieldPathPart } from '@/object-record/field-path-picker/utils/isSelectableFieldPathPart';
 
 export const getViewFieldMetadataItems = (
   objectMetadataItems: ObjectMetadataItem[],
@@ -9,11 +10,11 @@ export const getViewFieldMetadataItems = (
 
   const allFieldMetadataItems = objectMetadataItems
     .flatMap((objectMetadata) => objectMetadata.fields)
-    .filter(
-      (fieldMetadata) => fieldMetadata.isActive && !fieldMetadata.isSystem,
-    );
+    .filter(isSelectableFieldPathPart);
 
-  let viewFieldMetadataItems = sourceObjectMetadata.fields;
+  let viewFieldMetadataItems = sourceObjectMetadata.fields.filter(
+    isSelectableFieldPathPart,
+  );
 
   for (const fieldPathFieldMetadataId of fieldPathFieldMetadataIds) {
     const fieldPathFieldMetadata = allFieldMetadataItems.find(
@@ -35,7 +36,9 @@ export const getViewFieldMetadataItems = (
     );
     if (!nextObjectMetadata) throw new Error();
 
-    viewFieldMetadataItems = nextObjectMetadata.fields;
+    viewFieldMetadataItems = nextObjectMetadata.fields.filter(
+      isSelectableFieldPathPart,
+    );
   }
 
   return viewFieldMetadataItems;
