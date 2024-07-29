@@ -1,4 +1,4 @@
-export const getImageAbsoluteURIOrBase64 = (
+export const getImageAbsoluteURI = (
   imageUrl?: string | null,
   serverUrl?: string,
 ) => {
@@ -6,7 +6,7 @@ export const getImageAbsoluteURIOrBase64 = (
     return null;
   }
 
-  if (imageUrl?.startsWith('data:') || imageUrl?.startsWith('https:')) {
+  if (imageUrl?.startsWith('https:')) {
     return imageUrl;
   }
 
