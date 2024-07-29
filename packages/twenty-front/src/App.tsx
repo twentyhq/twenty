@@ -82,7 +82,10 @@ import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { SettingsServerlessFunctions } from '~/pages/settings/serverless-functions/SettingsServerlessFunctions';
+import { SettingsServerlessFunctionsNew } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { SettingsServerlessFunctionDetailWrapper } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetailWrapper';
 
 const ProvidersThatNeedRouterContext = () => {
   const { pathname } = useLocation();
@@ -130,6 +133,7 @@ const ProvidersThatNeedRouterContext = () => {
 const createRouter = (
   isBillingEnabled?: boolean,
   isCRMMigrationEnabled?: boolean,
+  isServerlessFunctionSettingsEnabled?: boolean,
 ) =>
   createBrowserRouter(
     createRoutesFromElements(
@@ -256,6 +260,22 @@ const createRouter = (
                     </Routes>
                   }
                 />
+                {isServerlessFunctionSettingsEnabled && (
+                  <>
+                    <Route
+                      path={SettingsPath.ServerlessFunctions}
+                      element={<SettingsServerlessFunctions />}
+                    />
+                    <Route
+                      path={SettingsPath.NewServerlessFunction}
+                      element={<SettingsServerlessFunctionsNew />}
+                    />
+                    <Route
+                      path={SettingsPath.ServerlessFunctionDetail}
+                      element={<SettingsServerlessFunctionDetailWrapper />}
+                    />
+                  </>
+                )}
                 <Route
                   path={SettingsPath.Integrations}
                   element={<SettingsIntegrations />}
@@ -304,10 +324,17 @@ const createRouter = (
 export const App = () => {
   const billing = useRecoilValue(billingState);
   const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
+  const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
+    'IS_FUNCTION_SETTINGS_ENABLED',
+  );
 
   return (
     <RouterProvider
-      router={createRouter(billing?.isBillingEnabled, isCRMMigrationEnabled)}
+      router={createRouter(
+        billing?.isBillingEnabled,
+        isCRMMigrationEnabled,
+        isServerlessFunctionSettingsEnabled,
+      )}
     />
   );
 };

@@ -51,6 +51,11 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
+        key: FeatureFlagKeys.IsFunctionSettingsEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKeys.IsWorkflowEnabled,
         workspaceId: workspaceId,
         value: false,
