@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
+import { TimelineCalendarEvent } from '~/generated/graphql';
 
 type CalendarContextValue = {
   calendarEventsByDayTime: Record<number, TimelineCalendarEvent[] | undefined>;
