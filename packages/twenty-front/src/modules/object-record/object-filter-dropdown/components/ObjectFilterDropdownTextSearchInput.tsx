@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -28,10 +28,17 @@ export const ObjectFilterDropdownTextSearchInput = () => {
   );
   const selectedFilter = useRecoilValue(selectedFilterState);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  if (Boolean(inputRef.current) === true) {
+    inputRef.current?.focus();
+    inputRef.current?.select();
+  }
   return (
     filterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
       <DropdownMenuSearchInput
+        ref={inputRef}
         autoFocus
         type="text"
         placeholder={filterDefinitionUsedInDropdown.label}
