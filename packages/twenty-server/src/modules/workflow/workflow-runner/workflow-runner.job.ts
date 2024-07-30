@@ -1,19 +1,19 @@
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
-import { WorkflowRunService } from 'src/modules/workflow/workflow-runner/services/workflow-run.service';
-import { WorkflowCommonService } from 'src/modules/workflow/common/services/workflow-common.services';
+import { WorkflowRunnerService } from 'src/modules/workflow/workflow-runner/workflow-runner.service';
+import { WorkflowCommonService } from 'src/modules/workflow/common/workflow-common.services';
 
 type RunWorkflowJobData = { workspaceId: string; workflowVersionId: string };
 
 @Processor(MessageQueue.workflowQueue)
-export class WorkflowRunJob {
+export class WorkflowRunnerJob {
   constructor(
     private readonly workflowCommonService: WorkflowCommonService,
-    private readonly workflowRunService: WorkflowRunService,
+    private readonly workflowRunnerService: WorkflowRunnerService,
   ) {}
 
-  @Process(WorkflowRunJob.name)
+  @Process(WorkflowRunnerJob.name)
   async handle({
     workspaceId,
     workflowVersionId,
@@ -23,7 +23,7 @@ export class WorkflowRunJob {
       workflowVersionId,
     );
 
-    await this.workflowRunService.run({
+    await this.workflowRunnerService.run({
       action: workflowVersion.trigger.nextAction,
       workspaceId,
       payload: workflowVersion.trigger.input,

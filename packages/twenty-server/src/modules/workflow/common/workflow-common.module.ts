@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 
-import { WorkflowCommonService } from 'src/modules/workflow/common/services/workflow-common.services';
+import { WorkflowCommonService } from 'src/modules/workflow/common/workflow-common.services';
 
 @Module({
   providers: [WorkflowCommonService],

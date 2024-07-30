@@ -10,7 +10,7 @@ import {
   WorkflowDatabaseEventTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/common/types/workflow-trigger.type';
-import { WorkflowCommonService } from 'src/modules/workflow/common/services/workflow-common.services';
+import { WorkflowCommonService } from 'src/modules/workflow/common/workflow-common.services';
 
 @Injectable()
 export class WorkflowTriggerService {

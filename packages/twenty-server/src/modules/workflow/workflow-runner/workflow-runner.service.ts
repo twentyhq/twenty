@@ -13,7 +13,7 @@ import {
 const MAX_RETRIES_ON_FAILURE = 3;
 
 @Injectable()
-export class WorkflowRunService {
+export class WorkflowRunnerService {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
   ) {}
