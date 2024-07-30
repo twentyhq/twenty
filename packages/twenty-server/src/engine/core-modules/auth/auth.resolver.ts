@@ -24,6 +24,8 @@ import { TransientToken } from 'src/engine/core-modules/auth/dto/transient-token
 import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
+import { authGraphqlApiExceptionHandler } from 'src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util';
+import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -61,33 +63,41 @@ export class AuthResolver {
   @Query(() => UserExists)
   async checkUserExists(
     @Args() checkUserExistsInput: CheckUserExistsInput,
-  ): Promise<UserExists> {
-    const { exists } = await this.authService.checkUserExists(
-      checkUserExistsInput.email,
-    );
+  ): Promise<UserExists | void> {
+    try {
+      const { exists } = await this.authService.checkUserExists(
+        checkUserExistsInput.email,
+      );
 
-    return { exists };
+      return { exists };
+    } catch (error) {
+      authGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Query(() => WorkspaceInviteHashValid)
   async checkWorkspaceInviteHashIsValid(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ): Promise<WorkspaceInviteHashValid> {
-    return await this.authService.checkWorkspaceInviteHashIsValid(
-      workspaceInviteHashValidInput.inviteHash,
-    );
+  ): Promise<WorkspaceInviteHashValid | void> {
+    try {
+      return await this.authService.checkWorkspaceInviteHashIsValid(
+        workspaceInviteHashValidInput.inviteHash,
+      );
+    } catch (error) {
+      authGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Query(() => Workspace)
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ) {
+  ): Promise<Workspace> {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash: workspaceInviteHashValidInput.inviteHash,
     });
 
     if (!workspace) {
-      throw new BadRequestException('Workspace does not exist');
+      throw new NotFoundError('Workspace does not exist');
     }
 
     return workspace;
@@ -163,13 +173,17 @@ export class AuthResolver {
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: User,
-  ): Promise<AuthorizeApp> {
-    const authorizedApp = await this.authService.generateAuthorizationCode(
-      authorizeAppInput,
-      user,
-    );
+  ): Promise<AuthorizeApp | void> {
+    try {
+      const authorizedApp = await this.authService.generateAuthorizationCode(
+        authorizeAppInput,
+        user,
+      );
 
-    return authorizedApp;
+      return authorizedApp;
+    } catch (error) {
+      authGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => AuthTokens)
@@ -203,12 +217,12 @@ export class AuthResolver {
   @Mutation(() => Verify)
   async impersonate(
     @Args() impersonateInput: ImpersonateInput,
-    @AuthUser() user: User,
-  ): Promise<Verify> {
-    // Check if user can impersonate
-    assert(user.canImpersonate, 'User cannot impersonate', ForbiddenException);
-
-    return this.authService.impersonate(impersonateInput.userId);
+  ): Promise<Verify | void> {
+    try {
+      return await this.authService.impersonate(impersonateInput.userId);
+    } catch (error) {
+      authGraphqlApiExceptionHandler(error);
+    }
   }
 
   @UseGuards(JwtAuthGuard)
