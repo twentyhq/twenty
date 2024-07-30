@@ -695,7 +695,7 @@ export type Sentry = {
 export type ServerlessFunction = {
   __typename?: 'ServerlessFunction';
   createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   name: Scalars['String'];
   runtime: Scalars['String'];
