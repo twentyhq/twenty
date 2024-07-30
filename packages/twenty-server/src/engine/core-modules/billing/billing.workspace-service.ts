@@ -13,10 +13,8 @@ import {
   SubscriptionStatus,
 } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import {

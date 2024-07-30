@@ -7,10 +7,8 @@ import {
   BillingSubscription,
   SubscriptionStatus,
 } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
