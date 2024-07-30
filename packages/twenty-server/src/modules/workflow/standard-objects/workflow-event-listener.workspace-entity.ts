@@ -21,7 +21,6 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/standard-objects/w
   labelSingular: 'WorkflowEventListener',
   labelPlural: 'WorkflowEventListeners',
   description: 'A workflow event listener',
-  icon: 'IconPhoneCheck',
   labelIdentifierStandardId:
     WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,
 })

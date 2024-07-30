@@ -15,19 +15,19 @@ import { WORKFLOW_VERSION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manage
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow.workspace-entity';
 
-export enum WorkflowVersionTriggerType {
-  INTERNAL_EVENT = 'INTERNAL_EVENT',
+export enum WorkflowTriggerType {
+  DATABASE_EVENT = 'DATABASE_EVENT',
 }
 
-export type WorkflowInternalEventTrigger = {
-  type: WorkflowVersionTriggerType.INTERNAL_EVENT;
+export type WorkflowDatabaseEventTrigger = {
+  type: WorkflowTriggerType.DATABASE_EVENT;
   settings: {
     eventName: string;
     triggerName: string;
   };
 };
 
-export type WorkflowVersionTrigger = WorkflowInternalEventTrigger;
+export type WorkflowTrigger = WorkflowDatabaseEventTrigger;
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowVersion,

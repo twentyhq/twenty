@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  WorkflowTriggerException,
-  WorkflowTriggerExceptionCode,
-} from 'src/engine/core-modules/workflow/workflow-trigger.exception';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow-event-listener.workspace-entity';
 import {
-  WorkflowInternalEventTrigger,
-  WorkflowVersionTrigger,
-  WorkflowVersionTriggerType,
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
+} from 'src/modules/workflow/standard-objects/workflow-trigger/workflow-trigger.exception';
+import {
+  WorkflowDatabaseEventTrigger,
+  WorkflowTrigger,
+  WorkflowTriggerType,
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/standard-objects/workflow-version.workspace-entity';
 
@@ -39,8 +39,7 @@ export class WorkflowTriggerService {
       );
     }
 
-    const trigger =
-      workflowVersion.trigger as unknown as WorkflowVersionTrigger;
+    const trigger = workflowVersion.trigger as unknown as WorkflowTrigger;
 
     if (!trigger || !trigger?.type) {
       throw new WorkflowTriggerException(
@@ -50,8 +49,8 @@ export class WorkflowTriggerService {
     }
 
     switch (trigger.type) {
-      case WorkflowVersionTriggerType.INTERNAL_EVENT:
-        await this.executeInternalEventTrigger(
+      case WorkflowTriggerType.DATABASE_EVENT:
+        await this.upsertWorkflowEventListener(
           workspaceId,
           workflowVersion.workflowId,
           trigger,
@@ -64,16 +63,16 @@ export class WorkflowTriggerService {
     return true;
   }
 
-  private async executeInternalEventTrigger(
+  private async upsertWorkflowEventListener(
     workspaceId: string,
     workflowId: string,
-    trigger: WorkflowInternalEventTrigger,
+    trigger: WorkflowDatabaseEventTrigger,
   ) {
     const eventName = trigger?.settings?.eventName;
 
     if (!eventName) {
       throw new WorkflowTriggerException(
-        'No event name provided in internal event trigger',
+        'No event name provided in database event trigger',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
       );
     }
