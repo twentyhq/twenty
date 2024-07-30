@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
-import { InformationBanner } from '@/information-banner/InformationBanner';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
@@ -21,6 +20,7 @@ import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-in
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 
+import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -126,7 +126,7 @@ export const RecordIndexContainer = ({
 
   return (
     <StyledContainer>
-      <InformationBanner />
+      <InformationBannerWrapper />
       <RecordFieldValueSelectorContextProvider>
         <SpreadsheetImportProvider>
           <StyledContainerWithPadding>

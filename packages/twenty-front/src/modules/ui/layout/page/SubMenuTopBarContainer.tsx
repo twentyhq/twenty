@@ -4,7 +4,7 @@ import { IconComponent } from 'twenty-ui';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { InformationBanner } from '@/information-banner/InformationBanner';
+import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import { PageBody } from './PageBody';
 import { PageHeader } from './PageHeader';
 
@@ -34,7 +34,7 @@ export const SubMenuTopBarContainer = ({
     <StyledContainer isMobile={isMobile} className={className}>
       {isMobile && <PageHeader title={title} Icon={Icon} />}
       <PageBody>
-        <InformationBanner />
+        <InformationBannerWrapper />
         {children}
       </PageBody>
     </StyledContainer>
