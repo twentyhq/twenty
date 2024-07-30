@@ -188,6 +188,7 @@ export class MigrateDomainNameFromTextToLinksCommand extends CommandRunner {
               },
               [],
             ),
+            size: 150,
           });
 
           // Delete initial domainName text field
