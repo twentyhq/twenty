@@ -4,21 +4,22 @@ import { isUndefined } from '@nestjs/common/utils/shared.utils';
 import * as fs from 'fs';
 import * as path from 'path';
 
+import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import * as semver from 'semver';
 
+import { MigrateDomainNameFromTextToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-domain-to-links.command';
+import { MigrateLinkFieldsToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-link-fields-to-links.command';
+import { MigrateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-message-channel-sync-status-enum.command';
+import { SetWorkspaceActivationStatusCommand } from 'src/database/commands/upgrade-version/0-23/0-23-set-workspace-activation-status.command';
 import { UpdateActivitiesCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-activities.command';
 
 interface UpgradeCommandOptions {
   workspaceId?: string;
 }
 
-type UpgradeCommand = new (...args: any[]) => {
-  run: (passedParam: string[], options: UpgradeCommandOptions) => Promise<void>;
-};
-
-const versionUpgradeMap: Record<string, UpgradeCommand[]> = {
-  '0.23': [UpdateActivitiesCommand],
+type VersionUpgradeMap = {
+  [version: string]: CommandRunner[];
 };
 
 @Command({
@@ -26,14 +27,16 @@ const versionUpgradeMap: Record<string, UpgradeCommand[]> = {
   description: 'Upgrade to a specific version',
 })
 export class UpgradeVersionCommand extends CommandRunner {
-  private currentVersion: string;
   private readonly logger = new Logger(UpgradeVersionCommand.name);
 
   constructor(
+    private readonly migrateLinkFieldsToLinksCommand: MigrateLinkFieldsToLinksCommand,
+    private readonly migrateDomainNameFromTextToLinksCommand: MigrateDomainNameFromTextToLinksCommand,
+    private readonly migrateMessageChannelSyncStatusEnumCommand: MigrateMessageChannelSyncStatusEnumCommand,
+    private readonly setWorkspaceActivationStatusCommand: SetWorkspaceActivationStatusCommand,
     private readonly updateActivitiesCommand: UpdateActivitiesCommand,
   ) {
     super();
-    this.currentVersion = this.getCurrentCodeVersion();
   }
 
   @Option({
@@ -60,7 +63,17 @@ export class UpgradeVersionCommand extends CommandRunner {
   ): Promise<void> {
     const { version, ...upgradeOptions } = options;
 
-    this.validateVersions(version);
+    const versionUpgradeMap = {
+      '0.23': [
+        this.migrateLinkFieldsToLinksCommand,
+        this.migrateDomainNameFromTextToLinksCommand,
+        this.migrateMessageChannelSyncStatusEnumCommand,
+        this.setWorkspaceActivationStatusCommand,
+        this.updateActivitiesCommand,
+      ],
+    };
+
+    await this.validateVersions(version, versionUpgradeMap);
 
     if (!versionUpgradeMap[version]) {
       throw new Error(
@@ -68,52 +81,40 @@ export class UpgradeVersionCommand extends CommandRunner {
       );
     }
 
-    for (const CommandClass of versionUpgradeMap[version]) {
-      const commandInstance = this.getCommandInstance(CommandClass);
-
-      await commandInstance.run(passedParams, upgradeOptions);
+    for (const command of versionUpgradeMap[version]) {
+      await command.run(passedParams, upgradeOptions);
     }
 
-    this.logger.log(`Successfully upgraded to version ${version}`);
+    this.logger.log(chalk.green(`Successfully upgraded to version ${version}`));
   }
 
-  private getCommandInstance(CommandClass: UpgradeCommand): {
-    run: (
-      passedParam: string[],
-      options: UpgradeCommandOptions,
-    ) => Promise<void>;
-  } {
-    return this[
-      CommandClass.name.charAt(0).toLowerCase() + CommandClass.name.slice(1)
-    ] as any;
-  }
-
-  private getCurrentCodeVersion(): string {
+  private async getCurrentCodeVersion(): Promise<string> {
     const packageJsonPath = path.join(process.cwd(), 'package.json');
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
 
     return packageJson.version;
   }
 
-  private validateVersions(targetVersion: string): void {
-    const cleanCurrentVersion = semver.coerce(this.currentVersion);
+  private async validateVersions(
+    targetVersion: string,
+    versionUpgradeMap: VersionUpgradeMap,
+  ): Promise<void> {
+    const currentVersion = await this.getCurrentCodeVersion();
+
+    const cleanCurrentVersion = semver.coerce(currentVersion);
     const cleanTargetVersion = semver.coerce(targetVersion);
 
     if (!cleanCurrentVersion || !cleanTargetVersion) {
       throw new Error(
-        `Invalid version format. Current Code: ${this.currentVersion}, Target: ${targetVersion}`,
+        `Invalid version format. Current Code: ${currentVersion}, Target: ${targetVersion}`,
       );
     }
 
+    const targetMajorMinor = `${cleanTargetVersion.major}.${cleanTargetVersion.minor}`;
+
     if (
       semver.gt(cleanTargetVersion, cleanCurrentVersion) &&
-      isUndefined(
-        versionUpgradeMap[
-          cleanTargetVersion.major.toString() +
-            '.' +
-            cleanTargetVersion.minor.toString()
-        ],
-      )
+      isUndefined(versionUpgradeMap[targetMajorMinor])
     ) {
       throw new Error(
         `Cannot upgrade to ${cleanTargetVersion}. Your current code version is ${cleanCurrentVersion}. Please update your codebase or upgrade your Docker image first.`,
@@ -121,7 +122,7 @@ export class UpgradeVersionCommand extends CommandRunner {
     }
 
     this.logger.log(
-      `Current Code Version: ${this.currentVersion}, Target: ${targetVersion}`,
+      `Current Code Version: ${currentVersion}, Target: ${targetVersion}`,
     );
   }
 }
