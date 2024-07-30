@@ -123,7 +123,7 @@ export const RecordIndexOptionsDropdownContent = ({
     objectNameSingular,
     recordIndexId,
   });
-
+  console.log(currentMenu);
   return (
     <>
       {!currentMenu && (
@@ -198,7 +198,7 @@ export const RecordIndexOptionsDropdownContent = ({
         </>
       )}
 
-      {viewType === ViewType.Kanban && (
+      {viewType === ViewType.Kanban && !currentMenu && (
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
