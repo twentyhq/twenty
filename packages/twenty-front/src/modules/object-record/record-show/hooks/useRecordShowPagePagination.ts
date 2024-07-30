@@ -1,4 +1,6 @@
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
+import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
@@ -10,8 +12,6 @@ import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-s
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useRecordShowPagePagination = (
@@ -60,7 +60,8 @@ export const useRecordShowPagePagination = (
 
   const cursorFromRequest = currentRecordsPageInfo?.endCursor;
 
-  const [totalCount, setTotalCount] = useState<number>(0);
+  const [totalCountBefore, setTotalCountBefore] = useState<number>(0);
+  const [totalCountAfter, setTotalCountAfter] = useState<number>(0);
 
   const { loading: loadingRecordBefore, records: recordsBefore } =
     useFindManyRecords({
@@ -78,7 +79,7 @@ export const useRecordShowPagePagination = (
       objectNameSingular,
       recordGqlFields,
       onCompleted: (_, pagination) => {
-        setTotalCount(pagination?.totalCount ?? 0);
+        setTotalCountBefore(pagination?.totalCount ?? 0);
       },
     });
 
@@ -98,7 +99,7 @@ export const useRecordShowPagePagination = (
       objectNameSingular,
       recordGqlFields,
       onCompleted: (_, pagination) => {
-        setTotalCount(pagination?.totalCount ?? 0);
+        setTotalCountAfter(pagination?.totalCount ?? 0);
       },
     });
 
@@ -146,6 +147,16 @@ export const useRecordShowPagePagination = (
   const rankFoundInFiew = rankInView > -1;
 
   const objectLabel = capitalize(objectMetadataItem.namePlural);
+
+  // Todo: the totalCount is broken on backend (likely because of pg_graphql)
+  // Here are the current behavior, if the query does not return any result, totalCount is 0
+  // If the query returns a result, totalCount is the total number of records
+  const totalCount =
+    totalCountBefore === 0
+      ? totalCountAfter === 0
+        ? 1
+        : totalCountAfter
+      : totalCountBefore;
 
   const viewNameWithCount = rankFoundInFiew
     ? `${rankInView + 1} of ${totalCount} in ${objectLabel}`
