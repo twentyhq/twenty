@@ -2,7 +2,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '04b2e9f5-0713-40a5-8216-82802401d33e',
-    domainName: { primarlyLinkUrl: 'qonto.com', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'qonto.com',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 1400,
     name: 'Qonto',
@@ -13,8 +18,13 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     address: {
       addressStreet1: 'OLINDA SAS',
       addressStreet2: '18 rue de Navarin',
-      addressCity: 'Paris',
+      addressState: null,
       addressPostcode: '75009',
+      addressCountry: 'France',
+      addressCity: 'Paris',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -33,9 +43,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: '04b2e9f5-0713-40a5-8216-82802401d33e',
             jobTitle: 'zdf',
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: 'asd',
               primaryLinkUrl: 'asd.com',
+              secondaryLinks: null,
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -45,9 +56,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'Seattle',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: 'asd',
               primaryLinkUrl: 'asd.com',
+              secondaryLinks: null,
+              __typename: 'Links',
             },
           },
         },
@@ -60,9 +72,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'qonto',
       primaryLinkUrl: 'https://www.linkedin.com/company/qonto',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -70,9 +83,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: null,
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -112,7 +126,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '0d940997-c21e-4ec2-873b-de4264d89025',
-    domainName: { primarlyLinkUrl: 'google.com', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'google.com',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 72_000,
     name: 'Google',
@@ -125,6 +144,11 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       addressStreet2: 'Mountain View',
       addressState: 'CA',
       addressPostcode: '94043',
+      addressCountry: 'United States',
+      addressCity: 'Mountain View',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -142,9 +166,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: '0d940997-c21e-4ec2-873b-de4264d89025',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -154,9 +179,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'Seattle',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -172,9 +198,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: '0d940997-c21e-4ec2-873b-de4264d89025',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -184,9 +211,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'New York',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -202,9 +230,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: '0d940997-c21e-4ec2-873b-de4264d89025',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -214,9 +243,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'Los Angeles',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -232,9 +262,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: '0d940997-c21e-4ec2-873b-de4264d89025',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -244,9 +275,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'New York',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -262,9 +294,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: '0d940997-c21e-4ec2-873b-de4264d89025',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -274,9 +307,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'San Francisco',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -289,9 +323,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'google',
       primaryLinkUrl: 'https://www.linkedin.com/company/google',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -299,9 +334,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -316,7 +352,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '118995f3-5d81-46d6-bf83-f7fd33ea6102',
-    domainName: { primarlyLinkUrl: 'facebook.com', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'facebook.com',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 87_000,
     name: 'Facebook',
@@ -329,6 +370,11 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       addressStreet2: 'Menlo Park',
       addressState: 'CA',
       addressPostcode: '94025',
+      addressCountry: 'United States',
+      addressCity: 'Menlo Park',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -346,9 +392,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: '118995f3-5d81-46d6-bf83-f7fd33ea6102',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -358,9 +405,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'Seattle',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -376,9 +424,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: '118995f3-5d81-46d6-bf83-f7fd33ea6102',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -388,9 +437,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'Los Angeles',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -403,9 +453,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'facebook',
       primaryLinkUrl: 'https://www.linkedin.com/company/facebook',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -433,9 +484,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -450,7 +502,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '1d3a1c6e-707e-44dc-a1d2-30030bf1a944',
-    domainName: { primarlyLinkUrl: 'netflix.com', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'netflix.com',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 3_000,
     name: 'Netflix',
@@ -463,6 +520,11 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       addressStreet2: 'Los Gatos',
       addressState: 'CA',
       addressPostcode: '95032',
+      addressCountry: 'France',
+      addressCity: 'Paris',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -476,9 +538,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'netflix',
       primaryLinkUrl: 'https://www.linkedin.com/company/netflix',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -486,9 +549,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -503,7 +567,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '460b6fb1-ed89-413a-b31a-962986e67bb4',
-    domainName: { primarlyLinkUrl: 'microsoft.com', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'microsoft.com',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 221_000,
     name: 'Microsoft',
@@ -516,6 +585,11 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       addressStreet2: 'Redmond',
       addressState: 'WA',
       addressPostcode: '98052',
+      addressCountry: 'United States',
+      addressCity: 'Redmond',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -533,9 +607,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -545,9 +620,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'New York',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -563,9 +639,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -575,9 +652,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'Seattle',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -593,9 +671,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: '460b6fb1-ed89-413a-b31a-962986e67bb4',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -605,9 +684,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'Seattle',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -620,9 +700,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'microsoft',
       primaryLinkUrl: 'https://www.linkedin.com/company/microsoft',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -669,9 +750,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -686,7 +768,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '7a93d1e5-3f74-492d-a101-2a70f50a1645',
-    domainName: { primarlyLinkUrl: 'libeo.io', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'libeo.io',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 50,
     name: 'Libeo',
@@ -696,8 +783,14 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     address: {
       addressStreet1: '42 rue de paradis',
+      addressStreet2: '3rd floor',
       addressCity: 'Paris',
+      addressState: 'Ile de France',
       addressPostcode: '75010',
+      addressCountry: 'France',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -711,9 +804,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'libeo',
       primaryLinkUrl: 'https://www.linkedin.com/company/libeo',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -721,9 +815,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -738,7 +833,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
-    domainName: { primarlyLinkUrl: 'airbnb.com', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'airbnb.com',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 6_000,
     name: 'Airbnb',
@@ -748,9 +848,14 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     address: {
       addressStreet1: '888 Brannan Street',
+      addressStreet2: '4th Floor',
       addressCity: 'San Francisco',
       addressState: 'CA',
-      addressPostcode: '75010',
+      addressPostcode: '94103',
+      addressCountry: 'United States',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -764,9 +869,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'airbnb',
       primaryLinkUrl: 'https://www.linkedin.com/company/airbnb',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -774,9 +880,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -791,7 +898,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: '9d162de6-cfbf-4156-a790-e39854dcd4eb',
-    domainName: { primarlyLinkUrl: 'claap.io', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'claap.io',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 7,
     name: 'Claap',
@@ -805,6 +917,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       addressCity: 'Seattle',
       addressState: 'WA',
       addressPostcode: '98164',
+      addressCountry: 'United States',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -818,9 +934,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'claap',
       primaryLinkUrl: 'https://www.linkedin.com/company/claap',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -828,9 +945,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -845,7 +963,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: 'a674fa6c-1455-4c57-afaf-dd5dc086361d',
-    domainName: { primarlyLinkUrl: 'algolia.com', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'algolia.com',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 250,
     name: 'Algolia',
@@ -859,6 +982,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       addressCity: 'Palo Alto',
       addressState: 'CA',
       addressPostcode: '94306',
+      addressCountry: 'United States',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -876,9 +1003,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: 'a674fa6c-1455-4c57-afaf-dd5dc086361d',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -888,9 +1016,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'Seattle',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -903,9 +1032,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'algolia',
       primaryLinkUrl: 'https://www.linkedin.com/company/algolia',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -913,9 +1043,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -930,7 +1061,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: 'a7bc68d5-f79e-40dd-bd06-c36e6abb4678',
-    domainName: { primarlyLinkUrl: 'samsung.com', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'samsung.com',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 400_000,
     name: 'Samsung',
@@ -941,7 +1077,13 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     address: {
       addressStreet1: '129, Samsung-ro',
       addressStreet2: 'Yeongtong-gu, Suwon-si',
+      addressPostcode: '16677',
+      addressState: 'Gyeonggi-do',
       addressCity: 'Gyeonggi-do',
+      addressCountry: 'South Korea',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -959,9 +1101,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: 'a7bc68d5-f79e-40dd-bd06-c36e6abb4678',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -971,9 +1114,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'Seattle',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -986,9 +1130,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'samsung',
       primaryLinkUrl: 'https://www.linkedin.com/company/samsung',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -996,9 +1141,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -1013,7 +1159,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: 'aaffcfbd-f86b-419f-b794-02319abe8637',
-    domainName: { primarlyLinkUrl: 'hasura.io', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'hasura.io',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 17_000,
     name: 'Hasura',
@@ -1027,6 +1178,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       addressCity: 'San Francisco',
       addressState: 'CA',
       addressPostcode: '94105',
+      addressCountry: 'United States',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -1040,9 +1195,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'hasura',
       primaryLinkUrl: 'https://www.linkedin.com/company/hasura',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -1050,9 +1206,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -1067,7 +1224,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: 'f33dc242-5518-4553-9433-42d8eb82834b',
-    domainName: { primarlyLinkUrl: 'wework.com', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'wework.com',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 2_000,
     name: 'Wework',
@@ -1077,7 +1239,14 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     address: {
       addressStreet1: '575 Lexington Ave 16th Floor',
+      addressStreet2: '16th Floor',
       addressCity: 'New York',
+      addressState: 'NY',
+      addressPostcode: '10022',
+      addressCountry: 'United States',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -1091,9 +1260,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'wework',
       primaryLinkUrl: 'https://www.linkedin.com/company/wework',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -1101,9 +1271,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
@@ -1118,7 +1289,12 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
   {
     __typename: 'Company',
     id: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
-    domainName: { primarlyLinkUrl: 'linkedin.com', primaryLinkLabel: '' },
+    domainName: {
+      primaryLinkUrl: 'linkedin.com',
+      primaryLinkLabel: '',
+      secondaryLinks: [],
+      __typename: 'Links',
+    },
     updatedAt: '2023-11-23T15:38:03.699Z',
     employees: 20_000,
     name: 'Linkedin',
@@ -1132,6 +1308,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       addressCity: 'San Francisco',
       addressState: 'CA',
       addressPostcode: '94104',
+      addressCountry: 'United States',
+      addressLat: null,
+      addressLng: null,
+      __typename: 'Address',
     },
     accountOwner: null,
     people: {
@@ -1149,9 +1329,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
             jobTitle: '',
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -1161,9 +1342,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'Los Angeles',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -1179,9 +1361,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             companyId: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
             jobTitle: null,
             xLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
             name: {
               __typename: 'FullName',
@@ -1191,9 +1374,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             city: 'Seattle',
             updatedAt: '2023-11-23T15:38:03.700Z',
             linkedinLink: {
-              __typename: 'Link',
               primaryLinkLabel: null,
               primaryLinkUrl: null,
+              secondaryLinks: [],
+              __typename: 'Links',
             },
           },
         },
@@ -1206,9 +1390,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     createdAt: '2023-11-23T15:38:03.699Z',
     idealCustomerProfile: null,
     linkedinLink: {
-      __typename: 'Link',
       primaryLinkLabel: 'linkedin',
       primaryLinkUrl: 'https://www.linkedin.com/company/linkedin',
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     opportunities: {
       __typename: 'OpportunityConnection',
@@ -1236,9 +1421,10 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
     accountOwnerId: null,
     xLink: {
-      __typename: 'Link',
       primaryLinkLabel: null,
       primaryLinkUrl: null,
+      secondaryLinks: [],
+      __typename: 'Links',
     },
     activityTargets: {
       __typename: 'ActivityTargetConnection',
