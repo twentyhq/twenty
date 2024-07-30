@@ -1,7 +1,5 @@
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
-import { CalendarChannelVisibility } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 describe('googleApisSetRequestExtraParams', () => {
   it('should set request extra params', () => {
@@ -12,15 +10,15 @@ describe('googleApisSetRequestExtraParams', () => {
     setRequestExtraParams(request, {
       transientToken: 'abc',
       redirectLocation: '/test',
-      calendarVisibility: CalendarChannelVisibility.SHARE_EVERYTHING,
-      messageVisibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      calendarVisibility: 'share_everything',
+      messageVisibility: 'share_everything',
     });
 
     expect(request.params).toEqual({
       transientToken: 'abc',
       redirectLocation: '/test',
-      calendarVisibility: CalendarChannelVisibility.SHARE_EVERYTHING,
-      messageVisibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      calendarVisibility: 'share_everything',
+      messageVisibility: 'share_everything',
     });
   });
 
@@ -32,8 +30,8 @@ describe('googleApisSetRequestExtraParams', () => {
     expect(() => {
       setRequestExtraParams(request, {
         redirectLocation: '/test',
-        calendarVisibility: CalendarChannelVisibility.SHARE_EVERYTHING,
-        messageVisibility: MessageChannelVisibility.SHARE_EVERYTHING,
+        calendarVisibility: 'share_everything',
+        messageVisibility: 'share_everything',
       });
     }).toThrow('transientToken is required');
   });
