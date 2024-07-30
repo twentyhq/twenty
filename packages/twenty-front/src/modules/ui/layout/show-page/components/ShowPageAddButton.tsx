@@ -25,10 +25,10 @@ export const ShowPageAddButton = ({
 }) => {
   const { closeDropdown, toggleDropdown } = useDropdown('add-show-page');
   const openNote = useOpenCreateActivityDrawer({
-    objectNameSingular: CoreObjectNameSingular.Note,
+    activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
   const openTask = useOpenCreateActivityDrawer({
-    objectNameSingular: CoreObjectNameSingular.Task,
+    activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
   const handleSelect = (objectNameSingular: CoreObjectNameSingular) => {

@@ -1,5 +1,6 @@
 import { RichTextEditor } from '@/activities/components/RichTextEditor';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import styled from '@emotion/styled';
 
 const StyledShowPageActivityContainer = styled.div`
@@ -19,7 +20,11 @@ export const ShowPageActivityContainer = ({
       <RichTextEditor
         activityId={targetableObject.id}
         fillTitleFromBody={false}
-        objectNameSingular={targetableObject.targetObjectNameSingular}
+        activityObjectNameSingular={
+          targetableObject.targetObjectNameSingular as
+            | CoreObjectNameSingular.Note
+            | CoreObjectNameSingular.Task
+        }
       />
     </StyledShowPageActivityContainer>
   );

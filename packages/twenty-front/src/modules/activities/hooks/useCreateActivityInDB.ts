@@ -19,15 +19,19 @@ import { useRecoilCallback } from 'recoil';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useCreateActivityInDB = ({
-  objectNameSingular,
+  activityObjectNameSingular,
 }: {
-  objectNameSingular: CoreObjectNameSingular;
+  activityObjectNameSingular:
+    | CoreObjectNameSingular.Task
+    | CoreObjectNameSingular.Note;
 }) => {
   const createOneActivityOperationSignature =
-    createOneActivityOperationSignatureFactory({ objectNameSingular });
+    createOneActivityOperationSignatureFactory({
+      objectNameSingular: activityObjectNameSingular,
+    });
 
   const { createOneRecord: createOneActivity } = useCreateOneRecord({
-    objectNameSingular,
+    objectNameSingular: activityObjectNameSingular,
     recordGqlFields: createOneActivityOperationSignature.fields,
     shouldMatchRootQueryFilter: true,
   });
@@ -35,7 +39,7 @@ export const useCreateActivityInDB = ({
   const { createManyRecords: createManyActivityTargets } = useCreateManyRecords<
     TaskTarget | NoteTarget
   >({
-    objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
+    objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
     shouldMatchRootQueryFilter: true,
   });
 
@@ -43,12 +47,12 @@ export const useCreateActivityInDB = ({
 
   const { objectMetadataItem: objectMetadataItemActivityTarget } =
     useObjectMetadataItem({
-      objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
+      objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
     });
 
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
-      objectNameSingular: objectNameSingular,
+      objectNameSingular: activityObjectNameSingular,
     });
 
   const cache = useApolloClient().cache;

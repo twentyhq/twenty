@@ -4,7 +4,7 @@ import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 
 export const PageAddTaskButton = () => {
   const openCreateActivity = useOpenCreateActivityDrawer({
-    objectNameSingular: CoreObjectNameSingular.Task,
+    activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
   // TODO: fetch workspace member from filter here

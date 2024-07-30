@@ -40,7 +40,7 @@ export const PageChangeEffect = () => {
   const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();
 
   const openCreateActivity = useOpenCreateActivityDrawer({
-    objectNameSingular: CoreObjectNameSingular.Task,
+    activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
   useEffect(() => {

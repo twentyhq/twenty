@@ -230,8 +230,10 @@ export const RecordShowContainer = ({
                       }}
                     >
                       <ActivityTargetsInlineCell
-                        objectNameSingular={
-                          objectNameSingular as CoreObjectNameSingular
+                        activityObjectNameSingular={
+                          objectNameSingular as
+                            | CoreObjectNameSingular.Note
+                            | CoreObjectNameSingular.Task
                         }
                         activity={recordFromStore as Task | Note}
                         showLabel={true}

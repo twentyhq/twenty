@@ -28,7 +28,7 @@ describe('useOpenCreateActivityDrawer', () => {
     const { result } = renderHook(
       () => {
         const openActivityRightDrawer = useOpenCreateActivityDrawer({
-          objectNameSingular: CoreObjectNameSingular.Note,
+          activityObjectNameSingular: CoreObjectNameSingular.Note,
         });
         const viewableRecordId = useRecoilValue(viewableRecordIdState);
         const setObjectMetadataItems = useSetRecoilState(

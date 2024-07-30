@@ -6,6 +6,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
@@ -176,6 +177,7 @@ describe('useActivities', () => {
     const { result } = renderHook(
       () =>
         useActivities({
+          objectNameSingular: CoreObjectNameSingular.Task,
           targetableObjects: [],
           activitiesFilters: {},
           activitiesOrderByVariables: [{}],
@@ -198,6 +200,7 @@ describe('useActivities', () => {
         );
 
         const activities = useActivities({
+          objectNameSingular: CoreObjectNameSingular.Task,
           targetableObjects: [
             { targetObjectNameSingular: 'company', id: '123' },
           ],

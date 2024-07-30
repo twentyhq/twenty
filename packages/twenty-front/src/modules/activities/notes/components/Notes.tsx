@@ -33,7 +33,7 @@ export const Notes = ({
   const { notes, loading } = useNotes(targetableObject);
 
   const openCreateActivity = useOpenCreateActivityDrawer({
-    objectNameSingular: CoreObjectNameSingular.Note,
+    activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
 
   const isNotesEmpty = !notes || notes.length === 0;

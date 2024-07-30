@@ -22,7 +22,9 @@ type ActivityTargetsInlineCellProps = {
   showLabel?: boolean;
   maxWidth?: number;
   readonly?: boolean;
-  objectNameSingular: CoreObjectNameSingular;
+  activityObjectNameSingular:
+    | CoreObjectNameSingular.Note
+    | CoreObjectNameSingular.Task;
 };
 
 export const ActivityTargetsInlineCell = ({
@@ -30,11 +32,11 @@ export const ActivityTargetsInlineCell = ({
   showLabel = true,
   maxWidth,
   readonly,
-  objectNameSingular,
+  activityObjectNameSingular,
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
     activity,
-    objectNameSingular,
+    activityObjectNameSingular,
   );
 
   const { closeInlineCell } = useInlineCell();
@@ -51,7 +53,7 @@ export const ActivityTargetsInlineCell = ({
 
   const { FieldContextProvider: ActivityTargetsContextProvider } =
     useFieldContext({
-      objectNameSingular: objectNameSingular,
+      objectNameSingular: activityObjectNameSingular,
       objectRecordId: activity.id,
       fieldMetadataName: fieldDefinition.metadata.fieldName,
       fieldPosition: 3,
@@ -76,7 +78,7 @@ export const ActivityTargetsInlineCell = ({
                 <ActivityTargetInlineCellEditMode
                   activity={activity}
                   activityTargetWithTargetRecords={activityTargetObjectRecords}
-                  objectNameSingular={objectNameSingular}
+                  activityObjectNameSingular={activityObjectNameSingular}
                 />
               }
               label="Relations"

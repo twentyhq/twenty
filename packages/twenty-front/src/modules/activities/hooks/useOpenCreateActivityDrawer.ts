@@ -16,16 +16,18 @@ import { viewableRecordNameSingularState } from '@/object-record/record-right-dr
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 export const useOpenCreateActivityDrawer = ({
-  objectNameSingular,
+  activityObjectNameSingular,
 }: {
-  objectNameSingular: CoreObjectNameSingular;
+  activityObjectNameSingular:
+    | CoreObjectNameSingular.Note
+    | CoreObjectNameSingular.Task;
 }) => {
   const { openRightDrawer } = useRightDrawer();
 
   const setHotkeyScope = useSetHotkeyScope();
 
   const { createActivityInCache } = useCreateActivityInCache({
-    objectNameSingular,
+    activityObjectNameSingular,
   });
 
   const setActivityTargetableEntityArray = useSetRecoilState(
@@ -59,7 +61,7 @@ export const useOpenCreateActivityDrawer = ({
     setTemporaryActivityForEditor(createdActivityInCache);
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setViewableRecordId(createdActivityInCache.id);
-    setViewableRecordNameSingular(objectNameSingular);
+    setViewableRecordNameSingular(activityObjectNameSingular);
     setActivityTargetableEntityArray(targetableObjects ?? []);
 
     openRightDrawer(RightDrawerPages.ViewRecord);

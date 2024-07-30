@@ -9,16 +9,16 @@ import { isDefined } from '~/utils/isDefined';
 // It will take a targetableObject and prepare the queries for the activities
 // based on the activityTargets of the targetableObject
 export const useRefreshShowPageFindManyActivitiesQueries = ({
-  objectNameSingular,
+  activityObjectNameSingular,
 }: {
-  objectNameSingular: CoreObjectNameSingular;
+  activityObjectNameSingular: CoreObjectNameSingular;
 }) => {
   const objectShowPageTargetableObject = useRecoilValue(
     objectShowPageTargetableObjectState,
   );
 
   const { prepareFindManyActivitiesQuery } = usePrepareFindManyActivitiesQuery({
-    objectNameSingular,
+    activityObjectNameSingular,
   });
 
   const refreshShowPageFindManyActivitiesQueries = () => {

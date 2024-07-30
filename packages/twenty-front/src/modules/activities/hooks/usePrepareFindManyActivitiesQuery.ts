@@ -17,17 +17,17 @@ import { sortByAscString } from '~/utils/array/sortByAscString';
 import { isDefined } from '~/utils/isDefined';
 
 export const usePrepareFindManyActivitiesQuery = ({
-  objectNameSingular,
+  activityObjectNameSingular,
 }: {
-  objectNameSingular: CoreObjectNameSingular;
+  activityObjectNameSingular: CoreObjectNameSingular;
 }) => {
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
-      objectNameSingular,
+      objectNameSingular: activityObjectNameSingular,
     });
 
   const getActivityFromCache = useGetRecordFromCache({
-    objectNameSingular,
+    objectNameSingular: activityObjectNameSingular,
   });
 
   const cache = useApolloClient().cache;
@@ -112,7 +112,7 @@ export const usePrepareFindManyActivitiesQuery = ({
 
     const FIND_ACTIVITIES_OPERATION_SIGNATURE =
       findActivitiesOperationSignatureFactory({
-        objectNameSingular,
+        objectNameSingular: activityObjectNameSingular,
         objectMetadataItems,
       });
 

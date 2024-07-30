@@ -24,13 +24,15 @@ import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateActivityInCache = ({
-  objectNameSingular,
+  activityObjectNameSingular,
 }: {
-  objectNameSingular: CoreObjectNameSingular;
+  activityObjectNameSingular:
+    | CoreObjectNameSingular.Task
+    | CoreObjectNameSingular.Note;
 }) => {
   const { createManyRecordsInCache: createManyActivityTargetsInCache } =
     useCreateManyRecordsInCache<TaskTarget | NoteTarget>({
-      objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
+      objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
     });
 
   const cache = useApolloClient().cache;
@@ -45,12 +47,12 @@ export const useCreateActivityInCache = ({
 
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
-      objectNameSingular,
+      objectNameSingular: activityObjectNameSingular,
     });
 
   const { objectMetadataItem: objectMetadataItemActivityTarget } =
     useObjectMetadataItem({
-      objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
+      objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
     });
 
   const createOneActivityInCache = useCreateOneRecordInCache<Task | Note>({
@@ -70,7 +72,7 @@ export const useCreateActivityInCache = ({
 
         const createdActivityInCache = createOneActivityInCache({
           id: activityId,
-          __typename: objectNameSingular,
+          __typename: activityObjectNameSingular,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           author: currentWorkspaceMemberRecord,
@@ -177,13 +179,13 @@ export const useCreateActivityInCache = ({
       },
     [
       createOneActivityInCache,
+      activityObjectNameSingular,
       currentWorkspaceMemberRecord,
       createManyActivityTargetsInCache,
       objectMetadataItems,
       objectMetadataItemActivityTarget,
       cache,
       objectMetadataItemActivity,
-      objectNameSingular,
     ],
   );
 

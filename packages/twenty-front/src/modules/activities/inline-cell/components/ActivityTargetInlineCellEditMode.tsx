@@ -40,13 +40,15 @@ const StyledSelectContainer = styled.div`
 type ActivityTargetInlineCellEditModeProps = {
   activity: Task | Note;
   activityTargetWithTargetRecords: ActivityTargetWithTargetRecord[];
-  objectNameSingular: CoreObjectNameSingular;
+  activityObjectNameSingular:
+    | CoreObjectNameSingular.Note
+    | CoreObjectNameSingular.Task;
 };
 
 export const ActivityTargetInlineCellEditMode = ({
   activity,
   activityTargetWithTargetRecords,
-  objectNameSingular,
+  activityObjectNameSingular,
 }: ActivityTargetInlineCellEditModeProps) => {
   const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
   const relationPickerScopeId = `relation-picker-${activity.id}`;
@@ -61,24 +63,24 @@ export const ActivityTargetInlineCellEditMode = ({
   const { createManyRecords: createManyActivityTargets } = useCreateManyRecords<
     NoteTarget | TaskTarget
   >({
-    objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
+    objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
   });
 
   const { deleteManyRecords: deleteManyActivityTargets } = useDeleteManyRecords(
     {
-      objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
+      objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
     },
   );
 
   const { closeInlineCell: closeEditableField } = useInlineCell();
 
   const { upsertActivity } = useUpsertActivity({
-    objectNameSingular: objectNameSingular,
+    activityObjectNameSingular,
   });
 
   const { objectMetadataItem: objectMetadataItemActivityTarget } =
     useObjectMetadataItem({
-      objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
+      objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
     });
 
   const setActivityFromStore = useSetRecoilState(
@@ -87,7 +89,7 @@ export const ActivityTargetInlineCellEditMode = ({
 
   const { createManyRecordsInCache: createManyActivityTargetsInCache } =
     useCreateManyRecordsInCache<NoteTarget | TaskTarget>({
-      objectNameSingular: getJoinObjectNameSingular(objectNameSingular),
+      objectNameSingular: getJoinObjectNameSingular(activityObjectNameSingular),
     });
 
   const handleSubmit = useRecoilCallback(
@@ -180,11 +182,11 @@ export const ActivityTargetInlineCellEditMode = ({
             input: {
               id: newActivityTargetId,
               taskId:
-                objectNameSingular === CoreObjectNameSingular.Task
+                activityObjectNameSingular === CoreObjectNameSingular.Task
                   ? activity.id
                   : null,
               noteId:
-                objectNameSingular === CoreObjectNameSingular.Note
+                activityObjectNameSingular === CoreObjectNameSingular.Note
                   ? activity.id
                   : null,
               createdAt: new Date().toISOString(),
@@ -201,9 +203,9 @@ export const ActivityTargetInlineCellEditMode = ({
             upsertActivity({
               activity,
               input: {
-                [objectNameSingular === CoreObjectNameSingular.Task
+                [activityObjectNameSingular === CoreObjectNameSingular.Task
                   ? 'taskTargets'
-                  : objectNameSingular === CoreObjectNameSingular.Note
+                  : activityObjectNameSingular === CoreObjectNameSingular.Note
                     ? 'noteTargets'
                     : '']: activityTargetsAfterUpdate,
               },
@@ -238,9 +240,9 @@ export const ActivityTargetInlineCellEditMode = ({
             upsertActivity({
               activity,
               input: {
-                [objectNameSingular === CoreObjectNameSingular.Task
+                [activityObjectNameSingular === CoreObjectNameSingular.Task
                   ? 'taskTargets'
-                  : objectNameSingular === CoreObjectNameSingular.Note
+                  : activityObjectNameSingular === CoreObjectNameSingular.Note
                     ? 'noteTargets'
                     : '']: activityTargetsAfterUpdate,
               },
@@ -264,7 +266,7 @@ export const ActivityTargetInlineCellEditMode = ({
       objectMetadataItemActivityTarget,
       relationPickerScopeId,
       upsertActivity,
-      objectNameSingular,
+      activityObjectNameSingular,
     ],
   );
 

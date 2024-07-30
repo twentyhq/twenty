@@ -12,20 +12,22 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isDefined } from '~/utils/isDefined';
 
 export const useUpsertActivity = ({
-  objectNameSingular,
+  activityObjectNameSingular,
 }: {
-  objectNameSingular: CoreObjectNameSingular;
+  activityObjectNameSingular:
+    | CoreObjectNameSingular.Task
+    | CoreObjectNameSingular.Note;
 }) => {
   const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
 
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<
     Task | Note
   >({
-    objectNameSingular,
+    objectNameSingular: activityObjectNameSingular,
   });
 
   const { createActivityInDB } = useCreateActivityInDB({
-    objectNameSingular,
+    activityObjectNameSingular,
   });
 
   const [, setIsUpsertingActivityInDB] = useRecoilState(
@@ -37,7 +39,9 @@ export const useUpsertActivity = ({
   );
 
   const { refreshShowPageFindManyActivitiesQueries } =
-    useRefreshShowPageFindManyActivitiesQueries({ objectNameSingular });
+    useRefreshShowPageFindManyActivitiesQueries({
+      activityObjectNameSingular,
+    });
 
   const upsertActivity = async ({
     activity,

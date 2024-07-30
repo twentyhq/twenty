@@ -38,13 +38,15 @@ import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 type RichTextEditorProps = {
   activityId: string;
   fillTitleFromBody: boolean;
-  objectNameSingular: string;
+  activityObjectNameSingular:
+    | CoreObjectNameSingular.Task
+    | CoreObjectNameSingular.Note;
 };
 
 export const RichTextEditor = ({
   activityId,
   fillTitleFromBody,
-  objectNameSingular,
+  activityObjectNameSingular,
 }: RichTextEditorProps) => {
   const [activityInStore] = useRecoilState(recordStoreFamilyState(activityId));
 
@@ -65,7 +67,7 @@ export const RichTextEditor = ({
 
   const { objectMetadataItem: objectMetadataItemActivity } =
     useObjectMetadataItem({
-      objectNameSingular: objectNameSingular,
+      objectNameSingular: activityObjectNameSingular,
     });
 
   const {
@@ -74,7 +76,7 @@ export const RichTextEditor = ({
   } = usePreviousHotkeyScope();
 
   const { upsertActivity } = useUpsertActivity({
-    objectNameSingular: objectNameSingular as CoreObjectNameSingular,
+    activityObjectNameSingular: activityObjectNameSingular,
   });
 
   const persistBodyDebounced = useDebouncedCallback((newBody: string) => {

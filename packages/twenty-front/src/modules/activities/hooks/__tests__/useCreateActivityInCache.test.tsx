@@ -7,6 +7,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { useCreateActivityInCache } from '@/activities/hooks/useCreateActivityInCache';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
@@ -69,7 +70,9 @@ describe('useCreateActivityInCache', () => {
           recordStoreFamilyState('1234'),
         );
 
-        const res = useCreateActivityInCache();
+        const res = useCreateActivityInCache({
+          activityObjectNameSingular: CoreObjectNameSingular.Task,
+        });
         return {
           ...res,
           setCurrentWorkspaceMember,
@@ -91,7 +94,6 @@ describe('useCreateActivityInCache', () => {
 
     act(() => {
       const res = result.current.createActivityInCache({
-        type: 'NOTE',
         targetObject: {
           targetObjectNameSingular: 'person',
           id: '1234',

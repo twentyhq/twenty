@@ -5,8 +5,21 @@ import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
+import { Task } from '@/activities/types/Task';
 
-const task = { id: '123', status: '2024-03-15T07:33:14.212Z' };
+const task: Task = {
+  id: '123',
+  status: null,
+  title: 'Test',
+  body: 'Test',
+  dueAt: '2024-03-15T07:33:14.212Z',
+  createdAt: '2024-03-15T07:33:14.212Z',
+  updatedAt: '2024-03-15T07:33:14.212Z',
+  assignee: null,
+  assigneeId: null,
+  taskTargets: [],
+  __typename: 'Task',
+};
 
 const mocks: MockedResponse[] = [
   {

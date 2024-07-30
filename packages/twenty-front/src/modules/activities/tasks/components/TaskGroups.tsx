@@ -44,7 +44,7 @@ export const TaskGroups = ({
   });
 
   const openCreateActivity = useOpenCreateActivityDrawer({
-    objectNameSingular: CoreObjectNameSingular.Task,
+    activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
   const { activeTabIdState } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);

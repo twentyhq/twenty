@@ -12,7 +12,7 @@ export const AddTaskButton = ({
   activityTargetableObjects?: ActivityTargetableObject[];
 }) => {
   const openCreateActivity = useOpenCreateActivityDrawer({
-    objectNameSingular: CoreObjectNameSingular.Task,
+    activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
   if (!isNonEmptyArray(activityTargetableObjects)) {

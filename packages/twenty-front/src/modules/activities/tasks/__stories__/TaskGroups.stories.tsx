@@ -9,7 +9,7 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedTasks } from '~/testing/mock-data/activities';
+import { mockedTasks } from '~/testing/mock-data/tasks';
 
 const meta: Meta<typeof TaskGroups> = {
   title: 'Modules/Activity/TaskGroups',
@@ -39,7 +39,7 @@ export const WithTasks: Story = {
   args: {
     targetableObjects: [
       {
-        id: mockedTasks[0].authorId,
+        id: mockedTasks[0].taskTargets?.[0].personId,
         targetObjectNameSingular: 'person',
       },
     ] as ActivityTargetableObject[],
