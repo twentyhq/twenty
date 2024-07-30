@@ -9,7 +9,7 @@ const StyledButtonContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  margin-left: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const MessageThreadSubscribersTopBar = () => {

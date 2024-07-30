@@ -19,6 +19,7 @@ import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPage
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledTopBarWrapper = styled.div`
+  align-items: center;
   display: flex;
 `;
 

@@ -8,15 +8,8 @@ export const EmailThreadMembersChip = ({
 }) => {
   const subscribers = messageThread.subscribers ?? [];
 
-  const numberOfMessageThreadSubscribers = subscribers.length;
-
-  const shouldShowPrivateLabel = numberOfMessageThreadSubscribers === 1;
-
-  const label = shouldShowPrivateLabel ? 'Private' : '';
-
   return (
     <MessageThreadSubscribersDropdownButton
-      label={label}
       messageThreadSubscribers={subscribers}
     />
   );

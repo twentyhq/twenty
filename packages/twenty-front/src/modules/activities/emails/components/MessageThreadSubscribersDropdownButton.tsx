@@ -1,118 +1,112 @@
-import { useTheme } from '@emotion/react';
 import { offset } from '@floating-ui/react';
-import {
-  Avatar,
-  Chip,
-  ChipVariant,
-  IconChevronDown,
-  IconPlus,
-  MultiChip,
-} from 'twenty-ui';
+import { IconMinus, IconPlus } from 'twenty-ui';
 
+import { MessageThreadSubscriberDropdownAddSubscriber } from '@/activities/emails/components/MessageThreadSubscriberDropdownAddSubscriber';
+import { MessageThreadSubscribersChip } from '@/activities/emails/components/MessageThreadSubscribersChip';
 import { MessageThreadSubscriber } from '@/activities/emails/types/MessageThreadSubscriber';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
-import { isNonEmptyString } from '@sniptt/guards';
+import { MenuItemAvatar } from '@/ui/navigation/menu-item/components/MenuItemAvatar';
+import { useState } from 'react';
+
+export const MESSAGE_THREAD_SUBSCRIBER_DROPDOWN_ID =
+  'message-thread-subscriber';
 
 export const MessageThreadSubscribersDropdownButton = ({
   messageThreadSubscribers,
-  label,
 }: {
   messageThreadSubscribers: MessageThreadSubscriber[];
-  label: string;
 }) => {
-  const messageThreadMembersAvatarUrls = messageThreadSubscribers
-    .map((member) => member.workspaceMember.avatarUrl)
-    .filter(isNonEmptyString);
+  const [isAddingSubscriber, setIsAddingSubscriber] = useState(false);
 
-  const firstAvatarUrl = messageThreadMembersAvatarUrls[0];
+  const { closeDropdown } = useDropdown(MESSAGE_THREAD_SUBSCRIBER_DROPDOWN_ID);
 
-  const messageThreadMembersNames = messageThreadSubscribers.map(
-    (member) => member.workspaceMember?.name.firstName,
-  );
+  const mockSubscribers = [
+    ...messageThreadSubscribers,
+    ...messageThreadSubscribers,
+    ...messageThreadSubscribers,
+    ...messageThreadSubscribers,
+  ];
 
-  const theme = useTheme();
+  const handleAddSubscriberClick = () => {
+    setIsAddingSubscriber(true);
+  };
 
-  const { closeDropdown } = useDropdown('message-thread-share');
-
-  const handleAddParticipantClick = () => {
+  const handleSubscriberClick = () => {
     closeDropdown();
   };
 
-  const handleParticipantClick = () => {
+  const handleRemoveSubscriber = (subscriber: MessageThreadSubscriber) => {
+    console.log({ subscriber });
     closeDropdown();
   };
+
+  useListenRightDrawerClose(() => {
+    closeDropdown();
+  });
 
   return (
     <Dropdown
-      dropdownId={'message-thread-share'}
+      dropdownId={MESSAGE_THREAD_SUBSCRIBER_DROPDOWN_ID}
       clickableComponent={
-        messageThreadSubscribers?.length === 1 ? (
-          <Chip
-            label={label ?? ''}
-            variant={ChipVariant.Highlighted}
-            leftComponent={
-              <Avatar
-                avatarUrl={firstAvatarUrl}
-                placeholderColorSeed={
-                  messageThreadSubscribers?.[0].workspaceMember.id
-                }
-                placeholder={messageThreadMembersNames?.[0]}
-                size="md"
-                type={'rounded'}
-              />
-            }
-            rightComponent={<IconChevronDown size={theme.icon.size.sm} />}
-          />
-        ) : (
-          <MultiChip
-            names={messageThreadMembersNames}
-            RightIcon={IconChevronDown}
-            avatarUrls={messageThreadMembersAvatarUrls}
-          />
-        )
+        <MessageThreadSubscribersChip
+          messageThreadSubscribers={mockSubscribers}
+        />
       }
       dropdownComponents={
         <DropdownMenu width="160px" z-index={offset(1)}>
-          <DropdownMenuItemsContainer>
-            {messageThreadSubscribers?.map((member) => (
-              <MenuItemSelectAvatar
-                key={member.workspaceMember.id}
-                selected={false}
-                testId="menu-item"
-                onClick={handleParticipantClick}
-                text={
-                  member.workspaceMember.name.firstName +
-                  ' ' +
-                  member.workspaceMember.name.lastName
-                }
-                avatar={
-                  <Avatar
-                    avatarUrl={member.workspaceMember.avatarUrl}
-                    placeholderColorSeed={member.workspaceMember.id}
-                    placeholder={member.workspaceMember.name.firstName}
-                    size="md"
-                    type={'rounded'}
-                  />
-                }
-              />
-            ))}
-            <DropdownMenuSeparator />
-            <MenuItem
-              LeftIcon={IconPlus}
-              onClick={handleAddParticipantClick}
-              text="Add participant"
+          {isAddingSubscriber ? (
+            <MessageThreadSubscriberDropdownAddSubscriber
+              existingSubscribers={messageThreadSubscribers}
             />
-          </DropdownMenuItemsContainer>
+          ) : (
+            <DropdownMenuItemsContainer>
+              {messageThreadSubscribers?.map((subscriber) => (
+                <MenuItemAvatar
+                  key={subscriber.workspaceMember.id}
+                  testId="menu-item"
+                  onClick={() => {
+                    handleRemoveSubscriber(subscriber);
+                  }}
+                  text={
+                    subscriber.workspaceMember.name.firstName +
+                    ' ' +
+                    subscriber.workspaceMember.name.lastName
+                  }
+                  avatar={{
+                    placeholder: subscriber.workspaceMember.name.firstName,
+                    avatarUrl: subscriber.workspaceMember.avatarUrl,
+                    placeholderColorSeed: subscriber.workspaceMember.id,
+                    size: 'md',
+                    type: 'rounded',
+                  }}
+                  iconButtons={[
+                    {
+                      Icon: IconMinus,
+                      onClick: () => {
+                        handleRemoveSubscriber(subscriber);
+                      },
+                    },
+                  ]}
+                />
+              ))}
+              <DropdownMenuSeparator />
+              <MenuItem
+                LeftIcon={IconPlus}
+                onClick={handleAddSubscriberClick}
+                text="Add subscriber"
+              />
+            </DropdownMenuItemsContainer>
+          )}
         </DropdownMenu>
       }
       dropdownHotkeyScope={{
-        scope: 'message-thread-share',
+        scope: MESSAGE_THREAD_SUBSCRIBER_DROPDOWN_ID,
       }}
     />
   );
