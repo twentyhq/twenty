@@ -198,7 +198,7 @@ export const RecordIndexOptionsDropdownContent = ({
         </>
       )}
 
-      {viewType === ViewType.Kanban && (
+      {viewType === ViewType.Kanban && !currentMenu && (
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
