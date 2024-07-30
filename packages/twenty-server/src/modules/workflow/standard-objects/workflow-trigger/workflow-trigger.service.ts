@@ -83,6 +83,7 @@ export class WorkflowTriggerService {
         'workflowEventListener',
       );
 
+    // TODO: Use upsert when available for workspace entities
     await workflowEventListenerRepository.delete({
       workflowId,
       eventName,
