@@ -6,12 +6,10 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 
 export const SettingsIntegrationEditDatabaseConnection = () => {
   return (
-    <>
-      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        <SettingsPageContainer>
-          <SettingsIntegrationEditDatabaseConnectionContainer />
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </>
+    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <SettingsPageContainer>
+        <SettingsIntegrationEditDatabaseConnectionContainer />
+      </SettingsPageContainer>
+    </SubMenuTopBarContainer>
   );
 };

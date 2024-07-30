@@ -1,7 +1,6 @@
-import { ComponentProps, ReactNode } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ComponentProps, ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   IconChevronDown,
@@ -77,19 +76,6 @@ const StyledTopBarButtonContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledSkeletonLoader = () => {
-  const theme = useTheme();
-  return (
-    <SkeletonTheme
-      baseColor={theme.background.quaternary}
-      highlightColor={theme.background.transparent.light}
-      borderRadius={50}
-    >
-      <Skeleton height={24} width={108} />
-    </SkeletonTheme>
-  );
-};
-
 type PageHeaderProps = ComponentProps<'div'> & {
   title: string;
   hasClosePageButton?: boolean;
@@ -101,7 +87,6 @@ type PageHeaderProps = ComponentProps<'div'> & {
   navigateToNextRecord?: () => void;
   Icon: IconComponent;
   children?: ReactNode;
-  loading?: boolean;
 };
 
 export const PageHeader = ({
@@ -115,7 +100,6 @@ export const PageHeader = ({
   navigateToNextRecord,
   Icon,
   children,
-  loading,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
@@ -137,34 +121,31 @@ export const PageHeader = ({
             onClick={() => onClosePage?.()}
           />
         )}
-        {loading ? (
-          <StyledSkeletonLoader />
-        ) : (
-          <StyledTopBarIconStyledTitleContainer>
-            {hasPaginationButtons && (
-              <>
-                <IconButton
-                  Icon={IconChevronUp}
-                  size="small"
-                  variant="secondary"
-                  disabled={!hasPreviousRecord}
-                  onClick={() => navigateToPreviousRecord?.()}
-                />
-                <IconButton
-                  Icon={IconChevronDown}
-                  size="small"
-                  variant="secondary"
-                  disabled={!hasNextRecord}
-                  onClick={() => navigateToNextRecord?.()}
-                />
-              </>
-            )}
-            {Icon && <Icon size={theme.icon.size.md} />}
-            <StyledTitleContainer data-testid="top-bar-title">
-              <OverflowingTextWithTooltip text={title} />
-            </StyledTitleContainer>
-          </StyledTopBarIconStyledTitleContainer>
-        )}
+
+        <StyledTopBarIconStyledTitleContainer>
+          {hasPaginationButtons && (
+            <>
+              <IconButton
+                Icon={IconChevronUp}
+                size="small"
+                variant="secondary"
+                disabled={!hasPreviousRecord}
+                onClick={() => navigateToPreviousRecord?.()}
+              />
+              <IconButton
+                Icon={IconChevronDown}
+                size="small"
+                variant="secondary"
+                disabled={!hasNextRecord}
+                onClick={() => navigateToNextRecord?.()}
+              />
+            </>
+          )}
+          {Icon && <Icon size={theme.icon.size.md} />}
+          <StyledTitleContainer data-testid="top-bar-title">
+            <OverflowingTextWithTooltip text={title} />
+          </StyledTitleContainer>
+        </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>
       <StyledPageActionContainer>{children}</StyledPageActionContainer>
     </StyledTopBarContainer>

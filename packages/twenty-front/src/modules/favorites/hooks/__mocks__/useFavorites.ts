@@ -143,7 +143,11 @@ export const mocks = [
                 primaryLinkLabel
                 secondaryLinks
               }
-              domainName
+              domainName {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
               annualRecurringRevenue {
                 amountMicros
                 currencyCode
@@ -273,7 +277,11 @@ export const mocks = [
                 primaryLinkLabel
                 secondaryLinks
               }
-              domainName
+              domainName {
+                primaryLinkUrl
+                primaryLinkLabel
+                secondaryLinks
+              }
               annualRecurringRevenue {
                 amountMicros
                 currencyCode

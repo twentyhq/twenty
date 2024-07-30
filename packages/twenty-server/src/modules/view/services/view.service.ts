@@ -17,6 +17,7 @@ export class ViewService {
     fieldId,
     viewsIds,
     positions,
+    size,
   }: {
     workspaceId: string;
     fieldId: string;
@@ -24,6 +25,7 @@ export class ViewService {
     positions?: {
       [key: string]: number;
     }[];
+    size?: number;
   }) {
     const viewFieldRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -51,6 +53,7 @@ export class ViewService {
         fieldMetadataId: fieldId,
         isVisible: true,
         ...(isDefined(position) && { position: position }),
+        ...(isDefined(size) && { size: size }),
       });
 
       await viewFieldRepository.save(newViewField);

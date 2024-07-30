@@ -105,6 +105,24 @@ export const useBuildAvailableFieldsForImport = () => {
               ),
           });
         });
+      } else if (fieldMetadataItem.type === FieldMetadataType.Links) {
+        Object.entries(
+          COMPOSITE_FIELD_IMPORT_LABELS[FieldMetadataType.Links],
+        ).forEach(([_, fieldLabel]) => {
+          availableFieldsForImport.push({
+            icon: getIcon(fieldMetadataItem.icon),
+            label: `${fieldLabel} (${fieldMetadataItem.label})`,
+            key: `${fieldLabel} (${fieldMetadataItem.name})`,
+            fieldType: {
+              type: 'input',
+            },
+            fieldValidationDefinitions:
+              getSpreadSheetFieldValidationDefinitions(
+                fieldMetadataItem.type,
+                `${fieldLabel} (${fieldMetadataItem.label})`,
+              ),
+          });
+        });
       } else {
         availableFieldsForImport.push({
           icon: getIcon(fieldMetadataItem.icon),

@@ -4,7 +4,6 @@ import { GraphQLISODateTime } from '@nestjs/graphql';
 import {
   GraphQLBoolean,
   GraphQLEnumType,
-  GraphQLFloat,
   GraphQLID,
   GraphQLInputObjectType,
   GraphQLInputType,

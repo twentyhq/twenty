@@ -10,6 +10,8 @@ export * from './constants/BorderDark';
 export * from './constants/BorderLight';
 export * from './constants/BoxShadowDark';
 export * from './constants/BoxShadowLight';
+export * from './constants/CodeDark';
+export * from './constants/CodeLight';
 export * from './constants/Colors';
 export * from './constants/FontCommon';
 export * from './constants/FontDark';

@@ -10,7 +10,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-5e4e-4007-a630-8a2617914889',
       label: 'Domain Name',
       size: 100,
-      type: FieldMetadataType.Text,
+      type: FieldMetadataType.Links,
       metadata: {
         fieldName: 'domainName',
         placeHolder: 'Domain Name',

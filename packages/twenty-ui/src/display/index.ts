@@ -4,6 +4,7 @@ export * from './avatar/components/states/isInvalidAvatarUrlState';
 export * from './avatar/constants/AvatarPropertiesBySize';
 export * from './avatar/types/AvatarSize';
 export * from './avatar/types/AvatarType';
+export * from './banner/components/Banner';
 export * from './checkmark/components/AnimatedCheckmark';
 export * from './checkmark/components/Checkmark';
 export * from './chip/components/AvatarChip';

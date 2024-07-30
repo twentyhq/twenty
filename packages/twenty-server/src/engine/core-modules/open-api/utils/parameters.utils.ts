@@ -60,6 +60,7 @@ export const computeDepthParameters = (): OpenAPIV3_1.ParameterObject => {
     schema: {
       type: 'integer',
       enum: [0, 1, 2],
+      default: 1,
     },
   };
 };

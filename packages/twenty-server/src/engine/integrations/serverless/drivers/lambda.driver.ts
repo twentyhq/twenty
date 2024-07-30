@@ -5,8 +5,13 @@ import {
   Lambda,
   LambdaClientConfig,
   InvokeCommand,
+  GetFunctionCommand,
+  UpdateFunctionCodeCommand,
+  DeleteFunctionCommand,
+  ResourceNotFoundException,
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
+import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
 
 import { ServerlessDriver } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
@@ -42,6 +47,39 @@ export class LambdaDriver
     this.buildDirectoryManagerService = options.buildDirectoryManagerService;
   }
 
+  private async checkFunctionExists(
+    serverlessFunctionId: string,
+  ): Promise<boolean> {
+    try {
+      const getFunctionCommand = new GetFunctionCommand({
+        FunctionName: serverlessFunctionId,
+      });
+
+      await this.lambdaClient.send(getFunctionCommand);
+
+      return true;
+    } catch (error) {
+      if (error instanceof ResourceNotFoundException) {
+        return false;
+      }
+      throw error;
+    }
+  }
+
+  async delete(serverlessFunction: ServerlessFunctionEntity) {
+    const functionExists = await this.checkFunctionExists(
+      serverlessFunction.id,
+    );
+
+    if (functionExists) {
+      const deleteFunctionCommand = new DeleteFunctionCommand({
+        FunctionName: serverlessFunction.id,
+      });
+
+      await this.lambdaClient.send(deleteFunctionCommand);
+    }
+  }
+
   async build(serverlessFunction: ServerlessFunctionEntity) {
     const javascriptCode = await this.getCompiledCode(
       serverlessFunction,
@@ -59,21 +97,36 @@ export class LambdaDriver
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    const params: CreateFunctionCommandInput = {
-      Code: {
+    const functionExists = await this.checkFunctionExists(
+      serverlessFunction.id,
+    );
+
+    if (!functionExists) {
+      const params: CreateFunctionCommandInput = {
+        Code: {
+          ZipFile: await fs.promises.readFile(lambdaZipPath),
+        },
+        FunctionName: serverlessFunction.id,
+        Handler: lambdaHandler,
+        Role: this.lambdaRole,
+        Runtime: serverlessFunction.runtime,
+        Description: 'Lambda function to run user script',
+        Timeout: 900,
+      };
+
+      const command = new CreateFunctionCommand(params);
+
+      await this.lambdaClient.send(command);
+    } else {
+      const params: UpdateFunctionCodeCommandInput = {
         ZipFile: await fs.promises.readFile(lambdaZipPath),
-      },
-      FunctionName: serverlessFunction.id,
-      Handler: lambdaHandler,
-      Role: this.lambdaRole,
-      Runtime: 'nodejs18.x',
-      Description: 'Lambda function to run user script',
-      Timeout: 900,
-    };
+        FunctionName: serverlessFunction.id,
+      };
 
-    const command = new CreateFunctionCommand(params);
+      const command = new UpdateFunctionCodeCommand(params);
 
-    await this.lambdaClient.send(command);
+      await this.lambdaClient.send(command);
+    }
 
     await this.buildDirectoryManagerService.clean();
   }

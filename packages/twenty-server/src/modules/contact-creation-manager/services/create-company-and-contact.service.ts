@@ -7,8 +7,13 @@ import compact from 'lodash.compact';
 import { EntityManager, Repository } from 'typeorm';
 
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { COMPANY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
@@ -36,12 +41,15 @@ export class CreateCompanyAndContactService {
     private readonly eventEmitter: EventEmitter2,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 
   private async createCompaniesAndPeople(
     connectedAccount: ConnectedAccountWorkspaceEntity,
     contactsToCreate: Contact[],
     workspaceId: string,
+    companyDomainNameColumnName: string,
     transactionManager?: EntityManager,
   ): Promise<PersonWorkspaceEntity[]> {
     if (!contactsToCreate || contactsToCreate.length === 0) {
@@ -103,6 +111,7 @@ export class CreateCompanyAndContactService {
     const companiesObject = await this.createCompaniesService.createCompanies(
       domainNamesToCreate,
       workspaceId,
+      companyDomainNameColumnName,
       transactionManager,
     );
 
@@ -146,11 +155,24 @@ export class CreateCompanyAndContactService {
       throw new Error('Object metadata not found');
     }
 
+    const domainNameFieldMetadata = await this.fieldMetadataRepository.findOne({
+      where: {
+        workspaceId: workspaceId,
+        standardId: COMPANY_STANDARD_FIELD_IDS.domainName,
+      },
+    });
+
+    const companyDomainNameColumnName =
+      domainNameFieldMetadata?.type === FieldMetadataType.LINKS
+        ? 'domainNamePrimaryLinkUrl'
+        : 'domainName';
+
     for (const contactsBatch of contactsBatches) {
       const createdPeople = await this.createCompaniesAndPeople(
         connectedAccount,
         contactsBatch,
         workspaceId,
+        companyDomainNameColumnName,
       );
 
       for (const createdPerson of createdPeople) {

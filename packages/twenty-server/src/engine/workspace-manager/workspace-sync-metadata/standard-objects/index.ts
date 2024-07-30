@@ -30,6 +30,9 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
+import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow-event-listener.workspace-entity';
+import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow-version.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // TODO: Maybe we should automate this with the DiscoverService of Nest.JS
@@ -49,6 +52,17 @@ export const standardObjectMetadataDefinitions = [
   CompanyWorkspaceEntity,
   ConnectedAccountWorkspaceEntity,
   FavoriteWorkspaceEntity,
+  OpportunityWorkspaceEntity,
+  PersonWorkspaceEntity,
+  TimelineActivityWorkspaceEntity,
+  ViewFieldWorkspaceEntity,
+  ViewFilterWorkspaceEntity,
+  ViewSortWorkspaceEntity,
+  ViewWorkspaceEntity,
+  WebhookWorkspaceEntity,
+  WorkflowWorkspaceEntity,
+  WorkflowEventListenerWorkspaceEntity,
+  WorkflowVersionWorkspaceEntity,
   WorkspaceMemberWorkspaceEntity,
   MessageThreadWorkspaceEntity,
   MessageWorkspaceEntity,

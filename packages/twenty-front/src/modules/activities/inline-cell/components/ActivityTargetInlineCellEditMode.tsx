@@ -12,7 +12,6 @@ import { NoteTarget } from '@/activities/types/NoteTarget';
 import { Task } from '@/activities/types/Task';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { getActivityTargetObjectFieldName } from '@/activities/utils/getActivityTargetObjectFieldName';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -171,9 +170,7 @@ export const ActivityTargetInlineCellEditMode = ({
           );
 
           const newActivityTargetId = v4();
-          const fieldName = getActivityTargetObjectFieldName({
-            nameSingular: record.objectMetadataItem.nameSingular,
-          });
+          const fieldName = record.objectMetadataItem.nameSingular;
           const fieldNameWithIdSuffix = getActivityTargetObjectFieldIdName({
             nameSingular: record.objectMetadataItem.nameSingular,
           });

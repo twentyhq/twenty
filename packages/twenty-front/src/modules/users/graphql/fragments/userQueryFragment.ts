@@ -49,5 +49,6 @@ export const USER_QUERY_FRAGMENT = gql`
         domainName
       }
     }
+    userVars
   }
 `;

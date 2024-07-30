@@ -1,4 +1,3 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
   BadRequestException,
   ForbiddenException,
@@ -6,46 +5,47 @@ import {
   NotFoundException,
   UseGuards,
 } from '@nestjs/common';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { assert } from 'src/utils/assert';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
-import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
-import { TransientToken } from 'src/engine/core-modules/auth/dto/transient-token.entity';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
-import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
-import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
-import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
-import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
-import { GenerateJwtInput } from 'src/engine/core-modules/auth/dto/generate-jwt.input';
+import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
+import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
+import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
 import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
+import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
+import { GenerateJwtInput } from 'src/engine/core-modules/auth/dto/generate-jwt.input';
+import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
+import { TransientToken } from 'src/engine/core-modules/auth/dto/transient-token.entity';
+import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
+import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
+import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { CaptchaGuard } from 'src/engine/integrations/captcha/captcha.guard';
+import { assert } from 'src/utils/assert';
 
-import { ApiKeyToken, AuthTokens } from './dto/token.entity';
-import { TokenService } from './services/token.service';
-import { Verify } from './dto/verify.entity';
-import { VerifyInput } from './dto/verify.input';
-import { AuthService } from './services/auth.service';
-import { LoginToken } from './dto/login-token.entity';
 import { ChallengeInput } from './dto/challenge.input';
+import { ImpersonateInput } from './dto/impersonate.input';
+import { LoginToken } from './dto/login-token.entity';
+import { SignUpInput } from './dto/sign-up.input';
+import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { UserExists } from './dto/user-exists.entity';
 import { CheckUserExistsInput } from './dto/user-exists.input';
+import { Verify } from './dto/verify.entity';
+import { VerifyInput } from './dto/verify.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
-import { SignUpInput } from './dto/sign-up.input';
-import { ImpersonateInput } from './dto/impersonate.input';
+import { AuthService } from './services/auth.service';
+import { TokenService } from './services/token.service';
 
 @Resolver()
 export class AuthResolver {
