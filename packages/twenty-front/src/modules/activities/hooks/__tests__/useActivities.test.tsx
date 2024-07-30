@@ -101,13 +101,13 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        query FindManyActivities(
-          $filter: ActivityFilterInput
-          $orderBy: [ActivityOrderByInput]
+        query FindManyTasks(
+          $filter: TaskFilterInput
+          $orderBy: [TaskOrderByInput]
           $lastCursor: String
           $limit: Int
         ) {
-          activities(
+          tasks(
             filter: $filter
             orderBy: $orderBy
             first: $limit
@@ -116,17 +116,13 @@ const mocks: MockedResponse[] = [
             edges {
               node {
                 __typename
-                createdAt
-                reminderAt
-                authorId
                 title
-                status
-                updatedAt
-                body
-                dueAt
-                type
                 id
-                assigneeId
+                updatedAt
+                createdAt
+                body
+                status
+                dueAt
               }
               cursor
             }
