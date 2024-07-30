@@ -298,3 +298,52 @@ export const getJsonResponse = () => {
     },
   };
 };
+
+export const getFindDuplicatesResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+) => {
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            companyDuplicates: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  edges: {
+                    type: 'array',
+                    items: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          node: {
+                            $ref: `#/components/schemas/${capitalize(
+                              item.nameSingular,
+                            )}`,
+                          },
+                        },
+                      },
+                    },
+                  },
+                  pageInfo: {
+                    type: 'object',
+                    properties: {
+                      hasNextPage: { type: 'boolean' },
+                      startCursor: { type: 'string' },
+                      endCursor: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};
