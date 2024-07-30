@@ -6,7 +6,7 @@ export const getTimeFormatFromWorkspaceTimeFormat = (
   workspaceTimeFormat: WorkspaceMemberTimeFormatEnum,
 ) => {
   switch (workspaceTimeFormat) {
-    case WorkspaceMemberTimeFormatEnum.Browser:
+    case WorkspaceMemberTimeFormatEnum.System:
       return detectTimeFormat();
     case WorkspaceMemberTimeFormatEnum.Hour_24:
       return TimeFormat.HOUR_24;

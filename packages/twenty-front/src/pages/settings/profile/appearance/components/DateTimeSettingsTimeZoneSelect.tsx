@@ -19,8 +19,8 @@ export const DateTimeSettingsTimeZoneSelect = ({
       label="Time zone"
       fullWidth
       value={
-        value === 'browser'
-          ? 'Browser settings'
+        value === 'system'
+          ? 'System settings'
           : findAvailableTimeZoneOption(value)?.value
       }
       options={[

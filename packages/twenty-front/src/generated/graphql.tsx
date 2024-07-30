@@ -1018,19 +1018,19 @@ export type WorkspaceMember = {
   timeZone?: Maybe<Scalars['String']>;
 };
 
-/** Date format as Month first, Day first, Year first or browser as default */
+/** Date format as Month first, Day first, Year first or system as default */
 export enum WorkspaceMemberDateFormatEnum {
-  Browser = 'BROWSER',
   DayFirst = 'DAY_FIRST',
   MonthFirst = 'MONTH_FIRST',
+  System = 'SYSTEM',
   YearFirst = 'YEAR_FIRST'
 }
 
-/** Time time as Military, Standard or browser as default */
+/** Time time as Military, Standard or system as default */
 export enum WorkspaceMemberTimeFormatEnum {
-  Browser = 'BROWSER',
   Hour_12 = 'HOUR_12',
-  Hour_24 = 'HOUR_24'
+  Hour_24 = 'HOUR_24',
+  System = 'SYSTEM'
 }
 
 export type Field = {

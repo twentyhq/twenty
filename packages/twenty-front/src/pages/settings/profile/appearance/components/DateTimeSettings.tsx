@@ -68,7 +68,7 @@ export const DateTimeSettings = () => {
     switch (settingName) {
       case 'timeZone': {
         workspaceMember[settingName] = value;
-        dateTime[settingName] = value === 'browser' ? detectTimeZone() : value;
+        dateTime[settingName] = value === 'system' ? detectTimeZone() : value;
         break;
       }
       case 'dateFormat': {
@@ -76,7 +76,7 @@ export const DateTimeSettings = () => {
           value as DateFormat,
         );
         dateTime[settingName] =
-          (value as DateFormat) === DateFormat.BROWSER
+          (value as DateFormat) === DateFormat.SYSTEM
             ? detectDateFormat()
             : (value as DateFormat);
         break;
@@ -86,7 +86,7 @@ export const DateTimeSettings = () => {
           value as TimeFormat,
         );
         dateTime[settingName] =
-          (value as TimeFormat) === TimeFormat.BROWSER
+          (value as TimeFormat) === TimeFormat.SYSTEM
             ? detectTimeFormat()
             : (value as TimeFormat);
         break;
@@ -110,18 +110,18 @@ export const DateTimeSettings = () => {
   };
 
   const timeZone =
-    currentWorkspaceMember.timeZone === 'browser'
-      ? 'browser'
+    currentWorkspaceMember.timeZone === 'system'
+      ? 'system'
       : dateTimeFormat.timeZone;
 
   const dateFormat =
-    currentWorkspaceMember.dateFormat === WorkspaceMemberDateFormatEnum.Browser
-      ? DateFormat.BROWSER
+    currentWorkspaceMember.dateFormat === WorkspaceMemberDateFormatEnum.System
+      ? DateFormat.SYSTEM
       : dateTimeFormat.dateFormat;
 
   const timeFormat =
-    currentWorkspaceMember.timeFormat === WorkspaceMemberTimeFormatEnum.Browser
-      ? TimeFormat.BROWSER
+    currentWorkspaceMember.timeFormat === WorkspaceMemberTimeFormatEnum.System
+      ? TimeFormat.SYSTEM
       : dateTimeFormat.timeFormat;
 
   return (

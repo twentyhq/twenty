@@ -15,7 +15,7 @@ export const DateTimeSettingsTimeFormatSelect = ({
   timeZone,
   value,
 }: DateTimeSettingsTimeFormatSelectProps) => {
-  const setTimeZone = timeZone === 'browser' ? detectTimeZone() : timeZone;
+  const setTimeZone = timeZone === 'system' ? detectTimeZone() : timeZone;
   return (
     <Select
       dropdownId="datetime-settings-time-format"
@@ -26,7 +26,7 @@ export const DateTimeSettingsTimeFormatSelect = ({
       options={[
         {
           label: 'System settings',
-          value: TimeFormat.BROWSER,
+          value: TimeFormat.SYSTEM,
         },
         {
           label: `24h (${formatInTimeZone(
