@@ -5,7 +5,7 @@ import {
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
-} from 'src/modules/workflow/standard-objects/workflow-trigger/workflow-trigger.exception';
+} from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
 
 export const workflowTriggerGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof WorkflowTriggerException) {

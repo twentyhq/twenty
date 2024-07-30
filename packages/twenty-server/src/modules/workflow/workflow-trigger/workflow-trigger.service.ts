@@ -3,15 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow-event-listener.workspace-entity';
 import {
-  WorkflowTriggerException,
-  WorkflowTriggerExceptionCode,
-} from 'src/modules/workflow/standard-objects/workflow-trigger/workflow-trigger.exception';
-import {
   WorkflowDatabaseEventTrigger,
   WorkflowTrigger,
   WorkflowTriggerType,
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/standard-objects/workflow-version.workspace-entity';
+import {
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
+} from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
 
 @Injectable()
 export class WorkflowTriggerService {
