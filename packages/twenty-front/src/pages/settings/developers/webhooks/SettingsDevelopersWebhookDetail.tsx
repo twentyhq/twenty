@@ -105,7 +105,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
                     minRows={4}
                     value={value ?? undefined}
                     onChange={(nextValue) => onChange(nextValue ?? null)}
-                    // disabled={disabled}
                   />
                 )}
               />
