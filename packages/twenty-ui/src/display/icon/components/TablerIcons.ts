@@ -165,4 +165,7 @@ export {
   IconWorld,
   IconX,
   IconMoodSmile,
+  IconCreativeCommonsSa,
+  IconApi,
+  IconCsv,
 } from '@tabler/icons-react';

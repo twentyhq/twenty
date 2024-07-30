@@ -5,6 +5,7 @@ import {
   AddressFilter,
   AndObjectRecordFilter,
   BooleanFilter,
+  CreatedByFilter,
   CurrencyFilter,
   DateFilter,
   FloatFilter,
@@ -237,6 +238,17 @@ export const isRecordMatchingFilter = ({
           currencyFilter: filterValue as CurrencyFilter,
           value: record[filterKey].amountMicros,
         });
+      }
+      case FieldMetadataType.CreatedBy: {
+        const createdByFilter = filterValue as CreatedByFilter;
+
+        return (
+          createdByFilter.name === undefined ||
+          isMatchingStringFilter({
+            stringFilter: createdByFilter.name,
+            value: record[filterKey].name,
+          })
+        );
       }
       case FieldMetadataType.Relation: {
         throw new Error(

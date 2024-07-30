@@ -146,5 +146,14 @@ ${mapObjectMetadataToGraphQLQuery({
 }`;
   }
 
+  if (fieldType === FieldMetadataType.CreatedBy) {
+    return `${field.name}
+{
+    source
+    workspaceMemberId
+    name
+}`;
+  }
+
   return '';
 };

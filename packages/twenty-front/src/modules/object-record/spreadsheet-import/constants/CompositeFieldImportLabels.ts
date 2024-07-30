@@ -25,4 +25,7 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
     addressLatLabel: 'Latitude',
     addressLngLabel: 'Longitude',
   } satisfies CompositeFieldLabels<FieldAddressValue>,
+  [FieldMetadataType.CreatedBy]: {
+    sourceLabel: 'Source',
+  },
 };

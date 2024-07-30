@@ -85,6 +85,10 @@ export type AddressFilter = {
   addressPostcode?: StringFilter;
 };
 
+export type CreatedByFilter = {
+  name?: StringFilter;
+};
+
 export type LeafFilter =
   | UUIDFilter
   | StringFilter
@@ -95,6 +99,7 @@ export type LeafFilter =
   | FullNameFilter
   | BooleanFilter
   | AddressFilter
+  | CreatedByFilter
   | undefined;
 
 export type AndObjectRecordFilter = {

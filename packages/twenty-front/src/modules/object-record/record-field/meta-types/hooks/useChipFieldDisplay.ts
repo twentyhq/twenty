@@ -9,6 +9,7 @@ import { useRecordValue } from '@/object-record/record-store/contexts/RecordFiel
 import { isDefined } from '~/utils/isDefined';
 
 import { FieldContext } from '../../contexts/FieldContext';
+import { isFieldCreatedBy } from '@/object-record/record-field/types/guards/isFieldCreatedBy';
 
 export const useChipFieldDisplay = () => {
   const { entityId, fieldDefinition, isLabelIdentifier } =
@@ -25,7 +26,8 @@ export const useChipFieldDisplay = () => {
   const objectNameSingular =
     isFieldText(fieldDefinition) ||
     isFieldFullName(fieldDefinition) ||
-    isFieldNumber(fieldDefinition)
+    isFieldNumber(fieldDefinition) ||
+    isFieldCreatedBy(fieldDefinition)
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 

@@ -6,13 +6,12 @@ import { Repository } from 'typeorm';
 
 import { assert } from 'src/utils/assert';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
@@ -22,70 +21,35 @@ export class UserService extends TypeOrmQueryService<User> {
     private readonly typeORMService: TypeORMService,
     private readonly eventEmitter: EventEmitter2,
     private readonly workspaceService: WorkspaceService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(userRepository);
   }
 
   async loadWorkspaceMember(user: User) {
-    const dataSourcesMetadata =
-      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-        user.defaultWorkspace.id,
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        user.defaultWorkspaceId,
+        WorkspaceMemberWorkspaceEntity,
       );
 
-    if (!dataSourcesMetadata.length) {
-      return;
-    }
+    const workspaceMember = await workspaceMemberRepository.findOne({
+      where: {
+        userId: user.id,
+      },
+    });
 
-    if (dataSourcesMetadata.length > 1) {
-      throw new Error(
-        `user '${user.id}' default workspace '${user.defaultWorkspace.id}' has multiple data source metadata`,
-      );
-    }
-
-    const dataSourceMetadata = dataSourcesMetadata[0];
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    const workspaceMembers = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${user.id}'`,
-    );
-
-    if (!workspaceMembers.length) {
-      return;
-    }
-
-    assert(
-      workspaceMembers.length === 1,
-      'WorkspaceMember not found or too many found',
-    );
-
-    const userWorkspaceMember = new WorkspaceMember();
-
-    userWorkspaceMember.id = workspaceMembers[0].id;
-    userWorkspaceMember.colorScheme = workspaceMembers[0].colorScheme;
-    userWorkspaceMember.locale = workspaceMembers[0].locale;
-    userWorkspaceMember.avatarUrl = workspaceMembers[0].avatarUrl;
-    userWorkspaceMember.name = {
-      firstName: workspaceMembers[0].nameFirstName,
-      lastName: workspaceMembers[0].nameLastName,
-    };
-
-    return userWorkspaceMember;
+    return workspaceMember;
   }
 
-  async loadWorkspaceMembers(dataSource: DataSourceEntity) {
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSource);
+  async loadWorkspaceMembers(workspaceId: string) {
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        WorkspaceMemberWorkspaceEntity,
+      );
 
-    return await workspaceDataSource?.query(
-      `
-      SELECT * 
-      FROM ${dataSource.schema}."workspaceMember" AS s 
-      INNER JOIN core.user AS u 
-      ON s."userId" = u.id
-    `,
-    );
+    return workspaceMemberRepository.find();
   }
 
   async deleteUser(userId: string): Promise<User> {

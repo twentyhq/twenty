@@ -15,7 +15,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WorkspaceCustomObject } from 'src/engine/twenty-orm/decorators/workspace-custom-object.decorator';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import {
-  CreatedBySource,
+  FieldCreatedBySource,
   CreatedByMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 
@@ -46,9 +46,10 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.CREATED_BY,
     label: 'Create by',
+    icon: 'IconCreativeCommonsSa',
     description: 'The creator of the record',
     defaultValue: {
-      source: `'${CreatedBySource.MANUAL}'`,
+      source: `'${FieldCreatedBySource.MANUAL}'`,
       name: "''",
     },
   })

@@ -24,7 +24,7 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import {
-  CreatedBySource,
+  FieldCreatedBySource,
   CreatedByMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 
@@ -105,9 +105,10 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.CREATED_BY,
     label: 'Create by',
+    icon: 'IconCreativeCommonsSa',
     description: 'The creator of the record',
     defaultValue: {
-      source: `'${CreatedBySource.MANUAL}'`,
+      source: `'${FieldCreatedBySource.MANUAL}'`,
       name: "''",
     },
   })

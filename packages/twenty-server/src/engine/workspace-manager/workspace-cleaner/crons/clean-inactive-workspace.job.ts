@@ -94,8 +94,9 @@ export class CleanInactiveWorkspaceJob {
     daysSinceInactive: number,
     isDryRun: boolean,
   ) {
-    const workspaceMembers =
-      await this.userService.loadWorkspaceMembers(dataSource);
+    const workspaceMembers = await this.userService.loadWorkspaceMembers(
+      dataSource.workspaceId,
+    );
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSource);
@@ -110,7 +111,7 @@ export class CleanInactiveWorkspaceJob {
       `${getDryRunLogHeader(isDryRun)}Sending workspace ${
         dataSource.workspaceId
       } inactive since ${daysSinceInactive} days emails to users ['${workspaceMembers
-        .map((workspaceUser) => workspaceUser.email)
+        .map((workspaceUser) => workspaceUser.userEmail)
         .join(', ')}']`,
     );
 
@@ -121,7 +122,7 @@ export class CleanInactiveWorkspaceJob {
     workspaceMembers.forEach((workspaceMember) => {
       const emailData = {
         daysLeft: this.inactiveDaysBeforeDelete - daysSinceInactive,
-        userName: `${workspaceMember.nameFirstName} ${workspaceMember.nameLastName}`,
+        userName: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
         workspaceDisplayName: `${displayName}`,
       };
       const emailTemplate = CleanInactiveWorkspaceEmail(emailData);
@@ -133,7 +134,7 @@ export class CleanInactiveWorkspaceJob {
       });
 
       this.emailService.send({
-        to: workspaceMember.email,
+        to: workspaceMember.userEmail,
         bcc: this.environmentService.get('EMAIL_SYSTEM_ADDRESS'),
         from: `${this.environmentService.get(
           'EMAIL_FROM_NAME',

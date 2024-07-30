@@ -28,7 +28,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import {
   CreatedByMetadata,
-  CreatedBySource,
+  FieldCreatedBySource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 
 @WorkspaceEntity({
@@ -137,9 +137,10 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     standardId: COMPANY_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.CREATED_BY,
     label: 'Create by',
+    icon: 'IconCreativeCommonsSa',
     description: 'The creator of the record',
     defaultValue: {
-      source: `'${CreatedBySource.MANUAL}'`,
+      source: `'${FieldCreatedBySource.MANUAL}'`,
       name: "''",
     },
   })

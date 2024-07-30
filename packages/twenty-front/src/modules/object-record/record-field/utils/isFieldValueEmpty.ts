@@ -29,6 +29,8 @@ import { isFieldText } from '@/object-record/record-field/types/guards/isFieldTe
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { isDefined } from '~/utils/isDefined';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
+import { isFieldCreatedBy } from '@/object-record/record-field/types/guards/isFieldCreatedBy';
+import { isFieldCreatedByValue } from '@/object-record/record-field/types/guards/isFieldCreatedByValue';
 
 const isValueEmpty = (value: unknown) =>
   !isDefined(value) ||
@@ -107,6 +109,13 @@ export const isFieldValueEmpty = ({
   if (isFieldLinks(fieldDefinition)) {
     return (
       !isFieldLinksValue(fieldValue) || isValueEmpty(fieldValue.primaryLinkUrl)
+    );
+  }
+
+  if (isFieldCreatedBy(fieldDefinition)) {
+    return (
+      !isFieldCreatedByValue(fieldValue) ||
+      (isValueEmpty(fieldValue.name) && isValueEmpty(fieldValue.source))
     );
   }
 

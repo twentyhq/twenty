@@ -43,6 +43,8 @@ import { isFieldRawJson } from '../types/guards/isFieldRawJson';
 import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldUuid } from '../types/guards/isFieldUuid';
+import { isFieldCreatedBy } from '@/object-record/record-field/types/guards/isFieldCreatedBy';
+import { CreatedByDisplay } from '@/object-record/record-field/meta-types/display/components/CreatedByDisplay';
 
 export const FieldDisplay = () => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
@@ -93,5 +95,7 @@ export const FieldDisplay = () => {
     <BooleanFieldDisplay />
   ) : isFieldRating(fieldDefinition) ? (
     <RatingFieldDisplay />
+  ) : isFieldCreatedBy(fieldDefinition) ? (
+    <CreatedByDisplay />
   ) : null;
 };

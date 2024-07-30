@@ -6,7 +6,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import {
   CreatedByMetadata,
-  CreatedBySource,
+  FieldCreatedBySource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -28,22 +28,18 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
   async execute(
     authContext: AuthContext,
     objectName: string,
-    // TODO: Fix this type
     payload: CreateManyResolverArgs<CustomWorkspaceItem>,
   ): Promise<CreateManyResolverArgs<CustomWorkspaceItem>> {
-    // const entityRepository =
-    //   await this.twentyORMGlobalManager.getRepositoryForWorkspace<CustomWorkspaceEntity>(
-    //     workspaceId,
-    //     objectName,
-    //   );
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        authContext.workspace.id,
-        'workspaceMember',
-      );
     let createdBy: CreatedByMetadata | null = null;
 
+    // If user is logged in, we use the workspace member
     if (authContext.user) {
+      const workspaceMemberRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+          authContext.workspace.id,
+          'workspaceMember',
+        );
+
       const workspaceMember = await workspaceMemberRepository.findOne({
         where: {
           userId: authContext.user?.id,
@@ -57,15 +53,16 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
       }
 
       createdBy = {
-        source: CreatedBySource.MANUAL,
+        source: FieldCreatedBySource.MANUAL,
         workspaceMemberId: workspaceMember.id,
         name: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       };
     }
 
+    // If API key is used, we use the API key
     if (authContext.apiKey) {
       createdBy = {
-        source: CreatedBySource.API,
+        source: FieldCreatedBySource.API,
         name: authContext.apiKey.name,
       };
     }
@@ -79,8 +76,6 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
         };
       }
     }
-
-    console.log('payload', JSON.stringify(payload, null, 2));
 
     return payload;
   }

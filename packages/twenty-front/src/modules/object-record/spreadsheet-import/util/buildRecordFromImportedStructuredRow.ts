@@ -27,6 +27,7 @@ export const buildRecordFromImportedStructuredRow = (
     },
     CURRENCY: { amountMicrosLabel, currencyCodeLabel },
     FULL_NAME: { firstNameLabel, lastNameLabel },
+    CREATED_BY: { sourceLabel },
   } = COMPOSITE_FIELD_IMPORT_LABELS;
 
   for (const field of fields) {
@@ -134,6 +135,15 @@ export const buildRecordFromImportedStructuredRow = (
               importedStructuredRow[`${firstNameLabel} (${field.name})`] ?? '',
             lastName:
               importedStructuredRow[`${lastNameLabel} (${field.name})`] ?? '',
+          };
+        }
+        break;
+      case FieldMetadataType.CreatedBy:
+        if (
+          isDefined(importedStructuredRow[`${sourceLabel} (${field.name})`])
+        ) {
+          recordToBuild[field.name] = {
+            source: importedStructuredRow[`${sourceLabel} (${field.name})`],
           };
         }
         break;

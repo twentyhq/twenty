@@ -69,10 +69,15 @@ export class UserResolver {
   @ResolveField(() => WorkspaceMember, {
     nullable: true,
   })
-  async workspaceMember(
-    @Parent() user: User,
-  ): Promise<WorkspaceMember | undefined> {
+  async workspaceMember(@Parent() user: User): Promise<WorkspaceMember | null> {
     return this.userService.loadWorkspaceMember(user);
+  }
+
+  @ResolveField(() => [WorkspaceMember], {
+    nullable: true,
+  })
+  async workspaceMembers(@Parent() user: User): Promise<WorkspaceMember[]> {
+    return this.userService.loadWorkspaceMembers(user.defaultWorkspaceId);
   }
 
   @ResolveField(() => String, {

@@ -1,6 +1,7 @@
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
+  FieldCreatedByMetadata,
   FieldFullNameMetadata,
   FieldLinkMetadata,
   FieldRatingMetadata,
@@ -97,3 +98,14 @@ export const booleanFieldDefinition = formatFieldMetadataItemAsFieldDefinition({
   field: booleanFieldMetadataItem!,
   objectMetadataItem: mockedCompanyObjectMetadataItem,
 });
+
+export const createdByFieldDefinition: FieldDefinition<FieldCreatedByMetadata> = {
+  fieldMetadataId,
+  label: 'Display Name',
+  iconName: 'profile',
+  type: FieldMetadataType.FullName,
+  defaultValue: { source: 'MANUAL', name: '' },
+  metadata: {
+    fieldName: 'createdBy',
+  },
+};

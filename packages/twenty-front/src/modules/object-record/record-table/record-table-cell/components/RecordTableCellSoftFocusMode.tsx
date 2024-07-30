@@ -23,6 +23,7 @@ import { isDefined } from '~/utils/isDefined';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
+import { useIsFieldDisplayOnly } from '@/object-record/record-field/hooks/useIsFieldDisplayOnly';
 
 type RecordTableCellSoftFocusModeProps = {
   editModeContent: ReactElement;
@@ -42,6 +43,8 @@ export const RecordTableCellSoftFocusMode = ({
   const editModeContentOnly = useIsFieldInputOnly();
 
   const isFieldInputOnly = useIsFieldInputOnly();
+
+  const isFieldDisplayOnly = useIsFieldDisplayOnly();
 
   const isEmpty = useIsFieldEmpty();
 
@@ -111,7 +114,7 @@ export const RecordTableCellSoftFocusMode = ({
   );
 
   const handleClick = () => {
-    if (!isFieldInputOnly) {
+    if (!isFieldInputOnly && !isFieldDisplayOnly) {
       openTableCell();
     }
   };
@@ -143,7 +146,8 @@ export const RecordTableCellSoftFocusMode = ({
     isDefined(buttonIcon) &&
     !editModeContentOnly &&
     (!isFirstColumn || !isEmpty) &&
-    !isReadOnly;
+    !isReadOnly &&
+    !isFieldDisplayOnly;
 
   return (
     <>

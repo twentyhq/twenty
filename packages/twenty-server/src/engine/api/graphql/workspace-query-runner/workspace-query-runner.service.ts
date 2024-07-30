@@ -93,8 +93,16 @@ export class WorkspaceQueryRunnerService {
     const { authContext, objectMetadataItem } = options;
     const start = performance.now();
 
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'findMany',
+        args,
+      );
+
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      args,
+      hookedArgs,
       options,
       ResolverArgsType.FindMany,
     )) as FindManyResolverArgs<Filter, OrderBy>;
@@ -102,16 +110,6 @@ export class WorkspaceQueryRunnerService {
     const query = await this.workspaceQueryBuilderFactory.findMany(
       computedArgs,
       options,
-    );
-
-    // TODO: Properly type this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    args = await this.workspaceQueryHookService.executePreQueryHooks(
-      authContext,
-      objectMetadataItem.nameSingular,
-      'findMany',
-      args,
     );
 
     const result = await this.execute(query, authContext.workspace.id);
@@ -142,8 +140,16 @@ export class WorkspaceQueryRunnerService {
     }
     const { authContext, objectMetadataItem } = options;
 
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'findOne',
+        args,
+      );
+
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      args,
+      hookedArgs,
       options,
       ResolverArgsType.FindOne,
     )) as FindOneResolverArgs<Filter>;
@@ -151,16 +157,6 @@ export class WorkspaceQueryRunnerService {
     const query = await this.workspaceQueryBuilderFactory.findOne(
       computedArgs,
       options,
-    );
-
-    // TODO: Properly type this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    args = await this.workspaceQueryHookService.executePreQueryHooks(
-      authContext,
-      objectMetadataItem.nameSingular,
-      'findOne',
-      args,
     );
 
     const result = await this.execute(query, authContext.workspace.id);
@@ -191,8 +187,16 @@ export class WorkspaceQueryRunnerService {
 
     const { authContext, objectMetadataItem } = options;
 
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'findDuplicates',
+        args,
+      );
+
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      args,
+      hookedArgs,
       options,
       ResolverArgsType.FindDuplicates,
     )) as FindDuplicatesResolverArgs<TRecord>;
@@ -215,16 +219,6 @@ export class WorkspaceQueryRunnerService {
       computedArgs,
       options,
       existingRecords,
-    );
-
-    // TODO: Properly type this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    args = await this.workspaceQueryHookService.executePreQueryHooks(
-      authContext,
-      objectMetadataItem.nameSingular,
-      'findDuplicates',
-      computedArgs,
     );
 
     const result = await this.execute(query, authContext.workspace.id);
@@ -255,30 +249,24 @@ export class WorkspaceQueryRunnerService {
       }
     });
 
-    // TODO: Properly type this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    args = await this.workspaceQueryHookService.executePreQueryHooks(
-      authContext,
-      objectMetadataItem.nameSingular,
-      'createMany',
-      args,
-    );
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'createMany',
+        args,
+      );
 
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      args,
+      hookedArgs,
       options,
       ResolverArgsType.CreateMany,
     )) as CreateManyResolverArgs<Record>;
-
-    console.log('args', JSON.stringify(args, null, 2));
 
     const query = await this.workspaceQueryBuilderFactory.createMany(
       computedArgs,
       options,
     );
-
-    console.log('QUERY: ', query);
 
     const result = await this.execute(query, authContext.workspace.id);
 
@@ -391,19 +379,17 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    const query = await this.workspaceQueryBuilderFactory.updateOne(
-      args,
-      options,
-    );
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'updateOne',
+        args,
+      );
 
-    // TODO: Properly type this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    args = await this.workspaceQueryHookService.executePreQueryHooks(
-      authContext,
-      objectMetadataItem.nameSingular,
-      'updateOne',
-      args,
+    const query = await this.workspaceQueryBuilderFactory.updateOne(
+      hookedArgs,
+      options,
     );
 
     const result = await this.execute(query, authContext.workspace.id);
@@ -449,19 +435,21 @@ export class WorkspaceQueryRunnerService {
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_AFFECTED_RECORDS',
     );
-    const query = await this.workspaceQueryBuilderFactory.updateMany(args, {
-      ...options,
-      atMost: maximumRecordAffected,
-    });
 
-    // TODO: Properly type this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    args = await this.workspaceQueryHookService.executePreQueryHooks(
-      authContext,
-      objectMetadataItem.nameSingular,
-      'updateMany',
-      args,
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'updateMany',
+        args,
+      );
+
+    const query = await this.workspaceQueryBuilderFactory.updateMany(
+      hookedArgs,
+      {
+        ...options,
+        atMost: maximumRecordAffected,
+      },
     );
 
     const result = await this.execute(query, authContext.workspace.id);
@@ -503,19 +491,21 @@ export class WorkspaceQueryRunnerService {
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_AFFECTED_RECORDS',
     );
-    const query = await this.workspaceQueryBuilderFactory.deleteMany(args, {
-      ...options,
-      atMost: maximumRecordAffected,
-    });
 
-    // TODO: Properly type this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    args = await this.workspaceQueryHookService.executePreQueryHooks(
-      authContext,
-      objectMetadataItem.nameSingular,
-      'deleteMany',
-      args,
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'deleteMany',
+        args,
+      );
+
+    const query = await this.workspaceQueryBuilderFactory.deleteMany(
+      hookedArgs,
+      {
+        ...options,
+        atMost: maximumRecordAffected,
+      },
     );
 
     const result = await this.execute(query, authContext.workspace.id);
@@ -559,34 +549,32 @@ export class WorkspaceQueryRunnerService {
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
 
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'deleteOne',
+        args,
+      );
+
     const query = await this.workspaceQueryBuilderFactory.deleteOne(
-      args,
+      hookedArgs,
       options,
     );
 
     // TODO START: remove this awful patch and use our upcoming custom ORM is developed
     const deletedWorkspaceMember = await this.handleDeleteWorkspaceMember(
-      args.id,
+      hookedArgs.id,
       authContext.workspace.id,
       objectMetadataItem,
     );
 
     const deletedBlocklistItem = await this.handleDeleteBlocklistItem(
-      args.id,
+      hookedArgs.id,
       authContext.workspace.id,
       objectMetadataItem,
     );
     // TODO END
-
-    // TODO: Properly type this
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    args = await this.workspaceQueryHookService.executePreQueryHooks(
-      authContext,
-      objectMetadataItem.nameSingular,
-      'deleteOne',
-      args,
-    );
 
     const result = await this.execute(query, authContext.workspace.id);
 

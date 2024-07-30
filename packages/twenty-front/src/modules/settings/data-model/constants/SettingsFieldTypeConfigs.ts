@@ -4,6 +4,7 @@ import {
   IconCheck,
   IconCoins,
   IconComponent,
+  IconCreativeCommonsSa,
   IconJson,
   IconKey,
   IconLink,
@@ -130,6 +131,10 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
     label: 'JSON',
     Icon: IconJson,
     defaultValue: { key: 'value' },
+  },
+  [FieldMetadataType.CreatedBy]: {
+    label: 'Created By',
+    Icon: IconCreativeCommonsSa,
   },
 } as const satisfies Record<
   SettingsSupportedFieldType,

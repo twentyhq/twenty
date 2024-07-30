@@ -13,4 +13,5 @@ export type FilterType =
   | 'ADDRESS'
   | 'SELECT'
   | 'RATING'
-  | 'MULTI_SELECT';
+  | 'MULTI_SELECT'
+  | 'CREATED_BY';

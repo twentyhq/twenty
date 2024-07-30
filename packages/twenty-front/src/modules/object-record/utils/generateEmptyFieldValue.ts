@@ -39,12 +39,6 @@ export const generateEmptyFieldValue = (
         addressLng: null,
       };
     }
-    case FieldMetadataType.CreatedBy: {
-      return {
-        source: 'MANUAL',
-        name: '',
-      };
-    }
     case FieldMetadataType.DateTime: {
       return null;
     }
@@ -89,6 +83,12 @@ export const generateEmptyFieldValue = (
     }
     case FieldMetadataType.RawJson: {
       return null;
+    }
+    case FieldMetadataType.CreatedBy: {
+      return {
+        source: 'MANUAL',
+        name: '',
+      };
     }
     default: {
       throw new Error('Unhandled FieldMetadataType');
