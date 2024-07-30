@@ -1,20 +1,18 @@
-import { Args, Query, Resolver, ArgsType, Field } from '@nestjs/graphql';
 import { ForbiddenException, UseGuards } from '@nestjs/common';
+import { Args, ArgsType, Field, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { AISQLQueryResult } from 'src/engine/core-modules/ai-sql-query/dtos/ai-sql-query-result.dto';
 import { AISQLQueryService } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.service';
+import { AISQLQueryResult } from 'src/engine/core-modules/ai-sql-query/dtos/ai-sql-query-result.dto';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 
 @ArgsType()
 class GetAISQLQueryArgs {
@@ -40,13 +38,13 @@ export class AISQLQueryResolver {
     const isCopilotEnabledFeatureFlag =
       await this.featureFlagRepository.findOneBy({
         workspaceId,
-        key: FeatureFlagKeys.IsCopilotEnabled,
+        key: FeatureFlagKey.IsCopilotEnabled,
         value: true,
       });
 
     if (!isCopilotEnabledFeatureFlag?.value) {
       throw new ForbiddenException(
-        `${FeatureFlagKeys.IsCopilotEnabled} feature flag is disabled`,
+        `${FeatureFlagKey.IsCopilotEnabled} feature flag is disabled`,
       );
     }
 

@@ -13,21 +13,8 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-
-export enum FeatureFlagKeys {
-  IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
-  IsEventObjectEnabled = 'IS_EVENT_OBJECT_ENABLED',
-  IsAirtableIntegrationEnabled = 'IS_AIRTABLE_INTEGRATION_ENABLED',
-  IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
-  IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
-  IsCopilotEnabled = 'IS_COPILOT_ENABLED',
-  IsMessagingAliasFetchingEnabled = 'IS_MESSAGING_ALIAS_FETCHING_ENABLED',
-  IsGoogleCalendarSyncV2Enabled = 'IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED',
-  IsFreeAccessEnabled = 'IS_FREE_ACCESS_ENABLED',
-  IsFunctionSettingsEnabled = 'IS_FUNCTION_SETTINGS_ENABLED',
-  IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
-}
 
 @Entity({ name: 'featureFlag', schema: 'core' })
 @ObjectType('FeatureFlag')
@@ -37,9 +24,9 @@ export class FeatureFlagEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field()
+  @Field(() => String)
   @Column({ nullable: false, type: 'text' })
-  key: FeatureFlagKeys;
+  key: FeatureFlagKey;
 
   @Field()
   @Column({ nullable: false, type: 'uuid' })
