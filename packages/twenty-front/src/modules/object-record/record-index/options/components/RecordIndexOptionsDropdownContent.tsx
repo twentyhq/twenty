@@ -123,7 +123,7 @@ export const RecordIndexOptionsDropdownContent = ({
     objectNameSingular,
     recordIndexId,
   });
-  console.log(currentMenu);
+
   return (
     <>
       {!currentMenu && (
