@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import {
@@ -34,9 +34,9 @@ export const validateRemoteServerType = async (
 const getFeatureFlagKey = (remoteServerType: RemoteServerType) => {
   switch (remoteServerType) {
     case RemoteServerType.POSTGRES_FDW:
-      return FeatureFlagKeys.IsPostgreSQLIntegrationEnabled;
+      return FeatureFlagKey.IsPostgreSQLIntegrationEnabled;
     case RemoteServerType.STRIPE_FDW:
-      return FeatureFlagKeys.IsStripeIntegrationEnabled;
+      return FeatureFlagKey.IsStripeIntegrationEnabled;
     default:
       throw new RemoteServerException(
         `Type ${remoteServerType} is not supported.`,

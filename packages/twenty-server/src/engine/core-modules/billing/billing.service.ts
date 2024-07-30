@@ -7,7 +7,7 @@ import {
   BillingSubscription,
   SubscriptionStatus,
 } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
@@ -45,7 +45,7 @@ export class BillingService {
 
     const freeAccessFeatureFlags = await this.featureFlagRepository.find({
       where: {
-        key: FeatureFlagKeys.IsFreeAccessEnabled,
+        key: FeatureFlagKey.IsFreeAccessEnabled,
         value: true,
       },
       select: ['workspaceId'],

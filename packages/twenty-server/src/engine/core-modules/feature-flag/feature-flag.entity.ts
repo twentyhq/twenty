@@ -13,7 +13,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'featureFlag', schema: 'core' })
@@ -24,9 +24,9 @@ export class FeatureFlagEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field()
+  @Field(() => String)
   @Column({ nullable: false, type: 'text' })
-  key: FeatureFlagKeys;
+  key: FeatureFlagKey;
 
   @Field()
   @Column({ nullable: false, type: 'uuid' })

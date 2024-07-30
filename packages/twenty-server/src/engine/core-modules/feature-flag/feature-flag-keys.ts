@@ -1,6 +1,4 @@
-import { registerEnumType } from '@nestjs/graphql';
-
-export enum FeatureFlagKeys {
+export enum FeatureFlagKey {
   IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
   IsEventObjectEnabled = 'IS_EVENT_OBJECT_ENABLED',
   IsAirtableIntegrationEnabled = 'IS_AIRTABLE_INTEGRATION_ENABLED',
@@ -14,7 +12,7 @@ export enum FeatureFlagKeys {
   IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
 }
 
-registerEnumType(FeatureFlagKeys, {
-  name: 'FeatureFlagKeys',
-  description: 'Feature flag keys',
-});
+// registerEnumType(FeatureFlagKey, {
+//   name: 'FeatureFlagKey',
+//   description: 'Feature flag key',
+// });

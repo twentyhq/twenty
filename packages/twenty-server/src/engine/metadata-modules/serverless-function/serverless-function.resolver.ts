@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -37,7 +37,7 @@ export class ServerlessFunctionResolver {
     const isFunctionSettingsEnabled =
       await this.featureFlagRepository.findOneBy({
         workspaceId,
-        key: FeatureFlagKeys.IsFunctionSettingsEnabled,
+        key: FeatureFlagKey.IsFunctionSettingsEnabled,
         value: true,
       });
 

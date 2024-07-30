@@ -1,4 +1,4 @@
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -19,7 +19,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 })
 @WorkspaceIsSystem()
 @WorkspaceGate({
-  featureFlag: FeatureFlagKeys.IsEventObjectEnabled,
+  featureFlag: FeatureFlagKey.IsEventObjectEnabled,
 })
 export class BehavioralEventWorkspaceEntity extends BaseWorkspaceEntity {
   /** 

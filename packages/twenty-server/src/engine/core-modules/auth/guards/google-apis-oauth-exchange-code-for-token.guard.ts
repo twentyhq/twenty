@@ -14,7 +14,7 @@ import {
   GoogleAPIsOauthExchangeCodeForTokenStrategy,
 } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-exchange-code-for-token.auth.strategy';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
@@ -50,7 +50,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
       isMessagingAliasFetchingEnabled:
         !!(await this.featureFlagRepository.findOneBy({
           workspaceId,
-          key: FeatureFlagKeys.IsMessagingAliasFetchingEnabled,
+          key: FeatureFlagKey.IsMessagingAliasFetchingEnabled,
           value: true,
         })),
     };

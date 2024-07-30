@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 
 import { AISQLQueryService } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.service';
 import { AISQLQueryResult } from 'src/engine/core-modules/ai-sql-query/dtos/ai-sql-query-result.dto';
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/feature-flag-keys';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -38,13 +38,13 @@ export class AISQLQueryResolver {
     const isCopilotEnabledFeatureFlag =
       await this.featureFlagRepository.findOneBy({
         workspaceId,
-        key: FeatureFlagKeys.IsCopilotEnabled,
+        key: FeatureFlagKey.IsCopilotEnabled,
         value: true,
       });
 
     if (!isCopilotEnabledFeatureFlag?.value) {
       throw new ForbiddenException(
-        `${FeatureFlagKeys.IsCopilotEnabled} feature flag is disabled`,
+        `${FeatureFlagKey.IsCopilotEnabled} feature flag is disabled`,
       );
     }
 
