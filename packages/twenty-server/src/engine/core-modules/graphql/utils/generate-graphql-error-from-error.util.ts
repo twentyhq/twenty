@@ -5,7 +5,7 @@ import {
 
 export const generateGraphQLErrorFromError = (error: Error) => {
   const graphqlError = new BaseGraphQLError(
-    error.name,
+    error.message,
     ErrorCode.INTERNAL_SERVER_ERROR,
   );
 
