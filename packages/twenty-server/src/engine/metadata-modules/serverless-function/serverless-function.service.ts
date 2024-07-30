@@ -5,6 +5,8 @@ import { join } from 'path';
 
 import { FileUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { v4 } from 'uuid';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -21,24 +23,28 @@ import { readFileContent } from 'src/engine/integrations/file-storage/utils/read
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
+import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function-from-file.input';
+import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 
 @Injectable()
-export class ServerlessFunctionService {
+export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly serverlessService: ServerlessService,
     @InjectRepository(ServerlessFunctionEntity, 'metadata')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
-  ) {}
+  ) {
+    super(serverlessFunctionRepository);
+  }
 
   async executeOne(
-    name: string,
+    id: string,
     workspaceId: string,
     payload: object | undefined = undefined,
   ) {
     const functionToExecute = await this.serverlessFunctionRepository.findOne({
       where: {
-        name,
+        id,
         workspaceId,
       },
     });
@@ -62,14 +68,82 @@ export class ServerlessFunctionService {
     return this.serverlessService.execute(functionToExecute, payload);
   }
 
-  async createOne(
-    name: string,
+  async deleteOneServerlessFunction(id: string, workspaceId: string) {
+    const existingServerlessFunction =
+      await this.serverlessFunctionRepository.findOne({
+        where: { id, workspaceId },
+      });
+
+    if (!existingServerlessFunction) {
+      throw new ServerlessFunctionException(
+        `Function does not exist`,
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    await super.deleteOne(id);
+
+    await this.serverlessService.delete(existingServerlessFunction);
+
+    return existingServerlessFunction;
+  }
+
+  async updateOneServerlessFunction(
+    serverlessFunctionInput: UpdateServerlessFunctionInput,
     workspaceId: string,
-    { createReadStream, mimetype }: FileUpload,
   ) {
     const existingServerlessFunction =
       await this.serverlessFunctionRepository.findOne({
-        where: { name, workspaceId },
+        where: { id: serverlessFunctionInput.id, workspaceId },
+      });
+
+    if (!existingServerlessFunction) {
+      throw new ServerlessFunctionException(
+        `Function does not exist`,
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
+    }
+
+    const codeHasChanged =
+      serverlessFunctionCreateHash(serverlessFunctionInput.code) !==
+      existingServerlessFunction.sourceCodeHash;
+
+    await super.updateOne(existingServerlessFunction.id, {
+      name: serverlessFunctionInput.name,
+      description: serverlessFunctionInput.description,
+      sourceCodeHash: serverlessFunctionCreateHash(
+        serverlessFunctionInput.code,
+      ),
+    });
+
+    if (codeHasChanged) {
+      const fileFolder = join(
+        FileFolder.ServerlessFunction,
+        workspaceId,
+        existingServerlessFunction.id,
+      );
+
+      await this.fileStorageService.write({
+        file: serverlessFunctionInput.code,
+        name: SOURCE_FILE_NAME,
+        mimeType: undefined,
+        folder: fileFolder,
+      });
+
+      await this.serverlessService.build(existingServerlessFunction);
+    }
+
+    return await this.findById(existingServerlessFunction.id);
+  }
+
+  async createOneServerlessFunction(
+    serverlessFunctionInput: CreateServerlessFunctionFromFileInput,
+    code: FileUpload | string,
+    workspaceId: string,
+  ) {
+    const existingServerlessFunction =
+      await this.serverlessFunctionRepository.findOne({
+        where: { name: serverlessFunctionInput.name, workspaceId },
       });
 
     if (existingServerlessFunction) {
@@ -79,34 +153,44 @@ export class ServerlessFunctionService {
       );
     }
 
-    const typescriptCode = await readFileContent(createReadStream());
+    let typescriptCode: string;
 
-    const serverlessFunction = await this.serverlessFunctionRepository.save({
-      name,
-      workspaceId,
-      sourceCodeHash: serverlessFunctionCreateHash(typescriptCode),
-    });
+    if (typeof code === 'string') {
+      typescriptCode = code;
+    } else {
+      typescriptCode = await readFileContent(code.createReadStream());
+    }
+
+    const serverlessFunctionId = v4();
 
     const fileFolder = join(
       FileFolder.ServerlessFunction,
       workspaceId,
-      serverlessFunction.id,
+      serverlessFunctionId,
     );
+
+    const sourceCodeFullPath = fileFolder + '/' + SOURCE_FILE_NAME;
+
+    const serverlessFunction = await super.createOne({
+      ...serverlessFunctionInput,
+      id: serverlessFunctionId,
+      workspaceId,
+      sourceCodeHash: serverlessFunctionCreateHash(typescriptCode),
+      sourceCodeFullPath,
+    });
 
     await this.fileStorageService.write({
       file: typescriptCode,
       name: SOURCE_FILE_NAME,
-      mimeType: mimetype,
+      mimeType: undefined,
       folder: fileFolder,
     });
 
     await this.serverlessService.build(serverlessFunction);
-    await this.serverlessFunctionRepository.update(serverlessFunction.id, {
+    await super.updateOne(serverlessFunctionId, {
       syncStatus: ServerlessFunctionSyncStatus.READY,
     });
 
-    return await this.serverlessFunctionRepository.findOneByOrFail({
-      id: serverlessFunction.id,
-    });
+    return await this.findById(serverlessFunctionId);
   }
 }

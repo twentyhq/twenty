@@ -28,6 +28,12 @@ export class LocalDriver
     this.fileStorageService = options.fileStorageService;
   }
 
+  async delete(serverlessFunction: ServerlessFunctionEntity) {
+    await this.fileStorageService.delete({
+      folderPath: this.getFolderPath(serverlessFunction),
+    });
+  }
+
   async build(serverlessFunction: ServerlessFunctionEntity) {
     const javascriptCode = await this.getCompiledCode(
       serverlessFunction,
@@ -57,8 +63,16 @@ export class LocalDriver
     const modifiedContent = `
     process.on('message', async (message) => {
       const { event, context } = message;
-      const result = await handler(event, context);
-      process.send(result);
+      try {
+        const result = await handler(event, context);
+        process.send(result);
+      } catch (error) {
+        process.send({
+          errorType: error.name,
+          errorMessage: error.message,
+          stackTrace: error.stack.split('\\n').filter((line) => line.trim() !== ''),
+        });
+      }
     });
 
     ${fileContent}
@@ -67,10 +81,36 @@ export class LocalDriver
     await fs.writeFile(tmpFilePath, modifiedContent);
 
     return await new Promise((resolve, reject) => {
-      const child = fork(tmpFilePath);
+      const child = fork(tmpFilePath, { silent: true });
 
       child.on('message', (message: object) => {
         resolve(message);
+        child.kill();
+        fs.unlink(tmpFilePath);
+      });
+
+      child.stderr?.on('data', (data) => {
+        const stackTrace = data
+          .toString()
+          .split('\n')
+          .filter((line) => line.trim() !== '');
+        const errorTrace = stackTrace.filter((line) =>
+          line.includes('Error: '),
+        )?.[0];
+
+        let errorType = 'Unknown';
+        let errorMessage = '';
+
+        if (errorTrace) {
+          errorType = errorTrace.split(':')[0];
+          errorMessage = errorTrace.split(': ')[1];
+        }
+
+        resolve({
+          errorType,
+          errorMessage,
+          stackTrace: stackTrace,
+        });
         child.kill();
         fs.unlink(tmpFilePath);
       });

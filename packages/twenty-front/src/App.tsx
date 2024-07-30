@@ -34,6 +34,7 @@ import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
@@ -55,6 +56,7 @@ import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
+import { SettingsCRMMigration } from '~/pages/settings/crm-migration/SettingsCRMMigration';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
@@ -73,8 +75,11 @@ import { SettingsIntegrationEditDatabaseConnection } from '~/pages/settings/inte
 import { SettingsIntegrationNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsIntegrationShowDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationShowDatabaseConnection';
+import { SettingsAppearance } from '~/pages/settings/profile/appearance/components/SettingsAppearance';
 import { Releases } from '~/pages/settings/Releases';
-import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
+import { SettingsServerlessFunctionDetailWrapper } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetailWrapper';
+import { SettingsServerlessFunctions } from '~/pages/settings/serverless-functions/SettingsServerlessFunctions';
+import { SettingsServerlessFunctionsNew } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew';
 import { SettingsBilling } from '~/pages/settings/SettingsBilling';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
@@ -125,7 +130,11 @@ const ProvidersThatNeedRouterContext = () => {
   );
 };
 
-const createRouter = (isBillingEnabled?: boolean) =>
+const createRouter = (
+  isBillingEnabled?: boolean,
+  isCRMMigrationEnabled?: boolean,
+  isServerlessFunctionSettingsEnabled?: boolean,
+) =>
   createBrowserRouter(
     createRoutesFromElements(
       <Route
@@ -222,6 +231,12 @@ const createRouter = (isBillingEnabled?: boolean) =>
                   path={SettingsPath.Developers}
                   element={<SettingsDevelopers />}
                 />
+                {isCRMMigrationEnabled && (
+                  <Route
+                    path={SettingsPath.CRMMigration}
+                    element={<SettingsCRMMigration />}
+                  />
+                )}
                 <Route
                   path={AppPath.DevelopersCatchAll}
                   element={
@@ -245,6 +260,22 @@ const createRouter = (isBillingEnabled?: boolean) =>
                     </Routes>
                   }
                 />
+                {isServerlessFunctionSettingsEnabled && (
+                  <>
+                    <Route
+                      path={SettingsPath.ServerlessFunctions}
+                      element={<SettingsServerlessFunctions />}
+                    />
+                    <Route
+                      path={SettingsPath.NewServerlessFunction}
+                      element={<SettingsServerlessFunctionsNew />}
+                    />
+                    <Route
+                      path={SettingsPath.ServerlessFunctionDetail}
+                      element={<SettingsServerlessFunctionDetailWrapper />}
+                    />
+                  </>
+                )}
                 <Route
                   path={SettingsPath.Integrations}
                   element={<SettingsIntegrations />}
@@ -292,6 +323,18 @@ const createRouter = (isBillingEnabled?: boolean) =>
 
 export const App = () => {
   const billing = useRecoilValue(billingState);
+  const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
+  const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
+    'IS_FUNCTION_SETTINGS_ENABLED',
+  );
 
-  return <RouterProvider router={createRouter(billing?.isBillingEnabled)} />;
+  return (
+    <RouterProvider
+      router={createRouter(
+        billing?.isBillingEnabled,
+        isCRMMigrationEnabled,
+        isServerlessFunctionSettingsEnabled,
+      )}
+    />
+  );
 };

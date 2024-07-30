@@ -8,22 +8,25 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
 
 const StyledAnimatedContainer = styled(motion.div)`
+  align-items: center;
   display: flex;
   justify-content: end;
 `;
 
 const StyledItemsContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  margin-bottom: auto;
-  overflow-y: auto;
+  gap: 12px;
   height: calc(100dvh - 32px);
-  min-width: 216px;
-  max-width: 216px;
+  margin-bottom: auto;
+  max-width: 204px;
+  min-width: 204px;
+  overflow-y: auto;
 `;
 
 const StyledSkeletonContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -32,9 +35,13 @@ const StyledSkeletonContainer = styled.div`
 const StyledSkeletonTitleContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-left: 12px;
-  margin-top: 8px;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  height: 32px;
+
+  max-width: 196px;
+  min-width: 196px;
 `;
 
 export const LeftPanelSkeletonLoader = () => {
@@ -54,17 +61,18 @@ export const LeftPanelSkeletonLoader = () => {
       }}
     >
       <StyledItemsContainer>
+        <StyledSkeletonTitleContainer>
+          <SkeletonTheme
+            baseColor={GRAY_SCALE.gray15}
+            highlightColor={BACKGROUND_LIGHT.transparent.lighter}
+            borderRadius={4}
+          >
+            <Skeleton width={96} height={16} />
+          </SkeletonTheme>
+        </StyledSkeletonTitleContainer>
         <StyledSkeletonContainer>
-          <StyledSkeletonTitleContainer>
-            <SkeletonTheme
-              baseColor={GRAY_SCALE.gray15}
-              highlightColor={BACKGROUND_LIGHT.transparent.lighter}
-              borderRadius={4}
-            >
-              <Skeleton width={96} height={16} />
-            </SkeletonTheme>
-          </StyledSkeletonTitleContainer>
           <MainNavigationDrawerItemsSkeletonLoader length={3} />
+          <MainNavigationDrawerItemsSkeletonLoader title length={2} />
           <MainNavigationDrawerItemsSkeletonLoader title length={3} />
         </StyledSkeletonContainer>
       </StyledItemsContainer>

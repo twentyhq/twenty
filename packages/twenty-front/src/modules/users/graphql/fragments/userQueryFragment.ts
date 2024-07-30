@@ -18,6 +18,9 @@ export const USER_QUERY_FRAGMENT = gql`
       colorScheme
       avatarUrl
       locale
+      timeZone
+      dateFormat
+      timeFormat
     }
     defaultWorkspace {
       id
@@ -49,5 +52,6 @@ export const USER_QUERY_FRAGMENT = gql`
         domainName
       }
     }
+    userVars
   }
 `;

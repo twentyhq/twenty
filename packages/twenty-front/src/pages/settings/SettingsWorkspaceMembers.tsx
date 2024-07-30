@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { H1Title, H2Title, IconSettings, IconTrash } from 'twenty-ui';
 
@@ -13,10 +13,10 @@ import { IconButton } from '@/ui/input/button/components/IconButton';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;

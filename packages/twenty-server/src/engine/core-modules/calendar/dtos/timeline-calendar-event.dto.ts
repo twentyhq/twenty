@@ -1,4 +1,4 @@
-import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TimelineCalendarEventParticipant } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event-participant.dto';
@@ -10,12 +10,24 @@ registerEnumType(CalendarChannelVisibility, {
 });
 
 @ObjectType('LinkMetadata')
-export class LinkMetadata {
+class LinkMetadata {
   @Field()
   label: string;
 
   @Field()
   url: string;
+}
+
+@ObjectType('LinksMetadata')
+export class LinksMetadata {
+  @Field()
+  primaryLinkLabel: string;
+
+  @Field()
+  primaryLinkUrl: string;
+
+  @Field(() => [LinkMetadata], { nullable: true })
+  secondaryLinks: object | null;
 }
 
 @ObjectType('TimelineCalendarEvent')
@@ -47,8 +59,8 @@ export class TimelineCalendarEvent {
   @Field()
   conferenceSolution: string;
 
-  @Field(() => LinkMetadata)
-  conferenceLink: LinkMetadata;
+  @Field(() => LinksMetadata)
+  conferenceLink: LinksMetadata;
 
   @Field(() => [TimelineCalendarEventParticipant])
   participants: TimelineCalendarEventParticipant[];
