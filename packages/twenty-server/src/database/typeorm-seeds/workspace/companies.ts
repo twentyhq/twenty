@@ -42,7 +42,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.LINKEDIN,
         name: 'Linkedin',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://linkedin.com' },
+        domainNamePrimaryLinkUrl: 'https://linkedin.com',
         addressAddressStreet1: 'Eutaw Street',
         addressAddressStreet2: null,
         addressAddressCity: 'Dublin',
@@ -54,7 +54,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.FACEBOOK,
         name: 'Facebook',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://facebook.com' },
+        domainNamePrimaryLinkUrl: 'https://facebook.com',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -66,7 +66,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.QONTO,
         name: 'Qonto',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://qonto.com' },
+        domainNamePrimaryLinkUrl: 'https://qonto.com',
         addressAddressStreet1: '18 rue de navarrin',
         addressAddressStreet2: null,
         addressAddressCity: 'Paris',
@@ -78,7 +78,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.MICROSOFT,
         name: 'Microsoft',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://microsoft.com' },
+        domainNamePrimaryLinkUrl: 'https://microsoft.com',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -90,7 +90,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.AIRBNB,
         name: 'Airbnb',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://airbnb.com' },
+        domainNamePrimaryLinkUrl: 'https://airbnb.com',
         addressAddressStreet1: '888 Brannan St',
         addressAddressStreet2: null,
         addressAddressCity: 'San Francisco',
@@ -102,7 +102,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.GOOGLE,
         name: 'Google',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://google.com' },
+        domainNamePrimaryLinkUrl: 'https://google.com',
         addressAddressStreet1: '760 Market St',
         addressAddressStreet2: 'Floor 10',
         addressAddressCity: 'San Francisco',
@@ -114,7 +114,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.NETFLIX,
         name: 'Netflix',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://netflix.com' },
+        domainNamePrimaryLinkUrl: 'https://netflix.com',
         addressAddressStreet1: '2300 Harrison St',
         addressAddressStreet2: null,
         addressAddressCity: 'San Francisco',
@@ -126,7 +126,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.LIBEO,
         name: 'Libeo',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://libeo.io' },
+        domainNamePrimaryLinkUrl: 'https://libeo.io',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -138,7 +138,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.CLAAP,
         name: 'Claap',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://claap.io' },
+        domainNamePrimaryLinkUrl: 'https://claap.io',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -150,7 +150,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.HASURA,
         name: 'Hasura',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://hasura.io' },
+        domainNamePrimaryLinkUrl: 'https://hasura.io',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -162,7 +162,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.WEWORK,
         name: 'Wework',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://wework.com' },
+        domainNamePrimaryLinkUrl: 'https://wework.com',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -174,7 +174,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.SAMSUNG,
         name: 'Samsung',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://samsung.com' },
+        domainNamePrimaryLinkUrl: 'https://samsung.com',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -186,7 +186,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.ALGOLIA,
         name: 'Algolia',
-        domainNamePrimaryLinkUrl: { primarlyLinkUrl: 'https://algolia.com' },
+        domainNamePrimaryLinkUrl: 'https://algolia.com',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
