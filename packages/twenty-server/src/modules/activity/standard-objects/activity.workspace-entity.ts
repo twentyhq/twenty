@@ -8,7 +8,6 @@ import {
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
@@ -26,22 +25,11 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelSingular: 'Activity',
   labelPlural: 'Activities',
   description: 'An activity',
-  icon: 'IconActivity',
+  icon: 'IconCheckbox',
   labelIdentifierStandardId: ACTIVITY_STANDARD_FIELD_IDS.title,
 })
 @WorkspaceIsSystem()
 export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
-  @WorkspaceField({
-    standardId: ACTIVITY_STANDARD_FIELD_IDS.position,
-    type: FieldMetadataType.POSITION,
-    label: 'Position',
-    description: 'Activity record position',
-    icon: 'IconHierarchy2',
-  })
-  @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  position: number | null;
-
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
@@ -53,39 +41,22 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.body,
-    type: FieldMetadataType.RICH_TEXT,
+    type: FieldMetadataType.TEXT,
     label: 'Body',
     description: 'Activity body',
-    icon: 'IconFilePencil',
+    icon: 'IconList',
   })
-  @WorkspaceIsNullable()
-  body: string | null;
+  body: string;
 
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.type,
-    type: FieldMetadataType.SELECT,
-    label: 'Type',
-    description: 'Activity type',
-    icon: 'IconProgressCheck',
-    defaultValue: "'NOTE'",
-    options: [
-      { value: 'NOTE', label: 'Note', position: 0, color: 'sky' },
-      { value: 'TASK', label: 'Task', position: 1, color: 'purple' },
-    ],
-  })
-  type: string;
-
-  @WorkspaceField({
-    standardId: ACTIVITY_STANDARD_FIELD_IDS.typeDeprecated,
     type: FieldMetadataType.TEXT,
-    label: 'Type (Deprecated)',
+    label: 'Type',
     description: 'Activity type',
     icon: 'IconCheckbox',
     defaultValue: "'Note'",
   })
-  @WorkspaceIsDeprecated()
-  @WorkspaceIsSystem()
-  typeDeprecated: string;
+  type: string;
 
   @WorkspaceField({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.reminderAt,
@@ -115,35 +86,7 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCheck',
   })
   @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  @WorkspaceIsDeprecated()
   completedAt: Date | null;
-
-  @WorkspaceField({
-    standardId: ACTIVITY_STANDARD_FIELD_IDS.status,
-    type: FieldMetadataType.SELECT,
-    label: 'Status',
-    description: 'Activity status',
-    icon: 'IconCheck',
-    defaultValue: "'TODO'",
-    options: [
-      { value: 'TODO', label: 'To do', position: 0, color: 'sky' },
-      {
-        value: 'IN_PROGESS',
-        label: 'In progress',
-        position: 1,
-        color: 'purple',
-      },
-      {
-        value: 'DONE',
-        label: 'Done',
-        position: 1,
-        color: 'green',
-      },
-    ],
-  })
-  @WorkspaceIsNullable()
-  status: Date | null;
 
   @WorkspaceRelation({
     standardId: ACTIVITY_STANDARD_FIELD_IDS.activityTargets,
@@ -155,7 +98,6 @@ export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
   activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
