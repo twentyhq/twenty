@@ -1613,7 +1613,7 @@ export const getObjectMetadataItemsMock = () => {
       labelSingular: 'Notes',
       labelPlural: 'Notes',
       description: 'A note',
-      icon: 'IconCheckbox',
+      icon: 'IconNotes',
       isCustom: false,
       isActive: true,
       isSystem: false,
