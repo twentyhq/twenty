@@ -3,16 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, Repository } from 'typeorm';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
   BillingSubscription,
   SubscriptionStatus,
 } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
 export class BillingService {
@@ -47,7 +45,7 @@ export class BillingService {
 
     const freeAccessFeatureFlags = await this.featureFlagRepository.find({
       where: {
-        key: FeatureFlagKeys.IsFreeAccessEnabled,
+        key: FeatureFlagKey.IsFreeAccessEnabled,
         value: true,
       },
       select: ['workspaceId'],
