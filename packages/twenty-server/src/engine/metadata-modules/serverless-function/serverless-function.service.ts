@@ -41,7 +41,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     id: string,
     workspaceId: string,
     payload: object | undefined = undefined,
-  ) {
+  ): Promise<object> {
     const functionToExecute = await this.serverlessFunctionRepository.findOne({
       where: {
         id,

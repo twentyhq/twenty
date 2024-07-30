@@ -19,12 +19,41 @@ export enum WorkflowTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',
 }
 
+export enum WorkflowActionType {
+  CODE = 'CODE',
+}
+
+export type WorkflowCodeSettingsType = {
+  serverlessFunctionId: string;
+  errorHandlingOptions: {
+    retryOnFailure: {
+      value: boolean;
+    };
+    continueOnFailure: {
+      value: boolean;
+    };
+  };
+};
+
+export type WorkflowSettingsType = WorkflowCodeSettingsType;
+
+export type WorkflowAction = {
+  name: string;
+  displayName: string;
+  type: WorkflowActionType;
+  valid: boolean;
+  settings: WorkflowSettingsType;
+  nextAction?: WorkflowAction;
+};
+
 export type WorkflowDatabaseEventTrigger = {
   type: WorkflowTriggerType.DATABASE_EVENT;
+  input?: object;
   settings: {
     eventName: string;
     triggerName: string;
   };
+  nextAction?: WorkflowAction;
 };
 
 export type WorkflowTrigger = WorkflowDatabaseEventTrigger;
@@ -60,7 +89,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconPlayerPlay',
   })
   @WorkspaceIsNullable()
-  trigger: JSON | null;
+  trigger: WorkflowTrigger | null;
 
   // Relations
   @WorkspaceRelation({

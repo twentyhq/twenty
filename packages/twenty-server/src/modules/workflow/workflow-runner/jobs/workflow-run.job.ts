@@ -39,6 +39,10 @@ export class WorkflowRunJob {
       return;
     }
 
-    await this.workflowRunService.run(workflowVersion.trigger);
+    await this.workflowRunService.run({
+      action: workflowVersion.trigger.nextAction,
+      workspaceId,
+      payload: workflowVersion.trigger.input,
+    });
   }
 }
