@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  MAX_RETRIES_ON_FAILURE,
   WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -20,16 +21,18 @@ export class WorkflowRunService {
     action,
     workspaceId,
     payload,
+    attemptCount = 1,
   }: {
     action?: WorkflowAction;
     workspaceId: string;
     payload?: object;
+    attemptCount?: number;
   }) {
     if (!action) {
       return payload;
     }
 
-    let result = {};
+    let result: object | undefined = undefined;
 
     switch (action.type) {
       case WorkflowActionType.CODE:
@@ -41,7 +44,21 @@ export class WorkflowRunService {
           );
           break;
         } catch (err) {
-          return JSON.stringify(err);
+          if (action.settings.errorHandlingOptions.continueOnFailure) {
+            break;
+          } else if (
+            action.settings.errorHandlingOptions.retryOnFailure &&
+            attemptCount < MAX_RETRIES_ON_FAILURE
+          ) {
+            return await this.run({
+              action,
+              workspaceId,
+              payload,
+              attemptCount: attemptCount + 1,
+            });
+          } else {
+            return result;
+          }
         }
       default:
         throw new WorkflowTriggerException(
