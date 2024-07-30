@@ -11,8 +11,3 @@ export enum FeatureFlagKey {
   IsFunctionSettingsEnabled = 'IS_FUNCTION_SETTINGS_ENABLED',
   IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
 }
-
-// registerEnumType(FeatureFlagKey, {
-//   name: 'FeatureFlagKey',
-//   description: 'Feature flag key',
-// });
