@@ -14,52 +14,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { WORKFLOW_VERSION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-
-export enum WorkflowTriggerType {
-  DATABASE_EVENT = 'DATABASE_EVENT',
-}
-
-export enum WorkflowActionType {
-  CODE = 'CODE',
-}
-
-export const MAX_RETRIES_ON_FAILURE = 3;
-
-export type WorkflowCodeSettingsType = {
-  serverlessFunctionId: string;
-};
-
-export type WorkflowSettingsType = {
-  errorHandlingOptions: {
-    retryOnFailure: {
-      value: boolean;
-    };
-    continueOnFailure: {
-      value: boolean;
-    };
-  };
-} & WorkflowCodeSettingsType;
-
-export type WorkflowAction = {
-  name: string;
-  displayName: string;
-  type: WorkflowActionType;
-  valid: boolean;
-  settings: WorkflowSettingsType;
-  nextAction?: WorkflowAction;
-};
-
-export type WorkflowDatabaseEventTrigger = {
-  type: WorkflowTriggerType.DATABASE_EVENT;
-  input?: object;
-  settings: {
-    eventName: string;
-    triggerName: string;
-  };
-  nextAction?: WorkflowAction;
-};
-
-export type WorkflowTrigger = WorkflowDatabaseEventTrigger;
+import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowVersion,

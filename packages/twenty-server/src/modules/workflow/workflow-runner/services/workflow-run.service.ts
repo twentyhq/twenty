@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  MAX_RETRIES_ON_FAILURE,
-  WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
+import {
+  WorkflowAction,
+  WorkflowActionType,
+} from 'src/modules/workflow/common/types/workflow-action.type';
+
+const MAX_RETRIES_ON_FAILURE = 3;
 
 @Injectable()
 export class WorkflowRunService {
