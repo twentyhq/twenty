@@ -1,6 +1,6 @@
 import { Activity } from '@/activities/types/Activity';
 import { TaskTarget } from '@/activities/types/TaskTarget';
-import { WorkspaceMember } from '~/generated-metadata/graphql';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 type ActivityStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
 

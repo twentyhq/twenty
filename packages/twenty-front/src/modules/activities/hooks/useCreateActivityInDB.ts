@@ -1,6 +1,5 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
-import { CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE } from '@/activities/graphql/operation-signatures/CreateOneActivityOperationSignature';
 import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -12,6 +11,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useApolloClient } from '@apollo/client';
 
+import { createOneActivityOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/createOneActivityOperationSignatureFactory';
 import { NoteTarget } from '@/activities/types/NoteTarget';
 import { TaskTarget } from '@/activities/types/TaskTarget';
 import { getJoinObjectNameSingular } from '@/activities/utils/getJoinObjectNameSingular';
@@ -23,10 +23,12 @@ export const useCreateActivityInDB = ({
 }: {
   objectNameSingular: CoreObjectNameSingular;
 }) => {
+  const createOneActivityOperationSignature =
+    createOneActivityOperationSignatureFactory({ objectNameSingular });
+
   const { createOneRecord: createOneActivity } = useCreateOneRecord({
     objectNameSingular,
-    recordGqlFields:
-      CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE[objectNameSingular].fields,
+    recordGqlFields: createOneActivityOperationSignature.fields,
     shouldMatchRootQueryFilter: true,
   });
 
