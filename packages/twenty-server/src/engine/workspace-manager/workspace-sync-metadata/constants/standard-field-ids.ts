@@ -15,14 +15,11 @@ export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
 };
 
 export const ACTIVITY_STANDARD_FIELD_IDS = {
-  position: '20202020-9b9e-428b-b420-271f88a84780',
   title: '20202020-24a1-4d94-a071-617f3eeed7b0',
   body: '20202020-209b-440a-b2a8-043fa36a7d37',
-  type: '20202020-7210-4595-ba98-6767f2de81ee',
-  typeDeprecated: '20202020-0f2b-4aab-8827-ee5d3f07d993',
+  type: '20202020-0f2b-4aab-8827-ee5d3f07d993',
   reminderAt: '20202020-eb06-43e2-ba06-336be0e665a3',
   dueAt: '20202020-0336-4511-ba79-565b12801bd9',
-  status: '20202020-0dc7-481e-b3d7-df594376d3da',
   completedAt: '20202020-0f4d-4fca-9f2f-6309d9ecb85f',
   activityTargets: '20202020-7253-42cb-8586-8cf950e70b79',
   attachments: '20202020-5547-4197-bc2e-a07dfc4559ca',

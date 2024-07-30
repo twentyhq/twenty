@@ -34,8 +34,7 @@ type CoreLogicFunction = (params: {
 
 @Command({
   name: 'migrate-0.23:update-activities-type',
-  description:
-    'Update activities.type to change Note to NOTE and Task to TASK, backfill activity.position, update activity.body when null',
+  description: 'Migrate Activity object to Note and Task objects',
 })
 export class UpdateActivitiesCommand extends CommandRunner {
   private readonly logger = new Logger(UpdateActivitiesCommand.name);
