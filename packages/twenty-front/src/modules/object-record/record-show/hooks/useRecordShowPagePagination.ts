@@ -148,15 +148,7 @@ export const useRecordShowPagePagination = (
 
   const objectLabel = capitalize(objectMetadataItem.namePlural);
 
-  // Todo: the totalCount is broken on backend (likely because of pg_graphql)
-  // Here are the current behavior, if the query does not return any result, totalCount is 0
-  // If the query returns a result, totalCount is the total number of records
-  const totalCount =
-    totalCountBefore === 0
-      ? totalCountAfter === 0
-        ? 1
-        : totalCountAfter
-      : totalCountBefore;
+  const totalCount = Math.max(1, totalCountBefore, totalCountAfter);
 
   const viewNameWithCount = rankFoundInFiew
     ? `${rankInView + 1} of ${totalCount} in ${objectLabel}`
