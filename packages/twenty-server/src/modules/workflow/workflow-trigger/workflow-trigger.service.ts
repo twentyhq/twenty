@@ -9,7 +9,6 @@ import {
 } from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
 import {
   WorkflowDatabaseEventTrigger,
-  WorkflowTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/common/types/workflow-trigger.type';
 
@@ -39,7 +38,7 @@ export class WorkflowTriggerService {
       );
     }
 
-    const trigger = workflowVersion.trigger as unknown as WorkflowTrigger;
+    const trigger = workflowVersion.trigger;
 
     if (!trigger || !trigger?.type) {
       throw new WorkflowTriggerException(
