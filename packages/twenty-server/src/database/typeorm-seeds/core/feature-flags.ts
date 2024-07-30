@@ -60,6 +60,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: false,
       },
+      {
+        key: FeatureFlagKeys.IsMessageThreadSubscriberEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

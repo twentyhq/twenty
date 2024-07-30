@@ -27,8 +27,7 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
       receivedAt: true,
       messageThread: {
         id: true,
-        everyone: true,
-        messageThreadMember: {
+        subscribers: {
           workspaceMember: {
             id: true,
             name: true,

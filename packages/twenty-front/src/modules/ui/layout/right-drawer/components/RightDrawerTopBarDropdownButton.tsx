@@ -1,4 +1,4 @@
-import { MessageThreadMembersBar } from '@/activities/right-drawer/components/MessageThreadMembersBar';
+import { MessageThreadSubscribersTopBar } from '@/activities/right-drawer/components/MessageThreadSubscribersTopBar';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 import { rightDrawerPageState } from '@/ui/layout/right-drawer/states/rightDrawerPageState';
 import { ComponentByRightDrawerPage } from '@/ui/layout/right-drawer/types/ComponentByRightDrawerPage';
@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-ui';
 
 const RIGHT_DRAWER_TOP_BAR_DROPDOWN_BUTTON_CONFIG: ComponentByRightDrawerPage =
   {
-    [RightDrawerPages.ViewEmailThread]: <MessageThreadMembersBar />,
+    [RightDrawerPages.ViewEmailThread]: <MessageThreadSubscribersTopBar />,
   };
 
 export const RightDrawerTopBarDropdownButton = () => {

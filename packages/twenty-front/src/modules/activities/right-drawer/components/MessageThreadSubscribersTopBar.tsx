@@ -12,14 +12,12 @@ const StyledButtonContainer = styled.div`
   margin-left: ${({ theme }) => theme.spacing(3)};
 `;
 
-export const MessageThreadMembersBar = () => {
+export const MessageThreadSubscribersTopBar = () => {
   const messageThread = useRecoilValue(messageThreadState);
 
   const numberOfSubscribers = messageThread?.subscribers?.length ?? 0;
 
   const shouldShowMembersChip = numberOfSubscribers > 0;
-
-  console.log({ messageThread, numberOfSubscribers, shouldShowMembersChip });
 
   if (!isDefined(messageThread) || !shouldShowMembersChip) {
     return null;

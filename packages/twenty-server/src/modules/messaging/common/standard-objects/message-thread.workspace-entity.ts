@@ -1,11 +1,13 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -47,6 +49,9 @@ export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMessage',
     inverseSideTarget: () => MessageThreadSubscriberWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKeys.IsMessageThreadSubscriberEnabled,
   })
   subscribers: Relation<MessageThreadSubscriberWorkspaceEntity[]>;
 

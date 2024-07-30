@@ -7,7 +7,6 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
-import { MessageThreadSubscriberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-subscriber.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -20,7 +19,6 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
       MessageParticipantWorkspaceEntity,
       MessageWorkspaceEntity,
       MessageThreadWorkspaceEntity,
-      MessageThreadSubscriberWorkspaceEntity,
     ]),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     UserVarsModule,
