@@ -8,6 +8,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { CompanyRepository } from 'src/modules/company/repositories/company.repository';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
+import { getCompanyDomainName } from 'src/utils/getCompanyDomainName';
 @Injectable()
 export class CreateCompanyService {
   private readonly httpService: AxiosInstance;
@@ -24,6 +25,7 @@ export class CreateCompanyService {
   async createCompanies(
     domainNames: string[],
     workspaceId: string,
+    companyDomainNameColumnName: string,
     transactionManager?: EntityManager,
   ): Promise<{
     [domainName: string]: string;
@@ -38,6 +40,7 @@ export class CreateCompanyService {
       await this.companyRepository.getExistingCompaniesByDomainNames(
         uniqueDomainNames,
         workspaceId,
+        companyDomainNameColumnName,
         transactionManager,
       );
 
@@ -61,7 +64,7 @@ export class CreateCompanyService {
       (domainName) =>
         !existingCompanies.some(
           (company: { domainName: string }) =>
-            company.domainName === domainName,
+            getCompanyDomainName(company) === domainName,
         ),
     );
 
@@ -69,6 +72,7 @@ export class CreateCompanyService {
       companiesObject[domainName] = await this.createCompany(
         domainName,
         workspaceId,
+        companyDomainNameColumnName,
         transactionManager,
       );
     }
@@ -79,6 +83,7 @@ export class CreateCompanyService {
   private async createCompany(
     domainName: string,
     workspaceId: string,
+    companyDomainNameColumnName,
     transactionManager?: EntityManager,
   ): Promise<string> {
     const companyId = v4();
@@ -93,6 +98,7 @@ export class CreateCompanyService {
         name,
         city,
       },
+      companyDomainNameColumnName,
       transactionManager,
     );
 

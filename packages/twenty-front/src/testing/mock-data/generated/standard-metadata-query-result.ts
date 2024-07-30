@@ -938,7 +938,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
 							"node": {
 								"__typename": "field",
 								"id": "6b97ae7c-9b97-4a8f-885b-7f8ee3122a7d",
-								"type": "TEXT",
+								"type": "LINKS",
 								"name": "domainName",
 								"label": "Domain Name",
 								"description": "The company website URL. We use this url to fetch the company icon",
