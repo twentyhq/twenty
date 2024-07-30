@@ -1,6 +1,6 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -39,7 +39,7 @@ export type WorkflowTrigger = WorkflowDatabaseEventTrigger;
   labelIdentifierStandardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceGate({
-  featureFlag: FeatureFlagKeys.IsWorkflowEnabled,
+  featureFlag: FeatureFlagKey.IsWorkflowEnabled,
 })
 @WorkspaceIsSystem()
 export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {

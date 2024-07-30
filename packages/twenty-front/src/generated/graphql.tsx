@@ -315,6 +315,7 @@ export type Mutation = {
   disablePostgresProxy: PostgresCredentials;
   emailPasswordResetLink: EmailPasswordResetLink;
   enablePostgresProxy: PostgresCredentials;
+  enableWorkflowTrigger: Scalars['Boolean'];
   exchangeAuthorizationCode: ExchangeAuthCode;
   generateApiKeyToken: ApiKeyToken;
   generateJWT: AuthTokens;
@@ -374,6 +375,11 @@ export type MutationDeleteOneObjectArgs = {
 
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String'];
+};
+
+
+export type MutationEnableWorkflowTriggerArgs = {
+  workflowVersionId: Scalars['String'];
 };
 
 
