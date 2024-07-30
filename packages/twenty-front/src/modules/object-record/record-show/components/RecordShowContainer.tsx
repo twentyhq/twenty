@@ -66,7 +66,7 @@ export const RecordShowContainer = ({
     recordLoadingFamilyState(objectRecordId),
   );
 
-  const [recordFromStore] = useRecoilState(
+  const [recordFromStore] = useRecoilState<any>(
     recordStoreFamilyState(objectRecordId),
   );
 
@@ -155,50 +155,54 @@ export const RecordShowContainer = ({
   const isMobile = useIsMobile() || isInRightDrawer;
   const isPrefetchLoading = useIsPrefetchLoading();
 
-  const summary = (
+  const summaryCard = isDefined(recordFromStore) ? (
+    <ShowPageSummaryCard
+      id={objectRecordId}
+      logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
+      avatarPlaceholder={recordIdentifier?.name ?? ''}
+      date={recordFromStore.createdAt ?? ''}
+      loading={isPrefetchLoading || loading || recordLoading}
+      title={
+        <FieldContext.Provider
+          value={{
+            entityId: objectRecordId,
+            recoilScopeId:
+              objectRecordId + labelIdentifierFieldMetadataItem?.id,
+            isLabelIdentifier: false,
+            fieldDefinition: {
+              type:
+                labelIdentifierFieldMetadataItem?.type ||
+                FieldMetadataType.Text,
+              iconName: '',
+              fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
+              label: labelIdentifierFieldMetadataItem?.label || '',
+              metadata: {
+                fieldName: labelIdentifierFieldMetadataItem?.name || '',
+                objectMetadataNameSingular: objectNameSingular,
+              },
+              defaultValue: labelIdentifierFieldMetadataItem?.defaultValue,
+            },
+            useUpdateRecord: useUpdateOneObjectRecordMutation,
+            hotkeyScope: InlineCellHotkeyScope.InlineCell,
+            isCentered: true,
+          }}
+        >
+          <RecordInlineCell readonly={isReadOnly} isCentered={true} />
+        </FieldContext.Provider>
+      }
+      avatarType={recordIdentifier?.avatarType ?? 'rounded'}
+      onUploadPicture={
+        objectNameSingular === 'person' ? onUploadPicture : undefined
+      }
+    />
+  ) : (
+    <></>
+  );
+
+  const fieldsBox = (
     <>
       {isDefined(recordFromStore) && (
         <>
-          <ShowPageSummaryCard
-            id={objectRecordId}
-            logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
-            avatarPlaceholder={recordIdentifier?.name ?? ''}
-            date={recordFromStore.createdAt ?? ''}
-            loading={isPrefetchLoading || loading || recordLoading}
-            title={
-              <FieldContext.Provider
-                value={{
-                  entityId: objectRecordId,
-                  recoilScopeId:
-                    objectRecordId + labelIdentifierFieldMetadataItem?.id,
-                  isLabelIdentifier: false,
-                  fieldDefinition: {
-                    type:
-                      labelIdentifierFieldMetadataItem?.type ||
-                      FieldMetadataType.Text,
-                    iconName: '',
-                    fieldMetadataId: labelIdentifierFieldMetadataItem?.id ?? '',
-                    label: labelIdentifierFieldMetadataItem?.label || '',
-                    metadata: {
-                      fieldName: labelIdentifierFieldMetadataItem?.name || '',
-                      objectMetadataNameSingular: objectNameSingular,
-                    },
-                    defaultValue:
-                      labelIdentifierFieldMetadataItem?.defaultValue,
-                  },
-                  useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                  isCentered: true,
-                }}
-              >
-                <RecordInlineCell readonly={isReadOnly} isCentered={true} />
-              </FieldContext.Provider>
-            }
-            avatarType={recordIdentifier?.avatarType ?? 'rounded'}
-            onUploadPicture={
-              objectNameSingular === 'person' ? onUploadPicture : undefined
-            }
-          />
           <PropertyBox>
             {isPrefetchLoading ? (
               <PropertyBoxSkeletonLoader />
@@ -299,7 +303,8 @@ export const RecordShowContainer = ({
     <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
       <ShowPageContainer>
         <ShowPageLeftContainer forceMobile={isInRightDrawer}>
-          {!isMobile && summary}
+          {!isMobile && summaryCard}
+          {!isMobile && fieldsBox}
         </ShowPageLeftContainer>
         <ShowPageRightContainer
           targetableObject={{
@@ -311,7 +316,8 @@ export const RecordShowContainer = ({
           notes
           emails
           isRightDrawer={isInRightDrawer}
-          summary={summary}
+          summaryCard={isMobile ? summaryCard : <></>}
+          fieldsBox={fieldsBox}
           loading={isPrefetchLoading || loading || recordLoading}
         />
       </ShowPageContainer>

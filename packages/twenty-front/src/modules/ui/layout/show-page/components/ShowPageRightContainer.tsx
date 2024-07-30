@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
   IconCheckbox,
-  IconHome,
+  IconList,
   IconMail,
   IconNotes,
   IconPaperclip,
@@ -51,7 +51,8 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
-  summary?: JSX.Element;
+  fieldsBox?: JSX.Element;
+  summaryCard?: JSX.Element;
   isRightDrawer?: boolean;
   loading: boolean;
 };
@@ -63,7 +64,8 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
   loading,
-  summary,
+  fieldsBox,
+  summaryCard,
   isRightDrawer = false,
 }: ShowPageRightContainerProps) => {
   const { activeTabIdState } = useTabList(
@@ -86,14 +88,8 @@ export const ShowPageRightContainer = ({
 
   const tabs = [
     {
-      id: 'summary',
-      title: 'Summary',
-      Icon: IconHome,
-      hide: !isMobile,
-    },
-    {
       id: 'richText',
-      title: 'Content',
+      title: 'Note',
       Icon: IconNotes,
       hide:
         loading ||
@@ -101,6 +97,12 @@ export const ShowPageRightContainer = ({
           CoreObjectNameSingular.Note &&
           targetableObject.targetObjectNameSingular !==
             CoreObjectNameSingular.Task),
+    },
+    {
+      id: 'fields',
+      title: 'Fields',
+      Icon: IconList,
+      hide: !isMobile,
     },
     {
       id: 'timeline',
@@ -161,12 +163,12 @@ export const ShowPageRightContainer = ({
             <TimelineActivities targetableObject={targetableObject} />
           </>
         );
-      case 'summary':
-        return summary;
       case 'richText':
         return (
           <ShowPageActivityContainer targetableObject={targetableObject} />
         );
+      case 'fields':
+        return fieldsBox;
       case 'tasks':
         return <ObjectTasks targetableObject={targetableObject} />;
       case 'notes':
@@ -184,6 +186,7 @@ export const ShowPageRightContainer = ({
 
   return (
     <StyledShowPageRightContainer isMobile={isMobile}>
+      {summaryCard}
       <StyledTabListContainer>
         <TabList
           loading={loading}

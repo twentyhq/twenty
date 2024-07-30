@@ -23,7 +23,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   labelSingular: 'Note',
   labelPlural: 'Notes',
   description: 'A note',
-  icon: 'IconNote',
+  icon: 'IconNotes',
   labelIdentifierStandardId: NOTE_STANDARD_FIELD_IDS.title,
 })
 export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
