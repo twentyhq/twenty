@@ -11,14 +11,15 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
 import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
+import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
@@ -43,7 +44,6 @@ export class UpdateActivitiesCommand extends CommandRunner {
     private readonly workspaceStatusService: WorkspaceStatusService,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
-    private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -87,8 +87,18 @@ export class UpdateActivitiesCommand extends CommandRunner {
           workspaceId,
           'note',
         );
+      const noteTargetRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<NoteTargetWorkspaceEntity>(
+          workspaceId,
+          'note',
+        );
       const taskRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<TaskWorkspaceEntity>(
+          workspaceId,
+          'task',
+        );
+      const taskTargetRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<TaskTargetWorkspaceEntity>(
           workspaceId,
           'task',
         );
@@ -120,6 +130,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
 
       const activitiesToTransfer = await activityRepository.find({
         order: { createdAt: 'ASC' },
+        relations: ['activityTargets'],
       });
 
       for (let i = 0; i < activitiesToTransfer.length; i++) {
@@ -133,17 +144,24 @@ export class UpdateActivitiesCommand extends CommandRunner {
             createdAt: activity.createdAt,
             updatedAt: activity.updatedAt,
             position: i,
-            noteTargets: activity.activityTargets.map((activityTarget) => {
-              const { activityId, ...activityTargetData } = activityTarget;
-
-              return {
-                noteId: activityId,
-                ...activityTargetData,
-              };
-            }),
           });
 
           await noteRepository.save(note);
+
+          if (activity.activityTargets && activity.activityTargets.length > 0) {
+            const taskTargets = activity.activityTargets.map(
+              (activityTarget) => {
+                const { activityId, ...activityTargetData } = activityTarget;
+
+                return taskTargetRepository.create({
+                  taskId: activityId,
+                  ...activityTargetData,
+                });
+              },
+            );
+
+            await taskTargetRepository.save(taskTargets);
+          }
 
           await timelineActivityRepository.update(
             {
@@ -178,6 +196,22 @@ export class UpdateActivitiesCommand extends CommandRunner {
           });
 
           await taskRepository.save(task);
+
+          if (activity.activityTargets && activity.activityTargets.length > 0) {
+            const noteTargets = activity.activityTargets.map(
+              (activityTarget) => {
+                const { activityId, ...activityTargetData } = activityTarget;
+
+                return noteTargetRepository.create({
+                  noteId: activityId,
+                  ...activityTargetData,
+                });
+              },
+            );
+
+            await noteTargetRepository.save(noteTargets);
+          }
+
           await timelineActivityRepository.update(
             {
               linkedObjectMetadataId: activityObjectMetadataId,
@@ -201,131 +235,150 @@ export class UpdateActivitiesCommand extends CommandRunner {
         }
       }
 
-      /*********************** 
-      // Create missing views
-      ***********************/
-
-      const objectMetadataMap = objectMetadata.reduce((acc, object) => {
-        acc[object.standardId ?? ''] = {
-          id: object.id,
-          fields: object.fields.reduce((acc, field) => {
-            acc[field.standardId ?? ''] = field.id;
-
-            return acc;
-          }, {}),
-        };
-
-        return acc;
-      }, {}) as Record<string, ObjectMetadataEntity>;
-
-      const viewDefinitions = [
-        await notesAllView(objectMetadataMap),
-        await tasksAllView(objectMetadataMap),
-        await tasksByStatusView(objectMetadataMap),
-      ];
-
-      const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({
-        ...viewDefinition,
-        id: v4(),
-      }));
-
-      await queryRunner.manager
+      // Hack to make sure the command is indempotent and return if one of the view exists
+      const viewExists = await queryRunner.manager
         .createQueryBuilder()
-        .insert()
-        .into(`${schema}.view`, [
-          'id',
-          'name',
-          'objectMetadataId',
-          'type',
-          'key',
-          'position',
-          'icon',
-          'kanbanFieldMetadataId',
-        ])
-        .values(
-          viewDefinitionsWithId.map(
-            ({
-              id,
-              name,
-              objectMetadataId,
-              type,
-              key,
-              position,
-              icon,
-              kanbanFieldMetadataId,
-            }) => ({
-              id,
-              name,
-              objectMetadataId,
-              type,
-              key,
-              position,
-              icon,
-              kanbanFieldMetadataId,
-            }),
-          ),
-        )
-        .returning('*')
-        .execute();
+        .select()
+        .from(`${schema}.view`, 'view')
+        .where('name = :name', { name: 'All Notes' })
+        .getRawOne();
 
-      for (const viewDefinition of viewDefinitionsWithId) {
-        if (viewDefinition.fields && viewDefinition.fields.length > 0) {
-          await queryRunner.manager
-            .createQueryBuilder()
-            .insert()
-            .into(`${schema}.viewField`, [
-              'fieldMetadataId',
-              'position',
-              'isVisible',
-              'size',
-              'viewId',
-            ])
-            .values(
-              viewDefinition.fields.map((field) => ({
-                fieldMetadataId: field.fieldMetadataId,
-                position: field.position,
-                isVisible: field.isVisible,
-                size: field.size,
-                viewId: viewDefinition.id,
-              })),
-            )
-            .execute();
-        }
-
-        if (viewDefinition.filters && viewDefinition.filters.length > 0) {
-          await queryRunner.manager
-            .createQueryBuilder()
-            .insert()
-            .into(`${schema}.viewFilter`, [
-              'fieldMetadataId',
-              'displayValue',
-              'operand',
-              'value',
-              'viewId',
-            ])
-            .values(
-              viewDefinition.filters.map((filter: any) => ({
-                fieldMetadataId: filter.fieldMetadataId,
-                displayValue: filter.displayValue,
-                operand: filter.operand,
-                value: filter.value,
-                viewId: viewDefinition.id,
-              })),
-            )
-            .execute();
-        }
-
-        await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+      if (!viewExists) {
+        await this.createViews(
+          objectMetadata,
+          queryRunner,
+          schema,
+          workspaceId,
+        );
       }
     };
 
     return this.sharedBoilerplate(_passedParam, options, updateActivities);
   }
 
+  private async createViews(
+    objectMetadata: ObjectMetadataEntity[],
+    queryRunner: QueryRunner,
+    schema: string,
+    workspaceId: string,
+  ) {
+    const objectMetadataMap = objectMetadata.reduce((acc, object) => {
+      acc[object.standardId ?? ''] = {
+        id: object.id,
+        fields: object.fields.reduce((acc, field) => {
+          acc[field.standardId ?? ''] = field.id;
+
+          return acc;
+        }, {}),
+      };
+
+      return acc;
+    }, {}) as Record<string, ObjectMetadataEntity>;
+
+    const viewDefinitions = [
+      await notesAllView(objectMetadataMap),
+      await tasksAllView(objectMetadataMap),
+      await tasksByStatusView(objectMetadataMap),
+    ];
+
+    const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({
+      ...viewDefinition,
+      id: v4(),
+    }));
+
+    await queryRunner.manager
+      .createQueryBuilder()
+      .insert()
+      .into(`${schema}.view`, [
+        'id',
+        'name',
+        'objectMetadataId',
+        'type',
+        'key',
+        'position',
+        'icon',
+        'kanbanFieldMetadataId',
+      ])
+      .values(
+        viewDefinitionsWithId.map(
+          ({
+            id,
+            name,
+            objectMetadataId,
+            type,
+            key,
+            position,
+            icon,
+            kanbanFieldMetadataId,
+          }) => ({
+            id,
+            name,
+            objectMetadataId,
+            type,
+            key,
+            position,
+            icon,
+            kanbanFieldMetadataId,
+          }),
+        ),
+      )
+      .returning('*')
+      .execute();
+
+    for (const viewDefinition of viewDefinitionsWithId) {
+      if (viewDefinition.fields && viewDefinition.fields.length > 0) {
+        await queryRunner.manager
+          .createQueryBuilder()
+          .insert()
+          .into(`${schema}.viewField`, [
+            'fieldMetadataId',
+            'position',
+            'isVisible',
+            'size',
+            'viewId',
+          ])
+          .values(
+            viewDefinition.fields.map((field) => ({
+              fieldMetadataId: field.fieldMetadataId,
+              position: field.position,
+              isVisible: field.isVisible,
+              size: field.size,
+              viewId: viewDefinition.id,
+            })),
+          )
+          .execute();
+      }
+
+      if (viewDefinition.filters && viewDefinition.filters.length > 0) {
+        await queryRunner.manager
+          .createQueryBuilder()
+          .insert()
+          .into(`${schema}.viewFilter`, [
+            'fieldMetadataId',
+            'displayValue',
+            'operand',
+            'value',
+            'viewId',
+          ])
+          .values(
+            viewDefinition.filters.map((filter: any) => ({
+              fieldMetadataId: filter.fieldMetadataId,
+              displayValue: filter.displayValue,
+              operand: filter.operand,
+              value: filter.value,
+              viewId: viewDefinition.id,
+            })),
+          )
+          .execute();
+      }
+
+      await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+    }
+  }
+
   // This is an attempt to do something more generic that could be reused in every command
   // Next step if it works well for a few command is to isolated it into a file so
   // it can be reused and not copy-pasted.
-
   async sharedBoilerplate(
     _passedParam: string[],
     options: UpdateActivitiesCommandOptions,
@@ -362,7 +415,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
         );
       } catch (error) {
         this.logger.error(
-          `Migration failed for workspace ${workspaceId}: ${error.message}`,
+          `Migration failed for workspace ${workspaceId}: ${error.message}, ${error.stack}`,
         );
       }
     }
