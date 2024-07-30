@@ -5,7 +5,13 @@ export type Company = {
   updatedAt?: string;
   deletedAt?: string | null;
   name: string;
-  domainName: string;
+  domainName:
+    | string
+    | {
+        __typename?: 'Links';
+        primaryLinkUrl: string;
+        primaryLinkLabel: string;
+      };
   address: string;
   accountOwnerId?: string | null;
   position?: number;

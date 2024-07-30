@@ -1,21 +1,22 @@
 import { Module } from '@nestjs/common';
 
-import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
-import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { AISQLQueryModule } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
-import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
-import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
-import { AISQLQueryModule } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.module';
+import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
+import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
+import { UserModule } from 'src/engine/core-modules/user/user.module';
+import { WorkflowTriggerModule } from 'src/engine/core-modules/workflow/workflow-trigger.module';
+import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
+import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { FileModule } from './file/file.module';
-import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     WorkspaceModule,
     AISQLQueryModule,
     PostgresCredentialsModule,
+    WorkflowTriggerModule,
   ],
   exports: [
     AnalyticsModule,

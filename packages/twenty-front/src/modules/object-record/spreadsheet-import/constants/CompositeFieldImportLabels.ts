@@ -2,6 +2,7 @@ import {
   FieldAddressValue,
   FieldCurrencyValue,
   FieldFullNameValue,
+  FieldLinksValue,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { CompositeFieldLabels } from '@/object-record/spreadsheet-import/types/CompositeFieldLabels';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -25,4 +26,8 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
     addressLatLabel: 'Latitude',
     addressLngLabel: 'Longitude',
   } satisfies CompositeFieldLabels<FieldAddressValue>,
+  [FieldMetadataType.Links]: {
+    primaryLinkUrlLabel: 'Link URL',
+    primaryLinkLabelLabel: 'Link Label',
+  } satisfies Partial<CompositeFieldLabels<FieldLinksValue>>,
 };

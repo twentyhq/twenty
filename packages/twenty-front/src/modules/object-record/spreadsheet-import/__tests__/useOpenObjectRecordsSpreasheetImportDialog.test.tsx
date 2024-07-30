@@ -36,7 +36,11 @@ const companyMocks = [
               primaryLinkLabel
               secondaryLinks
             }
-            domainName
+            domainName {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
             annualRecurringRevenue {
               amountMicros
               currencyCode
@@ -64,7 +68,6 @@ const companyMocks = [
       variables: {
         data: [
           {
-            domainName: 'example.com',
             employees: 0,
             idealCustomerProfile: true,
             name: 'Example Company',
@@ -157,7 +160,6 @@ describe('useSpreadsheetCompanyImport', () => {
             {
               id: companyId,
               name: 'Example Company',
-              domainName: 'example.com',
               idealCustomerProfile: true,
               employees: '0',
             },
@@ -167,7 +169,6 @@ describe('useSpreadsheetCompanyImport', () => {
             {
               id: companyId,
               name: 'Example Company',
-              domainName: 'example.com',
               __index: 'cbc3985f-dde9-46d1-bae2-c124141700ac',
               idealCustomerProfile: true,
               employees: '0',

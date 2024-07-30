@@ -5,6 +5,7 @@ import {
   SubscriptionStatus,
   User,
   Workspace,
+  WorkspaceActivationStatus,
 } from '~/generated/graphql';
 
 type MockedUser = Pick<
@@ -37,7 +38,7 @@ export const mockDefaultWorkspace: Workspace = {
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
   allowImpersonation: true,
-  activationStatus: 'active',
+  activationStatus: WorkspaceActivationStatus.Active,
   featureFlags: [
     {
       id: '1492de61-5018-4368-8923-4f1eeaf988c4',

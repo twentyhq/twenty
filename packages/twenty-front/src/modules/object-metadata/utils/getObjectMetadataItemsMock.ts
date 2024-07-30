@@ -2940,7 +2940,7 @@ export const getObjectMetadataItemsMock = () => {
         {
           __typename: 'field',
           id: '20202020-5e4e-4007-a630-8a2617914889',
-          type: 'TEXT',
+          type: 'LINKS',
           name: 'domainName',
           label: 'Domain Name',
           description:

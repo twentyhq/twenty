@@ -327,10 +327,16 @@ export const WEBHOOK_STANDARD_FIELD_IDS = {
   operation: '20202020-15b7-458e-bf30-74770a54410c',
 };
 
+export const WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS = {
+  eventName: '20202020-7318-4cf8-a6ac-2de75e3fd97d',
+  workflow: '20202020-4082-4641-8569-dc08d5365002',
+};
+
 export const WORKFLOW_STANDARD_FIELD_IDS = {
   name: '20202020-b3d3-478f-acc0-5d901e725b20',
   publishedVersionId: '20202020-326a-4fba-8639-3456c0a169e8',
   versions: '20202020-9432-416e-8f3c-27ee3153d099',
+  eventListeners: '20202020-0229-4c66-832e-035c67579a38',
   position: '20202020-39b0-4d8c-8c5f-33c2326deb5f',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   activityTargets: '20202020-9d65-445a-899d-1c6f1cf3a9ab',
@@ -363,6 +369,9 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   calendarEventParticipants: '20202020-0dbc-4841-9ce1-3e793b5b3512',
   timelineActivities: '20202020-e15b-47b8-94fe-8200e3c66615',
   auditLogs: '20202020-2f54-4739-a5e2-99563385e83d',
+  timeZone: '20202020-2d33-4c21-a86e-5943b050dd54',
+  dateFormat: '20202020-af13-4e11-b1e7-b8cf5ea13dc0',
+  timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
