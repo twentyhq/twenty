@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
@@ -11,48 +10,27 @@ import {
   WorkflowDatabaseEventTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/common/types/workflow-trigger.type';
+import { WorkflowCommonService } from 'src/modules/workflow/common/services/workflow-common.services';
 
 @Injectable()
 export class WorkflowTriggerService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workflowCommonService: WorkflowCommonService,
   ) {}
 
   async enableWorkflowTrigger(workspaceId: string, workflowVersionId: string) {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-      );
+    const workflowVersion = await this.workflowCommonService.getWorkflowVersion(
+      workspaceId,
+      workflowVersionId,
+    );
 
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionId,
-      },
-    });
-
-    if (!workflowVersion) {
-      throw new WorkflowTriggerException(
-        'Workflow version not found',
-        WorkflowTriggerExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    const trigger = workflowVersion.trigger;
-
-    if (!trigger || !trigger?.type) {
-      throw new WorkflowTriggerException(
-        'Workflow version does not contains trigger',
-        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-      );
-    }
-
-    switch (trigger.type) {
+    switch (workflowVersion.trigger.type) {
       case WorkflowTriggerType.DATABASE_EVENT:
         await this.upsertWorkflowEventListener(
           workspaceId,
           workflowVersion.workflowId,
-          trigger,
+          workflowVersion.trigger,
         );
         break;
       default:
