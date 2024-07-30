@@ -5,7 +5,7 @@ import { workflowTriggerGraphqlApiExceptionHandler } from 'src/engine/core-modul
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { WorkflowTriggerService } from 'src/modules/workflow/standard-objects/workflow-trigger/workflow-trigger.service';
+import { WorkflowTriggerService } from 'src/modules/workflow/workflow-trigger/workflow-trigger.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
