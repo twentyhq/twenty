@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -12,6 +12,7 @@ export const ObjectFilterDropdownNumberInput = () => {
     selectedFilterState,
     selectFilter,
   } = useFilterDropdown();
+  const [hasFocused, setHasFocused] = useState(false);
 
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
@@ -26,18 +27,21 @@ export const ObjectFilterDropdownNumberInput = () => {
     () => selectedFilter?.value || '',
   );
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  if (Boolean(inputRef.current) === true) {
-    inputRef.current?.focus();
-    inputRef.current?.select();
-  }
-
+  const handleInputRef = useCallback(
+    (node: HTMLInputElement | null) => {
+      if (Boolean(node) && !hasFocused) {
+        node?.focus();
+        node?.select();
+        setHasFocused(true);
+      }
+    },
+    [hasFocused],
+  );
   return (
     filterDefinitionUsedInDropdown &&
     selectedOperandInDropdown && (
       <DropdownMenuInput
-        ref={inputRef}
+        ref={handleInputRef}
         value={inputValue}
         autoFocus
         type="number"
