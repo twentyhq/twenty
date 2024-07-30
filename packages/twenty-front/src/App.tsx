@@ -34,6 +34,7 @@ import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
@@ -74,18 +75,17 @@ import { SettingsIntegrationEditDatabaseConnection } from '~/pages/settings/inte
 import { SettingsIntegrationNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsIntegrationShowDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationShowDatabaseConnection';
+import { SettingsAppearance } from '~/pages/settings/profile/appearance/components/SettingsAppearance';
 import { Releases } from '~/pages/settings/Releases';
-import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
+import { SettingsServerlessFunctionDetailWrapper } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetailWrapper';
+import { SettingsServerlessFunctions } from '~/pages/settings/serverless-functions/SettingsServerlessFunctions';
+import { SettingsServerlessFunctionsNew } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew';
 import { SettingsBilling } from '~/pages/settings/SettingsBilling';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
-import { SettingsServerlessFunctions } from '~/pages/settings/serverless-functions/SettingsServerlessFunctions';
-import { SettingsServerlessFunctionsNew } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { SettingsServerlessFunctionDetailWrapper } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetailWrapper';
 
 const ProvidersThatNeedRouterContext = () => {
   const { pathname } = useLocation();
