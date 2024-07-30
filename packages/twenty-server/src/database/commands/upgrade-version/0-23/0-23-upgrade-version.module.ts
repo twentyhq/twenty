@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { MigrateDomainNameFromTextToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-domain-to-links.command';
 import { MigrateLinkFieldsToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-link-fields-to-links.command';
 import { MigrateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-message-channel-sync-status-enum.command';
 import { UpgradeTo0_23Command } from 'src/database/commands/upgrade-version/0-23/0-23-upgrade-version.command';
@@ -28,6 +29,7 @@ import { ViewModule } from 'src/modules/view/view.module';
   ],
   providers: [
     MigrateLinkFieldsToLinksCommand,
+    MigrateDomainNameFromTextToLinksCommand,
     MigrateMessageChannelSyncStatusEnumCommand,
     UpgradeTo0_23Command,
   ],

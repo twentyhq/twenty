@@ -48,7 +48,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.domainName,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.LINKS,
     label: 'Domain Name',
     description:
       'The company website URL. We use this url to fetch the company icon',
