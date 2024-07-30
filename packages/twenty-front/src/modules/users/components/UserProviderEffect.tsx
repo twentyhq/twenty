@@ -87,6 +87,7 @@ export const UserProviderEffect = () => {
     setWorkspaces,
     queryData?.currentUser,
     setIsCurrentUserLoaded,
+    setDateTimeFormat,
   ]);
 
   return <></>;
