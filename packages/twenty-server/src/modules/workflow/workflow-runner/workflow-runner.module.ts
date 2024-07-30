@@ -8,5 +8,6 @@ import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless
 @Module({
   imports: [WorkflowCommonModule, ServerlessFunctionModule],
   providers: [WorkflowRunnerService, WorkflowRunnerJob],
+  exports: [WorkflowRunnerService],
 })
 export class WorkflowRunnerModule {}

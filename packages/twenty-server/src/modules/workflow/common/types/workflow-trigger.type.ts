@@ -2,16 +2,27 @@ import { WorkflowAction } from 'src/modules/workflow/common/types/workflow-actio
 
 export enum WorkflowTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',
+  MANUAL = 'MANUAL',
 }
 
-export type WorkflowDatabaseEventTrigger = {
-  type: WorkflowTriggerType.DATABASE_EVENT;
+type BaseTrigger = {
+  type: WorkflowTriggerType;
   input?: object;
+  nextAction?: WorkflowAction;
+};
+
+export type WorkflowDatabaseEventTrigger = BaseTrigger & {
+  type: WorkflowTriggerType.DATABASE_EVENT;
   settings: {
     eventName: string;
     triggerName: string;
   };
-  nextAction?: WorkflowAction;
 };
 
-export type WorkflowTrigger = WorkflowDatabaseEventTrigger;
+type WorkflowManualTrigger = BaseTrigger & {
+  type: WorkflowTriggerType.MANUAL;
+};
+
+export type WorkflowTrigger =
+  | WorkflowDatabaseEventTrigger
+  | WorkflowManualTrigger;

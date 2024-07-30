@@ -11,13 +11,28 @@ import {
   WorkflowTriggerType,
 } from 'src/modules/workflow/common/types/workflow-trigger.type';
 import { WorkflowCommonService } from 'src/modules/workflow/common/workflow-common.services';
+import { WorkflowRunnerService } from 'src/modules/workflow/workflow-runner/workflow-runner.service';
 
 @Injectable()
 export class WorkflowTriggerService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowCommonService: WorkflowCommonService,
+    private readonly workflowRunnerService: WorkflowRunnerService,
   ) {}
+
+  async runWorkflow(workspaceId: string, workflowVersionId: string) {
+    const workflowVersion = await this.workflowCommonService.getWorkflowVersion(
+      workspaceId,
+      workflowVersionId,
+    );
+
+    return await this.workflowRunnerService.run({
+      action: workflowVersion.trigger.nextAction,
+      workspaceId,
+      payload: workflowVersion.trigger.input,
+    });
+  }
 
   async enableWorkflowTrigger(workspaceId: string, workflowVersionId: string) {
     const workflowVersion = await this.workflowCommonService.getWorkflowVersion(
