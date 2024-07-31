@@ -4,6 +4,7 @@ import { FieldDefinition } from '../FieldDefinition';
 import {
   FieldAddressMetadata,
   FieldBooleanMetadata,
+  FieldCreatedByMetadata,
   FieldCurrencyMetadata,
   FieldDateMetadata,
   FieldDateTimeMetadata,
@@ -63,7 +64,9 @@ type AssertFieldMetadataFunction = <
                                       ? FieldRawJsonMetadata
                                       : E extends 'RICH_TEXT'
                                         ? FieldTextMetadata
-                                        : never,
+                                        : E extends 'CREATED_BY'
+                                          ? FieldCreatedByMetadata
+                                          : never,
 >(
   fieldType: E,
   fieldTypeGuard: (
