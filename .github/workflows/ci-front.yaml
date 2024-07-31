@@ -140,3 +140,6 @@ jobs:
         with:
           tag: scope:frontend
           tasks: ${{ matrix.task }}
+      - name: TypeScript Type Check
+        if: matrix.task == 'typecheck'
+        run: npx tsc --noEmit -p packages/twenty-front/tsconfig.json
