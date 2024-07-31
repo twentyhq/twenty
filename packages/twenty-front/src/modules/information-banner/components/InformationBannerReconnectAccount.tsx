@@ -14,7 +14,9 @@ export const InformationBannerAccountToReconnect = () => {
   const userVars = currentUser?.userVars;
 
   const firstAccountIdToReconnect =
-    userVars?.[InformationBannerKeys.ACCOUNTS_TO_RECONNECT]?.[0];
+    userVars?.[
+      InformationBannerKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS
+    ]?.[0];
 
   const accountToReconnect = useFindOneRecord<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
