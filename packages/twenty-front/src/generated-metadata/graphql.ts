@@ -1055,7 +1055,7 @@ export type ServerlessFunctionExecutionResult = {
   status: ServerlessFunctionExecutionStatus;
 };
 
-/** Status of the table */
+/** Status of the serverless function execution */
 export enum ServerlessFunctionExecutionStatus {
   Error = 'ERROR',
   Success = 'SUCCESS'
@@ -1304,6 +1304,7 @@ export type User = {
   updatedAt: Scalars['DateTime']['output'];
   userVars: Scalars['JSONObject']['output'];
   workspaceMember?: Maybe<WorkspaceMember>;
+  workspaceMembers?: Maybe<Array<WorkspaceMember>>;
   workspaces: Array<UserWorkspace>;
 };
 
@@ -1547,43 +1548,6 @@ export type RelationEdge = {
   node: Relation;
 };
 
-<<<<<<< HEAD
-export type ServerlessFunction = {
-  __typename?: 'serverlessFunction';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  sourceCodeHash: Scalars['String']['output'];
-  syncStatus: ServerlessFunctionSyncStatus;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type ServerlessFunctionEdge = {
-  __typename?: 'serverlessFunctionEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
-  /** The node containing the serverlessFunction */
-  node: ServerlessFunction;
-};
-
-export type ServerlessFunctionFilter = {
-  and?: InputMaybe<Array<ServerlessFunctionFilter>>;
-  id?: InputMaybe<UuidFilterComparison>;
-  or?: InputMaybe<Array<ServerlessFunctionFilter>>;
-};
-
-export type ServerlessFunctionSort = {
-  direction: SortDirection;
-  field: ServerlessFunctionSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum ServerlessFunctionSortFields {
-  Id = 'id'
-}
-
-=======
->>>>>>> origin/main
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
 
 export type RemoteTableFieldsFragment = { __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null };

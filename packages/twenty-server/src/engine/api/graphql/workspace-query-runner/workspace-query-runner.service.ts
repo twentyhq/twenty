@@ -52,7 +52,6 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 import {
   PGGraphQLMutation,
@@ -511,8 +510,8 @@ export class WorkspaceQueryRunnerService {
 
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
         name: `${objectMetadataItem.nameSingular}.updated`,
-        workspaceId,
-        userId,
+        workspaceId: authContext.workspace.id,
+        userId: authContext.user?.id,
         recordId: existingRecord.id,
         objectMetadata: objectMetadataItem,
         properties: {
@@ -811,66 +810,5 @@ export class WorkspaceQueryRunnerService {
         { retryLimit: 3 },
       );
     });
-  }
-
-  async handleDeleteWorkspaceMember(
-    id: string,
-    workspaceId: string,
-    objectMetadataItem: ObjectMetadataInterface,
-  ) {
-    if (objectMetadataItem.nameSingular !== 'workspaceMember') {
-      return;
-    }
-
-    const workspaceMemberResult = await this.executeAndParse<IRecord>(
-      `
-      query {
-        workspaceMemberCollection(filter: {id: {eq: "${id}"}}) {
-          edges {
-            node {
-              userId: userId
-            }
-          }
-        }
-      }
-      `,
-      objectMetadataItem,
-      '',
-      workspaceId,
-    );
-
-    return workspaceMemberResult.edges?.[0]?.node;
-  }
-
-  async handleDeleteBlocklistItem(
-    id: string,
-    workspaceId: string,
-    objectMetadataItem: ObjectMetadataInterface,
-  ) {
-    if (objectMetadataItem.standardId !== STANDARD_OBJECT_IDS.blocklist) {
-      return;
-    }
-
-    const blocklistItemResult = await this.executeAndParse<IRecord>(
-      `
-      query {
-        blocklistCollection(filter: {id: {eq: "${id}"}}) {
-          edges {
-            node {
-              handle
-              workspaceMember {
-                id
-              }
-            }
-          }
-        }
-      }
-      `,
-      objectMetadataItem,
-      '',
-      workspaceId,
-    );
-
-    return blocklistItemResult.edges?.[0]?.node;
   }
 }
