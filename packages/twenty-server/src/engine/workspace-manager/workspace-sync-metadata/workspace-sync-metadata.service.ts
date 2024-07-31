@@ -144,6 +144,7 @@ export class WorkspaceSyncMetadataService {
       await queryRunner.commitTransaction();
 
       // Execute migrations
+      this.logger.log('Executing pending migrations');
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
         context.workspaceId,
       );

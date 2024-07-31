@@ -36,7 +36,7 @@ registerEnumType(ServerlessFunctionSyncStatus, {
   defaultResultSize: 10,
   maxResultsSize: 1000,
 })
-export class ServerlessFunctionDto {
+export class ServerlessFunctionDTO {
   @IsUUID()
   @IsNotEmpty()
   @IDField(() => UUIDScalarType)
@@ -48,7 +48,7 @@ export class ServerlessFunctionDto {
   name: string;
 
   @IsString()
-  @Field()
+  @Field({ nullable: true })
   description: string;
 
   @IsString()

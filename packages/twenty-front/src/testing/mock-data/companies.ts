@@ -13,7 +13,12 @@ export const getEmptyCompanyMock = () => {
   return {
     id: '9231e6ee-4cc2-4c7b-8c55-dff16f4d968a',
     name: '',
-    domainName: '',
+    domainName: {
+      __typename: 'Links',
+      primaryLinkUrl: '',
+      primaryLinkLabel: '',
+      secondaryLinks: null,
+    },
     address: '',
     accountOwner: null,
     createdAt: null,
@@ -51,17 +56,22 @@ export const companiesQueryResult = {
           name: 'Linkedin',
           accountOwnerId: null,
           accountOwner: null,
-          domainName: 'linkedin.com',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkLabel: 'https://linkedin.com',
+            primaryLinkUrl: '',
+            secondaryLinks: null,
+          },
           address: '',
           position: 1,
           idealCustomerProfile: true,
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -97,7 +107,7 @@ export const companiesQueryResult = {
               currencyCode: 'USD',
             },
             xLink: {
-              __typename: 'Link',
+              __typename: 'Links',
               primaryLinkLabel: '',
               primaryLinkUrl: 'twitter.com',
             },
@@ -113,7 +123,7 @@ export const companiesQueryResult = {
               lastName: 'Duss',
             },
             linkedinLink: {
-              __typename: 'Link',
+              __typename: 'Links',
               primaryLinkLabel: '',
               primaryLinkUrl: 'linkedin.com',
             },
@@ -129,7 +139,7 @@ export const companiesQueryResult = {
               addressLng: null,
             },
             testLink: {
-              __typename: 'Link',
+              __typename: 'Links',
               primaryLinkLabel: '',
               primaryLinkUrl: '',
             },
@@ -149,7 +159,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: false,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'facebook.com',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://facebook.com',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -159,12 +174,12 @@ export const companiesQueryResult = {
           },
           position: 2,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -183,7 +198,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: false,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'qonto.com',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://qonto.com',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -193,12 +213,12 @@ export const companiesQueryResult = {
           },
           position: 3,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -217,7 +237,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: true,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'microsoft.com',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://microsoft.com',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -227,12 +252,12 @@ export const companiesQueryResult = {
           },
           position: 4,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -251,7 +276,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: true,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'airbnb.com',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://airbnb.com',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -261,12 +291,12 @@ export const companiesQueryResult = {
           },
           position: 5,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -285,7 +315,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: false,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'google.com',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://google.com',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -295,12 +330,12 @@ export const companiesQueryResult = {
           },
           position: 6,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -319,7 +354,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: true,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'netflix.com',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://netflix.com',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -329,12 +369,12 @@ export const companiesQueryResult = {
           },
           position: 7,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -353,7 +393,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: false,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'libeo.io',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://libeo.io',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -363,12 +408,12 @@ export const companiesQueryResult = {
           },
           position: 8,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -387,7 +432,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: false,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'claap.io',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://claap.com',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -397,12 +447,12 @@ export const companiesQueryResult = {
           },
           position: 9,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -421,7 +471,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: false,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'hasura.io',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://hasura.io',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -431,12 +486,12 @@ export const companiesQueryResult = {
           },
           position: 10,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -455,7 +510,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: false,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'wework.com',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://wework.com',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -465,12 +525,12 @@ export const companiesQueryResult = {
           },
           position: 11,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -489,7 +549,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: false,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'samsung.com',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://samsung.com',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -499,12 +564,12 @@ export const companiesQueryResult = {
           },
           position: 12,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
@@ -523,7 +588,12 @@ export const companiesQueryResult = {
           idealCustomerProfile: false,
           accountOwner: null,
           accountOwnerId: null,
-          domainName: 'algolia.com',
+          domainName: {
+            __typename: 'Links',
+            primaryLinkUrl: 'https://algolia.com',
+            primaryLinkLabel: '',
+            secondaryLinks: null,
+          },
           address: '',
           previousEmployees: null,
           annualRecurringRevenue: {
@@ -533,12 +603,12 @@ export const companiesQueryResult = {
           },
           position: 13,
           xLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },
           linkedinLink: {
-            __typename: 'Link',
+            __typename: 'Links',
             primaryLinkLabel: '',
             primaryLinkUrl: '',
           },

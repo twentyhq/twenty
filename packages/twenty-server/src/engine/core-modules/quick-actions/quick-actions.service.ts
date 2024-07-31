@@ -8,7 +8,9 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { stringifyWithoutKeyQuote } from 'src/engine/api/graphql/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
 import { IntelligenceService } from 'src/engine/core-modules/quick-actions/intelligence.service';
+import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
 import { capitalize } from 'src/utils/capitalize';
+import { getCompanyDomainName } from 'src/utils/getCompanyDomainName';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
@@ -159,7 +161,7 @@ export class QuickActionsService {
     }
 
     const enrichedData = await this.intelligenceService.enrichCompany(
-      company.domainName,
+      getCompanyNameFromDomainName(getCompanyDomainName(company)),
     );
 
     await this.workspaceQueryRunnunerService.execute(

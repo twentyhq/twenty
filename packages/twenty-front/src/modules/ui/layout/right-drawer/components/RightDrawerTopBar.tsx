@@ -3,8 +3,9 @@ import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Chip, ChipAccent, ChipSize, useIcons } from 'twenty-ui';
 
-import { ActivityActionBar } from '@/activities/right-drawer/components/ActivityActionBar';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RightDrawerTopBarCloseButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarCloseButton';
 import { RightDrawerTopBarDropdownButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarDropdownButton';
@@ -65,6 +66,8 @@ export const RightDrawerTopBar = () => {
     viewableRecordNameSingularState,
   );
 
+  const viewableRecordId = useRecoilValue(viewableRecordIdState);
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: viewableRecordNameSingular ?? 'company',
   });
@@ -90,22 +93,15 @@ export const RightDrawerTopBar = () => {
       onClick={handleOnclick}
       isRightDrawerMinimized={isRightDrawerMinimized}
     >
-      {!isRightDrawerMinimized &&
-        (rightDrawerPage === RightDrawerPages.EditActivity ||
-          rightDrawerPage === RightDrawerPages.CreateActivity) && (
-          <ActivityActionBar />
-        )}
-      {!isRightDrawerMinimized &&
-        rightDrawerPage !== RightDrawerPages.EditActivity &&
-        rightDrawerPage !== RightDrawerPages.CreateActivity && (
-          <Chip
-            label={label}
-            leftComponent={<Icon size={theme.icon.size.md} />}
-            size={ChipSize.Large}
-            accent={ChipAccent.TextSecondary}
-            clickable={false}
-          />
-        )}
+      {!isRightDrawerMinimized && (
+        <Chip
+          label={label}
+          leftComponent={<Icon size={theme.icon.size.md} />}
+          size={ChipSize.Large}
+          accent={ChipAccent.TextSecondary}
+          clickable={false}
+        />
+      )}
       {isRightDrawerMinimized && (
         <StyledMinimizeTopBarTitleContainer>
           <StyledMinimizeTopBarIcon>
@@ -119,8 +115,15 @@ export const RightDrawerTopBar = () => {
         {!isMobile && !isRightDrawerMinimized && (
           <RightDrawerTopBarMinimizeButton />
         )}
+
         {!isMobile && !isRightDrawerMinimized && (
-          <RightDrawerTopBarExpandButton />
+          <RightDrawerTopBarExpandButton
+            to={
+              getBasePathToShowPage({
+                objectNameSingular: viewableRecordNameSingular ?? '',
+              }) + viewableRecordId
+            }
+          />
         )}
         <RightDrawerTopBarCloseButton />
       </StyledTopBarWrapper>

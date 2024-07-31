@@ -1,33 +1,19 @@
-import {
-  IconLayoutSidebarRightCollapse,
-  IconLayoutSidebarRightExpand,
-} from 'twenty-ui';
-
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
+import { IconExternalLink } from 'twenty-ui';
 
-export const RightDrawerTopBarExpandButton = () => {
-  const { isRightDrawerExpanded, downsizeRightDrawer, expandRightDrawer } =
-    useRightDrawer();
-
-  const handleButtonClick = () => {
-    if (isRightDrawerExpanded === true) {
-      downsizeRightDrawer();
-      return;
-    }
-    expandRightDrawer();
-  };
+export const RightDrawerTopBarExpandButton = ({ to }: { to: string }) => {
+  const { closeRightDrawer } = useRightDrawer();
 
   return (
-    <LightIconButton
-      size="medium"
-      accent="tertiary"
-      Icon={
-        isRightDrawerExpanded
-          ? IconLayoutSidebarRightCollapse
-          : IconLayoutSidebarRightExpand
-      }
-      onClick={handleButtonClick}
-    />
+    <UndecoratedLink to={to}>
+      <LightIconButton
+        size="medium"
+        accent="tertiary"
+        Icon={IconExternalLink}
+        onClick={closeRightDrawer}
+      />
+    </UndecoratedLink>
   );
 };

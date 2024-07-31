@@ -5,7 +5,7 @@ export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
     fieldMetadataId: '20202020-5e4e-4007-a630-8a2617914889',
     label: 'Domain Name',
     iconName: 'IconLink',
-    type: 'TEXT',
+    type: 'LINKS',
   },
   {
     fieldMetadataId: '20202020-7fbd-41ad-b64d-25a15ff62f04',

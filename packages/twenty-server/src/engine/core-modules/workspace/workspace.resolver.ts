@@ -29,7 +29,7 @@ import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/worksp
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-import { Workspace } from './workspace.entity';
+import { Workspace, WorkspaceActivationStatus } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
 
@@ -100,15 +100,19 @@ export class WorkspaceResolver {
     return this.workspaceService.deleteWorkspace(id);
   }
 
-  @ResolveField(() => String)
+  @ResolveField(() => WorkspaceActivationStatus)
   async activationStatus(
     @Parent() workspace: Workspace,
-  ): Promise<'active' | 'inactive'> {
-    if (await this.workspaceService.isWorkspaceActivated(workspace.id)) {
-      return 'active';
+  ): Promise<WorkspaceActivationStatus> {
+    if (workspace.activationStatus) {
+      return workspace.activationStatus;
     }
 
-    return 'inactive';
+    if (await this.workspaceService.isWorkspaceActivated(workspace.id)) {
+      return WorkspaceActivationStatus.ACTIVE;
+    }
+
+    return WorkspaceActivationStatus.INACTIVE;
   }
 
   @ResolveField(() => String, { nullable: true })

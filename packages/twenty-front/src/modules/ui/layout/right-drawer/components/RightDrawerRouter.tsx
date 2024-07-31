@@ -4,8 +4,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { RightDrawerCalendarEvent } from '@/activities/calendar/right-drawer/components/RightDrawerCalendarEvent';
 import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/RightDrawerAIChat';
 import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
-import { RightDrawerCreateActivity } from '@/activities/right-drawer/components/create/RightDrawerCreateActivity';
-import { RightDrawerEditActivity } from '@/activities/right-drawer/components/edit/RightDrawerEditActivity';
 import { RightDrawerRecord } from '@/object-record/record-right-drawer/components/RightDrawerRecord';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 
@@ -33,8 +31,6 @@ const StyledRightDrawerBody = styled.div`
 `;
 
 const RIGHT_DRAWER_PAGES_CONFIG: ComponentByRightDrawerPage = {
-  [RightDrawerPages.CreateActivity]: <RightDrawerCreateActivity />,
-  [RightDrawerPages.EditActivity]: <RightDrawerEditActivity />,
   [RightDrawerPages.ViewEmailThread]: <RightDrawerEmailThread />,
   [RightDrawerPages.ViewCalendarEvent]: <RightDrawerCalendarEvent />,
   [RightDrawerPages.ViewRecord]: <RightDrawerRecord />,

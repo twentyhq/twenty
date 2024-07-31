@@ -1,13 +1,13 @@
 import { Logger } from '@nestjs/common';
 
-import { Command, CommandRunner, Option } from 'nest-commander';
 import chalk from 'chalk';
+import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { WorkspaceHealthMode } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
 import { WorkspaceHealthFixKind } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-fix-kind.interface';
+import { WorkspaceHealthMode } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
 
-import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
 import { CommandLogger } from 'src/command/command-logger';
+import { WorkspaceHealthService } from 'src/engine/workspace-manager/workspace-health/workspace-health.service';
 
 interface WorkspaceHealthCommandOptions {
   workspaceId: string;
@@ -48,13 +48,20 @@ export class WorkspaceHealthCommand extends CommandRunner {
         chalk.red(`Workspace is not healthy, found ${issues.length} issues`),
       );
 
-      if (options.dryRun) {
-        await this.commandLogger.writeLog(
-          `workspace-health-issues-${options.workspaceId}`,
-          issues,
+      for (let issueIndex = 0; issueIndex < issues.length; issueIndex++) {
+        this.logger.log(
+          chalk.red(`Issue #${issueIndex + 1} : ${issues[issueIndex].message}`),
         );
-        this.logger.log(chalk.yellow('Issues written to log'));
       }
+
+      const logFilePath = await this.commandLogger.writeLog(
+        `workspace-health-issues-${options.workspaceId}`,
+        issues,
+      );
+
+      this.logger.log(
+        chalk.yellow(`Issues written to log at : ${logFilePath}`),
+      );
     }
 
     if (options.fix) {

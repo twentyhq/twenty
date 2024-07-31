@@ -1,5 +1,8 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
+import {
+  FieldAddressValue,
+  FieldLinksValue,
+} from '@/object-record/record-field/types/FieldMetadata';
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -27,6 +30,7 @@ export const buildRecordFromImportedStructuredRow = (
     },
     CURRENCY: { amountMicrosLabel, currencyCodeLabel },
     FULL_NAME: { firstNameLabel, lastNameLabel },
+    LINKS: { primaryLinkLabelLabel, primaryLinkUrlLabel },
   } = COMPOSITE_FIELD_IMPORT_LABELS;
 
   for (const field of fields) {
@@ -103,6 +107,25 @@ export const buildRecordFromImportedStructuredRow = (
               importedStructuredRow[`${addressLngLabel} (${field.name})`],
             ),
           } satisfies FieldAddressValue;
+        }
+        break;
+      }
+      case FieldMetadataType.Links: {
+        if (
+          isDefined(
+            importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`] ||
+              importedStructuredRow[`${primaryLinkLabelLabel} (${field.name})`],
+          )
+        ) {
+          recordToBuild[field.name] = {
+            primaryLinkLabel: castToString(
+              importedStructuredRow[`${primaryLinkLabelLabel} (${field.name})`],
+            ),
+            primaryLinkUrl: castToString(
+              importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
+            ),
+            secondaryLinks: null,
+          } satisfies FieldLinksValue;
         }
         break;
       }

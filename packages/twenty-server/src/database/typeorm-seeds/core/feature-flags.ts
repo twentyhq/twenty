@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 const tableName = 'featureFlag';
 
@@ -16,47 +16,47 @@ export const seedFeatureFlags = async (
     .orIgnore()
     .values([
       {
-        key: FeatureFlagKeys.IsBlocklistEnabled,
+        key: FeatureFlagKey.IsBlocklistEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsAirtableIntegrationEnabled,
+        key: FeatureFlagKey.IsAirtableIntegrationEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsPostgreSQLIntegrationEnabled,
+        key: FeatureFlagKey.IsPostgreSQLIntegrationEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsEventObjectEnabled,
+        key: FeatureFlagKey.IsEventObjectEnabled,
         workspaceId: workspaceId,
         value: false,
       },
       {
-        key: FeatureFlagKeys.IsStripeIntegrationEnabled,
+        key: FeatureFlagKey.IsStripeIntegrationEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsMessagingAliasFetchingEnabled,
+        key: FeatureFlagKey.IsMessagingAliasFetchingEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsGoogleCalendarSyncV2Enabled,
+        key: FeatureFlagKey.IsGoogleCalendarSyncV2Enabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsFunctionSettingsEnabled,
+        key: FeatureFlagKey.IsFunctionSettingsEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsWorkflowEnabled,
+        key: FeatureFlagKey.IsWorkflowEnabled,
         workspaceId: workspaceId,
         value: false,
       },

@@ -6,6 +6,7 @@ import { useIcons } from 'twenty-ui';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { buildFindOneRecordForShowPageOperationSignature } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -30,6 +31,7 @@ export const useRecordShowPage = (
   }
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItems } = useObjectMetadataItems();
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({ objectNameSingular });
   const { favorites, createFavorite, deleteFavorite } = useFavorites();
@@ -39,7 +41,10 @@ export const useRecordShowPage = (
   const { getIcon } = useIcons();
   const headerIcon = getIcon(objectMetadataItem?.icon);
   const FIND_ONE_RECORD_FOR_SHOW_PAGE_OPERATION_SIGNATURE =
-    buildFindOneRecordForShowPageOperationSignature({ objectMetadataItem });
+    buildFindOneRecordForShowPageOperationSignature({
+      objectMetadataItem,
+      objectMetadataItems,
+    });
 
   const { record, loading } = useFindOneRecord({
     objectRecordId,

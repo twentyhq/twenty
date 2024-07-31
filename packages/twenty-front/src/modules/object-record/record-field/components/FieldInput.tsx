@@ -20,6 +20,8 @@ import { isFieldRelationToOneObject } from '@/object-record/record-field/types/g
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
+import { RichTextFieldInput } from '@/object-record/record-field/meta-types/input/components/RichTextFieldInput';
+import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
 import { CurrencyFieldInput } from '../meta-types/input/components/CurrencyFieldInput';
@@ -175,6 +177,8 @@ export const FieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
+      ) : isFieldRichText(fieldDefinition) ? (
+        <RichTextFieldInput />
       ) : (
         <></>
       )}

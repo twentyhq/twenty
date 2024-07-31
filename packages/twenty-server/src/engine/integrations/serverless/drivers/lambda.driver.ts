@@ -8,17 +8,22 @@ import {
   GetFunctionCommand,
   UpdateFunctionCodeCommand,
   DeleteFunctionCommand,
+  ResourceNotFoundException,
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
 
-import { ServerlessDriver } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
+import {
+  ServerlessDriver,
+  ServerlessExecuteResult,
+} from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { createZipFile } from 'src/engine/integrations/serverless/drivers/utils/create-zip-file';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
 import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
+import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
@@ -46,15 +51,36 @@ export class LambdaDriver
     this.buildDirectoryManagerService = options.buildDirectoryManagerService;
   }
 
-  async delete(serverlessFunction: ServerlessFunctionEntity) {
+  private async checkFunctionExists(
+    serverlessFunctionId: string,
+  ): Promise<boolean> {
     try {
+      const getFunctionCommand = new GetFunctionCommand({
+        FunctionName: serverlessFunctionId,
+      });
+
+      await this.lambdaClient.send(getFunctionCommand);
+
+      return true;
+    } catch (error) {
+      if (error instanceof ResourceNotFoundException) {
+        return false;
+      }
+      throw error;
+    }
+  }
+
+  async delete(serverlessFunction: ServerlessFunctionEntity) {
+    const functionExists = await this.checkFunctionExists(
+      serverlessFunction.id,
+    );
+
+    if (functionExists) {
       const deleteFunctionCommand = new DeleteFunctionCommand({
         FunctionName: serverlessFunction.id,
       });
 
       await this.lambdaClient.send(deleteFunctionCommand);
-    } catch {
-      return;
     }
   }
 
@@ -75,19 +101,11 @@ export class LambdaDriver
 
     await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    let existingFunction = true;
+    const functionExists = await this.checkFunctionExists(
+      serverlessFunction.id,
+    );
 
-    try {
-      const getFunctionCommand = new GetFunctionCommand({
-        FunctionName: serverlessFunction.id,
-      });
-
-      await this.lambdaClient.send(getFunctionCommand);
-    } catch {
-      existingFunction = false;
-    }
-
-    if (!existingFunction) {
+    if (!functionExists) {
       const params: CreateFunctionCommandInput = {
         Code: {
           ZipFile: await fs.promises.readFile(lambdaZipPath),
@@ -120,7 +138,8 @@ export class LambdaDriver
   async execute(
     functionToExecute: ServerlessFunctionEntity,
     payload: object | undefined = undefined,
-  ): Promise<object> {
+  ): Promise<ServerlessExecuteResult> {
+    const startTime = Date.now();
     const params = {
       FunctionName: functionToExecute.id,
       Payload: JSON.stringify(payload),
@@ -130,10 +149,25 @@ export class LambdaDriver
 
     const result = await this.lambdaClient.send(command);
 
-    if (!result.Payload) {
-      return {};
+    const parsedResult = result.Payload
+      ? JSON.parse(result.Payload.transformToString())
+      : {};
+
+    const duration = Date.now() - startTime;
+
+    if (result.FunctionError) {
+      return {
+        data: null,
+        duration,
+        status: ServerlessFunctionExecutionStatus.ERROR,
+        error: parsedResult,
+      };
     }
 
-    return JSON.parse(result.Payload.transformToString());
+    return {
+      data: parsedResult,
+      duration,
+      status: ServerlessFunctionExecutionStatus.SUCCESS,
+    };
   }
 }
