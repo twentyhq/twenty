@@ -33,16 +33,13 @@ export const MessageThreadSubscribersDropdownButton = ({
     ...messageThreadSubscribers,
   ];
 
+  // TODO: implement
   const handleAddSubscriberClick = () => {
     setIsAddingSubscriber(true);
   };
 
-  const handleSubscriberClick = () => {
-    closeDropdown();
-  };
-
-  const handleRemoveSubscriber = (subscriber: MessageThreadSubscriber) => {
-    console.log({ subscriber });
+  // TODO: implement
+  const handleRemoveSubscriber = (_subscriber: MessageThreadSubscriber) => {
     closeDropdown();
   };
 

@@ -20,7 +20,6 @@ export const MessageThreadSubscriberDropdownAddSubscriberMenuItem = ({
     createOneRecord({
       workspaceMember,
     });
-    console.log('Add button clicked');
   };
 
   return (
