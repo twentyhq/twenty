@@ -165,7 +165,12 @@ export const ShowPageRightContainer = ({
         );
       case 'richText':
         return (
-          <ShowPageActivityContainer targetableObject={targetableObject} />
+          (targetableObject.targetObjectNameSingular ===
+            CoreObjectNameSingular.Note ||
+            targetableObject.targetObjectNameSingular ===
+              CoreObjectNameSingular.Task) && (
+            <ShowPageActivityContainer targetableObject={targetableObject} />
+          )
         );
       case 'fields':
         return fieldsBox;
