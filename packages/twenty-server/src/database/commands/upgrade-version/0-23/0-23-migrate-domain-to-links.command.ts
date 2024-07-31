@@ -302,7 +302,7 @@ export class MigrateDomainNameFromTextToLinksCommand extends CommandRunner {
     dataSourceMetadata: DataSourceEntity;
   }) {
     await workspaceQueryRunner.query(
-      `UPDATE "${dataSourceMetadata.schema}"."company" SET "${targetColumnName}" = CASE WHEN "${sourceColumnName}" LIKE 'http%' THEN "${sourceColumnName}" ELSE 'https://' || "${sourceColumnName}" END;`,
+      `UPDATE "${dataSourceMetadata.schema}"."company" SET "${targetColumnName}" = CASE WHEN "${sourceColumnName}" IS NULL OR "${sourceColumnName}" = '' THEN "${sourceColumnName}" WHEN "${sourceColumnName}" LIKE 'http%' THEN "${sourceColumnName}" ELSE 'https://' || "${sourceColumnName}" END;`,
     );
   }
 }
