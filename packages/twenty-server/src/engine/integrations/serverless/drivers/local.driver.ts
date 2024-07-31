@@ -5,7 +5,11 @@ import { fork } from 'child_process';
 
 import { v4 } from 'uuid';
 
-import { ServerlessDriver } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
+import {
+  ServerlessDriver,
+  ServerlessExecuteError,
+  ServerlessExecuteResult,
+} from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
@@ -51,7 +55,8 @@ export class LocalDriver
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object | undefined = undefined,
-  ): Promise<object> {
+  ): Promise<ServerlessExecuteResult> {
+    const startTime = Date.now();
     const fileStream = await this.fileStorageService.read({
       folderPath: this.getFolderPath(serverlessFunction),
       filename: BUILD_FILE_NAME,
@@ -83,8 +88,14 @@ export class LocalDriver
     return await new Promise((resolve, reject) => {
       const child = fork(tmpFilePath, { silent: true });
 
-      child.on('message', (message: object) => {
-        resolve(message);
+      child.on('message', (message: object | ServerlessExecuteError) => {
+        const duration = Date.now() - startTime;
+
+        if ('errorType' in message) {
+          resolve({ data: null, duration, error: message, status: 500 });
+        } else {
+          resolve({ data: message, duration, status: 200 });
+        }
         child.kill();
         fs.unlink(tmpFilePath);
       });
@@ -93,8 +104,8 @@ export class LocalDriver
         const stackTrace = data
           .toString()
           .split('\n')
-          .filter((line) => line.trim() !== '');
-        const errorTrace = stackTrace.filter((line) =>
+          .filter((line: string) => line.trim() !== '');
+        const errorTrace = stackTrace.filter((line: string) =>
           line.includes('Error: '),
         )?.[0];
 
@@ -105,11 +116,17 @@ export class LocalDriver
           errorType = errorTrace.split(':')[0];
           errorMessage = errorTrace.split(': ')[1];
         }
+        const duration = Date.now() - startTime;
 
         resolve({
-          errorType,
-          errorMessage,
-          stackTrace: stackTrace,
+          data: null,
+          duration,
+          status: 500,
+          error: {
+            errorType,
+            errorMessage,
+            stackTrace: stackTrace,
+          },
         });
         child.kill();
         fs.unlink(tmpFilePath);

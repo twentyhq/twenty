@@ -13,7 +13,10 @@ import {
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
 
-import { ServerlessDriver } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
+import {
+  ServerlessDriver,
+  ServerlessExecuteResult,
+} from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { createZipFile } from 'src/engine/integrations/serverless/drivers/utils/create-zip-file';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -134,7 +137,8 @@ export class LambdaDriver
   async execute(
     functionToExecute: ServerlessFunctionEntity,
     payload: object | undefined = undefined,
-  ): Promise<object> {
+  ): Promise<ServerlessExecuteResult> {
+    const startTime = Date.now();
     const params = {
       FunctionName: functionToExecute.id,
       Payload: JSON.stringify(payload),
@@ -144,10 +148,25 @@ export class LambdaDriver
 
     const result = await this.lambdaClient.send(command);
 
-    if (!result.Payload) {
-      return {};
+    const parsedResult = result.Payload
+      ? JSON.parse(result.Payload.transformToString())
+      : {};
+
+    const duration = Date.now() - startTime;
+
+    if (result.FunctionError) {
+      return {
+        data: null,
+        duration,
+        status: 500,
+        error: parsedResult,
+      };
     }
 
-    return JSON.parse(result.Payload.transformToString());
+    return {
+      data: parsedResult,
+      duration,
+      status: 200,
+    };
   }
 }

@@ -78,13 +78,24 @@ export const SettingsServerlessFunctionDetail = () => {
         serverlessFunctionId,
         JSON.parse(settingsServerlessFunctionInput),
       );
-      setSettingsServerlessFunctionOutput(
-        JSON.stringify(
-          result?.data?.executeOneServerlessFunction?.result,
-          null,
-          4,
-        ),
-      );
+      setSettingsServerlessFunctionOutput({
+        data: result?.data?.executeOneServerlessFunction?.data
+          ? JSON.stringify(
+              result?.data?.executeOneServerlessFunction?.data,
+              null,
+              4,
+            )
+          : undefined,
+        duration: result?.data?.executeOneServerlessFunction?.duration,
+        status: result?.data?.executeOneServerlessFunction?.status,
+        error: result?.data?.executeOneServerlessFunction?.error
+          ? JSON.stringify(
+              result?.data?.executeOneServerlessFunction?.error,
+              null,
+              4,
+            )
+          : undefined,
+      });
     } catch (err) {
       enqueueSnackBar(
         (err as Error)?.message || 'An error occurred while executing function',
@@ -92,7 +103,6 @@ export const SettingsServerlessFunctionDetail = () => {
           variant: SnackBarVariant.Error,
         },
       );
-      setSettingsServerlessFunctionOutput(JSON.stringify(err, null, 4));
     }
     setActiveTabId('test');
   };

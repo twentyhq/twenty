@@ -136,13 +136,11 @@ export class ServerlessFunctionResolver {
       await this.checkFeatureFlag(workspaceId);
       const { id, payload } = executeServerlessFunctionInput;
 
-      return {
-        result: await this.serverlessFunctionService.executeOne(
-          id,
-          workspaceId,
-          payload,
-        ),
-      };
+      return await this.serverlessFunctionService.executeOne(
+        id,
+        workspaceId,
+        payload,
+      );
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
     }
