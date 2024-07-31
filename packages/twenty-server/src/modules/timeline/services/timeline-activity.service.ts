@@ -32,7 +32,7 @@ export class TimelineActivityService {
     if (!events || events.length === 0) return;
 
     for (const event of events) {
-      return await this.timelineActivityRepository.upsertOne(
+      await this.timelineActivityRepository.upsertOne(
         event.name,
         event.properties,
         event.objectName ?? event.objectMetadata.nameSingular,

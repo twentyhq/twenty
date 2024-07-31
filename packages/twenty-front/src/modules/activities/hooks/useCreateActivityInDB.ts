@@ -36,8 +36,6 @@ export const useCreateActivityInDB = ({
     shouldMatchRootQueryFilter: true,
   });
 
-  console.log(activityObjectNameSingular);
-
   const { createManyRecords: createManyActivityTargets } = useCreateManyRecords<
     TaskTarget | NoteTarget
   >({
