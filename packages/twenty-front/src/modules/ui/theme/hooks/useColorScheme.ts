@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -15,9 +15,17 @@ export const useColorScheme = () => {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
-  const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
+  const [colorScheme, setColorScheme] = useState<ColorScheme | 'System'>(
+    'System',
+  );
+  useEffect(() => {
+    if (currentWorkspaceMember?.colorScheme !== undefined) {
+      setColorScheme(currentWorkspaceMember.colorScheme);
+      localStorage.setItem('app-theme', currentWorkspaceMember.colorScheme);
+    }
+  }, [currentWorkspaceMember]);
 
-  const setColorScheme = useCallback(
+  const updateColorScheme = useCallback(
     async (value: ColorScheme) => {
       if (!currentWorkspaceMember) {
         return;
@@ -47,6 +55,6 @@ export const useColorScheme = () => {
 
   return {
     colorScheme,
-    setColorScheme,
+    setColorScheme: updateColorScheme,
   };
 };
