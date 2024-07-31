@@ -1,6 +1,6 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -15,7 +15,7 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceGate({
-  featureFlag: FeatureFlagKeys.IsMessageThreadSubscriberEnabled,
+  featureFlag: FeatureFlagKey.IsMessageThreadSubscriberEnabled,
 })
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageThreadSubscriber,
@@ -48,7 +48,7 @@ export class MessageThreadSubscriberWorkspaceEntity extends BaseWorkspaceEntity 
     label: 'Workspace Member',
     description: 'Workspace Member that is part of the message thread',
     icon: 'IconCircleUser',
-    inverseSideFieldKey: 'messageThreadMember',
+    inverseSideFieldKey: 'messageThreadSubscribers',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
   })
   workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;

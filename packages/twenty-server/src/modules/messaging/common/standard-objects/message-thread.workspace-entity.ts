@@ -1,6 +1,6 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -51,7 +51,7 @@ export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceGate({
-    featureFlag: FeatureFlagKeys.IsMessageThreadSubscriberEnabled,
+    featureFlag: FeatureFlagKey.IsMessageThreadSubscriberEnabled,
   })
   subscribers: Relation<MessageThreadSubscriberWorkspaceEntity[]>;
 
