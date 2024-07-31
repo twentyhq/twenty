@@ -36,31 +36,36 @@ export class WorkflowRunnerService {
     let result: object | undefined = undefined;
 
     switch (action.type) {
-      case WorkflowActionType.CODE:
-        try {
-          result = await this.serverlessFunctionService.executeOne(
-            action.settings.serverlessFunctionId,
+      case WorkflowActionType.CODE: {
+        const executionResult = await this.serverlessFunctionService.executeOne(
+          action.settings.serverlessFunctionId,
+          workspaceId,
+          payload,
+        );
+
+        if (executionResult.data) {
+          result = executionResult.data;
+        }
+        if (!executionResult.error) {
+          throw new Error('Execution result error, no data or error');
+        }
+        if (action.settings.errorHandlingOptions.continueOnFailure.value) {
+          result = payload;
+          break;
+        } else if (
+          action.settings.errorHandlingOptions.retryOnFailure.value &&
+          attemptCount < MAX_RETRIES_ON_FAILURE
+        ) {
+          return await this.run({
+            action,
             workspaceId,
             payload,
-          );
-          break;
-        } catch (err) {
-          if (action.settings.errorHandlingOptions.continueOnFailure) {
-            break;
-          } else if (
-            action.settings.errorHandlingOptions.retryOnFailure &&
-            attemptCount < MAX_RETRIES_ON_FAILURE
-          ) {
-            return await this.run({
-              action,
-              workspaceId,
-              payload,
-              attemptCount: attemptCount + 1,
-            });
-          } else {
-            return result;
-          }
+            attemptCount: attemptCount + 1,
+          });
+        } else {
+          return executionResult.error;
         }
+      }
       default:
         throw new WorkflowTriggerException(
           `Unknown action type '${action.type}'`,

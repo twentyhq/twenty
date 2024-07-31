@@ -15,7 +15,7 @@ export class ServerlessFunctionExecutionResultDto {
   @Field({ description: 'Execution duration in milliseconds' })
   duration: number;
 
-  @Field({ description: 'Execution status cpde' })
+  @Field({ description: 'Execution status code' })
   status: 200 | 500;
 
   @IsObject()
