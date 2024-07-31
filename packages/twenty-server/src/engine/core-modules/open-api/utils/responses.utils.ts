@@ -309,33 +309,26 @@ export const getFindDuplicatesResponse200 = (
         schema: {
           type: 'object',
           properties: {
-            companyDuplicates: {
+            data: {
               type: 'array',
               items: {
                 type: 'object',
                 properties: {
-                  edges: {
-                    type: 'array',
-                    items: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          node: {
-                            $ref: `#/components/schemas/${capitalize(
-                              item.nameSingular,
-                            )}`,
-                          },
-                        },
-                      },
-                    },
-                  },
+                  totalCount: { type: 'number' },
                   pageInfo: {
                     type: 'object',
                     properties: {
                       hasNextPage: { type: 'boolean' },
                       startCursor: { type: 'string' },
                       endCursor: { type: 'string' },
+                    },
+                  },
+                  companyDuplicates: {
+                    type: 'array',
+                    items: {
+                      $ref: `#/components/schemas/${capitalize(
+                        item.nameSingular,
+                      )}`,
                     },
                   },
                 },

@@ -11,6 +11,12 @@ export class FindDuplicatesQueryFactory {
     return `
       query FindDuplicate${capitalize(objectNameSingular)}($ids: [ID!]!) {
         ${objectNameSingular}Duplicates(ids: $ids) {
+          totalCount
+          pageInfo {
+            hasNextPage
+            startCursor
+            endCursor
+          }
           edges{
             node {
                 ${objectMetadata.objectMetadataItem.fields
@@ -24,14 +30,7 @@ export class FindDuplicatesQueryFactory {
                   .join('\n')}
             }
           }
-          pageInfo {
-          hasNextPage
-          startCursor
-          endCursor
-          __typename
-          }
-          __typename
-          }
+        }
       }
     `;
   }
