@@ -14,9 +14,6 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-@WorkspaceGate({
-  featureFlag: FeatureFlagKey.IsMessageThreadSubscriberEnabled,
-})
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageThreadSubscriber,
   namePlural: 'messageThreadSubscriber',
@@ -27,6 +24,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
+@WorkspaceGate({
+  featureFlag: FeatureFlagKey.IsMessageThreadSubscriberEnabled,
+})
 export class MessageThreadSubscriberWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_THREAD_SUBSCRIBER_STANDARD_FIELD_IDS.messageThread,

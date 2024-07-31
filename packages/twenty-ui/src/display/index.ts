@@ -28,4 +28,3 @@ export * from './tooltip/OverflowingTextWithTooltip';
 export * from './typography/components/H1Title';
 export * from './typography/components/H2Title';
 export * from './typography/components/H3Title';
-
