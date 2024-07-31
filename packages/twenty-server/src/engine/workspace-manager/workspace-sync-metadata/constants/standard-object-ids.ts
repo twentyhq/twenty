@@ -37,5 +37,5 @@ export const STANDARD_OBJECT_IDS = {
   workflow: '20202020-62be-406c-b9ca-8caa50d51392',
   workflowEventListener: '20202020-92aa-462f-965c-a785b00e9989',
   workflowVersion: '20202020-d65d-4ab9-9344-d77bfb376a3d',
-  workspaceMember: '20202020-2632-4659-9540-567498166593',
+  workspaceMember: '20202020-3319-4234-a34c-82d5c0e881a6',
 };
