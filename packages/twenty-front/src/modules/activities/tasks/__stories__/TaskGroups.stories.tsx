@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
@@ -25,9 +24,6 @@ const meta: Meta<typeof TaskGroups> = {
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],
-  parameters: {
-    customRecoilScopeContext: TasksRecoilScopeContext,
-  },
 };
 
 export default meta;
