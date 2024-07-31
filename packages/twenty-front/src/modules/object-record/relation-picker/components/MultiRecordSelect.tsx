@@ -28,11 +28,11 @@ export const StyledSelectableItem = styled(SelectableItem)`
 export const MultiRecordSelect = ({
   onChange,
   onSubmit,
-  onAddNew,
+  onCreate,
 }: {
   onChange?: (changedRecordForSelectId: string) => void;
   onSubmit?: () => void;
-  onAddNew?: () => void;
+  onCreate?: ((searchInput?: string) => void) | (() => void);
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -109,13 +109,13 @@ export const MultiRecordSelect = ({
               )}
             </>
           )}
-          {isDefined(onAddNew) && (
+          {isDefined(onCreate) && (
             <>
               {objectRecordsIdsMultiSelect.length > 0 && (
                 <DropdownMenuSeparator />
               )}
               <CreateNewButton
-                onClick={onAddNew}
+                onClick={() => onCreate?.(relationPickerSearchFilter)}
                 LeftIcon={IconPlus}
                 text="Add New"
               />

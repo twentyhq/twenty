@@ -1,10 +1,13 @@
 import { useContext } from 'react';
 
 import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
+import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
@@ -26,14 +29,25 @@ export const RelationFromManyFieldInput = ({
     onSubmit?.(() => {});
   };
 
-  console.log(fieldDefinition);
+  const relationFieldDefinition =
+    fieldDefinition as FieldDefinition<FieldRelationMetadata>;
+
+  const { objectMetadataItem: relationObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular:
+        relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
+    });
+
+  const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
+    ({ id }) => id === relationFieldDefinition.metadata.relationFieldMetadataId,
+  );
 
   const { createNewRecordAndOpenRightDrawer } =
     useAddNewRecordAndOpenRightDrawer({
       relationObjectMetadataNameSingular:
-        fieldDefinition.metadata.relationObjectMetadataNameSingular,
-      // relationObjectMetadataItem,
-      // relationFieldMetadataItem,
+        relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
+      relationObjectMetadataItem,
+      relationFieldMetadataItem,
       entityId,
     });
 
@@ -42,7 +56,11 @@ export const RelationFromManyFieldInput = ({
       <RelationPickerScope relationPickerScopeId={relationPickerScopeId}>
         <ObjectMetadataItemsRelationPickerEffect />
         <RelationFromManyFieldInputMultiRecordsEffect />
-        <MultiRecordSelect onSubmit={handleSubmit} onChange={updateRelation} />
+        <MultiRecordSelect
+          onSubmit={handleSubmit}
+          onChange={updateRelation}
+          onCreate={createNewRecordAndOpenRightDrawer}
+        />
       </RelationPickerScope>
     </>
   );
