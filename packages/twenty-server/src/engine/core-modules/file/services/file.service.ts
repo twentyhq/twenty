@@ -16,16 +16,14 @@ export class FileService {
   async getFileStream(
     folderPath: string,
     filename: string,
-    workspaceId: string | undefined,
+    workspaceId: string,
   ): Promise<Stream> {
-    const workspaceFolderPath = workspaceId
-      ? `workspace-${workspaceId}/${folderPath}`
-      : folderPath;
+    const workspaceFolderPath = `workspace-${workspaceId}/${folderPath}`;
 
     try {
       return await this.fileStorageService.read({
         folderPath: workspaceFolderPath,
-        filename: filename,
+        filename,
       });
     } catch (error) {
       if (
@@ -33,8 +31,8 @@ export class FileService {
         error.code === FileStorageExceptionCode.FILE_NOT_FOUND
       ) {
         return await this.fileStorageService.read({
-          folderPath: folderPath,
-          filename: filename,
+          folderPath,
+          filename,
         });
       }
       throw error;

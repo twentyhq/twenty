@@ -31,6 +31,10 @@ export class FileController {
 
     const workspaceId = (req as any)?.workspaceId;
 
+    if (!workspaceId) {
+      return res.status(401).send({ error: 'Unauthorized' });
+    }
+
     try {
       const fileStream = await this.fileService.getFileStream(
         folderPath,
@@ -44,10 +48,10 @@ export class FileController {
         error instanceof FileStorageException &&
         error.code === FileStorageExceptionCode.FILE_NOT_FOUND
       ) {
-        res.status(404).send({ error: 'File not found' });
-      } else {
-        res.status(500).send({ error: 'Internal server error' });
+        return res.status(404).send({ error: 'File not found' });
       }
+
+      return res.status(500).send({ error: 'Internal server error' });
     }
   }
 }
