@@ -45,6 +45,7 @@ export class WorkflowRunnerService {
 
         if (executionResult.data) {
           result = executionResult.data;
+          break;
         }
         if (!executionResult.error) {
           throw new Error('Execution result error, no data or error');
