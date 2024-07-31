@@ -317,7 +317,7 @@ export const RecordShowContainer = ({
           tasks
           notes
           emails
-          isRightDrawer={isInRightDrawer}
+          isInRightDrawer={isInRightDrawer}
           summaryCard={isMobile ? summaryCard : <></>}
           fieldsBox={fieldsBox}
           loading={isPrefetchLoading || loading || recordLoading}

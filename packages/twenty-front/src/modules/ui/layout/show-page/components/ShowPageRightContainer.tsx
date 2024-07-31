@@ -53,7 +53,7 @@ type ShowPageRightContainerProps = {
   emails?: boolean;
   fieldsBox?: JSX.Element;
   summaryCard?: JSX.Element;
-  isRightDrawer?: boolean;
+  isInRightDrawer?: boolean;
   loading: boolean;
 };
 
@@ -66,10 +66,10 @@ export const ShowPageRightContainer = ({
   loading,
   fieldsBox,
   summaryCard,
-  isRightDrawer = false,
+  isInRightDrawer = false,
 }: ShowPageRightContainerProps) => {
   const { activeTabIdState } = useTabList(
-    TAB_LIST_COMPONENT_ID + targetableObject.id,
+    `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`,
   );
   const activeTabId = useRecoilValue(activeTabIdState);
 
@@ -84,7 +84,7 @@ export const ShowPageRightContainer = ({
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
-  const isMobile = useIsMobile() || isRightDrawer;
+  const isMobile = useIsMobile() || isInRightDrawer;
 
   const tabs = [
     {
@@ -108,7 +108,7 @@ export const ShowPageRightContainer = ({
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline || isRightDrawer,
+      hide: !timeline || isInRightDrawer,
     },
     {
       id: 'tasks',
@@ -157,9 +157,6 @@ export const ShowPageRightContainer = ({
       case 'timeline':
         return (
           <>
-            {/*<TimelineActivitiesQueryEffect
-              targetableObject={targetableObject}
-            />*/}
             <TimelineActivities targetableObject={targetableObject} />
           </>
         );
@@ -190,7 +187,7 @@ export const ShowPageRightContainer = ({
       <StyledTabListContainer>
         <TabList
           loading={loading}
-          tabListId={TAB_LIST_COMPONENT_ID + targetableObject.id}
+          tabListId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
           tabs={tabs}
         />
       </StyledTabListContainer>
