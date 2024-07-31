@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
@@ -8,6 +8,8 @@ import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/worksp
 
 @Injectable()
 export class WorkspaceCacheStorageService {
+  private readonly logger = new Logger(WorkspaceCacheStorageService.name);
+
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.WorkspaceSchema)
     private readonly workspaceSchemaCache: CacheStorageService,
@@ -24,7 +26,11 @@ export class WorkspaceCacheStorageService {
       await this.workspaceCacheVersionService.getVersion(workspaceId);
 
     if (!latestVersion || currentVersion !== latestVersion) {
-      // Invalidate cache if version mismatch is detected
+      // Invalidate cache if version mismatch is detected"
+      this.logger.log(
+        `Cache version mismatch detected for workspace ${workspaceId}. Current version: ${currentVersion}. Latest version: ${latestVersion}. Invalidating cache...`,
+      );
+
       await this.invalidateCache(workspaceId);
 
       // If the latest version is not found, increment the version

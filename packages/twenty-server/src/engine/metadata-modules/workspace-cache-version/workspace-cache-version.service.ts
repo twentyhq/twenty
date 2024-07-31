@@ -35,4 +35,8 @@ export class WorkspaceCacheVersionService {
 
     return workspaceCacheVersion?.version ?? null;
   }
+
+  async deleteVersion(workspaceId: string): Promise<void> {
+    await this.workspaceCacheVersionRepository.delete({ workspaceId });
+  }
 }

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   H1Title,
@@ -14,7 +14,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SupportChat } from '@/support/components/SupportChat';
 import { AppPath } from '@/types/AppPath';
 import { Info } from '@/ui/display/info/components/Info';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -35,10 +34,6 @@ import { isDefined } from '~/utils/isDefined';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
-`;
-
-const StyledInvisibleChat = styled.div`
-  display: none;
 `;
 
 type SwitchInfo = {
@@ -217,9 +212,6 @@ export const SettingsBilling = () => {
           </>
         )}
       </SettingsPageContainer>
-      <StyledInvisibleChat>
-        <SupportChat />
-      </StyledInvisibleChat>
       <ConfirmationModal
         isOpen={isSwitchingIntervalModalOpen}
         setIsOpen={setIsSwitchingIntervalModalOpen}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -6,6 +6,12 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { workspacesState } from '@/auth/states/workspaces';
+import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
+import { detectDateFormat } from '@/localization/utils/detectDateFormat';
+import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
+import { detectTimeZone } from '@/localization/utils/detectTimeZone';
+import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
+import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -21,6 +27,8 @@ export const UserProviderEffect = () => {
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setWorkspaces = useSetRecoilState(workspacesState);
+
+  const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
 
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
@@ -56,6 +64,7 @@ export const UserProviderEffect = () => {
       return {
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
+        locale: workspaceMember.locale ?? 'en',
       };
     };
 
@@ -63,6 +72,20 @@ export const UserProviderEffect = () => {
       setCurrentWorkspaceMember(
         computeWorkspaceMemberColorScheme(workspaceMember),
       );
+
+      // TODO: factorize
+      setDateTimeFormat({
+        timeZone:
+          workspaceMember.timeZone && workspaceMember.timeZone !== 'system'
+            ? workspaceMember.timeZone
+            : detectTimeZone(),
+        dateFormat: isDefined(workspaceMember.dateFormat)
+          ? getDateFormatFromWorkspaceDateFormat(workspaceMember.dateFormat)
+          : detectDateFormat(),
+        timeFormat: isDefined(workspaceMember.timeFormat)
+          ? getTimeFormatFromWorkspaceTimeFormat(workspaceMember.timeFormat)
+          : detectTimeFormat(),
+      });
     }
 
     if (isDefined(workspaceMembers)) {
@@ -87,6 +110,7 @@ export const UserProviderEffect = () => {
     setWorkspaces,
     queryData?.currentUser,
     setIsCurrentUserLoaded,
+    setDateTimeFormat,
   ]);
 
   return <></>;

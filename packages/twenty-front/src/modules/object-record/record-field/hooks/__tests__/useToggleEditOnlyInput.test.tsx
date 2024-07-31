@@ -36,7 +36,11 @@ const mocks: MockedResponse[] = [
               primaryLinkLabel
               secondaryLinks
             }
-            domainName
+            domainName {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
             annualRecurringRevenue {
               amountMicros
               currencyCode

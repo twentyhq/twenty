@@ -24,12 +24,28 @@ export class WorkspaceMigrationService {
   public async getPendingMigrations(
     workspaceId: string,
   ): Promise<WorkspaceMigrationEntity[]> {
-    return await this.workspaceMigrationRepository.find({
+    const pendingMigrations = await this.workspaceMigrationRepository.find({
       order: { createdAt: 'ASC', name: 'ASC' },
       where: {
         appliedAt: IsNull(),
         workspaceId,
       },
+    });
+
+    const typeOrder = { delete: 1, update: 2, create: 3 };
+
+    const getType = (name: string) =>
+      name.split('-')[1] as keyof typeof typeOrder;
+
+    return pendingMigrations.sort((a, b) => {
+      if (a.createdAt.getTime() !== b.createdAt.getTime()) {
+        return a.createdAt.getTime() - b.createdAt.getTime();
+      }
+
+      return (
+        (typeOrder[getType(a.name)] || 4) - (typeOrder[getType(b.name)] || 4) ||
+        a.name.localeCompare(b.name)
+      );
     });
   }
 

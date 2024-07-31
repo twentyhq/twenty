@@ -25,6 +25,17 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
       subject: true,
       text: true,
       receivedAt: true,
-      messageParticipants: true,
+      messageParticipants: {
+        id: true,
+        role: true,
+        displayName: true,
+        participant: {
+          id: true,
+          email: true,
+          name: true,
+        },
+        person: true,
+        workspaceMember: true,
+      },
     },
   });

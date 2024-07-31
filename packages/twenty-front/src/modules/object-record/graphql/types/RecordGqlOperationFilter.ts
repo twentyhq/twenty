@@ -85,6 +85,11 @@ export type AddressFilter = {
   addressPostcode?: StringFilter;
 };
 
+export type LinksFilter = {
+  primaryLinkUrl?: StringFilter;
+  primaryLinkLabel?: StringFilter;
+};
+
 export type CreatedByFilter = {
   name?: StringFilter;
 };
@@ -99,6 +104,7 @@ export type LeafFilter =
   | FullNameFilter
   | BooleanFilter
   | AddressFilter
+  | LinksFilter
   | CreatedByFilter
   | undefined;
 

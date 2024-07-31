@@ -30,7 +30,7 @@ export const seedCompanies = async (
     .into(`${schemaName}.${tableName}`, [
       'id',
       'name',
-      'domainName',
+      'domainNamePrimaryLinkUrl',
       'addressAddressStreet1',
       'addressAddressStreet2',
       'addressAddressCity',
@@ -47,7 +47,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.LINKEDIN,
         name: 'Linkedin',
-        domainName: 'linkedin.com',
+        domainNamePrimaryLinkUrl: 'https://linkedin.com',
         addressAddressStreet1: 'Eutaw Street',
         addressAddressStreet2: null,
         addressAddressCity: 'Dublin',
@@ -62,7 +62,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.FACEBOOK,
         name: 'Facebook',
-        domainName: 'facebook.com',
+        domainNamePrimaryLinkUrl: 'https://facebook.com',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -77,7 +77,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.QONTO,
         name: 'Qonto',
-        domainName: 'qonto.com',
+        domainNamePrimaryLinkUrl: 'https://qonto.com',
         addressAddressStreet1: '18 rue de navarrin',
         addressAddressStreet2: null,
         addressAddressCity: 'Paris',
@@ -92,7 +92,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.MICROSOFT,
         name: 'Microsoft',
-        domainName: 'microsoft.com',
+        domainNamePrimaryLinkUrl: 'https://microsoft.com',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -107,7 +107,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.AIRBNB,
         name: 'Airbnb',
-        domainName: 'airbnb.com',
+        domainNamePrimaryLinkUrl: 'https://airbnb.com',
         addressAddressStreet1: '888 Brannan St',
         addressAddressStreet2: null,
         addressAddressCity: 'San Francisco',
@@ -122,7 +122,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.GOOGLE,
         name: 'Google',
-        domainName: 'google.com',
+        domainNamePrimaryLinkUrl: 'https://google.com',
         addressAddressStreet1: '760 Market St',
         addressAddressStreet2: 'Floor 10',
         addressAddressCity: 'San Francisco',
@@ -137,7 +137,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.NETFLIX,
         name: 'Netflix',
-        domainName: 'netflix.com',
+        domainNamePrimaryLinkUrl: 'https://netflix.com',
         addressAddressStreet1: '2300 Harrison St',
         addressAddressStreet2: null,
         addressAddressCity: 'San Francisco',
@@ -152,7 +152,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.LIBEO,
         name: 'Libeo',
-        domainName: 'libeo.io',
+        domainNamePrimaryLinkUrl: 'https://libeo.io',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -167,7 +167,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.CLAAP,
         name: 'Claap',
-        domainName: 'claap.io',
+        domainNamePrimaryLinkUrl: 'https://claap.io',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -182,7 +182,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.HASURA,
         name: 'Hasura',
-        domainName: 'hasura.io',
+        domainNamePrimaryLinkUrl: 'https://hasura.io',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -197,7 +197,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.WEWORK,
         name: 'Wework',
-        domainName: 'wework.com',
+        domainNamePrimaryLinkUrl: 'https://wework.com',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -212,7 +212,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.SAMSUNG,
         name: 'Samsung',
-        domainName: 'samsung.com',
+        domainNamePrimaryLinkUrl: 'https://samsung.com',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
@@ -227,7 +227,7 @@ export const seedCompanies = async (
       {
         id: DEV_SEED_COMPANY_IDS.ALGOLIA,
         name: 'Algolia',
-        domainName: 'algolia.com',
+        domainNamePrimaryLinkUrl: 'https://algolia.com',
         addressAddressStreet1: null,
         addressAddressStreet2: null,
         addressAddressCity: null,
