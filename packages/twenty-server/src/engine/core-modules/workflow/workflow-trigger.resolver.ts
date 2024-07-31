@@ -6,7 +6,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { WorkflowTriggerService } from 'src/modules/workflow/workflow-trigger/workflow-trigger.service';
-import { WorkflowTriggerResultDto } from 'src/engine/core-modules/workflow/dtos/workflow-trigger-result.dto';
+import { WorkflowTriggerResultDTO } from 'src/engine/core-modules/workflow/dtos/workflow-trigger-result.dto';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
@@ -30,7 +30,7 @@ export class WorkflowTriggerResolver {
     }
   }
 
-  @Mutation(() => WorkflowTriggerResultDto)
+  @Mutation(() => WorkflowTriggerResultDTO)
   async triggerWorkflow(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('workflowVersionId') workflowVersionId: string,
