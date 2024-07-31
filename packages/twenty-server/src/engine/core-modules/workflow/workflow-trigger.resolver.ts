@@ -1,14 +1,12 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
-import graphqlTypeJson from 'graphql-type-json';
-
 import { workflowTriggerGraphqlApiExceptionHandler } from 'src/engine/core-modules/workflow/utils/workflow-trigger-graphql-api-exception-handler.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { WorkflowTriggerService } from 'src/modules/workflow/workflow-trigger/workflow-trigger.service';
-import { WorkflowTriggerResultDto } from "src/engine/core-modules/workflow/dtos/workflow-trigger-result.dto";
+import { WorkflowTriggerResultDto } from 'src/engine/core-modules/workflow/dtos/workflow-trigger-result.dto';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
