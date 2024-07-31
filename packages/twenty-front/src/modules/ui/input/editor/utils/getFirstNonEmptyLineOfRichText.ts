@@ -12,7 +12,7 @@ export const getFirstNonEmptyLineOfRichText = (
       const contentArray = node.content as Array<{ text: string }>;
       if (contentArray.length > 0) {
         for (const content of contentArray) {
-          if (content.text.trim() !== '') {
+          if (content.text?.trim() !== '') {
             return content.text;
           }
         }
