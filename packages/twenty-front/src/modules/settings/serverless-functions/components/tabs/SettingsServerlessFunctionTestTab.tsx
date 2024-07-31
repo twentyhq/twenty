@@ -10,6 +10,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
 import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
 import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
+import { SettingsServerlessFunctionsOutputMetadataInfo } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsOutputMetadataInfo';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -31,27 +32,32 @@ export const SettingsServerlessFunctionTestTab = ({
   const [settingsServerlessFunctionInput, setSettingsServerlessFunctionInput] =
     useRecoilState(settingsServerlessFunctionInputState);
 
-  const InputHeaderButton = (
-    <Button
-      title="Run Function"
-      variant="primary"
-      accent="blue"
-      size="small"
-      Icon={IconPlayerPlay}
-      onClick={handleExecute}
+  const result =
+    settingsServerlessFunctionOutput.data ||
+    settingsServerlessFunctionOutput.error ||
+    '';
+
+  const InputHeader = (
+    <CoreEditorHeader
+      title={'Input'}
+      rightNodes={[
+        <Button
+          title="Run Function"
+          variant="primary"
+          accent="blue"
+          size="small"
+          Icon={IconPlayerPlay}
+          onClick={handleExecute}
+        />,
+      ]}
     />
   );
 
-  const InputHeader = (
-    <CoreEditorHeader title={'Input'} rightNodes={[InputHeaderButton]} />
-  );
-
-  const OutputHeaderButton = (
-    <LightCopyIconButton copyText={settingsServerlessFunctionOutput} />
-  );
-
   const OutputHeader = (
-    <CoreEditorHeader title={'Output'} rightNodes={[OutputHeaderButton]} />
+    <CoreEditorHeader
+      leftNodes={[<SettingsServerlessFunctionsOutputMetadataInfo />]}
+      rightNodes={[<LightCopyIconButton copyText={result} />]}
+    />
   );
 
   return (
@@ -69,7 +75,7 @@ export const SettingsServerlessFunctionTestTab = ({
           header={InputHeader}
         />
         <CodeEditor
-          value={settingsServerlessFunctionOutput}
+          value={result}
           height={settingsServerlessFunctionCodeEditorOutputParams.height}
           language={settingsServerlessFunctionCodeEditorOutputParams.language}
           options={{ readOnly: true, domReadOnly: true }}

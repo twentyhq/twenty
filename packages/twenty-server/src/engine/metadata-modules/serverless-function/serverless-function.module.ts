@@ -13,7 +13,7 @@ import { ServerlessModule } from 'src/engine/integrations/serverless/serverless.
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { ServerlessFunctionResolver } from 'src/engine/metadata-modules/serverless-function/serverless-function.resolver';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { ServerlessFunctionDto } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
+import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
@@ -32,7 +32,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
       resolvers: [
         {
           EntityClass: ServerlessFunctionEntity,
-          DTOClass: ServerlessFunctionDto,
+          DTOClass: ServerlessFunctionDTO,
           ServiceClass: ServerlessFunctionService,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {

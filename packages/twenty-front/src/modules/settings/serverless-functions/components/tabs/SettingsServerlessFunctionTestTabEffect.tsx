@@ -1,6 +1,9 @@
 import React from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
+import {
+  DEFAULT_OUTPUT_VALUE,
+  settingsServerlessFunctionOutputState,
+} from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
 import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
 
 export const SettingsServerlessFunctionTestTabEffect = () => {
@@ -10,14 +13,11 @@ export const SettingsServerlessFunctionTestTabEffect = () => {
   const setSettingsServerlessFunctionCodeEditorOutputParams = useSetRecoilState(
     settingsServerlessFunctionCodeEditorOutputParamsState,
   );
-  try {
-    JSON.parse(settingsServerlessFunctionOutput);
+  if (settingsServerlessFunctionOutput.data !== DEFAULT_OUTPUT_VALUE) {
     setSettingsServerlessFunctionCodeEditorOutputParams({
       language: 'json',
       height: 300,
     });
-  } catch {
-    return <></>;
   }
   return <></>;
 };

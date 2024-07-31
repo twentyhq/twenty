@@ -13,21 +13,8 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKFLOW_VERSION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { WorkflowWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow.workspace-entity';
-
-export enum WorkflowTriggerType {
-  DATABASE_EVENT = 'DATABASE_EVENT',
-}
-
-export type WorkflowDatabaseEventTrigger = {
-  type: WorkflowTriggerType.DATABASE_EVENT;
-  settings: {
-    eventName: string;
-    triggerName: string;
-  };
-};
-
-export type WorkflowTrigger = WorkflowDatabaseEventTrigger;
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workflowVersion,
@@ -60,7 +47,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconPlayerPlay',
   })
   @WorkspaceIsNullable()
-  trigger: JSON | null;
+  trigger: WorkflowTrigger | null;
 
   // Relations
   @WorkspaceRelation({
