@@ -14,8 +14,8 @@ import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modul
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { DeleteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/delete-serverless-function.input';
 import { ExecuteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/execute-serverless-function.input';
-import { ServerlessFunctionExecutionResultDto } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
-import { ServerlessFunctionDto } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
+import { ServerlessFunctionExecutionResultDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import { ServerlessFunctionDTO } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function.dto';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
   ServerlessFunctionException,
@@ -49,7 +49,7 @@ export class ServerlessFunctionResolver {
     }
   }
 
-  @Mutation(() => ServerlessFunctionDto)
+  @Mutation(() => ServerlessFunctionDTO)
   async deleteOneServerlessFunction(
     @Args('input') input: DeleteServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -66,7 +66,7 @@ export class ServerlessFunctionResolver {
     }
   }
 
-  @Mutation(() => ServerlessFunctionDto)
+  @Mutation(() => ServerlessFunctionDTO)
   async updateOneServerlessFunction(
     @Args('input')
     input: UpdateServerlessFunctionInput,
@@ -84,7 +84,7 @@ export class ServerlessFunctionResolver {
     }
   }
 
-  @Mutation(() => ServerlessFunctionDto)
+  @Mutation(() => ServerlessFunctionDTO)
   async createOneServerlessFunction(
     @Args('input')
     input: CreateServerlessFunctionInput,
@@ -106,7 +106,7 @@ export class ServerlessFunctionResolver {
     }
   }
 
-  @Mutation(() => ServerlessFunctionDto)
+  @Mutation(() => ServerlessFunctionDTO)
   async createOneServerlessFunctionFromFile(
     @Args({ name: 'file', type: () => GraphQLUpload })
     file: FileUpload,
@@ -127,7 +127,7 @@ export class ServerlessFunctionResolver {
     }
   }
 
-  @Mutation(() => ServerlessFunctionExecutionResultDto)
+  @Mutation(() => ServerlessFunctionExecutionResultDTO)
   async executeOneServerlessFunction(
     @Args() executeServerlessFunctionInput: ExecuteServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
@@ -136,13 +136,11 @@ export class ServerlessFunctionResolver {
       await this.checkFeatureFlag(workspaceId);
       const { id, payload } = executeServerlessFunctionInput;
 
-      return {
-        result: await this.serverlessFunctionService.executeOne(
-          id,
-          workspaceId,
-          payload,
-        ),
-      };
+      return await this.serverlessFunctionService.executeOne(
+        id,
+        workspaceId,
+        payload,
+      );
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
     }

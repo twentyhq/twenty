@@ -1,59 +1,51 @@
 import { Injectable } from '@nestjs/common';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow-event-listener.workspace-entity';
-import {
-  WorkflowDatabaseEventTrigger,
-  WorkflowTrigger,
-  WorkflowTriggerType,
-  WorkflowVersionWorkspaceEntity,
-} from 'src/modules/workflow/standard-objects/workflow-version.workspace-entity';
+import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
+import {
+  WorkflowDatabaseEventTrigger,
+  WorkflowTriggerType,
+} from 'src/modules/workflow/common/types/workflow-trigger.type';
+import { WorkflowCommonService } from 'src/modules/workflow/common/workflow-common.services';
+import { WorkflowRunnerService } from 'src/modules/workflow/workflow-runner/workflow-runner.service';
 
 @Injectable()
 export class WorkflowTriggerService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workflowCommonService: WorkflowCommonService,
+    private readonly workflowRunnerService: WorkflowRunnerService,
   ) {}
 
-  async enableWorkflowTrigger(workspaceId: string, workflowVersionId: string) {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-      );
+  async runWorkflow(workspaceId: string, workflowVersionId: string) {
+    const workflowVersion = await this.workflowCommonService.getWorkflowVersion(
+      workspaceId,
+      workflowVersionId,
+    );
 
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionId,
-      },
+    return await this.workflowRunnerService.run({
+      action: workflowVersion.trigger.nextAction,
+      workspaceId,
+      payload: workflowVersion.trigger.input,
     });
+  }
 
-    if (!workflowVersion) {
-      throw new WorkflowTriggerException(
-        'Workflow version not found',
-        WorkflowTriggerExceptionCode.INVALID_INPUT,
-      );
-    }
+  async enableWorkflowTrigger(workspaceId: string, workflowVersionId: string) {
+    const workflowVersion = await this.workflowCommonService.getWorkflowVersion(
+      workspaceId,
+      workflowVersionId,
+    );
 
-    const trigger = workflowVersion.trigger as unknown as WorkflowTrigger;
-
-    if (!trigger || !trigger?.type) {
-      throw new WorkflowTriggerException(
-        'Workflow version does not contains trigger',
-        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-      );
-    }
-
-    switch (trigger.type) {
+    switch (workflowVersion.trigger.type) {
       case WorkflowTriggerType.DATABASE_EVENT:
         await this.upsertWorkflowEventListener(
           workspaceId,
           workflowVersion.workflowId,
-          trigger,
+          workflowVersion.trigger,
         );
         break;
       default:

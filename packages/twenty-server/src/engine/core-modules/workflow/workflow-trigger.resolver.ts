@@ -6,6 +6,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { WorkflowTriggerService } from 'src/modules/workflow/workflow-trigger/workflow-trigger.service';
+import { WorkflowTriggerResultDTO } from 'src/engine/core-modules/workflow/dtos/workflow-trigger-result.dto';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
@@ -24,6 +25,23 @@ export class WorkflowTriggerResolver {
         workspaceId,
         workflowVersionId,
       );
+    } catch (error) {
+      workflowTriggerGraphqlApiExceptionHandler(error);
+    }
+  }
+
+  @Mutation(() => WorkflowTriggerResultDTO)
+  async triggerWorkflow(
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Args('workflowVersionId') workflowVersionId: string,
+  ) {
+    try {
+      return {
+        result: await this.workflowTriggerService.runWorkflow(
+          workspaceId,
+          workflowVersionId,
+        ),
+      };
     } catch (error) {
       workflowTriggerGraphqlApiExceptionHandler(error);
     }
