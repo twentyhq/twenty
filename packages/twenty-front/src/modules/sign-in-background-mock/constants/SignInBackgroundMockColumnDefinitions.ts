@@ -180,7 +180,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-a61d-4b78-b998-3fd88b4f73a1',
       label: 'Linkedin',
       size: 100,
-      type: FieldMetadataType.Link,
+      type: FieldMetadataType.Links,
       metadata: {
         fieldName: 'linkedinLink',
         placeHolder: 'Linkedin',
@@ -214,7 +214,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       fieldMetadataId: '20202020-46e3-479a-b8f4-77137c74daa6',
       label: 'X',
       size: 100,
-      type: FieldMetadataType.Link,
+      type: FieldMetadataType.Links,
       metadata: {
         fieldName: 'xLink',
         placeHolder: 'X',

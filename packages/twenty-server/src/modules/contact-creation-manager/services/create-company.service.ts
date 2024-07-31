@@ -7,8 +7,8 @@ import { v4 } from 'uuid';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CompanyRepository } from 'src/modules/company/repositories/company.repository';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { extractDomainFromLink } from 'src/modules/contact-creation-manager/utils/extract-domain-from-link.util';
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
-import { getCompanyDomainName } from 'src/utils/getCompanyDomainName';
 @Injectable()
 export class CreateCompanyService {
   private readonly httpService: AxiosInstance;
@@ -55,7 +55,7 @@ export class CreateCompanyService {
         },
       ) => ({
         ...acc,
-        [company.domainName]: company.id,
+        [extractDomainFromLink(company.domainName)]: company.id,
       }),
       {},
     );
@@ -64,7 +64,7 @@ export class CreateCompanyService {
       (domainName) =>
         !existingCompanies.some(
           (company: { domainName: string }) =>
-            getCompanyDomainName(company) === domainName,
+            extractDomainFromLink(company.domainName) === domainName,
         ),
     );
 

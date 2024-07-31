@@ -57,7 +57,7 @@ export class CompanyRepository {
   public async createCompany(
     workspaceId: string,
     companyToCreate: CompanyToCreate,
-    companyDomainNameColumnName,
+    companyDomainNameColumnName: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
     const dataSourceSchema =
