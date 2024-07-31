@@ -135,5 +135,14 @@ export const mapFieldMetadataToGraphqlQuery = (
         addressLng
       }
     `;
+  } else if (fieldType === FieldMetadataType.CREATED_BY) {
+    return `
+      ${field.name}
+      {
+        source
+        workspaceMemberId
+        name
+      }
+    `;
   }
 };
