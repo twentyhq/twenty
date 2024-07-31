@@ -3,6 +3,11 @@ import * as fs from 'fs/promises';
 import { dirname, join } from 'path';
 import { Readable } from 'stream';
 
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
+
 import { StorageDriver } from './interfaces/storage-driver.interface';
 
 export interface LocalDriverOptions {
@@ -65,7 +70,18 @@ export class LocalDriver implements StorageDriver {
       params.filename,
     );
 
-    return createReadStream(filePath);
+    try {
+      return createReadStream(filePath);
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      throw error;
+    }
   }
 
   async move(params: {
@@ -86,6 +102,17 @@ export class LocalDriver implements StorageDriver {
 
     await this.createFolder(dirname(toPath));
 
-    await fs.rename(fromPath, toPath);
+    try {
+      await fs.rename(fromPath, toPath);
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      throw error;
+    }
   }
 }

@@ -81,7 +81,7 @@ export class FileUploadService {
     return {
       id,
       mimeType,
-      path: `${folder}/${name}`,
+      path: `${fileFolder}/${name}`,
     };
   }
 
@@ -124,7 +124,7 @@ export class FileUploadService {
         const buffer = await image.toBuffer();
         const folder = this.getWorkspaceFolderName(workspaceId, fileFolder);
 
-        paths.push(`${folder}/${cropSizes[index]}/${name}`);
+        paths.push(`${fileFolder}/${cropSizes[index]}/${name}`);
 
         return this._uploadFile({
           file: buffer,

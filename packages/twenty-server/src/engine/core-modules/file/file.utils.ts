@@ -17,7 +17,7 @@ export const checkFilePath = (filePath: string): string => {
   );
 
   const sanitizedFilePath = filePath.replace(/\0/g, '');
-  const { size, folder } = getFilePathParts(sanitizedFilePath);
+  const [folder, size] = sanitizedFilePath.split('/');
 
   if (!allowedFolders.includes(folder as AllowedFolders)) {
     throw new BadRequestException(`Folder ${folder} is not allowed`);
@@ -47,22 +47,4 @@ export const checkFilename = (filename: string) => {
   }
 
   return basename(sanitizedFilename);
-};
-
-const getFilePathParts = (sanitizedFilePath: string) => {
-  const filePathParts = sanitizedFilePath.split('/');
-
-  if (filePathParts[0].startsWith('workspace-')) {
-    const [workspaceFolder, folder, size] = filePathParts;
-
-    return {
-      workspaceFolder,
-      folder,
-      size,
-    };
-  }
-
-  const [folder, size] = filePathParts;
-
-  return { folder, size };
 };

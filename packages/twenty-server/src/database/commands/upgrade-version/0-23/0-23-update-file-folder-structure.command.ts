@@ -3,9 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
+import pLimit from 'p-limit';
 import { Like, Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -108,15 +113,9 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
           attachmentsToMove,
         );
 
-        await workspaceQueryRunner.query(
-          `UPDATE "${dataSourceMetadata.schema}"."attachment"
-          SET "fullPath" = REPLACE("fullPath", '${FileFolder.Attachment}', 'workspace-${workspaceId}/${FileFolder.Attachment}')
-          WHERE "fullPath" LIKE '${FileFolder.Attachment}%'`,
-        );
-
         this.logger.log(
           chalk.green(
-            `Updated ${updatedAttachments.length} attachments in workspace ${workspaceId}`,
+            `Moved ${updatedAttachments.length} attachments in workspace ${workspaceId}`,
           ),
         );
       } catch (e) {
@@ -129,15 +128,9 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
           workspaceMemberAvatarsToMove,
         );
 
-        await workspaceQueryRunner.query(
-          `UPDATE "${dataSourceMetadata.schema}"."workspaceMember"
-          SET "avatarUrl" = REPLACE("avatarUrl", '${FileFolder.ProfilePicture}', 'workspace-${workspaceId}/${FileFolder.ProfilePicture}')
-          WHERE "avatarUrl" LIKE '${FileFolder.ProfilePicture}%'`,
-        );
-
         this.logger.log(
           chalk.green(
-            `Updated ${updatedWorkspaceMemberAvatars.length} workspaceMemberAvatars in workspace ${workspaceId}`,
+            `Moved ${updatedWorkspaceMemberAvatars.length} workspaceMemberAvatars in workspace ${workspaceId}`,
           ),
         );
       } catch (e) {
@@ -150,15 +143,9 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
           personAvatarsToMove,
         );
 
-        await workspaceQueryRunner.query(
-          `UPDATE "${dataSourceMetadata.schema}"."person" 
-          SET "avatarUrl" = REPLACE("avatarUrl", '${FileFolder.PersonPicture}', 'workspace-${workspaceId}/${FileFolder.PersonPicture}')
-          WHERE "avatarUrl" LIKE '${FileFolder.PersonPicture}%'`,
-        );
-
         this.logger.log(
           chalk.green(
-            `Updated ${updatedPersonAvatars.length} personAvatars in workspace ${workspaceId}`,
+            `Moved ${updatedPersonAvatars.length} personAvatars in workspace ${workspaceId}`,
           ),
         );
       } catch (e) {
@@ -172,17 +159,9 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
             fullPath: workspacePictureToMove.logo,
           },
         ]);
-        await this.workspaceRepository.update(
-          {
-            id: workspaceId,
-          },
-          {
-            logo: `workspace-${workspaceId}/${workspacePictureToMove.logo}`,
-          },
-        );
 
         this.logger.log(
-          chalk.green(`Updated workspacePicture in workspace ${workspaceId}`),
+          chalk.green(`Moved workspacePicture in workspace ${workspaceId}`),
         );
       }
 
@@ -197,35 +176,55 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
   private async moveFiles(
     workspaceId: string,
     filesToMove: { id: string; fullPath: string }[],
-  ) {
-    return await Promise.all(
-      filesToMove.map(async (file) => {
-        const { id, fullPath } = file;
-        const pathParts = fullPath.split('/');
-        const filename = pathParts.pop();
-        const originalFolderPath = pathParts.join('/');
-        const updatedFolderPath = `workspace-${workspaceId}/${originalFolderPath}`;
+  ): Promise<Array<{ id: string; updatedFolderPath: string }>> {
+    const batchSize = 20;
+    const limit = pLimit(batchSize);
 
-        if (!filename) {
-          throw new Error(`Filename is empty`);
+    const moveFile = async ({
+      id,
+      fullPath,
+    }: {
+      id: string;
+      fullPath: string;
+    }) => {
+      const pathParts = fullPath.split('/');
+      const filename = pathParts.pop();
+
+      if (!filename) {
+        throw new Error(`Filename is empty for file ID: ${id}`);
+      }
+
+      const originalFolderPath = pathParts.join('/');
+      const updatedFolderPath = `workspace-${workspaceId}/${originalFolderPath}`;
+
+      try {
+        await this.fileStorageService.move({
+          from: { folderPath: originalFolderPath, filename },
+          to: { folderPath: updatedFolderPath, filename },
+        });
+      } catch (error) {
+        if (
+          error instanceof FileStorageException &&
+          error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+        ) {
+          this.logger.error(`File not found: ${fullPath}`);
+        } else {
+          this.logger.error(`Error moving file ${fullPath}: ${error}`);
         }
 
-        await this.fileStorageService.move({
-          from: {
-            folderPath: originalFolderPath,
-            filename: filename,
-          },
-          to: {
-            folderPath: updatedFolderPath,
-            filename: filename,
-          },
-        });
+        return;
+      }
 
-        return {
-          id,
-          updatedFolderPath,
-        };
-      }),
+      return { id, updatedFolderPath };
+    };
+
+    const movePromises = filesToMove.map((file) => limit(() => moveFile(file)));
+
+    const results = await Promise.all(movePromises);
+
+    return results.filter(
+      (result): result is { id: string; updatedFolderPath: string } =>
+        Boolean(result),
     );
   }
 }

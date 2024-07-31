@@ -14,13 +14,6 @@ describe('FileUtils', () => {
       expect(sanitizedFilePath).toBe(`${FileFolder.Attachment}`);
     });
 
-    it('should return sanitized file path with workspace prefix', () => {
-      const filePath = `workspace-test/${FileFolder.Attachment}\0`;
-      const sanitizedFilePath = checkFilePath(filePath);
-
-      expect(sanitizedFilePath).toBe(`workspace-test/${FileFolder.Attachment}`);
-    });
-
     it('should return sanitized file path with size', () => {
       const filePath = `${FileFolder.ProfilePicture}\0/original`;
       const sanitizedFilePath = checkFilePath(filePath);

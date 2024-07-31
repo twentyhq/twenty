@@ -5,8 +5,8 @@ import ms from 'ms';
 
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
 export class QueryResultGettersFactory {
@@ -18,11 +18,12 @@ export class QueryResultGettersFactory {
   async create<Result>(
     result: Result,
     objectMetadataItem: ObjectMetadataInterface,
+    workspaceId: string,
   ): Promise<Result> {
     // TODO: look for file type once implemented
     switch (objectMetadataItem.nameSingular) {
       case 'attachment':
-        return this.applyAttachmentGetters(result);
+        return this.applyAttachmentGetters(result, workspaceId);
       default:
         return result;
     }
@@ -30,6 +31,7 @@ export class QueryResultGettersFactory {
 
   private async applyAttachmentGetters<Result>(
     attachments: any,
+    workspaceId: string,
   ): Promise<Result> {
     if (!attachments || !attachments.edges) {
       return attachments;
@@ -55,6 +57,7 @@ export class QueryResultGettersFactory {
           {
             expiration_date: expirationDate,
             attachment_id: attachment.node.id,
+            workspace_id: workspaceId,
           },
           {
             secret,
