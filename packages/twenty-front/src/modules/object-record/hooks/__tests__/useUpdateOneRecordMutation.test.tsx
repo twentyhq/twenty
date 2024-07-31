@@ -3,6 +3,7 @@ import { print } from 'graphql';
 import { RecoilRoot } from 'recoil';
 
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
+import { normalizeGQLQuery } from '~/utils/normalizeGQLQuery';
 
 const expectedQueryTemplate = `
 mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
@@ -32,8 +33,7 @@ mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
     avatarUrl
     companyId
   }
-}
-`.replace(/\s/g, '');
+}`;
 
 describe('useUpdateOneRecordMutation', () => {
   it('should return a valid createManyRecordsMutation', () => {
@@ -53,11 +53,10 @@ describe('useUpdateOneRecordMutation', () => {
 
     expect(updateOneRecordMutation).toBeDefined();
 
-    const printedReceivedQuery = print(updateOneRecordMutation).replace(
-      /\s/g,
-      '',
-    );
+    const printedReceivedQuery = print(updateOneRecordMutation);
 
-    expect(printedReceivedQuery).toEqual(expectedQueryTemplate);
+    expect(normalizeGQLQuery(printedReceivedQuery)).toEqual(
+      normalizeGQLQuery(expectedQueryTemplate),
+    );
   });
 });
