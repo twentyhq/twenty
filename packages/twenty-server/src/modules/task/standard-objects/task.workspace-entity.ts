@@ -93,7 +93,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     ],
   })
   @WorkspaceIsNullable()
-  status: Date | null;
+  status: string | null;
 
   @WorkspaceRelation({
     standardId: TASK_STANDARD_FIELD_IDS.taskTargets,
