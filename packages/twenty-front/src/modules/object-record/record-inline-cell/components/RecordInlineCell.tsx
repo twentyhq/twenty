@@ -14,7 +14,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { useInlineCell } from '../hooks/useInlineCell';
 
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
-import { useIsFieldDisplayOnly } from '@/object-record/record-field/hooks/useIsFieldDisplayOnly';
+import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
 
 type RecordInlineCellProps = {
   readonly?: boolean;
@@ -33,9 +33,11 @@ export const RecordInlineCell = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const isFieldDisplayOnly = useIsFieldDisplayOnly();
+  const isFieldReadOnly = useIsFieldReadOnly();
 
   const { closeInlineCell } = useInlineCell();
+
+  const cellIsReadOnly = readonly || isFieldReadOnly;
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -75,7 +77,7 @@ export const RecordInlineCell = ({
   return (
     <FieldFocusContextProvider>
       <RecordInlineCellContainer
-        readonly={readonly || isFieldDisplayOnly}
+        readonly={cellIsReadOnly}
         buttonIcon={buttonIcon}
         customEditHotkeyScope={
           isFieldRelation(fieldDefinition)
@@ -103,7 +105,7 @@ export const RecordInlineCell = ({
             onTab={handleTab}
             onShiftTab={handleShiftTab}
             onClickOutside={handleClickOutside}
-            isReadOnly={readonly || isFieldDisplayOnly}
+            isReadOnly={cellIsReadOnly}
           />
         }
         displayModeContent={<FieldDisplay />}

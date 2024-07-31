@@ -24,7 +24,6 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
-import { useIsFieldDisplayOnly } from '@/object-record/record-field/hooks/useIsFieldDisplayOnly';
 
 type RecordTableCellSoftFocusModeProps = {
   editModeContent: ReactElement;

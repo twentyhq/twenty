@@ -7,7 +7,7 @@ import {
   phoneFieldDefinition,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldDisplayOnly } from '@/object-record/record-field/hooks/useIsFieldDisplayOnly';
+import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 
@@ -31,9 +31,9 @@ const getWrapper =
 const CreatedByWrapper = getWrapper(createdByFieldDefinition);
 const PhoneWrapper = getWrapper(phoneFieldDefinition);
 
-describe('useIsFieldDisplayOnly', () => {
+describe('useIsFieldReadOnly', () => {
   it('should return true', () => {
-    const { result } = renderHook(() => useIsFieldDisplayOnly(), {
+    const { result } = renderHook(() => useIsFieldReadOnly(), {
       wrapper: CreatedByWrapper,
     });
 
@@ -41,7 +41,7 @@ describe('useIsFieldDisplayOnly', () => {
   });
 
   it('should return false', () => {
-    const { result } = renderHook(() => useIsFieldDisplayOnly(), {
+    const { result } = renderHook(() => useIsFieldReadOnly(), {
       wrapper: PhoneWrapper,
     });
 
