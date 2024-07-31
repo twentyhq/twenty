@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CompanyRepository } from 'src/modules/company/repositories/company.repository';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { extractDomainFromLink } from 'src/modules/contact-creation-manager/utils/extract-domain-from-link.util';
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
 @Injectable()
 export class CreateCompanyService {
@@ -24,6 +25,7 @@ export class CreateCompanyService {
   async createCompanies(
     domainNames: string[],
     workspaceId: string,
+    companyDomainNameColumnName: string,
     transactionManager?: EntityManager,
   ): Promise<{
     [domainName: string]: string;
@@ -38,6 +40,7 @@ export class CreateCompanyService {
       await this.companyRepository.getExistingCompaniesByDomainNames(
         uniqueDomainNames,
         workspaceId,
+        companyDomainNameColumnName,
         transactionManager,
       );
 
@@ -52,7 +55,7 @@ export class CreateCompanyService {
         },
       ) => ({
         ...acc,
-        [company.domainName]: company.id,
+        [extractDomainFromLink(company.domainName)]: company.id,
       }),
       {},
     );
@@ -61,7 +64,7 @@ export class CreateCompanyService {
       (domainName) =>
         !existingCompanies.some(
           (company: { domainName: string }) =>
-            company.domainName === domainName,
+            extractDomainFromLink(company.domainName) === domainName,
         ),
     );
 
@@ -69,6 +72,7 @@ export class CreateCompanyService {
       companiesObject[domainName] = await this.createCompany(
         domainName,
         workspaceId,
+        companyDomainNameColumnName,
         transactionManager,
       );
     }
@@ -79,6 +83,7 @@ export class CreateCompanyService {
   private async createCompany(
     domainName: string,
     workspaceId: string,
+    companyDomainNameColumnName,
     transactionManager?: EntityManager,
   ): Promise<string> {
     const companyId = v4();
@@ -93,6 +98,7 @@ export class CreateCompanyService {
         name,
         city,
       },
+      companyDomainNameColumnName,
       transactionManager,
     );
 

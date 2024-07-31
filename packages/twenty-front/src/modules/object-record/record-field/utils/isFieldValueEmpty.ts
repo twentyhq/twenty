@@ -23,6 +23,7 @@ import { isFieldPhone } from '@/object-record/record-field/types/guards/isFieldP
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
@@ -54,6 +55,7 @@ export const isFieldValueEmpty = ({
     isFieldBoolean(fieldDefinition) ||
     isFieldRelation(fieldDefinition) ||
     isFieldRawJson(fieldDefinition) ||
+    isFieldRichText(fieldDefinition) ||
     isFieldPhone(fieldDefinition)
   ) {
     return isValueEmpty(fieldValue);

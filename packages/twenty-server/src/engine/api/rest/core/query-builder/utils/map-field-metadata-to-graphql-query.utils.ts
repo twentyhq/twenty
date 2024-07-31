@@ -30,6 +30,7 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.MULTI_SELECT,
     FieldMetadataType.POSITION,
     FieldMetadataType.RAW_JSON,
+    FieldMetadataType.RICH_TEXT,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {

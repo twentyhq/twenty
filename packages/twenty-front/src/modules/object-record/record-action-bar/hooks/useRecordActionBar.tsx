@@ -96,8 +96,8 @@ export const useRecordActionBar = ({
   const { deleteTableData } = useDeleteTableData(baseTableDataParams);
 
   const handleDeleteClick = useCallback(() => {
-    deleteTableData();
-  }, [deleteTableData]);
+    deleteTableData(selectedRecordIds);
+  }, [deleteTableData, selectedRecordIds]);
 
   const handleExecuteQuickActionOnClick = useCallback(async () => {
     callback?.();

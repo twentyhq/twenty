@@ -6,22 +6,16 @@ import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
-import { mockedActivities } from '~/testing/mock-data/activities';
+import { mockedTasks } from '~/testing/mock-data/tasks';
 
 const mockedDate = '2024-03-15T12:00:00.000Z';
 const toISOStringMock = jest.fn(() => mockedDate);
 global.Date.prototype.toISOString = toISOStringMock;
 
 const mockedActivity = {
-  ...pick(mockedActivities[0], [
-    'id',
-    'title',
-    'body',
-    'type',
-    'completedAt',
-    'dueAt',
-  ]),
+  ...pick(mockedTasks[0], ['id', 'title', 'body', 'type', 'status', 'dueAt']),
   updatedAt: mockedDate,
 };
 
@@ -36,7 +30,7 @@ const mocks: MockedResponse[] = [
             reminderAt
             authorId
             title
-            completedAt
+            status
             updatedAt
             body
             dueAt
@@ -77,14 +71,19 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useCreateActivityInDB', () => {
   it('Should create activity in DB', async () => {
-    const { result } = renderHook(() => useCreateActivityInDB(), {
-      wrapper: Wrapper,
-    });
+    const { result } = renderHook(
+      () =>
+        useCreateActivityInDB({
+          activityObjectNameSingular: CoreObjectNameSingular.Task,
+        }),
+      {
+        wrapper: Wrapper,
+      },
+    );
 
     await act(async () => {
       await result.current.createActivityInDB({
         ...mockedActivity,
-        __typename: 'Activity',
       });
     });
 

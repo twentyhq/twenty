@@ -16,8 +16,12 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
+import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
+import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
 import { BehavioralEventWorkspaceEntity } from 'src/modules/timeline/standard-objects/behavioral-event.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
@@ -26,8 +30,9 @@ import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/vie
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow-version.workspace-entity';
-import { WorkflowWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow.workspace-entity';
+import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
+import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // TODO: Maybe we should automate this with the DiscoverService of Nest.JS
@@ -56,6 +61,7 @@ export const standardObjectMetadataDefinitions = [
   ViewWorkspaceEntity,
   WebhookWorkspaceEntity,
   WorkflowWorkspaceEntity,
+  WorkflowEventListenerWorkspaceEntity,
   WorkflowVersionWorkspaceEntity,
   WorkspaceMemberWorkspaceEntity,
   MessageThreadWorkspaceEntity,
@@ -63,4 +69,16 @@ export const standardObjectMetadataDefinitions = [
   MessageChannelWorkspaceEntity,
   MessageParticipantWorkspaceEntity,
   MessageChannelMessageAssociationWorkspaceEntity,
+  NoteWorkspaceEntity,
+  NoteTargetWorkspaceEntity,
+  OpportunityWorkspaceEntity,
+  PersonWorkspaceEntity,
+  TaskWorkspaceEntity,
+  TaskTargetWorkspaceEntity,
+  TimelineActivityWorkspaceEntity,
+  ViewFieldWorkspaceEntity,
+  ViewFilterWorkspaceEntity,
+  ViewSortWorkspaceEntity,
+  ViewWorkspaceEntity,
+  WebhookWorkspaceEntity,
 ];

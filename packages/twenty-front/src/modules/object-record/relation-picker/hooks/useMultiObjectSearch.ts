@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery } from '@/object-record/relation-picker/hooks/useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery';
 import { useMultiObjectSearchMatchesSearchFilterAndToSelectQuery } from '@/object-record/relation-picker/hooks/useMultiObjectSearchMatchesSearchFilterAndToSelectQuery';
@@ -30,11 +31,13 @@ export const useMultiObjectSearch = ({
   selectedObjectRecordIds,
   limit,
   excludedObjectRecordIds = [],
+  excludedObjects,
 }: {
   searchFilterValue: string;
   selectedObjectRecordIds: SelectedObjectRecordId[];
   limit?: number;
   excludedObjectRecordIds?: SelectedObjectRecordId[];
+  excludedObjects?: CoreObjectNameSingular[];
 }): MultiObjectSearch => {
   const { selectedObjectRecords, selectedObjectRecordsLoading } =
     useMultiObjectSearchSelectedItemsQuery({
@@ -54,6 +57,7 @@ export const useMultiObjectSearch = ({
     toSelectAndMatchesSearchFilterObjectRecords,
     toSelectAndMatchesSearchFilterObjectRecordsLoading,
   } = useMultiObjectSearchMatchesSearchFilterAndToSelectQuery({
+    excludedObjects,
     excludedObjectRecordIds,
     searchFilterValue,
     selectedObjectRecordIds,

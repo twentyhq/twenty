@@ -3,9 +3,7 @@ import { AvatarChip, AvatarChipVariant } from 'twenty-ui';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isNonEmptyString } from '@sniptt/guards';
-import { MouseEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 export type RecordChipProps = {
   objectNameSingular: string;
@@ -20,31 +18,22 @@ export const RecordChip = ({
   className,
   variant,
 }: RecordChipProps) => {
-  const navigate = useNavigate();
-
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
     record,
   });
 
-  const handleAvatarChipClick = (event: MouseEvent) => {
-    const linkToShowPage = getLinkToShowPage(objectNameSingular, record);
-
-    if (isNonEmptyString(linkToShowPage)) {
-      event.stopPropagation();
-      navigate(linkToShowPage);
-    }
-  };
-
   return (
-    <AvatarChip
-      placeholderColorSeed={record.id}
-      name={recordChipData.name}
-      avatarType={recordChipData.avatarType}
-      avatarUrl={recordChipData.avatarUrl ?? ''}
-      onClick={handleAvatarChipClick}
-      className={className}
-      variant={variant}
-    />
+    <UndecoratedLink to={getLinkToShowPage(objectNameSingular, record)}>
+      <AvatarChip
+        placeholderColorSeed={record.id}
+        name={recordChipData.name}
+        avatarType={recordChipData.avatarType}
+        avatarUrl={recordChipData.avatarUrl ?? ''}
+        className={className}
+        variant={variant}
+        onClick={() => {}}
+      />
+    </UndecoratedLink>
   );
 };
