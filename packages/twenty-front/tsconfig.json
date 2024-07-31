@@ -28,15 +28,8 @@
     }
   },
   "files": [],
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.stories.ts",
-    "src/**/*.stories.tsx",
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx"
-  ],
   "exclude": ["**/object-metadata/utils/getObjectMetadataItemsMock.ts"],
+  "include": [],
   "references": [
     {
       "path": "./tsconfig.app.json"
