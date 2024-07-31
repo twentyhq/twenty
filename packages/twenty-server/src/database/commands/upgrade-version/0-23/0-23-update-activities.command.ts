@@ -165,12 +165,25 @@ export class UpdateActivitiesCommand extends CommandRunner {
 
           await timelineActivityRepository.update(
             {
+              name: 'note.created',
               linkedObjectMetadataId: activityObjectMetadataId,
               linkedRecordId: activity.id,
             },
             {
               linkedObjectMetadataId: noteObjectMetadataId,
-              name: 'linked-note',
+              name: 'linked-note-created',
+            },
+          );
+
+          await timelineActivityRepository.update(
+            {
+              name: 'note.updated',
+              linkedObjectMetadataId: activityObjectMetadataId,
+              linkedRecordId: activity.id,
+            },
+            {
+              linkedObjectMetadataId: noteObjectMetadataId,
+              name: 'linked-note-updated',
             },
           );
 
@@ -215,12 +228,25 @@ export class UpdateActivitiesCommand extends CommandRunner {
 
           await timelineActivityRepository.update(
             {
+              name: 'task.created',
               linkedObjectMetadataId: activityObjectMetadataId,
               linkedRecordId: activity.id,
             },
             {
               linkedObjectMetadataId: taskObjectMetadataId,
-              name: 'linked-task',
+              name: 'linked-task-created',
+            },
+          );
+
+          await timelineActivityRepository.update(
+            {
+              name: 'task.updated',
+              linkedObjectMetadataId: activityObjectMetadataId,
+              linkedRecordId: activity.id,
+            },
+            {
+              linkedObjectMetadataId: taskObjectMetadataId,
+              name: 'linked-task-updated',
             },
           );
           await attachmentRepository.update(
