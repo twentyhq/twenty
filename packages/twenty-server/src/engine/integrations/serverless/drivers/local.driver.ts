@@ -16,9 +16,7 @@ import { readFileContent } from 'src/engine/integrations/file-storage/utils/read
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { BUILD_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/build-file-name';
 import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
-import {
-  ServerlessFunctionExecutionStatus
-} from "src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto";
+import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -95,9 +93,18 @@ export class LocalDriver
         const duration = Date.now() - startTime;
 
         if ('errorType' in message) {
-          resolve({ data: null, duration, error: message, status: ServerlessFunctionExecutionStatus.ERROR });
+          resolve({
+            data: null,
+            duration,
+            error: message,
+            status: ServerlessFunctionExecutionStatus.ERROR,
+          });
         } else {
-          resolve({ data: message, duration, status: ServerlessFunctionExecutionStatus.SUCCESS });
+          resolve({
+            data: message,
+            duration,
+            status: ServerlessFunctionExecutionStatus.SUCCESS,
+          });
         }
         child.kill();
         fs.unlink(tmpFilePath);

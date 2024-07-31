@@ -23,9 +23,7 @@ import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
 import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
-import {
-  ServerlessFunctionExecutionStatus
-} from "src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto";
+import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   fileStorageService: FileStorageService;
