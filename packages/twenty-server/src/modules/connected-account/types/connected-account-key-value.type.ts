@@ -1,7 +1,7 @@
 export enum ConnectedAccountKeys {
-  ACCOUNTS_TO_RECONNECT = 'ACCOUNTS_TO_RECONNECT',
+  ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS = 'ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS',
 }
 
 export type ConnectedAccountKeyValueType = {
-  [ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT]: string[];
+  [ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS]: string[];
 };

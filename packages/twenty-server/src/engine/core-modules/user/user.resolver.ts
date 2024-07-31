@@ -83,7 +83,8 @@ export class UserResolver {
 
     const userVarAllowList = [
       'SYNC_EMAIL_ONBOARDING_STEP',
-      'ACCOUNTS_TO_RECONNECT',
+      'ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS',
+      'ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES',
     ];
 
     const filteredMap = new Map(

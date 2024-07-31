@@ -203,7 +203,7 @@ export class MessagingChannelSyncStatusService {
       (await this.userVarsService.get({
         userId,
         workspaceId,
-        key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
+        key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       })) ?? [];
 
     if (accountsToReconnect.includes(connectedAccountId)) {
@@ -215,7 +215,7 @@ export class MessagingChannelSyncStatusService {
     await this.userVarsService.set({
       userId,
       workspaceId,
-      key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
+      key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       value: accountsToReconnect,
     });
   }
