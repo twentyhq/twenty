@@ -9,15 +9,21 @@ export const getFirstNonEmptyLineOfRichText = (
   }
   for (const node of fieldValue) {
     if (!isUndefinedOrNull(node.content)) {
-      const contentArray = node.content as Array<{ text: string }>;
+      const contentArray = node.content as Array<
+        { text: string } | { link: string }
+      >;
       if (contentArray.length > 0) {
         for (const content of contentArray) {
-          if (content.text?.trim() !== '') {
-            return content.text;
+          if ('link' in content) {
+            return content.link;
+          }
+          if ('text' in content) {
+            return content.text.trim();
           }
         }
       }
     }
   }
+
   return '';
 };

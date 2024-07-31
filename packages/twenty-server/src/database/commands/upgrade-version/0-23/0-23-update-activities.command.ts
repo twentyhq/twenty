@@ -170,6 +170,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
             },
             {
               linkedObjectMetadataId: noteObjectMetadataId,
+              name: 'linked-note',
             },
           );
 
@@ -219,6 +220,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
             },
             {
               linkedObjectMetadataId: taskObjectMetadataId,
+              name: 'linked-task',
             },
           );
           await attachmentRepository.update(
