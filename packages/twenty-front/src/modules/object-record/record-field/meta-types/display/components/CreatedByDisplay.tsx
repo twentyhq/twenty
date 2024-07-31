@@ -47,7 +47,7 @@ export const CreatedByDisplay = () => {
     switch (fieldValue.source) {
       case 'API':
         return LeftApiIcon;
-      case 'CSV':
+      case 'IMPORT':
         return LeftCsvIcon;
       default:
         return undefined;
@@ -56,11 +56,11 @@ export const CreatedByDisplay = () => {
 
   return (
     <AvatarChip
-      placeholderColorSeed={fieldValue.workspaceMemberId}
+      placeholderColorSeed={fieldValue.workspaceMemberId ?? undefined}
       name={name ?? ''}
       avatarType={fieldValue.workspaceMemberId ? 'rounded' : 'squared'}
       LeftIcon={LeftIcon}
-      avatarUrl={fieldValue.workspaceMember?.avatarUrl ?? ''}
+      avatarUrl={fieldValue.workspaceMember?.avatarUrl ?? undefined}
       variant={AvatarChipVariant.Transparent}
     />
   );

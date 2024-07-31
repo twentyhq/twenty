@@ -156,7 +156,13 @@ export const RecordTableCellSoftFocusMode = ({
         scrollRef={scrollRef}
         softFocus
       >
-        {editModeContentOnly ? editModeContent : nonEditModeContent}
+        {isEmpty && isFieldDisplayOnly ? (
+          <></>
+        ) : editModeContentOnly ? (
+          editModeContent
+        ) : (
+          nonEditModeContent
+        )}
       </RecordTableCellDisplayContainer>
       {showButton && (
         <RecordTableCellButton onClick={handleButtonClick} Icon={buttonIcon} />

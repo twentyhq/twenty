@@ -30,7 +30,7 @@ export const viewOpportunityFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
-          OPPORTUNITY_STANDARD_FIELD_IDS.closeDate
+          OPPORTUNITY_STANDARD_FIELD_IDS.createdBy
         ],
       viewId: viewId,
       position: 2,
@@ -40,10 +40,20 @@ export const viewOpportunityFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
-          OPPORTUNITY_STANDARD_FIELD_IDS.company
+          OPPORTUNITY_STANDARD_FIELD_IDS.closeDate
         ],
       viewId: viewId,
       position: 3,
+      isVisible: true,
+      size: 150,
+    },
+    {
+      fieldMetadataId:
+        objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+          OPPORTUNITY_STANDARD_FIELD_IDS.company
+        ],
+      viewId: viewId,
+      position: 4,
       isVisible: true,
       size: 150,
     },

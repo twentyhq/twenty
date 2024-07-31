@@ -33,7 +33,7 @@ export const viewCompanyFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
-          COMPANY_STANDARD_FIELD_IDS.accountOwner
+          COMPANY_STANDARD_FIELD_IDS.createdBy
         ],
       viewId: viewId,
       position: 2,
@@ -43,7 +43,7 @@ export const viewCompanyFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
-          BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
+          COMPANY_STANDARD_FIELD_IDS.accountOwner
         ],
       viewId: viewId,
       position: 3,
@@ -53,7 +53,7 @@ export const viewCompanyFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
-          COMPANY_STANDARD_FIELD_IDS.employees
+          BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
         ],
       viewId: viewId,
       position: 4,
@@ -63,10 +63,20 @@ export const viewCompanyFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
-          COMPANY_STANDARD_FIELD_IDS.linkedinLink
+          COMPANY_STANDARD_FIELD_IDS.employees
         ],
       viewId: viewId,
       position: 5,
+      isVisible: true,
+      size: 150,
+    },
+    {
+      fieldMetadataId:
+        objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          COMPANY_STANDARD_FIELD_IDS.linkedinLink
+        ],
+      viewId: viewId,
+      position: 6,
       isVisible: true,
       size: 170,
     },
@@ -76,7 +86,7 @@ export const viewCompanyFields = (
           COMPANY_STANDARD_FIELD_IDS.address
         ],
       viewId: viewId,
-      position: 6,
+      position: 7,
       isVisible: true,
       size: 170,
     },

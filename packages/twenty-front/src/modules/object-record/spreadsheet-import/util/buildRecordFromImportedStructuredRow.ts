@@ -139,13 +139,9 @@ export const buildRecordFromImportedStructuredRow = (
         }
         break;
       case FieldMetadataType.CreatedBy:
-        if (
-          isDefined(importedStructuredRow[`${sourceLabel} (${field.name})`])
-        ) {
-          recordToBuild[field.name] = {
-            source: importedStructuredRow[`${sourceLabel} (${field.name})`],
-          };
-        }
+        recordToBuild[field.name] = {
+          source: 'IMPORT',
+        };
         break;
       default:
         recordToBuild[field.name] = importedFieldValue;

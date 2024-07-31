@@ -1,3 +1,7 @@
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -10,6 +14,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 type CustomWorkspaceItem = Omit<
   CustomWorkspaceEntity,
@@ -23,6 +28,8 @@ type CustomWorkspaceItem = Omit<
 export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 
   async execute(
@@ -31,6 +38,21 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
     payload: CreateManyResolverArgs<CustomWorkspaceItem>,
   ): Promise<CreateManyResolverArgs<CustomWorkspaceItem>> {
     let createdBy: CreatedByMetadata | null = null;
+
+    // Check if this object has a createdBy field
+    // TODO: Maybe we have a better way to check if the field exists
+    const fieldMetadata = await this.fieldMetadataRepository.findOne({
+      where: {
+        object: {
+          nameSingular: objectName,
+        },
+        name: 'createdBy',
+      },
+    });
+
+    if (!fieldMetadata) {
+      return payload;
+    }
 
     // If user is logged in, we use the workspace member
     if (authContext.user) {

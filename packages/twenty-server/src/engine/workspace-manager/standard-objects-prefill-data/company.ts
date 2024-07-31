@@ -1,5 +1,8 @@
 import { EntityManager } from 'typeorm';
 
+import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
+
+// FixMe: Is this file a duplicate of src/database/typeorm-seeds/workspace/companies.ts
 export const companyPrefillData = async (
   entityManager: EntityManager,
   schemaName: string,
@@ -18,6 +21,9 @@ export const companyPrefillData = async (
       'addressAddressCountry',
       'employees',
       'position',
+      'createdBySource',
+      'createdByWorkspaceMemberId',
+      'createdByName',
     ])
     .orIgnore()
     .values([
@@ -32,6 +38,9 @@ export const companyPrefillData = async (
         addressAddressCountry: 'United States',
         employees: 5000,
         position: 1,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         name: 'Qonto',
@@ -44,6 +53,9 @@ export const companyPrefillData = async (
         addressAddressCountry: 'France',
         employees: 800,
         position: 2,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         name: 'Stripe',
@@ -56,6 +68,9 @@ export const companyPrefillData = async (
         addressAddressCountry: 'Ireland',
         employees: 8000,
         position: 3,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         name: 'Figma',
@@ -68,6 +83,9 @@ export const companyPrefillData = async (
         addressAddressCountry: 'United States',
         employees: 800,
         position: 4,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         name: 'Notion',
@@ -80,6 +98,9 @@ export const companyPrefillData = async (
         addressAddressCountry: 'United States',
         employees: 400,
         position: 5,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
     ])
     .returning('*')

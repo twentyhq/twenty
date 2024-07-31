@@ -33,7 +33,7 @@ export const viewPersonFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.company
+          PERSON_STANDARD_FIELD_IDS.createdBy
         ],
       viewId: viewId,
       position: 2,
@@ -43,7 +43,7 @@ export const viewPersonFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.phone
+          PERSON_STANDARD_FIELD_IDS.company
         ],
       viewId: viewId,
       position: 3,
@@ -53,7 +53,7 @@ export const viewPersonFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
+          PERSON_STANDARD_FIELD_IDS.phone
         ],
       viewId: viewId,
       position: 4,
@@ -63,7 +63,7 @@ export const viewPersonFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.city
+          BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
         ],
       viewId: viewId,
       position: 5,
@@ -73,7 +73,7 @@ export const viewPersonFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.jobTitle
+          PERSON_STANDARD_FIELD_IDS.city
         ],
       viewId: viewId,
       position: 6,
@@ -83,7 +83,7 @@ export const viewPersonFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.linkedinLink
+          PERSON_STANDARD_FIELD_IDS.jobTitle
         ],
       viewId: viewId,
       position: 7,
@@ -93,10 +93,20 @@ export const viewPersonFields = (
     {
       fieldMetadataId:
         objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.xLink
+          PERSON_STANDARD_FIELD_IDS.linkedinLink
         ],
       viewId: viewId,
       position: 8,
+      isVisible: true,
+      size: 150,
+    },
+    {
+      fieldMetadataId:
+        objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
+          PERSON_STANDARD_FIELD_IDS.xLink
+        ],
+      viewId: viewId,
+      position: 9,
       isVisible: true,
       size: 150,
     },
