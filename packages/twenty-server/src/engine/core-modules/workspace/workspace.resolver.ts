@@ -1,35 +1,35 @@
+import { UseGuards } from '@nestjs/common';
 import {
-  Resolver,
-  Query,
   Args,
   Mutation,
-  ResolveField,
   Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { assert } from 'src/utils/assert';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
-import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
 import { SendInviteLinkInput } from 'src/engine/core-modules/workspace/dtos/send-invite-link.input';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
+import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { assert } from 'src/utils/assert';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-import { Workspace } from './workspace.entity';
+import { Workspace, WorkspaceActivationStatus } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
 
@@ -101,15 +101,19 @@ export class WorkspaceResolver {
     return this.workspaceService.deleteWorkspace(id);
   }
 
-  @ResolveField(() => String)
+  @ResolveField(() => WorkspaceActivationStatus)
   async activationStatus(
     @Parent() workspace: Workspace,
-  ): Promise<'active' | 'inactive'> {
-    if (await this.workspaceService.isWorkspaceActivated(workspace.id)) {
-      return 'active';
+  ): Promise<WorkspaceActivationStatus> {
+    if (workspace.activationStatus) {
+      return workspace.activationStatus;
     }
 
-    return 'inactive';
+    if (await this.workspaceService.isWorkspaceActivated(workspace.id)) {
+      return WorkspaceActivationStatus.ACTIVE;
+    }
+
+    return WorkspaceActivationStatus.INACTIVE;
   }
 
   @ResolveField(() => String, { nullable: true })
@@ -129,8 +133,10 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Number)
-  async workspaceMembersCount(): Promise<number | undefined> {
-    return await this.userWorkspaceService.getWorkspaceMemberCount();
+  async workspaceMembersCount(
+    @Parent() workspace: Workspace,
+  ): Promise<number | undefined> {
+    return await this.userWorkspaceService.getUserCount(workspace.id);
   }
 
   @Mutation(() => SendInviteLink)

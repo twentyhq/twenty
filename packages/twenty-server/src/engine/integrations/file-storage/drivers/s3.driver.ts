@@ -4,8 +4,10 @@ import {
   CopyObjectCommand,
   CreateBucketCommandInput,
   DeleteObjectCommand,
+  DeleteObjectsCommand,
   GetObjectCommand,
   HeadBucketCommandInput,
+  ListObjectsV2Command,
   NotFound,
   PutObjectCommand,
   S3,
@@ -53,6 +55,57 @@ export class S3Driver implements StorageDriver {
     });
 
     await this.s3Client.send(command);
+  }
+
+  private async emptyS3Directory(folderPath) {
+    const listParams = {
+      Bucket: this.bucketName,
+      Prefix: folderPath,
+    };
+
+    const listObjectsCommand = new ListObjectsV2Command(listParams);
+    const listedObjects = await this.s3Client.send(listObjectsCommand);
+
+    if (listedObjects.Contents?.length === 0) return;
+
+    const deleteParams = {
+      Bucket: this.bucketName,
+      Delete: {
+        Objects: listedObjects.Contents?.map(({ Key }) => {
+          return { Key };
+        }),
+      },
+    };
+
+    const deleteObjectCommand = new DeleteObjectsCommand(deleteParams);
+
+    await this.s3Client.send(deleteObjectCommand);
+
+    if (listedObjects.IsTruncated) {
+      await this.emptyS3Directory(folderPath);
+    }
+  }
+
+  async delete(params: {
+    folderPath: string;
+    filename?: string;
+  }): Promise<void> {
+    if (params.filename) {
+      const deleteCommand = new DeleteObjectCommand({
+        Key: `${params.folderPath}/${params.filename}`,
+        Bucket: this.bucketName,
+      });
+
+      await this.s3Client.send(deleteCommand);
+    } else {
+      await this.emptyS3Directory(params.folderPath);
+      const deleteEmptyFolderCommand = new DeleteObjectCommand({
+        Key: `${params.folderPath}`,
+        Bucket: this.bucketName,
+      });
+
+      await this.s3Client.send(deleteEmptyFolderCommand);
+    }
   }
 
   async read(params: {

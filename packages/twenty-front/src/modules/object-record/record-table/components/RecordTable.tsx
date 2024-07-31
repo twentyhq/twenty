@@ -21,6 +21,7 @@ const StyledTable = styled.table`
 `;
 
 type RecordTableProps = {
+  viewBarId: string;
   recordTableId: string;
   objectNameSingular: string;
   onColumnsChange: (columns: any) => void;
@@ -28,6 +29,7 @@ type RecordTableProps = {
 };
 
 export const RecordTable = ({
+  viewBarId,
   recordTableId,
   objectNameSingular,
   onColumnsChange,
@@ -68,6 +70,7 @@ export const RecordTable = ({
       <RecordTableContextProvider
         objectNameSingular={objectNameSingular}
         recordTableId={recordTableId}
+        viewBarId={viewBarId}
       >
         <RecordTableBodyEffect />
         {!isRecordTableInitialLoading &&

@@ -8,6 +8,7 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 
 @Injectable()
 export class StandardIndexFactory {
@@ -31,7 +32,7 @@ export class StandardIndexFactory {
     target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
-    _workspaceFeatureFlagsMap: FeatureFlagMap,
+    workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<IndexMetadataEntity>[] {
     const workspaceEntity = metadataArgsStorage.filterEntities(target);
 
@@ -41,8 +42,18 @@ export class StandardIndexFactory {
       );
     }
 
-    const workspaceIndexMetadataArgsCollection =
-      metadataArgsStorage.filterIndexes(target);
+    if (isGatedAndNotEnabled(workspaceEntity?.gate, workspaceFeatureFlagsMap)) {
+      return [];
+    }
+
+    const workspaceIndexMetadataArgsCollection = metadataArgsStorage
+      .filterIndexes(target)
+      .filter((workspaceIndexMetadataArgs) => {
+        return !isGatedAndNotEnabled(
+          workspaceIndexMetadataArgs.gate,
+          workspaceFeatureFlagsMap,
+        );
+      });
 
     return workspaceIndexMetadataArgsCollection.map(
       (workspaceIndexMetadataArgs) => {

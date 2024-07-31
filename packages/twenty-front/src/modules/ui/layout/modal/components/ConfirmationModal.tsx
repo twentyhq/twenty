@@ -1,6 +1,6 @@
-import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
+import { ReactNode, useState } from 'react';
 import { H1Title, H1TitleFontColor } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -130,6 +130,7 @@ export const ConfirmationModal = ({
             title={deleteButtonText}
             disabled={!isValidValue}
             fullWidth
+            dataTestId="confirmation-modal-confirm-button"
           />
         </StyledConfirmationModal>
       </LayoutGroup>

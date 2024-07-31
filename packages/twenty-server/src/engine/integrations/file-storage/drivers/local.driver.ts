@@ -42,6 +42,19 @@ export class LocalDriver implements StorageDriver {
     await fs.writeFile(filePath, params.file);
   }
 
+  async delete(params: {
+    folderPath: string;
+    filename?: string;
+  }): Promise<void> {
+    const filePath = join(
+      `${this.options.storagePath}/`,
+      params.folderPath,
+      params.filename || '',
+    );
+
+    await fs.rm(filePath, { recursive: true });
+  }
+
   async read(params: {
     folderPath: string;
     filename: string;

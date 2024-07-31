@@ -4,14 +4,14 @@ import { BooleanFieldDisplay } from '@/object-record/record-field/meta-types/dis
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
 import { RatingFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RatingFieldDisplay';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
+
+import { isFieldIdentifierDisplay } from '@/object-record/record-field/meta-types/display/utils/isFieldIdentifierDisplay';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
-import { isFieldChipDisplay } from '@/object-record/utils/getRecordChipGeneratorPerObjectPerField';
-
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -47,7 +47,10 @@ import { isFieldUuid } from '../types/guards/isFieldUuid';
 export const FieldDisplay = () => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
-  const isChipDisplay = isFieldChipDisplay(fieldDefinition, isLabelIdentifier);
+  const isChipDisplay = isFieldIdentifierDisplay(
+    fieldDefinition,
+    isLabelIdentifier,
+  );
 
   return isChipDisplay ? (
     <ChipFieldDisplay />

@@ -39,8 +39,9 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
 __typename
 xLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 id
 createdAt
@@ -49,15 +50,22 @@ company
 __typename
 xLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 linkedinLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 domainName
+{
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
+}
 annualRecurringRevenue
 {
   amountMicros
@@ -93,8 +101,9 @@ name
 phone
 linkedinLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 updatedAt
 avatarUrl

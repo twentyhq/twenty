@@ -102,11 +102,6 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
     Icon: IconPhone,
     defaultValue: '+1234-567-890',
   },
-  [FieldMetadataType.Probability]: {
-    label: 'Rating',
-    Icon: IconTwentyStar,
-    defaultValue: '3',
-  },
   [FieldMetadataType.Rating]: {
     label: 'Rating',
     Icon: IconTwentyStar,

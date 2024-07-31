@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
-const DEFAULT_DEPTH_VALUE = 2;
+const DEFAULT_DEPTH_VALUE = 1;
 
 // TODO: Should be properly type and based on composite type definitions
 export const mapFieldMetadataToGraphqlQuery = (
@@ -19,14 +19,17 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.UUID,
     FieldMetadataType.TEXT,
     FieldMetadataType.PHONE,
+    FieldMetadataType.EMAIL,
     FieldMetadataType.DATE_TIME,
     FieldMetadataType.DATE,
-    FieldMetadataType.EMAIL,
-    FieldMetadataType.NUMBER,
-    FieldMetadataType.SELECT,
-    FieldMetadataType.RATING,
     FieldMetadataType.BOOLEAN,
+    FieldMetadataType.NUMBER,
+    FieldMetadataType.NUMERIC,
+    FieldMetadataType.RATING,
+    FieldMetadataType.SELECT,
+    FieldMetadataType.MULTI_SELECT,
     FieldMetadataType.POSITION,
+    FieldMetadataType.RAW_JSON,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {

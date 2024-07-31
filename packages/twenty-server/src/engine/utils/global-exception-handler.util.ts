@@ -7,14 +7,14 @@ import { ExceptionHandlerUser } from 'src/engine/integrations/exception-handler/
 import {
   AuthenticationError,
   BaseGraphQLError,
-  ForbiddenError,
-  ValidationError,
-  NotFoundError,
   ConflictError,
-  MethodNotAllowedError,
-  TimeoutError,
   ErrorCode,
-} from 'src/engine/utils/graphql-errors.util';
+  ForbiddenError,
+  MethodNotAllowedError,
+  NotFoundError,
+  TimeoutError,
+  ValidationError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 
 const graphQLPredefinedExceptions = {
@@ -87,6 +87,9 @@ export const convertExceptionToGraphQLError = (
 ): BaseGraphQLError => {
   if (exception instanceof HttpException) {
     return convertHttpExceptionToGraphql(exception);
+  }
+  if (exception instanceof BaseGraphQLError) {
+    return exception;
   }
 
   return convertExceptionToGraphql(exception);

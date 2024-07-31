@@ -1,6 +1,4 @@
-import { EntityChip } from 'twenty-ui';
-
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
+import { AvatarChip } from 'twenty-ui';
 
 export type UserChipProps = {
   id: string;
@@ -9,10 +7,10 @@ export type UserChipProps = {
 };
 
 export const UserChip = ({ id, name, avatarUrl }: UserChipProps) => (
-  <EntityChip
-    entityId={id}
+  <AvatarChip
+    placeholderColorSeed={id}
     name={name}
     avatarType="rounded"
-    avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl) || ''}
+    avatarUrl={avatarUrl}
   />
 );

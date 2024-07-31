@@ -9,8 +9,9 @@ mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
   updatePerson(id: $idToUpdate, data: $input) {
     __typename
     xLink {
-      label
-      url
+      primaryLinkUrl
+      primaryLinkLabel
+      secondaryLinks
     }
     id
     createdAt
@@ -23,8 +24,9 @@ mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
     }
     phone
     linkedinLink {
-      label
-      url
+      primaryLinkUrl
+      primaryLinkLabel
+      secondaryLinks
     }
     updatedAt
     avatarUrl

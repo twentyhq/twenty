@@ -110,7 +110,10 @@ export const mockedActivities: Array<MockedActivity> = [
           __typename: 'Company',
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb280',
           name: 'Airbnb',
-          domainName: 'airbnb.com',
+          domainName: {
+            primaryLinkLabel: '',
+            primaryLinkUrl: 'https://www.airbnb.com',
+          },
         },
         person: null,
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb230',

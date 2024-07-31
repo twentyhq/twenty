@@ -1,32 +1,52 @@
+import { isPlainObject } from '@nestjs/common/utils/shared.utils';
+
 import {
   DeepPartial,
   DeleteResult,
   EntityManager,
+  EntitySchema,
+  EntityTarget,
   FindManyOptions,
   FindOneOptions,
   FindOptionsWhere,
   InsertResult,
   ObjectId,
   ObjectLiteral,
+  QueryRunner,
   RemoveOptions,
   Repository,
   SaveOptions,
   UpdateResult,
 } from 'typeorm';
+import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
-import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 
-import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
-import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-literal.storage';
+import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isPlainObject } from 'src/utils/is-plain-object';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
+import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 export class WorkspaceRepository<
   Entity extends ObjectLiteral,
 > extends Repository<Entity> {
+  private readonly internalContext: WorkspaceInternalContext;
+
+  constructor(
+    internalContext: WorkspaceInternalContext,
+    target: EntityTarget<Entity>,
+    manager: EntityManager,
+    queryRunner?: QueryRunner,
+  ) {
+    super(target, manager, queryRunner);
+    this.internalContext = internalContext;
+  }
+
   /**
    * FIND METHODS
    */
@@ -35,9 +55,9 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<Entity[]> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions(options);
+    const computedOptions = await this.transformOptions(options);
     const result = await manager.find(this.target, computedOptions);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -47,9 +67,9 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<Entity[]> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions({ where });
+    const computedOptions = await this.transformOptions({ where });
     const result = await manager.findBy(this.target, computedOptions.where);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -59,9 +79,9 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<[Entity[], number]> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions(options);
+    const computedOptions = await this.transformOptions(options);
     const result = await manager.findAndCount(this.target, computedOptions);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -71,12 +91,12 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<[Entity[], number]> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions({ where });
+    const computedOptions = await this.transformOptions({ where });
     const result = await manager.findAndCountBy(
       this.target,
       computedOptions.where,
     );
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -86,9 +106,9 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<Entity | null> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions(options);
+    const computedOptions = await this.transformOptions(options);
     const result = await manager.findOne(this.target, computedOptions);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -98,9 +118,9 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<Entity | null> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions({ where });
+    const computedOptions = await this.transformOptions({ where });
     const result = await manager.findOneBy(this.target, computedOptions.where);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -110,9 +130,9 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<Entity> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions(options);
+    const computedOptions = await this.transformOptions(options);
     const result = await manager.findOneOrFail(this.target, computedOptions);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -122,12 +142,12 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<Entity> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions({ where });
+    const computedOptions = await this.transformOptions({ where });
     const result = await manager.findOneByOrFail(
       this.target,
       computedOptions.where,
     );
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -165,14 +185,25 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<T | T[]> {
     const manager = entityManager || this.manager;
-    const formattedEntityOrEntities = this.formatData(entityOrEntities);
-    const result = await manager.save(
-      this.target,
-      formattedEntityOrEntities as any,
-      options,
-    );
+    const formattedEntityOrEntities = await this.formatData(entityOrEntities);
+    let result: T | T[];
 
-    const formattedResult = this.formatResult(result);
+    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    if (Array.isArray(formattedEntityOrEntities)) {
+      result = await manager.save(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    } else {
+      result = await manager.save(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    }
+
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -198,18 +229,18 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<Entity | Entity[]> {
     const manager = entityManager || this.manager;
-    const formattedEntityOrEntities = this.formatData(entityOrEntities);
+    const formattedEntityOrEntities = await this.formatData(entityOrEntities);
     const result = await manager.remove(
       this.target,
       formattedEntityOrEntities,
       options,
     );
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
 
-  override delete(
+  override async delete(
     criteria:
       | string
       | string[]
@@ -225,7 +256,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
 
     if (typeof criteria === 'object' && 'where' in criteria) {
-      criteria = this.transformOptions(criteria);
+      criteria = await this.transformOptions(criteria);
     }
 
     return manager.delete(this.target, criteria);
@@ -261,18 +292,30 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<T | T[]> {
     const manager = entityManager || this.manager;
-    const formattedEntityOrEntities = this.formatData(entityOrEntities);
-    const result = await manager.softRemove(
-      this.target,
-      formattedEntityOrEntities as any,
-      options,
-    );
-    const formattedResult = this.formatResult(result);
+    const formattedEntityOrEntities = await this.formatData(entityOrEntities);
+    let result: T | T[];
+
+    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    if (Array.isArray(formattedEntityOrEntities)) {
+      result = await manager.softRemove(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    } else {
+      result = await manager.softRemove(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    }
+
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
 
-  override softDelete(
+  override async softDelete(
     criteria:
       | string
       | string[]
@@ -288,7 +331,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
 
     if (typeof criteria === 'object' && 'where' in criteria) {
-      criteria = this.transformOptions(criteria);
+      criteria = await this.transformOptions(criteria);
     }
 
     return manager.softDelete(this.target, criteria);
@@ -327,18 +370,30 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<T | T[]> {
     const manager = entityManager || this.manager;
-    const formattedEntityOrEntities = this.formatData(entityOrEntities);
-    const result = await manager.recover(
-      this.target,
-      formattedEntityOrEntities as any,
-      options,
-    );
-    const formattedResult = this.formatResult(result);
+    const formattedEntityOrEntities = await this.formatData(entityOrEntities);
+    let result: T | T[];
+
+    // Needed becasuse save method has multiple signature, otherwise we will need to do a type assertion
+    if (Array.isArray(formattedEntityOrEntities)) {
+      result = await manager.recover(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    } else {
+      result = await manager.recover(
+        this.target,
+        formattedEntityOrEntities,
+        options,
+      );
+    }
+
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
 
-  override restore(
+  override async restore(
     criteria:
       | string
       | string[]
@@ -354,7 +409,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
 
     if (typeof criteria === 'object' && 'where' in criteria) {
-      criteria = this.transformOptions(criteria);
+      criteria = await this.transformOptions(criteria);
     }
 
     return manager.restore(this.target, criteria);
@@ -368,9 +423,9 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
-    const formatedEntity = this.formatData(entity);
+    const formatedEntity = await this.formatData(entity);
     const result = await manager.insert(this.target, formatedEntity);
-    const formattedResult = this.formatResult(result);
+    const formattedResult = await this.formatResult(result);
 
     return formattedResult;
   }
@@ -378,7 +433,7 @@ export class WorkspaceRepository<
   /**
    * UPDATE METHODS
    */
-  override update(
+  override async update(
     criteria:
       | string
       | string[]
@@ -395,13 +450,13 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
 
     if (typeof criteria === 'object' && 'where' in criteria) {
-      criteria = this.transformOptions(criteria);
+      criteria = await this.transformOptions(criteria);
     }
 
     return manager.update(this.target, criteria, partialEntity);
   }
 
-  override upsert(
+  override async upsert(
     entityOrEntities:
       | QueryDeepPartialEntity<Entity>
       | QueryDeepPartialEntity<Entity>[],
@@ -410,7 +465,7 @@ export class WorkspaceRepository<
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
 
-    const formattedEntityOrEntities = this.formatData(entityOrEntities);
+    const formattedEntityOrEntities = await this.formatData(entityOrEntities);
 
     return manager.upsert(
       this.target,
@@ -422,22 +477,22 @@ export class WorkspaceRepository<
   /**
    * EXIST METHODS
    */
-  override exists(
+  override async exists(
     options?: FindManyOptions<Entity>,
     entityManager?: EntityManager,
   ): Promise<boolean> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions(options);
+    const computedOptions = await this.transformOptions(options);
 
     return manager.exists(this.target, computedOptions);
   }
 
-  override existsBy(
+  override async existsBy(
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     entityManager?: EntityManager,
   ): Promise<boolean> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions({ where });
+    const computedOptions = await this.transformOptions({ where });
 
     return manager.existsBy(this.target, computedOptions.where);
   }
@@ -445,22 +500,22 @@ export class WorkspaceRepository<
   /**
    * COUNT METHODS
    */
-  override count(
+  override async count(
     options?: FindManyOptions<Entity>,
     entityManager?: EntityManager,
   ): Promise<number> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions(options);
+    const computedOptions = await this.transformOptions(options);
 
     return manager.count(this.target, computedOptions);
   }
 
-  override countBy(
+  override async countBy(
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     entityManager?: EntityManager,
   ): Promise<number> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions({ where });
+    const computedOptions = await this.transformOptions({ where });
 
     return manager.countBy(this.target, computedOptions.where);
   }
@@ -468,58 +523,60 @@ export class WorkspaceRepository<
   /**
    * MATH METHODS
    */
-  override sum(
+  override async sum(
     columnName: PickKeysByType<Entity, number>,
     where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     entityManager?: EntityManager,
   ): Promise<number | null> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions({ where });
+    const computedOptions = await this.transformOptions({ where });
 
     return manager.sum(this.target, columnName, computedOptions.where);
   }
 
-  override average(
+  override async average(
     columnName: PickKeysByType<Entity, number>,
     where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     entityManager?: EntityManager,
   ): Promise<number | null> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions({ where });
+    const computedOptions = await this.transformOptions({ where });
 
     return manager.average(this.target, columnName, computedOptions.where);
   }
 
-  override minimum(
+  override async minimum(
     columnName: PickKeysByType<Entity, number>,
     where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     entityManager?: EntityManager,
   ): Promise<number | null> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions({ where });
+    const computedOptions = await this.transformOptions({ where });
 
     return manager.minimum(this.target, columnName, computedOptions.where);
   }
 
-  override maximum(
+  override async maximum(
     columnName: PickKeysByType<Entity, number>,
     where?: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     entityManager?: EntityManager,
   ): Promise<number | null> {
     const manager = entityManager || this.manager;
-    const computedOptions = this.transformOptions({ where });
+    const computedOptions = await this.transformOptions({ where });
 
     return manager.maximum(this.target, columnName, computedOptions.where);
   }
 
-  override increment(
+  override async increment(
     conditions: FindOptionsWhere<Entity>,
     propertyPath: string,
     value: number | string,
     entityManager?: EntityManager,
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
-    const computedConditions = this.transformOptions({ where: conditions });
+    const computedConditions = await this.transformOptions({
+      where: conditions,
+    });
 
     return manager.increment(
       this.target,
@@ -529,14 +586,16 @@ export class WorkspaceRepository<
     );
   }
 
-  override decrement(
+  override async decrement(
     conditions: FindOptionsWhere<Entity>,
     propertyPath: string,
     value: number | string,
     entityManager?: EntityManager,
   ): Promise<UpdateResult> {
     const manager = entityManager || this.manager;
-    const computedConditions = this.transformOptions({ where: conditions });
+    const computedConditions = await this.transformOptions({
+      where: conditions,
+    });
 
     return manager.decrement(
       this.target,
@@ -549,70 +608,101 @@ export class WorkspaceRepository<
   /**
    * PRIVATE METHODS
    */
-  private getCompositeFieldMetadataArgs() {
-    const objectLiteral = ObjectLiteralStorage.getObjectLiteral(
-      this.target as any,
-    );
+  private async getObjectMetadataFromTarget() {
+    const objectMetadataName =
+      typeof this.target === 'string'
+        ? this.target
+        : WorkspaceEntitiesStorage.getObjectMetadataName(
+            this.internalContext.workspaceId,
+            this.target as EntitySchema,
+          );
 
-    if (!objectLiteral) {
-      throw new Error('Object literal is missing');
+    if (!objectMetadataName) {
+      throw new Error('Object metadata name is missing');
     }
 
-    const fieldMetadataArgsCollection =
-      metadataArgsStorage.filterFields(objectLiteral);
-    const compositeFieldMetadataArgsCollection =
-      fieldMetadataArgsCollection.filter((fieldMetadataArg) =>
-        isCompositeFieldMetadataType(fieldMetadataArg.type),
+    const objectMetadata =
+      await this.internalContext.workspaceCacheStorage.getObjectMetadata(
+        this.internalContext.workspaceId,
+        (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
       );
 
-    return compositeFieldMetadataArgsCollection;
+    if (!objectMetadata) {
+      const objectMetadataCollection =
+        await this.internalContext.workspaceCacheStorage.getObjectMetadataCollection(
+          this.internalContext.workspaceId,
+        );
+
+      throw new Error(
+        `Object metadata for object "${objectMetadataName}" is missing ` +
+          `in workspace "${this.internalContext.workspaceId}" ` +
+          `with object metadata collection length: ${objectMetadataCollection?.length}`,
+      );
+    }
+
+    return objectMetadata;
   }
 
-  private transformOptions<
+  private async getCompositeFieldMetadataCollection(
+    objectMetadata: ObjectMetadataEntity,
+  ) {
+    const compositeFieldMetadataCollection = objectMetadata.fields.filter(
+      (fieldMetadata) => isCompositeFieldMetadataType(fieldMetadata.type),
+    );
+
+    return compositeFieldMetadataCollection;
+  }
+
+  private async transformOptions<
     T extends FindManyOptions<Entity> | FindOneOptions<Entity> | undefined,
-  >(options: T): T {
+  >(options: T): Promise<T> {
     if (!options) {
       return options;
     }
 
     const transformedOptions = { ...options };
 
-    transformedOptions.where = this.formatData(options.where);
+    transformedOptions.where = await this.formatData(options.where);
 
     return transformedOptions;
   }
 
-  private formatData<T>(data: T): T {
+  private async formatData<T>(data: T): Promise<T> {
     if (!data) {
       return data;
     }
 
     if (Array.isArray(data)) {
-      return data.map((item) => this.formatData(item)) as T;
+      return Promise.all(
+        data.map((item) => this.formatData(item)),
+      ) as Promise<T>;
     }
-    const compositeFieldMetadataArgsCollection =
-      this.getCompositeFieldMetadataArgs();
-    const compositeFieldMetadataArgsMap = new Map(
-      compositeFieldMetadataArgsCollection.map((fieldMetadataArg) => [
-        fieldMetadataArg.name,
-        fieldMetadataArg,
+
+    const objectMetadata = await this.getObjectMetadataFromTarget();
+
+    const compositeFieldMetadataCollection =
+      await this.getCompositeFieldMetadataCollection(objectMetadata);
+    const compositeFieldMetadataMap = new Map(
+      compositeFieldMetadataCollection.map((fieldMetadata) => [
+        fieldMetadata.name,
+        fieldMetadata,
       ]),
     );
     const newData: object = {};
 
     for (const [key, value] of Object.entries(data)) {
-      const fieldMetadataArgs = compositeFieldMetadataArgsMap.get(key);
+      const fieldMetadata = compositeFieldMetadataMap.get(key);
 
-      if (!fieldMetadataArgs) {
+      if (!fieldMetadata) {
         if (isPlainObject(value)) {
-          newData[key] = this.formatData(value);
+          newData[key] = await this.formatData(value);
         } else {
           newData[key] = value;
         }
         continue;
       }
 
-      const compositeType = compositeTypeDefintions.get(fieldMetadataArgs.type);
+      const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
 
       if (!compositeType) {
         continue;
@@ -620,7 +710,7 @@ export class WorkspaceRepository<
 
       for (const compositeProperty of compositeType.properties) {
         const compositeKey = computeCompositeColumnName(
-          fieldMetadataArgs.name,
+          fieldMetadata.name,
           compositeProperty,
         );
         const value = data?.[key]?.[compositeProperty.name];
@@ -636,77 +726,116 @@ export class WorkspaceRepository<
     return newData as T;
   }
 
-  private formatResult<T>(
+  private async formatResult<T>(
     data: T,
-    target = ObjectLiteralStorage.getObjectLiteral(this.target as any),
-  ): T {
+    objectMetadata?: ObjectMetadataEntity,
+  ): Promise<T> {
+    objectMetadata ??= await this.getObjectMetadataFromTarget();
+
     if (!data) {
       return data;
     }
 
     if (Array.isArray(data)) {
-      return data.map((item) => this.formatResult(item, target)) as T;
+      // If the data is an array, map each item in the array, format result is a promise
+      return Promise.all(
+        data.map((item) => this.formatResult(item, objectMetadata)),
+      ) as Promise<T>;
     }
 
     if (!isPlainObject(data)) {
       return data;
     }
 
-    if (!target) {
-      throw new Error('Object literal is missing');
+    if (!objectMetadata) {
+      throw new Error('Object metadata is missing');
     }
 
-    const fieldMetadataArgsCollection =
-      metadataArgsStorage.filterFields(target);
-    const relationMetadataArgsCollection =
-      metadataArgsStorage.filterRelations(target);
-    const compositeFieldMetadataArgsCollection =
-      fieldMetadataArgsCollection.filter((fieldMetadataArg) =>
-        isCompositeFieldMetadataType(fieldMetadataArg.type),
-      );
-    const compositeFieldMetadataArgsMap = new Map(
-      compositeFieldMetadataArgsCollection.flatMap((fieldMetadataArg) => {
-        const compositeType = compositeTypeDefintions.get(
-          fieldMetadataArg.type,
-        );
+    const compositeFieldMetadataCollection =
+      await this.getCompositeFieldMetadataCollection(objectMetadata);
+
+    const compositeFieldMetadataMap = new Map(
+      compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
+        const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
 
         if (!compositeType) return [];
 
         // Map each composite property to a [key, value] pair
         return compositeType.properties.map((compositeProperty) => [
-          computeCompositeColumnName(fieldMetadataArg.name, compositeProperty),
+          computeCompositeColumnName(fieldMetadata.name, compositeProperty),
           {
-            parentField: fieldMetadataArg.name,
+            parentField: fieldMetadata.name,
             ...compositeProperty,
           },
         ]);
       }),
     );
-    const relationMetadataArgsMap = new Map(
-      relationMetadataArgsCollection.map((relationMetadataArgs) => [
-        relationMetadataArgs.name,
-        relationMetadataArgs,
-      ]),
+
+    const relationMetadataMap = new Map(
+      objectMetadata.fields
+        .filter(({ type }) => isRelationFieldMetadataType(type))
+        .map((fieldMetadata) => [
+          fieldMetadata.name,
+          {
+            relationMetadata:
+              fieldMetadata.fromRelationMetadata ??
+              fieldMetadata.toRelationMetadata,
+            relationType: computeRelationType(
+              fieldMetadata,
+              fieldMetadata.fromRelationMetadata ??
+                fieldMetadata.toRelationMetadata,
+            ),
+          },
+        ]),
     );
     const newData: object = {};
 
     for (const [key, value] of Object.entries(data)) {
-      const compositePropertyArgs = compositeFieldMetadataArgsMap.get(key);
-      const relationMetadataArgs = relationMetadataArgsMap.get(key);
+      const compositePropertyArgs = compositeFieldMetadataMap.get(key);
+      const { relationMetadata, relationType } =
+        relationMetadataMap.get(key) ?? {};
 
-      if (!compositePropertyArgs && !relationMetadataArgs) {
+      if (!compositePropertyArgs && !relationMetadata) {
         if (isPlainObject(value)) {
-          newData[key] = this.formatResult(value);
+          newData[key] = await this.formatResult(value);
         } else {
           newData[key] = value;
         }
         continue;
       }
 
-      if (relationMetadataArgs) {
-        newData[key] = this.formatResult(
+      if (relationMetadata) {
+        const toObjectMetadata =
+          await this.internalContext.workspaceCacheStorage.getObjectMetadata(
+            relationMetadata.workspaceId,
+            (objectMetadata) =>
+              objectMetadata.id === relationMetadata.toObjectMetadataId,
+          );
+
+        const fromObjectMetadata =
+          await this.internalContext.workspaceCacheStorage.getObjectMetadata(
+            relationMetadata.workspaceId,
+            (objectMetadata) =>
+              objectMetadata.id === relationMetadata.fromObjectMetadataId,
+          );
+
+        if (!toObjectMetadata) {
+          throw new Error(
+            `Object metadata for object metadataId "${relationMetadata.toObjectMetadataId}" is missing`,
+          );
+        }
+
+        if (!fromObjectMetadata) {
+          throw new Error(
+            `Object metadata for object metadataId "${relationMetadata.fromObjectMetadataId}" is missing`,
+          );
+        }
+
+        newData[key] = await this.formatResult(
           value,
-          relationMetadataArgs.inverseSideTarget() as any,
+          relationType === 'one-to-many'
+            ? toObjectMetadata
+            : fromObjectMetadata,
         );
         continue;
       }

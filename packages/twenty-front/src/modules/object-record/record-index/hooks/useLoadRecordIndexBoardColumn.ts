@@ -10,12 +10,13 @@ import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hook
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { isDefined } from '~/utils/isDefined';
 
 type UseLoadRecordIndexBoardProps = {
   objectNameSingular: string;
   boardFieldMetadataId: string | null;
   recordBoardId: string;
-  columnFieldSelectValue: string;
+  columnFieldSelectValue: string | null;
   columnId: string;
 };
 
@@ -51,9 +52,11 @@ export const useLoadRecordIndexBoardColumn = ({
 
   const filter = {
     ...requestFilters,
-    [recordIndexKanbanFieldMetadataItem?.name ?? '']: {
-      in: [columnFieldSelectValue],
-    },
+    [recordIndexKanbanFieldMetadataItem?.name ?? '']: isDefined(
+      columnFieldSelectValue,
+    )
+      ? { in: [columnFieldSelectValue] }
+      : { is: 'NULL' },
   };
 
   const {

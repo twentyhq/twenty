@@ -1,20 +1,20 @@
+/* eslint-disable @nx/workspace-inject-workspace-repository */
 import { Injectable } from '@nestjs/common';
 
-import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isDefined } from 'src/utils/is-defined';
-import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
 
 enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
@@ -25,7 +25,7 @@ enum OnboardingStepKeys {
   INVITE_TEAM_ONBOARDING_STEP = 'INVITE_TEAM_ONBOARDING_STEP',
 }
 
-type OnboardingKeyValueType = {
+type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStepValues;
   [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepValues;
 };
@@ -33,14 +33,13 @@ type OnboardingKeyValueType = {
 @Injectable()
 export class OnboardingService {
   constructor(
+    private readonly twentyORMManager: TwentyORMManager,
     private readonly billingWorkspaceService: BillingWorkspaceService,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly keyValuePairService: KeyValuePairService<OnboardingKeyValueType>,
+    private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectWorkspaceRepository(WorkspaceMemberWorkspaceEntity)
-    private readonly workspaceMemberRepository: WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
   ) {}
 
   private async isSubscriptionIncompleteOnboardingStatus(user: User) {
@@ -71,7 +70,12 @@ export class OnboardingService {
   }
 
   private async isProfileCreationOnboardingStatus(user: User) {
-    const workspaceMember = await this.workspaceMemberRepository.findOneBy({
+    const workspaceMemberRepository =
+      await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        'workspaceMember',
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOneBy({
       userId: user.id,
     });
 
@@ -82,7 +86,7 @@ export class OnboardingService {
   }
 
   private async isSyncEmailOnboardingStatus(user: User) {
-    const syncEmailValue = await this.keyValuePairService.get({
+    const syncEmailValue = await this.userVarsService.get({
       userId: user.id,
       workspaceId: user.defaultWorkspaceId,
       key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
@@ -98,14 +102,15 @@ export class OnboardingService {
   }
 
   private async isInviteTeamOnboardingStatus(workspace: Workspace) {
-    const inviteTeamValue = await this.keyValuePairService.get({
+    const inviteTeamValue = await this.userVarsService.get({
       workspaceId: workspace.id,
       key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
     });
     const isInviteTeamSkipped =
       inviteTeamValue === OnboardingStepValues.SKIPPED;
-    const workspaceMemberCount =
-      await this.userWorkspaceService.getWorkspaceMemberCount();
+    const workspaceMemberCount = await this.userWorkspaceService.getUserCount(
+      workspace.id,
+    );
 
     return (
       !isInviteTeamSkipped &&
@@ -138,7 +143,7 @@ export class OnboardingService {
   }
 
   async skipInviteTeamOnboardingStep(workspaceId: string) {
-    await this.keyValuePairService.set({
+    await this.userVarsService.set({
       workspaceId,
       key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
       value: OnboardingStepValues.SKIPPED,
@@ -146,7 +151,7 @@ export class OnboardingService {
   }
 
   async skipSyncEmailOnboardingStep(userId: string, workspaceId: string) {
-    await this.keyValuePairService.set({
+    await this.userVarsService.set({
       userId,
       workspaceId,
       key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,

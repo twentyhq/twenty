@@ -25,7 +25,6 @@ export type BasicFieldMetadataType =
   | FieldMetadataType.EMAIL
   | FieldMetadataType.NUMERIC
   | FieldMetadataType.NUMBER
-  | FieldMetadataType.PROBABILITY
   | FieldMetadataType.BOOLEAN
   | FieldMetadataType.POSITION
   | FieldMetadataType.DATE_TIME

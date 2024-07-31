@@ -6,9 +6,9 @@ import {
   TwentyORMOptions,
 } from 'src/engine/twenty-orm/interfaces/twenty-orm-options.interface';
 
-import { createTwentyORMProviders } from 'src/engine/twenty-orm/twenty-orm.providers';
 import { TwentyORMCoreModule } from 'src/engine/twenty-orm/twenty-orm-core.module';
 
+// Todo: remove this file
 @Global()
 @Module({})
 export class TwentyORMModule {
@@ -19,8 +19,8 @@ export class TwentyORMModule {
     };
   }
 
-  static forFeature(objects: EntityClassOrSchema[] = []): DynamicModule {
-    const providers = createTwentyORMProviders(objects);
+  static forFeature(_objects: EntityClassOrSchema[] = []): DynamicModule {
+    const providers = [];
 
     return {
       module: TwentyORMModule,

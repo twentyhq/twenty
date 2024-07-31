@@ -3,7 +3,7 @@ import { Address } from 'nodemailer/lib/mailer';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
-import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
+import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -34,6 +34,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelPlural: 'Companies',
   description: 'A company',
   icon: 'IconBuildingSkyscraper',
+  labelIdentifierStandardId: COMPANY_STANDARD_FIELD_IDS.name,
 })
 export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -47,7 +48,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.domainName,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.LINKS,
     label: 'Domain Name',
     description:
       'The company website URL. We use this url to fetch the company icon',
@@ -67,23 +68,23 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
-    type: FieldMetadataType.LINK,
+    type: FieldMetadataType.LINKS,
     label: 'Linkedin',
     description: 'The company Linkedin account',
     icon: 'IconBrandLinkedin',
   })
   @WorkspaceIsNullable()
-  linkedinLink: LinkMetadata | null;
+  linkedinLink: LinksMetadata | null;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.xLink,
-    type: FieldMetadataType.LINK,
+    type: FieldMetadataType.LINKS,
     label: 'X',
     description: 'The company Twitter/X account',
     icon: 'IconBrandX',
   })
   @WorkspaceIsNullable()
-  xLink: LinkMetadata | null;
+  xLink: LinksMetadata | null;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.annualRecurringRevenue,

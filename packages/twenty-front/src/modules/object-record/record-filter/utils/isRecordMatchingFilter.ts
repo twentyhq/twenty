@@ -9,6 +9,7 @@ import {
   DateFilter,
   FloatFilter,
   FullNameFilter,
+  LinksFilter,
   NotObjectRecordFilter,
   OrObjectRecordFilter,
   RecordGqlOperationFilter,
@@ -143,6 +144,7 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.Email:
       case FieldMetadataType.Phone:
       case FieldMetadataType.Select:
+      case FieldMetadataType.Rating:
       case FieldMetadataType.MultiSelect:
       case FieldMetadataType.Text: {
         return isMatchingStringFilter({
@@ -196,6 +198,23 @@ export const isRecordMatchingFilter = ({
 
         return keys.some((key) => {
           const value = addressFilter[key];
+          if (value === undefined) {
+            return false;
+          }
+
+          return isMatchingStringFilter({
+            stringFilter: value,
+            value: record[filterKey][key],
+          });
+        });
+      }
+      case FieldMetadataType.Links: {
+        const linksFilter = filterValue as LinksFilter;
+
+        const keys = ['primaryLinkLabel', 'primaryLinkUrl'] as const;
+
+        return keys.some((key) => {
+          const value = linksFilter[key];
           if (value === undefined) {
             return false;
           }

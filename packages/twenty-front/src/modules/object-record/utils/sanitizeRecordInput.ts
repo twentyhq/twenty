@@ -1,6 +1,5 @@
 import { isString } from '@sniptt/guards';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isFieldRelationToOneValue } from '@/object-record/record-field/types/guards/isFieldRelationToOneValue';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -47,13 +46,14 @@ export const sanitizeRecordInput = ({
       .filter(isDefined),
   );
   if (
-    objectMetadataItem.nameSingular !== CoreObjectNameSingular.Company ||
-    !isString(filteredResultRecord.domainName)
+    !(
+      isDefined(filteredResultRecord.domainName) &&
+      isString(filteredResultRecord.domainName)
+    )
   )
     return filteredResultRecord;
-
   return {
     ...filteredResultRecord,
-    domainName: getUrlHostName(filteredResultRecord.domainName),
+    domainName: getUrlHostName(filteredResultRecord.domainName as string),
   };
 };

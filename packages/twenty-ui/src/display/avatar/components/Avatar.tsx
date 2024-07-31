@@ -1,6 +1,6 @@
-import { useContext } from 'react';
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
+import { useContext, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
@@ -8,7 +8,7 @@ import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPr
 import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { ThemeContext } from '@ui/theme';
-import { Nullable, stringToHslColor } from '@ui/utilities';
+import { Nullable, getImageAbsoluteURI, stringToHslColor } from '@ui/utilities';
 
 const StyledAvatar = styled.div<{
   size: AvatarSize;
@@ -50,7 +50,7 @@ export type AvatarProps = {
   className?: string;
   size?: AvatarSize;
   placeholder: string | undefined;
-  entityId?: string;
+  placeholderColorSeed?: string;
   type?: Nullable<AvatarType>;
   color?: string;
   backgroundColor?: string;
@@ -62,7 +62,7 @@ export const Avatar = ({
   avatarUrl,
   size = 'md',
   placeholder,
-  entityId = placeholder,
+  placeholderColorSeed = placeholder,
   onClick,
   type = 'squared',
   color,
@@ -73,21 +73,28 @@ export const Avatar = ({
     invalidAvatarUrlsState,
   );
 
-  const noAvatarUrl = !isNonEmptyString(avatarUrl);
+  const avatarImageURI = useMemo(
+    () => getImageAbsoluteURI(avatarUrl),
+    [avatarUrl],
+  );
+
+  const noAvatarUrl = !isNonEmptyString(avatarImageURI);
 
   const placeholderChar = placeholder?.[0]?.toLocaleUpperCase();
 
-  const showPlaceholder = noAvatarUrl || invalidAvatarUrls.includes(avatarUrl);
+  const showPlaceholder =
+    noAvatarUrl || invalidAvatarUrls.includes(avatarImageURI);
 
   const handleImageError = () => {
-    if (isNonEmptyString(avatarUrl)) {
-      setInvalidAvatarUrls((prev) => [...prev, avatarUrl]);
+    if (isNonEmptyString(avatarImageURI)) {
+      setInvalidAvatarUrls((prev) => [...prev, avatarImageURI]);
     }
   };
 
-  const fixedColor = color ?? stringToHslColor(entityId ?? '', 75, 25);
+  const fixedColor =
+    color ?? stringToHslColor(placeholderColorSeed ?? '', 75, 25);
   const fixedBackgroundColor =
-    backgroundColor ?? stringToHslColor(entityId ?? '', 75, 85);
+    backgroundColor ?? stringToHslColor(placeholderColorSeed ?? '', 75, 85);
 
   const showBackgroundColor = showPlaceholder;
 
@@ -104,7 +111,7 @@ export const Avatar = ({
       {showPlaceholder ? (
         placeholderChar
       ) : (
-        <StyledImage src={avatarUrl} onError={handleImageError} alt="" />
+        <StyledImage src={avatarImageURI} onError={handleImageError} alt="" />
       )}
     </StyledAvatar>
   );
