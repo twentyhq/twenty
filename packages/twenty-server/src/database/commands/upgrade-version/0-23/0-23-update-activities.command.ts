@@ -90,7 +90,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
       const noteTargetRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<NoteTargetWorkspaceEntity>(
           workspaceId,
-          'note',
+          'noteTarget',
         );
       const taskRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<TaskWorkspaceEntity>(
@@ -100,7 +100,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
       const taskTargetRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<TaskTargetWorkspaceEntity>(
           workspaceId,
-          'task',
+          'taskTarget',
         );
       const timelineActivityRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<TimelineActivityWorkspaceEntity>(
@@ -149,18 +149,18 @@ export class UpdateActivitiesCommand extends CommandRunner {
           await noteRepository.save(note);
 
           if (activity.activityTargets && activity.activityTargets.length > 0) {
-            const taskTargets = activity.activityTargets.map(
+            const noteTargets = activity.activityTargets.map(
               (activityTarget) => {
                 const { activityId, ...activityTargetData } = activityTarget;
 
-                return taskTargetRepository.create({
-                  taskId: activityId,
+                return noteTargetRepository.create({
+                  noteId: activityId,
                   ...activityTargetData,
                 });
               },
             );
 
-            await taskTargetRepository.save(taskTargets);
+            await noteTargetRepository.save(noteTargets);
           }
 
           await timelineActivityRepository.update(
@@ -198,18 +198,18 @@ export class UpdateActivitiesCommand extends CommandRunner {
           await taskRepository.save(task);
 
           if (activity.activityTargets && activity.activityTargets.length > 0) {
-            const noteTargets = activity.activityTargets.map(
+            const taskTargets = activity.activityTargets.map(
               (activityTarget) => {
                 const { activityId, ...activityTargetData } = activityTarget;
 
-                return noteTargetRepository.create({
-                  noteId: activityId,
+                return taskTargetRepository.create({
+                  taskId: activityId,
                   ...activityTargetData,
                 });
               },
             );
 
-            await noteTargetRepository.save(noteTargets);
+            await taskTargetRepository.save(taskTargets);
           }
 
           await timelineActivityRepository.update(
