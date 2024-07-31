@@ -5,6 +5,6 @@ type WorkflowError = {
 };
 
 export type WorkflowResult = {
-  data?: object;
+  data: object | null;
   error?: WorkflowError;
 };
