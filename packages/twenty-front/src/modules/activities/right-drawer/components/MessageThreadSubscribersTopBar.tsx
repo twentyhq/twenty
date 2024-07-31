@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { EmailThreadMembersChip } from '@/activities/emails/components/EmailThreadMembersChip';
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from 'twenty-ui';
 
 const StyledButtonContainer = styled.div`
@@ -13,13 +14,21 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const MessageThreadSubscribersTopBar = () => {
+  const isMessageThreadSubscriberEnabled = useIsFeatureEnabled(
+    'IS_MESSAGE_THREAD_SUBSCRIBER_ENABLED',
+  );
+
   const messageThread = useRecoilValue(messageThreadState);
 
   const numberOfSubscribers = messageThread?.subscribers?.length ?? 0;
 
   const shouldShowMembersChip = numberOfSubscribers > 0;
 
-  if (!isDefined(messageThread) || !shouldShowMembersChip) {
+  if (
+    !isMessageThreadSubscriberEnabled ||
+    !isDefined(messageThread) ||
+    !shouldShowMembersChip
+  ) {
     return null;
   }
 

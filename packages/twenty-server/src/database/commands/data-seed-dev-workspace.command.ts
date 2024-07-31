@@ -23,6 +23,8 @@ import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
@@ -118,6 +120,11 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           return acc;
         }, {});
 
+        const featureFlagRepository =
+          workspaceDataSource.getRepository<FeatureFlagEntity>('featureFlag');
+
+        const featureFlags = await featureFlagRepository.find({});
+
         await workspaceDataSource.transaction(
           async (entityManager: EntityManager) => {
             await seedCompanies(entityManager, dataSourceMetadata.schema);
@@ -135,10 +142,21 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
                 entityManager,
                 dataSourceMetadata.schema,
               );
-              await seedMessageThreadSubscribers(
-                entityManager,
-                dataSourceMetadata.schema,
+
+              const isMessageThreadSubscriberEnabled = featureFlags.some(
+                (featureFlag) =>
+                  featureFlag.key ===
+                    FeatureFlagKey.IsMessageThreadSubscriberEnabled &&
+                  featureFlag.value === true,
               );
+
+              if (isMessageThreadSubscriberEnabled) {
+                await seedMessageThreadSubscribers(
+                  entityManager,
+                  dataSourceMetadata.schema,
+                );
+              }
+
               await seedMessage(entityManager, dataSourceMetadata.schema);
               await seedMessageChannel(
                 entityManager,
