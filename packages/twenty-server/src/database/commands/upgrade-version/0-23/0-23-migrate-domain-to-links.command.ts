@@ -130,12 +130,17 @@ export class MigrateDomainNameFromTextToLinksCommand extends CommandRunner {
         await workspaceQueryRunner.connect();
 
         const fieldName = domainNameField.name;
-        const { id: _id, ...domainNameFieldWithoutId } = domainNameField;
+        const {
+          id: _id,
+          createdAt: _createdAt,
+          updatedAt: _updatedAt,
+          ...domainNameFieldWithoutIdAndTimestamps
+        } = domainNameField;
 
         try {
           const tmpNewDomainLinksField =
             await this.fieldMetadataService.createOne({
-              ...domainNameFieldWithoutId,
+              ...domainNameFieldWithoutIdAndTimestamps,
               type: FieldMetadataType.LINKS,
               name: `${fieldName}Tmp`,
               defaultValue: {
@@ -207,6 +212,7 @@ export class MigrateDomainNameFromTextToLinksCommand extends CommandRunner {
 
           this.logger.log(`Migration of domainName done!`);
         } catch (error) {
+          this.logger.log(`Error: ${error.message}`);
           this.logger.log(
             `Failed to migrate domainName ${domainNameField.id}, rolling back.`,
           );
