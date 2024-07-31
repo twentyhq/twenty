@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-imports */
-export type { TablerIconsProps } from '@tabler/icons-react';
 export {
   Icon123,
   IconAlertCircle,
@@ -11,9 +10,9 @@ export {
   IconArrowDown,
   IconArrowLeft,
   IconArrowRight,
-  IconArrowsVertical,
   IconArrowUp,
   IconArrowUpRight,
+  IconArrowsVertical,
   IconAt,
   IconBaselineDensitySmall,
   IconBell,
@@ -39,8 +38,8 @@ export {
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
-  IconChevronsRight,
   IconChevronUp,
+  IconChevronsRight,
   IconCircleDot,
   IconCircleOff,
   IconCirclePlus,
@@ -72,12 +71,14 @@ export {
   IconDotsVertical,
   IconDownload,
   IconEditCircle,
+  IconExternalLink,
   IconEye,
   IconEyeOff,
   IconFile,
   IconFileCheck,
   IconFileExport,
   IconFileImport,
+  IconFilePencil,
   IconFileText,
   IconFileUpload,
   IconFileZip,
@@ -120,6 +121,7 @@ export {
   IconMessage,
   IconMinus,
   IconMoneybag,
+  IconMoodSmile,
   IconMouse2,
   IconNotes,
   IconNumbers,
@@ -167,6 +169,7 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX,
-  IconMoodSmile,
+  IconX
 } from '@tabler/icons-react';
+export type { TablerIconsProps } from '@tabler/icons-react';
+

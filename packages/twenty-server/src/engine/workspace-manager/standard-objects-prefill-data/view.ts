@@ -1,21 +1,42 @@
 import { EntityManager } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { viewCompanyFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-company-fields';
-import { viewOpportunityFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-opportunity-fields';
-import { viewPersonFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-person-fields';
-import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { activitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all.view';
+import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
+import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
+import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
+import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
+import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
+import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
+import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
 
 export const viewPrefillData = async (
   entityManager: EntityManager,
   schemaName: string,
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
 ) => {
-  const createdViews = await entityManager
+  const viewDefinitions = [
+    await companiesAllView(objectMetadataMap),
+    await peopleAllView(objectMetadataMap),
+    await opportunitiesAllView(objectMetadataMap),
+    await opportunitiesByStageView(objectMetadataMap),
+    await activitiesAllView(objectMetadataMap),
+    await notesAllView(objectMetadataMap),
+    await tasksAllView(objectMetadataMap),
+    await tasksByStatusView(objectMetadataMap),
+  ];
+
+  const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({
+    ...viewDefinition,
+    id: v4(),
+  }));
+
+  await entityManager
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.view`, [
+      'id',
       'name',
       'objectMetadataId',
       'type',
@@ -24,74 +45,77 @@ export const viewPrefillData = async (
       'icon',
       'kanbanFieldMetadataId',
     ])
-    .values([
-      {
-        name: 'All Companies',
-        objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.company].id,
-        type: 'table',
-        key: 'INDEX',
-        position: 0,
-        icon: 'IconBuildingSkyscraper',
-        kanbanFieldMetadataId: '',
-      },
-      {
-        name: 'All People',
-        objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.person].id,
-        type: 'table',
-        key: 'INDEX',
-        position: 0,
-        icon: 'IconUser',
-        kanbanFieldMetadataId: '',
-      },
-      {
-        name: 'All Opportunities',
-        objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].id,
-        type: 'table',
-        key: 'INDEX',
-        position: 0,
-        icon: 'IconTargetArrow',
-        kanbanFieldMetadataId: '',
-      },
-      {
-        name: 'By Stage',
-        objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].id,
-        type: 'kanban',
-        key: null,
-        position: 1,
-        icon: 'IconLayoutKanban',
-        kanbanFieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
-            OPPORTUNITY_STANDARD_FIELD_IDS.stage
-          ],
-      },
-    ])
+    .values(
+      viewDefinitionsWithId.map(
+        ({
+          id,
+          name,
+          objectMetadataId,
+          type,
+          key,
+          position,
+          icon,
+          kanbanFieldMetadataId,
+        }) => ({
+          id,
+          name,
+          objectMetadataId,
+          type,
+          key,
+          position,
+          icon,
+          kanbanFieldMetadataId,
+        }),
+      ),
+    )
     .returning('*')
     .execute();
 
-  const viewIdMap = createdViews.raw.reduce((acc, view) => {
-    acc[view.name] = view.id;
+  for (const viewDefinition of viewDefinitionsWithId) {
+    if (viewDefinition.fields && viewDefinition.fields.length > 0) {
+      await entityManager
+        .createQueryBuilder()
+        .insert()
+        .into(`${schemaName}.viewField`, [
+          'fieldMetadataId',
+          'position',
+          'isVisible',
+          'size',
+          'viewId',
+        ])
+        .values(
+          viewDefinition.fields.map((field) => ({
+            fieldMetadataId: field.fieldMetadataId,
+            position: field.position,
+            isVisible: field.isVisible,
+            size: field.size,
+            viewId: viewDefinition.id,
+          })),
+        )
+        .execute();
+    }
 
-    return acc;
-  }, {});
-
-  await entityManager
-    .createQueryBuilder()
-    .insert()
-    .into(`${schemaName}.viewField`, [
-      'fieldMetadataId',
-      'viewId',
-      'position',
-      'isVisible',
-      'size',
-    ])
-    .values([
-      ...viewCompanyFields(viewIdMap['All Companies'], objectMetadataMap),
-      ...viewPersonFields(viewIdMap['All People'], objectMetadataMap),
-      ...viewOpportunityFields(
-        viewIdMap['All Opportunities'],
-        objectMetadataMap,
-      ),
-      ...viewOpportunityFields(viewIdMap['By Stage'], objectMetadataMap),
-    ])
-    .execute();
+    if (viewDefinition.filters && viewDefinition.filters.length > 0) {
+      await entityManager
+        .createQueryBuilder()
+        .insert()
+        .into(`${schemaName}.viewFilter`, [
+          'fieldMetadataId',
+          'displayValue',
+          'operand',
+          'value',
+          'viewId',
+        ])
+        .values(
+          viewDefinition.filters.map((filter: any) => ({
+            fieldMetadataId: filter.fieldMetadataId,
+            displayValue: filter.displayValue,
+            operand: filter.operand,
+            value: filter.value,
+            viewId: viewDefinition.id,
+          })),
+        )
+        .execute();
+    }
+  }
 };

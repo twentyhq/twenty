@@ -1,4 +1,6 @@
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
+import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
@@ -10,8 +12,6 @@ import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-s
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useRecordShowPagePagination = (

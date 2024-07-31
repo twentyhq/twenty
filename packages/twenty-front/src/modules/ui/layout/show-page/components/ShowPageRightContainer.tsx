@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
   IconCheckbox,
-  IconHome,
+  IconList,
   IconMail,
   IconNotes,
   IconPaperclip,
@@ -16,9 +16,9 @@ import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
-import { TimelineActivitiesQueryEffect } from '@/activities/timelineActivities/components/TimelineActivitiesQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -51,8 +51,9 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
-  summary?: JSX.Element;
-  isRightDrawer?: boolean;
+  fieldsBox?: JSX.Element;
+  summaryCard?: JSX.Element;
+  isInRightDrawer?: boolean;
   loading: boolean;
 };
 
@@ -63,10 +64,13 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
   loading,
-  summary,
-  isRightDrawer = false,
+  fieldsBox,
+  summaryCard,
+  isInRightDrawer = false,
 }: ShowPageRightContainerProps) => {
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabIdState } = useTabList(
+    `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`,
+  );
   const activeTabId = useRecoilValue(activeTabIdState);
 
   const targetObjectNameSingular =
@@ -80,24 +84,60 @@ export const ShowPageRightContainer = ({
   const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
-  const isMobile = useIsMobile() || isRightDrawer;
+  const isMobile = useIsMobile() || isInRightDrawer;
 
   const tabs = [
     {
-      id: 'summary',
-      title: 'Summary',
-      Icon: IconHome,
+      id: 'richText',
+      title: 'Note',
+      Icon: IconNotes,
+      hide:
+        loading ||
+        (targetableObject.targetObjectNameSingular !==
+          CoreObjectNameSingular.Note &&
+          targetableObject.targetObjectNameSingular !==
+            CoreObjectNameSingular.Task),
+    },
+    {
+      id: 'fields',
+      title: 'Fields',
+      Icon: IconList,
       hide: !isMobile,
     },
     {
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline || isRightDrawer,
+      hide: !timeline || isInRightDrawer,
     },
-    { id: 'tasks', title: 'Tasks', Icon: IconCheckbox, hide: !tasks },
-    { id: 'notes', title: 'Notes', Icon: IconNotes, hide: !notes },
-    { id: 'files', title: 'Files', Icon: IconPaperclip, hide: !notes },
+    {
+      id: 'tasks',
+      title: 'Tasks',
+      Icon: IconCheckbox,
+      hide:
+        !tasks ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Note ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Task,
+    },
+    {
+      id: 'notes',
+      title: 'Notes',
+      Icon: IconNotes,
+      hide:
+        !notes ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Note ||
+        targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Task,
+    },
+    {
+      id: 'files',
+      title: 'Files',
+      Icon: IconPaperclip,
+      hide: !notes,
+    },
     {
       id: 'emails',
       title: 'Emails',
@@ -117,14 +157,23 @@ export const ShowPageRightContainer = ({
       case 'timeline':
         return (
           <>
-            <TimelineActivitiesQueryEffect
+            <TimelineActivities
               targetableObject={targetableObject}
+              isInRightDrawer={isInRightDrawer}
             />
-            <TimelineActivities targetableObject={targetableObject} />
           </>
         );
-      case 'summary':
-        return summary;
+      case 'richText':
+        return (
+          (targetableObject.targetObjectNameSingular ===
+            CoreObjectNameSingular.Note ||
+            targetableObject.targetObjectNameSingular ===
+              CoreObjectNameSingular.Task) && (
+            <ShowPageActivityContainer targetableObject={targetableObject} />
+          )
+        );
+      case 'fields':
+        return fieldsBox;
       case 'tasks':
         return <ObjectTasks targetableObject={targetableObject} />;
       case 'notes':
@@ -142,10 +191,11 @@ export const ShowPageRightContainer = ({
 
   return (
     <StyledShowPageRightContainer isMobile={isMobile}>
+      {summaryCard}
       <StyledTabListContainer>
         <TabList
           loading={loading}
-          tabListId={TAB_LIST_COMPONENT_ID}
+          tabListId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
           tabs={tabs}
         />
       </StyledTabListContainer>

@@ -1,21 +1,24 @@
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useMemo, useRef } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
-import { Avatar, IconNotes, IconSparkles, IconX } from 'twenty-ui';
 
 import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
 import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { Activity } from '@/activities/types/Activity';
+import { Note } from '@/activities/types/Note';
+import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuCommandsState } from '@/command-menu/states/commandMenuCommandsState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { Command, CommandType } from '@/command-menu/types/Command';
 import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { Person } from '@/people/types/Person';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -24,19 +27,13 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo, useRef } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { Key } from 'ts-key-enum';
+import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
-import { isDefined } from '~/utils/isDefined';
-
-import { useCommandMenu } from '../hooks/useCommandMenu';
-import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
-import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
-import { Command, CommandType } from '../types/Command';
-
-import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { CommandGroup } from './CommandGroup';
-import { CommandMenuItem } from './CommandMenuItem';
 
 const StyledCommandMenu = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -123,7 +120,9 @@ export const CommandMenu = () => {
   const { toggleCommandMenu, onItemClick, closeCommandMenu } = useCommandMenu();
   const commandMenuRef = useRef<HTMLDivElement>(null);
 
-  const openActivityRightDrawer = useOpenActivityRightDrawer();
+  const openActivityRightDrawer = useOpenActivityRightDrawer({
+    objectNameSingular: CoreObjectNameSingular.Note,
+  });
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
@@ -183,9 +182,9 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { records: activities } = useFindManyRecords<Activity>({
+  const { records: notes } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectNameSingular: CoreObjectNameSingular.Note,
     filter: commandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${commandMenuSearch}%` } },
@@ -215,24 +214,24 @@ export const CommandMenu = () => {
     [companies],
   );
 
-  const activityCommands = useMemo(
+  const noteCommands = useMemo(
     () =>
-      activities.map((activity) => ({
-        id: activity.id,
-        label: activity.title ?? '',
+      notes.map((note) => ({
+        id: note.id,
+        label: note.title ?? '',
         to: '',
-        onCommandClick: () => openActivityRightDrawer(activity.id),
+        onCommandClick: () => openActivityRightDrawer(note.id),
       })),
-    [activities, openActivityRightDrawer],
+    [notes, openActivityRightDrawer],
   );
 
   const otherCommands = useMemo(() => {
     return [
       ...peopleCommands,
       ...companyCommands,
-      ...activityCommands,
+      ...noteCommands,
     ] as Command[];
-  }, [peopleCommands, companyCommands, activityCommands]);
+  }, [peopleCommands, companyCommands, noteCommands]);
 
   const checkInShortcuts = (cmd: Command, search: string) => {
     return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
@@ -292,7 +291,7 @@ export const CommandMenu = () => {
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people.map((person) => person.id))
     .concat(companies.map((company) => company.id))
-    .concat(activities.map((activity) => activity.id));
+    .concat(notes.map((note) => note.id));
 
   return (
     <>
@@ -340,7 +339,7 @@ export const CommandMenu = () => {
                     !matchingNavigateCommand.length &&
                     !people.length &&
                     !companies.length &&
-                    !activities.length && (
+                    !notes.length && (
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
                   {isCopilotEnabled && (
@@ -439,14 +438,14 @@ export const CommandMenu = () => {
                     ))}
                   </CommandGroup>
                   <CommandGroup heading="Notes">
-                    {activities.map((activity) => (
-                      <SelectableItem itemId={activity.id} key={activity.id}>
+                    {notes.map((note) => (
+                      <SelectableItem itemId={note.id} key={note.id}>
                         <CommandMenuItem
-                          id={activity.id}
+                          id={note.id}
                           Icon={IconNotes}
-                          key={activity.id}
-                          label={activity.title ?? ''}
-                          onClick={() => openActivityRightDrawer(activity.id)}
+                          key={note.id}
+                          label={note.title ?? ''}
+                          onClick={() => openActivityRightDrawer(note.id)}
                         />
                       </SelectableItem>
                     ))}

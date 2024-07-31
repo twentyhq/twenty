@@ -9447,7 +9447,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
 								"isNullable": false,
 								"createdAt": "2024-06-07T09:05:12.599Z",
 								"updatedAt": "2024-06-07T09:05:12.599Z",
-								"defaultValue": "'Note'",
+								"defaultValue": "'NOTE'",
 								"options": null,
 								"relationDefinition": null,
 								"fromRelationMetadata": null,
@@ -9654,7 +9654,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
 							"node": {
 								"__typename": "field",
 								"id": "f7d5db6e-0916-49cc-a4d4-b0489b8fbdbc",
-								"type": "TEXT",
+								"type": "RICH_TEXT",
 								"name": "body",
 								"label": "Body",
 								"description": "Activity body",
@@ -11701,7 +11701,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
 							"node": {
 								"__typename": "field",
 								"id": "cd9efab6-a13f-4d5b-96fc-193cd3c8bce1",
-								"type": "TEXT",
+								"type": "RICH_TEXT",
 								"name": "body",
 								"label": "Body",
 								"description": "Comment body",

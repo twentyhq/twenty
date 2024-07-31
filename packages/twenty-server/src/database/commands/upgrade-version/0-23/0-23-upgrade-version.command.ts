@@ -4,6 +4,7 @@ import { MigrateDomainNameFromTextToLinksCommand } from 'src/database/commands/u
 import { MigrateLinkFieldsToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-link-fields-to-links.command';
 import { MigrateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-message-channel-sync-status-enum.command';
 import { SetWorkspaceActivationStatusCommand } from 'src/database/commands/upgrade-version/0-23/0-23-set-workspace-activation-status.command';
+import { UpdateActivitiesCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-activities.command';
 
 interface Options {
   workspaceId?: string;
@@ -19,6 +20,7 @@ export class UpgradeTo0_23Command extends CommandRunner {
     private readonly migrateDomainNameFromTextToLinks: MigrateDomainNameFromTextToLinksCommand,
     private readonly migrateMessageChannelSyncStatusEnumCommand: MigrateMessageChannelSyncStatusEnumCommand,
     private readonly setWorkspaceActivationStatusCommand: SetWorkspaceActivationStatusCommand,
+    private readonly updateActivitiesCommand: UpdateActivitiesCommand,
   ) {
     super();
   }
@@ -41,5 +43,6 @@ export class UpgradeTo0_23Command extends CommandRunner {
       options,
     );
     await this.setWorkspaceActivationStatusCommand.run(_passedParam, options);
+    await this.updateActivitiesCommand.run(_passedParam, options);
   }
 }

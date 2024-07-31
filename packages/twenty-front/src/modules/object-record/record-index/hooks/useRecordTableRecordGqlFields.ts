@@ -34,6 +34,18 @@ export const useRecordTableRecordGqlFields = ({
     ),
     ...identifierQueryFields,
     position: true,
+    noteTargets: {
+      note: {
+        id: true,
+        title: true,
+      },
+    },
+    taskTargets: {
+      task: {
+        id: true,
+        title: true,
+      },
+    },
   };
 
   return recordGqlFields;
