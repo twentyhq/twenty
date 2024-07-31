@@ -44,6 +44,10 @@ export const SettingsDevelopersWebhooksDetail = () => {
     navigate('/settings/developers');
   };
   const formConfig = useForm<SettingsDevelopersWebhooksDetailForm>();
+
+  const { isDirty, isValid, isSubmitting } = formConfig.formState;
+  const canSave = isDirty && isValid && !isSubmitting;
+
   const handleSave = async (
     formValues: SettingsDevelopersWebhooksDetailForm,
   ) => {
@@ -76,6 +80,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
               <SaveAndCancelButtons
                 onCancel={() => navigate(`/settings/developers`)}
                 onSave={formConfig.handleSubmit(handleSave)}
+                isSaveDisabled={!canSave}
               />
             </SettingsHeaderContainer>
             <Section>
