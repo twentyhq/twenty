@@ -1,3 +1,4 @@
+import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { isDefined } from '~/utils/isDefined';
 
@@ -19,7 +20,9 @@ export const mapFavorites = (favorites: any) => {
           ? {
               id: favorite.company.id,
               labelIdentifier: favorite.company.name,
-              avatarUrl: getLogoUrlFromDomainName(favorite.company.domainName),
+              avatarUrl: getLogoUrlFromDomainName(
+                getCompanyDomainName(favorite.company),
+              ),
               avatarType: 'squared',
               link: `/object/company/${favorite.company.id}`,
             }

@@ -70,6 +70,9 @@ export class UserService extends TypeOrmQueryService<User> {
       firstName: workspaceMembers[0].nameFirstName,
       lastName: workspaceMembers[0].nameLastName,
     };
+    userWorkspaceMember.timeZone = workspaceMembers[0].timeZone;
+    userWorkspaceMember.dateFormat = workspaceMembers[0].dateFormat;
+    userWorkspaceMember.timeFormat = workspaceMembers[0].timeFormat;
 
     return userWorkspaceMember;
   }

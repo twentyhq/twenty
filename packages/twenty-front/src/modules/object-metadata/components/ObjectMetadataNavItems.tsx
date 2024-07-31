@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
@@ -10,6 +12,7 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
+import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
@@ -25,6 +28,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
   );
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
+  const currentPathWithSearch = currentPath + useLocation().search;
 
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const loading = useIsPrefetchLoading();
@@ -84,16 +88,41 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
               viewId ? `?view=${viewId}` : ''
             }`;
 
+            const shouldSubItemsBeDisplayed =
+              currentPath === `/objects/${objectMetadataItem.namePlural}` &&
+              objectMetadataViews.length > 1;
+
             return (
-              <NavigationDrawerItem
-                key={objectMetadataItem.id}
-                label={objectMetadataItem.labelPlural}
-                to={navigationPath}
-                active={
-                  currentPath === `/objects/${objectMetadataItem.namePlural}`
-                }
-                Icon={getIcon(objectMetadataItem.icon)}
-              />
+              <React.Fragment key={objectMetadataItem.id}>
+                <NavigationDrawerItem
+                  key={objectMetadataItem.id}
+                  label={objectMetadataItem.labelPlural}
+                  to={navigationPath}
+                  Icon={getIcon(objectMetadataItem.icon)}
+                  active={
+                    currentPath === `/objects/${objectMetadataItem.namePlural}`
+                  }
+                />
+                {shouldSubItemsBeDisplayed &&
+                  objectMetadataViews
+                    .sort((viewA, viewB) =>
+                      viewA.key === 'INDEX'
+                        ? -1
+                        : viewA.position - viewB.position,
+                    )
+                    .map((view) => (
+                      <NavigationDrawerSubItem
+                        key={view.id}
+                        label={view.name}
+                        to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
+                        active={
+                          currentPathWithSearch ===
+                          `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
+                        }
+                        Icon={getIcon(view.icon)}
+                      />
+                    ))}
+              </React.Fragment>
             );
           })}
       </NavigationDrawerSection>

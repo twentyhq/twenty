@@ -4,8 +4,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { RightDrawerCalendarEvent } from '@/activities/calendar/right-drawer/components/RightDrawerCalendarEvent';
 import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/RightDrawerAIChat';
 import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
-import { RightDrawerCreateActivity } from '@/activities/right-drawer/components/create/RightDrawerCreateActivity';
-import { RightDrawerEditActivity } from '@/activities/right-drawer/components/edit/RightDrawerEditActivity';
 import { RightDrawerRecord } from '@/object-record/record-right-drawer/components/RightDrawerRecord';
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
@@ -31,14 +29,6 @@ const StyledRightDrawerBody = styled.div`
 `;
 
 const RIGHT_DRAWER_PAGES_CONFIG = {
-  [RightDrawerPages.CreateActivity]: {
-    page: <RightDrawerCreateActivity />,
-    topBar: <RightDrawerTopBar page={RightDrawerPages.CreateActivity} />,
-  },
-  [RightDrawerPages.EditActivity]: {
-    page: <RightDrawerEditActivity />,
-    topBar: <RightDrawerTopBar page={RightDrawerPages.EditActivity} />,
-  },
   [RightDrawerPages.ViewEmailThread]: {
     page: <RightDrawerEmailThread />,
     topBar: <RightDrawerTopBar page={RightDrawerPages.ViewEmailThread} />,

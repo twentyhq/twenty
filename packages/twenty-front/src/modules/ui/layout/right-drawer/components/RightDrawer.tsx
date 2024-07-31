@@ -1,12 +1,17 @@
-import { useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRef } from 'react';
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
-import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompleted';
+import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompletedState';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -16,7 +21,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
 import { useRightDrawer } from '../hooks/useRightDrawer';
-import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerHotkeyScope } from '../types/RightDrawerHotkeyScope';
@@ -49,8 +53,7 @@ export const RightDrawer = () => {
 
   const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
 
-  const isRightDrawerExpanded = useRecoilValue(isRightDrawerExpandedState);
-  const [, setIsRightDrawerAnimationCompleted] = useRecoilState(
+  const setIsRightDrawerAnimationCompleted = useSetRecoilState(
     isRightDrawerAnimationCompletedState,
   );
 
@@ -101,7 +104,7 @@ export const RightDrawer = () => {
   const isMobile = useIsMobile();
 
   const rightDrawerWidth = isRightDrawerOpen
-    ? isMobile || isRightDrawerExpanded
+    ? isMobile
       ? '100%'
       : theme.rightDrawerWidth
     : '0';

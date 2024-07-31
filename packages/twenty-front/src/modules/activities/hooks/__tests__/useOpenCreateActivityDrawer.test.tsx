@@ -1,23 +1,71 @@
-import { ReactNode } from 'react';
-import { MockedProvider } from '@apollo/client/testing';
+import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import gql from 'graphql-tag';
+import pick from 'lodash.pick';
+import { mockedTasks } from '~/testing/mock-data/tasks';
 
-const mockUUID = '37873e04-2f83-4468-9ab7-3f87da6cafad';
+const mockedDate = '2024-03-15T12:00:00.000Z';
+const toISOStringMock = jest.fn(() => mockedDate);
+global.Date.prototype.toISOString = toISOStringMock;
 
-jest.mock('uuid', () => ({
-  v4: () => mockUUID,
-}));
+const mockedActivity = {
+  ...pick(mockedTasks[0], ['id', 'title', 'body', 'type', 'status', 'dueAt']),
+  updatedAt: mockedDate,
+};
+
+const mocks: MockedResponse[] = [
+  {
+    request: {
+      query: gql`
+        mutation CreateOneActivity($input: ActivityCreateInput!) {
+          createActivity(data: $input) {
+            __typename
+            createdAt
+            reminderAt
+            authorId
+            title
+            status
+            updatedAt
+            body
+            dueAt
+            type
+            id
+            assigneeId
+          }
+        }
+      `,
+      variables: {
+        input: mockedActivity,
+      },
+    },
+    result: jest.fn(() => ({
+      data: {
+        createActivity: {
+          ...mockedActivity,
+          __typename: 'Activity',
+          assigneeId: '',
+          authorId: '1',
+          reminderAt: null,
+          createdAt: mockedDate,
+        },
+      },
+    })),
+  },
+];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
-    <MockedProvider addTypename={false}>{children}</MockedProvider>
+    <MockedProvider addTypename={false} mocks={mocks}>
+      {children}
+    </MockedProvider>
   </RecoilRoot>
 );
 
@@ -27,15 +75,15 @@ describe('useOpenCreateActivityDrawer', () => {
   it('works as expected', async () => {
     const { result } = renderHook(
       () => {
-        const openActivityRightDrawer = useOpenCreateActivityDrawer();
+        const openActivityRightDrawer = useOpenCreateActivityDrawer({
+          activityObjectNameSingular: CoreObjectNameSingular.Note,
+        });
         const viewableRecordId = useRecoilValue(viewableRecordIdState);
-        const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
         const setObjectMetadataItems = useSetRecoilState(
           objectMetadataItemsState,
         );
         return {
           openActivityRightDrawer,
-          activityIdInDrawer,
           viewableRecordId,
           setObjectMetadataItems,
         };
@@ -49,15 +97,11 @@ describe('useOpenCreateActivityDrawer', () => {
       result.current.setObjectMetadataItems(mockObjectMetadataItems);
     });
 
-    expect(result.current.activityIdInDrawer).toBeNull();
     expect(result.current.viewableRecordId).toBeNull();
     await act(async () => {
       result.current.openActivityRightDrawer({
-        type: 'Note',
         targetableObjects: [],
       });
     });
-    expect(result.current.activityIdInDrawer).toBe(mockUUID);
-    expect(result.current.viewableRecordId).toBe(mockUUID);
   });
 });
