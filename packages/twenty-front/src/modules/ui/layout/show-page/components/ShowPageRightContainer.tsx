@@ -157,7 +157,10 @@ export const ShowPageRightContainer = ({
       case 'timeline':
         return (
           <>
-            <TimelineActivities targetableObject={targetableObject} />
+            <TimelineActivities
+              targetableObject={targetableObject}
+              isInRightDrawer={isInRightDrawer}
+            />
           </>
         );
       case 'richText':

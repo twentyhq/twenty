@@ -35,8 +35,10 @@ const StyledMainContainer = styled.div`
 
 export const TimelineActivities = ({
   targetableObject,
+  isInRightDrawer = false,
 }: {
   targetableObject: ActivityTargetableObject;
+  isInRightDrawer?: boolean;
 }) => {
   const { timelineActivities, loading, fetchMoreRecords } =
     useTimelineActivities(targetableObject);

@@ -6,8 +6,14 @@ import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
 import { TAB_LIST_COMPONENT_ID } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
-export const TimelineCreateButtonGroup = () => {
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+export const TimelineCreateButtonGroup = ({
+  isInRightDrawer = false,
+}: {
+  isInRightDrawer?: boolean;
+}) => {
+  const { activeTabIdState } = useTabList(
+    `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`,
+  );
   const setActiveTabId = useSetRecoilState(activeTabIdState);
 
   return (

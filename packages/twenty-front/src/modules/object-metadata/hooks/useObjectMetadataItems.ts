@@ -4,7 +4,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 
 export const useObjectMetadataItems = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  console.log(objectMetadataItems);
 
   return {
     objectMetadataItems,
