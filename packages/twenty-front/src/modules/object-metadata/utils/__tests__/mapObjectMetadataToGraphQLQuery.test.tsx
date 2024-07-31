@@ -36,79 +36,80 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
       },
     });
     expect(formatGQLString(res)).toEqual(`{
-__typename
-xLink
-{
-  primaryLinkUrl
-  primaryLinkLabel
-  secondaryLinks
-}
-id
-createdAt
-company
-{
-__typename
-xLink
-{
-  primaryLinkUrl
-  primaryLinkLabel
-  secondaryLinks
-}
-linkedinLink
-{
-  primaryLinkUrl
-  primaryLinkLabel
-  secondaryLinks
-}
-domainName
-{
-  primaryLinkUrl
-  primaryLinkLabel
-  secondaryLinks
-}
-annualRecurringRevenue
-{
-  amountMicros
-  currencyCode
-}
-createdAt
-address
-{
-  addressStreet1
-  addressStreet2
-  addressCity
-  addressState
-  addressCountry
-  addressPostcode
-  addressLat
-  addressLng
-}
-updatedAt
-name
-accountOwnerId
-employees
-id
-idealCustomerProfile
-}
-city
-email
-jobTitle
-name
-{
-  firstName
-  lastName
-}
-phone
-linkedinLink
-{
-  primaryLinkUrl
-  primaryLinkLabel
-  secondaryLinks
-}
-updatedAt
-avatarUrl
-companyId
-}`);
+    __typename
+    name
+    {
+      firstName
+      lastName
+    }
+    email
+    phone
+    createdAt
+    avatarUrl
+    jobTitle
+    city
+    id
+    xLink
+    {
+      primaryLinkUrl
+      primaryLinkLabel
+      secondaryLinks
+    }
+    company
+    {
+    __typename
+    idealCustomerProfile
+    id
+    xLink
+    {
+      primaryLinkUrl
+      primaryLinkLabel
+      secondaryLinks
+    }
+    annualRecurringRevenue
+    {
+      amountMicros
+      currencyCode
+    }
+    address
+    {
+      addressStreet1
+      addressStreet2
+      addressCity
+      addressState
+      addressCountry
+      addressPostcode
+      addressLat
+      addressLng
+    }
+    employees
+    position
+    name
+    linkedinLink
+    {
+      primaryLinkUrl
+      primaryLinkLabel
+      secondaryLinks
+    }
+    createdAt
+    accountOwnerId
+    domainName
+    {
+      primaryLinkUrl
+      primaryLinkLabel
+      secondaryLinks
+    }
+    updatedAt
+    }
+    updatedAt
+    companyId
+    linkedinLink
+    {
+      primaryLinkUrl
+      primaryLinkLabel
+      secondaryLinks
+    }
+    }`);
   });
 
   it('should load only specified operation fields nested', async () => {
