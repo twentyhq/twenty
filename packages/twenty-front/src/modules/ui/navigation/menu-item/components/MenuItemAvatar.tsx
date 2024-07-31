@@ -1,11 +1,17 @@
 import { useTheme } from '@emotion/react';
-import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
-import { IconChevronRight, IconComponent } from 'twenty-ui';
+import { FunctionComponent, MouseEvent, ReactElement } from 'react';
+import {
+  Avatar,
+  AvatarProps,
+  IconChevronRight,
+  IconComponent,
+  isDefined,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui';
 
 import { LightIconButtonProps } from '@/ui/input/button/components/LightIconButton';
 import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
 
-import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
@@ -19,34 +25,38 @@ export type MenuItemIconButton = {
   onClick?: (event: MouseEvent<any>) => void;
 };
 
-export type MenuItemProps = {
+export type MenuItemAvatarProps = {
   accent?: MenuItemAccent;
   className?: string;
   iconButtons?: MenuItemIconButton[];
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
-  LeftIcon?: IconComponent | null;
+  avatar?: Pick<
+    AvatarProps,
+    'avatarUrl' | 'placeholderColorSeed' | 'placeholder' | 'size' | 'type'
+  > | null;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
   testId?: string;
-  text: ReactNode;
+  text: string;
   hasSubMenu?: boolean;
 };
 
-export const MenuItem = ({
+// TODO: merge with MenuItem
+export const MenuItemAvatar = ({
   accent = 'default',
   className,
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
-  LeftIcon,
   onClick,
   onMouseEnter,
   onMouseLeave,
   testId,
-  text,
+  avatar,
   hasSubMenu = false,
-}: MenuItemProps) => {
+  text,
+}: MenuItemAvatarProps) => {
   const theme = useTheme();
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
@@ -69,7 +79,16 @@ export const MenuItem = ({
       onMouseLeave={onMouseLeave}
     >
       <StyledMenuItemLeftContent>
-        <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
+        {isDefined(avatar) && (
+          <Avatar
+            placeholder={avatar.placeholder}
+            avatarUrl={avatar.avatarUrl}
+            placeholderColorSeed={avatar.placeholderColorSeed}
+            size={avatar.size}
+            type={avatar.type}
+          />
+        )}
+        <OverflowingTextWithTooltip text={text ?? ''} />
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
         {showIconButtons && (

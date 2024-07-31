@@ -5,9 +5,11 @@ import { RightDrawerCalendarEvent } from '@/activities/calendar/right-drawer/com
 import { RightDrawerAIChat } from '@/activities/copilot/right-drawer/components/RightDrawerAIChat';
 import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
 import { RightDrawerRecord } from '@/object-record/record-right-drawer/components/RightDrawerRecord';
-import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 
+import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
+import { ComponentByRightDrawerPage } from '@/ui/layout/right-drawer/types/ComponentByRightDrawerPage';
+import { isDefined } from 'twenty-ui';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';
 
@@ -28,39 +30,31 @@ const StyledRightDrawerBody = styled.div`
   position: relative;
 `;
 
-const RIGHT_DRAWER_PAGES_CONFIG = {
-  [RightDrawerPages.ViewEmailThread]: {
-    page: <RightDrawerEmailThread />,
-    topBar: <RightDrawerTopBar page={RightDrawerPages.ViewEmailThread} />,
-  },
-  [RightDrawerPages.ViewCalendarEvent]: {
-    page: <RightDrawerCalendarEvent />,
-    topBar: <RightDrawerTopBar page={RightDrawerPages.ViewCalendarEvent} />,
-  },
-  [RightDrawerPages.ViewRecord]: {
-    page: <RightDrawerRecord />,
-    topBar: <RightDrawerTopBar page={RightDrawerPages.ViewRecord} />,
-  },
-  [RightDrawerPages.Copilot]: {
-    page: <RightDrawerAIChat />,
-    topBar: <RightDrawerTopBar page={RightDrawerPages.Copilot} />,
-  },
+const RIGHT_DRAWER_PAGES_CONFIG: ComponentByRightDrawerPage = {
+  [RightDrawerPages.ViewEmailThread]: <RightDrawerEmailThread />,
+  [RightDrawerPages.ViewCalendarEvent]: <RightDrawerCalendarEvent />,
+  [RightDrawerPages.ViewRecord]: <RightDrawerRecord />,
+  [RightDrawerPages.Copilot]: <RightDrawerAIChat />,
 };
 
 export const RightDrawerRouter = () => {
   const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
 
-  const { topBar = null, page = null } = rightDrawerPage
-    ? RIGHT_DRAWER_PAGES_CONFIG[rightDrawerPage]
-    : {};
+  const rightDrawerPageComponent = isDefined(rightDrawerPage) ? (
+    RIGHT_DRAWER_PAGES_CONFIG[rightDrawerPage]
+  ) : (
+    <></>
+  );
 
   const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
 
   return (
     <StyledRightDrawerPage>
-      {topBar}
+      <RightDrawerTopBar />
       {!isRightDrawerMinimized && (
-        <StyledRightDrawerBody>{page}</StyledRightDrawerBody>
+        <StyledRightDrawerBody>
+          {rightDrawerPageComponent}
+        </StyledRightDrawerBody>
       )}
     </StyledRightDrawerPage>
   );
