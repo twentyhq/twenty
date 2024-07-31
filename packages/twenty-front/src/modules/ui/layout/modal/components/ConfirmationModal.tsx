@@ -27,8 +27,9 @@ export type ConfirmationModalProps = {
 
 const StyledConfirmationModal = styled(Modal)`
   border-radius: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(6)};
+  padding: ${({ theme }) => theme.spacing(10)};
   width: calc(400px - ${({ theme }) => theme.spacing(32)});
+  height: auto;
 `;
 
 const StyledCenteredButton = styled(Button)`

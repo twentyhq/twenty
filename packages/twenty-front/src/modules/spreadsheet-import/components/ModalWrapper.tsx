@@ -16,7 +16,7 @@ const StyledModal = styled(Modal)`
     min-width: auto;
     min-height: auto;
     width: 100%;
-    height: 100%;
+    height: 80%;
   }
 `;
 
