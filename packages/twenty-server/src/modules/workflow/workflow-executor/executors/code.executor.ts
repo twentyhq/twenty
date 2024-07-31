@@ -1,8 +1,9 @@
+import { Injectable } from '@nestjs/common';
+
 import { WorkflowExecutor } from 'src/modules/workflow/workflow-executor/workflow-executor.interface';
 import { WorkflowAction } from 'src/modules/workflow/common/types/workflow-action.type';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { WorkflowResult } from 'src/modules/workflow/common/types/workflow-result.type';
-import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CodeExecutor implements WorkflowExecutor {
