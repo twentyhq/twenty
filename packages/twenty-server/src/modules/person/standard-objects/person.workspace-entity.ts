@@ -161,6 +161,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => ActivityTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsSystem()
   activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({

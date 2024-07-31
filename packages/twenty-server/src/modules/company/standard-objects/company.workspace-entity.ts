@@ -171,6 +171,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
   activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
