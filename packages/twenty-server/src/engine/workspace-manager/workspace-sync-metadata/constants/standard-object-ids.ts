@@ -25,6 +25,7 @@ export const STANDARD_OBJECT_IDS = {
   messageChannel: '20202020-fe8c-40bc-a681-b80b771449b7',
   messageParticipant: '20202020-a433-4456-aa2d-fd9cb26b774a',
   messageThread: '20202020-849a-4c3e-84f5-a25a7d802271',
+  messageThreadSubscriber: '20202020-4b3b-4b3b-8b3b-3b3b3b3b3b3a',
   message: '20202020-3f6b-4425-80ab-e468899ab4b2',
   note: '20202020-0b00-45cd-b6f6-6cd806fc6804',
   noteTarget: '20202020-fff0-4b44-be82-bda313884400',

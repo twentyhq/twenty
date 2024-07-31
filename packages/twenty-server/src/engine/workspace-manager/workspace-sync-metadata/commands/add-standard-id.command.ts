@@ -64,6 +64,7 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_FREE_ACCESS_ENABLED: false,
             IS_FUNCTION_SETTINGS_ENABLED: false,
             IS_WORKFLOW_ENABLED: false,
+            IS_MESSAGE_THREAD_SUBSCRIBER_ENABLED: false,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
@@ -84,6 +85,7 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_FREE_ACCESS_ENABLED: false,
           IS_FUNCTION_SETTINGS_ENABLED: false,
           IS_WORKFLOW_ENABLED: false,
+          IS_MESSAGE_THREAD_SUBSCRIBER_ENABLED: false,
         },
       );
 

@@ -8,16 +8,19 @@ import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShow
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RightDrawerTopBarCloseButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarCloseButton';
+import { RightDrawerTopBarDropdownButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarDropdownButton';
 import { RightDrawerTopBarExpandButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarExpandButton';
 import { RightDrawerTopBarMinimizeButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarMinimizeButton';
 import { StyledRightDrawerTopBar } from '@/ui/layout/right-drawer/components/StyledRightDrawerTopBar';
 import { RIGHT_DRAWER_PAGE_ICONS } from '@/ui/layout/right-drawer/constants/RightDrawerPageIcons';
 import { RIGHT_DRAWER_PAGE_TITLES } from '@/ui/layout/right-drawer/constants/RightDrawerPageTitles';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
+import { rightDrawerPageState } from '@/ui/layout/right-drawer/states/rightDrawerPageState';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledTopBarWrapper = styled.div`
+  align-items: center;
   display: flex;
 `;
 
@@ -40,8 +43,10 @@ const StyledMinimizeTopBarIcon = styled.div`
   display: flex;
 `;
 
-export const RightDrawerTopBar = ({ page }: { page: RightDrawerPages }) => {
+export const RightDrawerTopBar = () => {
   const isMobile = useIsMobile();
+
+  const rightDrawerPage = useRecoilValue(rightDrawerPageState);
 
   const [isRightDrawerMinimized, setIsRightDrawerMinimized] = useRecoilState(
     isRightDrawerMinimizedState,
@@ -57,8 +62,6 @@ export const RightDrawerTopBar = ({ page }: { page: RightDrawerPages }) => {
 
   const { getIcon } = useIcons();
 
-  const PageIcon = getIcon(RIGHT_DRAWER_PAGE_ICONS[page]);
-
   const viewableRecordNameSingular = useRecoilValue(
     viewableRecordNameSingularState,
   );
@@ -69,14 +72,21 @@ export const RightDrawerTopBar = ({ page }: { page: RightDrawerPages }) => {
     objectNameSingular: viewableRecordNameSingular ?? 'company',
   });
 
+  if (!rightDrawerPage) {
+    return null;
+  }
+
+  const PageIcon = getIcon(RIGHT_DRAWER_PAGE_ICONS[rightDrawerPage]);
+
   const ObjectIcon = getIcon(objectMetadataItem.icon);
 
   const label =
-    page === RightDrawerPages.ViewRecord
+    rightDrawerPage === RightDrawerPages.ViewRecord
       ? objectMetadataItem.labelSingular
-      : RIGHT_DRAWER_PAGE_TITLES[page];
+      : RIGHT_DRAWER_PAGE_TITLES[rightDrawerPage];
 
-  const Icon = page === RightDrawerPages.ViewRecord ? ObjectIcon : PageIcon;
+  const Icon =
+    rightDrawerPage === RightDrawerPages.ViewRecord ? ObjectIcon : PageIcon;
 
   return (
     <StyledRightDrawerTopBar
@@ -101,6 +111,7 @@ export const RightDrawerTopBar = ({ page }: { page: RightDrawerPages }) => {
         </StyledMinimizeTopBarTitleContainer>
       )}
       <StyledTopBarWrapper>
+        <RightDrawerTopBarDropdownButton />
         {!isMobile && !isRightDrawerMinimized && (
           <RightDrawerTopBarMinimizeButton />
         )}
