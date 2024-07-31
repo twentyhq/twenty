@@ -9,6 +9,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { v4 } from 'uuid';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { ServerlessExecuteResult } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { ServerlessService } from 'src/engine/integrations/serverless/serverless.service';
 import {
@@ -41,7 +42,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     id: string,
     workspaceId: string,
     payload: object | undefined = undefined,
-  ) {
+  ): Promise<ServerlessExecuteResult> {
     const functionToExecute = await this.serverlessFunctionRepository.findOne({
       where: {
         id,

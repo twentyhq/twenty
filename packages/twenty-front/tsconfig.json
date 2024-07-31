@@ -36,6 +36,7 @@
     "src/**/*.test.ts",
     "src/**/*.test.tsx"
   ],
+  "exclude": ["**/object-metadata/utils/getObjectMetadataItemsMock.ts"],
   "references": [
     {
       "path": "./tsconfig.app.json"

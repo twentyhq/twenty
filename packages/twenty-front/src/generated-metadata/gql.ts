@@ -36,7 +36,7 @@ const documents = {
     "\n  fragment ServerlessFunctionFields on ServerlessFunction {\n    id\n    name\n    description\n    sourceCodeHash\n    sourceCodeFullPath\n    runtime\n    syncStatus\n    createdAt\n    updatedAt\n  }\n": types.ServerlessFunctionFieldsFragmentDoc,
     "\n  \n  mutation CreateOneServerlessFunctionItem(\n    $input: CreateServerlessFunctionInput!\n  ) {\n    createOneServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.CreateOneServerlessFunctionItemDocument,
     "\n  \n  mutation DeleteOneServerlessFunction($input: DeleteServerlessFunctionInput!) {\n    deleteOneServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.DeleteOneServerlessFunctionDocument,
-    "\n  mutation ExecuteOneServerlessFunction($id: UUID!, $payload: JSON!) {\n    executeOneServerlessFunction(id: $id, payload: $payload) {\n      result\n    }\n  }\n": types.ExecuteOneServerlessFunctionDocument,
+    "\n  mutation ExecuteOneServerlessFunction($id: UUID!, $payload: JSON!) {\n    executeOneServerlessFunction(id: $id, payload: $payload) {\n      data\n      duration\n      status\n      error\n    }\n  }\n": types.ExecuteOneServerlessFunctionDocument,
     "\n  \n  mutation UpdateOneServerlessFunction($input: UpdateServerlessFunctionInput!) {\n    updateOneServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.UpdateOneServerlessFunctionDocument,
     "\n  \n  query GetManyServerlessFunctions {\n    serverlessFunctions(paging: { first: 100 }) {\n      edges {\n        node {\n          ...ServerlessFunctionFields\n        }\n      }\n    }\n  }\n": types.GetManyServerlessFunctionsDocument,
     "\n  \n  query GetOneServerlessFunction($id: UUID!) {\n    serverlessFunction(id: $id) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.GetOneServerlessFunctionDocument,
@@ -151,7 +151,7 @@ export function graphql(source: "\n  \n  mutation DeleteOneServerlessFunction($i
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation ExecuteOneServerlessFunction($id: UUID!, $payload: JSON!) {\n    executeOneServerlessFunction(id: $id, payload: $payload) {\n      result\n    }\n  }\n"): (typeof documents)["\n  mutation ExecuteOneServerlessFunction($id: UUID!, $payload: JSON!) {\n    executeOneServerlessFunction(id: $id, payload: $payload) {\n      result\n    }\n  }\n"];
+export function graphql(source: "\n  mutation ExecuteOneServerlessFunction($id: UUID!, $payload: JSON!) {\n    executeOneServerlessFunction(id: $id, payload: $payload) {\n      data\n      duration\n      status\n      error\n    }\n  }\n"): (typeof documents)["\n  mutation ExecuteOneServerlessFunction($id: UUID!, $payload: JSON!) {\n    executeOneServerlessFunction(id: $id, payload: $payload) {\n      data\n      duration\n      status\n      error\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

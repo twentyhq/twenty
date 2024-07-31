@@ -54,6 +54,7 @@ export const UserProviderEffect = () => {
       setCurrentWorkspaceMember({
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
+        locale: workspaceMember.locale ?? 'en',
       });
 
       // TODO: factorize
