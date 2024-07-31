@@ -325,6 +325,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
 export const WEBHOOK_STANDARD_FIELD_IDS = {
   targetUrl: '20202020-1229-45a8-8cf4-85c9172aae12',
   operation: '20202020-15b7-458e-bf30-74770a54410c',
+  description: '20202020-15b7-458e-bf30-74770a54410d',
 };
 
 export const WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS = {
