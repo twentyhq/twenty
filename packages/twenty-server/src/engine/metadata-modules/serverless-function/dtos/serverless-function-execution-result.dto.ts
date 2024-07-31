@@ -1,7 +1,17 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IsObject, IsOptional } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
+
+export enum ServerlessFunctionExecutionStatus {
+  SUCCESS = 'SUCCESS',
+  ERROR = 'ERROR',
+}
+
+registerEnumType(ServerlessFunctionExecutionStatus, {
+  name: 'ServerlessFunctionExecutionStatus',
+  description: 'Status of the serverless function execution',
+});
 
 @ObjectType('ServerlessFunctionExecutionResult')
 export class ServerlessFunctionExecutionResultDTO {
@@ -15,8 +25,10 @@ export class ServerlessFunctionExecutionResultDTO {
   @Field({ description: 'Execution duration in milliseconds' })
   duration: number;
 
-  @Field({ description: 'Execution status code' })
-  status: 200 | 500;
+  @Field(() => ServerlessFunctionExecutionStatus, {
+    description: 'Execution status',
+  })
+  status: ServerlessFunctionExecutionStatus;
 
   @IsObject()
   @IsOptional()

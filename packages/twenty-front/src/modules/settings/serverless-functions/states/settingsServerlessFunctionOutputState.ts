@@ -1,9 +1,10 @@
 import { createState } from 'twenty-ui';
+import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';
 
 type settingsServerlessFunctionOutput = {
   data?: string;
   duration?: number;
-  status?: number;
+  status?: ServerlessFunctionExecutionStatus;
   error?: string;
 };
 

@@ -456,7 +456,7 @@ export type Mutation = {
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   track: Analytics;
-  triggerWorkflow: Scalars['JSON']['output'];
+  triggerWorkflow: WorkflowTriggerResult;
   unsyncRemoteTable: RemoteTable;
   updateBillingSubscription: UpdateBillingEntity;
   updateOneField: Field;
@@ -1049,9 +1049,15 @@ export type ServerlessFunctionExecutionResult = {
   duration: Scalars['Float']['output'];
   /** Execution error in JSON format */
   error?: Maybe<Scalars['JSON']['output']>;
-  /** Execution status cpde */
-  status: Scalars['Float']['output'];
+  /** Execution status */
+  status: ServerlessFunctionExecutionStatus;
 };
+
+/** Status of the table */
+export enum ServerlessFunctionExecutionStatus {
+  Error = 'ERROR',
+  Success = 'SUCCESS'
+}
 
 export type ServerlessFunctionFilter = {
   and?: InputMaybe<Array<ServerlessFunctionFilter>>;
@@ -1349,6 +1355,12 @@ export type Verify = {
   __typename?: 'Verify';
   tokens: AuthTokenPair;
   user: User;
+};
+
+export type WorkflowTriggerResult = {
+  __typename?: 'WorkflowTriggerResult';
+  /** Execution result in JSON format */
+  result?: Maybe<Scalars['JSON']['output']>;
 };
 
 export type Workspace = {
@@ -1688,7 +1700,7 @@ export type ExecuteOneServerlessFunctionMutationVariables = Exact<{
 }>;
 
 
-export type ExecuteOneServerlessFunctionMutation = { __typename?: 'Mutation', executeOneServerlessFunction: { __typename?: 'ServerlessFunctionExecutionResult', data?: any | null, duration: number, status: number, error?: any | null } };
+export type ExecuteOneServerlessFunctionMutation = { __typename?: 'Mutation', executeOneServerlessFunction: { __typename?: 'ServerlessFunctionExecutionResult', data?: any | null, duration: number, status: ServerlessFunctionExecutionStatus, error?: any | null } };
 
 export type UpdateOneServerlessFunctionMutationVariables = Exact<{
   input: UpdateServerlessFunctionInput;

@@ -1,4 +1,5 @@
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 
 export type ServerlessExecuteError = {
   errorType: string;
@@ -9,7 +10,7 @@ export type ServerlessExecuteError = {
 export type ServerlessExecuteResult = {
   data: object | null;
   duration: number;
-  status: 200 | 500;
+  status: ServerlessFunctionExecutionStatus;
   error?: ServerlessExecuteError;
 };
 
