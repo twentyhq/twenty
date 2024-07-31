@@ -1,7 +1,9 @@
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 // do we need to test this?
@@ -10,6 +12,10 @@ export const useTimelineActivities = (
 ) => {
   const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
     nameSingular: targetableObject.targetObjectNameSingular,
+  });
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.TimelineActivity,
   });
 
   const {
@@ -28,18 +34,7 @@ export const useTimelineActivities = (
         createdAt: 'DescNullsFirst',
       },
     ],
-    recordGqlFields: {
-      id: true,
-      createdAt: true,
-      linkedObjectMetadataId: true,
-      linkedRecordCachedName: true,
-      linkedRecordId: true,
-      name: true,
-      properties: true,
-      happensAt: true,
-      workspaceMember: true,
-      person: true,
-    },
+    recordGqlFields: generateDepthOneRecordGqlFields({ objectMetadataItem }),
     fetchPolicy: 'cache-and-network',
   });
 
