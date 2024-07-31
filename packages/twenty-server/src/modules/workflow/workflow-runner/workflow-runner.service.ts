@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import { WorkflowAction } from 'src/modules/workflow/common/types/workflow-action.type';
-import { WorkflowExecutorFactory } from 'src/modules/workflow/workflow-executor/workflow-executor.factory';
+import { WorkflowActionRunnerFactory } from 'src/modules/workflow/workflow-action-runner/workflow-action-runner.factory';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
 @Injectable()
 export class WorkflowRunnerService {
-  constructor(private readonly executorFactory: WorkflowExecutorFactory) {}
+  constructor(
+    private readonly workflowActionRunnerFactory: WorkflowActionRunnerFactory,
+  ) {}
 
   async run({
     action,
@@ -26,9 +28,11 @@ export class WorkflowRunnerService {
 
     let result: object | undefined = undefined;
 
-    const workflowExecutor = this.executorFactory.get(action.type);
+    const workflowActionRunner = this.workflowActionRunnerFactory.get(
+      action.type,
+    );
 
-    const executionResult = await workflowExecutor.run({
+    const executionResult = await workflowActionRunner.execute({
       action,
       workspaceId,
       payload,
