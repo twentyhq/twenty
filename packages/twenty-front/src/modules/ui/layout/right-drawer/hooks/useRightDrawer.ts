@@ -1,4 +1,4 @@
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
@@ -8,10 +8,10 @@ import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';
 
 export const useRightDrawer = () => {
-  const [isRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
-  const [isRightDrawerMinimized] = useRecoilState(isRightDrawerMinimizedState);
+  const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
+  const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
 
-  const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
+  const rightDrawerPage = useRecoilValue(rightDrawerPageState);
 
   const openRightDrawer = useRecoilCallback(
     ({ set }) =>
