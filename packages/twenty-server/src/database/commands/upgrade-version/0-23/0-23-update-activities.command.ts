@@ -171,7 +171,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
             },
             {
               linkedObjectMetadataId: noteObjectMetadataId,
-              name: 'linked-note-created',
+              name: 'linked-note.created',
             },
           );
 
@@ -183,7 +183,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
             },
             {
               linkedObjectMetadataId: noteObjectMetadataId,
-              name: 'linked-note-updated',
+              name: 'linked-note.updated',
             },
           );
 
@@ -234,7 +234,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
             },
             {
               linkedObjectMetadataId: taskObjectMetadataId,
-              name: 'linked-task-created',
+              name: 'linked-task.created',
             },
           );
 
@@ -246,7 +246,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
             },
             {
               linkedObjectMetadataId: taskObjectMetadataId,
-              name: 'linked-task-updated',
+              name: 'linked-task.updated',
             },
           );
           await attachmentRepository.update(
