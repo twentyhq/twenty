@@ -1,10 +1,8 @@
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { normalizeGQLQuery } from '~/utils/normalizeGQLQuery';
 
 const mockObjectMetadataItems = getObjectMetadataItemsMock();
-
-const formatGQLString = (inputString: string) =>
-  inputString.replace(/^\s*[\r\n]/gm, '');
 
 const personObjectMetadataItem = mockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
@@ -35,7 +33,8 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
         companyId: true,
       },
     });
-    expect(formatGQLString(res)).toEqual(`{
+    expect(normalizeGQLQuery(res)).toEqual(
+      normalizeGQLQuery(`{
     __typename
     name
     {
@@ -109,7 +108,8 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
       primaryLinkLabel
       secondaryLinks
     }
-    }`);
+    }`),
+    );
   });
 
   it('should load only specified operation fields nested', async () => {
@@ -118,7 +118,8 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
       objectMetadataItem: personObjectMetadataItem,
       recordGqlFields: { company: { id: true }, id: true, name: true },
     });
-    expect(formatGQLString(res)).toEqual(`{
+    expect(normalizeGQLQuery(res)).toEqual(
+      normalizeGQLQuery(`{
 __typename
 id
 company
@@ -131,6 +132,7 @@ name
   firstName
   lastName
 }
-}`);
+}`),
+    );
   });
 });
