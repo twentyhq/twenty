@@ -50,6 +50,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         const messageExternalIdsAndIdsMap =
           await this.messageService.saveMessagesWithinTransaction(
             messagesToSave,
+            connectedAccount,
             messageChannel.id,
             transactionManager,
           );
