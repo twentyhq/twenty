@@ -5,19 +5,15 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CanAccessMessageThreadService } from 'src/modules/messaging/common/query-hooks/message/can-access-message-thread.service';
-import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 
 @WorkspaceQueryHook(`message.findOne`)
 export class MessageFindOnePreQueryHook implements WorkspaceQueryHookInstance {
   constructor(
-    @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationWorkspaceEntity,
-    )
-    private readonly messageChannelMessageAssociationService: MessageChannelMessageAssociationRepository,
     private readonly canAccessMessageThreadService: CanAccessMessageThreadService,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   async execute(
@@ -25,11 +21,17 @@ export class MessageFindOnePreQueryHook implements WorkspaceQueryHookInstance {
     workspaceId: string,
     payload: FindOneResolverArgs,
   ): Promise<void> {
-    const messageChannelMessageAssociations =
-      await this.messageChannelMessageAssociationService.getByMessageIds(
-        [payload?.filter?.id?.eq],
-        workspaceId,
+    const messageChannelMessageAssociationRepository =
+      await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        'messageChannelMessageAssociation',
       );
+
+    const messageChannelMessageAssociations =
+      await messageChannelMessageAssociationRepository.find({
+        where: {
+          messageId: payload?.filter?.id?.eq,
+        },
+      });
 
     if (messageChannelMessageAssociations.length === 0) {
       throw new NotFoundException();
