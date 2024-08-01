@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { IconComponent, IconList, IconSearch, IconSettings } from 'twenty-ui';
 
@@ -16,7 +15,6 @@ export const MobileNavigationBar = () => {
   const [isCommandMenuOpened] = useRecoilState(isCommandMenuOpenedState);
   const { closeCommandMenu, openCommandMenu } = useCommandMenu();
   const isSettingsPage = useIsSettingsPage();
-  const navigate = useNavigate();
   const [isNavigationDrawerOpen, setIsNavigationDrawerOpen] = useRecoilState(
     isNavigationDrawerOpenState,
   );
