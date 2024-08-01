@@ -35,9 +35,6 @@ export class MessagingFullMessageListFetchService {
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
-    @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationWorkspaceEntity,
-    )
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
     private readonly twentyORMManager: TwentyORMManager,

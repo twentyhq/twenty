@@ -30,9 +30,6 @@ export class MessagingPartialMessageListFetchService {
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
-    @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationWorkspaceEntity,
-    )
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
     private readonly gmailGetHistoryService: MessagingGmailHistoryService,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
