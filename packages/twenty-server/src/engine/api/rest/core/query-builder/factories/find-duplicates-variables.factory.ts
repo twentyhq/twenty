@@ -7,11 +7,6 @@ import { QueryVariables } from 'src/engine/api/rest/core/types/query-variables.t
 @Injectable()
 export class FindDuplicatesVariablesFactory {
   create(request: Request): QueryVariables {
-    const data = request.body.data || [];
-    const ids = request.body.ids || data.map((item) => item.id).filter(Boolean);
-
-    return {
-      ids,
-    };
+    return request.body;
   }
 }

@@ -9,8 +9,10 @@ export class FindDuplicatesQueryFactory {
     const objectNameSingular = objectMetadata.objectMetadataItem.nameSingular;
 
     return `
-      query FindDuplicate${capitalize(objectNameSingular)}($ids: [ID!]!) {
-        ${objectNameSingular}Duplicates(ids: $ids) {
+      query FindDuplicate${capitalize(
+        objectNameSingular,
+      )}($ids: [ID], $data: [${capitalize(objectNameSingular)}CreateInput]) {
+        ${objectNameSingular}Duplicates(ids: $ids, data: $data) {
           totalCount
           pageInfo {
             hasNextPage

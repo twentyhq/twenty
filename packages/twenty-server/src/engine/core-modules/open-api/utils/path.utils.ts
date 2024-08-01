@@ -153,7 +153,7 @@ export const computeDuplicatesResultPath = (
       description: `**depth** can be provided to request your **${item.nameSingular}**`,
       operationId: `find${capitalize(item.nameSingular)}Duplicates`,
       parameters: [{ $ref: '#/components/parameters/depth' }],
-      requestBody: getFindDuplicatesRequestBody(),
+      requestBody: getFindDuplicatesRequestBody(capitalize(item.nameSingular)),
       responses: {
         '200': getFindDuplicatesResponse200(item),
         '400': { $ref: '#/components/responses/400' },
