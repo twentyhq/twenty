@@ -1399,7 +1399,8 @@ export type WorkspaceFeatureFlagsArgs = {
 
 export enum WorkspaceActivationStatus {
   Active = 'ACTIVE',
-  Inactive = 'INACTIVE'
+  Inactive = 'INACTIVE',
+  PendingCreation = 'PENDING_CREATION'
 }
 
 export type WorkspaceEdge = {
