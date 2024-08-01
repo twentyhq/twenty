@@ -12,13 +12,11 @@ import { AutoCompaniesAndContactsCreationMessageChannelListener } from 'src/modu
 import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 import { CreateCompanyService } from 'src/modules/contact-creation-manager/services/create-company.service';
 import { CreateContactService } from 'src/modules/contact-creation-manager/services/create-contact.service';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Module({
   imports: [
     ObjectMetadataRepositoryModule.forFeature([
-      PersonWorkspaceEntity,
       WorkspaceMemberWorkspaceEntity,
       CompanyWorkspaceEntity,
     ]),
