@@ -147,11 +147,8 @@ export class SignInUpService {
       ForbiddenException,
     );
 
-    const isWorkspaceActivated =
-      await this.workspaceService.isWorkspaceActivated(workspace.id);
-
     assert(
-      isWorkspaceActivated,
+      workspace.activationStatus !== WorkspaceActivationStatus.ACTIVE,
       'Workspace is not ready to welcome new members',
       ForbiddenException,
     );
