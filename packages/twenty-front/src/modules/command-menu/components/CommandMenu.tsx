@@ -194,6 +194,17 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
+  const { records: opportunities } = useFindManyRecords({
+    skip: !isCommandMenuOpened,
+    objectNameSingular: CoreObjectNameSingular.Opportunity,
+    filter: commandMenuSearch
+      ? {
+          name: { ilike: `%${commandMenuSearch}%` },
+        }
+      : undefined,
+    limit: 3,
+  });
+
   const peopleCommands = useMemo(
     () =>
       people.map(({ id, name: { firstName, lastName } }) => ({
@@ -214,6 +225,16 @@ export const CommandMenu = () => {
     [companies],
   );
 
+  const opportunityCommands = useMemo(
+    () =>
+      opportunities.map(({ id, name }) => ({
+        id,
+        label: name ?? '',
+        to: `object/opportunity/${id}`,
+      })),
+    [opportunities],
+  );
+
   const noteCommands = useMemo(
     () =>
       notes.map((note) => ({
@@ -229,9 +250,10 @@ export const CommandMenu = () => {
     return [
       ...peopleCommands,
       ...companyCommands,
+      ...opportunityCommands,
       ...noteCommands,
     ] as Command[];
-  }, [peopleCommands, companyCommands, noteCommands]);
+  }, [peopleCommands, companyCommands, noteCommands, opportunityCommands]);
 
   const checkInShortcuts = (cmd: Command, search: string) => {
     return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
@@ -291,6 +313,7 @@ export const CommandMenu = () => {
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people.map((person) => person.id))
     .concat(companies.map((company) => company.id))
+    .concat(opportunities.map((opportunity) => opportunity.id))
     .concat(notes.map((note) => note.id));
 
   return (
@@ -339,7 +362,8 @@ export const CommandMenu = () => {
                     !matchingNavigateCommand.length &&
                     !people.length &&
                     !companies.length &&
-                    !notes.length && (
+                    !notes.length &&
+                    !opportunities.length && (
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
                   {isCopilotEnabled && (
@@ -431,6 +455,29 @@ export const CommandMenu = () => {
                               avatarUrl={getLogoUrlFromDomainName(
                                 getCompanyDomainName(company),
                               )}
+                            />
+                          )}
+                        />
+                      </SelectableItem>
+                    ))}
+                  </CommandGroup>
+                  <CommandGroup heading="Opportunities">
+                    {opportunities.map((opportunity) => (
+                      <SelectableItem
+                        itemId={opportunity.id}
+                        key={opportunity.id}
+                      >
+                        <CommandMenuItem
+                          id={opportunity.id}
+                          key={opportunity.id}
+                          label={opportunity.name}
+                          to={`object/opportunity/${opportunity.id}`}
+                          Icon={() => (
+                            <Avatar
+                              type="rounded"
+                              avatarUrl={null}
+                              placeholderColorSeed={opportunity.id}
+                              placeholder={opportunity.name}
                             />
                           )}
                         />

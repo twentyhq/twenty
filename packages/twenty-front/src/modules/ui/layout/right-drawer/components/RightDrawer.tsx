@@ -25,6 +25,7 @@ import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerHotkeyScope } from '../types/RightDrawerHotkeyScope';
 
+import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { RightDrawerRouter } from './RightDrawerRouter';
 
 const StyledContainer = styled(motion.div)`
@@ -47,6 +48,41 @@ const StyledRightDrawer = styled.div`
 `;
 
 export const RightDrawer = () => {
+  const theme = useTheme();
+
+  const animationVariants = {
+    fullScreen: {
+      x: '0%',
+      width: '100%',
+      height: '100%',
+      bottom: '0',
+      top: '0',
+    },
+    normal: {
+      x: '0%',
+      width: theme.rightDrawerWidth,
+      height: '100%',
+      bottom: '0',
+      top: '0',
+    },
+    closed: {
+      x: '100%',
+      width: '0',
+      height: '100%',
+      bottom: '0',
+      top: 'auto',
+    },
+    minimized: {
+      x: '0%',
+      width: 220,
+      height: 41,
+      bottom: '0',
+      top: 'auto',
+    },
+  };
+
+  type RightDrawerAnimationVariant = keyof typeof animationVariants;
+
   const [isRightDrawerOpen, setIsRightDrawerOpen] = useRecoilState(
     isRightDrawerOpenState,
   );
@@ -82,6 +118,8 @@ export const RightDrawer = () => {
           if (isRightDrawerOpen && !isRightDrawerMinimized) {
             set(rightDrawerCloseEventState, event);
             closeRightDrawer();
+
+            emitRightDrawerCloseEvent();
           }
         },
       [closeRightDrawer],
@@ -89,11 +127,8 @@ export const RightDrawer = () => {
     mode: ClickOutsideMode.comparePixels,
   });
 
-  const theme = useTheme();
-
   useScopedHotkeys(
     [Key.Escape],
-
     () => {
       closeRightDrawer();
     },
@@ -103,56 +138,27 @@ export const RightDrawer = () => {
 
   const isMobile = useIsMobile();
 
-  const rightDrawerWidth = isRightDrawerOpen
-    ? isMobile
-      ? '100%'
-      : theme.rightDrawerWidth
-    : '0';
+  const targetVariantForAnimation: RightDrawerAnimationVariant =
+    !isRightDrawerOpen
+      ? 'closed'
+      : isRightDrawerMinimized
+        ? 'minimized'
+        : isMobile
+          ? 'fullScreen'
+          : 'normal';
+
+  const handleAnimationComplete = () => {
+    setIsRightDrawerAnimationCompleted(isRightDrawerOpen);
+  };
 
   if (!isDefined(rightDrawerPage)) {
     return <></>;
   }
 
-  const variants = {
-    fullScreen: {
-      x: '0%',
-    },
-    normal: {
-      x: '0%',
-      width: rightDrawerWidth,
-    },
-    closed: {
-      x: '100%',
-    },
-    minimized: {
-      x: '0%',
-      width: 'auto',
-      height: 'auto',
-      bottom: '0',
-      top: 'auto',
-    },
-  };
-  const handleAnimationComplete = () => {
-    setIsRightDrawerAnimationCompleted(isRightDrawerOpen);
-  };
-
   return (
     <StyledContainer
-      initial={
-        isRightDrawerOpen
-          ? isRightDrawerMinimized
-            ? 'minimized'
-            : 'normal'
-          : 'closed'
-      }
-      animate={
-        isRightDrawerOpen
-          ? isRightDrawerMinimized
-            ? 'minimized'
-            : 'normal'
-          : 'closed'
-      }
-      variants={variants}
+      animate={targetVariantForAnimation}
+      variants={animationVariants}
       transition={{
         duration: theme.animation.duration.normal,
       }}

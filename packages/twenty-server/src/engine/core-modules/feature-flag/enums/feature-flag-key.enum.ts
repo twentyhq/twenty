@@ -10,4 +10,5 @@ export enum FeatureFlagKey {
   IsFreeAccessEnabled = 'IS_FREE_ACCESS_ENABLED',
   IsFunctionSettingsEnabled = 'IS_FUNCTION_SETTINGS_ENABLED',
   IsWorkflowEnabled = 'IS_WORKFLOW_ENABLED',
+  IsMessageThreadSubscriberEnabled = 'IS_MESSAGE_THREAD_SUBSCRIBER_ENABLED',
 }
