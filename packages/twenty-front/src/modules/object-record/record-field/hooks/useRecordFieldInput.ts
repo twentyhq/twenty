@@ -1,7 +1,8 @@
-import { useContext } from 'react';
 import { isUndefined } from '@sniptt/guards';
+import { useContext } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
+import { FIELD_NOT_OVERWRITTEN_AT_DRAFT } from '@/object-record/constants/FieldsNotOverwrittenAtDraft';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useRecordFieldInputStates } from '@/object-record/record-field/hooks/internal/useRecordFieldInputStates';
 import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
@@ -31,7 +32,10 @@ export const useRecordFieldInput = <FieldValue>(
           )
           .getValue();
 
-        if (isUndefined(value)) {
+        if (
+          isUndefined(value) ||
+          FIELD_NOT_OVERWRITTEN_AT_DRAFT.includes(fieldDefinition.type) === true
+        ) {
           set(
             getDraftValueSelector(),
             computeDraftValueFromFieldValue<FieldValue>({
@@ -42,7 +46,10 @@ export const useRecordFieldInput = <FieldValue>(
         } else {
           set(
             getDraftValueSelector(),
-            computeDraftValueFromString<FieldValue>({ value, fieldDefinition }),
+            computeDraftValueFromString<FieldValue>({
+              value,
+              fieldDefinition,
+            }),
           );
         }
       },
