@@ -16,6 +16,11 @@ import { computeCompositePropertyTarget } from 'src/engine/api/graphql/workspace
 
 import { InputTypeFactory } from './input-type.factory';
 
+const hiddenAllowListKind = [
+  InputTypeDefinitionKind.Create,
+  InputTypeDefinitionKind.Update,
+];
+
 @Injectable()
 export class CompositeInputTypeDefinitionFactory {
   private readonly logger = new Logger(
@@ -59,7 +64,10 @@ export class CompositeInputTypeDefinitionFactory {
       }
 
       // Skip hidden fields
-      if (property.hidden === true || property.hidden === 'input') {
+      if (
+        property.hidden === true ||
+        (property.hidden === 'input' && hiddenAllowListKind.includes(kind))
+      ) {
         continue;
       }
 

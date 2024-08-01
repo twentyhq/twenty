@@ -25,6 +25,14 @@ export const getOrderByForFieldMetadataType = (
           },
         },
       ];
+    case FieldMetadataType.CreatedBy:
+      return [
+        {
+          [field.name]: {
+            name: direction ?? 'AscNullsLast',
+          },
+        },
+      ];
     default:
       return [
         {

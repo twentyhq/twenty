@@ -115,10 +115,7 @@ export const isFieldValueEmpty = ({
   }
 
   if (isFieldCreatedBy(fieldDefinition)) {
-    return (
-      !isFieldCreatedByValue(fieldValue) ||
-      (isValueEmpty(fieldValue.name) && isValueEmpty(fieldValue.source))
-    );
+    return !isFieldCreatedByValue(fieldValue) || isValueEmpty(fieldValue.name);
   }
 
   throw new Error(
