@@ -14,6 +14,7 @@ export const workflowTriggerGraphqlApiExceptionHandler = (error: Error) => {
         throw new UserInputError(error.message);
       case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER:
       case WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION:
+      case WorkflowTriggerExceptionCode.INVALID_ACTION_TYPE:
       default:
         throw new InternalServerError(error.message);
     }

@@ -33,6 +33,11 @@ export class FieldMetadataDefaultValueRawJson {
   value: object | null;
 }
 
+export class FieldMetadataDefaultValueRichText {
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  value: string | null;
+}
 export class FieldMetadataDefaultValueNumber {
   @ValidateIf((object, value) => value !== null)
   @IsNumber()
@@ -105,6 +110,7 @@ export class FieldMetadataDefaultValueNowFunction {
   @IsNotEmpty()
   value: typeof fieldMetadataDefaultValueFunctionName.NOW;
 }
+
 export class FieldMetadataDefaultValueAddress {
   @ValidateIf((_object, value) => value !== null)
   @IsString()

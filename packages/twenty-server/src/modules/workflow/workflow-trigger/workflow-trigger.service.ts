@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/standard-objects/workflow-event-listener.workspace-entity';
+import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   WorkflowDatabaseEventTrigger,
-  WorkflowTrigger,
   WorkflowTriggerType,
-  WorkflowVersionWorkspaceEntity,
-} from 'src/modules/workflow/standard-objects/workflow-version.workspace-entity';
+} from 'src/modules/workflow/common/types/workflow-trigger.type';
+import { WorkflowCommonService } from 'src/modules/workflow/common/workflow-common.services';
+import { WorkflowRunnerService } from 'src/modules/workflow/workflow-runner/workflow-runner.service';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
@@ -17,43 +18,40 @@ import {
 export class WorkflowTriggerService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workflowCommonService: WorkflowCommonService,
+    private readonly workflowRunnerService: WorkflowRunnerService,
   ) {}
 
-  async enableWorkflowTrigger(workspaceId: string, workflowVersionId: string) {
-    const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
-        'workflowVersion',
-      );
+  async runWorkflowVersion(
+    workspaceId: string,
+    workflowVersionId: string,
+    payload: object,
+  ) {
+    const workflowVersion = await this.workflowCommonService.getWorkflowVersion(
+      workspaceId,
+      workflowVersionId,
+    );
 
-    const workflowVersion = await workflowVersionRepository.findOne({
-      where: {
-        id: workflowVersionId,
-      },
+    return await this.workflowRunnerService.run({
+      action: workflowVersion.trigger.nextAction,
+      workspaceId,
+      payload,
     });
+  }
 
-    if (!workflowVersion) {
-      throw new WorkflowTriggerException(
-        'Workflow version not found',
-        WorkflowTriggerExceptionCode.INVALID_INPUT,
-      );
-    }
+  async enableWorkflowTrigger(workspaceId: string, workflowVersionId: string) {
+    const workflowVersion = await this.workflowCommonService.getWorkflowVersion(
+      workspaceId,
+      workflowVersionId,
+    );
 
-    const trigger = workflowVersion.trigger as unknown as WorkflowTrigger;
-
-    if (!trigger || !trigger?.type) {
-      throw new WorkflowTriggerException(
-        'Workflow version does not contains trigger',
-        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
-      );
-    }
-
-    switch (trigger.type) {
+    switch (workflowVersion.trigger.type) {
       case WorkflowTriggerType.DATABASE_EVENT:
-        await this.upsertWorkflowEventListener(
+        await this.upsertEventListenerAndPublishVersion(
           workspaceId,
           workflowVersion.workflowId,
-          trigger,
+          workflowVersionId,
+          workflowVersion.trigger,
         );
         break;
       default:
@@ -63,9 +61,10 @@ export class WorkflowTriggerService {
     return true;
   }
 
-  private async upsertWorkflowEventListener(
+  private async upsertEventListenerAndPublishVersion(
     workspaceId: string,
     workflowId: string,
+    workflowVersionId: string,
     trigger: WorkflowDatabaseEventTrigger,
   ) {
     const eventName = trigger?.settings?.eventName;
@@ -83,17 +82,41 @@ export class WorkflowTriggerService {
         'workflowEventListener',
       );
 
-    // TODO: Use upsert when available for workspace entities
-    await workflowEventListenerRepository.delete({
-      workflowId,
-      eventName,
-    });
-
     const workflowEventListener = await workflowEventListenerRepository.create({
       workflowId,
       eventName,
     });
 
-    await workflowEventListenerRepository.save(workflowEventListener);
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
+
+    const workflowRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+        workspaceId,
+        'workflow',
+      );
+
+    await workspaceDataSource?.transaction(async (transactionManager) => {
+      // TODO: Use upsert when available for workspace entities
+      await workflowEventListenerRepository.delete(
+        {
+          workflowId,
+          eventName,
+        },
+        transactionManager,
+      );
+
+      await workflowEventListenerRepository.save(
+        workflowEventListener,
+        {},
+        transactionManager,
+      );
+
+      await workflowRepository.update(
+        { id: workflowId },
+        { publishedVersionId: workflowVersionId },
+        transactionManager,
+      );
+    });
   }
 }
