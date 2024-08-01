@@ -1,3 +1,4 @@
+import { FieldCreatedBySource } from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
@@ -196,6 +197,16 @@ const fieldRichTextMock = {
   defaultValue: null,
 };
 
+const fieldCreatedByMock = {
+  name: 'fieldCreatedBy',
+  type: FieldMetadataType.CREATED_BY,
+  isNullable: true,
+  defaultValue: {
+    source: FieldCreatedBySource.MANUAL,
+    name: '',
+  },
+};
+
 export const fields = [
   fieldUuidMock,
   fieldTextMock,
@@ -218,6 +229,7 @@ export const fields = [
   fieldAddressMock,
   fieldRawJsonMock,
   fieldRichTextMock,
+  fieldCreatedByMock,
 ];
 
 export const objectMetadataItemMock = {
