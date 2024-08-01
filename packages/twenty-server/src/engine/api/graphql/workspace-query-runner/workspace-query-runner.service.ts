@@ -439,6 +439,7 @@ export class WorkspaceQueryRunnerService {
       recordId: existingRecord.id,
       objectMetadata: objectMetadataItem,
       properties: {
+        updatedFields: Object.keys(args.data),
         before: this.removeNestedProperties(existingRecord as Record),
         after: this.removeNestedProperties(parsedResults?.[0]),
       },
@@ -518,6 +519,7 @@ export class WorkspaceQueryRunnerService {
         recordId: existingRecord.id,
         objectMetadata: objectMetadataItem,
         properties: {
+          updatedFields: Object.keys(args.data),
           before: this.removeNestedProperties(existingRecord as Record),
           after: this.removeNestedProperties(record),
         },
