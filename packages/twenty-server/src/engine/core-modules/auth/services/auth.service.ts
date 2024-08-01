@@ -126,6 +126,13 @@ export class AuthService {
   }
 
   async verify(email: string): Promise<Verify> {
+    if (!email) {
+      throw new AuthException(
+        'Email is required',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const user = await this.userRepository.findOne({
       where: {
         email,
@@ -185,10 +192,17 @@ export class AuthService {
     return { isValid: !!workspace };
   }
 
-  async impersonate(userId: string) {
+  async impersonate(userIdToImpersonate: string, userImpersonating: User) {
+    if (!userImpersonating.canImpersonate) {
+      throw new AuthException(
+        'User cannot impersonate',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const user = await this.userRepository.findOne({
       where: {
-        id: userId,
+        id: userIdToImpersonate,
       },
       relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
     });
@@ -309,6 +323,13 @@ export class AuthService {
     userId: string,
     newPassword: string,
   ): Promise<UpdatePassword> {
+    if (!userId) {
+      throw new AuthException(
+        'User ID is required',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!user) {
@@ -357,5 +378,20 @@ export class AuthService {
     });
 
     return { success: true };
+  }
+
+  async findWorkspaceFromInviteHash(inviteHash: string): Promise<Workspace> {
+    const workspace = await this.workspaceRepository.findOneBy({
+      inviteHash,
+    });
+
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace does not exist',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    return workspace;
   }
 }

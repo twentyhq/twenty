@@ -1,11 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-<<<<<<< HEAD
-import {
-  Injectable
-} from '@nestjs/common';
-=======
 import { Injectable } from '@nestjs/common';
->>>>>>> 57971a6bf (Build exceptions and handler)
 import { InjectRepository } from '@nestjs/typeorm';
 
 import FileType from 'file-type';
@@ -225,7 +219,7 @@ export class SignInUpService {
     lastName: string;
     picture: SignInUpServiceInput['picture'];
   }) {
-    if (!this.environmentService.get('IS_SIGN_UP_DISABLED')) {
+    if (this.environmentService.get('IS_SIGN_UP_DISABLED')) {
       throw new AuthException(
         'Sign up is disabled',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,

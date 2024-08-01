@@ -1,3 +1,7 @@
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 
 type GoogleAPIsRequestExtraParams = {
@@ -19,7 +23,10 @@ export const setRequestExtraParams = (
   } = params;
 
   if (!transientToken) {
-    throw new Error('transientToken is required');
+    throw new AuthException(
+      'transientToken is required',
+      AuthExceptionCode.INVALID_INPUT,
+    );
   }
 
   request.params.transientToken = transientToken;
