@@ -11,7 +11,7 @@ import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timel
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
-import { WorkflowTriggerModule } from 'src/engine/core-modules/workflow/workflow-trigger.module';
+import { WorkflowTriggerCoreModule } from 'src/engine/core-modules/workflow/core-workflow-trigger.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
@@ -35,7 +35,7 @@ import { FileModule } from './file/file.module';
     WorkspaceModule,
     AISQLQueryModule,
     PostgresCredentialsModule,
-    WorkflowTriggerModule,
+    WorkflowTriggerCoreModule,
   ],
   exports: [
     AnalyticsModule,
