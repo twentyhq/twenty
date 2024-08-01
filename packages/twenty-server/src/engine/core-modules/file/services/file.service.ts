@@ -26,6 +26,7 @@ export class FileService {
         filename,
       });
     } catch (error) {
+      // TODO: Remove this fallback when all files are moved to workspace folders
       if (
         error instanceof FileStorageException &&
         error.code === FileStorageExceptionCode.FILE_NOT_FOUND
