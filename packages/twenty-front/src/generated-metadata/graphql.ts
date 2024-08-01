@@ -1054,7 +1054,7 @@ export type ServerlessFunctionExecutionResult = {
   status: ServerlessFunctionExecutionStatus;
 };
 
-/** Status of the table */
+/** Status of the serverless function execution */
 export enum ServerlessFunctionExecutionStatus {
   Error = 'ERROR',
   Success = 'SUCCESS'
@@ -1397,7 +1397,8 @@ export type WorkspaceFeatureFlagsArgs = {
 
 export enum WorkspaceActivationStatus {
   Active = 'ACTIVE',
-  Inactive = 'INACTIVE'
+  Inactive = 'INACTIVE',
+  PendingCreation = 'PENDING_CREATION'
 }
 
 export type WorkspaceEdge = {

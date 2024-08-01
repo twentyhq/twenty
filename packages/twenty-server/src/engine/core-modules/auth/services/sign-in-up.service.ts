@@ -1,30 +1,33 @@
+import { HttpService } from '@nestjs/axios';
 import {
   BadRequestException,
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpService } from '@nestjs/axios';
 
+import FileType from 'file-type';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import FileType from 'file-type';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { assert } from 'src/utils/assert';
 import {
   PASSWORD_REGEX,
-  hashPassword,
   compareHash,
+  hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { getImageBufferFromUrl } from 'src/utils/image';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { assert } from 'src/utils/assert';
+import { getImageBufferFromUrl } from 'src/utils/image';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -144,11 +147,8 @@ export class SignInUpService {
       ForbiddenException,
     );
 
-    const isWorkspaceActivated =
-      await this.workspaceService.isWorkspaceActivated(workspace.id);
-
     assert(
-      isWorkspaceActivated,
+      workspace.activationStatus === WorkspaceActivationStatus.ACTIVE,
       'Workspace is not ready to welcome new members',
       ForbiddenException,
     );
@@ -203,6 +203,7 @@ export class SignInUpService {
       displayName: '',
       domainName: '',
       inviteHash: v4(),
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
     });
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
