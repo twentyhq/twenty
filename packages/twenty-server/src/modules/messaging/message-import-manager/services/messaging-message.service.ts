@@ -63,8 +63,6 @@ export class MessagingMessageService {
       });
 
       if (existingMessage) {
-        messageExternalIdsAndIdsMap.set(message.externalId, existingMessage.id);
-
         await messageChannelMessageAssociationRepository.insert(
           {
             messageChannelId,
