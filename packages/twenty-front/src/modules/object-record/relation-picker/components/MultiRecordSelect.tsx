@@ -1,5 +1,5 @@
-import { useCallback, useRef } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -10,6 +10,7 @@ import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/r
 import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
 import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -18,6 +19,7 @@ import { SelectableItem } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { IconPlus, isDefined } from 'twenty-ui';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -26,9 +28,11 @@ export const StyledSelectableItem = styled(SelectableItem)`
 export const MultiRecordSelect = ({
   onChange,
   onSubmit,
+  onCreate,
 }: {
   onChange?: (changedRecordForSelectId: string) => void;
   onSubmit?: () => void;
+  onCreate?: ((searchInput?: string) => void) | (() => void);
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -58,12 +62,18 @@ export const MultiRecordSelect = ({
     leading: true,
   });
 
+  const debouncedOnCreate = useDebouncedCallback(
+    () => onCreate?.(relationPickerSearchFilter),
+    500,
+  );
+
   const handleFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       debouncedSetSearchFilter(event.currentTarget.value);
     },
     [debouncedSetSearchFilter],
   );
+
   return (
     <>
       <MultipleObjectRecordOnClickOutsideEffect
@@ -102,6 +112,18 @@ export const MultiRecordSelect = ({
               {objectRecordsIdsMultiSelect?.length === 0 && (
                 <MenuItem text="No result" />
               )}
+            </>
+          )}
+          {isDefined(onCreate) && (
+            <>
+              {objectRecordsIdsMultiSelect.length > 0 && (
+                <DropdownMenuSeparator />
+              )}
+              <CreateNewButton
+                onClick={debouncedOnCreate}
+                LeftIcon={IconPlus}
+                text="Add New"
+              />
             </>
           )}
         </DropdownMenuItemsContainer>
