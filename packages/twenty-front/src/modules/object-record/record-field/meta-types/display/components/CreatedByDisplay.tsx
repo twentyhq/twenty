@@ -2,8 +2,10 @@ import {
   AvatarChip,
   AvatarChipVariant,
   IconApi,
+  IconCalendar,
   IconComponent,
   IconCsv,
+  IconGmail,
 } from 'twenty-ui';
 import { useCreatedByDisplay } from '@/object-record/record-field/meta-types/hooks/useCreatedByFieldDisplay';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -49,6 +51,10 @@ export const CreatedByDisplay = () => {
         return LeftApiIcon;
       case 'IMPORT':
         return LeftCsvIcon;
+      case 'EMAIL':
+        return IconGmail;
+      case 'CALENDAR':
+        return IconCalendar;
       default:
         return undefined;
     }
