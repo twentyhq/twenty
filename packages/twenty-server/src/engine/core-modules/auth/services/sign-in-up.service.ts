@@ -148,7 +148,7 @@ export class SignInUpService {
     );
 
     assert(
-      workspace.activationStatus !== WorkspaceActivationStatus.ACTIVE,
+      workspace.activationStatus === WorkspaceActivationStatus.ACTIVE,
       'Workspace is not ready to welcome new members',
       ForbiddenException,
     );
