@@ -1,6 +1,7 @@
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { FieldCreatedBySource } from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 
@@ -30,6 +31,7 @@ export class CreateCompanyAndContactJob {
         displayName: contact.displayName,
       })),
       workspaceId,
+      FieldCreatedBySource.EMAIL,
     );
   }
 }
