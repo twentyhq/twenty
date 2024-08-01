@@ -31,10 +31,11 @@ export const ObjectFilterDropdownDateInput = () => {
     setInternalDate(date);
 
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
+
     selectFilter?.({
       id: selectedFilter?.id ? selectedFilter.id : v4(),
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
-      value: isDefined(date) ? date.toISOString() : '',
+      value: isDefined(date) ? date.toString() : '',
       operand: selectedOperandInDropdown,
       displayValue: isDefined(date) ? date.toLocaleString() : '',
       definition: filterDefinitionUsedInDropdown,
@@ -48,6 +49,7 @@ export const ObjectFilterDropdownDateInput = () => {
       date={internalDate}
       onChange={handleChange}
       onMouseSelect={handleChange}
+      isDateTimeInput={true}
     />
   );
 };
