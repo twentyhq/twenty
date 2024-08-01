@@ -73,12 +73,30 @@ export class MessagingMessageService {
         continue;
       }
 
-      const newMessageThreadId = v4();
-
-      await messageThreadRepository.insert(
-        { id: newMessageThreadId },
+      const existingThread = await messageThreadRepository.findOne(
+        {
+          where: {
+            messages: {
+              messageChannelMessageAssociations: {
+                messageThreadExternalId: message.messageThreadExternalId,
+                messageChannelId,
+              },
+            },
+          },
+        },
         transactionManager,
       );
+
+      let newOrExistingMessageThreadId = existingThread?.id;
+
+      if (!existingThread) {
+        newOrExistingMessageThreadId = v4();
+
+        await messageThreadRepository.insert(
+          { id: newOrExistingMessageThreadId },
+          transactionManager,
+        );
+      }
 
       const newMessageId = v4();
 
@@ -87,11 +105,11 @@ export class MessagingMessageService {
           id: newMessageId,
           headerMessageId: message.headerMessageId,
           subject: message.subject,
-          receivedAt: message.internalDate,
+          receivedAt: new Date(parseInt(message.internalDate)),
           direction:
             message.fromHandle === message.fromHandle ? 'outgoing' : 'incoming',
           text: message.text,
-          messageThreadId: newMessageThreadId,
+          messageThreadId: newOrExistingMessageThreadId,
         },
         transactionManager,
       );
