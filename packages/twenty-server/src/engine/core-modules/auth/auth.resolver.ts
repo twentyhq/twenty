@@ -277,14 +277,14 @@ export class AuthResolver {
 
   @Mutation(() => InvalidatePassword)
   async updatePasswordViaResetToken(
-    @Args() args: UpdatePasswordViaResetTokenInput,
+    @Args()
+    { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
   ): Promise<InvalidatePassword | void> {
     try {
-      const { id } = await this.tokenService.validatePasswordResetToken(
-        args.passwordResetToken,
-      );
+      const { id } =
+        await this.tokenService.validatePasswordResetToken(passwordResetToken);
 
-      await this.authService.updatePassword(id, args.newPassword);
+      await this.authService.updatePassword(id, newPassword);
 
       return await this.tokenService.invalidatePasswordResetToken(id);
     } catch (error) {
