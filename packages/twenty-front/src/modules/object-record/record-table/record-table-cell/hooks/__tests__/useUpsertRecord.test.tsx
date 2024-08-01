@@ -3,7 +3,9 @@ import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 import { createState } from 'twenty-ui';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -53,6 +55,8 @@ const updateOneRecordMock = jest.fn();
   createOneRecord: createOneRecordMock,
 });
 
+const objectMetadataItems = getObjectMetadataItemsMock();
+
 const Wrapper = ({
   children,
   pendingRecordIdMockedValue,
@@ -64,6 +68,7 @@ const Wrapper = ({
 }) => (
   <RecoilRoot
     initializeState={(snapshot) => {
+      snapshot.set(objectMetadataItemsState, objectMetadataItems);
       snapshot.set(pendingRecordIdState, pendingRecordIdMockedValue);
       snapshot.set(draftValueState, draftValueMockedValue);
     }}

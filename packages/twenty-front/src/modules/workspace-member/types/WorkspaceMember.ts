@@ -14,7 +14,7 @@ export type WorkspaceMember = {
     lastName: string;
   };
   avatarUrl?: string | null;
-  locale?: string | null;
+  locale: string | null;
   colorScheme?: ColorScheme;
   createdAt: string;
   updatedAt: string;

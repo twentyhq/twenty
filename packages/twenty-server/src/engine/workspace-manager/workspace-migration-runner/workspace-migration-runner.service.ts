@@ -9,27 +9,27 @@ import {
   TableUnique,
 } from 'typeorm';
 
-import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import {
-  WorkspaceMigrationTableAction,
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnCreate,
   WorkspaceMigrationColumnCreateRelation,
-  WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnDropRelation,
-  WorkspaceMigrationTableActionType,
   WorkspaceMigrationForeignTable,
   WorkspaceMigrationIndexAction,
   WorkspaceMigrationIndexActionType,
+  WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 
-import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
+import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {

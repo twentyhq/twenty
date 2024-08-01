@@ -6,6 +6,7 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
@@ -31,7 +32,9 @@ export const Notes = ({
 }) => {
   const { notes, loading } = useNotes(targetableObject);
 
-  const openCreateActivity = useOpenCreateActivityDrawer();
+  const openCreateActivity = useOpenCreateActivityDrawer({
+    activityObjectNameSingular: CoreObjectNameSingular.Note,
+  });
 
   const isNotesEmpty = !notes || notes.length === 0;
 
@@ -60,7 +63,6 @@ export const Notes = ({
           variant="secondary"
           onClick={() =>
             openCreateActivity({
-              type: 'Note',
               targetableObjects: [targetableObject],
             })
           }
@@ -82,7 +84,6 @@ export const Notes = ({
             title="Add note"
             onClick={() =>
               openCreateActivity({
-                type: 'Note',
                 targetableObjects: [targetableObject],
               })
             }

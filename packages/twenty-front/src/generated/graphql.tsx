@@ -250,6 +250,7 @@ export enum FieldMetadataType {
   Rating = 'RATING',
   RawJson = 'RAW_JSON',
   Relation = 'RELATION',
+  RichText = 'RICH_TEXT',
   Select = 'SELECT',
   Text = 'TEXT',
   Uuid = 'UUID'
