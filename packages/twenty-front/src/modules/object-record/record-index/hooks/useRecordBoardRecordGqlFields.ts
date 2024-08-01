@@ -44,6 +44,18 @@ export const useRecordBoardRecordGqlFields = ({
     ),
     ...(hasPositionField(objectMetadataItem) ? { position: true } : undefined),
     ...identifierQueryFields,
+    noteTargets: {
+      note: {
+        id: true,
+        title: true,
+      },
+    },
+    taskTargets: {
+      task: {
+        id: true,
+        title: true,
+      },
+    },
   };
 
   if (isDefined(kanbanFieldMetadataName)) {

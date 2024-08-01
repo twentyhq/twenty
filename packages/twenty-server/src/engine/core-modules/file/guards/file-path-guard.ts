@@ -1,13 +1,13 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
   HttpException,
   HttpStatus,
+  Injectable,
 } from '@nestjs/common';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
 export class FilePathGuard implements CanActivate {
@@ -17,25 +17,34 @@ export class FilePathGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const query = context.switchToHttp().getRequest().query;
+    const request = context.switchToHttp().getRequest();
+    const query = request.query;
 
     if (query && query['token']) {
-      return !(await this.isExpired(query['token']));
+      const payloadToDecode = query['token'];
+      const decodedPayload = await this.tokenService.decodePayload(
+        payloadToDecode,
+        {
+          secret: this.environmentService.get('FILE_TOKEN_SECRET'),
+        },
+      );
+
+      const expirationDate = decodedPayload?.['expiration_date'];
+      const workspaceId = decodedPayload?.['workspace_id'];
+
+      const isExpired = await this.isExpired(expirationDate);
+
+      if (isExpired) {
+        return false;
+      }
+
+      request.workspaceId = workspaceId;
     }
 
     return true;
   }
 
-  private async isExpired(signedExpirationDate: string): Promise<boolean> {
-    const decodedPayload = await this.tokenService.decodePayload(
-      signedExpirationDate,
-      {
-        secret: this.environmentService.get('FILE_TOKEN_SECRET'),
-      },
-    );
-
-    const expirationDate = decodedPayload?.['expiration_date'];
-
+  private async isExpired(expirationDate: string): Promise<boolean> {
     if (!expirationDate) {
       return true;
     }

@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
-import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
 
 @Injectable()
 export class WorkflowCommonService {

@@ -90,3 +90,16 @@ export const Catalog: CatalogStory<Story, typeof Tag> = {
   },
   decorators: [CatalogDecorator],
 };
+
+export const EmptyTag: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    color: 'transparent',
+    text: 'No Value',
+    variant: 'outline',
+    weight: 'medium',
+  },
+  parameters: {
+    container: { width: 'auto' },
+  },
+};

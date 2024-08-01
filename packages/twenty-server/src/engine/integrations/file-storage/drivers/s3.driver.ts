@@ -1,17 +1,24 @@
 import { Readable } from 'stream';
 
 import {
+  CopyObjectCommand,
   CreateBucketCommandInput,
   DeleteObjectCommand,
   DeleteObjectsCommand,
   GetObjectCommand,
   HeadBucketCommandInput,
+  HeadObjectCommand,
   ListObjectsV2Command,
   NotFound,
   PutObjectCommand,
   S3,
   S3ClientConfig,
 } from '@aws-sdk/client-s3';
+
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 
 import { StorageDriver } from './interfaces/storage-driver.interface';
 
@@ -115,13 +122,69 @@ export class S3Driver implements StorageDriver {
       Key: `${params.folderPath}/${params.filename}`,
       Bucket: this.bucketName,
     });
-    const file = await this.s3Client.send(command);
 
-    if (!file || !file.Body || !(file.Body instanceof Readable)) {
-      throw new Error('Unable to get file stream');
+    try {
+      const file = await this.s3Client.send(command);
+
+      if (!file || !file.Body || !(file.Body instanceof Readable)) {
+        throw new Error('Unable to get file stream');
+      }
+
+      return Readable.from(file.Body);
+    } catch (error) {
+      if (error.name === 'NoSuchKey') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      throw error;
     }
+  }
 
-    return Readable.from(file.Body);
+  async move(params: {
+    from: { folderPath: string; filename: string };
+    to: { folderPath: string; filename: string };
+  }): Promise<void> {
+    const fromKey = `${params.from.folderPath}/${params.from.filename}`;
+    const toKey = `${params.to.folderPath}/${params.to.filename}`;
+
+    try {
+      // Check if the source file exists
+      await this.s3Client.send(
+        new HeadObjectCommand({
+          Bucket: this.bucketName,
+          Key: fromKey,
+        }),
+      );
+
+      // Copy the object to the new location
+      await this.s3Client.send(
+        new CopyObjectCommand({
+          CopySource: `${this.bucketName}/${fromKey}`,
+          Bucket: this.bucketName,
+          Key: toKey,
+        }),
+      );
+
+      // Delete the original object
+      await this.s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: this.bucketName,
+          Key: fromKey,
+        }),
+      );
+    } catch (error) {
+      if (error.name === 'NotFound') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+      // For other errors, throw the original error
+      throw error;
+    }
   }
 
   async checkBucketExists(args: HeadBucketCommandInput) {

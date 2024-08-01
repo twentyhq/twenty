@@ -244,6 +244,12 @@ export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {
 export const MESSAGE_THREAD_STANDARD_FIELD_IDS = {
   messages: '20202020-3115-404f-aade-e1154b28e35a',
   messageChannelMessageAssociations: '20202020-314e-40a4-906d-a5d5d6c285f6',
+  messageThreadSubscribers: '20202020-3b3b-4b3b-8b3b-7f8d6a1d7d5b',
+};
+
+export const MESSAGE_THREAD_SUBSCRIBER_STANDARD_FIELD_IDS = {
+  messageThread: '20202020-2c8f-4f3e-8b9a-7f8d6a1c7d5b',
+  workspaceMember: '20202020-7f7b-4b3b-8b3b-7f8d6a1d7d5a',
 };
 
 export const MESSAGE_STANDARD_FIELD_IDS = {
@@ -418,6 +424,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   calendarEventParticipants: '20202020-0dbc-4841-9ce1-3e793b5b3512',
   timelineActivities: '20202020-e15b-47b8-94fe-8200e3c66615',
   auditLogs: '20202020-2f54-4739-a5e2-99563385e83d',
+  messageThreadSubscribers: '20202020-4b3b-4b3b-9b3b-3b3b3b3b3b3b',
   timeZone: '20202020-2d33-4c21-a86e-5943b050dd54',
   dateFormat: '20202020-af13-4e11-b1e7-b8cf5ea13dc0',
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',

@@ -25,7 +25,7 @@ import {
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { WorkspaceQueryBuilderFactory } from 'src/engine/api/graphql/workspace-query-builder/workspace-query-builder.factory';
-import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
+import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import {
   CallWebhookJobsJob,
@@ -125,6 +125,7 @@ export class WorkspaceQueryRunnerService {
       result,
       objectMetadataItem,
       '',
+      workspaceId,
     );
   }
 
@@ -167,6 +168,7 @@ export class WorkspaceQueryRunnerService {
       result,
       objectMetadataItem,
       '',
+      workspaceId,
     );
 
     return parsedResult?.edges?.[0]?.node;
@@ -235,6 +237,7 @@ export class WorkspaceQueryRunnerService {
       result,
       objectMetadataItem,
       '',
+      workspaceId,
       true,
     );
   }
@@ -283,6 +286,7 @@ export class WorkspaceQueryRunnerService {
         result,
         objectMetadataItem,
         'insertInto',
+        workspaceId,
       )
     )?.records;
 
@@ -418,6 +422,7 @@ export class WorkspaceQueryRunnerService {
         result,
         objectMetadataItem,
         'update',
+        workspaceId,
       )
     )?.records;
 
@@ -434,6 +439,7 @@ export class WorkspaceQueryRunnerService {
       recordId: existingRecord.id,
       objectMetadata: objectMetadataItem,
       properties: {
+        updatedFields: Object.keys(args.data),
         before: this.removeNestedProperties(existingRecord as Record),
         after: this.removeNestedProperties(parsedResults?.[0]),
       },
@@ -485,6 +491,7 @@ export class WorkspaceQueryRunnerService {
         result,
         objectMetadataItem,
         'update',
+        workspaceId,
       )
     )?.records;
 
@@ -512,6 +519,7 @@ export class WorkspaceQueryRunnerService {
         recordId: existingRecord.id,
         objectMetadata: objectMetadataItem,
         properties: {
+          updatedFields: Object.keys(args.data),
           before: this.removeNestedProperties(existingRecord as Record),
           after: this.removeNestedProperties(record),
         },
@@ -555,6 +563,7 @@ export class WorkspaceQueryRunnerService {
         result,
         objectMetadataItem,
         'deleteFrom',
+        workspaceId,
       )
     )?.records;
 
@@ -618,6 +627,7 @@ export class WorkspaceQueryRunnerService {
         result,
         objectMetadataItem,
         'deleteFrom',
+        workspaceId,
       )
     )?.records;
 
@@ -721,6 +731,7 @@ export class WorkspaceQueryRunnerService {
     graphqlResult: PGGraphQLResult | undefined,
     objectMetadataItem: ObjectMetadataInterface,
     command: string,
+    workspaceId: string,
     isMultiQuery = false,
   ): Promise<Result> {
     const entityKey = `${command}${computeObjectTargetTable(
@@ -767,6 +778,7 @@ export class WorkspaceQueryRunnerService {
     const resultWithGetters = await this.queryResultGettersFactory.create(
       result,
       objectMetadataItem,
+      workspaceId,
     );
 
     return parseResult(resultWithGetters);
@@ -780,7 +792,7 @@ export class WorkspaceQueryRunnerService {
   ): Promise<Result> {
     const result = await this.execute(query, workspaceId);
 
-    return this.parseResult(result, objectMetadataItem, command);
+    return this.parseResult(result, objectMetadataItem, command, workspaceId);
   }
 
   async triggerWebhooks<Record>(

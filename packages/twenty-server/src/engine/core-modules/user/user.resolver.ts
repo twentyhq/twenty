@@ -9,6 +9,7 @@ import {
 } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import assert from 'assert';
 import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
@@ -32,7 +33,6 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
-import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const getHMACKey = (email?: string, key?: string | null) => {
@@ -117,6 +117,7 @@ export class UserResolver {
   @Mutation(() => String)
   async uploadProfilePicture(
     @AuthUser() { id }: User,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<string> {
@@ -133,6 +134,7 @@ export class UserResolver {
       filename,
       mimeType: mimetype,
       fileFolder,
+      workspaceId,
     });
 
     return paths[0];
