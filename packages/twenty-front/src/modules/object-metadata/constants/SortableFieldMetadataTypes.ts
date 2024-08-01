@@ -12,4 +12,5 @@ export const SORTABLE_FIELD_METADATA_TYPES = [
   FieldMetadataType.FullName,
   FieldMetadataType.Rating,
   FieldMetadataType.Currency,
+  FieldMetadataType.Links,
 ];
