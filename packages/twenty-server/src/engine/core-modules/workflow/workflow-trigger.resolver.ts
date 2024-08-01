@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
-import { WorkflowInput } from 'src/engine/core-modules/workflow/dtos/workflow-input.dto';
+import { RunWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-workflow-version-input.dto';
 import { WorkflowTriggerResultDTO } from 'src/engine/core-modules/workflow/dtos/workflow-trigger-result.dto';
 import { workflowTriggerGraphqlApiExceptionHandler } from 'src/engine/core-modules/workflow/utils/workflow-trigger-graphql-api-exception-handler.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -32,14 +32,13 @@ export class WorkflowTriggerResolver {
   }
 
   @Mutation(() => WorkflowTriggerResultDTO)
-  async triggerWorkflow(
+  async runWorkflowVersion(
     @AuthWorkspace() { id: workspaceId }: Workspace,
-    @Args('workflowVersionId') workflowVersionId: string,
-    @Args('input') { payload }: WorkflowInput,
+    @Args('input') { workflowVersionId, payload }: RunWorkflowVersionInput,
   ) {
     try {
       return {
-        result: await this.workflowTriggerService.runWorkflow(
+        result: await this.workflowTriggerService.runWorkflowVersion(
           workspaceId,
           workflowVersionId,
           payload ?? {},

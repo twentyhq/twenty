@@ -4,6 +4,8 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { IsFeatureEnabledService } from 'src/engine/core-modules/feature-flag/services/is-feature-enabled.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
@@ -25,8 +27,27 @@ export class DatabaseEventTriggerListener {
     private readonly isFeatureFlagEnabledService: IsFeatureEnabledService,
   ) {}
 
-  @OnEvent('**')
-  async handleEvent(payload: ObjectRecordCreateEvent<any>) {
+  @OnEvent('*.created')
+  async handleObjectRecordCreateEvent(payload: ObjectRecordCreateEvent<any>) {
+    await this.handleEvent(payload);
+  }
+
+  @OnEvent('*.updated')
+  async handleObjectRecordUpdateEvent(payload: ObjectRecordUpdateEvent<any>) {
+    await this.handleEvent(payload);
+  }
+
+  @OnEvent('*.deleted')
+  async handleObjectRecordDeleteEvent(payload: ObjectRecordDeleteEvent<any>) {
+    await this.handleEvent(payload);
+  }
+
+  private async handleEvent(
+    payload:
+      | ObjectRecordCreateEvent<any>
+      | ObjectRecordUpdateEvent<any>
+      | ObjectRecordDeleteEvent<any>,
+  ) {
     const workspaceId = payload.workspaceId;
     const eventName = payload.name;
 

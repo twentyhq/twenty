@@ -22,7 +22,7 @@ export class WorkflowTriggerService {
     private readonly workflowRunnerService: WorkflowRunnerService,
   ) {}
 
-  async runWorkflow(
+  async runWorkflowVersion(
     workspaceId: string,
     workflowVersionId: string,
     payload: object,
