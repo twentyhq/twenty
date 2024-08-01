@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import React from 'react';
 
-import { ModalLayout } from '@/ui/layout/modal/components/ModalLayout';
+import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
 
-const StyledContent = styled(ModalLayout.Content)`
+const StyledContent = styled(EnhancedModalLayout.Content)`
   align-items: center;
   justify-content: center;
 `;
@@ -11,7 +11,7 @@ const StyledContent = styled(ModalLayout.Content)`
 type AuthModalProps = { children: React.ReactNode };
 
 export const AuthModal = ({ children }: AuthModalProps) => (
-  <ModalLayout padding={'none'}>
+  <EnhancedModalLayout padding={'none'} modalVariant="primary">
     <StyledContent>{children}</StyledContent>
-  </ModalLayout>
+  </EnhancedModalLayout>
 );

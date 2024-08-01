@@ -2,10 +2,11 @@ import styled from '@emotion/styled';
 
 import { CircularProgressBar } from '@/ui/feedback/progress-bar/components/CircularProgressBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
-import { Modal } from '@/ui/layout/modal/components/Modal';
+
+import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-const StyledFooter = styled(Modal.Footer)`
+const StyledFooter = styled(EnhancedModalLayout.Footer)`
   gap: ${({ theme }) => theme.spacing(2)};
   justify-content: space-between;
 `;

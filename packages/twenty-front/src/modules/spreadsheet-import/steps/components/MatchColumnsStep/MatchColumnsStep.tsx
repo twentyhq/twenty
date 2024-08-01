@@ -14,13 +14,13 @@ import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 
+import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
 import { UserTableColumn } from './components/UserTableColumn';
 
-const StyledContent = styled(Modal.Content)`
+const StyledContent = styled(EnhancedModalLayout.Content)`
   align-items: center;
   padding-left: ${({ theme }) => theme.spacing(6)};
   padding-right: ${({ theme }) => theme.spacing(6)};

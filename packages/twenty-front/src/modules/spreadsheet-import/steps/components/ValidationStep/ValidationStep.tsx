@@ -20,13 +20,13 @@ import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Button } from '@/ui/input/button/components/Button';
 import { Toggle } from '@/ui/input/components/Toggle';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 import { isDefined } from '~/utils/isDefined';
 
+import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
 
-const StyledContent = styled(Modal.Content)`
+const StyledContent = styled(EnhancedModalLayout.Content)`
   padding-left: ${({ theme }) => theme.spacing(6)};
   padding-right: ${({ theme }) => theme.spacing(6)};
 `;

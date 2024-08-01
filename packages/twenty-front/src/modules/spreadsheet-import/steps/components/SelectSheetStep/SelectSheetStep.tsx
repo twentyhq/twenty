@@ -1,13 +1,14 @@
-import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useState } from 'react';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { Radio } from '@/ui/input/components/Radio';
 import { RadioGroup } from '@/ui/input/components/RadioGroup';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 
-const StyledContent = styled(Modal.Content)`
+import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
+
+const StyledContent = styled(EnhancedModalLayout.Content)`
   align-items: center;
   padding-left: ${({ theme }) => theme.spacing(6)};
   padding-right: ${({ theme }) => theme.spacing(6)};
