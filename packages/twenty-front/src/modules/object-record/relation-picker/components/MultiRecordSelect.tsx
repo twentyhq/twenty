@@ -62,6 +62,11 @@ export const MultiRecordSelect = ({
     leading: true,
   });
 
+  const debouncedOnCreate = useDebouncedCallback(
+    () => onCreate?.(relationPickerSearchFilter),
+    500,
+  );
+
   const handleFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       debouncedSetSearchFilter(event.currentTarget.value);
@@ -115,7 +120,7 @@ export const MultiRecordSelect = ({
                 <DropdownMenuSeparator />
               )}
               <CreateNewButton
-                onClick={() => onCreate?.(relationPickerSearchFilter)}
+                onClick={debouncedOnCreate}
                 LeftIcon={IconPlus}
                 text="Add New"
               />
