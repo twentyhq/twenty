@@ -101,9 +101,9 @@ export const booleanFieldDefinition = formatFieldMetadataItemAsFieldDefinition({
 
 export const createdByFieldDefinition: FieldDefinition<FieldCreatedByMetadata> = {
   fieldMetadataId,
-  label: 'Display Name',
-  iconName: 'profile',
-  type: FieldMetadataType.FullName,
+  label: 'Created By',
+  iconName: 'restart',
+  type: FieldMetadataType.CreatedBy,
   defaultValue: { source: 'MANUAL', name: '' },
   metadata: {
     fieldName: 'createdBy',
