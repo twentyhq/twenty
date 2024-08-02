@@ -151,7 +151,7 @@ const getMonthLabels = () => {
     .map((date) => formatter.format(date));
 };
 
-const getMonthLabelsMemoized = moize(getMonthLabels);
+export const getMonthLabelsMemoized = moize(getMonthLabels);
 
 export const formatISOStringToHumanReadableDateTime = (date: string) => {
   const monthLabels = getMonthLabelsMemoized();

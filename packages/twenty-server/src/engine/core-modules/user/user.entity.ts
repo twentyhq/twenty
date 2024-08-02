@@ -1,24 +1,24 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-  ManyToOne,
-  Relation,
-} from 'typeorm';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Relation,
+  UpdateDateColumn,
+} from 'typeorm';
 
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(OnboardingStatus, {
   name: 'OnboardingStatus',
@@ -85,22 +85,6 @@ export class User {
   @Field()
   @Column()
   defaultWorkspaceId: string;
-
-  @Field({
-    nullable: true,
-    deprecationReason:
-      'field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021',
-  })
-  @Column({ nullable: true })
-  passwordResetToken: string;
-
-  @Field({
-    nullable: true,
-    deprecationReason:
-      'field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021',
-  })
-  @Column({ nullable: true, type: 'timestamptz' })
-  passwordResetTokenExpiresAt: Date;
 
   @OneToMany(() => AppToken, (appToken) => appToken.user, {
     cascade: true,

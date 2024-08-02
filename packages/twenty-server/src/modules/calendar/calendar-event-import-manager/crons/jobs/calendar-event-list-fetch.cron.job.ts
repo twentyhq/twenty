@@ -9,15 +9,12 @@ import { Processor } from 'src/engine/integrations/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   CalendarEventListFetchJob,
   CalendarEventsImportJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
-import {
-  CalendarChannelSyncStage,
-  CalendarChannelWorkspaceEntity,
-} from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
@@ -29,7 +26,7 @@ export class CalendarEventListFetchCronJob {
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly billingService: BillingService,
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   @Process(CalendarEventListFetchCronJob.name)
@@ -49,9 +46,9 @@ export class CalendarEventListFetchCronJob {
 
     for (const workspaceId of workspaceIdsWithDataSources) {
       const calendarChannelRepository =
-        await this.twentyORMManager.getRepositoryForWorkspace(
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
           workspaceId,
-          CalendarChannelWorkspaceEntity,
+          'calendarChannel',
         );
 
       const calendarChannels = await calendarChannelRepository.find({

@@ -1,6 +1,6 @@
-import { MouseEvent, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
+import { MouseEvent, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { IconLock, IconPencil, IconPlus, useIcons } from 'twenty-ui';
 
@@ -84,42 +84,52 @@ export const ViewPickerListContent = () => {
   return (
     <>
       <DropdownMenuItemsContainer>
+        {indexView && (
+          <MenuItemDraggable
+            key={indexView.id}
+            iconButtons={[
+              {
+                Icon: IconLock,
+              },
+            ].filter(isDefined)}
+            isIconDisplayedOnHoverOnly={false}
+            onClick={() => handleViewSelect(indexView.id)}
+            LeftIcon={getIcon(indexView.icon)}
+            text={indexView.name}
+            accent="placeholder"
+            isDragDisabled
+          />
+        )}
         <DraggableList
           onDragEnd={handleDragEnd}
-          draggableItems={viewsOnCurrentObject.map((view, index) => (
-            <DraggableItem
-              key={view.id}
-              draggableId={view.id}
-              index={index}
-              isDragDisabled={viewsOnCurrentObject.length === 1}
-              itemComponent={
-                <MenuItemDraggable
-                  key={view.id}
-                  iconButtons={
-                    indexView?.id === view.id
-                      ? [
-                          {
-                            Icon: IconLock,
-                          },
-                        ]
-                      : [
-                          {
-                            Icon: IconPencil,
-                            onClick: (event: MouseEvent<HTMLButtonElement>) =>
-                              handleEditViewButtonClick(event, view.id),
-                          },
-                        ].filter(isDefined)
-                  }
-                  isIconDisplayedOnHoverOnly={
-                    indexView?.id === view.id ? false : true
-                  }
-                  onClick={() => handleViewSelect(view.id)}
-                  LeftIcon={getIcon(view.icon)}
-                  text={view.name}
-                />
-              }
-            />
-          ))}
+          draggableItems={viewsOnCurrentObject
+            .filter((view) => indexView?.id !== view.id)
+            .map((view, index) => (
+              <DraggableItem
+                key={view.id}
+                draggableId={view.id}
+                index={index}
+                isDragDisabled={viewsOnCurrentObject.length === 1}
+                itemComponent={
+                  <MenuItemDraggable
+                    key={view.id}
+                    iconButtons={[
+                      {
+                        Icon: IconPencil,
+                        onClick: (event: MouseEvent<HTMLButtonElement>) =>
+                          handleEditViewButtonClick(event, view.id),
+                      },
+                    ].filter(isDefined)}
+                    isIconDisplayedOnHoverOnly={
+                      indexView?.id === view.id ? false : true
+                    }
+                    onClick={() => handleViewSelect(view.id)}
+                    LeftIcon={getIcon(view.icon)}
+                    text={view.name}
+                  />
+                }
+              />
+            ))}
         />
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />

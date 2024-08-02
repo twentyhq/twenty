@@ -4,6 +4,7 @@ import {
   IconCheck,
   IconCoins,
   IconComponent,
+  IconFilePencil,
   IconJson,
   IconKey,
   IconLink,
@@ -129,6 +130,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.RawJson]: {
     label: 'JSON',
     Icon: IconJson,
+    defaultValue: { key: 'value' },
+  },
+  [FieldMetadataType.RichText]: {
+    label: 'Rich Text',
+    Icon: IconFilePencil,
     defaultValue: { key: 'value' },
   },
 } as const satisfies Record<

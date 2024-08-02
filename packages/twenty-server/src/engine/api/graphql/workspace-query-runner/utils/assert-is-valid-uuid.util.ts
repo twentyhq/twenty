@@ -1,4 +1,7 @@
-import { BadRequestException } from '@nestjs/common';
+import {
+  WorkspaceQueryRunnerException,
+  WorkspaceQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 
 export const assertIsValidUuid = (value: string) => {
   const isValid =
@@ -7,6 +10,9 @@ export const assertIsValidUuid = (value: string) => {
     );
 
   if (!isValid) {
-    throw new BadRequestException(`Value "${value}" is not a valid UUID`);
+    throw new WorkspaceQueryRunnerException(
+      `Value "${value}" is not a valid UUID`,
+      WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+    );
   }
 };

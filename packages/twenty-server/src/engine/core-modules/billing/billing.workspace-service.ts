@@ -13,13 +13,14 @@ import {
   SubscriptionStatus,
 } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { assert } from 'src/utils/assert';
 
@@ -54,7 +55,7 @@ export class BillingWorkspaceService {
   async isBillingEnabledForWorkspace(workspaceId: string) {
     const isFreeAccessEnabled = await this.featureFlagRepository.findOneBy({
       workspaceId,
-      key: FeatureFlagKeys.IsFreeAccessEnabled,
+      key: FeatureFlagKey.IsFreeAccessEnabled,
       value: true,
     });
 
@@ -283,7 +284,7 @@ export class BillingWorkspaceService {
       | Stripe.CustomerSubscriptionCreatedEvent.Data
       | Stripe.CustomerSubscriptionDeletedEvent.Data,
   ) {
-    const workspace = this.workspaceRepository.find({
+    const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
 
@@ -327,7 +328,27 @@ export class BillingWorkspaceService {
 
     await this.featureFlagRepository.delete({
       workspaceId,
-      key: FeatureFlagKeys.IsFreeAccessEnabled,
+      key: FeatureFlagKey.IsFreeAccessEnabled,
     });
+
+    if (
+      data.object.status === SubscriptionStatus.Canceled ||
+      data.object.status === SubscriptionStatus.Unpaid
+    ) {
+      await this.workspaceRepository.update(workspaceId, {
+        activationStatus: WorkspaceActivationStatus.INACTIVE,
+      });
+    }
+
+    if (
+      (data.object.status === SubscriptionStatus.Active ||
+        data.object.status === SubscriptionStatus.Trialing ||
+        data.object.status === SubscriptionStatus.PastDue) &&
+      workspace.activationStatus == WorkspaceActivationStatus.INACTIVE
+    ) {
+      await this.workspaceRepository.update(workspaceId, {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+      });
+    }
   }
 }

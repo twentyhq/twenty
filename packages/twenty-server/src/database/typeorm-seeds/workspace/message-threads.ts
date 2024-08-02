@@ -7,6 +7,7 @@ export const DEV_SEED_MESSAGE_THREAD_IDS = {
   MESSAGE_THREAD_2: '20202020-634a-4fde-aa7c-28a0eaf203ca',
   MESSAGE_THREAD_3: '20202020-1b56-4f10-a2fa-2ccaddf81f6c',
   MESSAGE_THREAD_4: '20202020-d51c-485a-b1b6-ed7c63e05d72',
+  MESSAGE_THREAD_5: '20202020-3f74-492d-a101-2a70f50a1645',
 };
 
 export const seedMessageThread = async (

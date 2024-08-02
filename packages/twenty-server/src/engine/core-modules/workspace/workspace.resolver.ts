@@ -85,6 +85,7 @@ export class WorkspaceResolver {
       filename,
       mimeType: mimetype,
       fileFolder,
+      workspaceId: id,
     });
 
     await this.workspaceService.updateOne(id, {
@@ -98,17 +99,6 @@ export class WorkspaceResolver {
   @Mutation(() => Workspace)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
-  }
-
-  @ResolveField(() => String)
-  async activationStatus(
-    @Parent() workspace: Workspace,
-  ): Promise<'active' | 'inactive'> {
-    if (await this.workspaceService.isWorkspaceActivated(workspace.id)) {
-      return 'active';
-    }
-
-    return 'inactive';
   }
 
   @ResolveField(() => String, { nullable: true })

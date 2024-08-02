@@ -15,7 +15,10 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
@@ -42,20 +45,18 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     if (!data.displayName || !data.displayName.length) {
       throw new BadRequestException("'displayName' not provided");
     }
-    await this.workspaceRepository.update(user.defaultWorkspace.id, {
-      displayName: data.displayName,
-    });
+
     await this.workspaceManagerService.init(user.defaultWorkspace.id);
     await this.userWorkspaceService.createWorkspaceMember(
       user.defaultWorkspace.id,
       user,
     );
+    await this.workspaceRepository.update(user.defaultWorkspace.id, {
+      displayName: data.displayName,
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
+    });
 
     return user.defaultWorkspace;
-  }
-
-  async isWorkspaceActivated(id: string): Promise<boolean> {
-    return await this.workspaceManagerService.doesDataSourceExist(id);
   }
 
   async softDeleteWorkspace(id: string) {

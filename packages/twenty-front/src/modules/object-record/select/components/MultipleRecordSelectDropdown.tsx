@@ -12,8 +12,6 @@ import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/inter
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const MultipleRecordSelectDropdown = ({
   selectableListId,
@@ -122,7 +120,7 @@ export const MultipleRecordSelectDropdown = ({
               }}
               avatar={
                 <Avatar
-                  avatarUrl={getImageAbsoluteURIOrBase64(record.avatarUrl)}
+                  avatarUrl={record.avatarUrl}
                   placeholderColorSeed={record.id}
                   placeholder={record.name}
                   size="md"

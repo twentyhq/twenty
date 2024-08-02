@@ -3,11 +3,11 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const fieldValue = [
   {
     __typename: 'Company',
-    domainName: 'google.com',
+    domainName: { primaryLinkUrl: 'google.com', primaryLinkLabel: '' },
     xLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     name: 'Google',
     annualRecurringRevenue: {
@@ -25,17 +25,17 @@ export const fieldValue = [
     updatedAt: '2024-05-01T13:16:29.046Z',
     linkedinLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
   },
   {
     __typename: 'Company',
-    domainName: 'airbnb.com',
+    domainName: { primaryLinkUrl: 'airbnb.com', primaryLinkLabel: '' },
     xLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     name: 'Airbnb',
     annualRecurringRevenue: {
@@ -53,8 +53,8 @@ export const fieldValue = [
     updatedAt: '2024-05-01T13:16:29.046Z',
     linkedinLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
   },
 ];
@@ -69,11 +69,11 @@ export const otherPersonMock = {
     createdAt: '2024-05-01T13:16:29.046Z',
     company: {
       __typename: 'Company',
-      domainName: 'google.com',
+      domainName: { primaryLinkUrl: 'google.com', primaryLinkLabel: '' },
       xLink: {
         __typename: 'Link',
-        label: '',
-        url: '',
+        primaryLinkLabel: '',
+        primaryLinkUrl: '',
       },
       name: 'Google',
       annualRecurringRevenue: {
@@ -91,8 +91,8 @@ export const otherPersonMock = {
       updatedAt: '2024-05-01T13:16:29.046Z',
       linkedinLink: {
         __typename: 'Link',
-        label: '',
-        url: '',
+        primaryLinkLabel: '',
+        primaryLinkUrl: '',
       },
     },
     id: 'd3e70589-c449-4e64-8268-065640fdaff0',
@@ -100,13 +100,13 @@ export const otherPersonMock = {
     phone: '+33744332211',
     linkedinLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     xLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     tEst: '',
     position: 14,
@@ -125,11 +125,11 @@ export const relationFromManyFieldDisplayMock = {
     createdAt: '2024-05-01T13:16:29.046Z',
     company: {
       __typename: 'Company',
-      domainName: 'google.com',
+      domainName: { primaryLinkUrl: 'google.com', primaryLinkLabel: '' },
       xLink: {
         __typename: 'Link',
-        label: '',
-        url: '',
+        primaryLinkLabel: '',
+        primaryLinkUrl: '',
       },
       name: 'Google',
       annualRecurringRevenue: {
@@ -147,8 +147,8 @@ export const relationFromManyFieldDisplayMock = {
       updatedAt: '2024-05-01T13:16:29.046Z',
       linkedinLink: {
         __typename: 'Link',
-        label: '',
-        url: '',
+        primaryLinkLabel: '',
+        primaryLinkUrl: '',
       },
     },
     id: '20202020-2d40-4e49-8df4-9c6a049191df',
@@ -156,24 +156,27 @@ export const relationFromManyFieldDisplayMock = {
     phone: '+33788901235',
     linkedinLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     xLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     tEst: '',
     position: 15,
   },
   relationFieldValue: {
     __typename: 'Company',
-    domainName: 'microsoft.com',
+    domainName: {
+      primaryLinkLabel: '',
+      primaryLinkUrl: 'microsoft.com',
+    },
     xLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     name: 'Microsoft',
     annualRecurringRevenue: {
@@ -191,13 +194,13 @@ export const relationFromManyFieldDisplayMock = {
     updatedAt: '2024-05-01T13:16:29.046Z',
     linkedinLink: {
       __typename: 'Link',
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
   },
   fieldDefinition: {
     fieldMetadataId: '4e79f0b7-d100-4e89-a07b-315a710b8059',
-    label: 'Company',
+    primaryLinkLabel: 'Company',
     metadata: {
       fieldName: 'company',
       placeHolder: 'Company',

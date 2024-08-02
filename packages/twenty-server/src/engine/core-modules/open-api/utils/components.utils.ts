@@ -1,8 +1,5 @@
 import { OpenAPIV3_1 } from 'openapi-types';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { capitalize } from 'src/utils/capitalize';
 import {
   computeDepthParameters,
   computeEndingBeforeParameters,
@@ -13,6 +10,9 @@ import {
   computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { capitalize } from 'src/utils/capitalize';
 
 type Property = OpenAPIV3_1.SchemaObject;
 
@@ -26,6 +26,7 @@ const getFieldProperties = (type: FieldMetadataType): Property => {
       return { type: 'string', format: 'uuid' };
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONE:
+    case FieldMetadataType.RICH_TEXT:
       return { type: 'string' };
     case FieldMetadataType.EMAIL:
       return { type: 'string', format: 'email' };

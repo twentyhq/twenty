@@ -2,9 +2,9 @@ import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/ut
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import {
-  WorkspaceMigrationTableAction,
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnCreate,
+  WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -15,6 +15,8 @@ export const buildMigrationsForCustomObjectRelations = (
   attachmentObjectMetadata: ObjectMetadataEntity,
   timelineActivityObjectMetadata: ObjectMetadataEntity,
   favoriteObjectMetadata: ObjectMetadataEntity,
+  noteTargetObjectMetadata: ObjectMetadataEntity,
+  taskTargetObjectMetadata: ObjectMetadataEntity,
 ): WorkspaceMigrationTableAction[] => [
   {
     name: computeObjectTargetTable(createdObjectMetadata),
@@ -37,6 +39,66 @@ export const buildMigrationsForCustomObjectRelations = (
   },
   {
     name: computeObjectTargetTable(activityTargetObjectMetadata),
+    action: WorkspaceMigrationTableActionType.ALTER,
+    columns: [
+      {
+        action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
+        referencedTableName: computeObjectTargetTable(createdObjectMetadata),
+        referencedTableColumnName: 'id',
+        onDelete: RelationOnDeleteAction.CASCADE,
+      },
+    ],
+  },
+  // Add note target relation
+  {
+    name: computeObjectTargetTable(noteTargetObjectMetadata),
+    action: WorkspaceMigrationTableActionType.ALTER,
+    columns: [
+      {
+        action: WorkspaceMigrationColumnActionType.CREATE,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
+        columnType: 'uuid',
+        isNullable: true,
+      } satisfies WorkspaceMigrationColumnCreate,
+    ],
+  },
+  {
+    name: computeObjectTargetTable(noteTargetObjectMetadata),
+    action: WorkspaceMigrationTableActionType.ALTER,
+    columns: [
+      {
+        action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
+        referencedTableName: computeObjectTargetTable(createdObjectMetadata),
+        referencedTableColumnName: 'id',
+        onDelete: RelationOnDeleteAction.CASCADE,
+      },
+    ],
+  },
+  // Add task target relation
+  {
+    name: computeObjectTargetTable(taskTargetObjectMetadata),
+    action: WorkspaceMigrationTableActionType.ALTER,
+    columns: [
+      {
+        action: WorkspaceMigrationColumnActionType.CREATE,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
+        columnType: 'uuid',
+        isNullable: true,
+      } satisfies WorkspaceMigrationColumnCreate,
+    ],
+  },
+  {
+    name: computeObjectTargetTable(taskTargetObjectMetadata),
     action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {

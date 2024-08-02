@@ -1,3 +1,4 @@
+import { COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { ViewField } from '@/views/types/ViewField';
 
 export const SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS = [
@@ -59,7 +60,7 @@ export const SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS = [
   {
     __typename: 'ViewField',
     id: 'cafacdc8-cbfc-4545-8242-94787f144ace',
-    fieldMetadataId: '20202020-6d30-4111-9f40-b4301906fd3c',
+    fieldMetadataId: COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID,
     size: 180,
     createdAt: '2023-11-23T15:38:03.706Z',
     viewId: '20202020-2441-4424-8163-4002c523d415',
