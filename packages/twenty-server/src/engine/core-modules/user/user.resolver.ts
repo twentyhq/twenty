@@ -20,6 +20,7 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 import { SupportDriver } from 'src/engine/integrations/environment/interfaces/support.interface';
 
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
@@ -55,6 +56,7 @@ export class UserResolver {
     private readonly onboardingService: OnboardingService,
     private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
     private readonly userVarService: UserVarsService,
+    private readonly fileService: FileService,
   ) {}
 
   @Query(() => User)
@@ -67,6 +69,20 @@ export class UserResolver {
     });
 
     assert(user, 'User not found');
+
+    user.workspaces = await Promise.all(
+      user.workspaces.map(async (userWorkspace) => {
+        if (userWorkspace.workspace.logo) {
+          const workspaceLogoToken = await this.fileService.encodeFileToken({
+            workspace_id: userWorkspace.workspace.id,
+          });
+
+          userWorkspace.workspace.logo = `${userWorkspace.workspace.logo}?token=${workspaceLogoToken}`;
+        }
+
+        return userWorkspace;
+      }),
+    );
 
     return user;
   }
@@ -99,7 +115,18 @@ export class UserResolver {
   async workspaceMember(
     @Parent() user: User,
   ): Promise<WorkspaceMember | undefined> {
-    return this.userService.loadWorkspaceMember(user);
+    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+
+    if (workspaceMember && workspaceMember.avatarUrl) {
+      const avatarUrlToken = await this.fileService.encodeFileToken({
+        workspace_member_id: workspaceMember.id,
+        workspace_id: user.defaultWorkspace.id,
+      });
+
+      workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
+    }
+
+    return workspaceMember;
   }
 
   @ResolveField(() => String, {

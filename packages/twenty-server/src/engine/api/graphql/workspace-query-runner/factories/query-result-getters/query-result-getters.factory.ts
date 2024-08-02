@@ -1,31 +1,28 @@
 import { Injectable } from '@nestjs/common';
 
-import { QueryResultGuetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
+import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/attachment-query-result-getter.handler';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
+import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 
 @Injectable()
 export class QueryResultGettersFactory {
-  private handlers: Map<string, QueryResultGuetterHandlerInterface>;
+  private handlers: Map<string, QueryResultGetterHandlerInterface>;
 
-  constructor(
-    private readonly tokenService: TokenService,
-    private readonly environmentService: EnvironmentService,
-  ) {
+  constructor(private readonly fileService: FileService) {
     this.initializeHandlers();
   }
 
   private initializeHandlers() {
-    this.handlers = new Map<string, QueryResultGuetterHandlerInterface>([
+    this.handlers = new Map<string, QueryResultGetterHandlerInterface>([
+      ['attachment', new AttachmentQueryResultGetterHandler(this.fileService)],
+      ['person', new PersonQueryResultGetterHandler(this.fileService)],
       [
-        'attachment',
-        new AttachmentQueryResultGetterHandler(
-          this.tokenService,
-          this.environmentService,
-        ),
+        'workspaceMember',
+        new WorkspaceMemberQueryResultGetterHandler(this.fileService),
       ],
     ]);
   }
@@ -43,7 +40,7 @@ export class QueryResultGettersFactory {
         edges: await Promise.all(
           result.edges.map(async (edge: any) => ({
             ...edge,
-            node: await handler.process(edge.node, workspaceId),
+            node: await handler.handle(edge.node, workspaceId),
           })),
         ),
       };
@@ -54,19 +51,19 @@ export class QueryResultGettersFactory {
         ...result,
         records: await Promise.all(
           result.records.map(
-            async (item: any) => await handler.process(item, workspaceId),
+            async (item: any) => await handler.handle(item, workspaceId),
           ),
         ),
       };
     }
 
-    return await handler.process(result, workspaceId);
+    return await handler.handle(result, workspaceId);
   }
 
-  private getHandler(objectType: string): QueryResultGuetterHandlerInterface {
+  private getHandler(objectType: string): QueryResultGetterHandlerInterface {
     return (
       this.handlers.get(objectType) || {
-        process: (result: any) => result,
+        handle: (result: any) => result,
       }
     );
   }

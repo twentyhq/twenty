@@ -13,7 +13,10 @@ import {
 } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 
@@ -52,9 +55,11 @@ export class UpdateFileFolderStructureCommand extends CommandRunner {
   ): Promise<void> {
     const workspaceIds = options.workspaceId
       ? [options.workspaceId]
-      : (await this.workspaceRepository.find()).map(
-          (workspace) => workspace.id,
-        );
+      : (
+          await this.workspaceRepository.find({
+            where: { activationStatus: WorkspaceActivationStatus.ACTIVE },
+          })
+        ).map((workspace) => workspace.id);
 
     if (!workspaceIds.length) {
       this.logger.log(chalk.yellow('No workspace found'));
