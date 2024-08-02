@@ -27,12 +27,7 @@ import {
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { assert } from 'src/utils/assert';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
-import {
-  OnboardingKeyValueTypeMap,
-  OnboardingStepBooleanValues,
-  OnboardingStepKeys,
-} from 'src/engine/core-modules/onboarding/onboarding.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -53,7 +48,7 @@ export class SignInUpService {
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
+    private readonly onboardingService: OnboardingService,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
   ) {}
@@ -179,38 +174,12 @@ export class SignInUpService {
     await this.userWorkspaceService.create(user.id, workspace.id);
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
-    await this.addCreateProfileOnboardingStep(user);
-    await this.addSyncEmailOnboardingStep(user);
+    if (user.firstName === '' && user.lastName === '') {
+      await this.onboardingService.addCreateProfileOnboardingStep(user);
+    }
+    await this.onboardingService.addSyncEmailOnboardingStep(user);
 
     return user;
-  }
-
-  private async addSyncEmailOnboardingStep(user: User) {
-    await this.userVarsService.set({
-      userId: user.id,
-      workspaceId: user.defaultWorkspaceId,
-      key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
-      value: OnboardingStepBooleanValues.TRUE,
-    });
-  }
-
-  private async addInviteTeamOnboardingStep(user: User) {
-    await this.userVarsService.set({
-      workspaceId: user.defaultWorkspaceId,
-      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
-      value: OnboardingStepBooleanValues.TRUE,
-    });
-  }
-
-  private async addCreateProfileOnboardingStep(user: User) {
-    if (user.firstName === '' && user.lastName === '') {
-      await this.userVarsService.set({
-        userId: user.id,
-        workspaceId: user.defaultWorkspaceId,
-        key: OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP,
-        value: OnboardingStepBooleanValues.TRUE,
-      });
-    }
   }
 
   private async signUpOnNewWorkspace({
@@ -257,9 +226,11 @@ export class SignInUpService {
 
     await this.userWorkspaceService.create(user.id, workspace.id);
 
-    await this.addCreateProfileOnboardingStep(user);
-    await this.addInviteTeamOnboardingStep(user);
-    await this.addSyncEmailOnboardingStep(user);
+    if (user.firstName === '' && user.lastName === '') {
+      await this.onboardingService.addCreateProfileOnboardingStep(user);
+    }
+    await this.onboardingService.addInviteTeamOnboardingStep(user);
+    await this.onboardingService.addSyncEmailOnboardingStep(user);
 
     return user;
   }

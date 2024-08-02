@@ -115,6 +115,32 @@ export class OnboardingService {
     return OnboardingStatus.COMPLETED;
   }
 
+  async addSyncEmailOnboardingStep(user: User) {
+    await this.userVarsService.set({
+      userId: user.id,
+      workspaceId: user.defaultWorkspaceId,
+      key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
+      value: OnboardingStepBooleanValues.TRUE,
+    });
+  }
+
+  async addInviteTeamOnboardingStep(user: User) {
+    await this.userVarsService.set({
+      workspaceId: user.defaultWorkspaceId,
+      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
+      value: OnboardingStepBooleanValues.TRUE,
+    });
+  }
+
+  async addCreateProfileOnboardingStep(user: User) {
+    await this.userVarsService.set({
+      userId: user.id,
+      workspaceId: user.defaultWorkspaceId,
+      key: OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP,
+      value: OnboardingStepBooleanValues.TRUE,
+    });
+  }
+
   async removeCreateProfileOnboardingStep(userId: string, workspaceId: string) {
     await this.userVarsService.delete({
       userId,
