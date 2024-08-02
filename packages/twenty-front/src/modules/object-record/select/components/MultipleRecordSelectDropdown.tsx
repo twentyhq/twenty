@@ -12,6 +12,7 @@ import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/inter
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 export const MultipleRecordSelectDropdown = ({
   selectableListId,
