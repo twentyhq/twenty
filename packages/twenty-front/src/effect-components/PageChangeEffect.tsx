@@ -36,7 +36,7 @@ export const PageChangeEffect = () => {
   const pageChangeEffectNavigateLocation =
     usePageChangeEffectNavigateLocation();
 
-  useCleanRecoilState();
+  const { cleanRecoilState } = useCleanRecoilState();
 
   const eventTracker = useEventTracker();
 
@@ -45,6 +45,10 @@ export const PageChangeEffect = () => {
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
+
+  useEffect(() => {
+    cleanRecoilState();
+  }, [cleanRecoilState]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
