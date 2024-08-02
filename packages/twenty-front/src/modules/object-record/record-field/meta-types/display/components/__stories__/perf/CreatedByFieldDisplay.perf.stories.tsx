@@ -1,4 +1,5 @@
 import { CreatedByFieldDisplay } from '@/object-record/record-field/meta-types/display/components/CreatedByFieldDisplay';
+import { FieldCreatedByValue } from '@/object-record/record-field/types/FieldMetadata';
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
@@ -12,7 +13,11 @@ const meta: Meta = {
   decorators: [
     MemoryRouterDecorator,
     ChipGeneratorsDecorator,
-    getFieldDecorator('person', 'createdBy'),
+    getFieldDecorator('person', 'createdBy', {
+      name: 'John Doe',
+      source: 'API',
+      workspaceMemberId: undefined,
+    } satisfies FieldCreatedByValue),
     ComponentDecorator,
   ],
   component: CreatedByFieldDisplay,

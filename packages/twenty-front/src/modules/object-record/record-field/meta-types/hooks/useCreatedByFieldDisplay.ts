@@ -22,7 +22,7 @@ export const useCreatedByDisplay = () => {
     fieldDefinition,
     fieldValue: {
       ...fieldValue,
-      workspaceMember: currentWorkspaceMembers.find(
+      workspaceMember: currentWorkspaceMembers?.find(
         (member) => member.id === fieldValue?.workspaceMemberId,
       ),
     },

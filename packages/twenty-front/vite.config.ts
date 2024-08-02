@@ -73,6 +73,7 @@ export default defineConfig(({ command, mode }) => {
           '**/RecordTableTd.tsx',
           '**/RecordTableHeaderDragDropColumn.tsx',
           '**/CreatedByDisplay.tsx',
+          '**/AvatarChip.tsx',
         ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],

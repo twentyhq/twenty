@@ -1,13 +1,12 @@
-import { Theme, useTheme, withTheme } from '@emotion/react';
-
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Avatar } from '@ui/display/avatar/components/Avatar';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { Chip, ChipVariant } from '@ui/display/chip/components/Chip';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { ThemeContext } from '@ui/theme';
 import { isDefined } from '@ui/utilities/isDefined';
 import { Nullable } from '@ui/utilities/types/Nullable';
-import { MouseEvent } from 'react';
+import { MouseEvent, useContext } from 'react';
 
 export type AvatarChipProps = {
   name: string;
@@ -26,15 +25,15 @@ export enum AvatarChipVariant {
   Transparent = 'transparent',
 }
 
-const StyledInvertedIconContainer = withTheme(styled.div<{ theme: Theme }>`
+const StyledInvertedIconContainer = styled.div<{ backgroundColor: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 14px;
   height: 14px;
   border-radius: 4px;
-  background-color: ${({ theme }) => theme.background.invertedSecondary};
-`);
+  background-color: ${({ backgroundColor }) => backgroundColor};
+`;
 
 export const AvatarChip = ({
   name,
@@ -47,7 +46,7 @@ export const AvatarChip = ({
   placeholderColorSeed,
   onClick,
 }: AvatarChipProps) => {
-  const theme = useTheme();
+  const { theme } = useContext(ThemeContext);
 
   return (
     <Chip
@@ -62,7 +61,9 @@ export const AvatarChip = ({
       leftComponent={
         isDefined(LeftIcon) ? (
           isIconInverted === true ? (
-            <StyledInvertedIconContainer>
+            <StyledInvertedIconContainer
+              backgroundColor={theme.background.invertedSecondary}
+            >
               <LeftIcon
                 color="white"
                 size={theme.icon.size.md}
