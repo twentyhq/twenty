@@ -77,7 +77,7 @@ export class WorkspaceMigrationRunnerService {
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    await queryRunner.query(`SET local search_path TO ${schemaName}`);
+    await queryRunner.query(`SET LOCAL search_path TO ${schemaName}`);
 
     try {
       // Loop over each migration and create or update the table
