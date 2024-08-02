@@ -141,7 +141,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       });
     }
 
-    await this.onboardingService.removeDisplayInviteTeamOnboardingStep(
+    await this.onboardingService.removeInviteTeamOnboardingStep(
       workspace.id,
     );
 

@@ -93,7 +93,7 @@ export class GoogleAPIsAuthController {
           workspaceId,
         );
 
-      await onboardingServiceInstance.removeDisplaySyncEmailOnboardingStep(
+      await onboardingServiceInstance.removeSyncEmailOnboardingStep(
         userId,
         workspaceId,
       );

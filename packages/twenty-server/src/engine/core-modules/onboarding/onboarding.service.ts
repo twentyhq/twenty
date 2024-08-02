@@ -16,14 +16,14 @@ export enum OnboardingStepBooleanValues {
 }
 
 export enum OnboardingStepKeys {
-  DISPLAY_SYNC_EMAIL_ONBOARDING_STEP = 'DISPLAY_SYNC_EMAIL_ONBOARDING_STEP',
-  DISPLAY_INVITE_TEAM_ONBOARDING_STEP = 'DISPLAY_INVITE_TEAM_ONBOARDING_STEP',
+  SYNC_EMAIL_ONBOARDING_STEP = 'SYNC_EMAIL_ONBOARDING_STEP',
+  INVITE_TEAM_ONBOARDING_STEP = 'INVITE_TEAM_ONBOARDING_STEP',
   CREATE_PROFILE_ONBOARDING_STEP = 'CREATE_PROFILE_ONBOARDING_STEP',
 }
 
 export type OnboardingKeyValueTypeMap = {
-  [OnboardingStepKeys.DISPLAY_SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStepBooleanValues;
-  [OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepBooleanValues;
+  [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStepBooleanValues;
+  [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepBooleanValues;
   [OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP]: OnboardingStepBooleanValues;
 };
 
@@ -77,7 +77,7 @@ export class OnboardingService {
       (await this.userVarsService.get({
         userId: user.id,
         workspaceId: user.defaultWorkspaceId,
-        key: OnboardingStepKeys.DISPLAY_SYNC_EMAIL_ONBOARDING_STEP,
+        key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
       })) === OnboardingStepBooleanValues.TRUE
     );
   }
@@ -86,7 +86,7 @@ export class OnboardingService {
     return (
       (await this.userVarsService.get({
         workspaceId: workspace.id,
-        key: OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP,
+        key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
       })) === OnboardingStepBooleanValues.TRUE
     );
   }
@@ -123,21 +123,18 @@ export class OnboardingService {
     });
   }
 
-  async removeDisplayInviteTeamOnboardingStep(workspaceId: string) {
+  async removeInviteTeamOnboardingStep(workspaceId: string) {
     await this.userVarsService.delete({
       workspaceId,
-      key: OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP,
+      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
     });
   }
 
-  async removeDisplaySyncEmailOnboardingStep(
-    userId: string,
-    workspaceId: string,
-  ) {
+  async removeSyncEmailOnboardingStep(userId: string, workspaceId: string) {
     await this.userVarsService.delete({
       userId,
       workspaceId,
-      key: OnboardingStepKeys.DISPLAY_SYNC_EMAIL_ONBOARDING_STEP,
+      key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
     });
   }
 }

@@ -179,30 +179,30 @@ export class SignInUpService {
     await this.userWorkspaceService.create(user.id, workspace.id);
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
-    await this.setCreateProfileOnboardingStep(user);
-    await this.setDisplaySyncEmailOnboardingStep(user);
+    await this.addCreateProfileOnboardingStep(user);
+    await this.addSyncEmailOnboardingStep(user);
 
     return user;
   }
 
-  private async setDisplaySyncEmailOnboardingStep(user: User) {
+  private async addSyncEmailOnboardingStep(user: User) {
     await this.userVarsService.set({
       userId: user.id,
       workspaceId: user.defaultWorkspaceId,
-      key: OnboardingStepKeys.DISPLAY_SYNC_EMAIL_ONBOARDING_STEP,
+      key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
       value: OnboardingStepBooleanValues.TRUE,
     });
   }
 
-  private async setDisplayInviteTeamOnboardingStep(user: User) {
+  private async addInviteTeamOnboardingStep(user: User) {
     await this.userVarsService.set({
       workspaceId: user.defaultWorkspaceId,
-      key: OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP,
+      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
       value: OnboardingStepBooleanValues.TRUE,
     });
   }
 
-  private async setCreateProfileOnboardingStep(user: User) {
+  private async addCreateProfileOnboardingStep(user: User) {
     if (user.firstName === '' && user.lastName === '') {
       await this.userVarsService.set({
         userId: user.id,
@@ -257,9 +257,9 @@ export class SignInUpService {
 
     await this.userWorkspaceService.create(user.id, workspace.id);
 
-    await this.setCreateProfileOnboardingStep(user);
-    await this.setDisplayInviteTeamOnboardingStep(user);
-    await this.setDisplaySyncEmailOnboardingStep(user);
+    await this.addCreateProfileOnboardingStep(user);
+    await this.addInviteTeamOnboardingStep(user);
+    await this.addSyncEmailOnboardingStep(user);
 
     return user;
   }
