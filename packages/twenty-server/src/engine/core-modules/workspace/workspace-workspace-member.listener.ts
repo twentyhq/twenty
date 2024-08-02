@@ -29,33 +29,6 @@ export class WorkspaceWorkspaceMemberListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('workspaceMember.created')
-  async handleCreateEvent(
-    payload: ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>,
-  ) {
-    const setDisplayInviteTeamOnboardingStepValue =
-      await this.userVarsService.get({
-        workspaceId: payload.workspaceId,
-        key: OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP,
-      });
-
-    if (
-      setDisplayInviteTeamOnboardingStepValue ===
-      OnboardingStepBooleanValues.TRUE
-    ) {
-      const workspaceMemberCount = await this.userWorkspaceService.getUserCount(
-        payload.workspaceId,
-      );
-
-      if (workspaceMemberCount && workspaceMemberCount > 1) {
-        await this.userVarsService.delete({
-          workspaceId: payload.workspaceId,
-          key: OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP,
-        });
-      }
-    }
-  }
-
   @OnEvent('workspaceMember.updated')
   async handleUpdateEvent(
     payload: ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>,

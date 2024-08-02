@@ -99,7 +99,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       userId,
       workspaceId,
     });
-    await this.onboardingService.removeDisplayInviteTeamOnboardingStep(workspaceId);
     await this.reassignOrRemoveUserDefaultWorkspace(workspaceId, userId);
   }
 
@@ -142,7 +141,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       });
     }
 
-    await this.onboardingService.removeDisplayInviteTeamOnboardingStep(workspace.id);
+    await this.onboardingService.removeDisplayInviteTeamOnboardingStep(
+      workspace.id,
+    );
 
     return { success: true };
   }
