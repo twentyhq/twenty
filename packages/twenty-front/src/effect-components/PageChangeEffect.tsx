@@ -19,6 +19,7 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { isDefined } from '~/utils/isDefined';
+import { useCleanRecoilState } from '~/hooks/useCleanRecoilState';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -34,6 +35,8 @@ export const PageChangeEffect = () => {
 
   const pageChangeEffectNavigateLocation =
     usePageChangeEffectNavigateLocation();
+
+  useCleanRecoilState();
 
   const eventTracker = useEventTracker();
 
