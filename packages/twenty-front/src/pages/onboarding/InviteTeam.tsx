@@ -1,3 +1,6 @@
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback } from 'react';
 import {
   Controller,
@@ -5,9 +8,6 @@ import {
   useFieldArray,
   useForm,
 } from 'react-hook-form';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconCopy } from 'twenty-ui';
@@ -25,6 +25,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { AnimatedTranslation } from '@/ui/utilities/animation/components/AnimatedTranslation';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
@@ -52,6 +53,10 @@ const StyledButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   width: 200px;
+`;
+
+const StyledActionSkipLinkContainer = styled.div`
+  margin: ${({ theme }) => theme.spacing(3)} 0 0;
 `;
 
 const validationSchema = z.object({
@@ -218,6 +223,9 @@ export const InviteTeam = () => {
           fullWidth
         />
       </StyledButtonContainer>
+      <StyledActionSkipLinkContainer>
+        <ActionLink onClick={setNextOnboardingStatus}>Skip</ActionLink>
+      </StyledActionSkipLinkContainer>
     </>
   );
 };
