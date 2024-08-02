@@ -688,7 +688,7 @@ export class WorkspaceQueryRunnerService {
       return await workspaceDataSource?.transaction(
         async (transactionManager) => {
           await transactionManager.query(`
-          SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
+          SET LOCAL search_path TO ${this.workspaceDataSourceService.getSchemaName(
             workspaceId,
           )};
         `);

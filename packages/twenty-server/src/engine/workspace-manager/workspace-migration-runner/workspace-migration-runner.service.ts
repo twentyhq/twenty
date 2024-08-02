@@ -74,11 +74,10 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    // Reset search_path to force to postgres to prefix migrations in the correct schema due to postgres driver behavior
-    await queryRunner.query('SET search_path TO public');
-
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await queryRunner.query(`SET LOCAL search_path TO ${schemaName}`);
 
     try {
       // Loop over each migration and create or update the table
