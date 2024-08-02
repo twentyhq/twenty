@@ -9,7 +9,7 @@ import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefau
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { UNTESTED_APP_PATHS } from '~/testing/constants/untestedAppPaths';
+import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';
 
 jest.mock('@/onboarding/hooks/useOnboardingStatus');
 const setupMockOnboardingStatus = (
