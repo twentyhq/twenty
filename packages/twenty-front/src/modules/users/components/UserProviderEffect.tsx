@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
@@ -13,10 +14,9 @@ import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
-import { WorkspaceMember } from '~/generated-metadata/graphql';
 
 export const UserProviderEffect = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -58,7 +58,7 @@ export const UserProviderEffect = () => {
       workspaces: userWorkspaces,
     } = queryData.currentUser;
 
-    const computeWorkspaceMemberColorScheme = (
+    const affectDefaultValuesOnEmptyWorkspaceMemberFields = (
       workspaceMember: WorkspaceMember,
     ) => {
       return {
@@ -70,7 +70,7 @@ export const UserProviderEffect = () => {
 
     if (isDefined(workspaceMember)) {
       setCurrentWorkspaceMember(
-        computeWorkspaceMemberColorScheme(workspaceMember),
+        affectDefaultValuesOnEmptyWorkspaceMemberFields(workspaceMember),
       );
 
       // TODO: factorize
@@ -90,7 +90,8 @@ export const UserProviderEffect = () => {
 
     if (isDefined(workspaceMembers)) {
       setCurrentWorkspaceMembers(
-        workspaceMembers.map(computeWorkspaceMemberColorScheme) ?? [],
+        workspaceMembers.map(affectDefaultValuesOnEmptyWorkspaceMemberFields) ??
+          [],
       );
     }
 
@@ -103,6 +104,7 @@ export const UserProviderEffect = () => {
     }
   }, [
     setCurrentUser,
+    setCurrentWorkspaceMembers,
     isLoading,
     queryLoading,
     setCurrentWorkspace,

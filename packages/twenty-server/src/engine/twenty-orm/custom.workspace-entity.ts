@@ -1,3 +1,7 @@
+import {
+  CreatedByMetadata,
+  FieldCreatedBySource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -16,10 +20,6 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import {
-  FieldCreatedBySource,
-  CreatedByMetadata,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 
 @WorkspaceCustomObject()
 export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
@@ -47,7 +47,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.CREATED_BY,
-    label: 'Create by',
+    label: 'Created by',
     icon: 'IconCreativeCommonsSa',
     description: 'The creator of the record',
     defaultValue: {

@@ -1,5 +1,9 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import {
+  CreatedByMetadata,
+  FieldCreatedBySource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -16,10 +20,6 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import {
-  FieldCreatedBySource,
-  CreatedByMetadata,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.note,
@@ -64,7 +64,7 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: NOTE_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.CREATED_BY,
-    label: 'Create by',
+    label: 'Created by',
     icon: 'IconCreativeCommonsSa',
     description: 'The creator of the record',
     defaultValue: {

@@ -3,14 +3,13 @@ import { useContext } from 'react';
 import { FieldCreatedByValue } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
+import { AuthContext } from '@/auth/contexts/AuthContext';
 import { FieldContext } from '../../contexts/FieldContext';
-import { useRecoilValue } from 'recoil';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 
 export const useCreatedByDisplay = () => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
-  const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
+  const { currentWorkspaceMembers } = useContext(AuthContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
