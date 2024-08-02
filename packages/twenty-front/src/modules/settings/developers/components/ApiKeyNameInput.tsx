@@ -7,8 +7,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDefined } from '~/utils/isDefined';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
@@ -45,18 +43,10 @@ export const ApiKeyNameInput = ({
       if (!apiKeyName) {
         return;
       }
-      try {
-        const { data, errors } = await updateApiKey({
-          idToUpdate: apiKeyId,
-          updateOneRecordInput: { name },
-        });
-
-        if (isDefined(errors) || isUndefinedOrNull(data?.updateApiKey)) {
-          throw errors;
-        }
-      } catch (error) {
-        logError(error);
-      }
+      await updateApiKey({
+        idToUpdate: apiKeyId,
+        updateOneRecordInput: { name },
+      });
     }, 500),
     [updateApiKey, onNameUpdate],
   );
