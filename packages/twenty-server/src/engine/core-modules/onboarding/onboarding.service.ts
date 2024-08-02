@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common';
 import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import {
@@ -12,7 +11,6 @@ import {
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { isDefined } from 'src/utils/is-defined';
@@ -27,22 +25,20 @@ export enum OnboardingStepBooleanValues {
 
 export enum OnboardingStepKeys {
   SYNC_EMAIL_ONBOARDING_STEP = 'SYNC_EMAIL_ONBOARDING_STEP',
-  INVITE_TEAM_ONBOARDING_STEP = 'INVITE_TEAM_ONBOARDING_STEP',
+  DISPLAY_INVITE_TEAM_ONBOARDING_STEP = 'DISPLAY_INVITE_TEAM_ONBOARDING_STEP',
   CREATE_PROFILE_ONBOARDING_STEP = 'CREATE_PROFILE_ONBOARDING_STEP',
 }
 
 export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStepValues;
-  [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepValues;
+  [OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepBooleanValues;
   [OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP]: OnboardingStepBooleanValues;
 };
 
 @Injectable()
 export class OnboardingService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
     private readonly billingWorkspaceService: BillingWorkspaceService,
-    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
@@ -103,19 +99,11 @@ export class OnboardingService {
   }
 
   private async isInviteTeamOnboardingStatus(workspace: Workspace) {
-    const inviteTeamValue = await this.userVarsService.get({
-      workspaceId: workspace.id,
-      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
-    });
-    const isInviteTeamSkipped =
-      inviteTeamValue === OnboardingStepValues.SKIPPED;
-    const workspaceMemberCount = await this.userWorkspaceService.getUserCount(
-      workspace.id,
-    );
-
     return (
-      !isInviteTeamSkipped &&
-      (!workspaceMemberCount || workspaceMemberCount <= 1)
+      (await this.userVarsService.get({
+        workspaceId: workspace.id,
+        key: OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP,
+      })) === OnboardingStepBooleanValues.TRUE
     );
   }
 
@@ -144,10 +132,9 @@ export class OnboardingService {
   }
 
   async skipInviteTeamOnboardingStep(workspaceId: string) {
-    await this.userVarsService.set({
+    await this.userVarsService.delete({
       workspaceId,
-      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
-      value: OnboardingStepValues.SKIPPED,
+      key: OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP,
     });
   }
 

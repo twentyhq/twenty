@@ -184,6 +184,14 @@ export class SignInUpService {
     return user;
   }
 
+  private async setDisplayInviteTeamOnboardingStep(user: User) {
+    await this.userVarsService.set({
+      workspaceId: user.defaultWorkspaceId,
+      key: OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP,
+      value: OnboardingStepBooleanValues.TRUE,
+    });
+  }
+
   private async setCreateProfileOnboardingStep(user: User) {
     if (user.firstName === '' && user.lastName === '') {
       await this.userVarsService.set({
@@ -240,6 +248,7 @@ export class SignInUpService {
     await this.userWorkspaceService.create(user.id, workspace.id);
 
     await this.setCreateProfileOnboardingStep(user);
+    await this.setDisplayInviteTeamOnboardingStep(user);
 
     return user;
   }

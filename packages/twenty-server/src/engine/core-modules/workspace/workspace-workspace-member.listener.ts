@@ -17,14 +17,44 @@ import {
   OnboardingStepKeys,
 } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
+import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 @Injectable()
 export class WorkspaceWorkspaceMemberListener {
   constructor(
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
+    private readonly userWorkspaceService: UserWorkspaceService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
+
+  @OnEvent('workspaceMember.created')
+  async handleCreateEvent(
+    payload: ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>,
+  ) {
+    const setDisplayInviteTeamOnboardingStepValue =
+      await this.userVarsService.get({
+        workspaceId: payload.workspaceId,
+        key: OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP,
+      });
+
+    if (
+      setDisplayInviteTeamOnboardingStepValue ===
+      OnboardingStepBooleanValues.TRUE
+    ) {
+      const workspaceMemberCount = await this.userWorkspaceService.getUserCount(
+        payload.workspaceId,
+      );
+
+      if (workspaceMemberCount && workspaceMemberCount > 1) {
+        await this.userVarsService.delete({
+          workspaceId: payload.workspaceId,
+          key: OnboardingStepKeys.DISPLAY_INVITE_TEAM_ONBOARDING_STEP,
+        });
+      }
+    }
+  }
 
   @OnEvent('workspaceMember.updated')
   async handleUpdateEvent(
