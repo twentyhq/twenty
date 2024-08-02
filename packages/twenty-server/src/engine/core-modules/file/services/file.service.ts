@@ -49,7 +49,7 @@ export class FileService {
     }
   }
 
-  async encodeFile(payloadToEncode: Record<string, any>) {
+  async encodeFileToken(payloadToEncode: Record<string, any>) {
     const fileTokenExpiresIn = this.environmentService.get(
       'FILE_TOKEN_EXPIRES_IN',
     );

@@ -73,7 +73,7 @@ export class UserResolver {
     user.workspaces = await Promise.all(
       user.workspaces.map(async (userWorkspace) => {
         if (userWorkspace.workspace.logo) {
-          const workspaceLogoToken = await this.fileService.encodeFile({
+          const workspaceLogoToken = await this.fileService.encodeFileToken({
             workspace_id: userWorkspace.workspace.id,
           });
 
@@ -118,7 +118,7 @@ export class UserResolver {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (workspaceMember && workspaceMember.avatarUrl) {
-      const avatarUrlToken = await this.fileService.encodeFile({
+      const avatarUrlToken = await this.fileService.encodeFileToken({
         workspace_member_id: workspaceMember.id,
         workspace_id: user.defaultWorkspace.id,
       });

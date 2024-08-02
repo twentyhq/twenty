@@ -16,7 +16,7 @@ export class WorkspaceMemberQueryResultGetterHandler
       return workspaceMember;
     }
 
-    const signedPayload = await this.fileService.encodeFile({
+    const signedPayload = await this.fileService.encodeFileToken({
       workspace_member_id: workspaceMember.id,
       workspace_id: workspaceId,
     });
