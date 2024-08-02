@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
 import { QueryRunner, TableColumn } from 'typeorm';
 import { v4 } from 'uuid';
-import { isDefined } from 'class-validator';
 
+import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import {
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationRenamedEnum,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 
 @Injectable()
 export class WorkspaceMigrationEnumService {
@@ -79,15 +79,30 @@ export class WorkspaceMigrationEnumService {
       }),
     );
 
-    await this.migrateEnumValues(
-      queryRunner,
-      schemaName,
-      migrationColumn,
-      tableName,
-      oldColumnName,
-      enumValues,
-      renamedEnumValues,
-    );
+    if (columnDefinition.isNullable) {
+      await this.migrateEnumValues(
+        queryRunner,
+        schemaName,
+        migrationColumn,
+        tableName,
+        oldColumnName,
+        enumValues,
+        renamedEnumValues,
+      );
+    } else {
+      const defaultValue = columnDefinition.defaultValue?.replaceAll("'", '');
+
+      await this.migrateEnumValues(
+        queryRunner,
+        schemaName,
+        migrationColumn,
+        tableName,
+        oldColumnName,
+        enumValues,
+        renamedEnumValues,
+        defaultValue,
+      );
+    }
 
     // Drop old column
     await queryRunner.query(`
@@ -111,17 +126,27 @@ export class WorkspaceMigrationEnumService {
     `);
   }
 
-  private migrateEnumValue(
-    value: string,
-    renamedEnumValues?: WorkspaceMigrationRenamedEnum[],
-    allEnumValues?: string[],
-  ) {
+  private migrateEnumValue({
+    value,
+    renamedEnumValues,
+    allEnumValues,
+    defaultValueFallback,
+  }: {
+    value: string;
+    renamedEnumValues?: WorkspaceMigrationRenamedEnum[];
+    allEnumValues?: string[];
+    defaultValueFallback?: string;
+  }) {
     if (renamedEnumValues?.find((enumVal) => enumVal?.from === value)?.to) {
       return renamedEnumValues?.find((enumVal) => enumVal?.from === value)?.to;
     }
 
     if (allEnumValues?.includes(value)) {
       return value;
+    }
+
+    if (isDefined(defaultValueFallback)) {
+      return defaultValueFallback;
     }
 
     return null;
@@ -135,6 +160,7 @@ export class WorkspaceMigrationEnumService {
     oldColumnName: string,
     enumValues: string[],
     renamedEnumValues?: WorkspaceMigrationRenamedEnum[],
+    defaultValueFallback?: string,
   ) {
     const columnDefinition = migrationColumn.alteredColumnDefinition;
 
@@ -152,16 +178,21 @@ export class WorkspaceMigrationEnumService {
             .split(',')
             .map((v: string) => v.trim())
             .map((v: string) =>
-              this.migrateEnumValue(v, renamedEnumValues, enumValues),
+              this.migrateEnumValue({
+                value: v,
+                renamedEnumValues: renamedEnumValues,
+                allEnumValues: enumValues,
+              }),
             )
             .filter((v: string | null) => isDefined(v)),
         );
       } else if (typeof val === 'string') {
-        const migratedValue = this.migrateEnumValue(
-          val,
-          renamedEnumValues,
-          enumValues,
-        );
+        const migratedValue = this.migrateEnumValue({
+          value: val,
+          renamedEnumValues: renamedEnumValues,
+          allEnumValues: enumValues,
+          defaultValueFallback: defaultValueFallback,
+        });
 
         val = isDefined(migratedValue) ? `'${migratedValue}'` : null;
       }
