@@ -9,7 +9,6 @@ import {
   TableUnique,
 } from 'typeorm';
 
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
@@ -36,7 +35,6 @@ export class WorkspaceMigrationRunnerService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly workspaceMigrationEnumService: WorkspaceMigrationEnumService,
     private readonly workspaceMigrationTypeService: WorkspaceMigrationTypeService,
   ) {}
@@ -66,25 +64,18 @@ export class WorkspaceMigrationRunnerService {
       return [];
     }
 
-    console.log(
-      'Pending migrations',
-      JSON.stringify(pendingMigrations, null, 2),
-    );
-
     const flattenedPendingMigrations: WorkspaceMigrationTableAction[] =
       pendingMigrations.reduce((acc, pendingMigration) => {
         return [...acc, ...pendingMigration.migrations];
       }, []);
 
-    console.log(
-      'Flattened pending migrations',
-      JSON.stringify(flattenedPendingMigrations, null, 2),
-    );
-
     const queryRunner = workspaceDataSource?.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
+
+    // Reset search_path to force to postgres to prefix migrations in the correct schema due to postgres driver behavior
+    await queryRunner.query('SET search_path TO public');
 
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
@@ -96,8 +87,6 @@ export class WorkspaceMigrationRunnerService {
       }
 
       await queryRunner.commitTransaction();
-
-      console.log(`Commit ${flattenedPendingMigrations.length} migrations`);
     } catch (error) {
       console.error('Error executing migration', error);
       await queryRunner.rollbackTransaction();
@@ -114,8 +103,6 @@ export class WorkspaceMigrationRunnerService {
         pendingMigration,
       );
     }
-
-    console.log(`Applied ${pendingMigrations.length} migrations`);
 
     return flattenedPendingMigrations;
   }
