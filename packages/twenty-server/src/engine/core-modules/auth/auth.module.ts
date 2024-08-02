@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -54,7 +54,7 @@ const jwtModule = JwtModule.registerAsync({
     jwtModule,
     FileUploadModule,
     DataSourceModule,
-    UserModule,
+    forwardRef(() => UserModule),
     WorkspaceManagerModule,
     TypeORMModule,
     TypeOrmModule.forFeature(
