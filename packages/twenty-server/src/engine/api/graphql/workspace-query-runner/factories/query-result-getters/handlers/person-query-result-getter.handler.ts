@@ -1,14 +1,14 @@
-import { QueryResultGuetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
+import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 export class PersonQueryResultGetterHandler
-  implements QueryResultGuetterHandlerInterface
+  implements QueryResultGetterHandlerInterface
 {
   constructor(private readonly fileService: FileService) {}
 
-  async process(
+  async handle(
     person: PersonWorkspaceEntity,
     workspaceId: string,
   ): Promise<any> {

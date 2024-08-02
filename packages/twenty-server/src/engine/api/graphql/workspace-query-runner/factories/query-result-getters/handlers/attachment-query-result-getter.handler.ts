@@ -1,13 +1,13 @@
-import { QueryResultGuetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
+import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 
 export class AttachmentQueryResultGetterHandler
-  implements QueryResultGuetterHandlerInterface
+  implements QueryResultGetterHandlerInterface
 {
   constructor(private readonly fileService: FileService) {}
 
-  async process(attachment: any, workspaceId: string): Promise<any> {
+  async handle(attachment: any, workspaceId: string): Promise<any> {
     if (!attachment.id || !attachment?.fullPath) {
       return attachment;
     }
