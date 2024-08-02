@@ -115,6 +115,14 @@ export class OnboardingService {
     return OnboardingStatus.COMPLETED;
   }
 
+  async removeCreateProfileOnboardingStep(userId: string, workspaceId: string) {
+    await this.userVarsService.delete({
+      userId,
+      workspaceId,
+      key: OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP,
+    });
+  }
+
   async removeDisplayInviteTeamOnboardingStep(workspaceId: string) {
     await this.userVarsService.delete({
       workspaceId,
