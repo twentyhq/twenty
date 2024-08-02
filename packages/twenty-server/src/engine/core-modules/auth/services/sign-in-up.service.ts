@@ -20,7 +20,6 @@ import {
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import {
   Workspace,
   WorkspaceActivationStatus,
@@ -28,6 +27,12 @@ import {
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { assert } from 'src/utils/assert';
 import { getImageBufferFromUrl } from 'src/utils/image';
+import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
+import {
+  OnboardingKeyValueTypeMap,
+  OnboardingStepBooleanValues,
+  OnboardingStepKeys,
+} from 'src/engine/core-modules/onboarding/onboarding.service';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -48,7 +53,7 @@ export class SignInUpService {
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly workspaceService: WorkspaceService,
+    private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
   ) {}
@@ -174,7 +179,20 @@ export class SignInUpService {
     await this.userWorkspaceService.create(user.id, workspace.id);
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
+    await this.setCreateProfileOnboardingStep(user);
+
     return user;
+  }
+
+  private async setCreateProfileOnboardingStep(user: User) {
+    if (user.firstName === '' && user.lastName === '') {
+      await this.userVarsService.set({
+        userId: user.id,
+        workspaceId: user.defaultWorkspaceId,
+        key: OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP,
+        value: OnboardingStepBooleanValues.TRUE,
+      });
+    }
   }
 
   private async signUpOnNewWorkspace({
@@ -220,6 +238,8 @@ export class SignInUpService {
     const user = await this.userRepository.save(userToCreate);
 
     await this.userWorkspaceService.create(user.id, workspace.id);
+
+    await this.setCreateProfileOnboardingStep(user);
 
     return user;
   }

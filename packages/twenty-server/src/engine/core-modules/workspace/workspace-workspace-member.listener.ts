@@ -10,13 +10,44 @@ import {
   HandleWorkspaceMemberDeletedJobData,
 } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
+import {
+  OnboardingKeyValueTypeMap,
+  OnboardingStepBooleanValues,
+  OnboardingStepKeys,
+} from 'src/engine/core-modules/onboarding/onboarding.service';
+import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 
 @Injectable()
 export class WorkspaceWorkspaceMemberListener {
   constructor(
+    private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
+
+  @OnEvent('workspaceMember.updated')
+  async handleUpdateEvent(
+    payload: ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>,
+  ) {
+    const { firstName, lastName } = payload.properties.after.name;
+    const createProfileOnboardingStepValue = await this.userVarsService.get({
+      userId: payload.userId,
+      workspaceId: payload.workspaceId,
+      key: OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP,
+    });
+
+    if (
+      firstName + lastName !== '' &&
+      createProfileOnboardingStepValue === OnboardingStepBooleanValues.TRUE
+    ) {
+      await this.userVarsService.delete({
+        userId: payload.userId,
+        workspaceId: payload.workspaceId,
+        key: OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP,
+      });
+    }
+  }
 
   @OnEvent('workspaceMember.deleted')
   async handleDeleteEvent(

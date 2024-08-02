@@ -37,6 +37,7 @@ import { AuthResolver } from './auth.resolver';
 
 import { AuthService } from './services/auth.service';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
+import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 const jwtModule = JwtModule.registerAsync({
   useFactory: async (environmentService: EnvironmentService) => {
     return {
@@ -72,6 +73,7 @@ const jwtModule = JwtModule.registerAsync({
     TwentyORMModule.forFeature([CalendarChannelWorkspaceEntity]),
     WorkspaceDataSourceModule,
     ConnectedAccountModule,
+    UserVarsModule,
   ],
   controllers: [
     GoogleAuthController,

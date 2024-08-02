@@ -13,24 +13,28 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isDefined } from 'src/utils/is-defined';
 
 enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
 }
 
-enum OnboardingStepKeys {
-  SYNC_EMAIL_ONBOARDING_STEP = 'SYNC_EMAIL_ONBOARDING_STEP',
-  INVITE_TEAM_ONBOARDING_STEP = 'INVITE_TEAM_ONBOARDING_STEP',
+export enum OnboardingStepBooleanValues {
+  TRUE = 'TRUE',
 }
 
-type OnboardingKeyValueTypeMap = {
+export enum OnboardingStepKeys {
+  SYNC_EMAIL_ONBOARDING_STEP = 'SYNC_EMAIL_ONBOARDING_STEP',
+  INVITE_TEAM_ONBOARDING_STEP = 'INVITE_TEAM_ONBOARDING_STEP',
+  CREATE_PROFILE_ONBOARDING_STEP = 'CREATE_PROFILE_ONBOARDING_STEP',
+}
+
+export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStepValues;
   [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepValues;
+  [OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP]: OnboardingStepBooleanValues;
 };
 
 @Injectable()
@@ -73,18 +77,12 @@ export class OnboardingService {
   }
 
   private async isProfileCreationOnboardingStatus(user: User) {
-    const workspaceMemberRepository =
-      await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-        'workspaceMember',
-      );
-
-    const workspaceMember = await workspaceMemberRepository.findOneBy({
-      userId: user.id,
-    });
-
     return (
-      workspaceMember &&
-      (!workspaceMember.name.firstName || !workspaceMember.name.lastName)
+      (await this.userVarsService.get({
+        userId: user.id,
+        workspaceId: user.defaultWorkspaceId,
+        key: OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP,
+      })) === OnboardingStepBooleanValues.TRUE
     );
   }
 

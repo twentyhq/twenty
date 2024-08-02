@@ -7,7 +7,6 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 
 @Module({
   imports: [
