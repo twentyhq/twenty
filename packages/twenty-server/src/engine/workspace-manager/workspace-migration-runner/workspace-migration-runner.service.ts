@@ -66,10 +66,14 @@ export class WorkspaceMigrationRunnerService {
       return [];
     }
 
+    console.log('Pending migrations', pendingMigrations);
+
     const flattenedPendingMigrations: WorkspaceMigrationTableAction[] =
       pendingMigrations.reduce((acc, pendingMigration) => {
         return [...acc, ...pendingMigration.migrations];
       }, []);
+
+    console.log('Flattened pending migrations', flattenedPendingMigrations);
 
     const queryRunner = workspaceDataSource?.createQueryRunner();
 
@@ -86,6 +90,8 @@ export class WorkspaceMigrationRunnerService {
       }
 
       await queryRunner.commitTransaction();
+
+      console.log(`commit ${flattenedPendingMigrations.length} migrations`);
     } catch (error) {
       console.error('Error executing migration', error);
       await queryRunner.rollbackTransaction();
@@ -102,6 +108,8 @@ export class WorkspaceMigrationRunnerService {
         pendingMigration,
       );
     }
+
+    console.log(`Applied ${pendingMigrations.length} migrations`);
 
     return flattenedPendingMigrations;
   }
