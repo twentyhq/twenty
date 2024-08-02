@@ -5,7 +5,6 @@ import { QueryRunner, TableColumn } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
-import { unserializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/unserialize-default-value';
 import {
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationRenamedEnum,
@@ -80,15 +79,30 @@ export class WorkspaceMigrationEnumService {
       }),
     );
 
-    await this.migrateEnumValues(
-      queryRunner,
-      schemaName,
-      migrationColumn,
-      tableName,
-      oldColumnName,
-      enumValues,
-      renamedEnumValues,
-    );
+    if (columnDefinition.isNullable) {
+      await this.migrateEnumValues(
+        queryRunner,
+        schemaName,
+        migrationColumn,
+        tableName,
+        oldColumnName,
+        enumValues,
+        renamedEnumValues,
+      );
+    } else {
+      const defaultValue = columnDefinition.defaultValue?.replaceAll("'", '');
+
+      await this.migrateEnumValues(
+        queryRunner,
+        schemaName,
+        migrationColumn,
+        tableName,
+        oldColumnName,
+        enumValues,
+        renamedEnumValues,
+        defaultValue,
+      );
+    }
 
     // Drop old column
     await queryRunner.query(`
@@ -146,6 +160,7 @@ export class WorkspaceMigrationEnumService {
     oldColumnName: string,
     enumValues: string[],
     renamedEnumValues?: WorkspaceMigrationRenamedEnum[],
+    defaultValueFallback?: string,
   ) {
     const columnDefinition = migrationColumn.alteredColumnDefinition;
 
@@ -176,9 +191,7 @@ export class WorkspaceMigrationEnumService {
           value: val,
           renamedEnumValues: renamedEnumValues,
           allEnumValues: enumValues,
-          defaultValueFallback: columnDefinition.isNullable
-            ? null
-            : unserializeDefaultValue(columnDefinition.defaultValue),
+          defaultValueFallback: defaultValueFallback,
         });
 
         val = isDefined(migratedValue) ? `'${migratedValue}'` : null;
