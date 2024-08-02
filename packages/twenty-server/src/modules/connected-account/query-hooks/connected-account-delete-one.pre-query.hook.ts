@@ -36,10 +36,11 @@ export class ConnectedAccountDeleteOnePreQueryHook
     messageChannels.forEach((messageChannel) => {
       this.eventEmitter.emit('messageChannel.deleted', {
         workspaceId,
+        name: 'messageChannel.deleted',
         recordId: messageChannel.id,
       } satisfies Pick<
         ObjectRecordDeleteEvent<MessageChannelWorkspaceEntity>,
-        'workspaceId' | 'recordId'
+        'workspaceId' | 'recordId' | 'name'
       >);
     });
   }
