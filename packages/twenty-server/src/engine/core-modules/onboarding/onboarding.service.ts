@@ -7,7 +7,10 @@ import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboa
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
@@ -35,7 +38,6 @@ export class OnboardingService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly billingWorkspaceService: BillingWorkspaceService,
-    private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
@@ -64,9 +66,10 @@ export class OnboardingService {
   }
 
   private async isWorkspaceActivationOnboardingStatus(user: User) {
-    return !(await this.workspaceManagerService.doesDataSourceExist(
-      user.defaultWorkspaceId,
-    ));
+    return (
+      user.defaultWorkspace.activationStatus ===
+      WorkspaceActivationStatus.PENDING_CREATION
+    );
   }
 
   private async isProfileCreationOnboardingStatus(user: User) {

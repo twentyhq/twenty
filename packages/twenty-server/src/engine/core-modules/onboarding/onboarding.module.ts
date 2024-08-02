@@ -12,7 +12,6 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
 @Module({
   imports: [
     DataSourceModule,
-    WorkspaceManagerModule,
     UserWorkspaceModule,
     EnvironmentModule,
     BillingModule,
