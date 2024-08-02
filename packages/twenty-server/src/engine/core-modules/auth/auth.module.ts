@@ -32,12 +32,12 @@ import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/stan
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 
 import { AuthResolver } from './auth.resolver';
 
 import { AuthService } from './services/auth.service';
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
-import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 const jwtModule = JwtModule.registerAsync({
   useFactory: async (environmentService: EnvironmentService) => {
     return {
