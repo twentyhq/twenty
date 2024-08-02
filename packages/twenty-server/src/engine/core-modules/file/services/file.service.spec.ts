@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
@@ -18,6 +19,10 @@ describe('FileService', () => {
         },
         {
           provide: EnvironmentService,
+          useValue: {},
+        },
+        {
+          provide: TokenService,
           useValue: {},
         },
       ],
