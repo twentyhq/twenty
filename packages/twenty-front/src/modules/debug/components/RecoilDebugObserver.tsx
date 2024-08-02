@@ -1,4 +1,5 @@
-import { useRecoilTransactionObserver_UNSTABLE } from 'recoil';
+import { isDebugModeState } from '@/client-config/states/isDebugModeState';
+import { useRecoilTransactionObserver_UNSTABLE, useRecoilValue } from 'recoil';
 
 import { logDebug } from '~/utils/logDebug';
 
@@ -14,7 +15,7 @@ const formatTitle = (stateName: string) => {
 };
 
 export const RecoilDebugObserverEffect = () => {
-  const isDebugMode = false;
+  const isDebugMode = useRecoilValue(isDebugModeState);
 
   useRecoilTransactionObserver_UNSTABLE(({ snapshot }) => {
     if (!isDebugMode) {
