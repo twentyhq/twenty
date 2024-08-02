@@ -224,7 +224,7 @@ export const InviteTeam = () => {
         />
       </StyledButtonContainer>
       <StyledActionSkipLinkContainer>
-        <ActionLink onClick={handleSubmit(onSubmit)}>Skip</ActionLink>
+        <ActionLink onClick={setNextOnboardingStatus}>Skip</ActionLink>
       </StyledActionSkipLinkContainer>
     </>
   );
