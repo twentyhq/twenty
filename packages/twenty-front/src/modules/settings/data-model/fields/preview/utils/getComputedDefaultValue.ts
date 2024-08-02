@@ -12,6 +12,6 @@ export const getComputedDefaultValue = (defaultValue?: any) => {
     case 'now':
       return new Date().toISOString();
     default:
-      return null;
+      return defaultValue;
   }
 };
