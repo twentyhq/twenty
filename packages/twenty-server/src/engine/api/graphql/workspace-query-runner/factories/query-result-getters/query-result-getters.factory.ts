@@ -4,28 +4,25 @@ import { QueryResultGuetterHandlerInterface } from 'src/engine/api/graphql/works
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/attachment-query-result-getter.handler';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
+import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 
 @Injectable()
 export class QueryResultGettersFactory {
   private handlers: Map<string, QueryResultGuetterHandlerInterface>;
 
-  constructor(
-    private readonly tokenService: TokenService,
-    private readonly environmentService: EnvironmentService,
-  ) {
+  constructor(private readonly fileService: FileService) {
     this.initializeHandlers();
   }
 
   private initializeHandlers() {
     this.handlers = new Map<string, QueryResultGuetterHandlerInterface>([
+      ['attachment', new AttachmentQueryResultGetterHandler(this.fileService)],
+      ['person', new PersonQueryResultGetterHandler(this.fileService)],
       [
-        'attachment',
-        new AttachmentQueryResultGetterHandler(
-          this.tokenService,
-          this.environmentService,
-        ),
+        'workspaceMember',
+        new WorkspaceMemberQueryResultGetterHandler(this.fileService),
       ],
     ]);
   }
