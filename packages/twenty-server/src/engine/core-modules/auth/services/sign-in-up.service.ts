@@ -180,8 +180,18 @@ export class SignInUpService {
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
     await this.setCreateProfileOnboardingStep(user);
+    await this.setDisplaySyncEmailOnboardingStep(user);
 
     return user;
+  }
+
+  private async setDisplaySyncEmailOnboardingStep(user: User) {
+    await this.userVarsService.set({
+      userId: user.id,
+      workspaceId: user.defaultWorkspaceId,
+      key: OnboardingStepKeys.DISPLAY_SYNC_EMAIL_ONBOARDING_STEP,
+      value: OnboardingStepBooleanValues.TRUE,
+    });
   }
 
   private async setDisplayInviteTeamOnboardingStep(user: User) {
@@ -249,6 +259,7 @@ export class SignInUpService {
 
     await this.setCreateProfileOnboardingStep(user);
     await this.setDisplayInviteTeamOnboardingStep(user);
+    await this.setDisplaySyncEmailOnboardingStep(user);
 
     return user;
   }

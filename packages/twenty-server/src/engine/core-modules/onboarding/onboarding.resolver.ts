@@ -19,7 +19,7 @@ export class OnboardingResolver {
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<OnboardingStepSuccess> {
-    await this.onboardingService.skipSyncEmailOnboardingStep(
+    await this.onboardingService.removeDisplaySyncEmailOnboardingStep(
       user.id,
       workspace.id,
     );
