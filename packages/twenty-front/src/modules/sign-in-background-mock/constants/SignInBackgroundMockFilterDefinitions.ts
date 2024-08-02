@@ -1,3 +1,4 @@
+import { COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 
 export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
@@ -14,7 +15,7 @@ export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
     type: 'NUMBER',
   },
   {
-    fieldMetadataId: '20202020-6d30-4111-9f40-b4301906fd3c',
+    fieldMetadataId: COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID,
     label: 'Name',
     iconName: 'IconBuildingSkyscraper',
     type: 'TEXT',
