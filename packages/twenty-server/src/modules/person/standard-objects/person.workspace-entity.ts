@@ -160,8 +160,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'POC for Opportunities',
-    description: 'Point of Contact for Opportunities',
+    label: 'Linked Opportunities',
+    description:
+      'List of opportunities for which that person is the point of contact',
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'pointOfContact',

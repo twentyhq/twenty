@@ -75,11 +75,6 @@ export class SignInUpService {
 
     const passwordHash = password ? await hashPassword(password) : undefined;
 
-    let imagePath: string | undefined;
-
-    if (picture) {
-      imagePath = await this.uploadPicture(picture);
-    }
     const existingUser = await this.userRepository.findOne({
       where: {
         email: email,
@@ -103,7 +98,7 @@ export class SignInUpService {
         workspaceInviteHash,
         firstName,
         lastName,
-        imagePath,
+        picture,
         existingUser,
       });
     }
@@ -113,7 +108,7 @@ export class SignInUpService {
         passwordHash,
         firstName,
         lastName,
-        imagePath,
+        picture,
       });
     }
 
@@ -126,7 +121,7 @@ export class SignInUpService {
     workspaceInviteHash,
     firstName,
     lastName,
-    imagePath,
+    picture,
     existingUser,
   }: {
     email: string;
@@ -134,7 +129,7 @@ export class SignInUpService {
     workspaceInviteHash: string;
     firstName: string;
     lastName: string;
-    imagePath: string | undefined;
+    picture: SignInUpServiceInput['picture'];
     existingUser: User | null;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
@@ -162,6 +157,8 @@ export class SignInUpService {
       return Object.assign(existingUser, updatedUser);
     }
 
+    const imagePath = await this.uploadPicture(picture, workspace.id);
+
     const userToCreate = this.userRepository.create({
       email: email,
       firstName: firstName,
@@ -185,13 +182,13 @@ export class SignInUpService {
     passwordHash,
     firstName,
     lastName,
-    imagePath,
+    picture,
   }: {
     email: string;
     passwordHash: string | undefined;
     firstName: string;
     lastName: string;
-    imagePath: string | undefined;
+    picture: SignInUpServiceInput['picture'];
   }) {
     assert(
       !this.environmentService.get('IS_SIGN_UP_DISABLED'),
@@ -207,6 +204,8 @@ export class SignInUpService {
     });
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
+
+    const imagePath = await this.uploadPicture(picture, workspace.id);
 
     const userToCreate = this.userRepository.create({
       email: email,
@@ -225,7 +224,14 @@ export class SignInUpService {
     return user;
   }
 
-  async uploadPicture(picture: string): Promise<string> {
+  async uploadPicture(
+    picture: string | null | undefined,
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    if (!picture) {
+      return;
+    }
+
     const buffer = await getImageBufferFromUrl(
       picture,
       this.httpService.axiosRef,
@@ -238,6 +244,7 @@ export class SignInUpService {
       filename: `${v4()}.${type?.ext}`,
       mimeType: type?.mime,
       fileFolder: FileFolder.ProfilePicture,
+      workspaceId,
     });
 
     return paths[0];

@@ -102,40 +102,34 @@ export const ViewPickerListContent = () => {
         )}
         <DraggableList
           onDragEnd={handleDragEnd}
-          draggableItems={viewsOnCurrentObject.map((view, index) => (
-            <DraggableItem
-              key={view.id}
-              draggableId={view.id}
-              index={index}
-              isDragDisabled={viewsOnCurrentObject.length === 1}
-              itemComponent={
-                <MenuItemDraggable
-                  key={view.id}
-                  iconButtons={
-                    indexView?.id === view.id
-                      ? [
-                          {
-                            Icon: IconLock,
-                          },
-                        ]
-                      : [
-                          {
-                            Icon: IconPencil,
-                            onClick: (event: MouseEvent<HTMLButtonElement>) =>
-                              handleEditViewButtonClick(event, view.id),
-                          },
-                        ].filter(isDefined)
-                  }
-                  isIconDisplayedOnHoverOnly={
-                    indexView?.id === view.id ? false : true
-                  }
-                  onClick={() => handleViewSelect(view.id)}
-                  LeftIcon={getIcon(view.icon)}
-                  text={view.name}
-                />
-              }
-            />
-          ))}
+          draggableItems={viewsOnCurrentObject
+            .filter((view) => indexView?.id !== view.id)
+            .map((view, index) => (
+              <DraggableItem
+                key={view.id}
+                draggableId={view.id}
+                index={index}
+                isDragDisabled={viewsOnCurrentObject.length === 1}
+                itemComponent={
+                  <MenuItemDraggable
+                    key={view.id}
+                    iconButtons={[
+                      {
+                        Icon: IconPencil,
+                        onClick: (event: MouseEvent<HTMLButtonElement>) =>
+                          handleEditViewButtonClick(event, view.id),
+                      },
+                    ].filter(isDefined)}
+                    isIconDisplayedOnHoverOnly={
+                      indexView?.id === view.id ? false : true
+                    }
+                    onClick={() => handleViewSelect(view.id)}
+                    LeftIcon={getIcon(view.icon)}
+                    text={view.name}
+                  />
+                }
+              />
+            ))}
         />
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />

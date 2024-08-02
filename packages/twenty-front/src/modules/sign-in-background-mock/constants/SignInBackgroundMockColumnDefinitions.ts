@@ -1,3 +1,4 @@
+import { COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
@@ -41,7 +42,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
     },
     {
       position: 2,
-      fieldMetadataId: '20202020-6d30-4111-9f40-b4301906fd3c',
+      fieldMetadataId: COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID,
       label: 'Name',
       size: 100,
       type: FieldMetadataType.Text,
