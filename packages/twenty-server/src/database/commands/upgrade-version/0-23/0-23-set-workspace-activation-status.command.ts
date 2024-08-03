@@ -19,7 +19,7 @@ interface SetWorkspaceActivationStatusCommandOptions {
 }
 
 @Command({
-  name: 'migrate-0.23:set-workspace-activation-status',
+  name: 'upgrade-0.23:set-workspace-activation-status',
   description: 'Set workspace activation status',
 })
 export class SetWorkspaceActivationStatusCommand extends CommandRunner {

@@ -27,7 +27,7 @@ interface MigrateLinkFieldsToLinksCommandOptions {
 }
 
 @Command({
-  name: 'migrate-0.23:migrate-link-fields-to-links',
+  name: 'upgrade-0.23:migrate-link-fields-to-links',
   description: 'Migrating fields of deprecated type LINK to type LINKS',
 })
 export class MigrateLinkFieldsToLinksCommand extends CommandRunner {
