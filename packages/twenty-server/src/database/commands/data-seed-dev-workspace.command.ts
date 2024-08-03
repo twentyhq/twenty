@@ -1,5 +1,7 @@
+import { InjectRepository } from '@nestjs/typeorm';
+
 import { Command, CommandRunner } from 'nest-commander';
-import { EntityManager } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import {
@@ -34,6 +36,12 @@ import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/worksp
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import {
+  getDevSeedCompanyCustomFields,
+  getDevSeedPeopleCustomFields,
+} from 'src/database/typeorm-seeds/metadata/fieldsMetadata';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 
 // TODO: implement dry-run
 @Command({
@@ -49,6 +57,9 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     private readonly typeORMService: TypeORMService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly fieldMetadataService: FieldMetadataService,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     @InjectCacheStorage(CacheStorageNamespace.WorkspaceSchema)
     private readonly workspaceSchemaCache: CacheStorageService,
@@ -124,6 +135,9 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           workspaceDataSource.getRepository<FeatureFlagEntity>('featureFlag');
 
         const featureFlags = await featureFlagRepository.find({});
+
+        await this.seedCompanyCustomFields(workspaceId);
+        await this.seedPeopleCustomFields(workspaceId);
 
         await workspaceDataSource.transaction(
           async (entityManager: EntityManager) => {
@@ -201,6 +215,56 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       }
 
       await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
+    }
+  }
+
+  async seedCompanyCustomFields(workspaceId: string) {
+    const companyObjectMetadataId = (
+      await this.objectMetadataRepository.findOne({
+        where: {
+          labelSingular: 'Company',
+          workspaceId,
+        },
+      })
+    )?.id;
+
+    if (companyObjectMetadataId) {
+      const DEV_SEED_COMPANY_CUSTOM_FIELDS = getDevSeedCompanyCustomFields(
+        companyObjectMetadataId,
+        workspaceId,
+      );
+
+      for (const customField of DEV_SEED_COMPANY_CUSTOM_FIELDS) {
+        await this.fieldMetadataService.createOne({
+          ...customField,
+          isCustom: true,
+        });
+      }
+    }
+  }
+
+  async seedPeopleCustomFields(workspaceId: string) {
+    const personObjectMetadataId = (
+      await this.objectMetadataRepository.findOne({
+        where: {
+          labelSingular: 'Person',
+          workspaceId,
+        },
+      })
+    )?.id;
+
+    if (personObjectMetadataId) {
+      const DEV_SEED_PERSON_CUSTOM_FIELDS = getDevSeedPeopleCustomFields(
+        personObjectMetadataId,
+        workspaceId,
+      );
+
+      for (const customField of DEV_SEED_PERSON_CUSTOM_FIELDS) {
+        await this.fieldMetadataService.createOne({
+          ...customField,
+          isCustom: true,
+        });
+      }
     }
   }
 }
