@@ -98,6 +98,7 @@ export class UserService extends TypeOrmQueryService<User> {
     payload.properties = {
       before: workspaceMember,
     };
+    payload.name = 'workspaceMember.deleted';
     payload.recordId = workspaceMember.id;
 
     this.eventEmitter.emit('workspaceMember.deleted', payload);
