@@ -1,6 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { DEV_SEED_COMPANY_IDS } from 'src/database/typeorm-seeds/workspace/companies';
+import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 
 const tableName = 'person';
 
@@ -38,6 +39,9 @@ export const seedPeople = async (
       'companyId',
       'email',
       'position',
+      'createdBySource',
+      'createdByWorkspaceMemberId',
+      'createdByName',
     ])
     .orIgnore()
     .values([
@@ -50,6 +54,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.LINKEDIN,
         email: 'christoph.calisto@linkedin.com',
         position: 1,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.SYLVIE,
@@ -60,6 +67,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.LINKEDIN,
         email: 'sylvie.palmer@linkedin.com',
         position: 2,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.CHRISTOPHER_G,
@@ -70,6 +80,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.QONTO,
         email: 'christopher.gonzalez@qonto.com',
         position: 3,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.ASHLEY,
@@ -80,6 +93,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.QONTO,
         email: 'ashley.parker@qonto.com',
         position: 4,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.NICHOLAS,
@@ -90,6 +106,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.MICROSOFT,
         email: 'nicholas.wright@microsoft.com',
         position: 5,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.ISABELLA,
@@ -100,6 +119,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.MICROSOFT,
         email: 'isabella.scott@microsoft.com',
         position: 6,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.MATTHEW,
@@ -110,6 +132,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.MICROSOFT,
         email: 'matthew.green@microsoft.com',
         position: 7,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.ELIZABETH,
@@ -120,6 +145,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.AIRBNB,
         email: 'elizabeth.baker@airbnb.com',
         position: 8,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.CHRISTOPHER_N,
@@ -130,6 +158,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.AIRBNB,
         email: 'christopher.nelson@airbnb.com',
         position: 9,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.AVERY,
@@ -140,6 +171,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.AIRBNB,
         email: 'avery.carter@airbnb.com',
         position: 10,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.ETHAN,
@@ -150,6 +184,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.GOOGLE,
         email: 'ethan.mitchell@google.com',
         position: 11,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.MADISON,
@@ -160,6 +197,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.GOOGLE,
         email: 'madison.perez@google.com',
         position: 12,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.BERTRAND,
@@ -170,6 +210,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.GOOGLE,
         email: 'bertrand.voulzy@google.com',
         position: 13,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.LOUIS,
@@ -180,6 +223,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.GOOGLE,
         email: 'louis.duss@google.com',
         position: 14,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_PERSON_IDS.LORIE,
@@ -190,6 +236,9 @@ export const seedPeople = async (
         companyId: DEV_SEED_COMPANY_IDS.GOOGLE,
         email: 'lorie.vladim@google.com',
         position: 15,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: null,
+        createdByName: '',
       },
     ])
     .execute();

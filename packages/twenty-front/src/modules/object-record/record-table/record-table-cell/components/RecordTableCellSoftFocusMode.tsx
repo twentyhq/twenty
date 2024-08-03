@@ -78,7 +78,11 @@ export const RecordTableCellSoftFocusMode = ({
   useScopedHotkeys(
     Key.Enter,
     () => {
-      if (!isFieldInputOnly && !isCellReadOnly) {
+      if (isCellReadOnly) {
+        return;
+      }
+
+      if (!isFieldInputOnly) {
         openTableCell();
       } else {
         toggleEditOnlyInput();
@@ -91,6 +95,10 @@ export const RecordTableCellSoftFocusMode = ({
   useScopedHotkeys(
     '*',
     (keyboardEvent) => {
+      if (isCellReadOnly) {
+        return;
+      }
+
       if (!isFieldInputOnly) {
         const isWritingText =
           !isNonTextWritingKey(keyboardEvent.key) &&
@@ -150,6 +158,8 @@ export const RecordTableCellSoftFocusMode = ({
     (!isFirstColumn || !isEmpty) &&
     !isCellReadOnly;
 
+  const dontShowContent = isEmpty && isCellReadOnly;
+
   return (
     <>
       <RecordTableCellDisplayContainer
@@ -157,7 +167,13 @@ export const RecordTableCellSoftFocusMode = ({
         scrollRef={scrollRef}
         softFocus
       >
-        {editModeContentOnly ? editModeContent : nonEditModeContent}
+        {dontShowContent ? (
+          <></>
+        ) : editModeContentOnly ? (
+          editModeContent
+        ) : (
+          nonEditModeContent
+        )}
       </RecordTableCellDisplayContainer>
       {showButton && (
         <RecordTableCellButton onClick={handleButtonClick} Icon={buttonIcon} />

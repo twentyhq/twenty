@@ -4,8 +4,8 @@ import { basename } from 'path';
 
 import { KebabCase } from 'type-fest';
 
-import { kebabCase } from 'src/utils/kebab-case';
 import { settings } from 'src/engine/constants/settings';
+import { kebabCase } from 'src/utils/kebab-case';
 
 import { FileFolder } from './interfaces/file-folder.interface';
 

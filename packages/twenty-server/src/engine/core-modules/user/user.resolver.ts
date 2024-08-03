@@ -9,6 +9,7 @@ import {
 } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import assert from 'assert';
 import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
@@ -19,6 +20,7 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 import { SupportDriver } from 'src/engine/integrations/environment/interfaces/support.interface';
 
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
@@ -32,7 +34,6 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
-import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const getHMACKey = (email?: string, key?: string | null) => {
@@ -55,6 +56,7 @@ export class UserResolver {
     private readonly onboardingService: OnboardingService,
     private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
     private readonly userVarService: UserVarsService,
+    private readonly fileService: FileService,
   ) {}
 
   @Query(() => User)
@@ -67,6 +69,20 @@ export class UserResolver {
     });
 
     assert(user, 'User not found');
+
+    user.workspaces = await Promise.all(
+      user.workspaces.map(async (userWorkspace) => {
+        if (userWorkspace.workspace.logo) {
+          const workspaceLogoToken = await this.fileService.encodeFileToken({
+            workspace_id: userWorkspace.workspace.id,
+          });
+
+          userWorkspace.workspace.logo = `${userWorkspace.workspace.logo}?token=${workspaceLogoToken}`;
+        }
+
+        return userWorkspace;
+      }),
+    );
 
     return user;
   }
@@ -96,10 +112,43 @@ export class UserResolver {
   @ResolveField(() => WorkspaceMember, {
     nullable: true,
   })
-  async workspaceMember(
-    @Parent() user: User,
-  ): Promise<WorkspaceMember | undefined> {
-    return this.userService.loadWorkspaceMember(user);
+  async workspaceMember(@Parent() user: User): Promise<WorkspaceMember | null> {
+    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+
+    if (workspaceMember && workspaceMember.avatarUrl) {
+      const avatarUrlToken = await this.fileService.encodeFileToken({
+        workspace_member_id: workspaceMember.id,
+        workspace_id: user.defaultWorkspace.id,
+      });
+
+      workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
+    }
+
+    // TODO: Fix typing disrepency between Entity and DTO
+    return workspaceMember as WorkspaceMember | null;
+  }
+
+  @ResolveField(() => [WorkspaceMember], {
+    nullable: true,
+  })
+  async workspaceMembers(@Parent() user: User): Promise<WorkspaceMember[]> {
+    const workspaceMembers = await this.userService.loadWorkspaceMembers(
+      user.defaultWorkspace,
+    );
+
+    for (const workspaceMember of workspaceMembers) {
+      if (workspaceMember.avatarUrl) {
+        const avatarUrlToken = await this.fileService.encodeFileToken({
+          workspace_member_id: workspaceMember.id,
+          workspace_id: user.defaultWorkspaceId,
+        });
+
+        workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
+      }
+    }
+
+    // TODO: Fix typing disrepency between Entity and DTO
+    return workspaceMembers as WorkspaceMember[];
   }
 
   @ResolveField(() => String, {
@@ -117,6 +166,7 @@ export class UserResolver {
   @Mutation(() => String)
   async uploadProfilePicture(
     @AuthUser() { id }: User,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<string> {
@@ -133,6 +183,7 @@ export class UserResolver {
       filename,
       mimeType: mimetype,
       fileFolder,
+      workspaceId,
     });
 
     return paths[0];

@@ -169,7 +169,9 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX
+  IconX,
+  IconCreativeCommonsSa,
+  IconApi,
+  IconCsv,
 } from '@tabler/icons-react';
 export type { TablerIconsProps } from '@tabler/icons-react';
-

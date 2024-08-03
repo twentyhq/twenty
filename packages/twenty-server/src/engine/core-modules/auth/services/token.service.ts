@@ -42,7 +42,7 @@ import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/val
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
-import { JwtData } from 'src/engine/core-modules/auth/types/jwt-data.type';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
 import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
@@ -208,7 +208,7 @@ export class TokenService {
     return !!token;
   }
 
-  async validateToken(request: Request): Promise<JwtData> {
+  async validateToken(request: Request): Promise<AuthContext> {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
     if (!token) {
@@ -219,11 +219,11 @@ export class TokenService {
       this.environmentService.get('ACCESS_TOKEN_SECRET'),
     );
 
-    const { user, workspace } = await this.jwtStrategy.validate(
+    const { user, apiKey, workspace } = await this.jwtStrategy.validate(
       decoded as JwtPayload,
     );
 
-    return { user, workspace };
+    return { user, apiKey, workspace };
   }
 
   async verifyLoginToken(loginToken: string): Promise<string> {

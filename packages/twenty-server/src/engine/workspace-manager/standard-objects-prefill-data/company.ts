@@ -18,6 +18,9 @@ export const companyPrefillData = async (
       'addressAddressCountry',
       'employees',
       'position',
+      'createdBySource',
+      'createdByWorkspaceMemberId',
+      'createdByName',
     ])
     .orIgnore()
     .values([
@@ -32,6 +35,9 @@ export const companyPrefillData = async (
         addressAddressCountry: 'United States',
         employees: 5000,
         position: 1,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
       },
       {
         name: 'Qonto',
@@ -44,6 +50,9 @@ export const companyPrefillData = async (
         addressAddressCountry: 'France',
         employees: 800,
         position: 2,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
       },
       {
         name: 'Stripe',
@@ -56,6 +65,9 @@ export const companyPrefillData = async (
         addressAddressCountry: 'Ireland',
         employees: 8000,
         position: 3,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
       },
       {
         name: 'Figma',
@@ -68,6 +80,9 @@ export const companyPrefillData = async (
         addressAddressCountry: 'United States',
         employees: 800,
         position: 4,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
       },
       {
         name: 'Notion',
@@ -80,6 +95,9 @@ export const companyPrefillData = async (
         addressAddressCountry: 'United States',
         employees: 400,
         position: 5,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
       },
     ])
     .returning('*')

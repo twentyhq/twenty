@@ -9,7 +9,6 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
-import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -19,11 +18,13 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { Key } from 'ts-key-enum';
+import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
+import { useSetRecoilState } from 'recoil';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const navigate = useNavigate();
-  const setGeneratedApi = useGeneratedApiKeys();
+  const setApiKeyToken = useSetRecoilState(apiKeyTokenState);
   const [formValues, setFormValues] = useState<{
     name: string;
     expirationDate: number | null;
@@ -57,7 +58,7 @@ export const SettingsDevelopersApiKeysNew = () => {
       },
     });
     if (isDefined(tokenData.data?.generateApiKeyToken)) {
-      setGeneratedApi(newApiKey.id, tokenData.data.generateApiKeyToken.token);
+      setApiKeyToken(tokenData.data.generateApiKeyToken.token);
       navigate(`/settings/developers/api-keys/${newApiKey.id}`);
     }
   };

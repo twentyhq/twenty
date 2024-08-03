@@ -284,7 +284,7 @@ export class BillingWorkspaceService {
       | Stripe.CustomerSubscriptionCreatedEvent.Data
       | Stripe.CustomerSubscriptionDeletedEvent.Data,
   ) {
-    const workspace = this.workspaceRepository.find({
+    const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
 
@@ -341,9 +341,10 @@ export class BillingWorkspaceService {
     }
 
     if (
-      data.object.status === SubscriptionStatus.Active ||
-      data.object.status === SubscriptionStatus.Trialing ||
-      data.object.status === SubscriptionStatus.PastDue
+      (data.object.status === SubscriptionStatus.Active ||
+        data.object.status === SubscriptionStatus.Trialing ||
+        data.object.status === SubscriptionStatus.PastDue) &&
+      workspace.activationStatus == WorkspaceActivationStatus.INACTIVE
     ) {
       await this.workspaceRepository.update(workspaceId, {
         activationStatus: WorkspaceActivationStatus.ACTIVE,

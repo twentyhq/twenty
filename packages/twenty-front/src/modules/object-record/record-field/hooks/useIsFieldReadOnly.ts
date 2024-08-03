@@ -1,14 +1,16 @@
 import { useContext } from 'react';
 
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
+import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { FieldContext } from '../contexts/FieldContext';
 
 export const useIsFieldReadOnly = () => {
   const { fieldDefinition } = useContext(FieldContext);
 
   return (
-    fieldDefinition.type === FieldMetadataType.RichText ||
     fieldDefinition.metadata.fieldName === 'noteTargets' ||
-    fieldDefinition.metadata.fieldName === 'taskTargets' // TODO: do something cleaner
+    fieldDefinition.metadata.fieldName === 'taskTargets' ||
+    isFieldActor(fieldDefinition) ||
+    isFieldRichText(fieldDefinition)
   );
 };

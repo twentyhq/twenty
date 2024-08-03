@@ -21,6 +21,9 @@ export const personPrefillDemoData = async (
     avatarUrl: person.avatarUrl,
     position: index,
     companyId: companies[Math.floor(index / 2)].id,
+    createdBySource: person.createdBySource,
+    createdByWorkspaceMemberId: person.createdByWorkspaceMemberId,
+    createdByName: person.createdByName
   }));
 
   await entityManager
@@ -36,6 +39,9 @@ export const personPrefillDemoData = async (
       'avatarUrl',
       'position',
       'companyId',
+      'createdBySource',
+      'createdByWorkspaceMemberId',
+      'createdByName',
     ])
     .orIgnore()
     .values(people)
