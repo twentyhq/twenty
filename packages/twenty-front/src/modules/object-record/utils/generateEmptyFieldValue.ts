@@ -4,7 +4,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const generateEmptyFieldValue = (
-  fieldMetadataItem: FieldMetadataItem,
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'fromRelationMetadata'>,
 ) => {
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.Email:
