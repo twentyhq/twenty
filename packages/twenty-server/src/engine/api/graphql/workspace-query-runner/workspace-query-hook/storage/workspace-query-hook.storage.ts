@@ -13,7 +13,6 @@ interface WorkspaceQueryHookData<T> {
   isRequestScoped: boolean;
 }
 
-// TODO: We should allow wildcard as key
 @Injectable()
 export class WorkspaceQueryHookStorage {
   private preHookInstances = new Map<

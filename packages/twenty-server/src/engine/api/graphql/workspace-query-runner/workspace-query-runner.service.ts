@@ -421,7 +421,7 @@ export class WorkspaceQueryRunnerService {
         result,
         objectMetadataItem,
         'update',
-        workspaceId,
+        authContext.workspace.id,
       )
     )?.records;
 
@@ -494,7 +494,7 @@ export class WorkspaceQueryRunnerService {
         result,
         objectMetadataItem,
         'update',
-        workspaceId,
+        authContext.workspace.id,
       )
     )?.records;
 
@@ -570,7 +570,7 @@ export class WorkspaceQueryRunnerService {
         result,
         objectMetadataItem,
         'deleteFrom',
-        workspaceId,
+        authContext.workspace.id,
       )
     )?.records;
 
@@ -634,7 +634,7 @@ export class WorkspaceQueryRunnerService {
         result,
         objectMetadataItem,
         'deleteFrom',
-        workspaceId,
+        authContext.workspace.id,
       )
     )?.records;
 

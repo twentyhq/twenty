@@ -6,11 +6,11 @@ import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 
 export class UserService extends TypeOrmQueryService<User> {
@@ -30,7 +30,7 @@ export class UserService extends TypeOrmQueryService<User> {
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         user.defaultWorkspaceId,
-        WorkspaceMemberWorkspaceEntity,
+        'workspaceMember',
       );
 
     const workspaceMember = await workspaceMemberRepository.findOne({

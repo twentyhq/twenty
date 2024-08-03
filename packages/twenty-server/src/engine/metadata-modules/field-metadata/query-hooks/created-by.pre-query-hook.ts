@@ -6,15 +6,15 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   CreatedByMetadata,
   FieldCreatedBySource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
-import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type CustomWorkspaceItem = Omit<
   CustomWorkspaceEntity,
@@ -41,16 +41,17 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
 
     // Check if this object has a createdBy field
     // TODO: Maybe we have a better way to check if the field exists
-    const fieldMetadata = await this.fieldMetadataRepository.findOne({
+    const createdByFieldMetadata = await this.fieldMetadataRepository.findOne({
       where: {
         object: {
           nameSingular: objectName,
         },
         name: 'createdBy',
+        workspaceId: authContext.workspace.id,
       },
     });
 
-    if (!fieldMetadata) {
+    if (!createdByFieldMetadata) {
       return payload;
     }
 
@@ -81,7 +82,6 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
       };
     }
 
-    // If API key is used, we use the API key
     if (authContext.apiKey) {
       createdBy = {
         source: FieldCreatedBySource.API,

@@ -99,9 +99,6 @@ export class User {
   @Field(() => WorkspaceMember, { nullable: true })
   workspaceMember: Relation<WorkspaceMember>;
 
-  // @Field(() => [WorkspaceMember], { nullable: true })
-  // workspaceMembers: Relation<WorkspaceMember[]>;
-
   @Field(() => [UserWorkspace])
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
   workspaces: Relation<UserWorkspace[]>;

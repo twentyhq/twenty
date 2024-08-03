@@ -2,7 +2,6 @@ import { EntityManager } from 'typeorm';
 
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 
-// FixMe: Is this file a duplicate of src/database/typeorm-seeds/workspace/companies.ts
 export const companyPrefillData = async (
   entityManager: EntityManager,
   schemaName: string,
