@@ -73,7 +73,6 @@ const jwtModule = JwtModule.registerAsync({
     TwentyORMModule.forFeature([CalendarChannelWorkspaceEntity]),
     WorkspaceDataSourceModule,
     ConnectedAccountModule,
-    UserVarsModule,
   ],
   controllers: [
     GoogleAuthController,
