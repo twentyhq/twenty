@@ -197,8 +197,8 @@ const fieldRichTextMock = {
   defaultValue: null,
 };
 
-const fieldCreatedByMock = {
-  name: 'fieldCreatedBy',
+const fieldActorMock = {
+  name: 'fieldActor',
   type: FieldMetadataType.ACTOR,
   isNullable: true,
   defaultValue: {
@@ -229,7 +229,7 @@ export const fields = [
   fieldAddressMock,
   fieldRawJsonMock,
   fieldRichTextMock,
-  fieldCreatedByMock,
+  fieldActorMock,
 ];
 
 export const objectMetadataItemMock = {

@@ -28,13 +28,13 @@ const getWrapper =
     </FieldContext.Provider>
   );
 
-const CreatedByWrapper = getWrapper(actorFieldDefinition);
+const ActorWrapper = getWrapper(actorFieldDefinition);
 const PhoneWrapper = getWrapper(phoneFieldDefinition);
 
 describe('useIsFieldReadOnly', () => {
   it('should return true', () => {
     const { result } = renderHook(() => useIsFieldReadOnly(), {
-      wrapper: CreatedByWrapper,
+      wrapper: ActorWrapper,
     });
 
     expect(result.current).toBe(true);

@@ -161,7 +161,7 @@ export class FieldMetadataDefaultValueLinks {
   secondaryLinks: object | null;
 }
 
-export class FieldMetadataDefaultCreatedBy {
+export class FieldMetadataDefaultActor {
   @ValidateIf((_object, value) => value !== null)
   @IsString()
   source: string;

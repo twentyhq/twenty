@@ -137,7 +137,7 @@ describe('computeSchemaComponents', () => {
           fieldRichText: {
             type: 'string',
           },
-          fieldCreatedBy: {
+          fieldActor: {
             properties: {
               source: {
                 type: 'string',

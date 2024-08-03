@@ -52,7 +52,7 @@ export type FieldAddressDraftValue = {
   addressLng: number | null;
 };
 export type FieldJsonDraftValue = string;
-export type FieldCreatedByDraftValue = {
+export type FieldActorDraftValue = {
   source: string;
   workspaceMemberId?: string;
   name: string;
@@ -95,5 +95,5 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                                   : FieldValue extends FieldJsonValue
                                     ? FieldJsonDraftValue
                                     : FieldValue extends FieldActorValue
-                                      ? FieldCreatedByDraftValue
+                                      ? FieldActorDraftValue
                                       : never;

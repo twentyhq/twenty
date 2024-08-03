@@ -1,5 +1,5 @@
 import {
-  FieldMetadataDefaultCreatedBy,
+  FieldMetadataDefaultActor,
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
@@ -47,7 +47,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
   [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
-  [FieldMetadataType.ACTOR]: FieldMetadataDefaultCreatedBy;
+  [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
 };
 
 export type FieldMetadataClassValidation =
