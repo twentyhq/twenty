@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { IsFeatureEnabledService } from 'src/engine/core-modules/feature-flag/services/is-feature-enabled.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -26,6 +28,7 @@ export class OnboardingService {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly environmentService: EnvironmentService,
+    private readonly isFeatureEnabledService: IsFeatureEnabledService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
   ) {}
 
@@ -33,6 +36,16 @@ export class OnboardingService {
     const isBillingEnabled = this.environmentService.get('IS_BILLING_ENABLED');
 
     if (!isBillingEnabled) {
+      return false;
+    }
+
+    const isFreeAccessEnabled =
+      await this.isFeatureEnabledService.isFeatureEnabled(
+        FeatureFlagKey.IsFreeAccessEnabled,
+        user.defaultWorkspaceId,
+      );
+
+    if (isFreeAccessEnabled) {
       return false;
     }
 
