@@ -124,7 +124,7 @@ export class WorkspaceQueryRunnerService {
       result,
       objectMetadataItem,
       '',
-      workspaceId,
+      authContext.workspace.id,
     );
   }
 
@@ -167,7 +167,7 @@ export class WorkspaceQueryRunnerService {
       result,
       objectMetadataItem,
       '',
-      workspaceId,
+      authContext.workspace.id,
     );
 
     return parsedResult?.edges?.[0]?.node;
@@ -236,7 +236,7 @@ export class WorkspaceQueryRunnerService {
       result,
       objectMetadataItem,
       '',
-      workspaceId,
+      authContext.workspace.id,
       true,
     );
   }
@@ -285,7 +285,7 @@ export class WorkspaceQueryRunnerService {
         result,
         objectMetadataItem,
         'insertInto',
-        workspaceId,
+        authContext.workspace.id,
       )
     )?.records;
 

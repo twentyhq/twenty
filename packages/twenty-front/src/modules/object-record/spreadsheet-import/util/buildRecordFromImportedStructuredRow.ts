@@ -31,7 +31,6 @@ export const buildRecordFromImportedStructuredRow = (
     CURRENCY: { amountMicrosLabel, currencyCodeLabel },
     FULL_NAME: { firstNameLabel, lastNameLabel },
     LINKS: { primaryLinkLabelLabel, primaryLinkUrlLabel },
-    CREATED_BY: { sourceLabel },
   } = COMPOSITE_FIELD_IMPORT_LABELS;
 
   for (const field of fields) {

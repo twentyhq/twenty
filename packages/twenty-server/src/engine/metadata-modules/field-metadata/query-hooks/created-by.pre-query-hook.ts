@@ -39,8 +39,7 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
   ): Promise<CreateManyResolverArgs<CustomWorkspaceItem>> {
     let createdBy: CreatedByMetadata | null = null;
 
-    // Check if this object has a createdBy field
-    // TODO: Maybe we have a better way to check if the field exists
+    // TODO: Once all fields have it, we can remove this check
     const createdByFieldMetadata = await this.fieldMetadataRepository.findOne({
       where: {
         object: {
