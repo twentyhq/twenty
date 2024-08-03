@@ -1,7 +1,5 @@
 import { EntityManager } from 'typeorm';
 
-import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
-
 export const companyPrefillData = async (
   entityManager: EntityManager,
   schemaName: string,
@@ -38,8 +36,8 @@ export const companyPrefillData = async (
         employees: 5000,
         position: 1,
         createdBySource: 'MANUAL',
-        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
-        createdByName: 'Tim Apple',
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
       },
       {
         name: 'Qonto',
@@ -53,8 +51,8 @@ export const companyPrefillData = async (
         employees: 800,
         position: 2,
         createdBySource: 'MANUAL',
-        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
-        createdByName: 'Tim Apple',
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
       },
       {
         name: 'Stripe',
@@ -68,8 +66,8 @@ export const companyPrefillData = async (
         employees: 8000,
         position: 3,
         createdBySource: 'MANUAL',
-        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
-        createdByName: 'Tim Apple',
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
       },
       {
         name: 'Figma',
@@ -83,8 +81,8 @@ export const companyPrefillData = async (
         employees: 800,
         position: 4,
         createdBySource: 'MANUAL',
-        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
-        createdByName: 'Tim Apple',
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
       },
       {
         name: 'Notion',
@@ -98,8 +96,8 @@ export const companyPrefillData = async (
         employees: 400,
         position: 5,
         createdBySource: 'MANUAL',
-        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
-        createdByName: 'Tim Apple',
+        createdByWorkspaceMemberId: null,
+        createdByName: 'System',
       },
     ])
     .returning('*')

@@ -133,7 +133,7 @@ export class UserResolver {
   })
   async workspaceMembers(@Parent() user: User): Promise<WorkspaceMember[]> {
     const workspaceMembers = await this.userService.loadWorkspaceMembers(
-      user.defaultWorkspaceId,
+      user.defaultWorkspace,
     );
 
     for (const workspaceMember of workspaceMembers) {

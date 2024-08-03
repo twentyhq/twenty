@@ -1,26 +1,29 @@
 import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
-import { In } from 'typeorm';
 import {
   CleanInactiveWorkspaceEmail,
   DeleteInactiveWorkspaceEmail,
 } from 'twenty-emails';
+import { In, Repository } from 'typeorm';
 
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { CleanInactiveWorkspacesCommandOptions } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-inactive-workspaces.command';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
@@ -36,6 +39,8 @@ export class CleanInactiveWorkspaceJob {
   private readonly inactiveDaysBeforeEmail;
 
   constructor(
+    @InjectRepository(WorkspaceEntity, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     private readonly dataSourceService: DataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly typeORMService: TypeORMService,
@@ -94,9 +99,20 @@ export class CleanInactiveWorkspaceJob {
     daysSinceInactive: number,
     isDryRun: boolean,
   ) {
-    const workspaceMembers = await this.userService.loadWorkspaceMembers(
-      dataSource.workspaceId,
-    );
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: dataSource.workspaceId },
+    });
+
+    if (!workspace) {
+      this.logger.error(
+        `Workspace with id ${dataSource.workspaceId} not found in database`,
+      );
+
+      return;
+    }
+
+    const workspaceMembers =
+      await this.userService.loadWorkspaceMembers(workspace);
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSource);

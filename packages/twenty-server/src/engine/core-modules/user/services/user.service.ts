@@ -9,6 +9,10 @@ import { Repository } from 'typeorm';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -28,6 +32,13 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async loadWorkspaceMember(user: User) {
+    if (
+      user.defaultWorkspace.activationStatus !==
+      WorkspaceActivationStatus.ACTIVE
+    ) {
+      return null;
+    }
+
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         user.defaultWorkspaceId,
@@ -43,10 +54,14 @@ export class UserService extends TypeOrmQueryService<User> {
     return workspaceMember;
   }
 
-  async loadWorkspaceMembers(workspaceId: string) {
+  async loadWorkspaceMembers(workspace: Workspace) {
+    if (workspace.activationStatus !== WorkspaceActivationStatus.ACTIVE) {
+      return [];
+    }
+
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceId,
+        workspace.id,
         'workspaceMember',
       );
 
