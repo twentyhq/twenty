@@ -1,5 +1,5 @@
+import { motion } from 'framer-motion';
 import React from 'react';
-
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
@@ -16,6 +16,11 @@ import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/compo
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
+
+const navItemsAnimationVariants = {
+  hidden: { height: 0 },
+  visible: { height: 'auto' },
+};
 
 export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
   const { toggleNavigationSection, isNavigationSectionOpenState } =
@@ -103,25 +108,34 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
                     currentPath === `/objects/${objectMetadataItem.namePlural}`
                   }
                 />
-                {shouldSubItemsBeDisplayed &&
-                  objectMetadataViews
-                    .sort((viewA, viewB) =>
-                      viewA.key === 'INDEX'
-                        ? -1
-                        : viewA.position - viewB.position,
-                    )
-                    .map((view) => (
-                      <NavigationDrawerSubItem
-                        key={view.id}
-                        label={view.name}
-                        to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
-                        active={
-                          currentPathWithSearch ===
-                          `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
-                        }
-                        Icon={getIcon(view.icon)}
-                      />
-                    ))}
+                {shouldSubItemsBeDisplayed && (
+                  <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    variants={navItemsAnimationVariants}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {objectMetadataViews
+                      .sort((viewA, viewB) =>
+                        viewA.key === 'INDEX'
+                          ? -1
+                          : viewA.position - viewB.position,
+                      )
+                      .map((view) => (
+                        <NavigationDrawerSubItem
+                          key={view.id}
+                          label={view.name}
+                          to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
+                          active={
+                            currentPathWithSearch ===
+                            `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
+                          }
+                          Icon={getIcon(view.icon)}
+                        />
+                      ))}
+                  </motion.div>
+                )}
               </React.Fragment>
             );
           })}
