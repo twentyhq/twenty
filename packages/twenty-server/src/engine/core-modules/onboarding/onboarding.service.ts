@@ -11,10 +11,6 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { isDefined } from 'src/utils/is-defined';
 
-export enum OnboardingStepBooleanValues {
-  TRUE = 'TRUE',
-}
-
 export enum OnboardingStepKeys {
   SYNC_EMAIL_ONBOARDING_STEP = 'SYNC_EMAIL_ONBOARDING_STEP',
   INVITE_TEAM_ONBOARDING_STEP = 'INVITE_TEAM_ONBOARDING_STEP',
@@ -22,9 +18,9 @@ export enum OnboardingStepKeys {
 }
 
 export type OnboardingKeyValueTypeMap = {
-  [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStepBooleanValues;
-  [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepBooleanValues;
-  [OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP]: OnboardingStepBooleanValues;
+  [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: boolean;
+  [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: boolean;
+  [OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP]: boolean;
 };
 
 @Injectable()
@@ -63,32 +59,26 @@ export class OnboardingService {
   }
 
   private async isProfileCreationOnboardingStatus(user: User) {
-    return (
-      (await this.userVarsService.get({
-        userId: user.id,
-        workspaceId: user.defaultWorkspaceId,
-        key: OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP,
-      })) === OnboardingStepBooleanValues.TRUE
-    );
+    return await this.userVarsService.get({
+      userId: user.id,
+      workspaceId: user.defaultWorkspaceId,
+      key: OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP,
+    });
   }
 
   private async isSyncEmailOnboardingStatus(user: User) {
-    return (
-      (await this.userVarsService.get({
-        userId: user.id,
-        workspaceId: user.defaultWorkspaceId,
-        key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
-      })) === OnboardingStepBooleanValues.TRUE
-    );
+    return await this.userVarsService.get({
+      userId: user.id,
+      workspaceId: user.defaultWorkspaceId,
+      key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
+    });
   }
 
   private async isInviteTeamOnboardingStatus(workspace: Workspace) {
-    return (
-      (await this.userVarsService.get({
-        workspaceId: workspace.id,
-        key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
-      })) === OnboardingStepBooleanValues.TRUE
-    );
+    return await this.userVarsService.get({
+      workspaceId: workspace.id,
+      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
+    });
   }
 
   async getOnboardingStatus(user: User) {
@@ -120,7 +110,7 @@ export class OnboardingService {
       userId: user.id,
       workspaceId: user.defaultWorkspaceId,
       key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
-      value: OnboardingStepBooleanValues.TRUE,
+      value: true,
     });
   }
 
@@ -128,7 +118,7 @@ export class OnboardingService {
     await this.userVarsService.set({
       workspaceId: user.defaultWorkspaceId,
       key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
-      value: OnboardingStepBooleanValues.TRUE,
+      value: true,
     });
   }
 
@@ -137,7 +127,7 @@ export class OnboardingService {
       userId: user.id,
       workspaceId: user.defaultWorkspaceId,
       key: OnboardingStepKeys.CREATE_PROFILE_ONBOARDING_STEP,
-      value: OnboardingStepBooleanValues.TRUE,
+      value: true,
     });
   }
 
