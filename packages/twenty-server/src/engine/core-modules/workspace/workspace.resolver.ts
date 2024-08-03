@@ -12,8 +12,8 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -41,7 +41,7 @@ export class WorkspaceResolver {
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly fileUploadService: FileUploadService,
-    private readonly billingWorkspaceService: BillingWorkspaceService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
   @Query(() => Workspace)
@@ -112,7 +112,7 @@ export class WorkspaceResolver {
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription | null> {
-    return this.billingWorkspaceService.getCurrentBillingSubscription({
+    return this.billingSubscriptionService.getCurrentBillingSubscription({
       workspaceId: workspace.id,
     });
   }

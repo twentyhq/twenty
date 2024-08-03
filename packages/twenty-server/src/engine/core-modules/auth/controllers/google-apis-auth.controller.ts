@@ -9,14 +9,14 @@ import {
 
 import { Response } from 'express';
 
+import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-exchange-code-for-token.guard';
 import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
-import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-exchange-code-for-token.guard';
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 
 @Controller('auth/google-apis')
 export class GoogleAPIsAuthController {
@@ -93,10 +93,11 @@ export class GoogleAPIsAuthController {
           workspaceId,
         );
 
-      await onboardingServiceInstance.skipSyncEmailOnboardingStep(
+      await onboardingServiceInstance.toggleOnboardingConnectAccountCompletion({
         userId,
         workspaceId,
-      );
+        value: true,
+      });
     }
 
     return res.redirect(

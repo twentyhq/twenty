@@ -6,7 +6,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import {
   Workspace,
   WorkspaceActivationStatus,
@@ -32,7 +32,7 @@ export class SetWorkspaceActivationStatusCommand extends CommandRunner {
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
-    private readonly billingService: BillingService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {
     super();
   }
@@ -56,7 +56,7 @@ export class SetWorkspaceActivationStatusCommand extends CommandRunner {
       activeSubscriptionWorkspaceIds = [options.workspaceId];
     } else {
       activeSubscriptionWorkspaceIds =
-        await this.billingService.getActiveSubscriptionWorkspaceIds();
+        await this.billingSubscriptionService.getActiveSubscriptionWorkspaceIds();
     }
 
     if (!activeSubscriptionWorkspaceIds.length) {

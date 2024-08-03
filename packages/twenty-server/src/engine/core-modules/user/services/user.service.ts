@@ -18,6 +18,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
     @InjectRepository(User, 'core')
@@ -115,6 +116,7 @@ export class UserService extends TypeOrmQueryService<User> {
     };
     payload.name = 'workspaceMember.deleted';
     payload.recordId = workspaceMember.id;
+    payload.name = 'workspaceMember.deleted';
 
     this.eventEmitter.emit('workspaceMember.deleted', payload);
 

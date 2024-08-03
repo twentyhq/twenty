@@ -1,22 +1,50 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   HandleWorkspaceMemberDeletedJob,
   HandleWorkspaceMemberDeletedJobData,
 } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
+import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class WorkspaceWorkspaceMemberListener {
   constructor(
+    private readonly onboardingService: OnboardingService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
+
+  @OnEvent('workspaceMember.updated')
+  async handleUpdateEvent(
+    payload: ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>,
+  ) {
+    const { firstName: firstNameBefore, lastName: lastNameBefore } =
+      payload.properties.before.name;
+
+    const { firstName: firstNameAfter, lastName: lastNameAfter } =
+      payload.properties.after.name;
+
+    if (firstNameAfter === '' && lastNameAfter === '') {
+      return;
+    }
+
+    if (!payload.userId) {
+      return;
+    }
+
+    await this.onboardingService.toggleOnboardingCreateProfileCompletion({
+      userId: payload.userId,
+      workspaceId: payload.workspaceId,
+      value: true,
+    });
+  }
 
   @OnEvent('workspaceMember.deleted')
   async handleDeleteEvent(

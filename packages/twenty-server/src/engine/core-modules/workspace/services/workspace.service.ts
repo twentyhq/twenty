@@ -8,7 +8,7 @@ import { render } from '@react-email/render';
 import { SendInviteLinkEmail } from 'twenty-emails';
 import { Repository } from 'typeorm';
 
-import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -23,6 +23,7 @@ import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -33,7 +34,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly billingWorkspaceService: BillingWorkspaceService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
@@ -65,7 +66,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     assert(workspace, 'Workspace not found');
 
     await this.userWorkspaceRepository.delete({ workspaceId: id });
-    await this.billingWorkspaceService.deleteSubscription(workspace.id);
+    await this.billingSubscriptionService.deleteSubscription(workspace.id);
 
     await this.workspaceManagerService.delete(id);
 
@@ -99,7 +100,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       userId,
       workspaceId,
     });
-    await this.onboardingService.skipInviteTeamOnboardingStep(workspaceId);
     await this.reassignOrRemoveUserDefaultWorkspace(workspaceId, userId);
   }
 
@@ -142,7 +142,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       });
     }
 
-    await this.onboardingService.skipInviteTeamOnboardingStep(workspace.id);
+    await this.onboardingService.toggleOnboardingInviteTeamCompletion({
+      workspaceId: workspace.id,
+      value: true,
+    });
 
     return { success: true };
   }

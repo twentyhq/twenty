@@ -17,6 +17,7 @@ import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.r
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
+import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';

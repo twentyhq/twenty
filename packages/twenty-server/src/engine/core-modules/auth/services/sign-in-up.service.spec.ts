@@ -9,6 +9,7 @@ import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-u
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 
 describe('SignInUpService', () => {
   let service: SignInUpService;
@@ -22,10 +23,6 @@ describe('SignInUpService', () => {
           useValue: {},
         },
         {
-          provide: UserWorkspaceService,
-          useValue: {},
-        },
-        {
           provide: getRepositoryToken(Workspace, 'core'),
           useValue: {},
         },
@@ -34,7 +31,11 @@ describe('SignInUpService', () => {
           useValue: {},
         },
         {
-          provide: EnvironmentService,
+          provide: UserWorkspaceService,
+          useValue: {},
+        },
+        {
+          provide: OnboardingService,
           useValue: {},
         },
         {
@@ -42,7 +43,7 @@ describe('SignInUpService', () => {
           useValue: {},
         },
         {
-          provide: WorkspaceService,
+          provide: EnvironmentService,
           useValue: {},
         },
       ],
