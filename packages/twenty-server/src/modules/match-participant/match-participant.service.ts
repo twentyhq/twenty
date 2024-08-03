@@ -111,7 +111,6 @@ export class MatchParticipantService<
 
     this.eventEmitter.emit(`${objectMetadataName}.matched`, {
       workspaceId,
-      name: `${objectMetadataName}.matched`,
       workspaceMemberId: null,
       participants: matchedParticipants,
     });
