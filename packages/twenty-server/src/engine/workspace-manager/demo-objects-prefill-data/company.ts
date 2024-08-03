@@ -15,10 +15,10 @@ export const companyPrefillDemoData = async (
       'addressAddressCity',
       'employees',
       'linkedinLinkPrimaryLinkUrl',
-      'position',
       'createdBySource',
       'createdByWorkspaceMemberId',
-      'createdByName'
+      'createdByName',
+      'position'
     ])
     .orIgnore()
     .values(
