@@ -39,7 +39,7 @@ export const companiesAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
-            COMPANY_STANDARD_FIELD_IDS.accountOwner
+            COMPANY_STANDARD_FIELD_IDS.createdBy
           ],
         position: 2,
         isVisible: true,
@@ -48,7 +48,7 @@ export const companiesAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
-            BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
+            COMPANY_STANDARD_FIELD_IDS.accountOwner
           ],
         position: 3,
         isVisible: true,
@@ -57,7 +57,7 @@ export const companiesAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
-            COMPANY_STANDARD_FIELD_IDS.employees
+            BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
           ],
         position: 4,
         isVisible: true,
@@ -66,9 +66,18 @@ export const companiesAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
-            COMPANY_STANDARD_FIELD_IDS.linkedinLink
+            COMPANY_STANDARD_FIELD_IDS.employees
           ],
         position: 5,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+            COMPANY_STANDARD_FIELD_IDS.linkedinLink
+          ],
+        position: 6,
         isVisible: true,
         size: 170,
       },
@@ -77,7 +86,7 @@ export const companiesAllView = async (
           objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
             COMPANY_STANDARD_FIELD_IDS.address
           ],
-        position: 6,
+        position: 7,
         isVisible: true,
         size: 170,
       },

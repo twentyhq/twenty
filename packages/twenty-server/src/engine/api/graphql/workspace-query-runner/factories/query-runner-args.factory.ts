@@ -129,7 +129,7 @@ export class QueryRunnerArgsFactory {
                   isCustom: options.objectMetadataItem.isCustom,
                   nameSingular: options.objectMetadataItem.nameSingular,
                 },
-                options.workspaceId,
+                options.authContext.workspace.id,
                 argPositionBackfillInput.argIndex,
               ),
             ];
@@ -157,7 +157,7 @@ export class QueryRunnerArgsFactory {
               isCustom: options.objectMetadataItem.isCustom,
               nameSingular: options.objectMetadataItem.nameSingular,
             },
-            options.workspaceId,
+            options.authContext.workspace.id,
             argPositionBackfillInput.argIndex,
           ),
         ],

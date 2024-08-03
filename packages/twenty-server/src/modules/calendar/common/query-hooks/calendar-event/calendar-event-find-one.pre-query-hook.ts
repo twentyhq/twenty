@@ -7,6 +7,7 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CanAccessCalendarEventService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/can-access-calendar-event.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @WorkspaceQueryHook({
   key: `calendarEvent.findOne`,
@@ -21,12 +22,16 @@ export class CalendarEventFindOnePreQueryHook
   ) {}
 
   async execute(
-    userId: string,
-    workspaceId: string,
+    authContext: AuthContext,
+    objectName: string,
     payload: FindOneResolverArgs,
-  ): Promise<void> {
+  ): Promise<FindOneResolverArgs> {
     if (!payload?.filter?.id?.eq) {
       throw new BadRequestException('id filter is required');
+    }
+
+    if (!authContext.user?.id) {
+      throw new BadRequestException('User id is required');
     }
 
     const calendarChannelEventAssociationRepository =
@@ -48,9 +53,11 @@ export class CalendarEventFindOnePreQueryHook
     }
 
     await this.canAccessCalendarEventService.canAccessCalendarEvent(
-      userId,
-      workspaceId,
+      authContext.user.id,
+      authContext.workspace.id,
       calendarChannelCalendarEventAssociations,
     );
+
+    return payload;
   }
 }

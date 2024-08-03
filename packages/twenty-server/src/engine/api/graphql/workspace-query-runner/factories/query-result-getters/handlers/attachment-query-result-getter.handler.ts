@@ -1,41 +1,21 @@
-import { addMilliseconds } from 'date-fns';
-import ms from 'ms';
+import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
-import { QueryResultGuetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
-
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 
 export class AttachmentQueryResultGetterHandler
-  implements QueryResultGuetterHandlerInterface
+  implements QueryResultGetterHandlerInterface
 {
-  constructor(
-    private readonly tokenService: TokenService,
-    private readonly environmentService: EnvironmentService,
-  ) {}
+  constructor(private readonly fileService: FileService) {}
 
-  async process(attachment: any, workspaceId: string): Promise<any> {
+  async handle(attachment: any, workspaceId: string): Promise<any> {
     if (!attachment.id || !attachment?.fullPath) {
       return attachment;
     }
 
-    const fileTokenExpiresIn = this.environmentService.get(
-      'FILE_TOKEN_EXPIRES_IN',
-    );
-    const secret = this.environmentService.get('FILE_TOKEN_SECRET');
-
-    const expirationDate = addMilliseconds(new Date(), ms(fileTokenExpiresIn));
-
-    const signedPayload = await this.tokenService.encodePayload(
-      {
-        expiration_date: expirationDate,
-        attachment_id: attachment.id,
-        workspace_id: workspaceId,
-      },
-      {
-        secret,
-      },
-    );
+    const signedPayload = await this.fileService.encodeFileToken({
+      attachment_id: attachment.id,
+      workspace_id: workspaceId,
+    });
 
     return {
       ...attachment,

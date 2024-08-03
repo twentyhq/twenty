@@ -7,6 +7,7 @@ import { filterOutInvalidTimelineActivities } from '@/activities/timelineActivit
 import { groupEventsByMonth } from '@/activities/timelineActivities/utils/groupEventsByMonth';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 type EventListProps = {
@@ -34,9 +35,12 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
     objectNameSingular: targetableObject.targetObjectNameSingular,
   }).objectMetadataItem;
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const filteredEvents = filterOutInvalidTimelineActivities(
     events,
-    mainObjectMetadataItem,
+    targetableObject.targetObjectNameSingular,
+    objectMetadataItems,
   );
 
   const groupedEvents = groupEventsByMonth(filteredEvents);

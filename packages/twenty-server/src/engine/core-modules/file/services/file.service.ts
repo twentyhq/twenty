@@ -2,16 +2,25 @@ import { Injectable } from '@nestjs/common';
 
 import { Stream } from 'stream';
 
+import { addMilliseconds } from 'date-fns';
+import ms from 'ms';
+
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 
+import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
 @Injectable()
 export class FileService {
-  constructor(private readonly fileStorageService: FileStorageService) {}
+  constructor(
+    private readonly fileStorageService: FileStorageService,
+    private readonly environmentService: EnvironmentService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   async getFileStream(
     folderPath: string,
@@ -38,5 +47,26 @@ export class FileService {
       }
       throw error;
     }
+  }
+
+  async encodeFileToken(payloadToEncode: Record<string, any>) {
+    const fileTokenExpiresIn = this.environmentService.get(
+      'FILE_TOKEN_EXPIRES_IN',
+    );
+    const secret = this.environmentService.get('FILE_TOKEN_SECRET');
+
+    const expirationDate = addMilliseconds(new Date(), ms(fileTokenExpiresIn));
+
+    const signedPayload = await this.tokenService.encodePayload(
+      {
+        expiration_date: expirationDate,
+        ...payloadToEncode,
+      },
+      {
+        secret,
+      },
+    );
+
+    return signedPayload;
   }
 }

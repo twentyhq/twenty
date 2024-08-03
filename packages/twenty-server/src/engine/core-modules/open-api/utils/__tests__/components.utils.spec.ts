@@ -137,6 +137,21 @@ describe('computeSchemaComponents', () => {
           fieldRichText: {
             type: 'string',
           },
+          fieldActor: {
+            properties: {
+              source: {
+                type: 'string',
+              },
+              workspaceMemberId: {
+                type: 'string',
+                format: 'uuid',
+              },
+              name: {
+                type: 'string',
+              },
+            },
+            type: 'object',
+          },
         },
       },
       'ObjectName with Relations': {

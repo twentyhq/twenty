@@ -9,7 +9,6 @@ import {
   TableUnique,
 } from 'typeorm';
 
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
@@ -36,7 +35,6 @@ export class WorkspaceMigrationRunnerService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly workspaceMigrationEnumService: WorkspaceMigrationEnumService,
     private readonly workspaceMigrationTypeService: WorkspaceMigrationTypeService,
   ) {}
@@ -78,6 +76,8 @@ export class WorkspaceMigrationRunnerService {
 
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await queryRunner.query(`SET LOCAL search_path TO ${schemaName}`);
 
     try {
       // Loop over each migration and create or update the table
