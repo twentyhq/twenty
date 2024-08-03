@@ -100,6 +100,11 @@ export type FieldRichTextMetadata = {
   fieldName: string;
 };
 
+export type FieldPositionMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldDefinitionRelationType =
   | 'FROM_MANY_OBJECTS'
   | 'FROM_ONE_OBJECT'
