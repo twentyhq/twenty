@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   HandleWorkspaceMemberDeletedJob,
   HandleWorkspaceMemberDeletedJobData,
 } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
-import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class WorkspaceWorkspaceMemberListener {
@@ -28,10 +28,6 @@ export class WorkspaceWorkspaceMemberListener {
     const { firstName: firstNameBefore, lastName: lastNameBefore } =
       payload.properties.before.name;
 
-    if (firstNameBefore !== '' || lastNameBefore !== '') {
-      return;
-    }
-
     const { firstName: firstNameAfter, lastName: lastNameAfter } =
       payload.properties.after.name;
 
@@ -43,10 +39,11 @@ export class WorkspaceWorkspaceMemberListener {
       return;
     }
 
-    await this.onboardingService.removeCreateProfileOnboardingStep(
-      payload.userId,
-      payload.workspaceId,
-    );
+    await this.onboardingService.toggleOnboardingCreateProfileCompletion({
+      userId: payload.userId,
+      workspaceId: payload.workspaceId,
+      value: true,
+    });
   }
 
   @OnEvent('workspaceMember.deleted')

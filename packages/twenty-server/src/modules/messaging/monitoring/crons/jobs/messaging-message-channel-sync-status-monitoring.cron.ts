@@ -2,14 +2,15 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import snakeCase from 'lodash.snakecase';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -24,11 +25,8 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(DataSourceEntity, 'metadata')
-    private readonly dataSourceRepository: Repository<DataSourceEntity>,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly billingService: BillingService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
@@ -41,22 +39,16 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
       message: 'Starting message channel sync status monitoring',
     });
 
-    const workspaceIds =
-      await this.billingService.getActiveSubscriptionWorkspaceIds();
-
-    const dataSources = await this.dataSourceRepository.find({
+    const activeWorkspaces = await this.workspaceRepository.find({
       where: {
-        workspaceId: In(workspaceIds),
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
 
-    const workspaceIdsWithDataSources = new Set(
-      dataSources.map((dataSource) => dataSource.workspaceId),
-    );
-
-    for (const workspaceId of workspaceIdsWithDataSources) {
-      const messageChannels =
-        await this.messageChannelRepository.getAll(workspaceId);
+    for (const activeWorkspace of activeWorkspaces) {
+      const messageChannels = await this.messageChannelRepository.getAll(
+        activeWorkspace.id,
+      );
 
       for (const messageChannel of messageChannels) {
         if (!messageChannel.syncStatus) {
@@ -66,7 +58,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
           eventName: `message_channel.monitoring.sync_status.${snakeCase(
             messageChannel.syncStatus,
           )}`,
-          workspaceId,
+          workspaceId: activeWorkspace.id,
           connectedAccountId: messageChannel.connectedAccountId,
           messageChannelId: messageChannel.id,
           message: messageChannel.syncStatus,

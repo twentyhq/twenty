@@ -18,6 +18,7 @@ import {
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import {
@@ -27,7 +28,6 @@ import {
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { assert } from 'src/utils/assert';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -40,6 +40,7 @@ export type SignInUpServiceInput = {
 };
 
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class SignInUpService {
   constructor(
     private readonly fileUploadService: FileUploadService,
@@ -174,11 +175,6 @@ export class SignInUpService {
     await this.userWorkspaceService.create(user.id, workspace.id);
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
-    if (user.firstName === '' && user.lastName === '') {
-      await this.onboardingService.addCreateProfileOnboardingStep(user);
-    }
-    await this.onboardingService.addSyncEmailOnboardingStep(user);
-
     return user;
   }
 
@@ -226,11 +222,13 @@ export class SignInUpService {
 
     await this.userWorkspaceService.create(user.id, workspace.id);
 
-    if (user.firstName === '' && user.lastName === '') {
-      await this.onboardingService.addCreateProfileOnboardingStep(user);
+    if (user.firstName !== '' || user.lastName === '') {
+      await this.onboardingService.toggleOnboardingCreateProfileCompletion({
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      });
     }
-    await this.onboardingService.addInviteTeamOnboardingStep(user);
-    await this.onboardingService.addSyncEmailOnboardingStep(user);
 
     return user;
   }

@@ -1,6 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
 
-import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
@@ -16,7 +16,7 @@ export class UpdateSubscriptionJob {
   protected readonly logger = new Logger(UpdateSubscriptionJob.name);
 
   constructor(
-    private readonly billingWorkspaceService: BillingWorkspaceService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly stripeService: StripeService,
   ) {}
@@ -33,7 +33,7 @@ export class UpdateSubscriptionJob {
 
     try {
       const billingSubscriptionItem =
-        await this.billingWorkspaceService.getBillingSubscriptionItem(
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionItem(
           data.workspaceId,
         );
 
