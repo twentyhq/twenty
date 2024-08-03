@@ -1,5 +1,6 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
+import { BackfillNewOnboardingUserVarsCommand } from 'src/database/commands/upgrade-version/0-23/0-23-backfill-new-onboarding-user-vars';
 import { MigrateDomainNameFromTextToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-domain-to-links.command';
 import { MigrateLinkFieldsToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-link-fields-to-links.command';
 import { MigrateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-message-channel-sync-status-enum.command';
@@ -23,6 +24,7 @@ export class UpgradeTo0_23Command extends CommandRunner {
     private readonly migrateMessageChannelSyncStatusEnumCommand: MigrateMessageChannelSyncStatusEnumCommand,
     private readonly setWorkspaceActivationStatusCommand: SetWorkspaceActivationStatusCommand,
     private readonly updateActivitiesCommand: UpdateActivitiesCommand,
+    private readonly backfillNewOnboardingUserVarsCommand: BackfillNewOnboardingUserVarsCommand,
   ) {
     super();
   }
@@ -53,5 +55,6 @@ export class UpgradeTo0_23Command extends CommandRunner {
       options,
     );
     await this.updateActivitiesCommand.run(_passedParam, options);
+    await this.backfillNewOnboardingUserVarsCommand.run(_passedParam, options);
   }
 }
