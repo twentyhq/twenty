@@ -142,7 +142,7 @@ export type FieldMultiSelectMetadata = {
   options: { label: string; color: ThemeColor; value: string }[];
 };
 
-export type FieldCreatedByMetadata = {
+export type FieldActorMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
@@ -164,7 +164,7 @@ export type FieldMetadata =
   | FieldTextMetadata
   | FieldUuidMetadata
   | FieldAddressMetadata
-  | FieldCreatedByMetadata;
+  | FieldActorMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
@@ -211,8 +211,7 @@ export type FieldRelationValue<
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
 
-export type FieldCreatedByValue = {
-  // TODO: Check if we can put an enum here defined on the backend
+export type FieldActorValue = {
   source: string;
   workspaceMemberId?: string;
   name: string;

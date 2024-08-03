@@ -1,12 +1,12 @@
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
-  FieldCreatedByMetadata,
+  FieldActorMetadata,
   FieldFullNameMetadata,
   FieldLinkMetadata,
   FieldRatingMetadata,
   FieldSelectMetadata,
-  FieldTextMetadata,
+  FieldTextMetadata
 } from '@/object-record/record-field/types/FieldMetadata';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
@@ -80,7 +80,7 @@ export const phoneFieldDefinition = formatFieldMetadataItemAsFieldDefinition({
   objectMetadataItem: mockedPersonObjectMetadataItem,
 });
 
-export const ratingfieldDefinition: FieldDefinition<FieldRatingMetadata> = {
+export const ratingFieldDefinition: FieldDefinition<FieldRatingMetadata> = {
   fieldMetadataId,
   label: 'Rating',
   iconName: 'iconName',
@@ -99,13 +99,13 @@ export const booleanFieldDefinition = formatFieldMetadataItemAsFieldDefinition({
   objectMetadataItem: mockedCompanyObjectMetadataItem,
 });
 
-export const createdByFieldDefinition: FieldDefinition<FieldCreatedByMetadata> = {
+export const actorFieldDefinition: FieldDefinition<FieldActorMetadata> = {
   fieldMetadataId,
   label: 'Created By',
   iconName: 'restart',
-  type: FieldMetadataType.CreatedBy,
+  type: FieldMetadataType.Actor,
   defaultValue: { source: 'MANUAL', name: '' },
   metadata: {
-    fieldName: 'createdBy',
+    fieldName: 'actor',
   },
 };

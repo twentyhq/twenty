@@ -1,4 +1,4 @@
-import { FieldCreatedByValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 import { useMemo } from 'react';
 import {
   AvatarChip,
@@ -9,16 +9,16 @@ import {
   IconGmail,
 } from 'twenty-ui';
 
-type CreatedByDisplayProps = Partial<FieldCreatedByValue> & {
+type ActorDisplayProps = Partial<FieldActorValue> & {
   avatarUrl?: string | null;
 };
 
-export const CreatedByDisplay = ({
+export const ActorDisplay = ({
   name,
   source,
   workspaceMemberId,
   avatarUrl,
-}: CreatedByDisplayProps) => {
+}: ActorDisplayProps) => {
   const LeftIcon = useMemo(() => {
     switch (source) {
       case 'API':

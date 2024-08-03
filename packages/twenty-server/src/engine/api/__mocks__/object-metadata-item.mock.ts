@@ -1,4 +1,4 @@
-import { FieldCreatedBySource } from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
@@ -199,10 +199,10 @@ const fieldRichTextMock = {
 
 const fieldCreatedByMock = {
   name: 'fieldCreatedBy',
-  type: FieldMetadataType.CREATED_BY,
+  type: FieldMetadataType.ACTOR,
   isNullable: true,
   defaultValue: {
-    source: FieldCreatedBySource.MANUAL,
+    source: FieldActorSource.MANUAL,
     name: '',
   },
 };

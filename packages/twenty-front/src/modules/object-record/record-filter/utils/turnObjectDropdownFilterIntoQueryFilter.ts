@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
+  ActorFilter,
   AddressFilter,
-  CreatedByFilter,
   CurrencyFilter,
   DateFilter,
   FloatFilter,
@@ -213,18 +213,18 @@ const applyEmptyFilters = (
         [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
       };
       break;
-    case 'CREATED_BY':
+    case 'ACTOR':
       emptyRecordFilter = {
         or: [
           {
             [correspondingField.name]: {
               name: { ilike: '' },
-            } as CreatedByFilter,
+            } as ActorFilter,
           },
           {
             [correspondingField.name]: {
               name: { is: 'NULL' },
-            } as CreatedByFilter,
+            } as ActorFilter,
           },
         ],
       };
@@ -761,7 +761,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       }
-      case 'CREATED_BY':
+      case 'ACTOR':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
             objectRecordFilters.push({
@@ -771,7 +771,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                     name: {
                       ilike: `%${rawUIFilter.value}%`,
                     },
-                  } as CreatedByFilter,
+                  } as ActorFilter,
                 },
               ],
             });
@@ -785,7 +785,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                       name: {
                         ilike: `%${rawUIFilter.value}%`,
                       },
-                    } as CreatedByFilter,
+                    } as ActorFilter,
                   },
                 },
               ],

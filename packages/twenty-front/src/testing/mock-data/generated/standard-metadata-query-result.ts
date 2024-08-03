@@ -1,5 +1,5 @@
 import {
-	ObjectMetadataItemsQuery
+    ObjectMetadataItemsQuery
 } from '~/generated-metadata/graphql';
 
 // This file is not designed to be manually edited.
@@ -4345,7 +4345,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                             "node": {
                                 "__typename": "field",
                                 "id": "75210cae-eb24-4932-8f00-ccbce38a3d66",
-                                "type": "CREATED_BY",
+                                "type": "ACTOR",
                                 "name": "createdBy",
                                 "label": "Created by",
                                 "description": "The creator of the record",
@@ -8574,7 +8574,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                             "node": {
                                 "__typename": "field",
                                 "id": "7ecd1240-7300-4e9e-a9d2-02b489e160b9",
-                                "type": "CREATED_BY",
+                                "type": "ACTOR",
                                 "name": "createdBy",
                                 "label": "Created by",
                                 "description": "The creator of the record",
@@ -11025,7 +11025,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                             "node": {
                                 "__typename": "field",
                                 "id": "0d8481f5-5c58-4604-9283-7a5780eab671",
-                                "type": "CREATED_BY",
+                                "type": "ACTOR",
                                 "name": "createdBy",
                                 "label": "Created by",
                                 "description": "The creator of the record",
@@ -11085,7 +11085,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                             "node": {
                                 "__typename": "field",
                                 "id": "54f90efb-a0f4-4adb-9752-58593520ba14",
-                                "type": "CREATED_BY",
+                                "type": "ACTOR",
                                 "name": "createdBy",
                                 "label": "Created by",
                                 "description": "The creator of the record",
@@ -13535,7 +13535,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                             "node": {
                                 "__typename": "field",
                                 "id": "89f08f6a-f94a-4f1c-823b-8e5513362c0b",
-                                "type": "CREATED_BY",
+                                "type": "ACTOR",
                                 "name": "createdBy",
                                 "label": "Created by",
                                 "description": "The creator of the record",

@@ -1,19 +1,19 @@
 import { useContext } from 'react';
 
-import { FieldCreatedByValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
 import { AuthContext } from '@/auth/contexts/AuthContext';
 import { FieldContext } from '../../contexts/FieldContext';
 
-export const useCreatedByDisplay = () => {
+export const useActorFieldDisplay = () => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
   const { currentWorkspaceMembers } = useContext(AuthContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<FieldCreatedByValue | undefined>(
+  const fieldValue = useRecordFieldValue<FieldActorValue | undefined>(
     entityId,
     fieldName,
   );

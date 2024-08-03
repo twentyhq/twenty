@@ -1,9 +1,9 @@
-import { useCreatedByDisplay } from '@/object-record/record-field/meta-types/hooks/useCreatedByFieldDisplay';
-import { CreatedByDisplay } from '@/ui/field/display/components/CreatedByDisplay';
+import { useActorFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useActorFieldDisplay';
+import { ActorDisplay } from '@/ui/field/display/components/ActorDisplay';
 import { isNonEmptyString } from '@sniptt/guards';
 
-export const CreatedByFieldDisplay = () => {
-  const { fieldValue } = useCreatedByDisplay();
+export const ActorFieldDisplay = () => {
+  const { fieldValue } = useActorFieldDisplay();
 
   const name = !fieldValue.workspaceMemberId
     ? fieldValue.name
@@ -15,7 +15,7 @@ export const CreatedByFieldDisplay = () => {
         .join(' ');
 
   return (
-    <CreatedByDisplay
+    <ActorDisplay
       name={name}
       source={fieldValue.source}
       avatarUrl={fieldValue.workspaceMember?.avatarUrl}

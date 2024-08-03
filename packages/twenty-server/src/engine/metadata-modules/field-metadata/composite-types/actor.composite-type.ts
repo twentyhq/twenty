@@ -5,7 +5,7 @@ import {
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export enum FieldCreatedBySource {
+export enum FieldActorSource {
   EMAIL = 'EMAIL',
   CALENDAR = 'CALENDAR',
   API = 'API',
@@ -13,16 +13,16 @@ export enum FieldCreatedBySource {
   MANUAL = 'MANUAL',
 }
 
-export const createdByCompositeType: CompositeType = {
-  type: FieldMetadataType.CREATED_BY,
+export const actorCompositeType: CompositeType = {
+  type: FieldMetadataType.ACTOR,
   properties: [
     {
       name: 'source',
       type: FieldMetadataType.SELECT,
       hidden: false,
       isRequired: true,
-      options: Object.keys(FieldCreatedBySource).map((key, index) => ({
-        label: `Created by ${FieldCreatedBySource[key].toLowerCase()}`,
+      options: Object.keys(FieldActorSource).map((key, index) => ({
+        label: `${FieldActorSource[key].toLowerCase()}`,
         value: key,
         position: index,
       })),
@@ -42,8 +42,8 @@ export const createdByCompositeType: CompositeType = {
   ],
 };
 
-export type CreatedByMetadata = {
-  source: FieldCreatedBySource;
+export type ActorMetadata = {
+  source: FieldActorSource;
   workspaceMemberId?: string;
   name: string;
 };

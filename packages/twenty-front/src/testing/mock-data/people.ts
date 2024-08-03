@@ -70,7 +70,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -120,7 +120,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -166,7 +166,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -216,7 +216,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -262,7 +262,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -312,7 +312,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -358,7 +358,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -408,7 +408,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -454,7 +454,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -504,7 +504,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -550,7 +550,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -600,7 +600,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -646,7 +646,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -696,7 +696,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -742,7 +742,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -792,7 +792,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -838,7 +838,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -888,7 +888,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -934,7 +934,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -984,7 +984,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -1030,7 +1030,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -1080,7 +1080,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -1126,7 +1126,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -1176,7 +1176,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -1222,7 +1222,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -1272,7 +1272,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -1318,7 +1318,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -1368,7 +1368,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -1414,7 +1414,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
             name: 'Tim Apple',
@@ -1464,7 +1464,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',
@@ -1510,7 +1510,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
             secondaryLinks: null,
           },
           createdBy: {
-            __typename: 'CreatedBy',
+            __typename: 'Actor',
             source: 'MANUAL',
             workspaceMemberId: null,
             name: '',
@@ -1560,7 +1560,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
             createdBy: {
-              __typename: 'CreatedBy',
+              __typename: 'Actor',
               source: 'MANUAL',
               workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
               name: 'Tim Apple',

@@ -2,10 +2,10 @@ import { isObject } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
+  ActorFilter,
   AddressFilter,
   AndObjectRecordFilter,
   BooleanFilter,
-  CreatedByFilter,
   CurrencyFilter,
   DateFilter,
   FloatFilter,
@@ -257,13 +257,13 @@ export const isRecordMatchingFilter = ({
           value: record[filterKey].amountMicros,
         });
       }
-      case FieldMetadataType.CreatedBy: {
-        const createdByFilter = filterValue as CreatedByFilter;
+      case FieldMetadataType.Actor: {
+        const actorFilter = filterValue as ActorFilter;
 
         return (
-          createdByFilter.name === undefined ||
+          actorFilter.name === undefined ||
           isMatchingStringFilter({
-            stringFilter: createdByFilter.name,
+            stringFilter: actorFilter.name,
             value: record[filterKey].name,
           })
         );

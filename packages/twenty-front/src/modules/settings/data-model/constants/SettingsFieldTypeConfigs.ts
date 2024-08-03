@@ -4,8 +4,8 @@ import {
   IconCheck,
   IconCoins,
   IconComponent,
-  IconFilePencil,
   IconCreativeCommonsSa,
+  IconFilePencil,
   IconJson,
   IconKey,
   IconLink,
@@ -138,8 +138,8 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
     Icon: IconFilePencil,
     defaultValue: { key: 'value' },
   },
-  [FieldMetadataType.CreatedBy]: {
-    label: 'Created By',
+  [FieldMetadataType.Actor]: {
+    label: 'Actor',
     Icon: IconCreativeCommonsSa,
   },
 } as const satisfies Record<

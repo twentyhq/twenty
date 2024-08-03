@@ -72,7 +72,7 @@ export default defineConfig(({ command, mode }) => {
           '**/RecordTableCellTd.tsx',
           '**/RecordTableTd.tsx',
           '**/RecordTableHeaderDragDropColumn.tsx',
-          '**/CreatedByDisplay.tsx',
+          '**/ActorDisplay.tsx',
           '**/AvatarChip.tsx',
         ],
         babelOptions: {

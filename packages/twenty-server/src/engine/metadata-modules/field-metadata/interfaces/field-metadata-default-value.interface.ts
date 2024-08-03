@@ -1,4 +1,5 @@
 import {
+  FieldMetadataDefaultCreatedBy,
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
@@ -12,7 +13,6 @@ import {
   FieldMetadataDefaultValueRichText,
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueUuidFunction,
-  FieldMetadataDefaultCreatedBy,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -47,7 +47,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
   [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
-  [FieldMetadataType.CREATED_BY]: FieldMetadataDefaultCreatedBy;
+  [FieldMetadataType.ACTOR]: FieldMetadataDefaultCreatedBy;
 };
 
 export type FieldMetadataClassValidation =

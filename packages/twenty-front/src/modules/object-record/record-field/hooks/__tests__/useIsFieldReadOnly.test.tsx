@@ -1,9 +1,9 @@
-import { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import {
-  createdByFieldDefinition,
+  actorFieldDefinition,
   phoneFieldDefinition,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -28,7 +28,7 @@ const getWrapper =
     </FieldContext.Provider>
   );
 
-const CreatedByWrapper = getWrapper(createdByFieldDefinition);
+const CreatedByWrapper = getWrapper(actorFieldDefinition);
 const PhoneWrapper = getWrapper(phoneFieldDefinition);
 
 describe('useIsFieldReadOnly', () => {

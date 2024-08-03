@@ -87,7 +87,7 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.RichText: {
       return null;
     }
-    case FieldMetadataType.CreatedBy: {
+    case FieldMetadataType.Actor: {
       return {
         source: 'MANUAL',
         name: '',

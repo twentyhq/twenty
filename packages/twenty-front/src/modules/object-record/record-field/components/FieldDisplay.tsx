@@ -1,14 +1,14 @@
 import { useContext } from 'react';
 
+import { ActorFieldDisplay } from '@/object-record/record-field/meta-types/display/components/ActorFieldDisplay';
 import { BooleanFieldDisplay } from '@/object-record/record-field/meta-types/display/components/BooleanFieldDisplay';
-import { CreatedByFieldDisplay } from '@/object-record/record-field/meta-types/display/components/CreatedByFieldDisplay';
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
 import { RatingFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RatingFieldDisplay';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
 import { RichTextFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RichTextFieldDisplay';
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/meta-types/display/utils/isFieldIdentifierDisplay';
+import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
-import { isFieldCreatedBy } from '@/object-record/record-field/types/guards/isFieldCreatedBy';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
@@ -98,7 +98,7 @@ export const FieldDisplay = () => {
     <RatingFieldDisplay />
   ) : isFieldRichText(fieldDefinition) ? (
     <RichTextFieldDisplay />
-  ) : isFieldCreatedBy(fieldDefinition) ? (
-    <CreatedByFieldDisplay />
+  ) : isFieldActor(fieldDefinition) ? (
+    <ActorFieldDisplay />
   ) : null;
 };

@@ -147,7 +147,7 @@ ${mapObjectMetadataToGraphQLQuery({
 }`;
   }
 
-  if (fieldType === FieldMetadataType.CreatedBy) {
+  if (fieldType === FieldMetadataType.Actor) {
     return `${field.name}
 {
     source

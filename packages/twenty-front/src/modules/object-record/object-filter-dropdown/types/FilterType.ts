@@ -14,4 +14,4 @@ export type FilterType =
   | 'SELECT'
   | 'RATING'
   | 'MULTI_SELECT'
-  | 'CREATED_BY';
+  | 'ACTOR';

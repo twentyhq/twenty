@@ -90,7 +90,7 @@ export type LinksFilter = {
   primaryLinkLabel?: StringFilter;
 };
 
-export type CreatedByFilter = {
+export type ActorFilter = {
   name?: StringFilter;
 };
 
@@ -105,7 +105,7 @@ export type LeafFilter =
   | BooleanFilter
   | AddressFilter
   | LinksFilter
-  | CreatedByFilter
+  | ActorFilter
   | undefined;
 
 export type AndObjectRecordFilter = {

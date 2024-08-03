@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 
-import { FieldContext } from '../contexts/FieldContext';
-import { isFieldCreatedBy } from '@/object-record/record-field/types/guards/isFieldCreatedBy';
+import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
+import { FieldContext } from '../contexts/FieldContext';
 
 export const useIsFieldReadOnly = () => {
   const { fieldDefinition } = useContext(FieldContext);
@@ -10,7 +10,7 @@ export const useIsFieldReadOnly = () => {
   return (
     fieldDefinition.metadata.fieldName === 'noteTargets' ||
     fieldDefinition.metadata.fieldName === 'taskTargets' ||
-    isFieldCreatedBy(fieldDefinition) ||
+    isFieldActor(fieldDefinition) ||
     isFieldRichText(fieldDefinition)
   );
 };

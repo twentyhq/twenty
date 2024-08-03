@@ -160,7 +160,7 @@ export const buildRecordFromImportedStructuredRow = (
           };
         }
         break;
-      case FieldMetadataType.CreatedBy:
+      case FieldMetadataType.Actor:
         recordToBuild[field.name] = {
           source: 'IMPORT',
         };

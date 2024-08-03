@@ -1,5 +1,5 @@
-import { CreatedByFieldDisplay } from '@/object-record/record-field/meta-types/display/components/CreatedByFieldDisplay';
-import { FieldCreatedByValue } from '@/object-record/record-field/types/FieldMetadata';
+import { ActorFieldDisplay } from '@/object-record/record-field/meta-types/display/components/ActorFieldDisplay';
+import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
@@ -9,18 +9,18 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 const meta: Meta = {
-  title: 'UI/Data/Field/Display/CreatedByFieldDisplay',
+  title: 'UI/Data/Field/Display/ActorFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
     ChipGeneratorsDecorator,
-    getFieldDecorator('person', 'createdBy', {
+    getFieldDecorator('person', 'actor', {
       name: 'John Doe',
       source: 'API',
       workspaceMemberId: undefined,
-    } satisfies FieldCreatedByValue),
+    } satisfies FieldActorValue),
     ComponentDecorator,
   ],
-  component: CreatedByFieldDisplay,
+  component: ActorFieldDisplay,
   args: {},
   parameters: {
     chromatic: { disableSnapshot: true },
@@ -29,12 +29,12 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof CreatedByFieldDisplay>;
+type Story = StoryObj<typeof ActorFieldDisplay>;
 
 export const Default: Story = {};
 
 export const Performance = getProfilingStory({
-  componentName: 'CreatedByFieldDisplay',
+  componentName: 'ActorFieldDisplay',
   averageThresholdInMs: 0.2,
   numberOfRuns: 20,
   numberOfTestsPerRun: 100,

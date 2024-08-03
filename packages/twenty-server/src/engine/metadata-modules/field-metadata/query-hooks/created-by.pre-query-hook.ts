@@ -8,9 +8,9 @@ import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolve
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
-  CreatedByMetadata,
-  FieldCreatedBySource,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -37,9 +37,9 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
     objectName: string,
     payload: CreateManyResolverArgs<CustomWorkspaceItem>,
   ): Promise<CreateManyResolverArgs<CustomWorkspaceItem>> {
-    let createdBy: CreatedByMetadata | null = null;
+    let createdBy: ActorMetadata | null = null;
 
-    // TODO: Once all fields have it, we can remove this check
+    // TODO: Once all objects have it, we can remove this check
     const createdByFieldMetadata = await this.fieldMetadataRepository.findOne({
       where: {
         object: {
@@ -75,7 +75,7 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
       }
 
       createdBy = {
-        source: FieldCreatedBySource.MANUAL,
+        source: FieldActorSource.MANUAL,
         workspaceMemberId: workspaceMember.id,
         name: `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`,
       };
@@ -83,7 +83,7 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
 
     if (authContext.apiKey) {
       createdBy = {
-        source: FieldCreatedBySource.API,
+        source: FieldActorSource.API,
         name: authContext.apiKey.name,
       };
     }

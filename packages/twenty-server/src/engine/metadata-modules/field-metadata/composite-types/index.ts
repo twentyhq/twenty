@@ -1,28 +1,13 @@
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import {
-  CurrencyMetadata,
-  currencyCompositeType,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
-import {
-  FullNameMetadata,
-  fullNameCompositeType,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
-import {
-  LinkMetadata,
-  linkCompositeType,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import {
-  addressCompositeType,
-  AddressMetadata,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
+import { actorCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { addressCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
+import { currencyCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
+import { fullNameCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
+import { linkCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
 import { linksCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
-import {
-  createdByCompositeType,
-  CreatedByMetadata,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export type CompositeFieldsDefinitionFunction = (
   fieldMetadata?: FieldMetadataInterface,
@@ -37,12 +22,5 @@ export const compositeTypeDefintions = new Map<
   [FieldMetadataType.CURRENCY, currencyCompositeType],
   [FieldMetadataType.FULL_NAME, fullNameCompositeType],
   [FieldMetadataType.ADDRESS, addressCompositeType],
-  [FieldMetadataType.CREATED_BY, createdByCompositeType],
+  [FieldMetadataType.ACTOR, actorCompositeType],
 ]);
-
-export type CompositeMetadataTypes =
-  | AddressMetadata
-  | CurrencyMetadata
-  | FullNameMetadata
-  | LinkMetadata
-  | CreatedByMetadata;

@@ -1,8 +1,8 @@
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
+  FieldActorValue,
   FieldAddressValue,
   FieldBooleanValue,
-  FieldCreatedByValue,
   FieldCurrencyValue,
   FieldDateTimeValue,
   FieldEmailValue,
@@ -94,6 +94,6 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                                   ? FieldAddressDraftValue
                                   : FieldValue extends FieldJsonValue
                                     ? FieldJsonDraftValue
-                                    : FieldValue extends FieldCreatedByValue
+                                    : FieldValue extends FieldActorValue
                                       ? FieldCreatedByDraftValue
                                       : never;

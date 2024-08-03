@@ -1,9 +1,9 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
-  CreatedByMetadata,
-  FieldCreatedBySource,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -130,16 +130,16 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.createdBy,
-    type: FieldMetadataType.CREATED_BY,
+    type: FieldMetadataType.ACTOR,
     label: 'Created by',
     icon: 'IconCreativeCommonsSa',
     description: 'The creator of the record',
     defaultValue: {
-      source: `'${FieldCreatedBySource.MANUAL}'`,
+      source: `'${FieldActorSource.MANUAL}'`,
       name: "''",
     },
   })
-  createdBy: CreatedByMetadata;
+  createdBy: ActorMetadata;
 
   // Relations
   @WorkspaceRelation({

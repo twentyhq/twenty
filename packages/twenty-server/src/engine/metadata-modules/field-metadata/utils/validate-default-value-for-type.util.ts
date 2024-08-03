@@ -7,6 +7,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
+  FieldMetadataDefaultCreatedBy,
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
@@ -21,7 +22,6 @@ import {
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueStringArray,
   FieldMetadataDefaultValueUuidFunction,
-  FieldMetadataDefaultCreatedBy,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -52,7 +52,7 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.RICH_TEXT]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
   [FieldMetadataType.LINKS]: [FieldMetadataDefaultValueLinks],
-  [FieldMetadataType.CREATED_BY]: [FieldMetadataDefaultCreatedBy],
+  [FieldMetadataType.ACTOR]: [FieldMetadataDefaultCreatedBy],
 };
 
 type ValidationResult = {

@@ -26,7 +26,7 @@ export const getOrderByForFieldMetadataType = (
           },
         },
       ];
-    case FieldMetadataType.CreatedBy:
+    case FieldMetadataType.Actor:
       return [
         {
           [field.name]: {

@@ -8,13 +8,13 @@ export const isCompositeFieldMetadataType = (
   | FieldMetadataType.FULL_NAME
   | FieldMetadataType.ADDRESS
   | FieldMetadataType.LINKS
-  | FieldMetadataType.CREATED_BY => {
+  | FieldMetadataType.ACTOR => {
   return [
     FieldMetadataType.LINK,
     FieldMetadataType.CURRENCY,
     FieldMetadataType.FULL_NAME,
     FieldMetadataType.ADDRESS,
     FieldMetadataType.LINKS,
-    FieldMetadataType.CREATED_BY,
+    FieldMetadataType.ACTOR,
   ].includes(type);
 };

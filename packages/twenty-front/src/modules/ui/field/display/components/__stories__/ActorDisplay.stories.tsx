@@ -2,12 +2,12 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
-import { CreatedByDisplay } from '@/ui/field/display/components/CreatedByDisplay';
+import { ActorDisplay } from '@/ui/field/display/components/ActorDisplay';
 import { CatalogDecorator } from 'twenty-ui';
 
 const meta: Meta = {
-  title: 'UI/Display/CreatedByDisplay',
-  component: CreatedByDisplay,
+  title: 'UI/Display/ActorDisplay',
+  component: ActorDisplay,
   args: {
     name: 'John Doe',
   },
@@ -16,7 +16,7 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof CreatedByDisplay>;
+type Story = StoryObj<typeof ActorDisplay>;
 
 export const Default: Story = {};
 
