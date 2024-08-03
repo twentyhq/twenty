@@ -1,6 +1,8 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import assert from 'assert';
+
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
@@ -11,7 +13,6 @@ import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/t
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { assert } from 'src/utils/assert';
 
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
@@ -28,7 +29,7 @@ export class UserService extends TypeOrmQueryService<User> {
 
   async loadWorkspaceMember(user: User) {
     const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         user.defaultWorkspaceId,
         'workspaceMember',
       );
@@ -44,9 +45,9 @@ export class UserService extends TypeOrmQueryService<User> {
 
   async loadWorkspaceMembers(workspaceId: string) {
     const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
-        WorkspaceMemberWorkspaceEntity,
+        'workspaceMember',
       );
 
     return workspaceMemberRepository.find();

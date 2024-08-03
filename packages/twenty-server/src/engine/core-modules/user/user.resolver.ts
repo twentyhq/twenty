@@ -112,9 +112,7 @@ export class UserResolver {
   @ResolveField(() => WorkspaceMember, {
     nullable: true,
   })
-  async workspaceMember(
-    @Parent() user: User,
-  ): Promise<WorkspaceMember | undefined> {
+  async workspaceMember(@Parent() user: User): Promise<WorkspaceMember | null> {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (workspaceMember && workspaceMember.avatarUrl) {
@@ -126,7 +124,8 @@ export class UserResolver {
       workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
     }
 
-    return workspaceMember;
+    // TODO: Fix typing disrepency between Entity and DTO
+    return workspaceMember as WorkspaceMember | null;
   }
 
   @ResolveField(() => [WorkspaceMember], {
