@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
@@ -13,6 +14,7 @@ import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -31,6 +33,9 @@ export const UserProviderEffect = () => {
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
+  const setCurrentWorkspaceMembers = useSetRecoilState(
+    currentWorkspaceMembersState,
+  );
 
   const { loading: queryLoading, data: queryData } = useGetCurrentUserQuery({
     skip: isCurrentUserLoaded,
@@ -47,15 +52,26 @@ export const UserProviderEffect = () => {
     setCurrentUser(queryData.currentUser);
     setCurrentWorkspace(queryData.currentUser.defaultWorkspace);
 
-    const { workspaceMember, workspaces: userWorkspaces } =
-      queryData.currentUser;
+    const {
+      workspaceMember,
+      workspaceMembers,
+      workspaces: userWorkspaces,
+    } = queryData.currentUser;
 
-    if (isDefined(workspaceMember)) {
-      setCurrentWorkspaceMember({
+    const affectDefaultValuesOnEmptyWorkspaceMemberFields = (
+      workspaceMember: WorkspaceMember,
+    ) => {
+      return {
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
         locale: workspaceMember.locale ?? 'en',
-      });
+      };
+    };
+
+    if (isDefined(workspaceMember)) {
+      setCurrentWorkspaceMember(
+        affectDefaultValuesOnEmptyWorkspaceMemberFields(workspaceMember),
+      );
 
       // TODO: factorize
       setDateTimeFormat({
@@ -72,6 +88,13 @@ export const UserProviderEffect = () => {
       });
     }
 
+    if (isDefined(workspaceMembers)) {
+      setCurrentWorkspaceMembers(
+        workspaceMembers.map(affectDefaultValuesOnEmptyWorkspaceMemberFields) ??
+          [],
+      );
+    }
+
     if (isDefined(userWorkspaces)) {
       const workspaces = userWorkspaces
         .map(({ workspace }) => workspace)
@@ -81,6 +104,7 @@ export const UserProviderEffect = () => {
     }
   }, [
     setCurrentUser,
+    setCurrentWorkspaceMembers,
     isLoading,
     queryLoading,
     setCurrentWorkspace,

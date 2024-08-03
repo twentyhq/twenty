@@ -10,17 +10,10 @@ export const USER_QUERY_FRAGMENT = gql`
     supportUserHash
     onboardingStatus
     workspaceMember {
-      id
-      name {
-        firstName
-        lastName
-      }
-      colorScheme
-      avatarUrl
-      locale
-      timeZone
-      dateFormat
-      timeFormat
+      ...WorkspaceMemberQueryFragment
+    }
+    workspaceMembers {
+      ...WorkspaceMemberQueryFragment
     }
     defaultWorkspace {
       id

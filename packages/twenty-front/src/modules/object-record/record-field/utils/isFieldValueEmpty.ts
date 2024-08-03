@@ -2,6 +2,8 @@ import { isString } from '@sniptt/guards';
 
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
+import { isFieldActorValue } from '@/object-record/record-field/types/guards/isFieldActorValue';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
@@ -13,9 +15,9 @@ import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldE
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldLink } from '@/object-record/record-field/types/guards/isFieldLink';
+import { isFieldLinkValue } from '@/object-record/record-field/types/guards/isFieldLinkValue';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldLinksValue } from '@/object-record/record-field/types/guards/isFieldLinksValue';
-import { isFieldLinkValue } from '@/object-record/record-field/types/guards/isFieldLinkValue';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
@@ -110,6 +112,10 @@ export const isFieldValueEmpty = ({
     return (
       !isFieldLinksValue(fieldValue) || isValueEmpty(fieldValue.primaryLinkUrl)
     );
+  }
+
+  if (isFieldActor(fieldDefinition)) {
+    return !isFieldActorValue(fieldValue) || isValueEmpty(fieldValue.name);
   }
 
   throw new Error(

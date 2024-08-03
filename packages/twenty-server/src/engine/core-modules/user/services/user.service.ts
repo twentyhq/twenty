@@ -1,18 +1,22 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import assert from 'assert';
+
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { assert } from 'src/utils/assert';
 
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
@@ -22,73 +26,46 @@ export class UserService extends TypeOrmQueryService<User> {
     private readonly typeORMService: TypeORMService,
     private readonly eventEmitter: EventEmitter2,
     private readonly workspaceService: WorkspaceService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(userRepository);
   }
 
   async loadWorkspaceMember(user: User) {
-    const dataSourcesMetadata =
-      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-        user.defaultWorkspace.id,
+    if (
+      user.defaultWorkspace.activationStatus !==
+      WorkspaceActivationStatus.ACTIVE
+    ) {
+      return null;
+    }
+
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        user.defaultWorkspaceId,
+        'workspaceMember',
       );
 
-    if (!dataSourcesMetadata.length) {
-      return;
-    }
+    const workspaceMember = await workspaceMemberRepository.findOne({
+      where: {
+        userId: user.id,
+      },
+    });
 
-    if (dataSourcesMetadata.length > 1) {
-      throw new Error(
-        `user '${user.id}' default workspace '${user.defaultWorkspace.id}' has multiple data source metadata`,
-      );
-    }
-
-    const dataSourceMetadata = dataSourcesMetadata[0];
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    const workspaceMembers = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${user.id}'`,
-    );
-
-    if (!workspaceMembers.length) {
-      return;
-    }
-
-    assert(
-      workspaceMembers.length === 1,
-      'WorkspaceMember not found or too many found',
-    );
-
-    const userWorkspaceMember = new WorkspaceMember();
-
-    userWorkspaceMember.id = workspaceMembers[0].id;
-    userWorkspaceMember.colorScheme = workspaceMembers[0].colorScheme;
-    userWorkspaceMember.locale = workspaceMembers[0].locale;
-    userWorkspaceMember.avatarUrl = workspaceMembers[0].avatarUrl;
-    userWorkspaceMember.name = {
-      firstName: workspaceMembers[0].nameFirstName,
-      lastName: workspaceMembers[0].nameLastName,
-    };
-    userWorkspaceMember.timeZone = workspaceMembers[0].timeZone;
-    userWorkspaceMember.dateFormat = workspaceMembers[0].dateFormat;
-    userWorkspaceMember.timeFormat = workspaceMembers[0].timeFormat;
-
-    return userWorkspaceMember;
+    return workspaceMember;
   }
 
-  async loadWorkspaceMembers(dataSource: DataSourceEntity) {
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSource);
+  async loadWorkspaceMembers(workspace: Workspace) {
+    if (workspace.activationStatus !== WorkspaceActivationStatus.ACTIVE) {
+      return [];
+    }
 
-    return await workspaceDataSource?.query(
-      `
-      SELECT * 
-      FROM ${dataSource.schema}."workspaceMember" AS s 
-      INNER JOIN core.user AS u 
-      ON s."userId" = u.id
-    `,
-    );
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspace.id,
+        'workspaceMember',
+      );
+
+    return workspaceMemberRepository.find();
   }
 
   async deleteUser(userId: string): Promise<User> {
@@ -136,6 +113,7 @@ export class UserService extends TypeOrmQueryService<User> {
     payload.properties = {
       before: workspaceMember,
     };
+    payload.name = 'workspaceMember.deleted';
     payload.recordId = workspaceMember.id;
 
     this.eventEmitter.emit('workspaceMember.deleted', payload);

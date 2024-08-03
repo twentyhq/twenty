@@ -96,6 +96,7 @@ export class WorkspaceMigrationFactory {
         { factory: this.compositeColumnActionFactory },
       ],
       [FieldMetadataType.LINKS, { factory: this.compositeColumnActionFactory }],
+      [FieldMetadataType.ACTOR, { factory: this.compositeColumnActionFactory }],
     ]);
   }
 

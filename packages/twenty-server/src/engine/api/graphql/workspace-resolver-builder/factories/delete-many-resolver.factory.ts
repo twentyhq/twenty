@@ -25,12 +25,11 @@ export class DeleteManyResolverFactory
   ): Resolver<DeleteManyResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, context, info) => {
+    return (_source, args, context, info) => {
       try {
-        return await this.workspaceQueryRunnerService.deleteMany(args, {
+        return this.workspaceQueryRunnerService.deleteMany(args, {
+          authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
-          workspaceId: internalContext.workspaceId,
-          userId: internalContext.userId,
           info,
           fieldMetadataCollection: internalContext.fieldMetadataCollection,
           objectMetadataCollection: internalContext.objectMetadataCollection,

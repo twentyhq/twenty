@@ -4,6 +4,7 @@ import {
   IconCheck,
   IconCoins,
   IconComponent,
+  IconCreativeCommonsSa,
   IconFilePencil,
   IconJson,
   IconKey,
@@ -136,6 +137,10 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
     label: 'Rich Text',
     Icon: IconFilePencil,
     defaultValue: { key: 'value' },
+  },
+  [FieldMetadataType.Actor]: {
+    label: 'Actor',
+    Icon: IconCreativeCommonsSa,
   },
 } as const satisfies Record<
   SettingsSupportedFieldType,

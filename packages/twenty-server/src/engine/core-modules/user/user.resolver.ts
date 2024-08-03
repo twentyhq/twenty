@@ -112,9 +112,7 @@ export class UserResolver {
   @ResolveField(() => WorkspaceMember, {
     nullable: true,
   })
-  async workspaceMember(
-    @Parent() user: User,
-  ): Promise<WorkspaceMember | undefined> {
+  async workspaceMember(@Parent() user: User): Promise<WorkspaceMember | null> {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (workspaceMember && workspaceMember.avatarUrl) {
@@ -126,7 +124,31 @@ export class UserResolver {
       workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
     }
 
-    return workspaceMember;
+    // TODO: Fix typing disrepency between Entity and DTO
+    return workspaceMember as WorkspaceMember | null;
+  }
+
+  @ResolveField(() => [WorkspaceMember], {
+    nullable: true,
+  })
+  async workspaceMembers(@Parent() user: User): Promise<WorkspaceMember[]> {
+    const workspaceMembers = await this.userService.loadWorkspaceMembers(
+      user.defaultWorkspace,
+    );
+
+    for (const workspaceMember of workspaceMembers) {
+      if (workspaceMember.avatarUrl) {
+        const avatarUrlToken = await this.fileService.encodeFileToken({
+          workspace_member_id: workspaceMember.id,
+          workspace_id: user.defaultWorkspaceId,
+        });
+
+        workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
+      }
+    }
+
+    // TODO: Fix typing disrepency between Entity and DTO
+    return workspaceMembers as WorkspaceMember[];
   }
 
   @ResolveField(() => String, {

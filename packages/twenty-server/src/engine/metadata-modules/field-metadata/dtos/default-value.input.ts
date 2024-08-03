@@ -6,7 +6,9 @@ import {
   IsNumber,
   IsNumberString,
   IsObject,
+  IsOptional,
   IsString,
+  IsUUID,
   Matches,
   ValidateIf,
 } from 'class-validator';
@@ -157,4 +159,19 @@ export class FieldMetadataDefaultValueLinks {
   @ValidateIf((_object, value) => value !== null)
   @IsObject()
   secondaryLinks: object | null;
+}
+
+export class FieldMetadataDefaultActor {
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  source: string;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsOptional()
+  @IsUUID()
+  workspaceMemberId?: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  name: string;
 }

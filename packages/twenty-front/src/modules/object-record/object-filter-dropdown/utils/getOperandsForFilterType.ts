@@ -20,6 +20,7 @@ export const getOperandsForFilterType = (
     case 'PHONE':
     case 'LINK':
     case 'LINKS':
+    case 'ACTOR':
       return [
         ViewFilterOperand.Contains,
         ViewFilterOperand.DoesNotContain,
