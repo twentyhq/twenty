@@ -30,4 +30,7 @@ export const COMPOSITE_FIELD_IMPORT_LABELS = {
     primaryLinkUrlLabel: 'Link URL',
     primaryLinkLabelLabel: 'Link Label',
   } satisfies Partial<CompositeFieldLabels<FieldLinksValue>>,
+  [FieldMetadataType.Actor]: {
+    sourceLabel: 'Source',
+  },
 };

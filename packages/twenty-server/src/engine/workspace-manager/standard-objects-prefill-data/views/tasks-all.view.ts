@@ -49,7 +49,7 @@ export const tasksAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.dueAt
+            TASK_STANDARD_FIELD_IDS.createdBy
           ],
         position: 3,
         isVisible: true,
@@ -58,7 +58,7 @@ export const tasksAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.assignee
+            TASK_STANDARD_FIELD_IDS.dueAt
           ],
         position: 4,
         isVisible: true,
@@ -67,7 +67,7 @@ export const tasksAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
-            TASK_STANDARD_FIELD_IDS.body
+            TASK_STANDARD_FIELD_IDS.assignee
           ],
         position: 5,
         isVisible: true,
@@ -76,9 +76,18 @@ export const tasksAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
-            BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
+            TASK_STANDARD_FIELD_IDS.body
           ],
         position: 6,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
+            BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
+          ],
+        position: 7,
         isVisible: true,
         size: 150,
       },

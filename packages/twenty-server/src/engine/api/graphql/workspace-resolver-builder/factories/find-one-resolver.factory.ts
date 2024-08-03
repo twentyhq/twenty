@@ -25,12 +25,11 @@ export class FindOneResolverFactory
   ): Resolver<FindOneResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, context, info) => {
+    return (_source, args, context, info) => {
       try {
-        return await this.workspaceQueryRunnerService.findOne(args, {
+        return this.workspaceQueryRunnerService.findOne(args, {
+          authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
-          workspaceId: internalContext.workspaceId,
-          userId: internalContext.userId,
           info,
           fieldMetadataCollection: internalContext.fieldMetadataCollection,
           objectMetadataCollection: internalContext.objectMetadataCollection,

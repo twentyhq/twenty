@@ -26,6 +26,14 @@ export const getOrderByForFieldMetadataType = (
           },
         },
       ];
+    case FieldMetadataType.Actor:
+      return [
+        {
+          [field.name]: {
+            name: direction ?? 'AscNullsLast',
+          },
+        },
+      ];
     case FieldMetadataType.Links:
       return [
         {

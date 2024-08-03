@@ -147,5 +147,14 @@ ${mapObjectMetadataToGraphQLQuery({
 }`;
   }
 
+  if (fieldType === FieldMetadataType.Actor) {
+    return `${field.name}
+{
+    source
+    workspaceMemberId
+    name
+}`;
+  }
+
   return '';
 };
