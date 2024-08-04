@@ -1,66 +1,40 @@
 import { Injectable } from '@nestjs/common';
 
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { IsFeatureEnabledService } from 'src/engine/core-modules/feature-flag/services/is-feature-enabled.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceActivationStatus } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { isDefined } from 'src/utils/is-defined';
 
 export enum OnboardingStepKeys {
-  ONBOARDING_CONNECT_ACCOUNT_COMPLETE = 'ONBOARDING_CONNECT_ACCOUNT_COMPLETE',
-  ONBOARDING_INVITE_TEAM_COMPLETE = 'ONBOARDING_INVITE_TEAM_COMPLETE',
-  ONBOARDING_CREATE_PROFILE_COMPLETE = 'ONBOARDING_CREATE_PROFILE_COMPLETE',
+  ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
+  ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
+  ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
 }
 
 export type OnboardingKeyValueTypeMap = {
-  [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_COMPLETE]: boolean;
-  [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_COMPLETE]: boolean;
-  [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_COMPLETE]: boolean;
+  [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
 };
 
 @Injectable()
 export class OnboardingService {
   constructor(
-    private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly environmentService: EnvironmentService,
-    private readonly isFeatureEnabledService: IsFeatureEnabledService,
+    private readonly billingService: BillingService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
   ) {}
 
   private async isSubscriptionIncompleteOnboardingStatus(user: User) {
-    const isBillingEnabled = this.environmentService.get('IS_BILLING_ENABLED');
-
-    if (!isBillingEnabled) {
-      return false;
-    }
-
-    const isFreeAccessEnabled =
-      await this.isFeatureEnabledService.isFeatureEnabled(
-        FeatureFlagKey.IsFreeAccessEnabled,
+    const hasSubscription =
+      await this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccess(
         user.defaultWorkspaceId,
       );
 
-    if (isFreeAccessEnabled) {
-      return false;
-    }
-
-    const currentBillingSubscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscription({
-        workspaceId: user.defaultWorkspaceId,
-      });
-
-    return (
-      !isDefined(currentBillingSubscription) ||
-      currentBillingSubscription?.status === SubscriptionStatus.Incomplete
-    );
+    return !hasSubscription;
   }
 
-  private async isWorkspaceActivationOnboardingStatus(user: User) {
+  private isWorkspaceActivationPending(user: User) {
     return (
       user.defaultWorkspace.activationStatus ===
       WorkspaceActivationStatus.PENDING_CREATION
@@ -72,7 +46,7 @@ export class OnboardingService {
       return OnboardingStatus.PLAN_REQUIRED;
     }
 
-    if (await this.isWorkspaceActivationOnboardingStatus(user)) {
+    if (this.isWorkspaceActivationPending(user)) {
       return OnboardingStatus.WORKSPACE_ACTIVATION;
     }
 
@@ -81,33 +55,33 @@ export class OnboardingService {
       workspaceId: user.defaultWorkspaceId,
     });
 
-    const isProfileCreationComplete =
-      userVars.get(OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_COMPLETE) ===
+    const isProfileCreationPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING) ===
       true;
 
-    const isConnectAccountComplete =
-      userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_COMPLETE) ===
+    const isConnectAccountPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING) ===
       true;
 
-    const isInviteTeamComplete =
-      userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_COMPLETE) === true;
+    const isInviteTeamPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
-    if (!isProfileCreationComplete) {
+    if (isProfileCreationPending) {
       return OnboardingStatus.PROFILE_CREATION;
     }
 
-    if (!isConnectAccountComplete) {
+    if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
     }
 
-    if (!isInviteTeamComplete) {
+    if (isInviteTeamPending) {
       return OnboardingStatus.INVITE_TEAM;
     }
 
     return OnboardingStatus.COMPLETED;
   }
 
-  async toggleOnboardingConnectAccountCompletion({
+  async setOnboardingConnectAccountPending({
     userId,
     workspaceId,
     value,
@@ -116,29 +90,48 @@ export class OnboardingService {
     workspaceId: string;
     value: boolean;
   }) {
+    if (!value) {
+      await this.userVarsService.delete({
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+      });
+
+      return;
+    }
+
     await this.userVarsService.set({
       userId,
       workspaceId: workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_COMPLETE,
-      value,
+      key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+      value: true,
     });
   }
 
-  async toggleOnboardingInviteTeamCompletion({
+  async setOnboardingInviteTeamPending({
     workspaceId,
     value,
   }: {
     workspaceId: string;
     value: boolean;
   }) {
+    if (!value) {
+      await this.userVarsService.delete({
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+      });
+
+      return;
+    }
+
     await this.userVarsService.set({
       workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_COMPLETE,
-      value,
+      key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+      value: true,
     });
   }
 
-  async toggleOnboardingCreateProfileCompletion({
+  async setOnboardingCreateProfileCompletion({
     userId,
     workspaceId,
     value,
@@ -147,11 +140,21 @@ export class OnboardingService {
     workspaceId: string;
     value: boolean;
   }) {
+    if (!value) {
+      await this.userVarsService.delete({
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
+      });
+
+      return;
+    }
+
     await this.userVarsService.set({
       userId,
       workspaceId,
-      key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_COMPLETE,
-      value,
+      key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
+      value: true,
     });
   }
 }

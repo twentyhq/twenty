@@ -70,11 +70,17 @@ export class BillingPortalWorkspaceService {
     returnUrlPath?: string,
   ) {
     const currentSubscriptionItem =
-      await this.billingSubscriptionService.getCurrentBillingSubscription({
-        workspaceId,
-      });
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        {
+          workspaceId,
+        },
+      );
 
     const stripeCustomerId = currentSubscriptionItem.stripeCustomerId;
+
+    if (!stripeCustomerId) {
+      throw new Error('Error: missing stripeCustomerId');
+    }
 
     const frontBaseUrl = this.environmentService.get('FRONT_BASE_URL');
     const returnUrl = returnUrlPath

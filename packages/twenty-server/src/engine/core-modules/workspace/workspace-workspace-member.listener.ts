@@ -25,9 +25,6 @@ export class WorkspaceWorkspaceMemberListener {
   async handleUpdateEvent(
     payload: ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>,
   ) {
-    const { firstName: firstNameBefore, lastName: lastNameBefore } =
-      payload.properties.before.name;
-
     const { firstName: firstNameAfter, lastName: lastNameAfter } =
       payload.properties.after.name;
 
@@ -39,10 +36,10 @@ export class WorkspaceWorkspaceMemberListener {
       return;
     }
 
-    await this.onboardingService.toggleOnboardingCreateProfileCompletion({
+    await this.onboardingService.setOnboardingCreateProfileCompletion({
       userId: payload.userId,
       workspaceId: payload.workspaceId,
-      value: true,
+      value: false,
     });
   }
 

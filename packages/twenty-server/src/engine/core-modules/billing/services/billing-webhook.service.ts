@@ -46,7 +46,7 @@ export class BillingWebhookService {
         workspaceId: workspaceId,
         stripeCustomerId: data.object.customer as string,
         stripeSubscriptionId: data.object.id,
-        status: data.object.status,
+        status: data.object.status as SubscriptionStatus,
         interval: data.object.items.data[0].plan.interval,
       },
       {

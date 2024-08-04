@@ -118,9 +118,9 @@ export class WorkspaceResolver {
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription | null> {
-    return this.billingSubscriptionService.getCurrentBillingSubscription({
-      workspaceId: workspace.id,
-    });
+    return this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+      { workspaceId: workspace.id },
+    );
   }
 
   @ResolveField(() => Number)

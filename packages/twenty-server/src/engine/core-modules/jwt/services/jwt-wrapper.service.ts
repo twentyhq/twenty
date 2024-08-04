@@ -7,7 +7,12 @@ import * as jwt from 'jsonwebtoken';
 export class JwtWrapperService {
   constructor(private readonly jwtService: JwtService) {}
 
-  sign(payload: string, options?: JwtSignOptions): string {
+  sign(payload: string | object, options?: JwtSignOptions): string {
+    // Typescript does not handle well the overloads of the sign method, helping it a little bit
+    if (typeof payload === 'object') {
+      return this.jwtService.sign(payload, options);
+    }
+
     return this.jwtService.sign(payload, options);
   }
 

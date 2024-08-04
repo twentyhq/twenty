@@ -5,7 +5,6 @@ import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import { UpdateFileFolderStructureCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-file-folder-structure.command';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   Workspace,
@@ -21,7 +20,9 @@ interface BackfillNewOnboardingUserVarsCommandOptions {
   description: 'Backfill new onboarding user vars for existing workspaces',
 })
 export class BackfillNewOnboardingUserVarsCommand extends CommandRunner {
-  private readonly logger = new Logger(UpdateFileFolderStructureCommand.name);
+  private readonly logger = new Logger(
+    BackfillNewOnboardingUserVarsCommand.name,
+  );
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -43,22 +44,13 @@ export class BackfillNewOnboardingUserVarsCommand extends CommandRunner {
     _passedParam: string[],
     options: BackfillNewOnboardingUserVarsCommandOptions,
   ): Promise<void> {
-    let workspaces;
-
-    if (options.workspaceId) {
-      workspaces = await this.workspaceRepository.find({
-        where: {
-          activationStatus: WorkspaceActivationStatus.ACTIVE,
-          id: options.workspaceId,
-        },
-        relations: ['users'],
-      });
-    } else {
-      workspaces = await this.workspaceRepository.find({
-        where: { activationStatus: WorkspaceActivationStatus.ACTIVE },
-        relations: ['users'],
-      });
-    }
+    const workspaces = await this.workspaceRepository.find({
+      where: {
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+        ...(options.workspaceId && { id: options.workspaceId }),
+      },
+      relations: ['users'],
+    });
 
     if (!workspaces.length) {
       this.logger.log(chalk.yellow('No workspace found'));
@@ -75,19 +67,19 @@ export class BackfillNewOnboardingUserVarsCommand extends CommandRunner {
         chalk.green(`Running command on workspace ${workspace.id}`),
       );
 
-      await this.onboardingService.toggleOnboardingInviteTeamCompletion({
+      await this.onboardingService.setOnboardingInviteTeamPending({
         workspaceId: workspace.id,
         value: true,
       });
 
       for (const user of workspace.users) {
-        await this.onboardingService.toggleOnboardingConnectAccountCompletion({
+        await this.onboardingService.setOnboardingCreateProfileCompletion({
           userId: user.id,
           workspaceId: workspace.id,
           value: true,
         });
 
-        await this.onboardingService.toggleOnboardingCreateProfileCompletion({
+        await this.onboardingService.setOnboardingConnectAccountPending({
           userId: user.id,
           workspaceId: workspace.id,
           value: true,

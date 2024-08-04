@@ -33,7 +33,7 @@ export class UpdateSubscriptionJob {
 
     try {
       const billingSubscriptionItem =
-        await this.billingSubscriptionService.getCurrentBillingSubscriptionItem(
+        await this.billingSubscriptionService.getCurrentBillingSubscriptionItemOrThrow(
           data.workspaceId,
         );
 

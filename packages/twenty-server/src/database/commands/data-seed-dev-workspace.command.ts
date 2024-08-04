@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { Command, CommandRunner } from 'nest-commander';
 import { EntityManager } from 'typeorm';
 
@@ -43,6 +45,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 })
 export class DataSeedWorkspaceCommand extends CommandRunner {
   workspaceIds = [SEED_APPLE_WORKSPACE_ID, SEED_TWENTY_WORKSPACE_ID];
+  private readonly logger = new Logger(DataSeedWorkspaceCommand.name);
 
   constructor(
     private readonly dataSourceService: DataSourceService,
@@ -86,7 +89,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         });
       }
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
 
       return;
     }
@@ -197,7 +200,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           },
         );
       } catch (error) {
-        console.error(error);
+        this.logger.error(error);
       }
 
       await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
