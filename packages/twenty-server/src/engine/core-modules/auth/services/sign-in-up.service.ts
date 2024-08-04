@@ -181,7 +181,7 @@ export class SignInUpService {
       value: true,
     });
 
-    await this.onboardingService.setOnboardingCreateProfileCompletion({
+    await this.onboardingService.setOnboardingCreateProfilePending({
       userId: user.id,
       workspaceId: workspace.id,
       value: true,
@@ -240,7 +240,7 @@ export class SignInUpService {
       value: true,
     });
 
-    await this.onboardingService.setOnboardingCreateProfileCompletion({
+    await this.onboardingService.setOnboardingCreateProfilePending({
       userId: user.id,
       workspaceId: workspace.id,
       value: true,

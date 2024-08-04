@@ -131,7 +131,7 @@ export class OnboardingService {
     });
   }
 
-  async setOnboardingCreateProfileCompletion({
+  async setOnboardingCreateProfilePending({
     userId,
     workspaceId,
     value,

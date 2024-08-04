@@ -36,7 +36,7 @@ export class WorkspaceWorkspaceMemberListener {
       return;
     }
 
-    await this.onboardingService.setOnboardingCreateProfileCompletion({
+    await this.onboardingService.setOnboardingCreateProfilePending({
       userId: payload.userId,
       workspaceId: payload.workspaceId,
       value: false,
