@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 import { BaseCallbackHandler } from '@langchain/core/callbacks/base';
-import { ConsoleCallbackHandler } from '@langchain/core/tracers/console';
 import { Run } from '@langchain/core/tracers/base';
+import { ConsoleCallbackHandler } from '@langchain/core/tracers/console';
 
 import { LLMTracingDriver } from 'src/engine/integrations/llm-tracing/drivers/interfaces/llm-tracing-driver.interface';
 

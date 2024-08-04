@@ -19,10 +19,10 @@ export class OnboardingResolver {
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<OnboardingStepSuccess> {
-    await this.onboardingService.toggleOnboardingConnectAccountCompletion({
+    await this.onboardingService.setOnboardingConnectAccountPending({
       userId: user.id,
       workspaceId: workspace.id,
-      value: true,
+      value: false,
     });
 
     return { success: true };

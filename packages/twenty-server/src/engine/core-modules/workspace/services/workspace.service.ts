@@ -47,6 +47,32 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       throw new BadRequestException("'displayName' not provided");
     }
 
+    const existingWorkspace = await this.workspaceRepository.findOneBy({
+      id: user.defaultWorkspace.id,
+    });
+
+    if (!existingWorkspace) {
+      throw new Error('Workspace not found');
+    }
+
+    if (
+      existingWorkspace.activationStatus ===
+      WorkspaceActivationStatus.ONGOING_CREATION
+    ) {
+      throw new Error('Workspace is already being created');
+    }
+
+    if (
+      existingWorkspace.activationStatus !==
+      WorkspaceActivationStatus.PENDING_CREATION
+    ) {
+      throw new Error('Worspace is not pending creation');
+    }
+
+    await this.workspaceRepository.update(user.defaultWorkspace.id, {
+      activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
+    });
+
     await this.workspaceManagerService.init(user.defaultWorkspace.id);
     await this.userWorkspaceService.createWorkspaceMember(
       user.defaultWorkspace.id,
@@ -142,9 +168,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       });
     }
 
-    await this.onboardingService.toggleOnboardingInviteTeamCompletion({
+    await this.onboardingService.setOnboardingInviteTeamPending({
       workspaceId: workspace.id,
-      value: true,
+      value: false,
     });
 
     return { success: true };

@@ -175,6 +175,18 @@ export class SignInUpService {
     await this.userWorkspaceService.create(user.id, workspace.id);
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
+    await this.onboardingService.setOnboardingConnectAccountPending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
+    await this.onboardingService.setOnboardingCreateProfileCompletion({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
     return user;
   }
 
@@ -222,13 +234,22 @@ export class SignInUpService {
 
     await this.userWorkspaceService.create(user.id, workspace.id);
 
-    if (user.firstName !== '' || user.lastName === '') {
-      await this.onboardingService.toggleOnboardingCreateProfileCompletion({
-        userId: user.id,
-        workspaceId: workspace.id,
-        value: true,
-      });
-    }
+    await this.onboardingService.setOnboardingConnectAccountPending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
+    await this.onboardingService.setOnboardingCreateProfileCompletion({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
+    await this.onboardingService.setOnboardingInviteTeamPending({
+      workspaceId: workspace.id,
+      value: true,
+    });
 
     return user;
   }

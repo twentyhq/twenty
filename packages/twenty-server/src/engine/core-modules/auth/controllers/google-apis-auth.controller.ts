@@ -93,10 +93,10 @@ export class GoogleAPIsAuthController {
           workspaceId,
         );
 
-      await onboardingServiceInstance.toggleOnboardingConnectAccountCompletion({
+      await onboardingServiceInstance.setOnboardingConnectAccountPending({
         userId,
         workspaceId,
-        value: true,
+        value: false,
       });
     }
 

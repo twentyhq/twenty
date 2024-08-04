@@ -45,7 +45,7 @@ export class BackfillNewOnboardingUserVarsCommand extends CommandRunner {
   ): Promise<void> {
     const workspaces = await this.workspaceRepository.find({
       where: {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
         ...(options.workspaceId && { id: options.workspaceId }),
       },
       relations: ['users'],
@@ -66,19 +66,19 @@ export class BackfillNewOnboardingUserVarsCommand extends CommandRunner {
         chalk.green(`Running command on workspace ${workspace.id}`),
       );
 
-      await this.onboardingService.toggleOnboardingInviteTeamCompletion({
+      await this.onboardingService.setOnboardingInviteTeamPending({
         workspaceId: workspace.id,
         value: true,
       });
 
       for (const user of workspace.users) {
-        await this.onboardingService.toggleOnboardingConnectAccountCompletion({
+        await this.onboardingService.setOnboardingCreateProfileCompletion({
           userId: user.id,
           workspaceId: workspace.id,
           value: true,
         });
 
-        await this.onboardingService.toggleOnboardingCreateProfileCompletion({
+        await this.onboardingService.setOnboardingConnectAccountPending({
           userId: user.id,
           workspaceId: workspace.id,
           value: true,
