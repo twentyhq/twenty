@@ -141,28 +141,30 @@ export class StripeService {
     );
   }
 
-  formatProductPrices(prices: Stripe.Price[]) {
-    const result: Record<string, ProductPriceEntity> = {};
+  formatProductPrices(prices: Stripe.Price[]): ProductPriceEntity[] {
+    const productPrices: ProductPriceEntity[] = Object.values(
+      prices
+        .filter((item) => item.recurring?.interval && item.unit_amount)
+        .reduce((acc, item: Stripe.Price) => {
+          const interval = item.recurring?.interval;
 
-    prices.forEach((item) => {
-      const interval = item.recurring?.interval;
+          if (!interval || !item.unit_amount) {
+            return acc;
+          }
 
-      if (!interval || !item.unit_amount) {
-        return;
-      }
-      if (
-        !result[interval] ||
-        item.created > (result[interval]?.created || 0)
-      ) {
-        result[interval] = {
-          unitAmount: item.unit_amount,
-          recurringInterval: interval,
-          created: item.created,
-          stripePriceId: item.id,
-        };
-      }
-    });
+          if (!acc[interval] || item.created > acc[interval].created) {
+            acc[interval] = {
+              unitAmount: item.unit_amount,
+              recurringInterval: interval,
+              created: item.created,
+              stripePriceId: item.id,
+            };
+          }
 
-    return Object.values(result).sort((a, b) => a.unitAmount - b.unitAmount);
+          return acc satisfies Record<string, ProductPriceEntity>;
+        }, {}),
+    );
+
+    return productPrices.sort((a, b) => a.unitAmount - b.unitAmount);
   }
 }

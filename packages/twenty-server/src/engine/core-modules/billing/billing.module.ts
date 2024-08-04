@@ -9,13 +9,16 @@ import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingWebhookService } from 'src/engine/core-modules/billing/services/billing-webhook.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
   imports: [
+    FeatureFlagModule,
     StripeModule,
     UserWorkspaceModule,
     TypeOrmModule.forFeature(
@@ -35,11 +38,13 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     BillingPortalWorkspaceService,
     BillingResolver,
     BillingWorkspaceMemberListener,
+    BillingService,
   ],
   exports: [
     BillingSubscriptionService,
     BillingPortalWorkspaceService,
     BillingWebhookService,
+    BillingService,
   ],
 })
 export class BillingModule {}

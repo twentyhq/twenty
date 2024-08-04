@@ -43,22 +43,13 @@ export class BackfillNewOnboardingUserVarsCommand extends CommandRunner {
     _passedParam: string[],
     options: BackfillNewOnboardingUserVarsCommandOptions,
   ): Promise<void> {
-    let workspaces;
-
-    if (options.workspaceId) {
-      workspaces = await this.workspaceRepository.find({
-        where: {
-          activationStatus: WorkspaceActivationStatus.ACTIVE,
-          id: options.workspaceId,
-        },
-        relations: ['users'],
-      });
-    } else {
-      workspaces = await this.workspaceRepository.find({
-        where: { activationStatus: WorkspaceActivationStatus.ACTIVE },
-        relations: ['users'],
-      });
-    }
+    const workspaces = await this.workspaceRepository.find({
+      where: {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        ...(options.workspaceId && { id: options.workspaceId }),
+      },
+      relations: ['users'],
+    });
 
     if (!workspaces.length) {
       this.logger.log(chalk.yellow('No workspace found'));

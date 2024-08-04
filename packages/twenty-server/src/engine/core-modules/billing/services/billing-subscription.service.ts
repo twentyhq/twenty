@@ -79,7 +79,7 @@ export class BillingSubscriptionService {
     );
   }
 
-  async getCurrentBillingSubscription(criteria: {
+  async getCurrentBillingSubscriptionOrThrow(criteria: {
     workspaceId?: string;
     stripeCustomerId?: string;
   }) {
@@ -97,21 +97,15 @@ export class BillingSubscriptionService {
     return notCanceledSubscriptions?.[0];
   }
 
-  async getCurrentBillingSubscriptionItem(
+  async getCurrentBillingSubscriptionItemOrThrow(
     workspaceId: string,
     stripeProductId = this.environmentService.get(
       'BILLING_STRIPE_BASE_PLAN_PRODUCT_ID',
     ),
   ) {
-    const billingSubscription = await this.getCurrentBillingSubscription({
-      workspaceId,
-    });
-
-    if (!billingSubscription) {
-      throw new Error(
-        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
-      );
-    }
+    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
+      { workspaceId },
+    );
 
     const billingSubscriptionItem =
       billingSubscription.billingSubscriptionItems.filter(
@@ -129,9 +123,10 @@ export class BillingSubscriptionService {
   }
 
   async deleteSubscription(workspaceId: string) {
-    const subscriptionToCancel = await this.getCurrentBillingSubscription({
-      workspaceId,
-    });
+    const subscriptionToCancel =
+      await this.getCurrentBillingSubscriptionOrThrow({
+        workspaceId,
+      });
 
     if (subscriptionToCancel) {
       await this.stripeService.cancelSubscription(
@@ -142,9 +137,9 @@ export class BillingSubscriptionService {
   }
 
   async handleUnpaidInvoices(data: Stripe.SetupIntentSucceededEvent.Data) {
-    const billingSubscription = await this.getCurrentBillingSubscription({
-      stripeCustomerId: data.object.customer as string,
-    });
+    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
+      { stripeCustomerId: data.object.customer as string },
+    );
 
     if (billingSubscription?.status === 'unpaid') {
       await this.stripeService.collectLastInvoice(
@@ -154,9 +149,9 @@ export class BillingSubscriptionService {
   }
 
   async applyBillingSubscription(user: User) {
-    const billingSubscription = await this.getCurrentBillingSubscription({
-      workspaceId: user.defaultWorkspaceId,
-    });
+    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
+      { workspaceId: user.defaultWorkspaceId },
+    );
 
     const newInterval =
       billingSubscription?.interval === SubscriptionInterval.Year
@@ -164,7 +159,9 @@ export class BillingSubscriptionService {
         : SubscriptionInterval.Year;
 
     const billingSubscriptionItem =
-      await this.getCurrentBillingSubscriptionItem(user.defaultWorkspaceId);
+      await this.getCurrentBillingSubscriptionItemOrThrow(
+        user.defaultWorkspaceId,
+      );
 
     const productPrice = await this.stripeService.getStripePrice(
       AvailableProduct.BasePlan,
