@@ -227,7 +227,7 @@ export class WorkspaceMigrationRunnerService {
       new Table({
         name: tableName,
         schema: schemaName,
-        columns: customTableDefaultColumns,
+        columns: customTableDefaultColumns(tableName),
       }),
       true,
     );

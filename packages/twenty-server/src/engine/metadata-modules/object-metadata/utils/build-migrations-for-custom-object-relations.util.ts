@@ -208,31 +208,4 @@ export const buildMigrationsForCustomObjectRelations = (
       },
     ],
   },
-  {
-    name: computeObjectTargetTable(createdObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: 'position',
-        columnType: 'float',
-        isNullable: true,
-        defaultValue: null,
-      } satisfies WorkspaceMigrationColumnCreate,
-    ],
-  } satisfies WorkspaceMigrationTableAction,
-  // This is temporary until we implement mainIdentifier
-  {
-    name: computeObjectTargetTable(createdObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: 'name',
-        columnType: 'text',
-        defaultValue: "'Untitled'",
-        isNullable: false,
-      } satisfies WorkspaceMigrationColumnCreate,
-    ],
-  } satisfies WorkspaceMigrationTableAction,
 ];
