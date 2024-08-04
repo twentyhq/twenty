@@ -181,11 +181,13 @@ export class SignInUpService {
       value: true,
     });
 
-    await this.onboardingService.setOnboardingCreateProfilePending({
-      userId: user.id,
-      workspaceId: workspace.id,
-      value: true,
-    });
+    if (firstName === '' && lastName === '') {
+      await this.onboardingService.setOnboardingCreateProfilePending({
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      });
+    }
 
     return user;
   }
@@ -240,11 +242,13 @@ export class SignInUpService {
       value: true,
     });
 
-    await this.onboardingService.setOnboardingCreateProfilePending({
-      userId: user.id,
-      workspaceId: workspace.id,
-      value: true,
-    });
+    if (firstName === '' && lastName === '') {
+      await this.onboardingService.setOnboardingCreateProfilePending({
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      });
+    }
 
     await this.onboardingService.setOnboardingInviteTeamPending({
       workspaceId: workspace.id,
