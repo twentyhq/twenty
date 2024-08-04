@@ -10,16 +10,16 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
 @Injectable()
 export class FileService {
   constructor(
+    private readonly jwtWrapperService: JwtWrapperService,
     private readonly fileStorageService: FileStorageService,
     private readonly environmentService: EnvironmentService,
-    private readonly tokenService: TokenService,
   ) {}
 
   async getFileStream(
@@ -57,7 +57,7 @@ export class FileService {
 
     const expirationDate = addMilliseconds(new Date(), ms(fileTokenExpiresIn));
 
-    const signedPayload = await this.tokenService.encodePayload(
+    const signedPayload = await this.jwtWrapperService.sign(
       {
         expiration_date: expirationDate,
         ...payloadToEncode,

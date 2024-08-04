@@ -15,6 +15,7 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
@@ -41,6 +42,7 @@ export class WorkspaceResolver {
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly fileUploadService: FileUploadService,
+    private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
@@ -92,7 +94,11 @@ export class WorkspaceResolver {
       logo: paths[0],
     });
 
-    return paths[0];
+    const workspaceLogoToken = await this.fileService.encodeFileToken({
+      workspace_id: id,
+    });
+
+    return `${paths[0]}?token=${workspaceLogoToken}`;
   }
 
   @UseGuards(DemoEnvGuard)
@@ -122,6 +128,19 @@ export class WorkspaceResolver {
     @Parent() workspace: Workspace,
   ): Promise<number | undefined> {
     return await this.userWorkspaceService.getUserCount(workspace.id);
+  }
+
+  @ResolveField(() => String)
+  async logo(@Parent() workspace: Workspace): Promise<string> {
+    if (workspace.logo) {
+      const workspaceLogoToken = await this.fileService.encodeFileToken({
+        workspace_id: workspace.id,
+      });
+
+      return `${workspace.logo}?token=${workspaceLogoToken}`;
+    }
+
+    return workspace.logo ?? '';
   }
 
   @Mutation(() => SendInviteLink)
