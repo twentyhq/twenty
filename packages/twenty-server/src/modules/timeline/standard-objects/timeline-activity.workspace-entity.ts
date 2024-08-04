@@ -212,7 +212,7 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
       standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.custom,
       name: oppositeObjectMetadata.nameSingular,
       label: oppositeObjectMetadata.labelSingular,
-      description: `Event ${oppositeObjectMetadata.labelSingular}`,
+      description: `Timeline Activity ${oppositeObjectMetadata.labelSingular}`,
       joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
       icon: 'IconTimeline',
     }),

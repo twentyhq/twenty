@@ -50,6 +50,7 @@ import {
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   FAVORITE_STANDARD_FIELD_IDS,
   NOTE_TARGET_STANDARD_FIELD_IDS,
+  TASK_TARGET_STANDARD_FIELD_IDS,
   TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import {
@@ -255,9 +256,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
               type: FieldMetadataType.DATE_TIME,
               name: 'updatedAt',
-              label: 'Update date',
-              icon: 'IconCalendar',
-              description: 'Update date',
+              label: 'Last update',
+              icon: 'IconCalendarClock',
+              description: 'Last time the record was changed',
               isNullable: false,
               isActive: true,
               isCustom: false,
@@ -269,7 +270,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
               type: FieldMetadataType.ACTOR,
               name: 'createdBy',
-              label: 'Created By',
+              label: 'Created by',
               icon: 'IconCreativeCommonsSa',
               description: 'The creator of the record',
               isNullable: false,
@@ -676,7 +677,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           name: 'noteTargets',
           label: 'Notes',
           description: `Notes tied to the ${createdObjectMetadata.labelSingular}`,
-          icon: 'IconCheckbox',
+          icon: 'IconNotes',
           isNullable: true,
         },
         // TO
@@ -784,7 +785,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           standardId: createRelationDeterministicUuid({
             objectId: createdObjectMetadata.id,
-            standardId: NOTE_TARGET_STANDARD_FIELD_IDS.custom,
+            standardId: TASK_TARGET_STANDARD_FIELD_IDS.custom,
           }),
           objectMetadataId: taskTargetObjectMetadata.id,
           workspaceId: workspaceId,
@@ -880,6 +881,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           description: `Attachments tied to the ${createdObjectMetadata.labelSingular}`,
           icon: 'IconFileImport',
           isNullable: true,
+          isSystem: true,
         },
         // TO
         {
@@ -979,8 +981,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           name: 'timelineActivities',
           label: 'Timeline Activities',
           description: `Timeline Activities tied to the ${createdObjectMetadata.labelSingular}`,
-          icon: 'IconTimeline',
+          icon: 'IconIconTimelineEvent',
           isNullable: true,
+          isSystem: true,
         },
         // TO
         {
@@ -996,7 +999,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           name: createdObjectMetadata.nameSingular,
           label: createdObjectMetadata.labelSingular,
           description: `Timeline Activity ${createdObjectMetadata.labelSingular}`,
-          icon: 'IconBuildingSkyscraper',
+          icon: 'IconTimeline',
           isNullable: true,
         },
       ]);

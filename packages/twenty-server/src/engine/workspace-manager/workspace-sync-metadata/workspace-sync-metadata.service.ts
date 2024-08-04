@@ -84,7 +84,7 @@ export class WorkspaceSyncMetadataService {
           workspaceFeatureFlagsMap,
         );
 
-      // 2 - Sync standard fields on custom objects
+      // 2 - Sync standard fields on standard and custom objects
       const workspaceFieldMigrations =
         await this.workspaceSyncFieldMetadataService.synchronize(
           context,

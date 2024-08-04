@@ -203,6 +203,8 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   company: '20202020-cff5-4682-8bf9-069169e08279',
   opportunity: '20202020-dabc-48e1-8318-2781a2b32aa2',
   workflow: '20202020-b11b-4dc8-999a-6bd0a947b463',
+  task: '20202020-1b1b-4b3b-8b1b-7f8d6a1d7d5c',
+  note: '20202020-1f25-43fe-8b00-af212fdde824',
   custom: '20202020-855a-4bc8-9861-79deef37011f',
 };
 
@@ -272,6 +274,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
   noteTargets: '20202020-1f25-43fe-8b00-af212fdde823',
   attachments: '20202020-4986-4c92-bf19-39934b149b16',
   timelineActivities: '20202020-7030-42f8-929c-1a57b25d6bce',
+  favorites: '20202020-4d1d-41ac-b13b-621631298d67',
 };
 
 export const NOTE_TARGET_STANDARD_FIELD_IDS = {
@@ -334,6 +337,7 @@ export const TASK_STANDARD_FIELD_IDS = {
   attachments: '20202020-794d-4783-a8ff-cecdb15be139',
   assignee: '20202020-065a-4f42-a906-e20422c1753f',
   timelineActivities: '20202020-c778-4278-99ee-23a2837aee64',
+  favorites: '20202020-4d1d-41ac-b13b-621631298d65',
 };
 
 export const TASK_TARGET_STANDARD_FIELD_IDS = {
