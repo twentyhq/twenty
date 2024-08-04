@@ -7,50 +7,50 @@ import {
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
-import ms from 'ms';
-import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-import { IsNull, MoreThan, Repository } from 'typeorm';
-import { Request } from 'express';
-import { ExtractJwt } from 'passport-jwt';
 import { render } from '@react-email/render';
+import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
+import { Request } from 'express';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
+import ms from 'ms';
+import { ExtractJwt } from 'passport-jwt';
 import { PasswordResetLinkEmail } from 'twenty-emails';
+import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import {
-  JwtAuthStrategy,
-  JwtPayload,
-} from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
-import { assert } from 'src/utils/assert';
+  AppToken,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
+import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
+import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
+import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
+import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import {
   ApiKeyToken,
   AuthToken,
   AuthTokens,
   PasswordResetToken,
 } from 'src/engine/core-modules/auth/dto/token.entity';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import {
-  AppToken,
-  AppTokenType,
-} from 'src/engine/core-modules/app-token/app-token.entity';
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
-import { EmailService } from 'src/engine/integrations/email/email.service';
-import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
-import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
+import {
+  JwtAuthStrategy,
+  JwtPayload,
+} from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
-import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
+import { EmailService } from 'src/engine/integrations/email/email.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { assert } from 'src/utils/assert';
 
 @Injectable()
 export class TokenService {
   constructor(
-    private readonly jwtService: JwtService,
+    private readonly jwtWrapperService: JwtWrapperService,
     private readonly jwtStrategy: JwtAuthStrategy,
     private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
@@ -90,7 +90,7 @@ export class TokenService {
     };
 
     return {
-      token: this.jwtService.sign(jwtPayload),
+      token: this.jwtWrapperService.sign(jwtPayload),
       expiresAt,
     };
   }
@@ -116,7 +116,7 @@ export class TokenService {
     await this.appTokenRepository.save(refreshToken);
 
     return {
-      token: this.jwtService.sign(jwtPayload, {
+      token: this.jwtWrapperService.sign(jwtPayload, {
         secret,
         expiresIn,
         // Jwtid will be used to link RefreshToken entity to this token
@@ -137,7 +137,7 @@ export class TokenService {
     };
 
     return {
-      token: this.jwtService.sign(jwtPayload, {
+      token: this.jwtWrapperService.sign(jwtPayload, {
         secret,
         expiresIn,
       }),
@@ -164,7 +164,7 @@ export class TokenService {
     };
 
     return {
-      token: this.jwtService.sign(jwtPayload, {
+      token: this.jwtWrapperService.sign(jwtPayload, {
         secret,
         expiresIn,
       }),
@@ -193,7 +193,7 @@ export class TokenService {
     } else {
       expiresIn = this.environmentService.get('API_TOKEN_EXPIRES_IN');
     }
-    const token = this.jwtService.sign(jwtPayload, {
+    const token = this.jwtWrapperService.sign(jwtPayload, {
       secret,
       expiresIn,
       jwtid: apiKeyId,
@@ -496,7 +496,10 @@ export class TokenService {
 
   async verifyJwt(token: string, secret?: string) {
     try {
-      return this.jwtService.verify(token, secret ? { secret } : undefined);
+      return this.jwtWrapperService.verify(
+        token,
+        secret ? { secret } : undefined,
+      );
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException('Token has expired.');
@@ -667,13 +670,5 @@ export class TokenService {
     );
 
     return { success: true };
-  }
-
-  async encodePayload(payload: any, options?: any): Promise<string> {
-    return this.jwtService.sign(payload, options);
-  }
-
-  async decodePayload(payload: any, options?: any): Promise<string> {
-    return this.jwtService.decode(payload, options);
   }
 }

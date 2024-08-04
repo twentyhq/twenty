@@ -70,20 +70,6 @@ export class UserResolver {
 
     assert(user, 'User not found');
 
-    user.workspaces = await Promise.all(
-      user.workspaces.map(async (userWorkspace) => {
-        if (userWorkspace.workspace.logo) {
-          const workspaceLogoToken = await this.fileService.encodeFileToken({
-            workspace_id: userWorkspace.workspace.id,
-          });
-
-          userWorkspace.workspace.logo = `${userWorkspace.workspace.logo}?token=${workspaceLogoToken}`;
-        }
-
-        return userWorkspace;
-      }),
-    );
-
     return user;
   }
 
@@ -186,7 +172,11 @@ export class UserResolver {
       workspaceId,
     });
 
-    return paths[0];
+    const fileToken = await this.fileService.encodeFileToken({
+      workspace_id: workspaceId,
+    });
+
+    return `${paths[0]}?token=${fileToken}`;
   }
 
   @UseGuards(DemoEnvGuard)
