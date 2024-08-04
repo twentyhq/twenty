@@ -262,7 +262,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               isNullable: false,
               isActive: true,
               isCustom: false,
-              isSystem: true,
+              isSystem: false,
               workspaceId: objectMetadataInput.workspaceId,
               defaultValue: 'now',
             },
@@ -747,7 +747,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       {
         standardId: createForeignKeyDeterministicUuid({
           objectId: createdObjectMetadata.id,
-          standardId: NOTE_TARGET_STANDARD_FIELD_IDS.custom,
+          standardId: TASK_TARGET_STANDARD_FIELD_IDS.custom,
         }),
         objectMetadataId: taskTargetObjectMetadata.id,
         workspaceId: workspaceId,
@@ -881,7 +881,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           description: `Attachments tied to the ${createdObjectMetadata.labelSingular}`,
           icon: 'IconFileImport',
           isNullable: true,
-          isSystem: true,
         },
         // TO
         {
@@ -1103,7 +1102,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           name: createdObjectMetadata.nameSingular,
           label: createdObjectMetadata.labelSingular,
           description: `Favorite ${createdObjectMetadata.labelSingular}`,
-          icon: 'IconBuildingSkyscraper',
+          icon: 'IconHeart',
           isNullable: true,
         },
       ]);
