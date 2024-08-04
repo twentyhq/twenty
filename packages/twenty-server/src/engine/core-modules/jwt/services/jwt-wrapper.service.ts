@@ -7,21 +7,7 @@ import * as jwt from 'jsonwebtoken';
 export class JwtWrapperService {
   constructor(private readonly jwtService: JwtService) {}
 
-  sign(payload: Buffer | object, options?: JwtSignOptions): string;
-
-  sign(
-    payload: string,
-    options?: Omit<JwtSignOptions, keyof jwt.SignOptions>,
-  ): string;
-
-  sign(
-    payload: string | Buffer | object,
-    options?: JwtSignOptions | Omit<JwtSignOptions, keyof jwt.SignOptions>,
-  ): string {
-    if (payload instanceof Buffer || typeof payload === 'object') {
-      return this.jwtService.sign(payload, options);
-    }
-
+  sign(payload: string, options?: JwtSignOptions): string {
     return this.jwtService.sign(payload, options);
   }
 
