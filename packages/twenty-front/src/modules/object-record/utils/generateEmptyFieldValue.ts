@@ -90,6 +90,7 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.Actor: {
       return {
         source: 'MANUAL',
+        workspaceMemberId: null,
         name: '',
       };
     }
