@@ -26,12 +26,15 @@ export class OnboardingService {
   ) {}
 
   private async isSubscriptionIncompleteOnboardingStatus(user: User) {
-    return !this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccess(
-      user.defaultWorkspaceId,
-    );
+    const hasSubscription =
+      await this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccess(
+        user.defaultWorkspaceId,
+      );
+
+    return !hasSubscription;
   }
 
-  private async isWorkspaceActivationOnboardingStatus(user: User) {
+  private isWorkspaceActivationPending(user: User) {
     return (
       user.defaultWorkspace.activationStatus ===
       WorkspaceActivationStatus.PENDING_CREATION
@@ -43,7 +46,7 @@ export class OnboardingService {
       return OnboardingStatus.PLAN_REQUIRED;
     }
 
-    if (await this.isWorkspaceActivationOnboardingStatus(user)) {
+    if (this.isWorkspaceActivationPending(user)) {
       return OnboardingStatus.WORKSPACE_ACTIVATION;
     }
 

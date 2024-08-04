@@ -5,7 +5,6 @@ import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import { UpdateFileFolderStructureCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-file-folder-structure.command';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
   Workspace,
@@ -21,7 +20,9 @@ interface BackfillNewOnboardingUserVarsCommandOptions {
   description: 'Backfill new onboarding user vars for existing workspaces',
 })
 export class BackfillNewOnboardingUserVarsCommand extends CommandRunner {
-  private readonly logger = new Logger(UpdateFileFolderStructureCommand.name);
+  private readonly logger = new Logger(
+    BackfillNewOnboardingUserVarsCommand.name,
+  );
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,

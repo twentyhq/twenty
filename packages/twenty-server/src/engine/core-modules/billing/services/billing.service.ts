@@ -22,10 +22,10 @@ export class BillingService {
   }
 
   async hasWorkspaceActiveSubscriptionOrFreeAccess(workspaceId: string) {
-    const isBillingEnabled = this.environmentService.get('IS_BILLING_ENABLED');
+    const isBillingEnabled = this.isBillingEnabled();
 
     if (!isBillingEnabled) {
-      return false;
+      return true;
     }
 
     const isFreeAccessEnabled =
@@ -35,7 +35,7 @@ export class BillingService {
       );
 
     if (isFreeAccessEnabled) {
-      return false;
+      return true;
     }
 
     const currentBillingSubscription =
@@ -44,8 +44,12 @@ export class BillingService {
       );
 
     return (
-      !isDefined(currentBillingSubscription) ||
-      currentBillingSubscription?.status === SubscriptionStatus.Incomplete
+      isDefined(currentBillingSubscription) &&
+      [
+        SubscriptionStatus.Active,
+        SubscriptionStatus.Trialing,
+        SubscriptionStatus.PastDue,
+      ].includes(currentBillingSubscription.status)
     );
   }
 }
