@@ -1,0 +1,6 @@
+{
+  "name": "twenty-e2e-testing",
+  "devDependencies": {
+    "@playwright/test": "^1.45.3"
+  }
+}
