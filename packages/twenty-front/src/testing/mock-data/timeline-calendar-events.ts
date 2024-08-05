@@ -1,5 +1,7 @@
-import { CalendarChannelVisibility } from '~/generated/graphql';
-import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
+import {
+  CalendarChannelVisibility,
+  TimelineCalendarEvent,
+} from '~/generated/graphql';
 
 export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
   {
@@ -11,8 +13,8 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     startsAt: '2024-05-16T12:00:00.000Z',
     endsAt: '2024-05-16T13:00:00.000Z',
     conferenceLink: {
-      url: 'https://meet.google.com/xxx-xxx-xxx',
-      label: 'Rejoindre la visio',
+      primaryLinkUrl: 'https://meet.google.com/xxx-xxx-xxx',
+      primaryLinkLabel: 'Rejoindre la visio',
     },
     conferenceSolution: 'GOOGLE_MEET',
     isCanceled: false,
@@ -51,8 +53,8 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     endsAt: '2024-05-08T12:25:00.000Z',
     isFullDay: false,
     conferenceLink: {
-      url: 'https://meet.google.com/xxx-xxx-xxx',
-      label: 'Rejoindre la visio',
+      primaryLinkUrl: 'https://meet.google.com/xxx-xxx-xxx',
+      primaryLinkLabel: 'Rejoindre la visio',
     },
     conferenceSolution: 'GOOGLE_MEET',
     isCanceled: false,
@@ -80,8 +82,8 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     endsAt: '2024-05-06T12:25:00.000Z',
     isFullDay: false,
     conferenceLink: {
-      url: 'https://meet.google.com/xxx-xxx-xxx',
-      label: 'Rejoindre la visio',
+      primaryLinkUrl: 'https://meet.google.com/xxx-xxx-xxx',
+      primaryLinkLabel: 'Rejoindre la visio',
     },
     conferenceSolution: 'GOOGLE_MEET',
     isCanceled: false,

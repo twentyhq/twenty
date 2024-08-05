@@ -9,6 +9,7 @@ import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCapt
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
@@ -18,6 +19,7 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { isDefined } from '~/utils/isDefined';
+import { useCleanRecoilState } from '~/hooks/useCleanRecoilState';
 
 // TODO: break down into smaller functions and / or hooks
 //  - moved usePageChangeEffectNavigateLocation into dedicated hook
@@ -34,11 +36,19 @@ export const PageChangeEffect = () => {
   const pageChangeEffectNavigateLocation =
     usePageChangeEffectNavigateLocation();
 
+  const { cleanRecoilState } = useCleanRecoilState();
+
   const eventTracker = useEventTracker();
 
   const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();
 
-  const openCreateActivity = useOpenCreateActivityDrawer();
+  const openCreateActivity = useOpenCreateActivityDrawer({
+    activityObjectNameSingular: CoreObjectNameSingular.Task,
+  });
+
+  useEffect(() => {
+    cleanRecoilState();
+  }, [cleanRecoilState]);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -143,8 +153,7 @@ export const PageChangeEffect = () => {
         label: 'Create Task',
         type: CommandType.Create,
         Icon: IconCheckbox,
-        onCommandClick: () =>
-          openCreateActivity({ type: 'Task', targetableObjects: [] }),
+        onCommandClick: () => openCreateActivity({ targetableObjects: [] }),
       },
     ]);
   }, [addToCommandMenu, setToInitialCommandMenu, openCreateActivity]);

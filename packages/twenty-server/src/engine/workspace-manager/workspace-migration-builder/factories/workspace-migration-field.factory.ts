@@ -7,15 +7,15 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationEntity,
   WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
-import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export interface FieldMetadataUpdate {
   current: FieldMetadataEntity;
@@ -60,17 +60,17 @@ export class WorkspaceMigrationFieldFactory {
 
     switch (action) {
       case WorkspaceMigrationBuilderAction.CREATE:
-        return this.createFieldMigration(
+        return await this.createFieldMigration(
           originalObjectMetadataMap,
           fieldMetadataCollectionOrFieldMetadataUpdateCollection as FieldMetadataEntity[],
         );
       case WorkspaceMigrationBuilderAction.UPDATE:
-        return this.updateFieldMigration(
+        return await this.updateFieldMigration(
           originalObjectMetadataMap,
           fieldMetadataCollectionOrFieldMetadataUpdateCollection as FieldMetadataUpdate[],
         );
       case WorkspaceMigrationBuilderAction.DELETE:
-        return this.deleteFieldMigration(
+        return await this.deleteFieldMigration(
           originalObjectMetadataMap,
           fieldMetadataCollectionOrFieldMetadataUpdateCollection as FieldMetadataEntity[],
         );

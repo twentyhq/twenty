@@ -22,8 +22,8 @@ export const seedCalendarEvents = async (
       'location',
       'iCalUID',
       'conferenceSolution',
-      'conferenceLinkLabel',
-      'conferenceLinkUrl',
+      'conferenceLinkPrimaryLinkLabel',
+      'conferenceLinkPrimaryLinkUrl',
       'recurringEventExternalId',
     ])
     .orIgnore()
@@ -41,8 +41,8 @@ export const seedCalendarEvents = async (
         location: 'Seattle',
         iCalUID: 'event1@calendar.com',
         conferenceSolution: 'Zoom',
-        conferenceLinkLabel: 'https://zoom.us/j/1234567890',
-        conferenceLinkUrl: 'https://zoom.us/j/1234567890',
+        conferenceLinkPrimaryLinkLabel: 'https://zoom.us/j/1234567890',
+        conferenceLinkPrimaryLinkUrl: 'https://zoom.us/j/1234567890',
         recurringEventExternalId: 'recurring1',
       },
     ])

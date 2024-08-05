@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Module } from '@nestjs/core/injector/module';
 
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
+import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 
@@ -36,8 +37,23 @@ export class WorkspaceQueryHookStorage {
 
   getWorkspaceQueryPreHookInstances(
     key: WorkspaceQueryHookKey,
-  ): WorkspaceQueryHookData<WorkspaceQueryHookInstance>[] | undefined {
-    return this.preHookInstances.get(key);
+  ): WorkspaceQueryHookData<WorkspaceQueryHookInstance>[] {
+    const methodName = key.split('.')?.[1] as
+      | WorkspaceResolverBuilderMethodNames
+      | undefined;
+    let wildcardInstances: WorkspaceQueryHookData<WorkspaceQueryHookInstance>[] =
+      [];
+
+    if (!methodName) {
+      throw new Error(`Can't split workspace query hook key: ${key}`);
+    }
+
+    // Retrive wildcard pre-hook instances
+    if (this.preHookInstances.has(`*.${methodName}`)) {
+      wildcardInstances = this.preHookInstances.get(`*.${methodName}`)!;
+    }
+
+    return [...wildcardInstances, ...(this.preHookInstances.get(key) ?? [])];
   }
 
   registerWorkspaceQueryPostHookInstance(

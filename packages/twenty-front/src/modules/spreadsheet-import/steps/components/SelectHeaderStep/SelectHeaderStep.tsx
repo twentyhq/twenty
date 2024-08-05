@@ -1,9 +1,9 @@
-import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useState } from 'react';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
-import { RawData } from '@/spreadsheet-import/types';
+import { ImportedRow } from '@/spreadsheet-import/types';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { SelectHeaderTable } from './components/SelectHeaderTable';
@@ -19,29 +19,36 @@ const StyledTableContainer = styled.div`
 `;
 
 type SelectHeaderStepProps = {
-  data: RawData[];
-  onContinue: (headerValues: RawData, data: RawData[]) => Promise<void>;
+  importedRows: ImportedRow[];
+  onContinue: (
+    headerValues: ImportedRow,
+    importedRows: ImportedRow[],
+  ) => Promise<void>;
   onBack: () => void;
 };
 
 export const SelectHeaderStep = ({
-  data,
+  importedRows,
   onContinue,
   onBack,
 }: SelectHeaderStepProps) => {
-  const [selectedRows, setSelectedRows] = useState<ReadonlySet<number>>(
-    new Set([0]),
-  );
+  const [selectedRowIndexes, setSelectedRowIndexes] = useState<
+    ReadonlySet<number>
+  >(new Set([0]));
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleContinue = useCallback(async () => {
-    const [selectedRowIndex] = Array.from(new Set(selectedRows));
+    const [selectedRowIndex] = Array.from(new Set(selectedRowIndexes));
     // We consider data above header to be redundant
-    const trimmedData = data.slice(selectedRowIndex + 1);
+    const trimmedData = importedRows.slice(selectedRowIndex + 1);
+
     setIsLoading(true);
-    await onContinue(data[selectedRowIndex], trimmedData);
+
+    await onContinue(importedRows[selectedRowIndex], trimmedData);
+
     setIsLoading(false);
-  }, [onContinue, data, selectedRows]);
+  }, [onContinue, importedRows, selectedRowIndexes]);
 
   return (
     <>
@@ -49,9 +56,9 @@ export const SelectHeaderStep = ({
         <StyledHeading title="Select header row" />
         <StyledTableContainer>
           <SelectHeaderTable
-            data={data}
-            selectedRows={selectedRows}
-            setSelectedRows={setSelectedRows}
+            importedRows={importedRows}
+            selectedRowIndexes={selectedRowIndexes}
+            setSelectedRowIndexes={setSelectedRowIndexes}
           />
         </StyledTableContainer>
       </Modal.Content>

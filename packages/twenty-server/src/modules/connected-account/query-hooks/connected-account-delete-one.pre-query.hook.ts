@@ -4,6 +4,7 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -18,10 +19,10 @@ export class ConnectedAccountDeleteOnePreQueryHook
   ) {}
 
   async execute(
-    _userId: string,
-    workspaceId: string,
+    authContext: AuthContext,
+    objectName: string,
     payload: DeleteOneResolverArgs,
-  ): Promise<void> {
+  ): Promise<DeleteOneResolverArgs> {
     const connectedAccountId = payload.id;
 
     const messageChannelRepository =
@@ -35,12 +36,15 @@ export class ConnectedAccountDeleteOnePreQueryHook
 
     messageChannels.forEach((messageChannel) => {
       this.eventEmitter.emit('messageChannel.deleted', {
-        workspaceId,
+        workspaceId: authContext.workspace.id,
+        name: 'messageChannel.deleted',
         recordId: messageChannel.id,
       } satisfies Pick<
         ObjectRecordDeleteEvent<MessageChannelWorkspaceEntity>,
-        'workspaceId' | 'recordId'
+        'workspaceId' | 'recordId' | 'name'
       >);
     });
+
+    return payload;
   }
 }

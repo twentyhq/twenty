@@ -9,6 +9,7 @@ import { useRecordTableRecordGqlFields } from '@/object-record/record-index/hook
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
+import { WorkspaceActivationStatus } from '~/generated/graphql';
 
 export const useFindManyParams = (
   objectNameSingular: string,
@@ -65,7 +66,7 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
 
   return {
     records:
-      currentWorkspace?.activationStatus === 'active'
+      currentWorkspace?.activationStatus === WorkspaceActivationStatus.Active
         ? records
         : SIGN_IN_BACKGROUND_MOCK_COMPANIES,
     totalCount: totalCount,

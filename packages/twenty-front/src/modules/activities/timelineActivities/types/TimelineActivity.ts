@@ -13,4 +13,4 @@ export type TimelineActivity = {
   linkedRecordId: string;
   linkedObjectMetadataId: string;
   __typename: 'TimelineActivity';
-};
+} & Record<string, any>;

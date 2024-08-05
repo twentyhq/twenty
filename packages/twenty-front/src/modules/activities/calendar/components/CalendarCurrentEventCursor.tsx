@@ -1,4 +1,3 @@
-import { useContext, useMemo, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -8,13 +7,14 @@ import {
   startOfMonth,
 } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useContext, useMemo, useState } from 'react';
 
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { hasCalendarEventStarted } from '@/activities/calendar/utils/hasCalendarEventStarted';
-import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
+import { TimelineCalendarEvent } from '~/generated/graphql';
 
 type CalendarCurrentEventCursorProps = {
   calendarEvent: TimelineCalendarEvent;

@@ -40,6 +40,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
     FieldMetadataType.MultiSelect,
     FieldMetadataType.Position,
     FieldMetadataType.RawJson,
+    FieldMetadataType.RichText,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {
@@ -143,6 +144,15 @@ ${mapObjectMetadataToGraphQLQuery({
   addressPostcode
   addressLat
   addressLng
+}`;
+  }
+
+  if (fieldType === FieldMetadataType.Actor) {
+    return `${field.name}
+{
+    source
+    workspaceMemberId
+    name
 }`;
   }
 

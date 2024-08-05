@@ -10,7 +10,7 @@ import { H2Title } from 'twenty-ui';
 import {
   CalendarChannelVisibility,
   TimelineCalendarEvent,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
 
 const StyledGeneralContainer = styled.div`
   display: flex;
@@ -51,8 +51,8 @@ export const SettingsAccountsCalendarChannelsGeneral = () => {
     startsAt: exampleStartDate.toISOString(),
     conferenceSolution: '',
     conferenceLink: {
-      label: '',
-      url: '',
+      primaryLinkLabel: '',
+      primaryLinkUrl: '',
     },
     description: '',
     isCanceled: false,

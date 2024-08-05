@@ -8,5 +8,5 @@ export interface ExceptionHandlerOptions {
     name: string;
   };
   document?: string;
-  user?: ExceptionHandlerUser;
+  user?: ExceptionHandlerUser | null;
 }

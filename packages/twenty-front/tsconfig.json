@@ -28,6 +28,7 @@
     }
   },
   "files": [],
+  "exclude": ["**/object-metadata/utils/getObjectMetadataItemsMock.ts"],
   "include": [],
   "references": [
     {
