@@ -17,10 +17,26 @@ export class AccountsToReconnectService {
     workspaceId: string,
     connectedAccountId: string,
   ) {
+    for (const key of Object.values(ConnectedAccountKeys)) {
+      await this.removeAccountToReconnectByKey(
+        key,
+        userId,
+        workspaceId,
+        connectedAccountId,
+      );
+    }
+  }
+
+  public async removeAccountToReconnectByKey(
+    key: ConnectedAccountKeys,
+    userId: string,
+    workspaceId: string,
+    connectedAccountId: string,
+  ) {
     const accountsToReconnect = await this.userVarsService.get({
       userId,
       workspaceId,
-      key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
+      key,
     });
 
     if (!accountsToReconnect) {
@@ -35,7 +51,7 @@ export class AccountsToReconnectService {
       await this.userVarsService.delete({
         userId,
         workspaceId,
-        key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
+        key,
       });
 
       return;
@@ -44,7 +60,7 @@ export class AccountsToReconnectService {
     await this.userVarsService.set({
       userId,
       workspaceId,
-      key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
+      key,
       value: updatedAccountsToReconnect,
     });
   }
