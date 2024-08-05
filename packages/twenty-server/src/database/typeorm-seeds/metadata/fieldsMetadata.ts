@@ -81,7 +81,7 @@ export const getDevSeedPeopleCustomFields = (
   return [
     {
       workspaceId,
-      type: FieldMetadataType.RICH_TEXT,
+      type: FieldMetadataType.TEXT,
       name: 'intro',
       label: 'Intro',
       description: "Contact's Intro",
