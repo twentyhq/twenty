@@ -8,7 +8,7 @@ config();
  * See https://playwright.dev/docs/trace-viewer to Collect trace when retrying the failed test
  */
 export default defineConfig({
-  testDir: './.',
+  testDir: 'e2e',
   /* Run tests in files in parallel */
   fullyParallel: true,
   reporter: 'html',
