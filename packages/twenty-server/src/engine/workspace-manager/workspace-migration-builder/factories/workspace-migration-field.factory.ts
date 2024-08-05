@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDeepStrictEqual } from 'util';
+
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
 import {
@@ -126,30 +128,37 @@ export class WorkspaceMigrationFieldFactory {
         continue;
       }
 
-      const migrations: WorkspaceMigrationTableAction[] = [
-        {
-          name: computeObjectTargetTable(
-            originalObjectMetadataMap[
-              fieldMetadataUpdate.current.objectMetadataId
-            ],
-          ),
-          action: WorkspaceMigrationTableActionType.ALTER,
-          columns: this.workspaceMigrationFactory.createColumnActions(
-            WorkspaceMigrationColumnActionType.ALTER,
-            fieldMetadataUpdate.current,
-            fieldMetadataUpdate.altered,
-          ),
-        },
-      ];
+      if (
+        !isDeepStrictEqual(
+          fieldMetadataUpdate.current,
+          fieldMetadataUpdate.altered,
+        )
+      ) {
+        const migrations: WorkspaceMigrationTableAction[] = [
+          {
+            name: computeObjectTargetTable(
+              originalObjectMetadataMap[
+                fieldMetadataUpdate.current.objectMetadataId
+              ],
+            ),
+            action: WorkspaceMigrationTableActionType.ALTER,
+            columns: this.workspaceMigrationFactory.createColumnActions(
+              WorkspaceMigrationColumnActionType.ALTER,
+              fieldMetadataUpdate.current,
+              fieldMetadataUpdate.altered,
+            ),
+          },
+        ];
 
-      workspaceMigrations.push({
-        workspaceId: fieldMetadataUpdate.current.workspaceId,
-        name: generateMigrationName(
-          `update-${fieldMetadataUpdate.altered.name}`,
-        ),
-        isCustom: false,
-        migrations,
-      });
+        workspaceMigrations.push({
+          workspaceId: fieldMetadataUpdate.current.workspaceId,
+          name: generateMigrationName(
+            `update-${fieldMetadataUpdate.altered.name}`,
+          ),
+          isCustom: false,
+          migrations,
+        });
+      }
     }
 
     return workspaceMigrations;
