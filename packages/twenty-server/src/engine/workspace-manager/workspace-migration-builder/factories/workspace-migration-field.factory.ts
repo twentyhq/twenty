@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDeepStrictEqual } from 'util';
+import diff from 'microdiff';
 
 import { WorkspaceMigrationBuilderAction } from 'src/engine/workspace-manager/workspace-migration-builder/interfaces/workspace-migration-builder-action.interface';
 
@@ -128,12 +128,41 @@ export class WorkspaceMigrationFieldFactory {
         continue;
       }
 
-      if (
-        !isDeepStrictEqual(
-          fieldMetadataUpdate.current,
-          fieldMetadataUpdate.altered,
-        )
-      ) {
+      const columnActions = this.workspaceMigrationFactory.createColumnActions(
+        WorkspaceMigrationColumnActionType.ALTER,
+        fieldMetadataUpdate.current,
+        fieldMetadataUpdate.altered,
+      );
+
+      const isMigrationNeeded = columnActions.reduce(
+        (result, currentColumnAction) => {
+          if (
+            currentColumnAction.action ===
+              WorkspaceMigrationColumnActionType.CREATE ||
+            currentColumnAction.action ===
+              WorkspaceMigrationColumnActionType.DROP
+          ) {
+            return true;
+          }
+
+          if (
+            currentColumnAction.action ===
+            WorkspaceMigrationColumnActionType.ALTER
+          ) {
+            return (
+              diff(
+                currentColumnAction.currentColumnDefinition,
+                currentColumnAction.alteredColumnDefinition,
+              ).length > 0
+            );
+          }
+
+          return result;
+        },
+        false,
+      );
+
+      if (migrationDifferences.length > 0) {
         const migrations: WorkspaceMigrationTableAction[] = [
           {
             name: computeObjectTargetTable(
