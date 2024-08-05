@@ -43,6 +43,7 @@ export const EventFieldDiff = ({
   const isUpdatedToEmpty =
     isValueEmpty(diffRecord) ||
     (typeof diffRecord === 'object' &&
+      diffRecord !== null &&
       Object.values(diffRecord).every(isValueEmpty));
 
   return (
