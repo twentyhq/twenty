@@ -8,6 +8,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 describe('UserService', () => {
   let service: UserService;
@@ -38,6 +39,10 @@ describe('UserService', () => {
         },
         {
           provide: WorkspaceService,
+          useValue: {},
+        },
+        {
+          provide: TwentyORMGlobalManager,
           useValue: {},
         },
       ],

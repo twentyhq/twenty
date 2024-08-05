@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { ServerlessDriver } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
+import {
+  ServerlessDriver,
+  ServerlessExecuteResult,
+} from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { SERVERLESS_DRIVER } from 'src/engine/integrations/serverless/serverless.constants';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
@@ -20,7 +23,7 @@ export class ServerlessService implements ServerlessDriver {
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object | undefined = undefined,
-  ) {
+  ): Promise<ServerlessExecuteResult> {
     return this.driver.execute(serverlessFunction, payload);
   }
 }

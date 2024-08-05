@@ -26,4 +26,11 @@ export class FileStorageService implements StorageDriver {
   read(params: { folderPath: string; filename: string }): Promise<Readable> {
     return this.driver.read(params);
   }
+
+  move(params: {
+    from: { folderPath: string; filename: string };
+    to: { folderPath: string; filename: string };
+  }): Promise<void> {
+    return this.driver.move(params);
+  }
 }

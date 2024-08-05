@@ -31,12 +31,11 @@ export class ExecuteQuickActionOnOneResolverFactory
   ): Resolver<ExecuteQuickActionOnOneResolverArgs> {
     const internalContext = context;
 
-    return async (_source, args, context, info) => {
+    return (_source, args, context, info) => {
       try {
-        return await this.executeQuickActionOnOne(args, {
+        return this.executeQuickActionOnOne(args, {
+          authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
-          userId: internalContext.userId,
-          workspaceId: internalContext.workspaceId,
           info,
           fieldMetadataCollection: internalContext.fieldMetadataCollection,
           objectMetadataCollection: internalContext.objectMetadataCollection,
@@ -55,7 +54,7 @@ export class ExecuteQuickActionOnOneResolverFactory
       case 'company': {
         await this.quickActionsService.executeQuickActionOnCompany(
           args.id,
-          options.workspaceId,
+          options.authContext.workspace.id,
           options.objectMetadataItem,
         );
         break;
@@ -63,7 +62,7 @@ export class ExecuteQuickActionOnOneResolverFactory
       case 'person': {
         await this.quickActionsService.createCompanyFromPerson(
           args.id,
-          options.workspaceId,
+          options.authContext.workspace.id,
           options.objectMetadataCollection,
         );
         break;

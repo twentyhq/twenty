@@ -51,7 +51,7 @@ export const ProfilePictureUploader = () => {
       setUploadController(null);
       setErrorMessage(null);
 
-      const avatarUrl = result?.data?.uploadProfilePicture;
+      const avatarUrl = result?.data?.uploadProfilePicture.split('?')[0];
 
       if (!avatarUrl) {
         throw new Error('Avatar URL not found');
@@ -64,7 +64,10 @@ export const ProfilePictureUploader = () => {
         },
       });
 
-      setCurrentWorkspaceMember({ ...currentWorkspaceMember, avatarUrl });
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        avatarUrl: result?.data?.uploadProfilePicture,
+      });
 
       return result;
     } catch (error) {

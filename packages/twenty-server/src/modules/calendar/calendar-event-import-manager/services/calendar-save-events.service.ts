@@ -141,6 +141,7 @@ export class CalendarSaveEventsService {
 
     this.eventEmitter.emit(`calendarEventParticipant.matched`, {
       workspaceId,
+      name: 'calendarEventParticipant.matched',
       workspaceMemberId: connectedAccount.accountOwnerId,
       calendarEventParticipants: savedCalendarEventParticipantsToEmit,
     });

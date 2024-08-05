@@ -3,10 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class IsFeatureEnabledService {
@@ -16,7 +14,7 @@ export class IsFeatureEnabledService {
   ) {}
 
   public async isFeatureEnabled(
-    key: FeatureFlagKeys,
+    key: FeatureFlagKey,
     workspaceId: string,
   ): Promise<boolean> {
     const featureFlag = await this.featureFlagRepository.findOneBy({

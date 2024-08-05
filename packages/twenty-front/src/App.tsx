@@ -12,6 +12,7 @@ import {
 import { useRecoilValue } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
+import { AuthProvider } from '@/auth/components/AuthProvider';
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
 import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
@@ -34,6 +35,7 @@ import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
@@ -74,18 +76,16 @@ import { SettingsIntegrationEditDatabaseConnection } from '~/pages/settings/inte
 import { SettingsIntegrationNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsIntegrationShowDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationShowDatabaseConnection';
+import { SettingsAppearance } from '~/pages/settings/profile/appearance/components/SettingsAppearance';
 import { Releases } from '~/pages/settings/Releases';
-import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
+import { SettingsServerlessFunctionDetailWrapper } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetailWrapper';
+import { SettingsServerlessFunctions } from '~/pages/settings/serverless-functions/SettingsServerlessFunctions';
+import { SettingsServerlessFunctionsNew } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew';
 import { SettingsBilling } from '~/pages/settings/SettingsBilling';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
-import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
-import { SettingsServerlessFunctions } from '~/pages/settings/serverless-functions/SettingsServerlessFunctions';
-import { SettingsServerlessFunctionsNew } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionsNew';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { SettingsServerlessFunctionDetailWrapper } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetailWrapper';
 
 const ProvidersThatNeedRouterContext = () => {
   const { pathname } = useLocation();
@@ -100,28 +100,30 @@ const ProvidersThatNeedRouterContext = () => {
           <ChromeExtensionSidecarProvider>
             <UserProviderEffect />
             <UserProvider>
-              <ApolloMetadataClientProvider>
-                <ObjectMetadataItemsProvider>
-                  <PrefetchDataProvider>
-                    <AppThemeProvider>
-                      <SnackBarProvider>
-                        <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                          <DialogManager>
-                            <StrictMode>
-                              <PromiseRejectionEffect />
-                              <CommandMenuEffect />
-                              <GotoHotkeysEffect />
-                              <PageTitle title={pageTitle} />
-                              <Outlet />
-                            </StrictMode>
-                          </DialogManager>
-                        </DialogManagerScope>
-                      </SnackBarProvider>
-                    </AppThemeProvider>
-                  </PrefetchDataProvider>
-                  <PageChangeEffect />
-                </ObjectMetadataItemsProvider>
-              </ApolloMetadataClientProvider>
+              <AuthProvider>
+                <ApolloMetadataClientProvider>
+                  <ObjectMetadataItemsProvider>
+                    <PrefetchDataProvider>
+                      <AppThemeProvider>
+                        <SnackBarProvider>
+                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                            <DialogManager>
+                              <StrictMode>
+                                <PromiseRejectionEffect />
+                                <CommandMenuEffect />
+                                <GotoHotkeysEffect />
+                                <PageTitle title={pageTitle} />
+                                <Outlet />
+                              </StrictMode>
+                            </DialogManager>
+                          </DialogManagerScope>
+                        </SnackBarProvider>
+                      </AppThemeProvider>
+                    </PrefetchDataProvider>
+                    <PageChangeEffect />
+                  </ObjectMetadataItemsProvider>
+                </ApolloMetadataClientProvider>
+              </AuthProvider>
             </UserProvider>
           </ChromeExtensionSidecarProvider>
         </ClientConfigProvider>
@@ -158,7 +160,6 @@ const createRouter = (
             element={<PaymentSuccess />}
           />
           <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
-          <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />

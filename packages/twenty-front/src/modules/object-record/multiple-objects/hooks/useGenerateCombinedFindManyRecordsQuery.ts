@@ -102,6 +102,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
           }
           pageInfo {
             hasNextPage
+            hasPreviousPage
             startCursor
             endCursor
           }

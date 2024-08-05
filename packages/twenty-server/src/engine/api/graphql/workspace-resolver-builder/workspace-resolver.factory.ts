@@ -8,6 +8,7 @@ import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { ExecuteQuickActionOnOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/execute-quick-action-on-one-resolver.factory';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 import { FindDuplicatesResolverFactory } from './factories/find-duplicates-resolver.factory';
 import { FindManyResolverFactory } from './factories/find-many-resolver.factory';
@@ -40,8 +41,7 @@ export class WorkspaceResolverFactory {
   ) {}
 
   async create(
-    workspaceId: string,
-    userId: string | undefined,
+    authContext: AuthContext,
     objectMetadataCollection: ObjectMetadataInterface[],
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
   ): Promise<IResolvers> {
@@ -82,8 +82,7 @@ export class WorkspaceResolverFactory {
         }
 
         resolvers.Query[resolverName] = resolverFactory.create({
-          workspaceId,
-          userId,
+          authContext,
           objectMetadataItem: objectMetadata,
           fieldMetadataCollection: objectMetadata.fields,
           objectMetadataCollection: objectMetadataCollection,
@@ -106,8 +105,7 @@ export class WorkspaceResolverFactory {
         }
 
         resolvers.Mutation[resolverName] = resolverFactory.create({
-          workspaceId,
-          userId,
+          authContext,
           objectMetadataItem: objectMetadata,
           fieldMetadataCollection: objectMetadata.fields,
           objectMetadataCollection: objectMetadataCollection,

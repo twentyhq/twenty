@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { Command, CommandRunner } from 'nest-commander';
 import { EntityManager } from 'typeorm';
 
@@ -15,6 +17,7 @@ import { seedConnectedAccount } from 'src/database/typeorm-seeds/workspace/conne
 import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/message-channel-message-associations';
 import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/message-channels';
 import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/message-participants';
+import { seedMessageThreadSubscribers } from 'src/database/typeorm-seeds/workspace/message-thread-subscribers';
 import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-threads';
 import { seedMessage } from 'src/database/typeorm-seeds/workspace/messages';
 import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunities';
@@ -22,6 +25,8 @@ import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspace-members';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
@@ -40,6 +45,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 })
 export class DataSeedWorkspaceCommand extends CommandRunner {
   workspaceIds = [SEED_APPLE_WORKSPACE_ID, SEED_TWENTY_WORKSPACE_ID];
+  private readonly logger = new Logger(DataSeedWorkspaceCommand.name);
 
   constructor(
     private readonly dataSourceService: DataSourceService,
@@ -83,7 +89,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         });
       }
     } catch (error) {
-      console.error(error);
+      this.logger.error(error);
 
       return;
     }
@@ -117,6 +123,11 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           return acc;
         }, {});
 
+        const featureFlagRepository =
+          workspaceDataSource.getRepository<FeatureFlagEntity>('featureFlag');
+
+        const featureFlags = await featureFlagRepository.find({});
+
         await workspaceDataSource.transaction(
           async (entityManager: EntityManager) => {
             await seedCompanies(entityManager, dataSourceMetadata.schema);
@@ -134,6 +145,21 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
                 entityManager,
                 dataSourceMetadata.schema,
               );
+
+              const isMessageThreadSubscriberEnabled = featureFlags.some(
+                (featureFlag) =>
+                  featureFlag.key ===
+                    FeatureFlagKey.IsMessageThreadSubscriberEnabled &&
+                  featureFlag.value === true,
+              );
+
+              if (isMessageThreadSubscriberEnabled) {
+                await seedMessageThreadSubscribers(
+                  entityManager,
+                  dataSourceMetadata.schema,
+                );
+              }
+
               await seedMessage(entityManager, dataSourceMetadata.schema);
               await seedMessageChannel(
                 entityManager,
@@ -174,7 +200,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           },
         );
       } catch (error) {
-        console.error(error);
+        this.logger.error(error);
       }
 
       await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);

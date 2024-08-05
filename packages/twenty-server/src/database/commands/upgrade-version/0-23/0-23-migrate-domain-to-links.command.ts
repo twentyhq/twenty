@@ -25,7 +25,7 @@ interface MigrateDomainNameFromTextToLinksCommandOptions {
 }
 
 @Command({
-  name: 'migrate-0.23:migrate-domain-standard-field-to-links',
+  name: 'upgrade-0.23:migrate-domain-standard-field-to-links',
   description:
     'Migrating field domainName of deprecated type TEXT to type LINKS',
 })
@@ -130,12 +130,17 @@ export class MigrateDomainNameFromTextToLinksCommand extends CommandRunner {
         await workspaceQueryRunner.connect();
 
         const fieldName = domainNameField.name;
-        const { id: _id, ...domainNameFieldWithoutId } = domainNameField;
+        const {
+          id: _id,
+          createdAt: _createdAt,
+          updatedAt: _updatedAt,
+          ...domainNameFieldWithoutIdAndTimestamps
+        } = domainNameField;
 
         try {
           const tmpNewDomainLinksField =
             await this.fieldMetadataService.createOne({
-              ...domainNameFieldWithoutId,
+              ...domainNameFieldWithoutIdAndTimestamps,
               type: FieldMetadataType.LINKS,
               name: `${fieldName}Tmp`,
               defaultValue: {
@@ -207,6 +212,7 @@ export class MigrateDomainNameFromTextToLinksCommand extends CommandRunner {
 
           this.logger.log(`Migration of domainName done!`);
         } catch (error) {
+          this.logger.log(`Error: ${error.message}`);
           this.logger.log(
             `Failed to migrate domainName ${domainNameField.id}, rolling back.`,
           );
@@ -296,7 +302,7 @@ export class MigrateDomainNameFromTextToLinksCommand extends CommandRunner {
     dataSourceMetadata: DataSourceEntity;
   }) {
     await workspaceQueryRunner.query(
-      `UPDATE "${dataSourceMetadata.schema}"."company" SET "${targetColumnName}" = CASE WHEN "${sourceColumnName}" LIKE 'http%' THEN "${sourceColumnName}" ELSE 'https://' || "${sourceColumnName}" END;`,
+      `UPDATE "${dataSourceMetadata.schema}"."company" SET "${targetColumnName}" = CASE WHEN "${sourceColumnName}" IS NULL OR "${sourceColumnName}" = '' THEN "${sourceColumnName}" WHEN "${sourceColumnName}" LIKE 'http%' THEN "${sourceColumnName}" ELSE 'https://' || "${sourceColumnName}" END;`,
     );
   }
 }

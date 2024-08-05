@@ -160,6 +160,11 @@ export const buildRecordFromImportedStructuredRow = (
           };
         }
         break;
+      case FieldMetadataType.Actor:
+        recordToBuild[field.name] = {
+          source: 'IMPORT',
+        };
+        break;
       default:
         recordToBuild[field.name] = importedFieldValue;
         break;

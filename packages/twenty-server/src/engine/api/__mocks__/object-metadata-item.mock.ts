@@ -1,3 +1,4 @@
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
@@ -189,6 +190,23 @@ const fieldRawJsonMock = {
   defaultValue: null,
 };
 
+const fieldRichTextMock = {
+  name: 'fieldRichText',
+  type: FieldMetadataType.RICH_TEXT,
+  isNullable: true,
+  defaultValue: null,
+};
+
+const fieldActorMock = {
+  name: 'fieldActor',
+  type: FieldMetadataType.ACTOR,
+  isNullable: true,
+  defaultValue: {
+    source: FieldActorSource.MANUAL,
+    name: '',
+  },
+};
+
 export const fields = [
   fieldUuidMock,
   fieldTextMock,
@@ -210,6 +228,8 @@ export const fields = [
   fieldPositionMock,
   fieldAddressMock,
   fieldRawJsonMock,
+  fieldRichTextMock,
+  fieldActorMock,
 ];
 
 export const objectMetadataItemMock = {
