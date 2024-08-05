@@ -39,6 +39,7 @@ import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 
 import { TokenService } from './token.service';
 
@@ -131,7 +132,7 @@ export class AuthService {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (workspaceMember) {
-      user.workspaceMember = workspaceMember;
+      user.workspaceMember = workspaceMember as WorkspaceMember;
     }
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);

@@ -17,8 +17,10 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { FAVORITE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -124,6 +126,36 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   })
   workflowId: string;
 
+  @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.task,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Task',
+    description: 'Favorite task',
+    icon: 'IconCheckbox',
+    inverseSideTarget: () => TaskWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+  })
+  @WorkspaceIsNullable()
+  task: Relation<TaskWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('task')
+  taskId: string;
+
+  @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.note,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Note',
+    description: 'Favorite note',
+    icon: 'IconNotes',
+    inverseSideTarget: () => NoteWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+  })
+  @WorkspaceIsNullable()
+  note: Relation<NoteWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('note')
+  noteId: string;
+
   @WorkspaceDynamicRelation({
     type: RelationMetadataType.MANY_TO_ONE,
     argsFactory: (oppositeObjectMetadata) => ({
@@ -132,7 +164,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
       label: oppositeObjectMetadata.labelSingular,
       description: `Favorite ${oppositeObjectMetadata.labelSingular}`,
       joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
-      icon: 'IconBuildingSkyscraper',
+      icon: 'IconHeart',
     }),
     inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'favorites',

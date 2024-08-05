@@ -12,6 +12,7 @@ import {
 import { useRecoilValue } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
+import { AuthProvider } from '@/auth/components/AuthProvider';
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
 import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
@@ -99,28 +100,30 @@ const ProvidersThatNeedRouterContext = () => {
           <ChromeExtensionSidecarProvider>
             <UserProviderEffect />
             <UserProvider>
-              <ApolloMetadataClientProvider>
-                <ObjectMetadataItemsProvider>
-                  <PrefetchDataProvider>
-                    <AppThemeProvider>
-                      <SnackBarProvider>
-                        <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                          <DialogManager>
-                            <StrictMode>
-                              <PromiseRejectionEffect />
-                              <CommandMenuEffect />
-                              <GotoHotkeysEffect />
-                              <PageTitle title={pageTitle} />
-                              <Outlet />
-                            </StrictMode>
-                          </DialogManager>
-                        </DialogManagerScope>
-                      </SnackBarProvider>
-                    </AppThemeProvider>
-                  </PrefetchDataProvider>
-                  <PageChangeEffect />
-                </ObjectMetadataItemsProvider>
-              </ApolloMetadataClientProvider>
+              <AuthProvider>
+                <ApolloMetadataClientProvider>
+                  <ObjectMetadataItemsProvider>
+                    <PrefetchDataProvider>
+                      <AppThemeProvider>
+                        <SnackBarProvider>
+                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                            <DialogManager>
+                              <StrictMode>
+                                <PromiseRejectionEffect />
+                                <CommandMenuEffect />
+                                <GotoHotkeysEffect />
+                                <PageTitle title={pageTitle} />
+                                <Outlet />
+                              </StrictMode>
+                            </DialogManager>
+                          </DialogManagerScope>
+                        </SnackBarProvider>
+                      </AppThemeProvider>
+                    </PrefetchDataProvider>
+                    <PageChangeEffect />
+                  </ObjectMetadataItemsProvider>
+                </ApolloMetadataClientProvider>
+              </AuthProvider>
             </UserProvider>
           </ChromeExtensionSidecarProvider>
         </ClientConfigProvider>

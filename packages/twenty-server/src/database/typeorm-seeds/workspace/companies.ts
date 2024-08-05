@@ -1,5 +1,7 @@
 import { EntityManager } from 'typeorm';
 
+import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
+
 const tableName = 'company';
 
 export const DEV_SEED_COMPANY_IDS = {
@@ -36,6 +38,9 @@ export const seedCompanies = async (
       'addressAddressPostcode',
       'addressAddressCountry',
       'position',
+      'createdBySource',
+      'createdByWorkspaceMemberId',
+      'createdByName',
     ])
     .orIgnore()
     .values([
@@ -50,6 +55,9 @@ export const seedCompanies = async (
         addressAddressPostcode: null,
         addressAddressCountry: 'Ireland',
         position: 1,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.FACEBOOK,
@@ -62,6 +70,9 @@ export const seedCompanies = async (
         addressAddressPostcode: null,
         addressAddressCountry: null,
         position: 2,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.QONTO,
@@ -74,6 +85,9 @@ export const seedCompanies = async (
         addressAddressPostcode: '75009',
         addressAddressCountry: 'France',
         position: 3,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.MICROSOFT,
@@ -86,6 +100,9 @@ export const seedCompanies = async (
         addressAddressPostcode: null,
         addressAddressCountry: null,
         position: 4,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.AIRBNB,
@@ -98,6 +115,9 @@ export const seedCompanies = async (
         addressAddressPostcode: '94103',
         addressAddressCountry: 'United States',
         position: 5,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.GOOGLE,
@@ -110,6 +130,9 @@ export const seedCompanies = async (
         addressAddressPostcode: '94102',
         addressAddressCountry: 'United States',
         position: 6,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.NETFLIX,
@@ -122,6 +145,9 @@ export const seedCompanies = async (
         addressAddressPostcode: '94110',
         addressAddressCountry: 'United States',
         position: 7,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.LIBEO,
@@ -134,6 +160,9 @@ export const seedCompanies = async (
         addressAddressPostcode: null,
         addressAddressCountry: null,
         position: 8,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.CLAAP,
@@ -146,6 +175,9 @@ export const seedCompanies = async (
         addressAddressPostcode: null,
         addressAddressCountry: null,
         position: 9,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.HASURA,
@@ -158,6 +190,9 @@ export const seedCompanies = async (
         addressAddressPostcode: null,
         addressAddressCountry: null,
         position: 10,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.WEWORK,
@@ -170,6 +205,9 @@ export const seedCompanies = async (
         addressAddressPostcode: null,
         addressAddressCountry: null,
         position: 11,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.SAMSUNG,
@@ -182,6 +220,9 @@ export const seedCompanies = async (
         addressAddressPostcode: null,
         addressAddressCountry: null,
         position: 12,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.ALGOLIA,
@@ -194,6 +235,9 @@ export const seedCompanies = async (
         addressAddressPostcode: null,
         addressAddressCountry: null,
         position: 13,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: null,
+        createdByName: '',
       },
     ])
     .execute();

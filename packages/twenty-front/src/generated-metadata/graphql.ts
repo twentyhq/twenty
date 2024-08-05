@@ -346,6 +346,7 @@ export type FieldConnection = {
 export enum FieldMetadataType {
   Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
+  Actor = 'ACTOR',
   Currency = 'CURRENCY',
   Date = 'DATE',
   DateTime = 'DATE_TIME',
@@ -1054,7 +1055,7 @@ export type ServerlessFunctionExecutionResult = {
   status: ServerlessFunctionExecutionStatus;
 };
 
-/** Status of the table */
+/** Status of the serverless function execution */
 export enum ServerlessFunctionExecutionStatus {
   Error = 'ERROR',
   Success = 'SUCCESS'
@@ -1303,6 +1304,7 @@ export type User = {
   updatedAt: Scalars['DateTime']['output'];
   userVars: Scalars['JSONObject']['output'];
   workspaceMember?: Maybe<WorkspaceMember>;
+  workspaceMembers?: Maybe<Array<WorkspaceMember>>;
   workspaces: Array<UserWorkspace>;
 };
 
@@ -1397,7 +1399,8 @@ export type WorkspaceFeatureFlagsArgs = {
 
 export enum WorkspaceActivationStatus {
   Active = 'ACTIVE',
-  Inactive = 'INACTIVE'
+  Inactive = 'INACTIVE',
+  PendingCreation = 'PENDING_CREATION'
 }
 
 export type WorkspaceEdge = {

@@ -2,36 +2,36 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { FindOneOptions, In, Repository } from 'typeorm';
 import camelCase from 'lodash.camelcase';
+import { FindOneOptions, In, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
-import { CreateRelationInput } from 'src/engine/metadata-modules/relation-metadata/dtos/create-relation.input';
-import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
-import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { CreateRelationInput } from 'src/engine/metadata-modules/relation-metadata/dtos/create-relation.input';
+import {
+  RelationMetadataException,
+  RelationMetadataExceptionCode,
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
+import {
+  InvalidStringException,
+  validateMetadataNameOrThrow,
+} from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDrop,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
-import {
-  validateMetadataNameOrThrow,
-  InvalidStringException,
-} from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
-import {
-  RelationMetadataException,
-  RelationMetadataExceptionCode,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 import {
   RelationMetadataEntity,
@@ -213,6 +213,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
               columnName,
               columnType: 'uuid',
               isNullable: true,
+              defaultValue: null,
             },
           ],
         },

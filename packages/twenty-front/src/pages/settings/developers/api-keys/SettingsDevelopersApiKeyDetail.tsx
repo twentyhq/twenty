@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { H2Title, IconRepeat, IconSettings, IconTrash } from 'twenty-ui';
@@ -13,8 +13,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
-import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
-import { generatedApiKeyFamilyState } from '@/settings/developers/states/generatedApiKeyFamilyState';
+import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
@@ -25,7 +24,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
+import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -49,10 +48,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
 
-  const setGeneratedApi = useGeneratedApiKeys();
-  const [generatedApiKey] = useRecoilState(
-    generatedApiKeyFamilyState(apiKeyId),
-  );
+  const [apiKeyToken, setApiKeyToken] = useRecoilState(apiKeyTokenState);
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
     objectNameSingular: CoreObjectNameSingular.ApiKey,
@@ -61,9 +57,14 @@ export const SettingsDevelopersApiKeyDetail = () => {
     objectNameSingular: CoreObjectNameSingular.ApiKey,
   });
 
-  const { record: apiKeyData } = useFindOneRecord({
+  const [apiKeyName, setApiKeyName] = useState('');
+
+  const { record: apiKeyData, loading } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.ApiKey,
     objectRecordId: apiKeyId,
+    onCompleted: (record) => {
+      setApiKeyName(record.name);
+    },
   });
 
   const deleteIntegration = async (redirect = true) => {
@@ -111,19 +112,11 @@ export const SettingsDevelopersApiKeyDetail = () => {
       await deleteIntegration(false);
 
       if (isNonEmptyString(apiKey?.token)) {
-        setGeneratedApi(apiKey.id, apiKey.token);
+        setApiKeyToken(apiKey.token);
         navigate(`/settings/developers/api-keys/${apiKey.id}`);
       }
     }
   };
-
-  useEffect(() => {
-    if (isDefined(apiKeyData)) {
-      return () => {
-        setGeneratedApi(apiKeyId, null);
-      };
-    }
-  });
 
   return (
     <>
@@ -134,18 +127,18 @@ export const SettingsDevelopersApiKeyDetail = () => {
               <Breadcrumb
                 links={[
                   { children: 'Developers', href: '/settings/developers' },
-                  { children: `${apiKeyData.name} API Key` },
+                  { children: `${apiKeyName} API Key` },
                 ]}
               />
             </SettingsHeaderContainer>
             <Section>
-              {generatedApiKey ? (
+              {apiKeyToken ? (
                 <>
                   <H2Title
                     title="Api Key"
                     description="Copy this key as it will only be visible this one time"
                   />
-                  <ApiKeyInput apiKey={generatedApiKey} />
+                  <ApiKeyInput apiKey={apiKeyToken} />
                   <StyledInfo>
                     {formatExpiration(apiKeyData?.expiresAt || '', true, false)}
                   </StyledInfo>
@@ -175,9 +168,25 @@ export const SettingsDevelopersApiKeyDetail = () => {
             </Section>
             <Section>
               <H2Title title="Name" description="Name of your API key" />
+              <ApiKeyNameInput
+                apiKeyName={apiKeyName}
+                apiKeyId={apiKeyData?.id}
+                disabled={loading}
+                onNameUpdate={setApiKeyName}
+              />
+            </Section>
+            <Section>
+              <H2Title
+                title="Expiration"
+                description="When the key will be diasbled"
+              />
               <TextInput
                 placeholder="E.g. backoffice integration"
-                value={apiKeyData.name}
+                value={formatExpiration(
+                  apiKeyData?.expiresAt || '',
+                  true,
+                  false,
+                )}
                 disabled
                 fullWidth
               />

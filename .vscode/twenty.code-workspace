@@ -17,6 +17,10 @@
       "path": "../packages/twenty-front"
     },
     {
+      "name": "packages/twenty-ui",
+      "path": "../packages/twenty-ui"
+    },
+    {
       "name": "packages/twenty-postgres",
       "path": "../packages/twenty-postgres"
     },

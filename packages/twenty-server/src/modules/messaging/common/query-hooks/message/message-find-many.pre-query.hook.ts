@@ -4,6 +4,7 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CanAccessMessageThreadService } from 'src/modules/messaging/common/query-hooks/message/can-access-message-thread.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -16,12 +17,16 @@ export class MessageFindManyPreQueryHook implements WorkspaceQueryHookInstance {
   ) {}
 
   async execute(
-    userId: string,
-    workspaceId: string,
+    authContext: AuthContext,
+    objectName: string,
     payload: FindManyResolverArgs,
-  ): Promise<void> {
+  ): Promise<FindManyResolverArgs> {
     if (!payload?.filter?.messageThreadId?.eq) {
       throw new BadRequestException('messageThreadId filter is required');
+    }
+
+    if (!authContext.user?.id) {
+      throw new BadRequestException('User id is required');
     }
 
     const messageChannelMessageAssociationRepository =
@@ -43,9 +48,11 @@ export class MessageFindManyPreQueryHook implements WorkspaceQueryHookInstance {
     }
 
     await this.canAccessMessageThreadService.canAccessMessageThread(
-      userId,
-      workspaceId,
+      authContext.user.id,
+      authContext.workspace.id,
       messageChannelMessageAssociations,
     );
+
+    return payload;
   }
 }

@@ -21,5 +21,13 @@ export class AddRuntimeColumnToServerlessFunction1721309629608
     await queryRunner.query(
       `ALTER TABLE "metadata"."serverlessFunction" DROP COLUMN "runtime"`,
     );
+
+    await queryRunner.query(
+      `ALTER TABLE "metadata"."serverlessFunction" DROP COLUMN "description"`,
+    );
+
+    await queryRunner.query(
+      `ALTER TABLE "metadata"."serverlessFunction" DROP COLUMN "sourceCodeFullPath"`,
+    );
   }
 }

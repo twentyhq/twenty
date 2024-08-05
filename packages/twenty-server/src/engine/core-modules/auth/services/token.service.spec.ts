@@ -1,25 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import {
   BadRequestException,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
-import { EmailService } from 'src/engine/integrations/email/email.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EmailService } from 'src/engine/integrations/email/email.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 import { TokenService } from './token.service';
 

@@ -1,5 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
+export const COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID = '39403bee-314b-4f14-bc91-70d500397517';
+
 export const getObjectMetadataItemsMock = () => {
     const mockArray = [
         {
@@ -1657,7 +1659,7 @@ export const getObjectMetadataItemsMock = () => {
             "isSystem": false,
             "createdAt": "2024-07-31T10:44:41.328Z",
             "updatedAt": "2024-07-31T10:44:41.328Z",
-            "labelIdentifierFieldMetadataId": "39403bee-314b-4f14-bc91-70d500397517",
+            "labelIdentifierFieldMetadataId": COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID,
             "imageIdentifierFieldMetadataId": null,
             "fields": [
                 {
@@ -2118,7 +2120,7 @@ export const getObjectMetadataItemsMock = () => {
                 },
                 {
                     "__typename": "field",
-                    "id": "39403bee-314b-4f14-bc91-70d500397517",
+                    "id": COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID,
                     "type": "TEXT",
                     "name": "name",
                     "label": "Name",

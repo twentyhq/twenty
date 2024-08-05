@@ -30,11 +30,10 @@ export abstract class BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Update date',
-    description: 'Update date',
-    icon: 'IconCalendar',
+    label: 'Last update',
+    description: 'Last time the record was changed',
+    icon: 'IconCalendarClock',
     defaultValue: 'now',
   })
-  @WorkspaceIsSystem()
   updatedAt: Date;
 }

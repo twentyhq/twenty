@@ -1,22 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { RunnableSequence } from '@langchain/core/runnables';
 import { StructuredOutputParser } from '@langchain/core/output_parsers';
+import { RunnableSequence } from '@langchain/core/runnables';
+import groupBy from 'lodash.groupby';
 import { DataSource, QueryFailedError } from 'typeorm';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
-import groupBy from 'lodash.groupby';
 
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceQueryRunnerService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.service';
+import { sqlGenerationPromptTemplate } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.prompt-templates';
+import { AISQLQueryResult } from 'src/engine/core-modules/ai-sql-query/dtos/ai-sql-query-result.dto';
 import { LLMChatModelService } from 'src/engine/integrations/llm-chat-model/llm-chat-model.service';
 import { LLMTracingService } from 'src/engine/integrations/llm-tracing/llm-tracing.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { DEFAULT_LABEL_IDENTIFIER_FIELD_NAME } from 'src/engine/metadata-modules/object-metadata/object-metadata.constants';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
-import { AISQLQueryResult } from 'src/engine/core-modules/ai-sql-query/dtos/ai-sql-query-result.dto';
-import { sqlGenerationPromptTemplate } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.prompt-templates';
 
 @Injectable()
 export class AISQLQueryService {
@@ -31,9 +31,9 @@ export class AISQLQueryService {
 
   private getLabelIdentifierName(
     objectMetadata: ObjectMetadataEntity,
-    dataSourceId,
-    workspaceId,
-    workspaceFeatureFlagsMap,
+    _dataSourceId,
+    _workspaceId,
+    _workspaceFeatureFlagsMap,
   ): string | undefined {
     const customObjectLabelIdentifierFieldMetadata = objectMetadata.fields.find(
       (fieldMetadata) =>

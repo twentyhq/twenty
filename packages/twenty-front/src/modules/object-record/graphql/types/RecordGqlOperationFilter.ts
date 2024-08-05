@@ -90,6 +90,10 @@ export type LinksFilter = {
   primaryLinkLabel?: StringFilter;
 };
 
+export type ActorFilter = {
+  name?: StringFilter;
+};
+
 export type LeafFilter =
   | UUIDFilter
   | StringFilter
@@ -101,6 +105,7 @@ export type LeafFilter =
   | BooleanFilter
   | AddressFilter
   | LinksFilter
+  | ActorFilter
   | undefined;
 
 export type AndObjectRecordFilter = {

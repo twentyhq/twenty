@@ -1,5 +1,9 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import {
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -14,6 +18,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { NOTE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
@@ -57,6 +62,19 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   body: string | null;
 
+  @WorkspaceField({
+    standardId: NOTE_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: 'Created by',
+    icon: 'IconCreativeCommonsSa',
+    description: 'The creator of the record',
+    defaultValue: {
+      source: `'${FieldActorSource.MANUAL}'`,
+      name: "''",
+    },
+  })
+  createdBy: ActorMetadata;
+
   @WorkspaceRelation({
     standardId: NOTE_STANDARD_FIELD_IDS.noteTargets,
     label: 'Targets',
@@ -93,4 +111,16 @@ export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: NOTE_STANDARD_FIELD_IDS.favorites,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Favorites',
+    description: 'Favorites linked to the note',
+    icon: 'IconHeart',
+    inverseSideTarget: () => FavoriteWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  favorites: Relation<FavoriteWorkspaceEntity[]>;
 }
