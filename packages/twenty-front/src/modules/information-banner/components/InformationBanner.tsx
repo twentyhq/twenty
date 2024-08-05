@@ -3,8 +3,14 @@ import styled from '@emotion/styled';
 import { Banner, IconComponent } from 'twenty-ui';
 
 const StyledBanner = styled(Banner)`
-position: absolute;
-`
+  position: absolute;
+`;
+
+const StyledText = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
 export const InformationBanner = ({
   message,
@@ -19,7 +25,7 @@ export const InformationBanner = ({
 }) => {
   return (
     <StyledBanner>
-      {message}
+      <StyledText>{message}</StyledText>
       <Button
         variant="secondary"
         title={buttonTitle}
