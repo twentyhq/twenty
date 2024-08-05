@@ -99,8 +99,11 @@ const StyledList = styled.div`
   transition-property: height;
 `;
 
-const StyledInnerList = styled.div`
-  max-height: calc(100vh - ${({ theme }) => theme.spacing(19)});
+const StyledInnerList = styled.div<{ isMobile: boolean }>`
+  max-height: ${({ isMobile, theme }) =>
+    isMobile
+      ? `calc(100dvh - ${theme.spacing(31)})`
+      : `calc(100dvh - ${theme.spacing(18)})`};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(1)};
@@ -341,7 +344,7 @@ export const CommandMenu = () => {
           </StyledInputContainer>
           <StyledList>
             <ScrollWrapper>
-              <StyledInnerList>
+              <StyledInnerList isMobile={isMobile}>
                 <SelectableList
                   selectableListId="command-menu-list"
                   selectableItemIdArray={selectableItemIds}
