@@ -37,14 +37,17 @@ export const EventFieldDiff = ({
     throw new Error('fieldMetadataItem is required');
   }
 
-  const isValueEmpty = (value: any) =>
+  const isValueEmpty = (value: unknown): boolean =>
     value === null || value === undefined || value === '';
+
+  const isObjectEmpty = (obj: Record<string, unknown>): boolean =>
+    Object.values(obj).every(isValueEmpty);
 
   const isUpdatedToEmpty =
     isValueEmpty(diffRecord) ||
     (typeof diffRecord === 'object' &&
       diffRecord !== null &&
-      Object.values(diffRecord).every(isValueEmpty));
+      isObjectEmpty(diffRecord));
 
   return (
     <RecordFieldValueSelectorContextProvider>
