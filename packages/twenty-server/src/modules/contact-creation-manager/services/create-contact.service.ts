@@ -7,13 +7,13 @@ import camelCase from 'lodash.camelcase';
 import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/contact-creation-manager/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { FieldCreatedBySource } from 'src/engine/metadata-modules/field-metadata/composite-types/created-by.composite-type';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 type ContactToCreate = {
   handle: string;
   displayName: string;
   companyId?: string;
-  source: FieldCreatedBySource;
+  source: FieldActorSource;
 };
 
 @Injectable()
