@@ -5,6 +5,10 @@ import styled from '@emotion/styled';
 const StyledInformationBannerWrapper = styled.div`
   height: 40px;
   position: relative;
+
+  &:empty {
+    height: 0;
+  }
 `;
 
 export const InformationBannerWrapper = () => {
