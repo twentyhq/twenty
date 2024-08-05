@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
@@ -11,6 +12,7 @@ import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.modu
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { EmailSenderJob } from 'src/engine/integrations/email/email-sender.job';
 import { EmailModule } from 'src/engine/integrations/email/email.module';
@@ -23,9 +25,11 @@ import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/contact-c
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
+import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Workspace], 'core'),
     DataSourceModule,
     ObjectMetadataModule,
     TypeORMModule,
@@ -43,6 +47,7 @@ import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.m
     WorkspaceQueryRunnerJobModule,
     AutoCompaniesAndContactsCreationJobModule,
     TimelineJobModule,
+    WorkflowModule,
   ],
   providers: [
     CleanInactiveWorkspaceJob,

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -21,6 +22,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 
 @Module({
   imports: [
+    FeatureFlagModule,
     WorkspaceMigrationBuilderModule,
     WorkspaceMigrationRunnerModule,
     TypeOrmModule.forFeature(

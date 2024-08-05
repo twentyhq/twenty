@@ -12,7 +12,6 @@ export class CacheManager<T> {
   ): Promise<T | null> {
     const [workspaceId] = cacheKey.split('-');
 
-    // If the cacheKey exists, return the cached value
     if (this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey)!;
     }

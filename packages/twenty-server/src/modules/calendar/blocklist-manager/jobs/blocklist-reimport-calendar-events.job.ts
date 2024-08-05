@@ -44,9 +44,10 @@ export class BlocklistReimportCalendarEventsJob {
       return;
     }
 
-    const calendarChannelRepository = await this.twentyORMManager.getRepository(
-      CalendarChannelWorkspaceEntity,
-    );
+    const calendarChannelRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+        'calendarChannel',
+      );
 
     await calendarChannelRepository.update(
       {

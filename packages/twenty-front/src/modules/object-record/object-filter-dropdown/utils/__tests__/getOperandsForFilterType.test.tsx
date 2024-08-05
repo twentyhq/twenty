@@ -28,6 +28,7 @@ describe('getOperandsForFilterType', () => {
     ['ADDRESS', [...containsOperands, ...emptyOperands]],
     ['LINK', [...containsOperands, ...emptyOperands]],
     ['LINKS', [...containsOperands, ...emptyOperands]],
+    ['ACTOR', [...containsOperands, ...emptyOperands]],
     ['CURRENCY', [...numberOperands, ...emptyOperands]],
     ['NUMBER', [...numberOperands, ...emptyOperands]],
     ['DATE_TIME', [...numberOperands, ...emptyOperands]],

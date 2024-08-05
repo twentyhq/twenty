@@ -14,8 +14,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo, useRef, useState } from 'react';
 import { IconCalendar } from 'twenty-ui';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
+
 import { formatToHumanReadableDate } from '~/utils/date-utils';
+import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
 const StyledRow = styled.div`
   align-items: center;
@@ -104,7 +105,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
             />
           ) : (
             <StyledLink
-              href={REACT_APP_SERVER_BASE_URL + '/files/' + attachment.fullPath}
+              href={getFileAbsoluteURI(attachment.fullPath)}
               target="__blank"
             >
               {attachment.name}

@@ -16,6 +16,14 @@ export const getLabelIdentifierFieldValue = (
     return `${record.name?.firstName ?? ''} ${record.name?.lastName ?? ''}`;
   }
 
+  if (objectNameSingular === CoreObjectNameSingular.NoteTarget) {
+    return record.note?.title ?? '';
+  }
+
+  if (objectNameSingular === CoreObjectNameSingular.TaskTarget) {
+    return record.task?.title ?? '';
+  }
+
   if (isDefined(labelIdentifierFieldMetadataItem?.name)) {
     return String(record[labelIdentifierFieldMetadataItem.name]);
   }

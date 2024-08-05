@@ -5,6 +5,7 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @WorkspaceQueryHook(`workspaceMember.deleteOne`)
 export class WorkspaceMemberDeleteOnePreQueryHook
@@ -14,10 +15,10 @@ export class WorkspaceMemberDeleteOnePreQueryHook
 
   // There is no need to validate the user's access to the workspace member since we don't have permission yet.
   async execute(
-    userId: string,
-    workspaceId: string,
+    authContext: AuthContext,
+    objectName: string,
     payload: DeleteOneResolverArgs,
-  ): Promise<void> {
+  ): Promise<DeleteOneResolverArgs> {
     const attachmentRepository =
       await this.twentyORMManager.getRepository<AttachmentWorkspaceEntity>(
         'attachment',
@@ -37,5 +38,7 @@ export class WorkspaceMemberDeleteOnePreQueryHook
     await commentRepository.delete({
       authorId,
     });
+
+    return payload;
   }
 }

@@ -7,6 +7,7 @@ import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-sche
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { CompositeObjectTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-object-type-definition.factory';
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
+import { CompositeEnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-enum-type-definition.factory';
 
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import {
@@ -32,6 +33,7 @@ export class TypeDefinitionsGenerator {
     private readonly objectTypeDefinitionFactory: ObjectTypeDefinitionFactory,
     private readonly compositeObjectTypeDefinitionFactory: CompositeObjectTypeDefinitionFactory,
     private readonly enumTypeDefinitionFactory: EnumTypeDefinitionFactory,
+    private readonly compositeEnumTypeDefinitionFactory: CompositeEnumTypeDefinitionFactory,
     private readonly inputTypeDefinitionFactory: InputTypeDefinitionFactory,
     private readonly compositeInputTypeDefinitionFactory: CompositeInputTypeDefinitionFactory,
     private readonly edgeTypeDefinitionFactory: EdgeTypeDefinitionFactory,
@@ -62,8 +64,22 @@ export class TypeDefinitionsGenerator {
     );
 
     // Generate composite types first because they can be used in metadata objects
+    this.generateCompositeEnumTypeDefs(compositeTypeCollection, options);
     this.generateCompositeObjectTypeDefs(compositeTypeCollection, options);
     this.generateCompositeInputTypeDefs(compositeTypeCollection, options);
+  }
+
+  private generateCompositeEnumTypeDefs(
+    compositeTypes: CompositeType[],
+    options: WorkspaceBuildSchemaOptions,
+  ) {
+    const enumTypeDefs = compositeTypes
+      .map((compositeType) =>
+        this.compositeEnumTypeDefinitionFactory.create(compositeType, options),
+      )
+      .flat();
+
+    this.typeDefinitionsStorage.addEnumTypes(enumTypeDefs);
   }
 
   private generateCompositeObjectTypeDefs(

@@ -1,4 +1,4 @@
-import { isEmailBlocklisted } from 'src/modules/calendar-messaging-participant-manager/utils/is-email-blocklisted.util';
+import { isEmailBlocklisted } from 'src/modules/blocklist/utils/is-email-blocklisted.util';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 
 export const filterOutBlocklistedEvents = (

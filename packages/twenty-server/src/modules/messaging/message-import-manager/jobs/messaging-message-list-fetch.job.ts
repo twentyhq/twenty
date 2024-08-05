@@ -6,15 +6,15 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessagingGmailFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-full-message-list-fetch.service';
-import { MessagingGmailPartialMessageListFetchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-partial-message-list-fetch.service';
-import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { MessagingFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-full-message-list-fetch.service';
+import { MessagingPartialMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-partial-message-list-fetch.service';
+import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
 export type MessagingMessageListFetchJobData = {
   messageChannelId: string;
@@ -29,8 +29,8 @@ export class MessagingMessageListFetchJob {
   private readonly logger = new Logger(MessagingMessageListFetchJob.name);
 
   constructor(
-    private readonly gmailFullMessageListFetchService: MessagingGmailFullMessageListFetchService,
-    private readonly gmailPartialMessageListFetchV2Service: MessagingGmailPartialMessageListFetchService,
+    private readonly messagingFullMessageListFetchService: MessagingFullMessageListFetchService,
+    private readonly messagingPartialMessageListFetchService: MessagingPartialMessageListFetchService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
@@ -95,7 +95,7 @@ export class MessagingMessageListFetchJob {
           messageChannelId: messageChannel.id,
         });
 
-        await this.gmailPartialMessageListFetchV2Service.processMessageListFetch(
+        await this.messagingPartialMessageListFetchService.processMessageListFetch(
           messageChannel,
           connectedAccount,
           workspaceId,
@@ -122,7 +122,7 @@ export class MessagingMessageListFetchJob {
           messageChannelId: messageChannel.id,
         });
 
-        await this.gmailFullMessageListFetchService.processMessageListFetch(
+        await this.messagingFullMessageListFetchService.processMessageListFetch(
           messageChannel,
           connectedAccount,
           workspaceId,

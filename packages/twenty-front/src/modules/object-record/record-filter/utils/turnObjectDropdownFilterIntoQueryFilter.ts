@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
+  ActorFilter,
   AddressFilter,
   CurrencyFilter,
   DateFilter,
@@ -210,6 +211,22 @@ const applyEmptyFilters = (
     case 'RELATION':
       emptyRecordFilter = {
         [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
+      };
+      break;
+    case 'ACTOR':
+      emptyRecordFilter = {
+        or: [
+          {
+            [correspondingField.name]: {
+              name: { ilike: '' },
+            } as ActorFilter,
+          },
+          {
+            [correspondingField.name]: {
+              name: { is: 'NULL' },
+            } as ActorFilter,
+          },
+        ],
       };
       break;
     default:
@@ -744,6 +761,51 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       }
+      case 'ACTOR':
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Contains:
+            objectRecordFilters.push({
+              or: [
+                {
+                  [correspondingField.name]: {
+                    name: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  } as ActorFilter,
+                },
+              ],
+            });
+            break;
+          case ViewFilterOperand.DoesNotContain:
+            objectRecordFilters.push({
+              and: [
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      name: {
+                        ilike: `%${rawUIFilter.value}%`,
+                      },
+                    } as ActorFilter,
+                  },
+                },
+              ],
+            });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              rawUIFilter.definition.type,
+            );
+            break;
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
+        break;
       default:
         throw new Error('Unknown filter type');
     }

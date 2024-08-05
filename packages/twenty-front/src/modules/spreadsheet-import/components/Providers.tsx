@@ -1,13 +1,13 @@
 import { createContext } from 'react';
 
-import { SpreadsheetOptions } from '@/spreadsheet-import/types';
+import { SpreadsheetImportDialogOptions } from '@/spreadsheet-import/types';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const RsiContext = createContext({} as any);
 
 type ProvidersProps<T extends string> = {
   children: React.ReactNode;
-  values: SpreadsheetOptions<T>;
+  values: SpreadsheetImportDialogOptions<T>;
 };
 
 export const Providers = <T extends string>({

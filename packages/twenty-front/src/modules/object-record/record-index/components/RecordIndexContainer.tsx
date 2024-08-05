@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 
+import { InformationBanner } from '@/information-banner/InformationBanner';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
@@ -40,7 +41,8 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledContainerWithPadding = styled.div`
+const StyledContainerWithPadding = styled.div<{ fullHeight?: boolean }>`
+  min-height: ${({ fullHeight }) => (fullHeight ? '100%' : 'auto')};
   padding-left: ${({ theme }) => theme.table.horizontalCellPadding};
 `;
 
@@ -92,10 +94,6 @@ export const RecordIndexContainer = ({
 
         setTableColumns(newFieldDefinitions);
 
-        const newRecordIndexFieldDefinitions = newFieldDefinitions.filter(
-          (boardField) => !boardField.isLabelIdentifier,
-        );
-
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
           .getValue();
@@ -103,10 +101,10 @@ export const RecordIndexContainer = ({
         if (
           !isDeeplyEqual(
             existingRecordIndexFieldDefinitions,
-            newRecordIndexFieldDefinitions,
+            newFieldDefinitions,
           )
         ) {
-          set(recordIndexFieldDefinitionsState, newRecordIndexFieldDefinitions);
+          set(recordIndexFieldDefinitionsState, newFieldDefinitions);
         }
       },
     [columnDefinitions, setTableColumns],
@@ -128,6 +126,7 @@ export const RecordIndexContainer = ({
 
   return (
     <StyledContainer>
+      <InformationBanner />
       <RecordFieldValueSelectorContextProvider>
         <SpreadsheetImportProvider>
           <StyledContainerWithPadding>
@@ -193,7 +192,7 @@ export const RecordIndexContainer = ({
             </>
           )}
           {recordIndexViewType === ViewType.Kanban && (
-            <StyledContainerWithPadding>
+            <StyledContainerWithPadding fullHeight>
               <RecordIndexBoardContainer
                 recordBoardId={recordIndexId}
                 viewBarId={recordIndexId}
