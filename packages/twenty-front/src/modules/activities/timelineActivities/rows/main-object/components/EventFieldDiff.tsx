@@ -37,9 +37,13 @@ export const EventFieldDiff = ({
     throw new Error('fieldMetadataItem is required');
   }
 
-  const isUpdatedToEmpty = Object.values(diffRecord).every(
-    (value) => value === null || value === undefined || value === '',
-  );
+  const isValueEmpty = (value: any) =>
+    value === null || value === undefined || value === '';
+
+  const isUpdatedToEmpty =
+    isValueEmpty(diffRecord) ||
+    (typeof diffRecord === 'object' &&
+      Object.values(diffRecord).every(isValueEmpty));
 
   return (
     <RecordFieldValueSelectorContextProvider>
