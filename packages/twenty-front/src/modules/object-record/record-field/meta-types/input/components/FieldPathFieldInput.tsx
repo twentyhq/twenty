@@ -42,8 +42,7 @@ export const FieldPathFieldInput = ({
     event: MouseEvent | TouchEvent,
     newFieldPath: string[],
   ) => {
-    console.log('handleClickOutside', event, newFieldPath);
-    onClickOutside?.(() => null /* persistField(newFieldPath) */); // TODO: Implement string array saving in persistField
+    onClickOutside?.(() => persistField(newFieldPath)); // TODO: Implement string array saving in persistField
   };
 
   const handleTab = (newFieldPath: string[]) => {
