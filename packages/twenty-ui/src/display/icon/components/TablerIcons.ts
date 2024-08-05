@@ -155,6 +155,7 @@ export {
   IconTable,
   IconTag,
   IconTags,
+  IconTallymarks,
   IconTarget,
   IconTargetArrow,
   IconTextSize,

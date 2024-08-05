@@ -1,17 +1,7 @@
-// import { useJsonField } from '../../hooks/useJsonField';
-
 import { FieldPathPicker } from '@/object-record/field-path-picker/components/FieldPathPicker';
+import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useFieldPathField } from '@/object-record/record-field/meta-types/hooks/useFieldPathField';
-import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import styled from '@emotion/styled';
-import { useRef } from 'react';
 import { FieldInputEvent } from './DateFieldInput';
-
-const StyledContainer = styled.div`
-  /*   left: -1px;
-  position: absolute;
-  top: -1px; */
-`;
 
 export type FieldPathFieldInputProps = {
   onClickOutside?: FieldInputEvent;
@@ -38,31 +28,47 @@ export const FieldPathFieldInput = ({
     sourceObjectNameSingular,
   } = useFieldPathField();
 
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const persistField = usePersistField();
 
-  useRegisterInputEvents({
-    inputRef: wrapperRef,
-    onClickOutside: () => onClickOutside?.(() => {}),
-    onEnter: onEnter as any,
-    onEscape: onEscape as any,
-    onTab,
-    onShiftTab,
-    hotkeyScope,
-    inputValue: () => {},
-  });
+  const handleEnter = (newFieldPath: string[]) => {
+    onEnter?.(() => persistField(newFieldPath));
+  };
+
+  const handleEscape = (newFieldPath: string[]) => {
+    onEscape?.(() => persistField(newFieldPath));
+  };
+
+  const handleClickOutside = (
+    event: MouseEvent | TouchEvent,
+    newFieldPath: string[],
+  ) => {
+    console.log('handleClickOutside', event, newFieldPath);
+    onClickOutside?.(() => null /* persistField(newFieldPath) */); // TODO: Implement string array saving in persistField
+  };
+
+  const handleTab = (newFieldPath: string[]) => {
+    onTab?.(() => persistField(newFieldPath));
+  };
+
+  const handleShiftTab = (newFieldPath: string[]) => {
+    onShiftTab?.(() => persistField(newFieldPath));
+  };
+
+  const handleChange = (newFieldPath: string[]) => {
+    setDraftValue(newFieldPath);
+  };
 
   return (
-    <StyledContainer ref={wrapperRef}>
-      <FieldPathPicker
-        draftValue={draftValue}
-        setDraftValue={setDraftValue}
-        fieldDefinition={fieldDefinition}
-        fieldValue={fieldValue}
-        setFieldValue={setFieldValue}
-        hotkeyScope={hotkeyScope}
-        sourceObjectNameSingular={sourceObjectNameSingular}
-        onClickOutside={onClickOutside}
-      />
-    </StyledContainer>
+    <FieldPathPicker
+      value={draftValue}
+      hotkeyScope={hotkeyScope}
+      sourceObjectNameSingular={sourceObjectNameSingular}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      onShiftTab={handleShiftTab}
+      onTab={handleTab}
+      onChange={handleChange}
+    />
   );
 };
