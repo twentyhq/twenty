@@ -162,7 +162,7 @@ export class WorkspaceMigrationFieldFactory {
         false,
       );
 
-      if (migrationDifferences.length > 0) {
+      if (isMigrationNeeded) {
         const migrations: WorkspaceMigrationTableAction[] = [
           {
             name: computeObjectTargetTable(
