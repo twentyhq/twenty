@@ -42,7 +42,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledContainerWithPadding = styled.div<{ fullHeight?: boolean }>`
-  min-height: ${({ fullHeight }) => (fullHeight ? '100%' : 'auto')};
+  height: ${({ fullHeight }) => (fullHeight ? '100%' : 'auto')};
   padding-left: ${({ theme }) => theme.table.horizontalCellPadding};
 `;
 
