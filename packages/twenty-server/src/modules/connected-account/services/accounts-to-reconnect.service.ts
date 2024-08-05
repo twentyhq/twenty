@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import {
-  ConnectedAccountKeys,
-  ConnectedAccountKeyValueType,
-} from 'src/modules/connected-account/types/connected-account-key-value.type';
+  AccountsToReconnectKeyValueType,
+  AccountsToReconnectKeys,
+} from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 
 @Injectable()
 export class AccountsToReconnectService {
   constructor(
-    private readonly userVarsService: UserVarsService<ConnectedAccountKeyValueType>,
+    private readonly userVarsService: UserVarsService<AccountsToReconnectKeyValueType>,
   ) {}
 
   public async removeAccountToReconnect(
@@ -17,7 +17,7 @@ export class AccountsToReconnectService {
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    for (const key of Object.values(ConnectedAccountKeys)) {
+    for (const key of Object.values(AccountsToReconnectKeys)) {
       await this.removeAccountToReconnectByKey(
         key,
         userId,
@@ -28,7 +28,7 @@ export class AccountsToReconnectService {
   }
 
   public async removeAccountToReconnectByKey(
-    key: ConnectedAccountKeys,
+    key: AccountsToReconnectKeys,
     userId: string,
     workspaceId: string,
     connectedAccountId: string,
