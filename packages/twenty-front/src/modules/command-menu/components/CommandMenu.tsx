@@ -100,6 +100,7 @@ const StyledList = styled.div`
 `;
 
 const StyledInnerList = styled.div`
+  max-height: calc(100vh - ${({ theme }) => theme.spacing(19)});
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(1)};
