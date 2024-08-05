@@ -1,18 +1,20 @@
-import { useMemo } from 'react';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { IconCalendar } from 'twenty-ui';
-
 import { AttachmentDropdown } from '@/activities/files/components/AttachmentDropdown';
 import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
   GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useMemo, useState } from 'react';
+import { IconCalendar } from 'twenty-ui';
+
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
@@ -23,8 +25,8 @@ const StyledRow = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   justify-content: space-between;
-
   padding: ${({ theme }) => theme.spacing(2)};
+  height: 32px;
 `;
 
 const StyledLeftContent = styled.div`
@@ -57,6 +59,9 @@ const StyledLink = styled.a`
 
 export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
   const theme = useTheme();
+  const [isEditing, setIsEditing] = useState(false);
+  const [attachmentName, setAttachmentName] = useState(attachment.name);
+
   const fieldContext = useMemo(
     () => ({ recoilScopeId: attachment?.id ?? '' }),
     [attachment?.id],
@@ -70,17 +75,47 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     deleteOneAttachment(attachment.id);
   };
 
+  const { updateOneRecord: updateOneAttachment } = useUpdateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.Attachment,
+  });
+
+  const handleRename = () => {
+    setIsEditing(true);
+  };
+
+  const handleOnBlur = () => {
+    setIsEditing(false);
+    updateOneAttachment({
+      idToUpdate: attachment.id,
+      updateOneRecordInput: { name: attachmentName },
+    });
+  };
+
+  const handleOnChange = (newName: string) => {
+    setAttachmentName(newName);
+  };
+
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
       <StyledRow>
         <StyledLeftContent>
           <AttachmentIcon attachmentType={attachment.type} />
-          <StyledLink
-            href={getFileAbsoluteURI(attachment.fullPath)}
-            target="__blank"
-          >
-            {attachment.name}
-          </StyledLink>
+          {isEditing ? (
+            <TextInput
+              value={attachmentName}
+              onChange={handleOnChange}
+              onBlur={handleOnBlur}
+              autoFocus
+              fullWidth
+            />
+          ) : (
+            <StyledLink
+              href={getFileAbsoluteURI(attachment.fullPath)}
+              target="__blank"
+            >
+              {attachment.name}
+            </StyledLink>
+          )}
         </StyledLeftContent>
         <StyledRightContent>
           <StyledCalendarIconContainer>
@@ -93,6 +128,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
             onDownload={() => {
               downloadFile(attachment.fullPath, attachment.name);
             }}
+            onRename={handleRename}
           />
         </StyledRightContent>
       </StyledRow>
