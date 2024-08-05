@@ -1,4 +1,3 @@
-import { COLOR } from '@ui/theme/constants/Colors';
 import { GRAY_SCALE } from './GrayScale';
 import { RGBA } from './Rgba';
 
@@ -19,6 +18,4 @@ export const BOX_SHADOW_LIGHT = {
     GRAY_SCALE.gray100,
     0.48,
   )}, 0px 24px 56px -16px ${RGBA(GRAY_SCALE.gray100, 0.08)}`,
-
-  editable: `0px 0px 0px 3px ${RGBA(COLOR.blue, 0.1)}  `,
 };
