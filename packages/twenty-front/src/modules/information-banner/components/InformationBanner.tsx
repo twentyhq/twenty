@@ -1,5 +1,10 @@
 import { Button } from '@/ui/input/button/components/Button';
+import styled from '@emotion/styled';
 import { Banner, IconComponent } from 'twenty-ui';
+
+const StyledBanner = styled(Banner)`
+position: absolute;
+`
 
 export const InformationBanner = ({
   message,
@@ -13,7 +18,7 @@ export const InformationBanner = ({
   buttonOnClick: () => void;
 }) => {
   return (
-    <Banner>
+    <StyledBanner>
       {message}
       <Button
         variant="secondary"
@@ -23,6 +28,6 @@ export const InformationBanner = ({
         inverted
         onClick={buttonOnClick}
       />
-    </Banner>
+    </StyledBanner>
   );
 };

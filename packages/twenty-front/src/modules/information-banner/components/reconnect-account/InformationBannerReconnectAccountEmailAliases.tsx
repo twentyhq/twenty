@@ -17,8 +17,7 @@ export const InformationBannerReconnectAccountEmailAliases = () => {
 
   return (
     <InformationBanner
-      message={`Sync lost with mailbox ${accountToReconnect?.handle}. Please
-    reconnect for updates:`}
+      message={`Please reconnect your mailbox ${accountToReconnect?.handle} to update your email aliases:`}
       buttonTitle="Reconnect"
       buttonIcon={IconRefresh}
       buttonOnClick={() => triggerGoogleApisOAuth()}
