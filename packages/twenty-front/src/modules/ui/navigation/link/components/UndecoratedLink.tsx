@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 const StyledUndecoratedLink = styled(Link)`
   text-decoration: none;
-  width: 100%;
 `;
 
 type UndecoratedLinkProps = {
