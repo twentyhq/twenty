@@ -30,6 +30,15 @@ yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
+## v0.22.0 to v0.23.0
+
+Run the following commands:
+
+```
+yarn database:migrate:prod 
+yarn command:prod upgrade-0.23
+```
+
 The `yarn database:migrate:prod` command will apply the migrations to the Database.  
 The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.  
 The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.

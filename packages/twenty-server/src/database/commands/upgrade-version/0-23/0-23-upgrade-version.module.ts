@@ -21,10 +21,12 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
+import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
 import { ViewModule } from 'src/modules/view/view.module';
 
 @Module({
   imports: [
+    WorkspaceSyncMetadataCommandsModule,
     TypeOrmModule.forFeature([Workspace], 'core'),
     FileStorageModule,
     OnboardingModule,

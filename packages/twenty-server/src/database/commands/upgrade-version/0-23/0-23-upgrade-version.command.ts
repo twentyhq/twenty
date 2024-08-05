@@ -7,6 +7,7 @@ import { MigrateMessageChannelSyncStatusEnumCommand } from 'src/database/command
 import { SetWorkspaceActivationStatusCommand } from 'src/database/commands/upgrade-version/0-23/0-23-set-workspace-activation-status.command';
 import { UpdateActivitiesCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-activities.command';
 import { UpdateFileFolderStructureCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-file-folder-structure.command';
+import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
 interface UpdateTo0_23CommandOptions {
   workspaceId?: string;
@@ -18,6 +19,7 @@ interface UpdateTo0_23CommandOptions {
 })
 export class UpgradeTo0_23Command extends CommandRunner {
   constructor(
+    private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
     private readonly updateFileFolderStructureCommandOptions: UpdateFileFolderStructureCommand,
     private readonly migrateLinkFieldsToLinks: MigrateLinkFieldsToLinksCommand,
     private readonly migrateDomainNameFromTextToLinks: MigrateDomainNameFromTextToLinksCommand,
@@ -54,6 +56,10 @@ export class UpgradeTo0_23Command extends CommandRunner {
       _passedParam,
       options,
     );
+    await this.syncWorkspaceMetadataCommand.run(_passedParam, {
+      ...options,
+      force: true,
+    });
     await this.updateActivitiesCommand.run(_passedParam, options);
     await this.backfillNewOnboardingUserVarsCommand.run(_passedParam, options);
   }
