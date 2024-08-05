@@ -1,14 +1,11 @@
-import { InformationBannerAccountToReconnect } from '@/information-banner/components/InformationBannerReconnectAccount';
-
-export enum InformationBannerKeys {
-  ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS = 'ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS',
-  ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES = 'ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES',
-}
+import { InformationBannerReconnectAccountEmailAliases } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases';
+import { InformationBannerReconnectAccountInsufficientPermissions } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions';
 
 export const InformationBannerWrapper = () => {
   return (
     <>
-      <InformationBannerAccountToReconnect />
+      <InformationBannerReconnectAccountEmailAliases />
+      <InformationBannerReconnectAccountInsufficientPermissions />
     </>
   );
 };
