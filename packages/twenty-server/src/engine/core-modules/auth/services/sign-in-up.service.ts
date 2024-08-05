@@ -18,9 +18,9 @@ import {
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import {
   Workspace,
   WorkspaceActivationStatus,
@@ -40,6 +40,7 @@ export type SignInUpServiceInput = {
 };
 
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class SignInUpService {
   constructor(
     private readonly fileUploadService: FileUploadService,
@@ -48,7 +49,7 @@ export class SignInUpService {
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly workspaceService: WorkspaceService,
+    private readonly onboardingService: OnboardingService,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
   ) {}
@@ -174,6 +175,18 @@ export class SignInUpService {
     await this.userWorkspaceService.create(user.id, workspace.id);
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
+    await this.onboardingService.setOnboardingConnectAccountPending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
+    await this.onboardingService.setOnboardingCreateProfileCompletion({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
     return user;
   }
 
@@ -220,6 +233,23 @@ export class SignInUpService {
     const user = await this.userRepository.save(userToCreate);
 
     await this.userWorkspaceService.create(user.id, workspace.id);
+
+    await this.onboardingService.setOnboardingConnectAccountPending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
+    await this.onboardingService.setOnboardingCreateProfileCompletion({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
+    await this.onboardingService.setOnboardingInviteTeamPending({
+      workspaceId: workspace.id,
+      value: true,
+    });
 
     return user;
   }

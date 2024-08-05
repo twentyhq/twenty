@@ -1,4 +1,5 @@
 import {
+  FieldMetadataDefaultActor,
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
@@ -46,6 +47,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
   [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
+  [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
 };
 
 export type FieldMetadataClassValidation =

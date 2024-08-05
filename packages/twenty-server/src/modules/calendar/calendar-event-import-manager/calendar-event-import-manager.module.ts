@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -44,7 +45,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
       WorkspaceMemberWorkspaceEntity,
     ]),
     CalendarEventParticipantManagerModule,
-    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    TypeOrmModule.forFeature([FeatureFlagEntity, Workspace], 'core'),
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
     WorkspaceDataSourceModule,
     CalendarEventCleanerModule,

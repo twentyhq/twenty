@@ -114,6 +114,8 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
         ...objectMetadata,
         labelIdentifierFieldMetadataId:
           labelIdentifierFieldMetadata?.id ?? null,
+        imageIdentifierFieldMetadataId:
+          imageIdentifierFieldMetadata?.id ?? null,
       });
     }
   }
@@ -161,9 +163,12 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
       );
     }
 
-    if (imageIdentifierFieldMetadata) {
+    if (
+      imageIdentifierFieldMetadata &&
+      imageIdentifierFieldMetadata.type !== FieldMetadataType.TEXT
+    ) {
       throw new Error(
-        `Image identifier field for object ${objectMetadata.nameSingular} are not supported yet.`,
+        `Image identifier field for object ${objectMetadata.nameSingular} has invalid type ${imageIdentifierFieldMetadata.type}`,
       );
     }
   }

@@ -70,20 +70,6 @@ export class UserResolver {
 
     assert(user, 'User not found');
 
-    user.workspaces = await Promise.all(
-      user.workspaces.map(async (userWorkspace) => {
-        if (userWorkspace.workspace.logo) {
-          const workspaceLogoToken = await this.fileService.encodeFileToken({
-            workspace_id: userWorkspace.workspace.id,
-          });
-
-          userWorkspace.workspace.logo = `${userWorkspace.workspace.logo}?token=${workspaceLogoToken}`;
-        }
-
-        return userWorkspace;
-      }),
-    );
-
     return user;
   }
 
@@ -99,7 +85,8 @@ export class UserResolver {
 
     const userVarAllowList = [
       'SYNC_EMAIL_ONBOARDING_STEP',
-      'ACCOUNTS_TO_RECONNECT',
+      'ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS',
+      'ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES',
     ];
 
     const filteredMap = new Map(
@@ -112,9 +99,7 @@ export class UserResolver {
   @ResolveField(() => WorkspaceMember, {
     nullable: true,
   })
-  async workspaceMember(
-    @Parent() user: User,
-  ): Promise<WorkspaceMember | undefined> {
+  async workspaceMember(@Parent() user: User): Promise<WorkspaceMember | null> {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (workspaceMember && workspaceMember.avatarUrl) {
@@ -126,7 +111,31 @@ export class UserResolver {
       workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
     }
 
-    return workspaceMember;
+    // TODO: Fix typing disrepency between Entity and DTO
+    return workspaceMember as WorkspaceMember | null;
+  }
+
+  @ResolveField(() => [WorkspaceMember], {
+    nullable: true,
+  })
+  async workspaceMembers(@Parent() user: User): Promise<WorkspaceMember[]> {
+    const workspaceMembers = await this.userService.loadWorkspaceMembers(
+      user.defaultWorkspace,
+    );
+
+    for (const workspaceMember of workspaceMembers) {
+      if (workspaceMember.avatarUrl) {
+        const avatarUrlToken = await this.fileService.encodeFileToken({
+          workspace_member_id: workspaceMember.id,
+          workspace_id: user.defaultWorkspaceId,
+        });
+
+        workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
+      }
+    }
+
+    // TODO: Fix typing disrepency between Entity and DTO
+    return workspaceMembers as WorkspaceMember[];
   }
 
   @ResolveField(() => String, {
@@ -164,7 +173,11 @@ export class UserResolver {
       workspaceId,
     });
 
-    return paths[0];
+    const fileToken = await this.fileService.encodeFileToken({
+      workspace_id: workspaceId,
+    });
+
+    return `${paths[0]}?token=${fileToken}`;
   }
 
   @UseGuards(DemoEnvGuard)

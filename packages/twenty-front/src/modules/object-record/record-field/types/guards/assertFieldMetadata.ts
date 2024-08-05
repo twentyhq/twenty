@@ -2,6 +2,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldDefinition } from '../FieldDefinition';
 import {
+  FieldActorMetadata,
   FieldAddressMetadata,
   FieldBooleanMetadata,
   FieldCurrencyMetadata,
@@ -63,7 +64,9 @@ type AssertFieldMetadataFunction = <
                                       ? FieldRawJsonMetadata
                                       : E extends 'RICH_TEXT'
                                         ? FieldTextMetadata
-                                        : never,
+                                        : E extends 'ACTOR'
+                                          ? FieldActorMetadata
+                                          : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

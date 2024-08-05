@@ -21,6 +21,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
+import { CreatedByPreQueryHook } from 'src/engine/metadata-modules/field-metadata/query-hooks/created-by.pre-query-hook';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 import { FieldMetadataService } from './field-metadata.service';
@@ -42,7 +43,11 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         DataSourceModule,
         TypeORMModule,
       ],
-      services: [IsFieldMetadataDefaultValue, FieldMetadataService],
+      services: [
+        IsFieldMetadataDefaultValue,
+        FieldMetadataService,
+        CreatedByPreQueryHook,
+      ],
       resolvers: [
         {
           EntityClass: FieldMetadataEntity,

@@ -7,9 +7,9 @@ import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/typ
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
-  ConnectedAccountKeys,
-  ConnectedAccountKeyValueType,
-} from 'src/modules/connected-account/types/connected-account-key-value.type';
+  AccountsToReconnectKeyValueType,
+  AccountsToReconnectKeys,
+} from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import {
   MessageChannelSyncStage,
@@ -24,7 +24,7 @@ export class MessagingChannelSyncStatusService {
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly userVarsService: UserVarsService<ConnectedAccountKeyValueType>,
+    private readonly userVarsService: UserVarsService<AccountsToReconnectKeyValueType>,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -203,7 +203,7 @@ export class MessagingChannelSyncStatusService {
       (await this.userVarsService.get({
         userId,
         workspaceId,
-        key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
+        key: AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       })) ?? [];
 
     if (accountsToReconnect.includes(connectedAccountId)) {
@@ -215,7 +215,7 @@ export class MessagingChannelSyncStatusService {
     await this.userVarsService.set({
       userId,
       workspaceId,
-      key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
+      key: AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       value: accountsToReconnect,
     });
   }

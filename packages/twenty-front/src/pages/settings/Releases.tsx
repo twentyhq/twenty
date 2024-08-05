@@ -51,6 +51,14 @@ const StyledReleaseContainer = styled.div`
     margin: ${({ theme }) => theme.spacing(6)} 0px 0px;
     text-align: justify;
   }
+
+  li {
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
+
+  li strong {
+    color: ${({ theme }) => theme.font.color.primary};
+  }
 `;
 
 const StyledReleaseHeader = styled.h2`

@@ -3,7 +3,7 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { JwtData } from 'src/engine/core-modules/auth/types/jwt-data.type';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
@@ -45,7 +45,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
       return next();
     }
 
-    let data: JwtData;
+    let data: AuthContext;
 
     try {
       data = await this.tokenService.validateToken(req);
@@ -54,6 +54,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
       );
 
       req.user = data.user;
+      req.apiKey = data.apiKey;
       req.workspace = data.workspace;
       req.workspaceId = data.workspace.id;
       req.cacheVersion = cacheVersion;

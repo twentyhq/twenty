@@ -34,6 +34,7 @@ export const buildMigrationsForCustomObjectRelations = (
         }),
         columnType: 'uuid',
         isNullable: true,
+        defaultValue: null,
       } satisfies WorkspaceMigrationColumnCreate,
     ],
   },
@@ -64,6 +65,7 @@ export const buildMigrationsForCustomObjectRelations = (
         }),
         columnType: 'uuid',
         isNullable: true,
+        defaultValue: null,
       } satisfies WorkspaceMigrationColumnCreate,
     ],
   },
@@ -94,6 +96,7 @@ export const buildMigrationsForCustomObjectRelations = (
         }),
         columnType: 'uuid',
         isNullable: true,
+        defaultValue: null,
       } satisfies WorkspaceMigrationColumnCreate,
     ],
   },
@@ -124,6 +127,7 @@ export const buildMigrationsForCustomObjectRelations = (
         }),
         columnType: 'uuid',
         isNullable: true,
+        defaultValue: null,
       } satisfies WorkspaceMigrationColumnCreate,
     ],
   },
@@ -154,6 +158,7 @@ export const buildMigrationsForCustomObjectRelations = (
         }),
         columnType: 'uuid',
         isNullable: true,
+        defaultValue: null,
       } satisfies WorkspaceMigrationColumnCreate,
     ],
   },
@@ -184,6 +189,7 @@ export const buildMigrationsForCustomObjectRelations = (
         }),
         columnType: 'uuid',
         isNullable: true,
+        defaultValue: null,
       } satisfies WorkspaceMigrationColumnCreate,
     ],
   },
@@ -202,29 +208,4 @@ export const buildMigrationsForCustomObjectRelations = (
       },
     ],
   },
-  {
-    name: computeObjectTargetTable(createdObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: 'position',
-        columnType: 'float',
-        isNullable: true,
-      } satisfies WorkspaceMigrationColumnCreate,
-    ],
-  } satisfies WorkspaceMigrationTableAction,
-  // This is temporary until we implement mainIdentifier
-  {
-    name: computeObjectTargetTable(createdObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: 'name',
-        columnType: 'text',
-        defaultValue: "'Untitled'",
-      } satisfies WorkspaceMigrationColumnCreate,
-    ],
-  } satisfies WorkspaceMigrationTableAction,
 ];

@@ -1,5 +1,7 @@
 import { EntityManager } from 'typeorm';
 
+import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
+
 const tableName = 'company';
 
 export const DEV_SEED_COMPANY_IDS = {
@@ -38,6 +40,9 @@ export const seedCompanies = async (
       'position',
       'tagline',
       'workPolicy',
+      'createdBySource',
+      'createdByWorkspaceMemberId',
+      'createdByName',
     ])
     .orIgnore()
     .values([
@@ -54,6 +59,9 @@ export const seedCompanies = async (
         position: 1,
         tagline: "Linkedin's tagline",
         workPolicy: ['ON_SITE'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.FACEBOOK,
@@ -68,6 +76,9 @@ export const seedCompanies = async (
         position: 2,
         tagline: "Facebook's tagline",
         workPolicy: ['REMOTE_WORK'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.QONTO,
@@ -82,6 +93,9 @@ export const seedCompanies = async (
         position: 3,
         tagline: "Qonto's tagline",
         workPolicy: ['ON_SITE'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.MICROSOFT,
@@ -96,6 +110,9 @@ export const seedCompanies = async (
         position: 4,
         tagline: "Microsoft's tagline",
         workPolicy: ['ON_SITE', 'HYBRID'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.AIRBNB,
@@ -110,6 +127,9 @@ export const seedCompanies = async (
         position: 5,
         tagline: "Airbnb's tagline",
         workPolicy: ['ON_SITE'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.GOOGLE,
@@ -124,6 +144,9 @@ export const seedCompanies = async (
         position: 6,
         tagline: "Google's tagline",
         workPolicy: ['HYBRID', 'REMOTE_WORK'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.NETFLIX,
@@ -138,6 +161,9 @@ export const seedCompanies = async (
         position: 7,
         tagline: "Netflix's tagline",
         workPolicy: ['REMOTE_WORK'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.LIBEO,
@@ -152,6 +178,9 @@ export const seedCompanies = async (
         position: 8,
         tagline: "Libeo's tagline",
         workPolicy: ['HYBRID'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.CLAAP,
@@ -166,6 +195,9 @@ export const seedCompanies = async (
         position: 9,
         tagline: "Claap's tagline",
         workPolicy: ['ON_SITE', 'REMOTE_WORK'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.HASURA,
@@ -180,6 +212,9 @@ export const seedCompanies = async (
         position: 10,
         tagline: "Hasura's tagline",
         workPolicy: ['HYBRID'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.WEWORK,
@@ -194,6 +229,9 @@ export const seedCompanies = async (
         position: 11,
         tagline: "Wework's tagline",
         workPolicy: ['ON_SITE'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.SAMSUNG,
@@ -208,6 +246,9 @@ export const seedCompanies = async (
         position: 12,
         tagline: "Samsung's tagline",
         workPolicy: ['HYBRID'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Apple',
       },
       {
         id: DEV_SEED_COMPANY_IDS.ALGOLIA,
@@ -222,6 +263,9 @@ export const seedCompanies = async (
         position: 13,
         tagline: "Algolia's tagline",
         workPolicy: ['ON_SITE'],
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: null,
+        createdByName: '',
       },
     ])
     .execute();
