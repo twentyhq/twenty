@@ -27,7 +27,7 @@ export class AccountsToReconnectService {
     }
   }
 
-  public async removeAccountToReconnectByKey(
+  private async removeAccountToReconnectByKey(
     key: AccountsToReconnectKeys,
     userId: string,
     workspaceId: string,
