@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
+import { BackfillNewOnboardingUserVarsCommand } from 'src/database/commands/upgrade-version/0-23/0-23-backfill-new-onboarding-user-vars';
 import { MigrateDomainNameFromTextToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-domain-to-links.command';
 import { MigrateLinkFieldsToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-link-fields-to-links.command';
 import { MigrateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-message-channel-sync-status-enum.command';
@@ -12,6 +13,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -30,6 +32,7 @@ import { ViewModule } from 'src/modules/view/view.module';
   imports: [
     WorkspaceManagerModule,
     DataSourceModule,
+    OnboardingModule,
     TypeORMModule,
     TypeOrmModule.forFeature(
       [Workspace, BillingSubscription, FeatureFlagEntity],
@@ -57,6 +60,7 @@ import { ViewModule } from 'src/modules/view/view.module';
     MigrateMessageChannelSyncStatusEnumCommand,
     SetWorkspaceActivationStatusCommand,
     UpdateActivitiesCommand,
+    BackfillNewOnboardingUserVarsCommand,
   ],
 })
 export class UpgradeVersionModule {}

@@ -9,7 +9,6 @@ import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-wo
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { UpgradeTo0_23CommandModule } from 'src/database/commands/upgrade-version/0-23/0-23-upgrade-version.module';
 import { UpgradeVersionModule } from 'src/database/commands/upgrade-version/upgrade-version.module';
-import { WorkspaceAddTotalCountCommand } from 'src/database/commands/workspace-add-total-count.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -51,7 +50,6 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
   providers: [
     DataSeedWorkspaceCommand,
     DataSeedDemoWorkspaceCommand,
-    WorkspaceAddTotalCountCommand,
     ConfirmationQuestion,
     StartDataSeedDemoWorkspaceCronCommand,
     StopDataSeedDemoWorkspaceCronCommand,

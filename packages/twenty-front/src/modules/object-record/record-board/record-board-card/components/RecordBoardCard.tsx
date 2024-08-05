@@ -245,6 +245,7 @@ export const RecordBoardCard = () => {
           )}
           <StyledCheckboxContainer className="checkbox-container">
             <Checkbox
+              hoverable
               checked={isCurrentCardSelected}
               onChange={() => setIsCurrentCardSelected(!isCurrentCardSelected)}
               variant={CheckboxVariant.Secondary}

@@ -22,7 +22,9 @@ export const EventRowActivity = ({
   authorFullName,
   objectNameSingular,
 }: EventRowActivityProps & { objectNameSingular: CoreObjectNameSingular }) => {
-  const [, eventAction] = event.name.split('.');
+  const [eventLinkedObject, eventAction] = event.name.split('.');
+
+  const eventObject = eventLinkedObject.replace('linked-', '');
 
   if (!event.linkedRecordId) {
     throw new Error('Could not find linked record id for event');
@@ -39,7 +41,9 @@ export const EventRowActivity = ({
   return (
     <>
       <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
-      <StyledEventRowItemAction>{eventAction}</StyledEventRowItemAction>
+      <StyledEventRowItemAction>
+        {`${eventAction} a related ${eventObject}`}
+      </StyledEventRowItemAction>
       {activityInStore ? (
         <StyledLinkedActivity
           onClick={() => openActivityRightDrawer(event.linkedRecordId)}

@@ -15,7 +15,7 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { JwtData } from 'src/engine/core-modules/auth/types/jwt-data.type';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
 import { useGraphQLErrorHandlerHook } from 'src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -65,7 +65,7 @@ export class GraphQLConfigService
       autoSchemaFile: true,
       include: [CoreEngineModule],
       conditionalSchema: async (context) => {
-        let user: User | undefined;
+        let user: User | null | undefined;
         let workspace: Workspace | undefined;
 
         try {
@@ -136,7 +136,7 @@ export class GraphQLConfigService
 
   async createSchema(
     context: YogaDriverServerContext<'express'> & YogaInitialContext,
-    data: JwtData,
+    data: AuthContext,
   ): Promise<GraphQLSchemaWithContext<YogaDriverServerContext<'express'>>> {
     // Create a new contextId for each request
     const contextId = ContextIdFactory.create();
@@ -155,9 +155,6 @@ export class GraphQLConfigService
       },
     );
 
-    return await workspaceFactory.createGraphQLSchema(
-      data.workspace.id,
-      data.user?.id,
-    );
+    return await workspaceFactory.createGraphQLSchema(data);
   }
 }

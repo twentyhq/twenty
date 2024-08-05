@@ -35,6 +35,10 @@ import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
+const SEARCH_BAR_HEIGHT = 56;
+const SEARCH_BAR_PADDING = 3;
+const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
+
 const StyledCommandMenu = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border-left: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -59,12 +63,12 @@ const StyledInputContainer = styled.div`
 
   display: flex;
   font-size: ${({ theme }) => theme.font.size.lg};
-  height: 56px;
+  height: ${SEARCH_BAR_HEIGHT}px;
   margin: 0;
   outline: none;
   position: relative;
 
-  padding: 0 ${({ theme }) => theme.spacing(3)};
+  padding: 0 ${({ theme }) => theme.spacing(SEARCH_BAR_PADDING)};
 `;
 
 const StyledInput = styled.input`
@@ -99,7 +103,13 @@ const StyledList = styled.div`
   transition-property: height;
 `;
 
-const StyledInnerList = styled.div`
+const StyledInnerList = styled.div<{ isMobile: boolean }>`
+  max-height: ${({ isMobile }) =>
+    isMobile
+      ? `calc(100dvh - ${SEARCH_BAR_HEIGHT}px - ${
+          SEARCH_BAR_PADDING * 2
+        }px - ${MOBILE_NAVIGATION_BAR_HEIGHT}px)`
+      : `calc(100dvh - ${SEARCH_BAR_HEIGHT}px - ${SEARCH_BAR_PADDING * 2}px)`};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(1)};
@@ -340,7 +350,7 @@ export const CommandMenu = () => {
           </StyledInputContainer>
           <StyledList>
             <ScrollWrapper>
-              <StyledInnerList>
+              <StyledInnerList isMobile={isMobile}>
                 <SelectableList
                   selectableListId="command-menu-list"
                   selectableItemIdArray={selectableItemIds}

@@ -1,8 +1,4 @@
-export type WorkflowCodeSettingsType = {
-  serverlessFunctionId: string;
-};
-
-export type WorkflowSettingsType = {
+type WorkflowBaseSettingsType = {
   errorHandlingOptions: {
     retryOnFailure: {
       value: boolean;
@@ -11,4 +7,8 @@ export type WorkflowSettingsType = {
       value: boolean;
     };
   };
-} & WorkflowCodeSettingsType;
+};
+
+export type WorkflowCodeSettingsType = WorkflowBaseSettingsType & {
+  serverlessFunctionId: string;
+};

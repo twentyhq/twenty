@@ -1,3 +1,7 @@
+import {
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -39,6 +43,19 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   position: number | null;
+
+  @WorkspaceField({
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: 'Created by',
+    icon: 'IconCreativeCommonsSa',
+    description: 'The creator of the record',
+    defaultValue: {
+      source: `'${FieldActorSource.MANUAL}'`,
+      name: "''",
+    },
+  })
+  createdBy: ActorMetadata;
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.activityTargets,

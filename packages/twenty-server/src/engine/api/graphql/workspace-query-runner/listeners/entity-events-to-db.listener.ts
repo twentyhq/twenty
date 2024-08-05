@@ -28,6 +28,7 @@ export class EntityEventsToDbListener {
     payload.properties.diff = objectRecordChangedValues(
       payload.properties.before,
       payload.properties.after,
+      payload.properties.updatedFields,
       payload.objectMetadata,
     );
 

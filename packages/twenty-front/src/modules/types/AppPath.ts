@@ -21,8 +21,10 @@ export enum AppPath {
   RecordIndexPage = '/objects/:objectNamePlural',
   RecordShowPage = '/object/:objectNameSingular/:objectRecordId',
 
-  SettingsCatchAll = `/settings/*`,
-  DevelopersCatchAll = `/developers/*`,
+  Settings = `settings`,
+  SettingsCatchAll = `/${Settings}/*`,
+  Developers = `developers`,
+  DevelopersCatchAll = `/${Developers}/*`,
 
   // Impersonate
   Impersonate = '/impersonate/:userId',

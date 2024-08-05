@@ -2,8 +2,9 @@ import React from 'react';
 
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui';
+import { isDefined, useIcons } from 'twenty-ui';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { ObjectMetadataNavItemsSkeletonLoader } from '@/object-metadata/components/ObjectMetadataNavItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
@@ -18,6 +19,8 @@ import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 
 export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
+  const currentUser = useRecoilValue(currentUserState);
+
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
@@ -33,7 +36,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const loading = useIsPrefetchLoading();
 
-  if (loading) {
+  if (loading && isDefined(currentUser)) {
     return <ObjectMetadataNavItemsSkeletonLoader />;
   }
 
