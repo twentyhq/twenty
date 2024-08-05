@@ -3,6 +3,7 @@ export {
   Icon123,
   IconAlertCircle,
   IconAlertTriangle,
+  IconApi,
   IconApps,
   IconArchive,
   IconArchiveOff,
@@ -51,7 +52,9 @@ export {
   IconColorSwatch,
   IconMessageCircle as IconComment,
   IconCopy,
+  IconCreativeCommonsSa,
   IconCreditCard,
+  IconCsv,
   IconCurrencyBaht,
   IconCurrencyDirham,
   IconCurrencyDollar,
@@ -85,8 +88,8 @@ export {
   IconFilter,
   IconFilterOff,
   IconFocusCentered,
-  IconFunction,
   IconForbid,
+  IconFunction,
   IconGripVertical,
   IconH1,
   IconH2,
@@ -169,9 +172,7 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX,
-  IconCreativeCommonsSa,
-  IconApi,
-  IconCsv,
+  IconX
 } from '@tabler/icons-react';
 export type { TablerIconsProps } from '@tabler/icons-react';
+
