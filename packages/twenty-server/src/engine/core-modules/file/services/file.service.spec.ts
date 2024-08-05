@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 
@@ -22,7 +22,7 @@ describe('FileService', () => {
           useValue: {},
         },
         {
-          provide: TokenService,
+          provide: JwtWrapperService,
           useValue: {},
         },
       ],
