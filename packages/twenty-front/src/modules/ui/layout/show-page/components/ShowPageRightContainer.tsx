@@ -40,6 +40,9 @@ const StyledTabListContainer = styled.div`
   height: 40px;
 `;
 
+const StyledFieldsBox = styled.div`
+  //style fields acc to figma
+`;
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
 type ShowPageRightContainerProps = {
@@ -151,7 +154,7 @@ export const ShowPageRightContainer = ({
       hide: !shouldDisplayCalendarTab,
     },
   ];
-
+  //this renders BlockEditor
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case 'timeline':
@@ -173,7 +176,8 @@ export const ShowPageRightContainer = ({
           )
         );
       case 'fields':
-        return fieldsBox;
+        return <StyledFieldsBox>{fieldsBox}</StyledFieldsBox>;
+
       case 'tasks':
         return <ObjectTasks targetableObject={targetableObject} />;
       case 'notes':
@@ -188,10 +192,9 @@ export const ShowPageRightContainer = ({
         return <></>;
     }
   };
-
+  //check if this is used for rightcontainer fields
   return (
     <StyledShowPageRightContainer isMobile={isMobile}>
-      {summaryCard}
       <StyledTabListContainer>
         <TabList
           loading={loading}
@@ -199,6 +202,8 @@ export const ShowPageRightContainer = ({
           tabs={tabs}
         />
       </StyledTabListContainer>
+      {summaryCard}
+
       {renderActiveTabContent()}
     </StyledShowPageRightContainer>
   );

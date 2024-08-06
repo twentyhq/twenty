@@ -155,6 +155,7 @@ export const RecordShowContainer = ({
 
   const summaryCard = isDefined(recordFromStore) ? (
     <ShowPageSummaryCard
+      isCompact={isInRightDrawer}
       id={objectRecordId}
       logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
@@ -316,6 +317,7 @@ export const RecordShowContainer = ({
         emails
         isInRightDrawer={isInRightDrawer}
         summaryCard={isMobile ? summaryCard : <></>}
+        //introduce new summarycard for right container
         fieldsBox={fieldsBox}
         loading={isPrefetchLoading || loading || recordLoading}
       />

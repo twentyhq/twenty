@@ -20,40 +20,43 @@ type ShowPageSummaryCardProps = {
   onUploadPicture?: (file: File) => void;
   title: ReactNode;
   loading: boolean;
+  isCompact: boolean;
 };
 
-export const StyledShowPageSummaryCard = styled.div`
+export const StyledShowPageSummaryCard = styled.div<{ isCompact: boolean }>`
   align-items: center;
   display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  justify-content: center;
+  flex-direction: ${({ isCompact }) => (isCompact ? 'row' : 'column')};
+  gap: ${({ theme, isCompact }) =>
+    isCompact ? theme.spacing(2) : theme.spacing(3)};
+  justify-content: ${({ isCompact }) => (isCompact ? 'flex-start' : 'center')};
   padding: ${({ theme }) => theme.spacing(4)};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  height: 127px;
+  height: ${({ isCompact }) => (isCompact ? '77px' : '127px')};
+  box-sizing: border-box;
 `;
 
-const StyledInfoContainer = styled.div`
-  align-items: center;
+const StyledInfoContainer = styled.div<{ isCompact: boolean }>`
+  align-items: ${({ isCompact }) => (isCompact ? 'flex-start' : 'center')};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;
 
-const StyledDate = styled.div`
+const StyledDate = styled.div<{ isCompact: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
+  padding-left: ${({ theme, isCompact }) => (isCompact ? theme.spacing(2) : 0)};
 `;
 
-const StyledTitle = styled.div`
+const StyledTitle = styled.div<{ isCompact: boolean }>`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  justify-content: center;
-
-  width: 100%;
+  justify-content: ${({ isCompact }) => (isCompact ? 'flex-start' : 'center')};
+  width: ${({ isCompact }) => (isCompact ? '' : '100%')};
 `;
 
 const StyledAvatarWrapper = styled.div`
@@ -97,13 +100,14 @@ export const ShowPageSummaryCard = ({
   onUploadPicture,
   title,
   loading,
+  isCompact = false,
 }: ShowPageSummaryCardProps) => {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';
   const dateElementId = `date-id-${uuidV4()}`;
   const inputFileRef = useRef<HTMLInputElement>(null);
-
+  console.log(isCompact);
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) onUploadPicture?.(e.target.files[0]);
   };
@@ -114,13 +118,13 @@ export const ShowPageSummaryCard = ({
 
   if (loading)
     return (
-      <StyledShowPageSummaryCard>
+      <StyledShowPageSummaryCard isCompact={isCompact}>
         <StyledShowPageSummaryCardSkeletonLoader />
       </StyledShowPageSummaryCard>
     );
 
   return (
-    <StyledShowPageSummaryCard>
+    <StyledShowPageSummaryCard isCompact={isCompact}>
       <StyledAvatarWrapper>
         <Avatar
           avatarUrl={logoOrAvatar}
@@ -136,10 +140,10 @@ export const ShowPageSummaryCard = ({
           type="file"
         />
       </StyledAvatarWrapper>
-      <StyledInfoContainer>
-        <StyledTitle>{title}</StyledTitle>
+      <StyledInfoContainer isCompact={isCompact}>
+        <StyledTitle isCompact={isCompact}>{title}</StyledTitle>
         {beautifiedCreatedAt && (
-          <StyledDate id={dateElementId}>
+          <StyledDate isCompact={isCompact} id={dateElementId}>
             Added {beautifiedCreatedAt}
           </StyledDate>
         )}
