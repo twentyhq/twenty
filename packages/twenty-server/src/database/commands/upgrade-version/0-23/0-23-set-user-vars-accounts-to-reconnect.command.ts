@@ -105,6 +105,12 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
           try {
             const connectedAccountsInFailedInsufficientPermissions =
               await connectedAccountRepository.find({
+                select: {
+                  id: true,
+                  accountOwner: {
+                    userId: true,
+                  },
+                },
                 where: [
                   {
                     messageChannels: {
@@ -119,6 +125,9 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
                     },
                   },
                 ],
+                relations: {
+                  accountOwner: true,
+                },
               });
 
             for (const connectedAccount of connectedAccountsInFailedInsufficientPermissions) {
