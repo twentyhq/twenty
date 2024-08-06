@@ -116,6 +116,7 @@ export class MessagingFullMessageListFetchService {
           error: {
             code: error.response?.status,
             reason: error.response?.data?.error,
+            message: error.message,
           },
         };
       }
