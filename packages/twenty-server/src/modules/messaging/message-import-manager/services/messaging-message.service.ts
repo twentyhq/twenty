@@ -133,8 +133,6 @@ export class MessagingMessageService {
         },
         transactionManager,
       );
-
-      continue;
     }
 
     return messageExternalIdsAndIdsMap;
