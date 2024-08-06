@@ -4,6 +4,7 @@ import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/worksp
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/attachment-query-result-getter.handler';
+import { NoteQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/note-query-result-getter.handler';
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -24,6 +25,7 @@ export class QueryResultGettersFactory {
         'workspaceMember',
         new WorkspaceMemberQueryResultGetterHandler(this.fileService),
       ],
+      ['note', new NoteQueryResultGetterHandler(this.fileService)],
     ]);
   }
 
