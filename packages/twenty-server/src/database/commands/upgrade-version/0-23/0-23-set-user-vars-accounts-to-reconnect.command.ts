@@ -5,13 +5,13 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
-import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CalendarChannelSyncStatus } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 interface SetUserVarsAccountsToReconnectCommandOptions {
@@ -27,13 +27,12 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
     SetUserVarsAccountsToReconnectCommand.name,
   );
   constructor(
-    private readonly userVarsService: UserVarsService,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
+    private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {
     super();
   }
@@ -89,17 +88,6 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
               'connectedAccount',
             );
 
-          const userVarsServiceInstance =
-            await this.loadServiceWithWorkspaceContext.load(
-              this.userVarsService,
-              workspaceId,
-            );
-
-          const queryRunner = workspaceDataSource.createQueryRunner();
-
-          await queryRunner.connect();
-          await queryRunner.startTransaction();
-
           try {
             const connectedAccountsInFailedInsufficientPermissions =
               await connectedAccountRepository.find({
@@ -120,17 +108,25 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
               });
 
             for (const connectedAccount of connectedAccountsInFailedInsufficientPermissions) {
+              try {
+                await this.accountsToReconnectService.addAccountToReconnectByKey(
+                  AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
+                  connectedAccount.accountOwner.userId,
+                  workspaceId,
+                  connectedAccount.id,
+                );
+              } catch (error) {
+                this.logger.error(
+                  `Failed to add account to reconnect for workspace ${workspaceId}: ${error.message}`,
+                );
+                throw error;
+              }
             }
-
-            await queryRunner.commitTransaction();
           } catch (error) {
-            await queryRunner.rollbackTransaction();
             this.logger.log(
               chalk.red(`Running command on workspace ${workspaceId} failed`),
             );
             throw error;
-          } finally {
-            await queryRunner.release();
           }
         }
 
