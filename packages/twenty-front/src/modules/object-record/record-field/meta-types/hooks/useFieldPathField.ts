@@ -1,7 +1,6 @@
-import { useContext } from 'react';
-import { SetterOrUpdater, useRecoilState, useRecoilValue } from 'recoil';
+import { useContext, useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import {
   FieldFieldPathValue,
   FieldTextValue,
@@ -39,16 +38,11 @@ export const useFieldPathField = () => {
     }),
   );
 
-  const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldFieldPathValue>(`${entityId}-${fieldName}`);
-
-  const draftValue = useRecoilValue(getDraftValueSelector());
+  const [draftValue, setDraftValue] = useState<FieldFieldPathDraftValue>();
 
   return {
-    draftValue: draftValue as FieldFieldPathDraftValue | undefined,
-    setDraftValue: setDraftValue as SetterOrUpdater<
-      FieldFieldPathDraftValue | undefined
-    >,
+    draftValue,
+    setDraftValue,
     fieldDefinition,
     fieldValue,
     setFieldValue,
