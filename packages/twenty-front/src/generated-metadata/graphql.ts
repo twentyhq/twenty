@@ -346,6 +346,7 @@ export type FieldConnection = {
 export enum FieldMetadataType {
   Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
+  Actor = 'ACTOR',
   Currency = 'CURRENCY',
   Date = 'DATE',
   DateTime = 'DATE_TIME',
@@ -1303,6 +1304,7 @@ export type User = {
   updatedAt: Scalars['DateTime']['output'];
   userVars: Scalars['JSONObject']['output'];
   workspaceMember?: Maybe<WorkspaceMember>;
+  workspaceMembers?: Maybe<Array<WorkspaceMember>>;
   workspaces: Array<UserWorkspace>;
 };
 

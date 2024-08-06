@@ -1,30 +1,32 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
+import { WorkspaceHealthFixKind } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-fix-kind.interface';
 import { WorkspaceHealthIssue } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 import {
   WorkspaceHealthMode,
   WorkspaceHealthOptions,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
-import { WorkspaceHealthFixKind } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-fix-kind.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ObjectMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/object-metadata-health.service';
-import { FieldMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/field-metadata-health.service';
-import { RelationMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/relation-metadata.health.service';
-import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
-import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
+import { FieldMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/field-metadata-health.service';
+import { ObjectMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/object-metadata-health.service';
+import { RelationMetadataHealthService } from 'src/engine/workspace-manager/workspace-health/services/relation-metadata.health.service';
 import { WorkspaceFixService } from 'src/engine/workspace-manager/workspace-health/services/workspace-fix.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 
 @Injectable()
 export class WorkspaceHealthService {
+  private readonly logger = new Logger(WorkspaceHealthService.name);
+
   constructor(
     @InjectDataSource('metadata')
     private readonly metadataDataSource: DataSource,
@@ -188,7 +190,7 @@ export class WorkspaceHealthService {
       );
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      console.error('Fix of issues failed with:', error);
+      this.logger.error('Fix of issues failed with:', error);
     } finally {
       await queryRunner.release();
     }

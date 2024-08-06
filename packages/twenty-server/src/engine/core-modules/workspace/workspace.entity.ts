@@ -21,6 +21,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { User } from 'src/engine/core-modules/user/user.entity';
 
 export enum WorkspaceActivationStatus {
+  ONGOING_CREATION = 'ONGOING_CREATION',
   PENDING_CREATION = 'PENDING_CREATION',
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',

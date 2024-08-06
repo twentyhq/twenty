@@ -5,7 +5,6 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useRecordIdsFromFindManyCacheRootQuery';
@@ -37,10 +36,6 @@ export const useRecordShowPagePagination = (
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
-  const recordGqlFields = generateDepthOneRecordGqlFields({
-    objectMetadataItem,
-  });
-
   const { filter, orderBy } =
     useQueryVariablesFromActiveFieldsOfViewOrDefaultView({
       objectMetadataItem,
@@ -55,7 +50,7 @@ export const useRecordShowPagePagination = (
       orderBy,
       limit: 1,
       objectNameSingular,
-      recordGqlFields,
+      recordGqlFields: { id: true },
     });
 
   const cursorFromRequest = currentRecordsPageInfo?.endCursor;
@@ -77,7 +72,7 @@ export const useRecordShowPagePagination = (
           }
         : undefined,
       objectNameSingular,
-      recordGqlFields,
+      recordGqlFields: { id: true },
       onCompleted: (_, pagination) => {
         setTotalCountBefore(pagination?.totalCount ?? 0);
       },
@@ -97,7 +92,7 @@ export const useRecordShowPagePagination = (
           }
         : undefined,
       objectNameSingular,
-      recordGqlFields,
+      recordGqlFields: { id: true },
       onCompleted: (_, pagination) => {
         setTotalCountAfter(pagination?.totalCount ?? 0);
       },

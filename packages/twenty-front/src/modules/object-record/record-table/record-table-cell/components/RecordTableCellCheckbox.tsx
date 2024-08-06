@@ -36,7 +36,7 @@ export const RecordTableCellCheckbox = () => {
   return (
     <RecordTableTd isSelected={isSelected} hasRightBorder={false}>
       <StyledContainer onClick={handleClick}>
-        <Checkbox checked={currentRowSelected} />
+        <Checkbox hoverable checked={currentRowSelected} />
       </StyledContainer>
     </RecordTableTd>
   );

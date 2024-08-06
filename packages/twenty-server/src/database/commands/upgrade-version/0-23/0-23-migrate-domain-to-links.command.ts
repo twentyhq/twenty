@@ -25,7 +25,7 @@ interface MigrateDomainNameFromTextToLinksCommandOptions {
 }
 
 @Command({
-  name: 'migrate-0.23:migrate-domain-standard-field-to-links',
+  name: 'upgrade-0.23:migrate-domain-standard-field-to-links',
   description:
     'Migrating field domainName of deprecated type TEXT to type LINKS',
 })

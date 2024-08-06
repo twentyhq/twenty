@@ -18654,7 +18654,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.merge@npm:^4.6.7":
+"@types/lodash.merge@npm:^4.6.7, @types/lodash.merge@npm:^4.6.9":
   version: 4.6.9
   resolution: "@types/lodash.merge@npm:4.6.9"
   dependencies:
@@ -49145,6 +49145,7 @@ __metadata:
     "@types/lodash.isempty": "npm:^4.4.7"
     "@types/lodash.isequal": "npm:^4.5.8"
     "@types/lodash.isobject": "npm:^3.0.7"
+    "@types/lodash.merge": "npm:^4.6.9"
     "@types/lodash.omit": "npm:^4.5.9"
     "@types/lodash.omitby": "npm:^4.6.9"
     "@types/lodash.snakecase": "npm:^4.1.7"
@@ -49161,6 +49162,7 @@ __metadata:
     langchain: "npm:^0.2.6"
     langfuse-langchain: "npm:^3.11.2"
     lodash.differencewith: "npm:^4.5.0"
+    lodash.merge: "npm:^4.6.2"
     lodash.omitby: "npm:^4.6.0"
     lodash.uniq: "npm:^4.5.0"
     lodash.uniqby: "npm:^4.7.0"

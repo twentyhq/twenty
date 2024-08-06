@@ -6,13 +6,13 @@ import {
   Injectable,
 } from '@nestjs/common';
 
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
 export class FilePathGuard implements CanActivate {
   constructor(
-    private readonly tokenService: TokenService,
+    private readonly jwtWrapperService: JwtWrapperService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
@@ -22,11 +22,11 @@ export class FilePathGuard implements CanActivate {
 
     if (query && query['token']) {
       const payloadToDecode = query['token'];
-      const decodedPayload = await this.tokenService.decodePayload(
+      const decodedPayload = await this.jwtWrapperService.decode(
         payloadToDecode,
         {
           secret: this.environmentService.get('FILE_TOKEN_SECRET'),
-        },
+        } as any,
       );
 
       const expirationDate = decodedPayload?.['expiration_date'];

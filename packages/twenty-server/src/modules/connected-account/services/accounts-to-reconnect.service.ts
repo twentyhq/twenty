@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import {
-  ConnectedAccountKeys,
-  ConnectedAccountKeyValueType,
-} from 'src/modules/connected-account/types/connected-account-key-value.type';
+  AccountsToReconnectKeyValueType,
+  AccountsToReconnectKeys,
+} from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 
 @Injectable()
 export class AccountsToReconnectService {
   constructor(
-    private readonly userVarsService: UserVarsService<ConnectedAccountKeyValueType>,
+    private readonly userVarsService: UserVarsService<AccountsToReconnectKeyValueType>,
   ) {}
 
   public async removeAccountToReconnect(
@@ -17,10 +17,26 @@ export class AccountsToReconnectService {
     workspaceId: string,
     connectedAccountId: string,
   ) {
+    for (const key of Object.values(AccountsToReconnectKeys)) {
+      await this.removeAccountToReconnectByKey(
+        key,
+        userId,
+        workspaceId,
+        connectedAccountId,
+      );
+    }
+  }
+
+  private async removeAccountToReconnectByKey(
+    key: AccountsToReconnectKeys,
+    userId: string,
+    workspaceId: string,
+    connectedAccountId: string,
+  ) {
     const accountsToReconnect = await this.userVarsService.get({
       userId,
       workspaceId,
-      key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
+      key,
     });
 
     if (!accountsToReconnect) {
@@ -35,7 +51,7 @@ export class AccountsToReconnectService {
       await this.userVarsService.delete({
         userId,
         workspaceId,
-        key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
+        key,
       });
 
       return;
@@ -44,7 +60,7 @@ export class AccountsToReconnectService {
     await this.userVarsService.set({
       userId,
       workspaceId,
-      key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
+      key,
       value: updatedAccountsToReconnect,
     });
   }

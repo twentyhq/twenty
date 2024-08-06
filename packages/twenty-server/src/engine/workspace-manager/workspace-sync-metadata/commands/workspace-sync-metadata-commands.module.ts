@@ -31,5 +31,6 @@ import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.ser
     ConvertRecordPositionsToIntegers,
     SyncWorkspaceLoggerService,
   ],
+  exports: [SyncWorkspaceMetadataCommand],
 })
 export class WorkspaceSyncMetadataCommandsModule {}

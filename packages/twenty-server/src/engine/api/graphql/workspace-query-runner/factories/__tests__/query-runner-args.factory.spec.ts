@@ -19,7 +19,7 @@ describe('QueryRunnerArgsFactory', () => {
       { name: 'testNumber', type: FieldMetadataType.NUMBER },
     ] as FieldMetadataInterface[],
     objectMetadataItem: { isCustom: true, nameSingular: 'test' },
-    workspaceId,
+    authContext: { workspace: { id: workspaceId } },
   } as WorkspaceQueryRunnerOptions;
 
   let factory: QueryRunnerArgsFactory;
@@ -149,6 +149,7 @@ describe('QueryRunnerArgsFactory', () => {
           { name: 'testNumber', type: FieldMetadataType.NUMBER },
         ] as FieldMetadataInterface[],
         objectMetadataItem: { isCustom: true, nameSingular: 'test' },
+        authContext: { workspace: { id: workspaceId } },
       } as WorkspaceQueryRunnerOptions;
 
       const args = {

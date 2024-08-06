@@ -2,19 +2,23 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingController } from 'src/engine/core-modules/billing/billing.controller';
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
-import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
-import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
-import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingWebhookService } from 'src/engine/core-modules/billing/services/billing-webhook.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
   imports: [
+    FeatureFlagModule,
     StripeModule,
     UserWorkspaceModule,
     TypeOrmModule.forFeature(
@@ -29,11 +33,18 @@ import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing
   ],
   controllers: [BillingController],
   providers: [
-    BillingService,
-    BillingWorkspaceService,
+    BillingSubscriptionService,
+    BillingWebhookService,
+    BillingPortalWorkspaceService,
     BillingResolver,
     BillingWorkspaceMemberListener,
+    BillingService,
   ],
-  exports: [BillingService, BillingWorkspaceService],
+  exports: [
+    BillingSubscriptionService,
+    BillingPortalWorkspaceService,
+    BillingWebhookService,
+    BillingService,
+  ],
 })
 export class BillingModule {}
