@@ -3,7 +3,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -16,6 +15,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
@@ -34,10 +34,8 @@ describe('TokenService', () => {
       providers: [
         TokenService,
         {
-          provide: JwtService,
-          useValue: {
-            sign: jest.fn().mockReturnValue('mock-jwt-token'),
-          },
+          provide: JwtWrapperService,
+          useValue: {},
         },
         {
           provide: JwtAuthStrategy,
