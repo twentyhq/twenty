@@ -11,7 +11,7 @@ export class WorkspaceMemberQueryResultGetterHandler
   async handle(
     workspaceMember: WorkspaceMemberWorkspaceEntity,
     workspaceId: string,
-  ): Promise<any> {
+  ): Promise<WorkspaceMemberWorkspaceEntity> {
     if (!workspaceMember.id || !workspaceMember?.avatarUrl) {
       return workspaceMember;
     }

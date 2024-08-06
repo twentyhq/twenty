@@ -11,7 +11,7 @@ export class AttachmentQueryResultGetterHandler
   async handle(
     attachment: AttachmentWorkspaceEntity,
     workspaceId: string,
-  ): Promise<any> {
+  ): Promise<AttachmentWorkspaceEntity> {
     if (!attachment.id || !attachment?.fullPath) {
       return attachment;
     }

@@ -12,7 +12,10 @@ export class NoteQueryResultGetterHandler
 {
   constructor(private readonly fileService: FileService) {}
 
-  async handle(note: NoteWorkspaceEntity, workspaceId: string): Promise<any> {
+  async handle(
+    note: NoteWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<NoteWorkspaceEntity> {
     if (!note.id || !note.body) {
       return note;
     }
