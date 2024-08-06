@@ -11,7 +11,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
@@ -39,7 +39,7 @@ export class MessagingFullMessageListFetchService {
       MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
-    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
   ) {}
 
@@ -48,7 +48,7 @@ export class MessagingFullMessageListFetchService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
-    await this.messagingChannelSyncStatusService.markAsMessagesListFetchOngoing(
+    await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
       messageChannel.id,
       workspaceId,
     );
@@ -83,7 +83,7 @@ export class MessagingFullMessageListFetchService {
       workspaceId,
     );
 
-    await this.messagingChannelSyncStatusService.scheduleMessagesImport(
+    await this.messageChannelSyncStatusService.scheduleMessagesImport(
       messageChannel.id,
       workspaceId,
     );

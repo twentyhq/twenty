@@ -18,7 +18,7 @@ import {
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
-export class MessagingChannelSyncStatusService {
+export class MessageChannelSyncStatusService {
   constructor(
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,

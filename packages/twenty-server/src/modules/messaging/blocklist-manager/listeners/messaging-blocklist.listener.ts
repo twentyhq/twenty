@@ -16,7 +16,7 @@ import {
   BlocklistItemDeleteMessagesJobData,
 } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-item-delete-messages.job';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class MessagingBlocklistListener {
     private readonly messageQueueService: MessageQueueService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
   ) {}
@@ -67,7 +67,7 @@ export class MessagingBlocklistListener {
         workspaceId,
       );
 
-    await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+    await this.messageChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
       messageChannel[0].id,
       workspaceId,
     );
@@ -104,7 +104,7 @@ export class MessagingBlocklistListener {
         workspaceId,
       );
 
-    await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+    await this.messageChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
       messageChannel[0].id,
       workspaceId,
     );

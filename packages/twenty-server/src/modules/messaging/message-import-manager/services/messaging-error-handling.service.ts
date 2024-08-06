@@ -6,7 +6,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/message-import-manager/constants/messaging-throttle-max-attempts';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
@@ -26,7 +26,7 @@ export class MessagingErrorHandlingService {
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
@@ -117,7 +117,7 @@ export class MessagingErrorHandlingService {
             workspaceId,
           );
         } else {
-          await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+          await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
             messageChannel.id,
             workspaceId,
           );
@@ -142,7 +142,7 @@ export class MessagingErrorHandlingService {
         );
         break;
       default:
-        await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+        await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
           messageChannel.id,
           workspaceId,
         );
@@ -200,7 +200,7 @@ export class MessagingErrorHandlingService {
       message: `${error.code}: ${error.reason}`,
     });
 
-    await this.messagingChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
+    await this.messageChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
       messageChannel.id,
       workspaceId,
     );
@@ -235,7 +235,7 @@ export class MessagingErrorHandlingService {
       message: `404: ${error.reason}`,
     });
 
-    await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+    await this.messageChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
       messageChannel.id,
       workspaceId,
     );
@@ -249,7 +249,7 @@ export class MessagingErrorHandlingService {
     if (
       messageChannel.throttleFailureCount >= MESSAGING_THROTTLE_MAX_ATTEMPTS
     ) {
-      await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+      await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
         messageChannel.id,
         workspaceId,
       );
@@ -261,21 +261,21 @@ export class MessagingErrorHandlingService {
 
     switch (syncStep) {
       case 'full-message-list-fetch':
-        await this.messagingChannelSyncStatusService.scheduleFullMessageListFetch(
+        await this.messageChannelSyncStatusService.scheduleFullMessageListFetch(
           messageChannel.id,
           workspaceId,
         );
         break;
 
       case 'partial-message-list-fetch':
-        await this.messagingChannelSyncStatusService.schedulePartialMessageListFetch(
+        await this.messageChannelSyncStatusService.schedulePartialMessageListFetch(
           messageChannel.id,
           workspaceId,
         );
         break;
 
       case 'messages-import':
-        await this.messagingChannelSyncStatusService.scheduleMessagesImport(
+        await this.messageChannelSyncStatusService.scheduleMessagesImport(
           messageChannel.id,
           workspaceId,
         );
@@ -318,7 +318,7 @@ export class MessagingErrorHandlingService {
       message: `${error.code}: ${error.reason}`,
     });
 
-    await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+    await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
       messageChannel.id,
       workspaceId,
     );
