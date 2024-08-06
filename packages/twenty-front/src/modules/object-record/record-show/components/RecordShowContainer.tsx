@@ -317,7 +317,6 @@ export const RecordShowContainer = ({
         emails
         isInRightDrawer={isInRightDrawer}
         summaryCard={isMobile ? summaryCard : <></>}
-        //introduce new summarycard for right container
         fieldsBox={fieldsBox}
         loading={isPrefetchLoading || loading || recordLoading}
       />
