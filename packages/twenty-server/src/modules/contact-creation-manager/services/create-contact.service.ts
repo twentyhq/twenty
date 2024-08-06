@@ -2,18 +2,20 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
-import camelCase from 'lodash.camelcase';
 
 import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/contact-creation-manager/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { computeDisplayName } from 'src/utils/compute-display-name';
 
 type ContactToCreate = {
   handle: string;
   displayName: string;
   companyId?: string;
-  source: FieldActorSource;
+  createdBySource: FieldActorSource;
+  createdByWorkspaceMember?: WorkspaceMemberWorkspaceEntity | null;
 };
 
 @Injectable()
@@ -28,10 +30,17 @@ export class CreateContactService {
     return contactsToCreate.map((contact) => {
       const id = v4();
 
-      const { handle, displayName, companyId, source } = contact;
+      const {
+        handle,
+        displayName,
+        companyId,
+        createdBySource,
+        createdByWorkspaceMember,
+      } = contact;
 
       const { firstName, lastName } =
         getFirstNameAndLastNameFromHandleAndDisplayName(handle, displayName);
+      const createdByName = computeDisplayName(createdByWorkspaceMember?.name);
 
       return {
         id,
@@ -41,11 +50,10 @@ export class CreateContactService {
           lastName,
         },
         companyId,
-        // TODO: We need to add workspaceMemberId here, for that a system like loadServiceWithContext
-        // is needed so we can get the user id from the context when this service is called from a job
         createdBy: {
-          source,
-          name: camelCase(source),
+          source: createdBySource,
+          workspaceMemberId: contact.createdByWorkspaceMember?.id,
+          name: createdByName,
         },
       };
     });

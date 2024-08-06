@@ -9,13 +9,11 @@ import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Module({
   imports: [
     WorkspaceDataSourceModule,
     ObjectMetadataRepositoryModule.forFeature([
-      PersonWorkspaceEntity,
       MessageParticipantWorkspaceEntity,
       MessageWorkspaceEntity,
       MessageThreadWorkspaceEntity,
