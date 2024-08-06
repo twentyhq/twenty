@@ -120,7 +120,6 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
               });
 
             for (const connectedAccount of connectedAccountsInFailedInsufficientPermissions) {
-              //Add logic
             }
 
             await queryRunner.commitTransaction();

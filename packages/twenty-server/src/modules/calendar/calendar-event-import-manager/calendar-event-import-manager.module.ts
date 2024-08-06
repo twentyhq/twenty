@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
@@ -25,6 +24,7 @@ import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/cale
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { RefreshAccessTokenManagerModule } from 'src/modules/connected-account/refresh-access-token-manager/refresh-access-token-manager.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -53,7 +53,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     BillingModule,
     RefreshAccessTokenManagerModule,
     CalendarEventParticipantManagerModule,
-    UserVarsModule,
+    ConnectedAccountModule,
   ],
   providers: [
     CalendarChannelSyncStatusService,
