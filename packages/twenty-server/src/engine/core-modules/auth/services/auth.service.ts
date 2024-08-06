@@ -78,7 +78,7 @@ export class AuthService {
     if (!user.passwordHash) {
       throw new AuthException(
         'Incorrect login method',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        AuthExceptionCode.INVALID_INPUT,
       );
     }
 
@@ -380,7 +380,9 @@ export class AuthService {
     return { success: true };
   }
 
-  async findWorkspaceFromInviteHash(inviteHash: string): Promise<Workspace> {
+  async findWorkspaceFromInviteHashOrFail(
+    inviteHash: string,
+  ): Promise<Workspace> {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash,
     });

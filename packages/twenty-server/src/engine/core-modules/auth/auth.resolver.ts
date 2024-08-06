@@ -74,7 +74,7 @@ export class AuthResolver {
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
   ): Promise<Workspace> {
-    return await this.authService.findWorkspaceFromInviteHash(
+    return await this.authService.findWorkspaceFromInviteHashOrFail(
       workspaceInviteHashValidInput.inviteHash,
     );
   }
