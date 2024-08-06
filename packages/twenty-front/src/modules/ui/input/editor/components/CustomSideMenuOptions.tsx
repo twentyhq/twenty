@@ -2,33 +2,33 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
 
-const StyledContainer = styled.div<{ variant: variants }>`
-  color: ${({ theme, variant }) =>
-    variant === 'Danger' ? theme.color.red : 'inherit'};
+const StyledContainer = styled.div<{ Variant: Variants }>`
+  color: ${({ theme, Variant }) =>
+    Variant === 'danger' ? theme.color.red : 'inherit'};
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTextContainer = styled.div``;
 
 type CustomSideMenuOptionsProps = {
   LeftIcon: IconComponent; // Any valid React node (e.g., a component)
-  variant: variants;
+  Variant: Variants;
   text: string;
 };
 
-type variants = 'Normal' | 'Danger';
+type Variants = 'normal' | 'danger';
 
 export const CustomSideMenuOptions = ({
   LeftIcon,
-  variant,
+  Variant,
   text,
 }: CustomSideMenuOptionsProps) => {
   const theme = useTheme();
   return (
-    <StyledContainer variant={variant}>
+    <StyledContainer Variant={Variant}>
       <LeftIcon
         size={theme.icon.size.md}
         stroke={theme.icon.stroke.sm}

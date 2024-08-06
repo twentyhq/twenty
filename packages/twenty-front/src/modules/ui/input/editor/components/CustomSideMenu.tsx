@@ -17,7 +17,7 @@ type CustomSideMenuProps = {
 };
 
 const StyledDivToCreateGap = styled.div`
-  width: 8px;
+  width: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
@@ -36,7 +36,7 @@ export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
                   <CustomSideMenuOptions
                     LeftIcon={IconPlus}
                     text={'Add Block'}
-                    variant="Normal"
+                    Variant="normal"
                   />
                 </CustomAddBlockItem>
                 {/* eslint-disable-next-line react/jsx-props-no-spreading */}
@@ -44,7 +44,7 @@ export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
                   <CustomSideMenuOptions
                     LeftIcon={IconColorSwatch}
                     text={'Change Color'}
-                    variant="Normal"
+                    Variant="normal"
                   />
                 </BlockColorsItem>
                 {/* eslint-disable-next-line react/jsx-props-no-spreading */}
@@ -53,7 +53,7 @@ export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
                   <CustomSideMenuOptions
                     LeftIcon={IconTrash}
                     text={'Delete'}
-                    variant="Danger"
+                    Variant="danger"
                   />
                 </RemoveBlockItem>
               </DragHandleMenu>
