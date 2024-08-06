@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
@@ -25,7 +26,7 @@ interface SetUserVarsAccountsToReconnectCommandOptions {
 
 @Command({
   name: 'upgrade-0.23:set-user-vars-accounts-to-reconnect',
-  description: 'Set workspace activation status',
+  description: 'Set user vars accounts to reconnect',
 })
 export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
   private readonly logger = new Logger(
@@ -38,6 +39,7 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly accountsToReconnectService: AccountsToReconnectService,
+    @InjectRepository(KeyValuePair, 'core')
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
   ) {
     super();

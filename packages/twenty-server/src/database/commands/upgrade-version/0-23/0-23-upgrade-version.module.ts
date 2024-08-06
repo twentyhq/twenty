@@ -12,6 +12,7 @@ import { UpdateFileFolderStructureCommand } from 'src/database/commands/upgrade-
 import { UpgradeTo0_23Command } from 'src/database/commands/upgrade-version/0-23/0-23-upgrade-version.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FileStorageModule } from 'src/engine/integrations/file-storage/file-storage.module';
@@ -22,11 +23,12 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
+import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { ViewModule } from 'src/modules/view/view.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([Workspace, KeyValuePair], 'core'),
     FileStorageModule,
     OnboardingModule,
     TypeORMModule,
@@ -41,6 +43,7 @@ import { ViewModule } from 'src/modules/view/view.module';
     ViewModule,
     BillingModule,
     ObjectMetadataModule,
+    ConnectedAccountModule,
   ],
   providers: [
     UpdateFileFolderStructureCommand,
