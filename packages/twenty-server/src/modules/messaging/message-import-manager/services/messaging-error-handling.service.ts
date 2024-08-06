@@ -19,6 +19,7 @@ type SyncStep =
 export type GmailError = {
   code: number | string;
   reason: string;
+  message: string;
 };
 
 @Injectable()
