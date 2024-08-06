@@ -9,6 +9,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 type ContactToCreate = {
   handle: string;
@@ -26,6 +27,7 @@ export class CreateContactService {
 
   private formatContacts(
     contactsToCreate: ContactToCreate[],
+    lastPersonPosition: number,
   ): DeepPartial<PersonWorkspaceEntity>[] {
     return contactsToCreate.map((contact) => {
       const id = v4();
@@ -44,7 +46,7 @@ export class CreateContactService {
 
       return {
         id,
-        handle,
+        email: handle,
         name: {
           firstName,
           lastName,
@@ -55,6 +57,7 @@ export class CreateContactService {
           workspaceMemberId: contact.createdByWorkspaceMember?.id,
           name: createdByName,
         },
+        position: ++lastPersonPosition,
       };
     });
   }
@@ -72,12 +75,33 @@ export class CreateContactService {
         PersonWorkspaceEntity,
       );
 
-    const formattedContacts = this.formatContacts(contactsToCreate);
+    const lastPersonPosition = await this.getLastPersonPosition(
+      personRepository,
+      transactionManager,
+    );
+
+    const formattedContacts = this.formatContacts(
+      contactsToCreate,
+      lastPersonPosition,
+    );
 
     return personRepository.save(
       formattedContacts,
       undefined,
       transactionManager,
     );
+  }
+
+  private async getLastPersonPosition(
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>,
+    transactionManager?: EntityManager,
+  ): Promise<number> {
+    const lastPersonPosition = await personRepository.maximum(
+      'position',
+      undefined,
+      transactionManager,
+    );
+
+    return lastPersonPosition ?? 0;
   }
 }
