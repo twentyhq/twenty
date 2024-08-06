@@ -395,9 +395,7 @@ export class TokenService {
         );
       }
 
-      if (
-        !(codeChallengeAppToken.userId === authorizationCodeAppToken.userId)
-      ) {
+      if (codeChallengeAppToken.userId !== authorizationCodeAppToken.userId) {
         throw new AuthException(
           'authorization code / code verifier was not created by same client',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -507,7 +505,7 @@ export class TokenService {
       );
 
       throw new AuthException(
-        'Suspicious activity detected, this refresh token has been revoked. All tokens has been revoked.',
+        'Suspicious activity detected, this refresh token has been revoked. All tokens have been revoked.',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
@@ -519,6 +517,13 @@ export class TokenService {
     accessToken: AuthToken;
     refreshToken: AuthToken;
   }> {
+    if (!token) {
+      throw new AuthException(
+        'Refresh token not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const {
       user,
       token: { id },

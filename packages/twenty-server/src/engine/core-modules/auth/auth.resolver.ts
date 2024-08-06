@@ -1,8 +1,6 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
@@ -18,7 +16,7 @@ import { TransientToken } from 'src/engine/core-modules/auth/dto/transient-token
 import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
-import { authGraphqlApiExceptionHandler } from 'src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -42,10 +40,10 @@ import { AuthService } from './services/auth.service';
 import { TokenService } from './services/token.service';
 
 @Resolver()
+@UseFilters(AuthGraphqlApiExceptionFilter)
 export class AuthResolver {
   constructor(
     @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     private authService: AuthService,
     private tokenService: TokenService,
     private userService: UserService,
@@ -55,89 +53,63 @@ export class AuthResolver {
   @Query(() => UserExists)
   async checkUserExists(
     @Args() checkUserExistsInput: CheckUserExistsInput,
-  ): Promise<UserExists | void> {
-    try {
-      const { exists } = await this.authService.checkUserExists(
-        checkUserExistsInput.email,
-      );
+  ): Promise<UserExists> {
+    const { exists } = await this.authService.checkUserExists(
+      checkUserExistsInput.email,
+    );
 
-      return { exists };
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+    return { exists };
   }
 
   @Query(() => WorkspaceInviteHashValid)
   async checkWorkspaceInviteHashIsValid(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ): Promise<WorkspaceInviteHashValid | void> {
-    try {
-      return await this.authService.checkWorkspaceInviteHashIsValid(
-        workspaceInviteHashValidInput.inviteHash,
-      );
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+  ): Promise<WorkspaceInviteHashValid> {
+    return await this.authService.checkWorkspaceInviteHashIsValid(
+      workspaceInviteHashValidInput.inviteHash,
+    );
   }
 
   @Query(() => Workspace)
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
-  ): Promise<Workspace | void> {
-    try {
-      return await this.authService.findWorkspaceFromInviteHash(
-        workspaceInviteHashValidInput.inviteHash,
-      );
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+  ): Promise<Workspace> {
+    return await this.authService.findWorkspaceFromInviteHash(
+      workspaceInviteHashValidInput.inviteHash,
+    );
   }
 
   @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
-  async challenge(
-    @Args() challengeInput: ChallengeInput,
-  ): Promise<LoginToken | void> {
-    try {
-      const user = await this.authService.challenge(challengeInput);
-      const loginToken = await this.tokenService.generateLoginToken(user.email);
+  async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
+    const user = await this.authService.challenge(challengeInput);
+    const loginToken = await this.tokenService.generateLoginToken(user.email);
 
-      return { loginToken };
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+    return { loginToken };
   }
 
   @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
-  async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken | void> {
-    try {
-      const user = await this.authService.signInUp({
-        ...signUpInput,
-        fromSSO: false,
-      });
+  async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
+    const user = await this.authService.signInUp({
+      ...signUpInput,
+      fromSSO: false,
+    });
 
-      const loginToken = await this.tokenService.generateLoginToken(user.email);
+    const loginToken = await this.tokenService.generateLoginToken(user.email);
 
-      return { loginToken };
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+    return { loginToken };
   }
 
   @Mutation(() => ExchangeAuthCode)
   async exchangeAuthorizationCode(
     @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
   ) {
-    try {
-      const tokens = await this.tokenService.verifyAuthorizationCode(
-        exchangeAuthCodeInput,
-      );
+    const tokens = await this.tokenService.verifyAuthorizationCode(
+      exchangeAuthCodeInput,
+    );
 
-      return tokens;
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+    return tokens;
   }
 
   @Mutation(() => TransientToken)
@@ -145,37 +117,29 @@ export class AuthResolver {
   async generateTransientToken(
     @AuthUser() user: User,
   ): Promise<TransientToken | void> {
-    try {
-      const workspaceMember = await this.userService.loadWorkspaceMember(user);
+    const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
-      if (!workspaceMember) {
-        return;
-      }
-      const transientToken = await this.tokenService.generateTransientToken(
-        workspaceMember.id,
-        user.id,
-        user.defaultWorkspace.id,
-      );
-
-      return { transientToken };
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
+    if (!workspaceMember) {
+      return;
     }
+    const transientToken = await this.tokenService.generateTransientToken(
+      workspaceMember.id,
+      user.id,
+      user.defaultWorkspace.id,
+    );
+
+    return { transientToken };
   }
 
   @Mutation(() => Verify)
-  async verify(@Args() verifyInput: VerifyInput): Promise<Verify | void> {
-    try {
-      const email = await this.tokenService.verifyLoginToken(
-        verifyInput.loginToken,
-      );
+  async verify(@Args() verifyInput: VerifyInput): Promise<Verify> {
+    const email = await this.tokenService.verifyLoginToken(
+      verifyInput.loginToken,
+    );
 
-      const result = await this.authService.verify(email);
+    const result = await this.authService.verify(email);
 
-      return result;
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+    return result;
   }
 
   @Mutation(() => AuthorizeApp)
@@ -183,17 +147,13 @@ export class AuthResolver {
   async authorizeApp(
     @Args() authorizeAppInput: AuthorizeAppInput,
     @AuthUser() user: User,
-  ): Promise<AuthorizeApp | void> {
-    try {
-      const authorizedApp = await this.authService.generateAuthorizationCode(
-        authorizeAppInput,
-        user,
-      );
+  ): Promise<AuthorizeApp> {
+    const authorizedApp = await this.authService.generateAuthorizationCode(
+      authorizeAppInput,
+      user,
+    );
 
-      return authorizedApp;
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+    return authorizedApp;
   }
 
   @Mutation(() => AuthTokens)
@@ -201,30 +161,22 @@ export class AuthResolver {
   async generateJWT(
     @AuthUser() user: User,
     @Args() args: GenerateJwtInput,
-  ): Promise<AuthTokens | void> {
-    try {
-      const token = await this.tokenService.generateSwitchWorkspaceToken(
-        user,
-        args.workspaceId,
-      );
+  ): Promise<AuthTokens> {
+    const token = await this.tokenService.generateSwitchWorkspaceToken(
+      user,
+      args.workspaceId,
+    );
 
-      return token;
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+    return token;
   }
 
   @Mutation(() => AuthTokens)
-  async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens | void> {
-    try {
-      const tokens = await this.tokenService.generateTokensFromRefreshToken(
-        args.appToken,
-      );
+  async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
+    const tokens = await this.tokenService.generateTokensFromRefreshToken(
+      args.appToken,
+    );
 
-      return { tokens: tokens };
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+    return { tokens: tokens };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -232,12 +184,8 @@ export class AuthResolver {
   async impersonate(
     @Args() impersonateInput: ImpersonateInput,
     @AuthUser() user: User,
-  ): Promise<Verify | void> {
-    try {
-      return await this.authService.impersonate(impersonateInput.userId, user);
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+  ): Promise<Verify> {
+    return await this.authService.impersonate(impersonateInput.userId, user);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -246,62 +194,46 @@ export class AuthResolver {
     @Args() args: ApiKeyTokenInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<ApiKeyToken | undefined> {
-    try {
-      return await this.tokenService.generateApiKeyToken(
-        workspaceId,
-        args.apiKeyId,
-        args.expiresAt,
-      );
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+    return await this.tokenService.generateApiKeyToken(
+      workspaceId,
+      args.apiKeyId,
+      args.expiresAt,
+    );
   }
 
   @Mutation(() => EmailPasswordResetLink)
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
-  ): Promise<EmailPasswordResetLink | void> {
-    try {
-      const resetToken = await this.tokenService.generatePasswordResetToken(
-        emailPasswordResetInput.email,
-      );
+  ): Promise<EmailPasswordResetLink> {
+    const resetToken = await this.tokenService.generatePasswordResetToken(
+      emailPasswordResetInput.email,
+    );
 
-      return await this.tokenService.sendEmailPasswordResetLink(
-        resetToken,
-        emailPasswordResetInput.email,
-      );
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+    return await this.tokenService.sendEmailPasswordResetLink(
+      resetToken,
+      emailPasswordResetInput.email,
+    );
   }
 
   @Mutation(() => InvalidatePassword)
   async updatePasswordViaResetToken(
     @Args()
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
-  ): Promise<InvalidatePassword | void> {
-    try {
-      const { id } =
-        await this.tokenService.validatePasswordResetToken(passwordResetToken);
+  ): Promise<InvalidatePassword> {
+    const { id } =
+      await this.tokenService.validatePasswordResetToken(passwordResetToken);
 
-      await this.authService.updatePassword(id, newPassword);
+    await this.authService.updatePassword(id, newPassword);
 
-      return await this.tokenService.invalidatePasswordResetToken(id);
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+    return await this.tokenService.invalidatePasswordResetToken(id);
   }
 
   @Query(() => ValidatePasswordResetToken)
   async validatePasswordResetToken(
     @Args() args: ValidatePasswordResetTokenInput,
-  ): Promise<ValidatePasswordResetToken | void> {
-    try {
-      return this.tokenService.validatePasswordResetToken(
-        args.passwordResetToken,
-      );
-    } catch (error) {
-      authGraphqlApiExceptionHandler(error);
-    }
+  ): Promise<ValidatePasswordResetToken> {
+    return this.tokenService.validatePasswordResetToken(
+      args.passwordResetToken,
+    );
   }
 }

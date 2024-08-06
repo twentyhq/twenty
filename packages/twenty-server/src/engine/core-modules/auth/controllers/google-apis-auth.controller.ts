@@ -1,4 +1,11 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Req,
+  Res,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 
 import { Response } from 'express';
 
@@ -6,6 +13,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-exchange-code-for-token.guard';
 import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
@@ -16,6 +24,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 
 @Controller('auth/google-apis')
+@UseFilters(AuthRestApiExceptionFilter)
 export class GoogleAPIsAuthController {
   constructor(
     private readonly googleAPIsService: GoogleAPIsService,

@@ -1,3 +1,5 @@
+import { Catch } from '@nestjs/common';
+
 import {
   AuthException,
   AuthExceptionCode,
@@ -9,22 +11,21 @@ import {
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-export const authGraphqlApiExceptionHandler = (error: Error) => {
-  if (error instanceof AuthException) {
-    switch (error.code) {
+@Catch(AuthException)
+export class AuthGraphqlApiExceptionFilter {
+  catch(exception: AuthException) {
+    switch (exception.code) {
       case AuthExceptionCode.USER_NOT_FOUND:
       case AuthExceptionCode.CLIENT_NOT_FOUND:
-        throw new NotFoundError(error.message);
+        throw new NotFoundError(exception.message);
       case AuthExceptionCode.INVALID_INPUT:
-        throw new UserInputError(error.message);
+        throw new UserInputError(exception.message);
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
-        throw new ForbiddenError(error.message);
+        throw new ForbiddenError(exception.message);
       case AuthExceptionCode.INVALID_DATA:
       case AuthExceptionCode.INTERNAL_SERVER_ERROR:
       default:
-        throw new InternalServerError(error.message);
+        throw new InternalServerError(exception.message);
     }
   }
-
-  throw error;
-};
+}
