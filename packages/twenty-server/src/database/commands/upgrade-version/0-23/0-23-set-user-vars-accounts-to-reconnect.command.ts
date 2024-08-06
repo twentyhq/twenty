@@ -2,9 +2,14 @@ import { Logger } from '@nestjs/common';
 
 import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
+import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import {
+  KeyValuePair,
+  KeyValuePairType,
+} from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -33,6 +38,7 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly accountsToReconnectService: AccountsToReconnectService,
+    private readonly keyValuePairRepository: Repository<KeyValuePair>,
   ) {
     super();
   }
@@ -70,6 +76,12 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
         ),
       );
     }
+
+    // Remove all deprecated user vars
+    await this.keyValuePairRepository.delete({
+      type: KeyValuePairType.USER_VAR,
+      key: 'ACCOUNTS_TO_RECONNECT',
+    });
 
     for (const workspaceId of activeSubscriptionWorkspaceIds) {
       try {
