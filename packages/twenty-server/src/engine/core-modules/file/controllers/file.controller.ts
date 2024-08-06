@@ -32,7 +32,9 @@ export class FileController {
     const workspaceId = (req as any)?.workspaceId;
 
     if (!workspaceId) {
-      return res.status(401).send({ error: 'Unauthorized' });
+      return res
+        .status(401)
+        .send({ error: 'Unauthorized, missing workspaceId' });
     }
 
     try {
