@@ -24,7 +24,7 @@ interface SetUserVarsAccountsToReconnectCommandOptions {
 }
 
 @Command({
-  name: 'upgrade-0.23:set-workspace-activation-status',
+  name: 'upgrade-0.23:set-user-vars-accounts-to-reconnect',
   description: 'Set workspace activation status',
 })
 export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
