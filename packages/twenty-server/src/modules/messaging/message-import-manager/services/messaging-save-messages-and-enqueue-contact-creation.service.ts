@@ -52,7 +52,6 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             messagesToSave,
             connectedAccount,
             messageChannel.id,
-            workspaceId,
             transactionManager,
           );
 

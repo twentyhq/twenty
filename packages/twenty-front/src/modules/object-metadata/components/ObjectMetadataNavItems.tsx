@@ -18,6 +18,14 @@ import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { Theme, useTheme } from '@emotion/react';
 
+const ORDERED_STANDARD_OBJECTS = [
+  'person',
+  'company',
+  'opportunity',
+  'task',
+  'note',
+];
+
 const navItemsAnimationVariants = (theme: Theme) => ({
   hidden: {
     height: 0,
@@ -67,14 +75,15 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
           [
             ...filteredActiveObjectMetadataItems
               .filter((item) =>
-                ['person', 'company', 'opportunity'].includes(
-                  item.nameSingular,
-                ),
+                ORDERED_STANDARD_OBJECTS.includes(item.nameSingular),
               )
               .sort((objectMetadataItemA, objectMetadataItemB) => {
-                const order = ['person', 'company', 'opportunity'];
-                const indexA = order.indexOf(objectMetadataItemA.nameSingular);
-                const indexB = order.indexOf(objectMetadataItemB.nameSingular);
+                const indexA = ORDERED_STANDARD_OBJECTS.indexOf(
+                  objectMetadataItemA.nameSingular,
+                );
+                const indexB = ORDERED_STANDARD_OBJECTS.indexOf(
+                  objectMetadataItemB.nameSingular,
+                );
                 if (indexA === -1 || indexB === -1) {
                   return objectMetadataItemA.nameSingular.localeCompare(
                     objectMetadataItemB.nameSingular,
@@ -84,10 +93,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
               }),
             ...filteredActiveObjectMetadataItems
               .filter(
-                (item) =>
-                  !['person', 'company', 'opportunity'].includes(
-                    item.nameSingular,
-                  ),
+                (item) => !ORDERED_STANDARD_OBJECTS.includes(item.nameSingular),
               )
               .sort((objectMetadataItemA, objectMetadataItemB) => {
                 return new Date(objectMetadataItemA.createdAt) <

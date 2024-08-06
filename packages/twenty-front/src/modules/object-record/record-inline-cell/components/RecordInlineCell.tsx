@@ -13,8 +13,8 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
-import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
+import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 
 type RecordInlineCellProps = {
   readonly?: boolean;
