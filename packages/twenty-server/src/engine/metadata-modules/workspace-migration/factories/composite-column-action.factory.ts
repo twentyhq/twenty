@@ -47,17 +47,29 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
     const columnActions: WorkspaceMigrationColumnCreate[] = [];
 
     for (const property of compositeType.properties) {
+      if (property.type === FieldMetadataType.RELATION) {
+        throw new WorkspaceMigrationException(
+          `Relation type not supported for composite columns`,
+          WorkspaceMigrationExceptionCode.INVALID_COMPOSITE_TYPE,
+        );
+      }
+
       const columnName = computeCompositeColumnName(fieldMetadata, property);
       const defaultValue = fieldMetadata.defaultValue?.[property.name];
       const serializedDefaultValue = serializeDefaultValue(defaultValue);
+      const enumOptions = property.options
+        ? [...property.options.map((option) => option.value)]
+        : undefined;
 
       columnActions.push({
         action: WorkspaceMigrationColumnActionType.CREATE,
         columnName,
         columnType: fieldMetadataTypeToColumnType(property.type),
+        enum: enumOptions,
         isNullable: fieldMetadata.isNullable || !property.isRequired,
         defaultValue: serializedDefaultValue,
-        isArray: property.isArray,
+        isArray:
+          property.type === FieldMetadataType.MULTI_SELECT || property.isArray,
       });
     }
 
@@ -103,6 +115,16 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
         );
       }
 
+      if (
+        alteredProperty.type === FieldMetadataType.RELATION ||
+        currentProperty.type === FieldMetadataType.RELATION
+      ) {
+        throw new WorkspaceMigrationException(
+          `Relation type not supported for composite columns`,
+          WorkspaceMigrationExceptionCode.INVALID_COMPOSITE_TYPE,
+        );
+      }
+
       const currentColumnName = computeCompositeColumnName(
         currentFieldMetadata,
         currentProperty,
@@ -114,26 +136,53 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
       const defaultValue =
         alteredFieldMetadata.defaultValue?.[alteredProperty.name];
       const serializedDefaultValue = serializeDefaultValue(defaultValue);
+      const enumOptions = alteredProperty.options
+        ? [
+            ...alteredProperty.options.map((option) => {
+              const currentOption = currentProperty.options?.find(
+                (currentOption) => currentOption.id === option.id,
+              );
+
+              // The id is the same, but the value is different, so we need to alter the enum
+              if (currentOption && currentOption.value !== option.value) {
+                return {
+                  from: currentOption.value,
+                  to: option.value,
+                };
+              }
+
+              return option.value;
+            }),
+          ]
+        : undefined;
 
       columnActions.push({
         action: WorkspaceMigrationColumnActionType.ALTER,
         currentColumnDefinition: {
           columnName: currentColumnName,
           columnType: fieldMetadataTypeToColumnType(currentProperty.type),
+          enum: currentProperty.options
+            ? [...currentProperty.options.map((option) => option.value)]
+            : undefined,
           isNullable:
             currentFieldMetadata.isNullable || !currentProperty.isRequired,
           defaultValue: serializeDefaultValue(
             currentFieldMetadata.defaultValue?.[currentProperty.name],
           ),
-          isArray: currentProperty.isArray,
+          isArray:
+            currentProperty.type === FieldMetadataType.MULTI_SELECT ||
+            currentProperty.isArray,
         },
         alteredColumnDefinition: {
           columnName: alteredColumnName,
           columnType: fieldMetadataTypeToColumnType(alteredProperty.type),
+          enum: enumOptions,
           isNullable:
             alteredFieldMetadata.isNullable || !alteredProperty.isRequired,
           defaultValue: serializedDefaultValue,
-          isArray: alteredProperty.isArray,
+          isArray:
+            alteredProperty.type === FieldMetadataType.MULTI_SELECT ||
+            alteredProperty.isArray,
         },
       });
     }

@@ -42,9 +42,7 @@ describe('getFieldPreviewValue', () => {
 
     // Then
     expect(result).toBe(2000);
-    expect(result).toBe(
-      getSettingsFieldTypeConfig(FieldMetadataType.Number)?.defaultValue,
-    );
+    expect(result).toBe(getSettingsFieldTypeConfig(FieldMetadataType.Number));
   });
 
   it('returns null if the field is supported in Settings but has no pre-configured placeholder defaultValue', () => {

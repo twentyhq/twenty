@@ -28,12 +28,15 @@ describe('filterOutInvalidTimelineActivities', () => {
     ] as TimelineActivity[];
 
     const mainObjectMetadataItem = {
+      nameSingular: 'objectNameSingular',
+      namePlural: 'objectNamePlural',
       fields: [{ name: 'field1' }, { name: 'field2' }, { name: 'field3' }],
     } as ObjectMetadataItem;
 
     const filteredEvents = filterOutInvalidTimelineActivities(
       events,
-      mainObjectMetadataItem,
+      'objectNameSingular',
+      [mainObjectMetadataItem],
     );
 
     expect(filteredEvents).toEqual([
@@ -85,7 +88,8 @@ describe('filterOutInvalidTimelineActivities', () => {
 
     const filteredEvents = filterOutInvalidTimelineActivities(
       events,
-      mainObjectMetadataItem,
+      'objectNameSingular',
+      [mainObjectMetadataItem],
     );
 
     expect(filteredEvents).toEqual([]);
@@ -109,7 +113,8 @@ describe('filterOutInvalidTimelineActivities', () => {
 
     const filteredEvents = filterOutInvalidTimelineActivities(
       events,
-      mainObjectMetadataItem,
+      'objectNameSingular',
+      [mainObjectMetadataItem],
     );
 
     expect(filteredEvents).toEqual(events);

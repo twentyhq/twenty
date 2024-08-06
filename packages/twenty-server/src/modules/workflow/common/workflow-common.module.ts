@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { WorkflowCommonService } from 'src/modules/workflow/common/workflow-common.services';
 

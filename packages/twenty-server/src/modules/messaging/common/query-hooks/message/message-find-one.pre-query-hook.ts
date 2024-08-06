@@ -9,6 +9,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { CanAccessMessageThreadService } from 'src/modules/messaging/common/query-hooks/message/can-access-message-thread.service';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @WorkspaceQueryHook(`message.findOne`)
 export class MessageFindOnePreQueryHook implements WorkspaceQueryHookInstance {
@@ -21,14 +22,18 @@ export class MessageFindOnePreQueryHook implements WorkspaceQueryHookInstance {
   ) {}
 
   async execute(
-    userId: string,
-    workspaceId: string,
+    authContext: AuthContext,
+    objectName: string,
     payload: FindOneResolverArgs,
-  ): Promise<void> {
+  ): Promise<FindOneResolverArgs> {
+    if (!authContext.user?.id) {
+      throw new NotFoundException('User id is required');
+    }
+
     const messageChannelMessageAssociations =
       await this.messageChannelMessageAssociationService.getByMessageIds(
         [payload?.filter?.id?.eq],
-        workspaceId,
+        authContext.workspace.id,
       );
 
     if (messageChannelMessageAssociations.length === 0) {
@@ -36,9 +41,11 @@ export class MessageFindOnePreQueryHook implements WorkspaceQueryHookInstance {
     }
 
     await this.canAccessMessageThreadService.canAccessMessageThread(
-      userId,
-      workspaceId,
+      authContext.user.id,
+      authContext.workspace.id,
       messageChannelMessageAssociations,
     );
+
+    return payload;
   }
 }

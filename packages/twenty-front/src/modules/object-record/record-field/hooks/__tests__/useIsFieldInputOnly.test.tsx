@@ -1,10 +1,10 @@
-import { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import {
   phoneFieldDefinition,
-  ratingfieldDefinition,
+  ratingFieldDefinition,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
@@ -28,7 +28,7 @@ const getWrapper =
     </FieldContext.Provider>
   );
 
-const RatingWrapper = getWrapper(ratingfieldDefinition);
+const RatingWrapper = getWrapper(ratingFieldDefinition);
 const PhoneWrapper = getWrapper(phoneFieldDefinition);
 
 describe('useIsFieldInputOnly', () => {

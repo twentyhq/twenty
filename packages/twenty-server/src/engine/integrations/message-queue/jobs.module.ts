@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
@@ -11,6 +12,7 @@ import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.modu
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { EmailSenderJob } from 'src/engine/integrations/email/email-sender.job';
 import { EmailModule } from 'src/engine/integrations/email/email.module';
@@ -27,6 +29,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Workspace], 'core'),
     DataSourceModule,
     ObjectMetadataModule,
     TypeORMModule,

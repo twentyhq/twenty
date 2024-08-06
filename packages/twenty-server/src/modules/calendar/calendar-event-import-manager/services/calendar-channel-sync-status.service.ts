@@ -11,9 +11,9 @@ import {
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import {
-  ConnectedAccountKeyValueType,
-  ConnectedAccountKeys,
-} from 'src/modules/connected-account/types/connected-account-key-value.type';
+  AccountsToReconnectKeyValueType,
+  AccountsToReconnectKeys,
+} from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 
 @Injectable()
 export class CalendarChannelSyncStatusService {
@@ -21,7 +21,7 @@ export class CalendarChannelSyncStatusService {
     private readonly twentyORMManager: TwentyORMManager,
     @InjectCacheStorage(CacheStorageNamespace.Calendar)
     private readonly cacheStorage: CacheStorageService,
-    private readonly userVarsService: UserVarsService<ConnectedAccountKeyValueType>,
+    private readonly userVarsService: UserVarsService<AccountsToReconnectKeyValueType>,
   ) {}
 
   public async scheduleFullCalendarEventListFetch(calendarChannelId: string) {
@@ -198,7 +198,7 @@ export class CalendarChannelSyncStatusService {
       (await this.userVarsService.get({
         userId,
         workspaceId,
-        key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
+        key: AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       })) ?? [];
 
     if (accountsToReconnect.includes(connectedAccountId)) {
@@ -210,7 +210,7 @@ export class CalendarChannelSyncStatusService {
     await this.userVarsService.set({
       userId,
       workspaceId,
-      key: ConnectedAccountKeys.ACCOUNTS_TO_RECONNECT,
+      key: AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       value: accountsToReconnect,
     });
   }
