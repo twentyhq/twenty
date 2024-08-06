@@ -20,43 +20,50 @@ type ShowPageSummaryCardProps = {
   onUploadPicture?: (file: File) => void;
   title: ReactNode;
   loading: boolean;
-  isCompact: boolean;
+  isInRightDrawer: boolean;
 };
 
-export const StyledShowPageSummaryCard = styled.div<{ isCompact: boolean }>`
+export const StyledShowPageSummaryCard = styled.div<{
+  isInRightDrawer: boolean;
+}>`
   align-items: center;
   display: flex;
-  flex-direction: ${({ isCompact }) => (isCompact ? 'row' : 'column')};
-  gap: ${({ theme, isCompact }) =>
-    isCompact ? theme.spacing(2) : theme.spacing(3)};
-  justify-content: ${({ isCompact }) => (isCompact ? 'flex-start' : 'center')};
+  flex-direction: ${({ isInRightDrawer }) =>
+    isInRightDrawer ? 'row' : 'column'};
+  gap: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.spacing(2) : theme.spacing(3)};
+  justify-content: ${({ isInRightDrawer }) =>
+    isInRightDrawer ? 'flex-start' : 'center'};
   padding: ${({ theme }) => theme.spacing(4)};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  height: ${({ isCompact }) => (isCompact ? '77px' : '127px')};
+  height: ${({ isInRightDrawer }) => (isInRightDrawer ? '77px' : '127px')};
   box-sizing: border-box;
 `;
 
-const StyledInfoContainer = styled.div<{ isCompact: boolean }>`
-  align-items: ${({ isCompact }) => (isCompact ? 'flex-start' : 'center')};
+const StyledInfoContainer = styled.div<{ isInRightDrawer: boolean }>`
+  align-items: ${({ isInRightDrawer }) =>
+    isInRightDrawer ? 'flex-start' : 'center'};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;
 
-const StyledDate = styled.div<{ isCompact: boolean }>`
+const StyledDate = styled.div<{ isInRightDrawer: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
-  padding-left: ${({ theme, isCompact }) => (isCompact ? theme.spacing(2) : 0)};
+  padding-left: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.spacing(2) : 0};
 `;
 
-const StyledTitle = styled.div<{ isCompact: boolean }>`
+const StyledTitle = styled.div<{ isInRightDrawer: boolean }>`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  justify-content: ${({ isCompact }) => (isCompact ? 'flex-start' : 'center')};
-  width: ${({ isCompact }) => (isCompact ? '' : '100%')};
+  justify-content: ${({ isInRightDrawer }) =>
+    isInRightDrawer ? 'flex-start' : 'center'};
+  width: ${({ isInRightDrawer }) => (isInRightDrawer ? '' : '100%')};
 `;
 
 const StyledAvatarWrapper = styled.div`
@@ -100,7 +107,7 @@ export const ShowPageSummaryCard = ({
   onUploadPicture,
   title,
   loading,
-  isCompact = false,
+  isInRightDrawer = false,
 }: ShowPageSummaryCardProps) => {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
@@ -117,13 +124,13 @@ export const ShowPageSummaryCard = ({
 
   if (loading)
     return (
-      <StyledShowPageSummaryCard isCompact={isCompact}>
+      <StyledShowPageSummaryCard isInRightDrawer={isInRightDrawer}>
         <StyledShowPageSummaryCardSkeletonLoader />
       </StyledShowPageSummaryCard>
     );
 
   return (
-    <StyledShowPageSummaryCard isCompact={isCompact}>
+    <StyledShowPageSummaryCard isInRightDrawer={isInRightDrawer}>
       <StyledAvatarWrapper>
         <Avatar
           avatarUrl={logoOrAvatar}
@@ -139,10 +146,10 @@ export const ShowPageSummaryCard = ({
           type="file"
         />
       </StyledAvatarWrapper>
-      <StyledInfoContainer isCompact={isCompact}>
-        <StyledTitle isCompact={isCompact}>{title}</StyledTitle>
+      <StyledInfoContainer isInRightDrawer={isInRightDrawer}>
+        <StyledTitle isInRightDrawer={isInRightDrawer}>{title}</StyledTitle>
         {beautifiedCreatedAt && (
-          <StyledDate isCompact={isCompact} id={dateElementId}>
+          <StyledDate isInRightDrawer={isInRightDrawer} id={dateElementId}>
             Added {beautifiedCreatedAt}
           </StyledDate>
         )}

@@ -155,7 +155,7 @@ export const RecordShowContainer = ({
 
   const summaryCard = isDefined(recordFromStore) ? (
     <ShowPageSummaryCard
-      isCompact={isInRightDrawer}
+      isInRightDrawer={isInRightDrawer}
       id={objectRecordId}
       logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
