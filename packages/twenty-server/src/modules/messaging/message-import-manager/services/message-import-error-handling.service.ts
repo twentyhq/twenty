@@ -7,9 +7,9 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { MessagingError } from 'src/modules/messaging/message-import-manager/types/messaging-error.type';
 
 export enum MessageImportSyncStep {
-  FULL_CALENDAR_EVENT_LIST_FETCH = 'FULL_CALENDAR_EVENT_LIST_FETCH',
-  PARTIAL_CALENDAR_EVENT_LIST_FETCH = 'PARTIAL_CALENDAR_EVENT_LIST_FETCH',
-  CALENDAR_EVENTS_IMPORT = 'CALENDAR_EVENTS_IMPORT',
+  FULL_MESSAGE_LIST_FETCH = 'FULL_MESSAGE_LIST_FETCH',
+  PARTIAL_MESSAGE_LIST_FETCH = 'PARTIAL_MESSAGE_LIST_FETCH',
+  MESSAGES_IMPORT = 'MESSAGES_IMPORT',
 }
 
 @Injectable()
@@ -78,21 +78,21 @@ export class MessageImportErrorHandlerService {
     );
 
     switch (syncStep) {
-      case MessageImportSyncStep.FULL_CALENDAR_EVENT_LIST_FETCH:
+      case MessageImportSyncStep.FULL_MESSAGE_LIST_FETCH:
         await this.messageChannelSyncStatusService.scheduleFullMessageListFetch(
           messageChannel.id,
           workspaceId,
         );
         break;
 
-      case MessageImportSyncStep.PARTIAL_CALENDAR_EVENT_LIST_FETCH:
+      case MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH:
         await this.messageChannelSyncStatusService.schedulePartialMessageListFetch(
           messageChannel.id,
           workspaceId,
         );
         break;
 
-      case MessageImportSyncStep.CALENDAR_EVENTS_IMPORT:
+      case MessageImportSyncStep.MESSAGES_IMPORT:
         await this.messageChannelSyncStatusService.scheduleMessagesImport(
           messageChannel.id,
           workspaceId,
@@ -134,7 +134,7 @@ export class MessageImportErrorHandlerService {
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
-    if (syncStep === MessageImportSyncStep.FULL_CALENDAR_EVENT_LIST_FETCH) {
+    if (syncStep === MessageImportSyncStep.FULL_MESSAGE_LIST_FETCH) {
       return;
     }
 
