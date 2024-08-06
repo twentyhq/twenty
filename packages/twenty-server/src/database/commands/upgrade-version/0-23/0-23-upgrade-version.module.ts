@@ -49,7 +49,6 @@ import { ViewModule } from 'src/modules/view/view.module';
   ],
   providers: [
     UpdateFileFolderStructureCommand,
-    UpgradeTo0_23Command,
     MigrateLinkFieldsToLinksCommand,
     MigrateDomainNameFromTextToLinksCommand,
     MigrateMessageChannelSyncStatusEnumCommand,
