@@ -2,17 +2,17 @@ import { join } from 'path';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
-import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { compileTypescript } from 'src/engine/integrations/serverless/drivers/utils/compile-typescript';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
+import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
+import { compileTypescript } from 'src/engine/integrations/serverless/drivers/utils/compile-typescript';
+import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export class BaseServerlessDriver {
   getFolderPath(serverlessFunction: ServerlessFunctionEntity) {
     return join(
+      'workspace-' + serverlessFunction.workspaceId,
       FileFolder.ServerlessFunction,
-      serverlessFunction.workspaceId,
       serverlessFunction.id,
     );
   }
