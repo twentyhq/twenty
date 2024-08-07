@@ -1,12 +1,14 @@
 import { Logger, Scope } from '@nestjs/common';
 
+import { Any } from 'typeorm';
+
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -27,13 +29,10 @@ export class BlocklistItemDeleteMessagesJob {
   constructor(
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationWorkspaceEntity,
-    )
-    private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly threadCleanerService: MessagingMessageCleanerService,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   @Process(BlocklistItemDeleteMessagesJob.name)
@@ -75,13 +74,21 @@ export class BlocklistItemDeleteMessagesJob {
 
     const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
 
-    for (const messageChannelId of messageChannelIds) {
-      await this.messageChannelMessageAssociationRepository.deleteByMessageParticipantHandleAndMessageChannelIdAndRoles(
-        handle,
-        messageChannelId,
-        rolesToDelete,
-        workspaceId,
+    const messageChannelMessageAssociationRepository =
+      await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        'messageChannelMessageAssociation',
       );
+
+    for (const messageChannelId of messageChannelIds) {
+      messageChannelMessageAssociationRepository.delete({
+        messageChannelId,
+        message: {
+          messageParticipants: {
+            handle,
+            role: Any(rolesToDelete),
+          },
+        },
+      });
     }
 
     await this.threadCleanerService.cleanWorkspaceThreads(workspaceId);

@@ -1,7 +1,6 @@
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { CompanyRepository } from 'src/modules/company/repositories/company.repository';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageRepository } from 'src/modules/messaging/common/repositories/message.repository';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
@@ -14,8 +13,7 @@ export const metadataToRepositoryMapping = {
   BlocklistWorkspaceEntity: BlocklistRepository,
   CompanyWorkspaceEntity: CompanyRepository,
   ConnectedAccountWorkspaceEntity: ConnectedAccountRepository,
-  MessageChannelMessageAssociationWorkspaceEntity:
-    MessageChannelMessageAssociationRepository,
+
   MessageChannelWorkspaceEntity: MessageChannelRepository,
   MessageWorkspaceEntity: MessageRepository,
   PersonWorkspaceEntity: PersonRepository,

@@ -12,7 +12,6 @@ import { EmailAliasManagerModule } from 'src/modules/connected-account/email-ali
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
-import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
 import { MessagingGmailFetchByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-by-batch.service';
@@ -30,7 +29,6 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     ObjectMetadataRepositoryModule.forFeature([
       ConnectedAccountWorkspaceEntity,
       MessageChannelWorkspaceEntity,
-      MessageChannelMessageAssociationWorkspaceEntity,
       BlocklistWorkspaceEntity,
     ]),
     MessagingCommonModule,
