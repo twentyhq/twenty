@@ -9,12 +9,6 @@
     "src/**/*.jsx",
     "src/**/*.d.ts",
     "src/**/*.ts",
-    "src/**/*.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx",
-    "**/*.stories.ts",
-    "**/*.stories.tsx",
-    "**/*.test.ts",
-    "**/*.test.tsx"
+    "src/**/*.tsx"
   ]
 }
