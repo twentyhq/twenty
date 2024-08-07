@@ -7,14 +7,14 @@ import { AuthContext } from '@/auth/contexts/AuthContext';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useActorFieldDisplay = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { currentWorkspaceMembers } = useContext(AuthContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const fieldValue = useRecordFieldValue<FieldActorValue | undefined>(
-    entityId,
+    recordId,
     fieldName,
   );
 

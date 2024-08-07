@@ -19,7 +19,7 @@ export type RelationFromManyFieldInputProps = {
 export const RelationFromManyFieldInput = ({
   onSubmit,
 }: RelationFromManyFieldInputProps) => {
-  const { fieldDefinition, entityId } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
   const relationPickerScopeId = `relation-picker-${fieldDefinition.fieldMetadataId}`;
   const { updateRelation } = useUpdateRelationFromManyFieldInput({
     scopeId: relationPickerScopeId,
@@ -48,7 +48,7 @@ export const RelationFromManyFieldInput = ({
         relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
       relationObjectMetadataItem,
       relationFieldMetadataItem,
-      entityId,
+      recordId,
     });
 
   return (

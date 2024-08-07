@@ -18,6 +18,10 @@ export const CustomAddBlockItem = ({
 }: CustomAddBlockItemProps) => {
   const Components = useComponentsContext();
 
+  if (!Components) {
+    return null;
+  }
+
   const handleClick = () => {
     const blockIdentifier = editor.getTextCursorPosition().block;
     const currentBlockContent = blockIdentifier?.content as
