@@ -15,9 +15,7 @@ import {
   BlocklistItemDeleteMessagesJob,
   BlocklistItemDeleteMessagesJobData,
 } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-item-delete-messages.job';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
 export class MessagingBlocklistListener {
@@ -27,8 +25,6 @@ export class MessagingBlocklistListener {
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
   ) {}
 
   @OnEvent('blocklist.created')
