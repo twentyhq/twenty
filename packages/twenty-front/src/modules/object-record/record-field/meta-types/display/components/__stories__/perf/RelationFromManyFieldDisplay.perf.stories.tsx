@@ -24,11 +24,11 @@ import {
 
 const RelationFieldValueSetterEffect = () => {
   const setEntity = useSetRecoilState(
-    recordStoreFamilyState(relationFromManyFieldDisplayMock.entityId),
+    recordStoreFamilyState(relationFromManyFieldDisplayMock.recordId),
   );
 
   const setRelationEntity = useSetRecoilState(
-    recordStoreFamilyState(relationFromManyFieldDisplayMock.relationEntityId),
+    recordStoreFamilyState(relationFromManyFieldDisplayMock.relationRecordId),
   );
 
   const setRecordFieldValue = useSetRecordFieldValue();
@@ -64,7 +64,7 @@ const meta: Meta = {
       <RecordFieldValueSelectorContextProvider>
         <FieldContext.Provider
           value={{
-            entityId: relationFromManyFieldDisplayMock.entityId,
+            recordId: relationFromManyFieldDisplayMock.recordId,
             basePathToShowPage: '/object-record/',
             isLabelIdentifier: false,
             fieldDefinition: {

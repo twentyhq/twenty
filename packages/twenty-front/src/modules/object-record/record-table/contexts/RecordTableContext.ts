@@ -13,11 +13,11 @@ export type RecordTableContextProps = {
   objectMetadataItem: ObjectMetadataItem;
   onUpsertRecord: ({
     persistField,
-    entityId,
+    recordId,
     fieldName,
   }: {
     persistField: () => void;
-    entityId: string;
+    recordId: string;
     fieldName: string;
   }) => void;
   onOpenTableCell: (args: OpenTableCellArgs) => void;
