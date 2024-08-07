@@ -10,7 +10,10 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
-import { MessageChannelContactAutoCreationPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageChannelContactAutoCreationPolicy,
+  MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 export type MessagingCreateCompanyAndContactAfterSyncJobData = {
@@ -39,12 +42,18 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
     );
     const { workspaceId, messageChannelId } = data;
 
-    const messageChannel = await this.messageChannelService.getByIds(
-      [messageChannelId],
-      workspaceId,
-    );
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
 
-    const { contactAutoCreationPolicy, connectedAccountId } = messageChannel[0];
+    const messageChannel = await messageChannelRepository.findOneOrFail({
+      where: {
+        id: messageChannelId,
+      },
+    });
+
+    const { contactAutoCreationPolicy, connectedAccountId } = messageChannel;
 
     if (
       contactAutoCreationPolicy === MessageChannelContactAutoCreationPolicy.NONE

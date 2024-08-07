@@ -40,7 +40,6 @@ export class MessagingPartialMessageListFetchService {
   ): Promise<void> {
     await this.messagingChannelSyncStatusService.markAsMessagesListFetchOngoing(
       messageChannel.id,
-      workspaceId,
     );
 
     const lastSyncHistoryId = messageChannel.syncCursor;
@@ -65,14 +64,19 @@ export class MessagingPartialMessageListFetchService {
       return;
     }
 
-    await this.messageChannelRepository.resetThrottleFailureCount(
-      messageChannel.id,
-      workspaceId,
-    );
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
 
-    await this.messageChannelRepository.resetSyncStageStartedAt(
-      messageChannel.id,
-      workspaceId,
+    await messageChannelRepository.update(
+      {
+        id: messageChannel.id,
+      },
+      {
+        throttleFailureCount: 0,
+        syncStageStartedAt: null,
+      },
     );
 
     if (!historyId) {
@@ -88,7 +92,6 @@ export class MessagingPartialMessageListFetchService {
 
       await this.messagingChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
         messageChannel.id,
-        workspaceId,
       );
 
       return;
@@ -143,15 +146,21 @@ export class MessagingPartialMessageListFetchService {
       `Deleted ${messagesDeleted.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
-    await this.messageChannelRepository.updateLastSyncCursorIfHigher(
-      messageChannel.id,
-      historyId,
-      workspaceId,
-    );
+    const currentSyncCursor = messageChannel.syncCursor;
+
+    if (!currentSyncCursor || historyId > currentSyncCursor) {
+      await messageChannelRepository.update(
+        {
+          id: messageChannel.id,
+        },
+        {
+          syncCursor: historyId,
+        },
+      );
+    }
 
     await this.messagingChannelSyncStatusService.scheduleMessagesImport(
       messageChannel.id,
-      workspaceId,
     );
   }
 }
