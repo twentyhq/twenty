@@ -1,12 +1,4 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  UnauthorizedException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -24,6 +16,10 @@ import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
 import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
 import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
@@ -45,7 +41,6 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { assert } from 'src/utils/assert';
 
 @Injectable()
 export class TokenService {
@@ -68,7 +63,13 @@ export class TokenService {
   ): Promise<AuthToken> {
     const expiresIn = this.environmentService.get('ACCESS_TOKEN_EXPIRES_IN');
 
-    assert(expiresIn, '', InternalServerErrorException);
+    if (!expiresIn) {
+      throw new AuthException(
+        'Expiration time for access token is not set',
+        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     const user = await this.userRepository.findOne({
@@ -77,11 +78,17 @@ export class TokenService {
     });
 
     if (!user) {
-      throw new NotFoundException('User is not found');
+      throw new AuthException(
+        'User is not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
     }
 
     if (!user.defaultWorkspace) {
-      throw new NotFoundException('User does not have a default workspace');
+      throw new AuthException(
+        'User does not have a default workspace',
+        AuthExceptionCode.INVALID_DATA,
+      );
     }
 
     const jwtPayload: JwtPayload = {
@@ -99,7 +106,13 @@ export class TokenService {
     const secret = this.environmentService.get('REFRESH_TOKEN_SECRET');
     const expiresIn = this.environmentService.get('REFRESH_TOKEN_EXPIRES_IN');
 
-    assert(expiresIn, '', InternalServerErrorException);
+    if (!expiresIn) {
+      throw new AuthException(
+        'Expiration time for access token is not set',
+        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     const refreshTokenPayload = {
@@ -130,7 +143,13 @@ export class TokenService {
     const secret = this.environmentService.get('LOGIN_TOKEN_SECRET');
     const expiresIn = this.environmentService.get('LOGIN_TOKEN_EXPIRES_IN');
 
-    assert(expiresIn, '', InternalServerErrorException);
+    if (!expiresIn) {
+      throw new AuthException(
+        'Expiration time for access token is not set',
+        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
     const jwtPayload = {
       sub: email,
@@ -155,7 +174,13 @@ export class TokenService {
       'SHORT_TERM_TOKEN_EXPIRES_IN',
     );
 
-    assert(expiresIn, '', InternalServerErrorException);
+    if (!expiresIn) {
+      throw new AuthException(
+        'Expiration time for access token is not set',
+        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
     const jwtPayload = {
       sub: workspaceMemberId,
@@ -212,7 +237,10 @@ export class TokenService {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
     if (!token) {
-      throw new UnauthorizedException('missing authentication token');
+      throw new AuthException(
+        'missing authentication token',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
     const decoded = await this.verifyJwt(
       token,
@@ -257,22 +285,35 @@ export class TokenService {
   ): Promise<AuthTokens> {
     const userExists = await this.userRepository.findBy({ id: user.id });
 
-    assert(userExists, 'User not found', NotFoundException);
+    if (!userExists) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       relations: ['workspaceUsers'],
     });
 
-    assert(workspace, 'workspace doesnt exist', NotFoundException);
+    if (!workspace) {
+      throw new AuthException(
+        'workspace doesnt exist',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
-    assert(
-      workspace.workspaceUsers
+    if (
+      !workspace.workspaceUsers
         .map((userWorkspace) => userWorkspace.userId)
-        .includes(user.id),
-      'user does not belong to workspace',
-      ForbiddenException,
-    );
+        .includes(user.id)
+    ) {
+      throw new AuthException(
+        'user does not belong to workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     await this.userRepository.save({
       id: user.id,
@@ -293,28 +334,16 @@ export class TokenService {
   async verifyAuthorizationCode(
     exchangeAuthCodeInput: ExchangeAuthCodeInput,
   ): Promise<ExchangeAuthCode> {
-    const { authorizationCode, codeVerifier, clientSecret } =
-      exchangeAuthCodeInput;
+    const { authorizationCode, codeVerifier } = exchangeAuthCodeInput;
 
-    assert(
-      authorizationCode,
-      'Authorization code not found',
-      NotFoundException,
-    );
-
-    assert(
-      !codeVerifier || !clientSecret,
-      'client secret or code verifier not found',
-      NotFoundException,
-    );
+    if (!authorizationCode) {
+      throw new AuthException(
+        'Authorization code not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     let userId = '';
-
-    if (clientSecret) {
-      // TODO: replace this with call to third party apps table
-      // assert(client.secret, 'client secret code does not exist', ForbiddenException);
-      throw new ForbiddenException();
-    }
 
     if (codeVerifier) {
       const authorizationCodeAppToken = await this.appTokenRepository.findOne({
@@ -323,17 +352,19 @@ export class TokenService {
         },
       });
 
-      assert(
-        authorizationCodeAppToken,
-        'Authorization code does not exist',
-        NotFoundException,
-      );
+      if (!authorizationCodeAppToken) {
+        throw new AuthException(
+          'Authorization code does not exist',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
 
-      assert(
-        authorizationCodeAppToken.expiresAt.getTime() >= Date.now(),
-        'Authorization code expired.',
-        ForbiddenException,
-      );
+      if (!(authorizationCodeAppToken.expiresAt.getTime() >= Date.now())) {
+        throw new AuthException(
+          'Authorization code expired.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
 
       const codeChallenge = crypto
         .createHash('sha256')
@@ -350,26 +381,32 @@ export class TokenService {
         },
       });
 
-      assert(
-        codeChallengeAppToken,
-        'code verifier doesnt match the challenge',
-        ForbiddenException,
-      );
+      if (!codeChallengeAppToken) {
+        throw new AuthException(
+          'code verifier doesnt match the challenge',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
 
-      assert(
-        codeChallengeAppToken.expiresAt.getTime() >= Date.now(),
-        'code challenge expired.',
-        ForbiddenException,
-      );
+      if (!(codeChallengeAppToken.expiresAt.getTime() >= Date.now())) {
+        throw new AuthException(
+          'code challenge expired.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
 
-      assert(
-        codeChallengeAppToken.userId === authorizationCodeAppToken.userId,
-        'authorization code / code verifier was not created by same client',
-        ForbiddenException,
-      );
+      if (codeChallengeAppToken.userId !== authorizationCodeAppToken.userId) {
+        throw new AuthException(
+          'authorization code / code verifier was not created by same client',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
 
       if (codeChallengeAppToken.revokedAt) {
-        throw new ForbiddenException('Token has been revoked.');
+        throw new AuthException(
+          'Token has been revoked.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
       }
 
       await this.appTokenRepository.save({
@@ -386,13 +423,17 @@ export class TokenService {
     });
 
     if (!user) {
-      throw new NotFoundException(
+      throw new AuthException(
         'User who generated the token does not exist',
+        AuthExceptionCode.INVALID_INPUT,
       );
     }
 
     if (!user.defaultWorkspace) {
-      throw new NotFoundException('User does not have a default workspace');
+      throw new AuthException(
+        'User does not have a default workspace',
+        AuthExceptionCode.INVALID_DATA,
+      );
     }
 
     const accessToken = await this.generateAccessToken(
@@ -414,24 +455,35 @@ export class TokenService {
     const coolDown = this.environmentService.get('REFRESH_TOKEN_COOL_DOWN');
     const jwtPayload = await this.verifyJwt(refreshToken, secret);
 
-    assert(
-      jwtPayload.jti && jwtPayload.sub,
-      'This refresh token is malformed',
-      UnprocessableEntityException,
-    );
+    if (!(jwtPayload.jti && jwtPayload.sub)) {
+      throw new AuthException(
+        'This refresh token is malformed',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const token = await this.appTokenRepository.findOneBy({
       id: jwtPayload.jti,
     });
 
-    assert(token, "This refresh token doesn't exist", NotFoundException);
+    if (!token) {
+      throw new AuthException(
+        "This refresh token doesn't exist",
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const user = await this.userRepository.findOne({
       where: { id: jwtPayload.sub },
       relations: ['appTokens'],
     });
 
-    assert(user, 'User not found', NotFoundException);
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     // Check if revokedAt is less than coolDown
     if (
@@ -452,8 +504,9 @@ export class TokenService {
         }),
       );
 
-      throw new ForbiddenException(
-        'Suspicious activity detected, this refresh token has been revoked. All tokens has been revoked.',
+      throw new AuthException(
+        'Suspicious activity detected, this refresh token has been revoked. All tokens have been revoked.',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
@@ -464,6 +517,13 @@ export class TokenService {
     accessToken: AuthToken;
     refreshToken: AuthToken;
   }> {
+    if (!token) {
+      throw new AuthException(
+        'Refresh token not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const {
       user,
       token: { id },
@@ -502,11 +562,20 @@ export class TokenService {
       );
     } catch (error) {
       if (error instanceof TokenExpiredError) {
-        throw new UnauthorizedException('Token has expired.');
+        throw new AuthException(
+          'Token has expired.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
       } else if (error instanceof JsonWebTokenError) {
-        throw new UnauthorizedException('Token invalid.');
+        throw new AuthException(
+          'Token invalid.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
       } else {
-        throw new UnprocessableEntityException();
+        throw new AuthException(
+          'Unknown token error.',
+          AuthExceptionCode.INVALID_INPUT,
+        );
       }
     }
   }
@@ -516,17 +585,23 @@ export class TokenService {
       email,
     });
 
-    assert(user, 'User not found', NotFoundException);
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const expiresIn = this.environmentService.get(
       'PASSWORD_RESET_TOKEN_EXPIRES_IN',
     );
 
-    assert(
-      expiresIn,
-      'PASSWORD_RESET_TOKEN_EXPIRES_IN constant value not found',
-      InternalServerErrorException,
-    );
+    if (!expiresIn) {
+      throw new AuthException(
+        'PASSWORD_RESET_TOKEN_EXPIRES_IN constant value not found',
+        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
 
     const existingToken = await this.appTokenRepository.findOne({
       where: {
@@ -543,10 +618,9 @@ export class TokenService {
         { long: true },
       );
 
-      assert(
-        false,
+      throw new AuthException(
         `Token has already been generated. Please wait for ${timeToWait} to generate again.`,
-        BadRequestException,
+        AuthExceptionCode.INVALID_INPUT,
       );
     }
 
@@ -579,7 +653,12 @@ export class TokenService {
       email,
     });
 
-    assert(user, 'User not found', NotFoundException);
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
     const resetLink = `${frontBaseURL}/reset-password/${resetToken.passwordResetToken}`;
@@ -636,13 +715,23 @@ export class TokenService {
       },
     });
 
-    assert(token, 'Token is invalid', NotFoundException);
+    if (!token) {
+      throw new AuthException(
+        'Token is invalid',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     const user = await this.userRepository.findOneBy({
       id: token.userId,
     });
 
-    assert(user, 'Token is invalid', NotFoundException);
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     return {
       id: user.id,
@@ -657,7 +746,12 @@ export class TokenService {
       id: userId,
     });
 
-    assert(user, 'User not found', NotFoundException);
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     await this.appTokenRepository.update(
       {

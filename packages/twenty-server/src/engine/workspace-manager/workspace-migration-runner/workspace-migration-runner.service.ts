@@ -205,7 +205,20 @@ export class WorkspaceMigrationRunnerService {
           );
           break;
         case WorkspaceMigrationIndexActionType.DROP:
-          await queryRunner.dropIndex(`${schemaName}.${tableName}`, index.name);
+          try {
+            await queryRunner.dropIndex(
+              `${schemaName}.${tableName}`,
+              index.name,
+            );
+          } catch (error) {
+            // Ignore error if index does not exist
+            if (
+              error.message ===
+              `Supplied index ${index.name} was not found in table ${schemaName}.${tableName}`
+            ) {
+              continue;
+            }
+          }
           break;
         default:
           throw new Error(`Migration index action not supported`);

@@ -5,12 +5,14 @@ import { BackfillNewOnboardingUserVarsCommand } from 'src/database/commands/upgr
 import { MigrateDomainNameFromTextToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-domain-to-links.command';
 import { MigrateLinkFieldsToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-link-fields-to-links.command';
 import { MigrateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-message-channel-sync-status-enum.command';
+import { SetUserVarsAccountsToReconnectCommand } from 'src/database/commands/upgrade-version/0-23/0-23-set-user-vars-accounts-to-reconnect.command';
 import { SetWorkspaceActivationStatusCommand } from 'src/database/commands/upgrade-version/0-23/0-23-set-workspace-activation-status.command';
 import { UpdateActivitiesCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-activities.command';
 import { UpdateFileFolderStructureCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-file-folder-structure.command';
 import { UpgradeTo0_23Command } from 'src/database/commands/upgrade-version/0-23/0-23-upgrade-version.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FileStorageModule } from 'src/engine/integrations/file-storage/file-storage.module';
@@ -22,12 +24,13 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
 import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
+import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { ViewModule } from 'src/modules/view/view.module';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Workspace, KeyValuePair], 'core'),
     WorkspaceSyncMetadataCommandsModule,
-    TypeOrmModule.forFeature([Workspace], 'core'),
     FileStorageModule,
     OnboardingModule,
     TypeORMModule,
@@ -42,16 +45,17 @@ import { ViewModule } from 'src/modules/view/view.module';
     ViewModule,
     BillingModule,
     ObjectMetadataModule,
+    ConnectedAccountModule,
   ],
   providers: [
     UpdateFileFolderStructureCommand,
-    UpgradeTo0_23Command,
     MigrateLinkFieldsToLinksCommand,
     MigrateDomainNameFromTextToLinksCommand,
     MigrateMessageChannelSyncStatusEnumCommand,
     SetWorkspaceActivationStatusCommand,
     UpdateActivitiesCommand,
     BackfillNewOnboardingUserVarsCommand,
+    SetUserVarsAccountsToReconnectCommand,
     UpgradeTo0_23Command,
   ],
 })

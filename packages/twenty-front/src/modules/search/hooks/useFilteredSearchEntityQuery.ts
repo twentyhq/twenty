@@ -24,7 +24,7 @@ export const useFilteredSearchEntityQuery = ({
   sortOrder = 'AscNullsLast',
   selectedIds,
   limit,
-  excludeEntityIds = [],
+  excludeRecordIds = [],
   objectNameSingular,
 }: {
   orderByField: string;
@@ -32,7 +32,7 @@ export const useFilteredSearchEntityQuery = ({
   sortOrder?: OrderBy;
   selectedIds: string[];
   limit?: number;
-  excludeEntityIds?: string[];
+  excludeRecordIds?: string[];
   objectNameSingular: string;
 }): EntitiesForMultipleEntitySelect<EntityForSelect> => {
   const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
@@ -97,7 +97,7 @@ export const useFilteredSearchEntityQuery = ({
     skip: !selectedIds.length,
   });
 
-  const notFilterIds = [...selectedIds, ...excludeEntityIds];
+  const notFilterIds = [...selectedIds, ...excludeRecordIds];
   const notFilter = notFilterIds.length
     ? { not: { id: { in: notFilterIds } } }
     : undefined;

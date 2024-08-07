@@ -1,10 +1,13 @@
-import { BadRequestException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
 import { Request } from 'express';
 import { VerifyCallback } from 'passport-google-oauth20';
 import { Strategy } from 'passport-microsoft';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 export type MicrosoftRequest = Omit<
@@ -60,7 +63,10 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
     const email = emails?.[0]?.value ?? null;
 
     if (!email) {
-      throw new BadRequestException('No email found in your Microsoft profile');
+      throw new AuthException(
+        'Email not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
     }
 
     const user: MicrosoftRequest['user'] = {

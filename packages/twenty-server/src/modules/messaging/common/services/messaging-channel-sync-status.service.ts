@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import {
-  AccountsToReconnectKeyValueType,
-  AccountsToReconnectKeys,
-} from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
+import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import {
   MessageChannelSyncStage,
@@ -24,8 +21,8 @@ export class MessagingChannelSyncStatusService {
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly userVarsService: UserVarsService<AccountsToReconnectKeyValueType>,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
   public async scheduleFullMessageListFetch(
@@ -199,24 +196,11 @@ export class MessagingChannelSyncStatusService {
     const userId = messageChannel.connectedAccount.accountOwner.userId;
     const connectedAccountId = messageChannel.connectedAccount.id;
 
-    const accountsToReconnect =
-      (await this.userVarsService.get({
-        userId,
-        workspaceId,
-        key: AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
-      })) ?? [];
-
-    if (accountsToReconnect.includes(connectedAccountId)) {
-      return;
-    }
-
-    accountsToReconnect.push(connectedAccountId);
-
-    await this.userVarsService.set({
+    await this.accountsToReconnectService.addAccountToReconnectByKey(
+      AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       userId,
       workspaceId,
-      key: AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
-      value: accountsToReconnect,
-    });
+      connectedAccountId,
+    );
   }
 }

@@ -12,7 +12,7 @@ import { isFieldText } from '../../types/guards/isFieldText';
 import { isFieldTextValue } from '../../types/guards/isFieldTextValue';
 
 export const useTextField = () => {
-  const { entityId, fieldDefinition, hotkeyScope, maxWidth } =
+  const { recordId, fieldDefinition, hotkeyScope, maxWidth } =
     useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.Text, isFieldText, fieldDefinition);
@@ -21,14 +21,14 @@ export const useTextField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldTextValue>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );
   const fieldTextValue = isFieldTextValue(fieldValue) ? fieldValue : '';
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldTextValue>(`${entityId}-${fieldName}`);
+    useRecordFieldInput<FieldTextValue>(`${recordId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

@@ -4,6 +4,7 @@ import { BackfillNewOnboardingUserVarsCommand } from 'src/database/commands/upgr
 import { MigrateDomainNameFromTextToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-domain-to-links.command';
 import { MigrateLinkFieldsToLinksCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-link-fields-to-links.command';
 import { MigrateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/upgrade-version/0-23/0-23-migrate-message-channel-sync-status-enum.command';
+import { SetUserVarsAccountsToReconnectCommand } from 'src/database/commands/upgrade-version/0-23/0-23-set-user-vars-accounts-to-reconnect.command';
 import { SetWorkspaceActivationStatusCommand } from 'src/database/commands/upgrade-version/0-23/0-23-set-workspace-activation-status.command';
 import { UpdateActivitiesCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-activities.command';
 import { UpdateFileFolderStructureCommand } from 'src/database/commands/upgrade-version/0-23/0-23-update-file-folder-structure.command';
@@ -27,6 +28,7 @@ export class UpgradeTo0_23Command extends CommandRunner {
     private readonly setWorkspaceActivationStatusCommand: SetWorkspaceActivationStatusCommand,
     private readonly updateActivitiesCommand: UpdateActivitiesCommand,
     private readonly backfillNewOnboardingUserVarsCommand: BackfillNewOnboardingUserVarsCommand,
+    private readonly setUserVarsAccountsToReconnectCommand: SetUserVarsAccountsToReconnectCommand,
   ) {
     super();
   }
@@ -62,5 +64,6 @@ export class UpgradeTo0_23Command extends CommandRunner {
     });
     await this.updateActivitiesCommand.run(_passedParam, options);
     await this.backfillNewOnboardingUserVarsCommand.run(_passedParam, options);
+    await this.setUserVarsAccountsToReconnectCommand.run(_passedParam, options);
   }
 }

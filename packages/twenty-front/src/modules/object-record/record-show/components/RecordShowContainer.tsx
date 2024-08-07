@@ -163,7 +163,7 @@ export const RecordShowContainer = ({
       title={
         <FieldContext.Provider
           value={{
-            entityId: objectRecordId,
+            recordId: objectRecordId,
             recoilScopeId:
               objectRecordId + labelIdentifierFieldMetadataItem?.id,
             isLabelIdentifier: false,
@@ -211,7 +211,7 @@ export const RecordShowContainer = ({
                     <FieldContext.Provider
                       key={objectRecordId + fieldMetadataItem.id}
                       value={{
-                        entityId: objectRecordId,
+                        recordId: objectRecordId,
                         maxWidth: 200,
                         recoilScopeId: objectRecordId + fieldMetadataItem.id,
                         isLabelIdentifier: false,
@@ -244,7 +244,7 @@ export const RecordShowContainer = ({
                   <FieldContext.Provider
                     key={objectRecordId + fieldMetadataItem.id}
                     value={{
-                      entityId: objectRecordId,
+                      recordId: objectRecordId,
                       maxWidth: 200,
                       recoilScopeId: objectRecordId + fieldMetadataItem.id,
                       isLabelIdentifier: false,
@@ -277,7 +277,7 @@ export const RecordShowContainer = ({
             <FieldContext.Provider
               key={objectRecordId + fieldMetadataItem.id}
               value={{
-                entityId: objectRecordId,
+                recordId: objectRecordId,
                 recoilScopeId: objectRecordId + fieldMetadataItem.id,
                 isLabelIdentifier: false,
                 fieldDefinition: formatFieldMetadataItemAsColumnDefinition({

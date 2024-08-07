@@ -1,9 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import FileType from 'file-type';
@@ -12,6 +8,10 @@ import { v4 } from 'uuid';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import {
   PASSWORD_REGEX,
   compareHash,
@@ -26,7 +26,6 @@ import {
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { assert } from 'src/utils/assert';
 import { getImageBufferFromUrl } from 'src/utils/image';
 
 export type SignInUpServiceInput = {
@@ -66,12 +65,22 @@ export class SignInUpService {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
 
-    assert(email, 'Email is required', BadRequestException);
+    if (!email) {
+      throw new AuthException(
+        'Email is required',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     if (password) {
       const isPasswordValid = PASSWORD_REGEX.test(password);
 
-      assert(isPasswordValid, 'Password too weak', BadRequestException);
+      if (!isPasswordValid) {
+        throw new AuthException(
+          'Password too weak',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
     }
 
     const passwordHash = password ? await hashPassword(password) : undefined;
@@ -89,7 +98,12 @@ export class SignInUpService {
         existingUser.passwordHash,
       );
 
-      assert(isValid, 'Wrong password', ForbiddenException);
+      if (!isValid) {
+        throw new AuthException(
+          'Wrong password',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
     }
 
     if (workspaceInviteHash) {
@@ -137,17 +151,19 @@ export class SignInUpService {
       inviteHash: workspaceInviteHash,
     });
 
-    assert(
-      workspace,
-      'This workspace inviteHash is invalid',
-      ForbiddenException,
-    );
+    if (!workspace) {
+      throw new AuthException(
+        'Invit hash is invalid',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
-    assert(
-      workspace.activationStatus === WorkspaceActivationStatus.ACTIVE,
-      'Workspace is not ready to welcome new members',
-      ForbiddenException,
-    );
+    if (!(workspace.activationStatus === WorkspaceActivationStatus.ACTIVE)) {
+      throw new AuthException(
+        'Workspace is not ready to welcome new members',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     if (existingUser) {
       const updatedUser = await this.userWorkspaceService.addUserToWorkspace(
@@ -203,11 +219,12 @@ export class SignInUpService {
     lastName: string;
     picture: SignInUpServiceInput['picture'];
   }) {
-    assert(
-      !this.environmentService.get('IS_SIGN_UP_DISABLED'),
-      'Sign up is disabled',
-      ForbiddenException,
-    );
+    if (this.environmentService.get('IS_SIGN_UP_DISABLED')) {
+      throw new AuthException(
+        'Sign up is disabled',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     const workspaceToCreate = this.workspaceRepository.create({
       displayName: '',
