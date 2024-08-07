@@ -192,7 +192,7 @@
     "tslib": "^2.3.0",
     "tsup": "^8.0.1",
     "type-fest": "4.10.1",
-    "typeorm": "^0.3.20",
+    "typeorm": "patch:typeorm@0.3.20#./packages/twenty-server/patches/typeorm+0.3.20.patch",
     "typescript": "5.3.3",
     "use-context-selector": "^2.0.0",
     "use-debounce": "^10.0.0",

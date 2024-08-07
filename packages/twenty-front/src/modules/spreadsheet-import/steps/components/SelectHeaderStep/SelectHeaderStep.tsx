@@ -4,8 +4,8 @@ import { useCallback, useState } from 'react';
 import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { ImportedRow } from '@/spreadsheet-import/types';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { SelectHeaderTable } from './components/SelectHeaderTable';
 
 const StyledHeading = styled(Heading)`

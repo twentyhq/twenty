@@ -19,6 +19,7 @@ import {
   CreateCompanyAndContactJob,
   CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 @Injectable()
 export class CalendarSaveEventsService {
@@ -153,6 +154,7 @@ export class CalendarSaveEventsService {
           workspaceId,
           connectedAccount,
           contactsToCreate: participantsToSave,
+          source: FieldActorSource.CALENDAR,
         },
       );
     }

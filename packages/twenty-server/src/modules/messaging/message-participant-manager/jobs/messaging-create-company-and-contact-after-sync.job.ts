@@ -5,6 +5,7 @@ import { Any, IsNull } from 'typeorm';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
@@ -100,6 +101,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
       connectedAccount,
       contactsToCreate,
       workspaceId,
+      FieldActorSource.EMAIL,
     );
 
     this.logger.log(

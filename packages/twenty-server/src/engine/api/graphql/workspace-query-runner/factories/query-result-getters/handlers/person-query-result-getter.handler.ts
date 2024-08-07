@@ -11,7 +11,7 @@ export class PersonQueryResultGetterHandler
   async handle(
     person: PersonWorkspaceEntity,
     workspaceId: string,
-  ): Promise<any> {
+  ): Promise<PersonWorkspaceEntity> {
     if (!person.id || !person?.avatarUrl) {
       return person;
     }
