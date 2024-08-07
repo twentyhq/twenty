@@ -3,6 +3,7 @@ import { useRecoilState } from 'recoil';
 import { useDropdownStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownStates';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
+import { useCallback } from 'react';
 import { isDefined } from '~/utils/isDefined';
 
 export const useDropdown = (dropdownId?: string) => {
@@ -27,10 +28,10 @@ export const useDropdown = (dropdownId?: string) => {
   const [isDropdownOpen, setIsDropdownOpen] =
     useRecoilState(isDropdownOpenState);
 
-  const closeDropdown = () => {
+  const closeDropdown = useCallback(() => {
     goBackToPreviousHotkeyScope();
     setIsDropdownOpen(false);
-  };
+  }, [goBackToPreviousHotkeyScope, setIsDropdownOpen]);
 
   const openDropdown = () => {
     setIsDropdownOpen(true);

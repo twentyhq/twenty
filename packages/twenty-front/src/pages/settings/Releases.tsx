@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import React, { useEffect, useState } from 'react';
 import rehypeStringify from 'rehype-stringify';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
@@ -50,6 +50,14 @@ const StyledReleaseContainer = styled.div`
     font-weight: ${({ theme }) => theme.font.weight.regular};
     margin: ${({ theme }) => theme.spacing(6)} 0px 0px;
     text-align: justify;
+  }
+
+  li {
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
+
+  li strong {
+    color: ${({ theme }) => theme.font.color.primary};
   }
 `;
 

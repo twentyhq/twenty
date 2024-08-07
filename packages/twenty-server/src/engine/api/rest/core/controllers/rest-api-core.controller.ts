@@ -18,6 +18,13 @@ import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-re
 export class RestApiCoreController {
   constructor(private readonly restApiCoreService: RestApiCoreService) {}
 
+  @Post('/duplicates')
+  async handleApiFindDuplicates(@Req() request: Request, @Res() res: Response) {
+    const result = await this.restApiCoreService.findDuplicates(request);
+
+    res.status(200).send(cleanGraphQLResponse(result.data.data));
+  }
+
   @Get()
   async handleApiGet(@Req() request: Request, @Res() res: Response) {
     const result = await this.restApiCoreService.get(request);

@@ -128,6 +128,18 @@
         "parallel": false
       }
     },
+    "database:migrate:revert": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": [
+          "nx typeorm -- migration:revert -d src/database/typeorm/metadata/metadata.datasource",
+          "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
+        ],
+        "parallel": false
+      }
+    },
     "database:reset": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],

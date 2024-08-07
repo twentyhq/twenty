@@ -6,7 +6,6 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { isDefined } from '~/utils/isDefined';
 
 export const usePageChangeEffectNavigateLocation = () => {
   const isMatchingLocation = useIsMatchingLocation();
@@ -100,9 +99,7 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.Completed &&
-    isMatchingOnboardingRoute &&
-    subscriptionStatus !== SubscriptionStatus.Canceled &&
-    (isDefined(subscriptionStatus) || !isMatchingLocation(AppPath.PlanRequired))
+    isMatchingOnboardingRoute
   ) {
     return defaultHomePagePath;
   }

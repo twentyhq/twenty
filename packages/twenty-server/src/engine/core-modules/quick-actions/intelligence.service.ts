@@ -28,7 +28,8 @@ export class IntelligenceService {
     }
 
     return {
-      linkedinLinkUrl: `https://linkedin.com/` + enrichedCompany.data.handle,
+      linkedinLinkPrimaryLinkUrl:
+        `https://linkedin.com/` + enrichedCompany.data.handle,
     };
   }
 
