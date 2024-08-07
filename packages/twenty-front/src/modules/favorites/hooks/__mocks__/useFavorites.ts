@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
 import { AvatarType } from 'twenty-ui';
 
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const mockId = '8f3b2121-f194-4ba4-9fbf-2d5a37126806';
@@ -235,41 +236,7 @@ export const mocks = [
           idealCustomerProfile
         }
         person {
-          __typename
-          updatedAt
-          myCustomObjectId
-          whatsapp
-          linkedinLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          name {
-            firstName
-            lastName
-          }
-          email
-          position
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          avatarUrl
-          jobTitle
-          xLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          performanceRating
-          createdAt
-          phone
-          id
-          city
-          companyId
-          intro
-          workPrefereance
+          ${PERSON_FRAGMENT}
         }
       }
     }
@@ -469,41 +436,7 @@ export const mocks = [
           idealCustomerProfile
         }
         person {
-          __typename
-          updatedAt
-          myCustomObjectId
-          whatsapp
-          linkedinLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          name {
-            firstName
-            lastName
-          }
-          email
-          position
-          createdBy {
-            source
-            workspaceMemberId
-            name
-          }
-          avatarUrl
-          jobTitle
-          xLink {
-            primaryLinkUrl
-            primaryLinkLabel
-            secondaryLinks
-          }
-          performanceRating
-          createdAt
-          phone
-          id
-          city
-          companyId
-          intro
-          workPrefereance
+          ${PERSON_FRAGMENT}
         }
           }
         }

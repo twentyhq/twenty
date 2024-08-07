@@ -2,46 +2,13 @@ import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
 import { RecoilRoot } from 'recoil';
 
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 
 const expectedQueryTemplate = `
   mutation CreateOnePerson($input: PersonCreateInput!) {
     createPerson(data: $input) {
-      __typename
-      updatedAt
-      myCustomObjectId
-      whatsapp
-      linkedinLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      name {
-        firstName
-        lastName
-      }
-      email
-      position
-      createdBy {
-        source
-        workspaceMemberId
-        name
-      }
-      avatarUrl
-      jobTitle
-      xLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      performanceRating
-      createdAt
-      phone
-      id
-      city
-      companyId
-      intro
-      workPrefereance
+      ${PERSON_FRAGMENT}
     }
   }
 `.replace(/\s/g, '');

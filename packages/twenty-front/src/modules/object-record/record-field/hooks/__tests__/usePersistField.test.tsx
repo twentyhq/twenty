@@ -5,6 +5,7 @@ import { ReactNode } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   phoneFieldDefinition,
@@ -23,41 +24,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 const query = gql`
   mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
     updatePerson(id: $idToUpdate, data: $input) {
-      __typename
-      updatedAt
-      myCustomObjectId
-      whatsapp
-      linkedinLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      name {
-        firstName
-        lastName
-      }
-      email
-      position
-      createdBy {
-        source
-        workspaceMemberId
-        name
-      }
-      avatarUrl
-      jobTitle
-      xLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      performanceRating
-      createdAt
-      phone
-      id
-      city
-      companyId
-      intro
-      workPrefereance
+      ${PERSON_FRAGMENT}
     }
   }
 `;

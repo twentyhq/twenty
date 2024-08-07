@@ -1,45 +1,12 @@
 import { gql } from '@apollo/client';
 
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
 import { responseData as person } from './useUpdateOneRecord';
 
 export const query = gql`
   query FindOnePerson($objectRecordId: ID!) {
     person(filter: { id: { eq: $objectRecordId } }) {
-      __typename
-      updatedAt
-      myCustomObjectId
-      whatsapp
-      linkedinLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      name {
-        firstName
-        lastName
-      }
-      email
-      position
-      createdBy {
-        source
-        workspaceMemberId
-        name
-      }
-      avatarUrl
-      jobTitle
-      xLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      performanceRating
-      createdAt
-      phone
-      id
-      city
-      companyId
-      intro
-      workPrefereance
+      ${PERSON_FRAGMENT}
     }
   }
 `;

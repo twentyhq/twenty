@@ -2,46 +2,13 @@ import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
 import { RecoilRoot } from 'recoil';
 
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
 
 const expectedQueryTemplate = `
   mutation CreatePeople($data: [PersonCreateInput!]!, $upsert: Boolean) {
     createPeople(data: $data, upsert: $upsert) {
-      __typename
-      updatedAt
-      myCustomObjectId
-      whatsapp
-      linkedinLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      name {
-        firstName
-        lastName
-      }
-      email
-      position
-      createdBy {
-        source
-        workspaceMemberId
-        name
-      }
-      avatarUrl
-      jobTitle
-      xLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      performanceRating
-      createdAt
-      phone
-      id
-      city
-      companyId
-      intro
-      workPrefereance
+      ${PERSON_FRAGMENT}
     }
   }
 `.replace(/\s/g, '');
