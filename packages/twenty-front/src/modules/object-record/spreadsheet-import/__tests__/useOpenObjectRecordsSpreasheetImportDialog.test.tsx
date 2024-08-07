@@ -26,26 +26,35 @@ const companyMocks = [
         ) {
           createCompanies(data: $data, upsert: $upsert) {
             __typename
-            xLink {
-              primaryLinkUrl
-              primaryLinkLabel
-              secondaryLinks
-            }
-            linkedinLink {
-              primaryLinkUrl
-              primaryLinkLabel
-              secondaryLinks
+            id
+            visaSponsorship
+            createdBy {
+              source
+              workspaceMemberId
+              name
             }
             domainName {
               primaryLinkUrl
               primaryLinkLabel
               secondaryLinks
             }
+            introVideo {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            position
             annualRecurringRevenue {
               amountMicros
               currencyCode
             }
-            createdAt
+            employees
+            linkedinLink {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            workPolicy
             address {
               addressStreet1
               addressStreet2
@@ -56,11 +65,17 @@ const companyMocks = [
               addressLat
               addressLng
             }
-            updatedAt
             name
+            updatedAt
+            xLink {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            myCustomField
+            createdAt
             accountOwnerId
-            employees
-            id
+            tagline
             idealCustomerProfile
           }
         }
@@ -68,10 +83,12 @@ const companyMocks = [
       variables: {
         data: [
           {
+            createdBy: { source: 'IMPORT' },
             employees: 0,
             idealCustomerProfile: true,
             name: 'Example Company',
             id: companyId,
+            visaSponsorship: false,
           },
         ],
         upsert: true,

@@ -21,7 +21,7 @@ const mockActivityTarget = {
 };
 
 const mockActivity = {
-  __typename: 'Note',
+  __typename: 'Task',
   updatedAt: '2021-08-03T19:20:06.000Z',
   createdAt: '2021-08-03T19:20:06.000Z',
   status: 'DONE',
