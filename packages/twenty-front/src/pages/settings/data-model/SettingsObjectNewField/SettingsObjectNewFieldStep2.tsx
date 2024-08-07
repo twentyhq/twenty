@@ -192,9 +192,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                 <SaveAndCancelButtons
                   isSaveDisabled={!canSave}
                   isCancelDisabled={isSubmitting}
-                  onCancel={() => {
-                    navigate(`/settings/objects/${objectSlug}`);
-                  }}
+                  onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
                   onSave={formConfig.handleSubmit(handleSave)}
                 />
               )}
