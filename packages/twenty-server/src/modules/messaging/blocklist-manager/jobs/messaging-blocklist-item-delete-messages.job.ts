@@ -9,9 +9,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
 export type BlocklistItemDeleteMessagesJobData = {
@@ -27,8 +25,6 @@ export class BlocklistItemDeleteMessagesJob {
   private readonly logger = new Logger(BlocklistItemDeleteMessagesJob.name);
 
   constructor(
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly threadCleanerService: MessagingMessageCleanerService,
@@ -64,30 +60,19 @@ export class BlocklistItemDeleteMessagesJob {
       );
     }
 
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
-
-    const messageChannels = await messageChannelRepository.find({
-      where: {
-        connectedAccount: {
-          accountOwnerId: workspaceMemberId,
-        },
-      },
-    });
-
-    const messageChannelIds = messageChannels.map(({ id }) => id);
-
-    const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
-
     const messageChannelMessageAssociationRepository =
       await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
         'messageChannelMessageAssociation',
       );
 
-    messageChannelMessageAssociationRepository.delete({
-      messageChannelId: Any(messageChannelIds),
+    const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
+
+    await messageChannelMessageAssociationRepository.delete({
+      messageChannel: {
+        connectedAccount: {
+          accountOwnerId: workspaceMemberId,
+        },
+      },
       message: {
         messageParticipants: {
           handle,
