@@ -1,6 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { ApiKeyTokenInput } from 'src/engine/core-modules/auth/dto/api-key-token.input';
 import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
@@ -43,7 +42,6 @@ import { TokenService } from './services/token.service';
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AuthResolver {
   constructor(
-    @InjectRepository(Workspace, 'core')
     private authService: AuthService,
     private tokenService: TokenService,
     private userService: UserService,
