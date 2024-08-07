@@ -354,7 +354,7 @@
     "type-fest": "4.10.1",
     "typescript": "5.3.3"
   },
-  "version": "0.2.1",
+  "version": "0.23.1",
   "nx": {},
   "scripts": {
     "start": "npx nx run-many -t start -p twenty-server twenty-front"
