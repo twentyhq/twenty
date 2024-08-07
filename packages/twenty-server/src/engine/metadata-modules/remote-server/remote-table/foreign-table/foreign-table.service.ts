@@ -15,10 +15,10 @@ import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/worksp
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   ReferencedTable,
-  WorkspaceMigrationTableActionType,
+  WorkspaceMigrationColumnAction,
   WorkspaceMigrationForeignColumnDefinition,
   WorkspaceMigrationForeignTable,
-  WorkspaceMigrationColumnAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -77,6 +77,8 @@ export class ForeignTableService {
                     columnName: getForeignTableColumnName(column.columnName),
                     columnType: column.dataType,
                     distantColumnName: column.columnName,
+                    isNullable: false,
+                    defaultValue: null,
                   }) satisfies WorkspaceMigrationForeignColumnDefinition,
               ),
               referencedTable,

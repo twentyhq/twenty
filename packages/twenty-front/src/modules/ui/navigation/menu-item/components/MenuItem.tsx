@@ -1,5 +1,5 @@
-import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
+import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
 import { IconChevronRight, IconComponent } from 'twenty-ui';
 
 import { LightIconButtonProps } from '@/ui/input/button/components/LightIconButton';
@@ -76,7 +76,6 @@ export const MenuItem = ({
           <LightIconButtonGroup iconButtons={iconButtons} size="small" />
         )}
       </div>
-
       {hasSubMenu && (
         <IconChevronRight
           size={theme.icon.size.sm}

@@ -1,7 +1,7 @@
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { Column, FormatterProps, useRowSelection } from 'react-data-grid';
 
-import { RawData } from '@/spreadsheet-import/types';
+import { ImportedRow } from '@/spreadsheet-import/types';
 import { Radio } from '@/ui/input/components/Radio';
 
 const SELECT_COLUMN_KEY = 'select-row';
@@ -39,7 +39,7 @@ export const SelectColumn: Column<any, any> = {
   formatter: SelectFormatter,
 };
 
-export const generateSelectionColumns = (data: RawData[]) => {
+export const generateSelectionColumns = (data: ImportedRow[]) => {
   const longestRowLength = data.reduce(
     (acc, curr) => (acc > curr.length ? acc : curr.length),
     0,

@@ -6,6 +6,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
@@ -20,16 +21,14 @@ const mockActivityTarget = {
 };
 
 const mockActivity = {
-  __typename: 'Activity',
+  __typename: 'Note',
   updatedAt: '2021-08-03T19:20:06.000Z',
   createdAt: '2021-08-03T19:20:06.000Z',
-  completedAt: '2021-08-03T19:20:06.000Z',
+  status: 'DONE',
   reminderAt: '2021-08-03T19:20:06.000Z',
   title: 'title',
-  authorId: '1',
   body: 'body',
   dueAt: '2021-08-03T19:20:06.000Z',
-  type: 'type',
   assigneeId: '1',
   id: '234',
 };
@@ -102,13 +101,13 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        query FindManyActivities(
-          $filter: ActivityFilterInput
-          $orderBy: [ActivityOrderByInput]
+        query FindManyTasks(
+          $filter: TaskFilterInput
+          $orderBy: [TaskOrderByInput]
           $lastCursor: String
           $limit: Int
         ) {
-          activities(
+          tasks(
             filter: $filter
             orderBy: $orderBy
             first: $limit
@@ -117,17 +116,13 @@ const mocks: MockedResponse[] = [
             edges {
               node {
                 __typename
-                createdAt
-                reminderAt
-                authorId
                 title
-                completedAt
-                updatedAt
-                body
-                dueAt
-                type
                 id
-                assigneeId
+                updatedAt
+                createdAt
+                body
+                status
+                dueAt
               }
               cursor
             }
@@ -178,6 +173,7 @@ describe('useActivities', () => {
     const { result } = renderHook(
       () =>
         useActivities({
+          objectNameSingular: CoreObjectNameSingular.Task,
           targetableObjects: [],
           activitiesFilters: {},
           activitiesOrderByVariables: [{}],
@@ -200,6 +196,7 @@ describe('useActivities', () => {
         );
 
         const activities = useActivities({
+          objectNameSingular: CoreObjectNameSingular.Task,
           targetableObjects: [
             { targetObjectNameSingular: 'company', id: '123' },
           ],

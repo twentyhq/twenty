@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
 import { gql } from '@apollo/client';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -14,7 +14,7 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 
-const entityId = 'entityId';
+const recordId = 'recordId';
 
 const mocks: MockedResponse[] = [
   {
@@ -26,20 +26,35 @@ const mocks: MockedResponse[] = [
         ) {
           updateCompany(id: $idToUpdate, data: $input) {
             __typename
-            xLink {
-              label
-              url
+            id
+            visaSponsorship
+            createdBy {
+              source
+              workspaceMemberId
+              name
             }
-            linkedinLink {
-              label
-              url
+            domainName {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
             }
-            domainName
+            introVideo {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            position
             annualRecurringRevenue {
               amountMicros
               currencyCode
             }
-            createdAt
+            employees
+            linkedinLink {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            workPolicy
             address {
               addressStreet1
               addressStreet2
@@ -50,24 +65,30 @@ const mocks: MockedResponse[] = [
               addressLat
               addressLng
             }
-            updatedAt
             name
+            updatedAt
+            xLink {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            myCustomField
+            createdAt
             accountOwnerId
-            employees
-            id
+            tagline
             idealCustomerProfile
           }
         }
       `,
       variables: {
-        idToUpdate: 'entityId',
+        idToUpdate: 'recordId',
         input: { idealCustomerProfile: true },
       },
     },
     result: jest.fn(() => ({
       data: {
         updateWorkspaceMember: {
-          id: 'entityId',
+          id: 'recordId',
         },
       },
     })),
@@ -95,7 +116,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
       <FieldContext.Provider
         value={{
           fieldDefinition: booleanFieldDefinition,
-          entityId,
+          recordId,
           hotkeyScope: 'hotkeyScope',
           isLabelIdentifier: false,
           useUpdateRecord: useUpdateOneRecordMutation,

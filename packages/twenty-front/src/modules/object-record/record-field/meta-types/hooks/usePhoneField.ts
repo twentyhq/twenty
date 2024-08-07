@@ -14,7 +14,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldPhone } from '../../types/guards/isFieldPhone';
 
 export const usePhoneField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   try {
     // TODO: temporary - remove when 'Phone' field in 'Person' object
@@ -32,7 +32,7 @@ export const usePhoneField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );
@@ -45,7 +45,7 @@ export const usePhoneField = () => {
     persistField(newPhoneValue);
   };
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldPhoneValue>(`${entityId}-${fieldName}`);
+    useRecordFieldInput<FieldPhoneValue>(`${recordId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

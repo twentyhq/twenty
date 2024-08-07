@@ -1,25 +1,25 @@
-import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { useSetRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useUpsertedPreviewRecord } from '@/settings/data-model/fields/preview/hooks/useUpsertedPreviewRecord';
+import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
 type SettingsDataModelSetFieldValueEffectProps = {
-  entityId: string;
+  recordId: string;
   fieldName: string;
   value: unknown;
 };
 
 export const SettingsDataModelSetFieldValueEffect = ({
-  entityId,
+  recordId,
   fieldName,
   value,
 }: SettingsDataModelSetFieldValueEffectProps) => {
   const upsertedPreviewRecord = useUpsertedPreviewRecord();
   const setFieldValue = useSetRecoilState(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName,
     }),
   );
@@ -32,19 +32,19 @@ export const SettingsDataModelSetFieldValueEffect = ({
     ) {
       setFieldValue(upsertedPreviewRecord[fieldName]);
       setRecordFieldValue(
-        entityId,
+        recordId,
         fieldName,
         upsertedPreviewRecord[fieldName],
       );
     } else {
       setFieldValue(value);
-      setRecordFieldValue(entityId, fieldName, value);
+      setRecordFieldValue(recordId, fieldName, value);
     }
   }, [
     value,
     setFieldValue,
     setRecordFieldValue,
-    entityId,
+    recordId,
     fieldName,
     upsertedPreviewRecord,
   ]);

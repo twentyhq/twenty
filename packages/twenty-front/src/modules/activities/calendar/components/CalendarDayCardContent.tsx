@@ -5,7 +5,7 @@ import { differenceInSeconds, endOfDay, format } from 'date-fns';
 import { CalendarEventRow } from '@/activities/calendar/components/CalendarEventRow';
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
+import { TimelineCalendarEvent } from '~/generated/graphql';
 
 type CalendarDayCardContentProps = {
   calendarEvents: TimelineCalendarEvent[];

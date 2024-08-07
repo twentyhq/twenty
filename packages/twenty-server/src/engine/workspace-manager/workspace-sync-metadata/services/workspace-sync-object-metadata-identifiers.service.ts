@@ -55,7 +55,7 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
     objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ): Promise<ObjectMetadataEntity[]> {
     return await objectMetadataRepository.find({
-      where: { workspaceId, isCustom: false },
+      where: { workspaceId, isCustom: false, isRemote: false },
       relations: ['fields'],
     });
   }
@@ -114,6 +114,8 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
         ...objectMetadata,
         labelIdentifierFieldMetadataId:
           labelIdentifierFieldMetadata?.id ?? null,
+        imageIdentifierFieldMetadataId:
+          imageIdentifierFieldMetadata?.id ?? null,
       });
     }
   }
@@ -127,7 +129,8 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
     const identifierFieldMetadata = objectMetadata.fields.find(
       (field) =>
         field.standardId ===
-        standardObjectMetadataMap[objectStandardId][standardIdFieldName],
+          standardObjectMetadataMap[objectStandardId][standardIdFieldName] &&
+        field.standardId !== null,
     );
 
     if (
@@ -160,9 +163,12 @@ export class WorkspaceSyncObjectMetadataIdentifiersService {
       );
     }
 
-    if (imageIdentifierFieldMetadata) {
+    if (
+      imageIdentifierFieldMetadata &&
+      imageIdentifierFieldMetadata.type !== FieldMetadataType.TEXT
+    ) {
       throw new Error(
-        `Image identifier field for object ${objectMetadata.nameSingular} are not supported yet.`,
+        `Image identifier field for object ${objectMetadata.nameSingular} has invalid type ${imageIdentifierFieldMetadata.type}`,
       );
     }
   }

@@ -4,6 +4,8 @@ import {
   IconCheck,
   IconCoins,
   IconComponent,
+  IconCreativeCommonsSa,
+  IconFilePencil,
   IconJson,
   IconKey,
   IconLink,
@@ -29,54 +31,56 @@ DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);
 export type SettingsFieldTypeConfig = {
   label: string;
   Icon: IconComponent;
-  defaultValue?: unknown;
+  exampleValue?: unknown;
 };
 
 export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.Uuid]: {
     label: 'Unique ID',
     Icon: IconKey,
-    defaultValue: '00000000-0000-0000-0000-000000000000',
+    exampleValue: '00000000-0000-0000-0000-000000000000',
   },
   [FieldMetadataType.Text]: {
     label: 'Text',
     Icon: IconTextSize,
-    defaultValue: 'Text',
+    exampleValue:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc.',
   },
   [FieldMetadataType.Numeric]: {
     label: 'Numeric',
     Icon: IconNumbers,
-    defaultValue: 12345,
+    exampleValue: 2000,
   },
   [FieldMetadataType.Number]: {
     label: 'Number',
     Icon: IconNumbers,
-    defaultValue: 12345,
+
+    exampleValue: 2000,
   },
   [FieldMetadataType.Link]: {
     label: 'Link',
     Icon: IconLink,
-    defaultValue: { url: 'www.twenty.com', label: '' },
+    exampleValue: { url: 'www.twenty.com', label: '' },
   },
   [FieldMetadataType.Links]: {
     label: 'Links',
     Icon: IconLink,
-    defaultValue: { primaryLinkUrl: 'twenty.com', primaryLinkLabel: '' },
+    exampleValue: { primaryLinkUrl: 'twenty.com', primaryLinkLabel: '' },
   },
   [FieldMetadataType.Boolean]: {
     label: 'True/False',
     Icon: IconCheck,
-    defaultValue: true,
+    exampleValue: true,
   },
   [FieldMetadataType.DateTime]: {
     label: 'Date and Time',
     Icon: IconCalendarTime,
-    defaultValue: DEFAULT_DATE_VALUE.toISOString(),
+    exampleValue: DEFAULT_DATE_VALUE.toISOString(),
   },
   [FieldMetadataType.Date]: {
     label: 'Date',
     Icon: IconCalendarEvent,
-    defaultValue: DEFAULT_DATE_VALUE.toISOString(),
+    exampleValue: DEFAULT_DATE_VALUE.toISOString(),
   },
   [FieldMetadataType.Select]: {
     label: 'Select',
@@ -89,7 +93,7 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.Currency]: {
     label: 'Currency',
     Icon: IconCoins,
-    defaultValue: { amountMicros: 2000000000, currencyCode: CurrencyCode.USD },
+    exampleValue: { amountMicros: 2000000000, currencyCode: CurrencyCode.USD },
   },
   [FieldMetadataType.Relation]: {
     label: 'Relation',
@@ -99,22 +103,22 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.Phone]: {
     label: 'Phone',
     Icon: IconPhone,
-    defaultValue: '+1234-567-890',
+    exampleValue: '+1234-567-890',
   },
   [FieldMetadataType.Rating]: {
     label: 'Rating',
     Icon: IconTwentyStar,
-    defaultValue: '3',
+    exampleValue: '3',
   },
   [FieldMetadataType.FullName]: {
     label: 'Full Name',
     Icon: IconUser,
-    defaultValue: { firstName: 'John', lastName: 'Doe' },
+    exampleValue: { firstName: 'John', lastName: 'Doe' },
   },
   [FieldMetadataType.Address]: {
     label: 'Address',
     Icon: IconMap,
-    defaultValue: {
+    exampleValue: {
       addressStreet1: '456 Oak Street',
       addressStreet2: 'Unit 3B',
       addressCity: 'Springfield',
@@ -128,7 +132,16 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.RawJson]: {
     label: 'JSON',
     Icon: IconJson,
-    defaultValue: { key: 'value' },
+    exampleValue: { key: 'value' },
+  },
+  [FieldMetadataType.RichText]: {
+    label: 'Rich Text',
+    Icon: IconFilePencil,
+    exampleValue: { key: 'value' },
+  },
+  [FieldMetadataType.Actor]: {
+    label: 'Actor',
+    Icon: IconCreativeCommonsSa,
   },
 } as const satisfies Record<
   SettingsSupportedFieldType,

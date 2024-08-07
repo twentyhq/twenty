@@ -18,6 +18,7 @@ const StyledEventFieldDiffValue = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 export const EventFieldDiffValue = ({
@@ -29,7 +30,7 @@ export const EventFieldDiffValue = ({
     <StyledEventFieldDiffValue>
       <FieldContext.Provider
         value={{
-          entityId: diffArtificialRecordStoreId,
+          recordId: diffArtificialRecordStoreId,
           isLabelIdentifier: isLabelIdentifierField({
             fieldMetadataItem,
             objectMetadataItem: mainObjectMetadataItem,

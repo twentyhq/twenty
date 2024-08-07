@@ -1,5 +1,6 @@
 export type QueryVariables = {
   id?: string;
+  ids?: string[];
   data?: object | null;
   filter?: object;
   orderBy?: object;

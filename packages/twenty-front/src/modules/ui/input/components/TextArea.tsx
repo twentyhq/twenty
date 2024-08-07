@@ -29,7 +29,6 @@ const StyledTextArea = styled(TextareaAutosize)`
   line-height: 16px;
   overflow: auto;
   padding: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(3)};
   resize: none;
   width: 100%;
 

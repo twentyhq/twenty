@@ -1,9 +1,8 @@
-import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
+import { useCallback, useState } from 'react';
 import { WorkBook } from 'xlsx-ugnis';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
-
 import { DropZone } from './components/DropZone';
 
 const StyledContent = styled(Modal.Content)`
