@@ -1,5 +1,7 @@
 import { blockSchema } from '@/activities/blocks/schema';
 
+import { useComponentsContext } from '@blocknote/react';
+
 type CustomAddBlockItemProps = {
   editor: typeof blockSchema.BlockNoteEditor;
   children: React.ReactNode; // Adding the children prop
@@ -14,6 +16,8 @@ export const CustomAddBlockItem = ({
   editor,
   children,
 }: CustomAddBlockItemProps) => {
+  const Components = useComponentsContext();
+
   const handleClick = () => {
     const blockIdentifier = editor.getTextCursorPosition().block;
     const currentBlockContent = blockIdentifier?.content as
@@ -31,11 +35,8 @@ export const CustomAddBlockItem = ({
     }
   };
   return (
-    <button
-      className="mantine-focus-auto m_99ac2aa1 mantine-Menu-item bn-menu-item m_87cf2631 mantine-UnstyledButton-root"
-      onClick={handleClick}
-    >
+    <Components.Generic.Menu.Item onClick={handleClick}>
       {children}
-    </button>
+    </Components.Generic.Menu.Item>
   );
 };
