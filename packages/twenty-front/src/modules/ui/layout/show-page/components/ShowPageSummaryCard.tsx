@@ -20,40 +20,45 @@ type ShowPageSummaryCardProps = {
   onUploadPicture?: (file: File) => void;
   title: ReactNode;
   loading: boolean;
+  isMobile?: boolean;
 };
 
-export const StyledShowPageSummaryCard = styled.div`
+export const StyledShowPageSummaryCard = styled.div<{
+  isMobile: boolean;
+}>`
   align-items: center;
   display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
-  justify-content: center;
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
+  gap: ${({ theme, isMobile }) =>
+    isMobile ? theme.spacing(2) : theme.spacing(3)};
+  justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
   padding: ${({ theme }) => theme.spacing(4)};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  height: 127px;
+  height: ${({ isMobile }) => (isMobile ? '77px' : '127px')};
+  box-sizing: border-box;
 `;
 
-const StyledInfoContainer = styled.div`
-  align-items: center;
+const StyledInfoContainer = styled.div<{ isMobile: boolean }>`
+  align-items: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;
 
-const StyledDate = styled.div`
+const StyledDate = styled.div<{ isMobile: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
+  padding-left: ${({ theme, isMobile }) => (isMobile ? theme.spacing(2) : 0)};
 `;
 
-const StyledTitle = styled.div`
+const StyledTitle = styled.div<{ isMobile: boolean }>`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  justify-content: center;
-
-  width: 100%;
+  justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
+  width: ${({ isMobile }) => (isMobile ? '' : '100%')};
 `;
 
 const StyledAvatarWrapper = styled.div`
@@ -97,13 +102,13 @@ export const ShowPageSummaryCard = ({
   onUploadPicture,
   title,
   loading,
+  isMobile = false,
 }: ShowPageSummaryCardProps) => {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';
   const dateElementId = `date-id-${uuidV4()}`;
   const inputFileRef = useRef<HTMLInputElement>(null);
-
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) onUploadPicture?.(e.target.files[0]);
   };
@@ -114,13 +119,13 @@ export const ShowPageSummaryCard = ({
 
   if (loading)
     return (
-      <StyledShowPageSummaryCard>
+      <StyledShowPageSummaryCard isMobile={isMobile}>
         <StyledShowPageSummaryCardSkeletonLoader />
       </StyledShowPageSummaryCard>
     );
 
   return (
-    <StyledShowPageSummaryCard>
+    <StyledShowPageSummaryCard isMobile={isMobile}>
       <StyledAvatarWrapper>
         <Avatar
           avatarUrl={logoOrAvatar}
@@ -136,10 +141,10 @@ export const ShowPageSummaryCard = ({
           type="file"
         />
       </StyledAvatarWrapper>
-      <StyledInfoContainer>
-        <StyledTitle>{title}</StyledTitle>
+      <StyledInfoContainer isMobile={isMobile}>
+        <StyledTitle isMobile={isMobile}>{title}</StyledTitle>
         {beautifiedCreatedAt && (
-          <StyledDate id={dateElementId}>
+          <StyledDate isMobile={isMobile} id={dateElementId}>
             Added {beautifiedCreatedAt}
           </StyledDate>
         )}
