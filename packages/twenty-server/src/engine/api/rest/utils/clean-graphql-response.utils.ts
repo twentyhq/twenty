@@ -43,6 +43,16 @@ export const cleanGraphQLResponse = (input: any) => {
     } else if (isObject(input[key])) {
       // Recursively clean and assign nested objects under the data key
       output.data[key] = cleanObject(input[key]);
+    } else if (Array.isArray(input[key])) {
+      const itemsWithEdges = input[key].filter((item) => item.edges);
+      const cleanedObjArray = itemsWithEdges.map(({ edges, ...item }) => {
+        return {
+          ...item,
+          [key]: edges.map((edge) => cleanObject(edge.node)),
+        };
+      });
+
+      output.data = cleanedObjArray;
     } else {
       // Assign all other properties directly under the data key
       output.data[key] = input[key];

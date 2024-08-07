@@ -1,194 +1,63 @@
-import { Injectable, Optional, Type } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, Type } from '@nestjs/common';
 
-import { ObjectLiteral, Repository } from 'typeorm';
+import { ObjectLiteral } from 'typeorm';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
-import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
-import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { workspaceDataSourceCacheInstance } from 'src/engine/twenty-orm/twenty-orm-core.module';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
 export class TwentyORMManager {
   constructor(
-    @Optional()
-    @InjectWorkspaceDatasource()
-    private readonly workspaceDataSource: WorkspaceDataSource | null,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceDataSourceFactory: WorkspaceDatasourceFactory,
-    private readonly entitySchemaFactory: EntitySchemaFactory,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
 
   async getRepository<T extends ObjectLiteral>(
+    workspaceEntity: Type<T>,
+  ): Promise<WorkspaceRepository<T>>;
+
+  async getRepository<T extends ObjectLiteral>(
     objectMetadataName: string,
   ): Promise<WorkspaceRepository<T>>;
 
   async getRepository<T extends ObjectLiteral>(
-    entityClass: Type<T>,
-  ): Promise<WorkspaceRepository<T>>;
-
-  async getRepository<T extends ObjectLiteral>(
-    entityClassOrobjectMetadataName: Type<T> | string,
+    workspaceEntityOrobjectMetadataName: Type<T> | string,
   ): Promise<WorkspaceRepository<T>> {
+    const { workspaceId, cacheVersion } =
+      this.scopedWorkspaceContextFactory.create();
+
     let objectMetadataName: string;
 
-    if (typeof entityClassOrobjectMetadataName === 'string') {
-      objectMetadataName = entityClassOrobjectMetadataName;
+    if (typeof workspaceEntityOrobjectMetadataName === 'string') {
+      objectMetadataName = workspaceEntityOrobjectMetadataName;
     } else {
       objectMetadataName = convertClassNameToObjectMetadataName(
-        entityClassOrobjectMetadataName.name,
+        workspaceEntityOrobjectMetadataName.name,
       );
     }
 
-    if (!this.workspaceDataSource) {
-      throw new Error('Workspace data source not found');
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
     }
 
-    const workspaceId = this.workspaceDataSource.getWorkspaceId();
-
-    let objectMetadataCollection =
-      await this.workspaceCacheStorageService.getObjectMetadataCollection(
-        workspaceId,
-      );
-
-    if (!objectMetadataCollection) {
-      objectMetadataCollection = await this.objectMetadataRepository.find({
-        where: { workspaceId },
-        relations: [
-          'fields.object',
-          'fields',
-          'fields.fromRelationMetadata',
-          'fields.toRelationMetadata',
-          'fields.fromRelationMetadata.toObjectMetadata',
-        ],
-      });
-
-      await this.workspaceCacheStorageService.setObjectMetadataCollection(
-        workspaceId,
-        objectMetadataCollection,
-      );
-    }
-
-    const objectMetadata = objectMetadataCollection.find(
-      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
-    );
-
-    if (!objectMetadata) {
-      throw new Error('Object metadata not found');
-    }
-
-    const entitySchema = await this.entitySchemaFactory.create(
+    const workspaceDataSource = await this.workspaceDataSourceFactory.create(
       workspaceId,
-      objectMetadata,
+      cacheVersion,
     );
 
-    if (!entitySchema) {
-      throw new Error('Entity schema not found');
-    }
-
-    return this.workspaceDataSource.getRepository<T>(entitySchema);
+    return workspaceDataSource.getRepository<T>(objectMetadataName);
   }
 
-  async getRepositoryForWorkspace<T extends ObjectLiteral>(
-    workspaceId: string,
-    entityClass: Type<T>,
-  ): Promise<WorkspaceRepository<T>>;
+  async getDatasource() {
+    const { workspaceId, cacheVersion } =
+      this.scopedWorkspaceContextFactory.create();
 
-  async getRepositoryForWorkspace(
-    workspaceId: string,
-    objectMetadataName: string,
-  ): Promise<WorkspaceRepository<CustomWorkspaceEntity>>;
-
-  async getRepositoryForWorkspace<T extends ObjectLiteral>(
-    workspaceId: string,
-    entityClassOrobjectMetadataName: Type<T> | string,
-  ): Promise<
-    WorkspaceRepository<T> | WorkspaceRepository<CustomWorkspaceEntity>
-  > {
-    const cacheVersion =
-      await this.workspaceCacheVersionService.getVersion(workspaceId);
-
-    let objectMetadataName: string;
-
-    if (typeof entityClassOrobjectMetadataName === 'string') {
-      objectMetadataName = entityClassOrobjectMetadataName;
-    } else {
-      objectMetadataName = convertClassNameToObjectMetadataName(
-        entityClassOrobjectMetadataName.name,
-      );
+    if (!workspaceId) {
+      throw new Error('Workspace not found');
     }
 
-    let objectMetadataCollection =
-      await this.workspaceCacheStorageService.getObjectMetadataCollection(
-        workspaceId,
-      );
-
-    if (!objectMetadataCollection) {
-      objectMetadataCollection = await this.objectMetadataRepository.find({
-        where: { workspaceId },
-        relations: [
-          'fields.object',
-          'fields',
-          'fields.fromRelationMetadata',
-          'fields.toRelationMetadata',
-          'fields.fromRelationMetadata.toObjectMetadata',
-        ],
-      });
-
-      await this.workspaceCacheStorageService.setObjectMetadataCollection(
-        workspaceId,
-        objectMetadataCollection,
-      );
-    }
-
-    const entities = await Promise.all(
-      objectMetadataCollection.map((objectMetadata) =>
-        this.entitySchemaFactory.create(workspaceId, objectMetadata),
-      ),
-    );
-
-    const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
-      `${workspaceId}-${cacheVersion}`,
-      async () => {
-        const workspaceDataSource =
-          await this.workspaceDataSourceFactory.create(entities, workspaceId);
-
-        return workspaceDataSource;
-      },
-      (dataSource) => dataSource.destroy(),
-    );
-
-    const objectMetadata = objectMetadataCollection.find(
-      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
-    );
-
-    if (!objectMetadata) {
-      throw new Error('Object metadata not found');
-    }
-
-    const entitySchema = await this.entitySchemaFactory.create(
-      workspaceId,
-      objectMetadata,
-    );
-
-    if (!workspaceDataSource) {
-      throw new Error('Workspace data source not found');
-    }
-
-    if (!entitySchema) {
-      throw new Error('Entity schema not found');
-    }
-
-    return workspaceDataSource.getRepository<T>(entitySchema);
+    return this.workspaceDataSourceFactory.create(workspaceId, cacheVersion);
   }
 }

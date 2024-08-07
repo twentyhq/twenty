@@ -3,7 +3,8 @@ import { Scope } from '@nestjs/common';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
+import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 export type MessageParticipantMatchParticipantJobData = {
   workspaceId: string;
@@ -18,16 +19,16 @@ export type MessageParticipantMatchParticipantJobData = {
 })
 export class MessageParticipantMatchParticipantJob {
   constructor(
-    private readonly messageParticipantService: MessagingMessageParticipantService,
+    private readonly matchParticipantService: MatchParticipantService<MessageParticipantWorkspaceEntity>,
   ) {}
 
   @Process(MessageParticipantMatchParticipantJob.name)
   async handle(data: MessageParticipantMatchParticipantJobData): Promise<void> {
-    const { workspaceId, email, personId, workspaceMemberId } = data;
+    const { email, personId, workspaceMemberId } = data;
 
-    await this.messageParticipantService.matchMessageParticipants(
-      workspaceId,
+    await this.matchParticipantService.matchParticipantsAfterPersonOrWorkspaceMemberCreation(
       email,
+      'messageParticipant',
       personId,
       workspaceMemberId,
     );

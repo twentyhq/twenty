@@ -7,14 +7,12 @@ import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entit
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class EntitySchemaFactory {
   constructor(
     private readonly entitySchemaColumnFactory: EntitySchemaColumnFactory,
     private readonly entitySchemaRelationFactory: EntitySchemaRelationFactory,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async create(
@@ -22,7 +20,6 @@ export class EntitySchemaFactory {
     objectMetadata: ObjectMetadataEntity,
   ): Promise<EntitySchema> {
     const columns = this.entitySchemaColumnFactory.create(
-      workspaceId,
       objectMetadata.fields,
     );
 

@@ -1,16 +1,25 @@
-import { ReactNode } from 'react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import gql from 'graphql-tag';
+import { ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
+import { Task } from '@/activities/types/Task';
 
-const task = { id: '123', completedAt: '2024-03-15T07:33:14.212Z' };
-
-const mockedDate = task.completedAt;
-const toISOStringMock = jest.fn(() => mockedDate);
-global.Date.prototype.toISOString = toISOStringMock;
+const task: Task = {
+  id: '123',
+  status: null,
+  title: 'Test',
+  body: 'Test',
+  dueAt: '2024-03-15T07:33:14.212Z',
+  createdAt: '2024-03-15T07:33:14.212Z',
+  updatedAt: '2024-03-15T07:33:14.212Z',
+  assignee: null,
+  assigneeId: null,
+  taskTargets: [],
+  __typename: 'Task',
+};
 
 const mocks: MockedResponse[] = [
   {
@@ -26,7 +35,7 @@ const mocks: MockedResponse[] = [
             reminderAt
             authorId
             title
-            completedAt
+            status
             updatedAt
             body
             dueAt
@@ -38,7 +47,7 @@ const mocks: MockedResponse[] = [
       `,
       variables: {
         idToUpdate: task.id,
-        input: { completedAt: task.completedAt },
+        input: { status: task.status },
       },
     },
     result: jest.fn(() => ({
@@ -49,11 +58,11 @@ const mocks: MockedResponse[] = [
           reminderAt: null,
           authorId: '123',
           title: 'Test',
-          completedAt: '2024-03-15T07:33:14.212Z',
+          status: 'DONE',
           updatedAt: '2024-03-15T07:33:14.212Z',
           body: 'Test',
           dueAt: '2024-03-15T07:33:14.212Z',
-          type: 'Task',
+          type: 'TASK',
           id: '123',
           assigneeId: '123',
         },

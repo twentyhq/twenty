@@ -161,13 +161,10 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const excludedFieldTypes: SettingsSupportedFieldType[] = (
     [
-      // FieldMetadataType.Email,
-      // FieldMetadataType.FullName,
       FieldMetadataType.Link,
       FieldMetadataType.Numeric,
-      // FieldMetadataType.Probability,
-      // FieldMetadataType.Uuid,
-      // FieldMetadataType.Phone,
+      FieldMetadataType.RichText,
+      FieldMetadataType.Actor,
     ] as const
   ).filter(isDefined);
 

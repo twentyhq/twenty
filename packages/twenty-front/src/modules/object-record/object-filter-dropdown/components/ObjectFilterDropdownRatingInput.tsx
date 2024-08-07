@@ -7,7 +7,9 @@ import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetada
 import { RatingInput } from '@/ui/field/input/components/RatingInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
-const convertFieldRatingValueToNumber = (rating: FieldRatingValue): string => {
+const convertFieldRatingValueToNumber = (
+  rating: Exclude<FieldRatingValue, null>,
+): string => {
   return rating.split('_')[1];
 };
 
@@ -51,6 +53,10 @@ export const ObjectFilterDropdownRatingInput = () => {
         <RatingInput
           value={selectedFilter?.value as FieldRatingValue}
           onChange={(newValue: FieldRatingValue) => {
+            if (!newValue) {
+              return;
+            }
+
             selectFilter?.({
               id: selectedFilter?.id ? selectedFilter.id : v4(),
               fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,

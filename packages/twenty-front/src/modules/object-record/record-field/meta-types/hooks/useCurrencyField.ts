@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { convertCurrencyToCurrencyMicros } from '~/utils/convert-currency-amount';
+import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { usePersistField } from '../../hooks/usePersistField';
@@ -45,7 +45,7 @@ export const useCurrencyField = () => {
     const newCurrencyValue = {
       amountMicros: isNaN(amount)
         ? null
-        : convertCurrencyToCurrencyMicros(amount),
+        : convertCurrencyAmountToCurrencyMicros(amount),
       currencyCode,
     };
 

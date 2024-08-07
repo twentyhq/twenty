@@ -18,6 +18,7 @@ const StyledEventFieldDiffValue = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 export const EventFieldDiffValue = ({

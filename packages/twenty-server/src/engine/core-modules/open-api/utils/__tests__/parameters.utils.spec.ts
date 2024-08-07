@@ -69,6 +69,7 @@ describe('computeParameters', () => {
         schema: {
           type: 'integer',
           enum: [0, 1, 2],
+          default: 1,
         },
       });
     });

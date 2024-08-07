@@ -2,14 +2,13 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
+import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
 import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';
 import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
-import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 
 export const useInlineCell = () => {
   const {
@@ -27,9 +26,7 @@ export const useInlineCell = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const { initDraftValue: initFieldInputDraftValue } = useRecordFieldInput(
-    getRecordFieldInputId(recordId,fieldDefinition?.metadata?.fieldName)
-  );
+  const initFieldInputDraftValue = useInitDraftValueV2();
 
   const closeInlineCell = () => {
     setIsInlineCellInEditMode(false);
@@ -39,7 +36,7 @@ export const useInlineCell = () => {
 
   const openInlineCell = (customEditHotkeyScopeForField?: HotkeyScope) => {
     setIsInlineCellInEditMode(true);
-    initFieldInputDraftValue();
+    initFieldInputDraftValue({ recordId, fieldDefinition });
 
     if (isDefined(customEditHotkeyScopeForField)) {
       setHotkeyScopeAndMemorizePreviousScope(

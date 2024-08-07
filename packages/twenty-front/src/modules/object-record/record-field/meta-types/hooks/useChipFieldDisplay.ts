@@ -8,6 +8,7 @@ import { isFieldText } from '@/object-record/record-field/types/guards/isFieldTe
 import { useRecordValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { isDefined } from '~/utils/isDefined';
 
+import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useChipFieldDisplay = () => {
@@ -25,7 +26,8 @@ export const useChipFieldDisplay = () => {
   const objectNameSingular =
     isFieldText(fieldDefinition) ||
     isFieldFullName(fieldDefinition) ||
-    isFieldNumber(fieldDefinition)
+    isFieldNumber(fieldDefinition) ||
+    isFieldActor(fieldDefinition)
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
