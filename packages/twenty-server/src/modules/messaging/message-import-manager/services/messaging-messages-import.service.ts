@@ -12,7 +12,6 @@ import { EmailAliasManagerService } from 'src/modules/connected-account/email-al
 import { RefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/services/refresh-access-token.service';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
@@ -40,8 +39,6 @@ export class MessagingMessagesImportService {
     private readonly messagingTelemetryService: MessagingTelemetryService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
     private readonly emailAliasManagerService: EmailAliasManagerService,
     private readonly isFeatureEnabledService: IsFeatureEnabledService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)

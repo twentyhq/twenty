@@ -7,11 +7,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import {
-  MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
@@ -29,8 +25,6 @@ export class MessagingMessagesImportJob {
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly gmailFetchMessageContentFromCacheService: MessagingMessagesImportService,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
     private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 

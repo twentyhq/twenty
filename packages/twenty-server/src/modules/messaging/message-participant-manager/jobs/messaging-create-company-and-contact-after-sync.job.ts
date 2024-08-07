@@ -10,11 +10,7 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import {
-  MessageChannelContactAutoCreationPolicy,
-  MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageChannelContactAutoCreationPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 export type MessagingCreateCompanyAndContactAfterSyncJobData = {
@@ -29,8 +25,6 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
   );
   constructor(
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelService: MessageChannelRepository,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly twentyORMManager: TwentyORMManager,

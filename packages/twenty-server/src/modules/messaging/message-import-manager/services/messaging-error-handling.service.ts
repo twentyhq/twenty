@@ -5,7 +5,6 @@ import snakeCase from 'lodash.snakecase';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/message-import-manager/constants/messaging-throttle-max-attempts';
@@ -28,8 +27,6 @@ export class MessagingErrorHandlingService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
   ) {}
 
   public async handleGmailError(
@@ -263,14 +260,12 @@ export class MessagingErrorHandlingService {
       case 'full-message-list-fetch':
         await this.messagingChannelSyncStatusService.scheduleFullMessageListFetch(
           messageChannel.id,
-          workspaceId,
         );
         break;
 
       case 'partial-message-list-fetch':
         await this.messagingChannelSyncStatusService.schedulePartialMessageListFetch(
           messageChannel.id,
-          workspaceId,
         );
         break;
 
