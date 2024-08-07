@@ -155,7 +155,7 @@ export const RecordShowContainer = ({
 
   const summaryCard = isDefined(recordFromStore) ? (
     <ShowPageSummaryCard
-      isInRightDrawer={isInRightDrawer}
+      isMobile={isMobile}
       id={objectRecordId}
       logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
@@ -302,7 +302,7 @@ export const RecordShowContainer = ({
 
   return (
     <ShowPageContainer>
-      <ShowPageLeftContainer forceMobile={isInRightDrawer}>
+      <ShowPageLeftContainer forceMobile={isMobile}>
         {!isMobile && summaryCard}
         {!isMobile && fieldsBox}
       </ShowPageLeftContainer>

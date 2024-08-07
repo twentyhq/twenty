@@ -20,50 +20,45 @@ type ShowPageSummaryCardProps = {
   onUploadPicture?: (file: File) => void;
   title: ReactNode;
   loading: boolean;
-  isInRightDrawer: boolean;
+  isMobile?: boolean;
 };
 
 export const StyledShowPageSummaryCard = styled.div<{
-  isInRightDrawer: boolean;
+  isMobile: boolean;
 }>`
   align-items: center;
   display: flex;
-  flex-direction: ${({ isInRightDrawer }) =>
-    isInRightDrawer ? 'row' : 'column'};
-  gap: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? theme.spacing(2) : theme.spacing(3)};
-  justify-content: ${({ isInRightDrawer }) =>
-    isInRightDrawer ? 'flex-start' : 'center'};
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
+  gap: ${({ theme, isMobile }) =>
+    isMobile ? theme.spacing(2) : theme.spacing(3)};
+  justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
   padding: ${({ theme }) => theme.spacing(4)};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  height: ${({ isInRightDrawer }) => (isInRightDrawer ? '77px' : '127px')};
+  height: ${({ isMobile }) => (isMobile ? '77px' : '127px')};
   box-sizing: border-box;
 `;
 
-const StyledInfoContainer = styled.div<{ isInRightDrawer: boolean }>`
-  align-items: ${({ isInRightDrawer }) =>
-    isInRightDrawer ? 'flex-start' : 'center'};
+const StyledInfoContainer = styled.div<{ isMobile: boolean }>`
+  align-items: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;
 
-const StyledDate = styled.div<{ isInRightDrawer: boolean }>`
+const StyledDate = styled.div<{ isMobile: boolean }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
-  padding-left: ${({ theme, isInRightDrawer }) =>
-    isInRightDrawer ? theme.spacing(2) : 0};
+  padding-left: ${({ theme, isMobile }) => (isMobile ? theme.spacing(2) : 0)};
 `;
 
-const StyledTitle = styled.div<{ isInRightDrawer: boolean }>`
+const StyledTitle = styled.div<{ isMobile: boolean }>`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  justify-content: ${({ isInRightDrawer }) =>
-    isInRightDrawer ? 'flex-start' : 'center'};
-  width: ${({ isInRightDrawer }) => (isInRightDrawer ? '' : '100%')};
+  justify-content: ${({ isMobile }) => (isMobile ? 'flex-start' : 'center')};
+  width: ${({ isMobile }) => (isMobile ? '' : '100%')};
 `;
 
 const StyledAvatarWrapper = styled.div`
@@ -107,7 +102,7 @@ export const ShowPageSummaryCard = ({
   onUploadPicture,
   title,
   loading,
-  isInRightDrawer = false,
+  isMobile = false,
 }: ShowPageSummaryCardProps) => {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
@@ -124,13 +119,13 @@ export const ShowPageSummaryCard = ({
 
   if (loading)
     return (
-      <StyledShowPageSummaryCard isInRightDrawer={isInRightDrawer}>
+      <StyledShowPageSummaryCard isMobile={isMobile}>
         <StyledShowPageSummaryCardSkeletonLoader />
       </StyledShowPageSummaryCard>
     );
 
   return (
-    <StyledShowPageSummaryCard isInRightDrawer={isInRightDrawer}>
+    <StyledShowPageSummaryCard isMobile={isMobile}>
       <StyledAvatarWrapper>
         <Avatar
           avatarUrl={logoOrAvatar}
@@ -146,10 +141,10 @@ export const ShowPageSummaryCard = ({
           type="file"
         />
       </StyledAvatarWrapper>
-      <StyledInfoContainer isInRightDrawer={isInRightDrawer}>
-        <StyledTitle isInRightDrawer={isInRightDrawer}>{title}</StyledTitle>
+      <StyledInfoContainer isMobile={isMobile}>
+        <StyledTitle isMobile={isMobile}>{title}</StyledTitle>
         {beautifiedCreatedAt && (
-          <StyledDate isInRightDrawer={isInRightDrawer} id={dateElementId}>
+          <StyledDate isMobile={isMobile} id={dateElementId}>
             Added {beautifiedCreatedAt}
           </StyledDate>
         )}

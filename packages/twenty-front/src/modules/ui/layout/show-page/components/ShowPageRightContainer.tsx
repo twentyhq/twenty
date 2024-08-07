@@ -29,6 +29,7 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   flex-direction: column;
   justify-content: start;
   width: 100%;
+  height: 100%;
 `;
 
 const StyledTabListContainer = styled.div`
@@ -40,7 +41,7 @@ const StyledTabListContainer = styled.div`
   height: 40px;
 `;
 
-const StyledFieldsBox = styled.div<{ isInRightDrawer: boolean }>`
+const StyledGreyBox = styled.div<{ isInRightDrawer: boolean }>`
   background: ${({ theme, isInRightDrawer }) =>
     isInRightDrawer ? theme.background.secondary : ''};
   border: ${({ isInRightDrawer, theme }) =>
@@ -185,7 +186,11 @@ export const ShowPageRightContainer = ({
           )
         );
       case 'fields':
-        return fieldsBox;
+        return (
+          <StyledGreyBox isInRightDrawer={isInRightDrawer}>
+            {fieldsBox}
+          </StyledGreyBox>
+        );
 
       case 'tasks':
         return <ObjectTasks targetableObject={targetableObject} />;
@@ -211,11 +216,7 @@ export const ShowPageRightContainer = ({
         />
       </StyledTabListContainer>
       {summaryCard}
-
-      <StyledFieldsBox isInRightDrawer={isInRightDrawer}>
-        {' '}
-        {renderActiveTabContent()}
-      </StyledFieldsBox>
+      {renderActiveTabContent()}
     </StyledShowPageRightContainer>
   );
 };
