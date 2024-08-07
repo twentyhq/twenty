@@ -3,7 +3,6 @@ import { CompanyRepository } from 'src/modules/company/repositories/company.repo
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
 import { MessageRepository } from 'src/modules/messaging/common/repositories/message.repository';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { AuditLogRepository } from 'src/modules/timeline/repositiories/audit-log.repository';
@@ -19,7 +18,6 @@ export const metadataToRepositoryMapping = {
     MessageChannelMessageAssociationRepository,
   MessageChannelWorkspaceEntity: MessageChannelRepository,
   MessageWorkspaceEntity: MessageRepository,
-  MessageParticipantWorkspaceEntity: MessageParticipantRepository,
   PersonWorkspaceEntity: PersonRepository,
   TimelineActivityWorkspaceEntity: TimelineActivityRepository,
   WorkspaceMemberWorkspaceEntity: WorkspaceMemberRepository,
