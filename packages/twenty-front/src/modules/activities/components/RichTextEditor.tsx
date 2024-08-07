@@ -139,6 +139,32 @@ export const RichTextEditor = ({
     return getFileAbsoluteURI(result.data.uploadFile);
   };
 
+  const prepareBody = (newStringifiedBody: string) => {
+    if (!newStringifiedBody) return newStringifiedBody;
+
+    const body = JSON.parse(newStringifiedBody);
+
+    const bodyWithSignedPayload = body.map((block: any) => {
+      if (block.type !== 'image' || !block.props.url) {
+        return block;
+      }
+
+      const imageProps = block.props;
+      const imageUrl = new URL(imageProps.url);
+
+      imageUrl.searchParams.delete('token');
+
+      return {
+        ...block,
+        props: {
+          ...imageProps,
+          url: `${imageUrl.toString()}`,
+        },
+      };
+    });
+    return JSON.stringify(bodyWithSignedPayload);
+  };
+
   const handlePersistBody = useCallback(
     (activityBody: string) => {
       if (!canCreateActivity) {
@@ -148,7 +174,7 @@ export const RichTextEditor = ({
       if (!activityTitleHasBeenSet && fillTitleFromBody) {
         updateTitleAndBody(activityBody);
       } else {
-        persistBodyDebounced(activityBody);
+        persistBodyDebounced(prepareBody(activityBody));
       }
     },
     [
