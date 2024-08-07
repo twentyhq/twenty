@@ -35,37 +35,31 @@ export const ColorSchemePicker = ({
   value,
   onChange,
   className,
-}: ColorSchemePickerProps) => {
-  const handleOnChange = (ColorScheme: ColorScheme) => {
-    localStorage.setItem('app-theme', ColorScheme);
-    onChange(ColorScheme);
-  };
-  return (
-    <StyledContainer className={className}>
-      <StyledCardContainer>
-        <ColorSchemeCard
-          onClick={() => handleOnChange('Light')}
-          variant="Light"
-          selected={value === 'Light'}
-        />
-        <StyledLabel>Light</StyledLabel>
-      </StyledCardContainer>
-      <StyledCardContainer>
-        <ColorSchemeCard
-          onClick={() => handleOnChange('Dark')}
-          variant="Dark"
-          selected={value === 'Dark'}
-        />
-        <StyledLabel>Dark</StyledLabel>
-      </StyledCardContainer>
-      <StyledCardContainer>
-        <ColorSchemeCard
-          onClick={() => handleOnChange('System')}
-          variant="System"
-          selected={value === 'System'}
-        />
-        <StyledLabel>System settings</StyledLabel>
-      </StyledCardContainer>
-    </StyledContainer>
-  );
-};
+}: ColorSchemePickerProps) => (
+  <StyledContainer className={className}>
+    <StyledCardContainer>
+      <ColorSchemeCard
+        onClick={() => onChange('Light')}
+        variant="Light"
+        selected={value === 'Light'}
+      />
+      <StyledLabel>Light</StyledLabel>
+    </StyledCardContainer>
+    <StyledCardContainer>
+      <ColorSchemeCard
+        onClick={() => onChange('Dark')}
+        variant="Dark"
+        selected={value === 'Dark'}
+      />
+      <StyledLabel>Dark</StyledLabel>
+    </StyledCardContainer>
+    <StyledCardContainer>
+      <ColorSchemeCard
+        onClick={() => onChange('System')}
+        variant="System"
+        selected={value === 'System'}
+      />
+      <StyledLabel>System settings</StyledLabel>
+    </StyledCardContainer>
+  </StyledContainer>
+);
