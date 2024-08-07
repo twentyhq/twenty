@@ -1,6 +1,9 @@
 import { Scope } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { Repository } from 'typeorm';
+
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
@@ -20,7 +23,8 @@ export type CalendarEventParticipantMatchParticipantJobData = {
 })
 export class CalendarEventParticipantMatchParticipantJob {
   constructor(
-    private readonly workspaceService: WorkspaceService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     private readonly matchParticipantService: MatchParticipantService<CalendarEventParticipantWorkspaceEntity>,
   ) {}
 
@@ -30,7 +34,13 @@ export class CalendarEventParticipantMatchParticipantJob {
   ): Promise<void> {
     const { workspaceId, email, personId, workspaceMemberId } = data;
 
-    if (!this.workspaceService.isWorkspaceActivated(workspaceId)) {
+    const workspace = await this.workspaceRepository.findOne({
+      where: {
+        id: workspaceId,
+      },
+    });
+
+    if (workspace?.activationStatus !== 'ACTIVE') {
       return;
     }
 

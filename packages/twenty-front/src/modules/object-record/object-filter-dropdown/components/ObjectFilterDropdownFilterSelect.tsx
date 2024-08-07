@@ -79,7 +79,10 @@ export const ObjectFilterDropdownFilterSelect = () => {
               onClick={() => {
                 setFilterDefinitionUsedInDropdown(availableFilterDefinition);
 
-                if (availableFilterDefinition.type === 'RELATION') {
+                if (
+                  availableFilterDefinition.type === 'RELATION' ||
+                  availableFilterDefinition.type === 'SELECT'
+                ) {
                   setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
                 }
 

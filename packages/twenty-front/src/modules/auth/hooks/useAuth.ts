@@ -32,6 +32,7 @@ import {
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
 import { detectDateFormat } from '@/localization/utils/detectDateFormat';
 import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
@@ -46,6 +47,9 @@ export const useAuth = () => {
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
+  );
+  const setCurrentWorkspaceMembers = useSetRecoilState(
+    currentWorkspaceMembersState,
   );
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -109,6 +113,18 @@ export const useAuth = () => {
 
       setCurrentUser(user);
 
+      if (isDefined(user.workspaceMembers)) {
+        const workspaceMembers = user.workspaceMembers.map(
+          (workspaceMember) => ({
+            ...workspaceMember,
+            colorScheme: workspaceMember.colorScheme as ColorScheme,
+            locale: workspaceMember.locale ?? 'en',
+          }),
+        );
+
+        setCurrentWorkspaceMembers(workspaceMembers);
+      }
+
       if (isDefined(user.workspaceMember)) {
         workspaceMember = {
           ...user.workspaceMember,
@@ -163,10 +179,11 @@ export const useAuth = () => {
       verify,
       setTokenPair,
       setCurrentUser,
-      setCurrentWorkspaceMember,
       setCurrentWorkspace,
-      setWorkspaces,
+      setCurrentWorkspaceMembers,
+      setCurrentWorkspaceMember,
       setDateTimeFormat,
+      setWorkspaces,
     ],
   );
 

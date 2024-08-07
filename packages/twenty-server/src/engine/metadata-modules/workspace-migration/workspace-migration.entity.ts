@@ -28,8 +28,8 @@ export interface WorkspaceMigrationColumnDefinition {
   columnType: string;
   enum?: WorkspaceMigrationEnum[];
   isArray?: boolean;
-  isNullable?: boolean;
-  defaultValue?: any;
+  isNullable: boolean;
+  defaultValue: any;
 }
 
 export interface WorkspaceMigrationIndexAction {

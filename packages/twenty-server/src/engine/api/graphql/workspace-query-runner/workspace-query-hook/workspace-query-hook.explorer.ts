@@ -1,14 +1,14 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, ModuleRef, createContextId } from '@nestjs/core';
-import { Module } from '@nestjs/core/injector/module';
 import { Injector } from '@nestjs/core/injector/injector';
+import { Module } from '@nestjs/core/injector/module';
 
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
-import { WorkspaceQueryHookMetadataAccessor } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook-metadata.accessor';
-import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage';
 import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
+import { WorkspaceQueryHookMetadataAccessor } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook-metadata.accessor';
 
 @Injectable()
 export class WorkspaceQueryHookExplorer implements OnModuleInit {
@@ -73,7 +73,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
     instance: object,
     host: Module,
     isRequestScoped: boolean,
-  ) {
+  ): Promise<ReturnType<WorkspaceQueryHookInstance['execute']>> {
     const methodName = 'execute';
 
     if (isRequestScoped) {
@@ -83,7 +83,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         this.moduleRef.registerRequestByContextId(
           {
             req: {
-              workspaceId: payload?.[1],
+              workspaceId: payload?.[0].workspace.id,
             },
           },
           contextId,
@@ -97,9 +97,9 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         contextId,
       );
 
-      await contextInstance[methodName].call(contextInstance, ...payload);
+      return contextInstance[methodName].call(contextInstance, ...payload);
     } else {
-      await instance[methodName].call(instance, ...payload);
+      return instance[methodName].call(instance, ...payload);
     }
   }
 

@@ -1,14 +1,16 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Any, In, Repository } from 'typeorm';
+import { Any, Repository } from 'typeorm';
 
-import { BillingService } from 'src/engine/core-modules/billing/billing.service';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   CalendarEventListFetchJob,
@@ -21,33 +23,25 @@ import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-o
 })
 export class CalendarEventListFetchCronJob {
   constructor(
-    @InjectRepository(DataSourceEntity, 'metadata')
-    private readonly dataSourceRepository: Repository<DataSourceEntity>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly billingService: BillingService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   @Process(CalendarEventListFetchCronJob.name)
   async handle(): Promise<void> {
-    const workspaceIds =
-      await this.billingService.getActiveSubscriptionWorkspaceIds();
-
-    const dataSources = await this.dataSourceRepository.find({
+    const activeWorkspaces = await this.workspaceRepository.find({
       where: {
-        workspaceId: In(workspaceIds),
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
 
-    const workspaceIdsWithDataSources = new Set(
-      dataSources.map((dataSource) => dataSource.workspaceId),
-    );
-
-    for (const workspaceId of workspaceIdsWithDataSources) {
+    for (const activeWorkspace of activeWorkspaces) {
       const calendarChannelRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
+          activeWorkspace.id,
           'calendarChannel',
         );
 
@@ -66,7 +60,7 @@ export class CalendarEventListFetchCronJob {
           CalendarEventListFetchJob.name,
           {
             calendarChannelId: calendarChannel.id,
-            workspaceId,
+            workspaceId: activeWorkspace.id,
           },
         );
       }

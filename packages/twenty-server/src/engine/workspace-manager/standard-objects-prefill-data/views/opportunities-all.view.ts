@@ -36,7 +36,7 @@ export const opportunitiesAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
-            OPPORTUNITY_STANDARD_FIELD_IDS.closeDate
+            OPPORTUNITY_STANDARD_FIELD_IDS.createdBy
           ],
         position: 2,
         isVisible: true,
@@ -45,9 +45,18 @@ export const opportunitiesAllView = async (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
-            OPPORTUNITY_STANDARD_FIELD_IDS.company
+            OPPORTUNITY_STANDARD_FIELD_IDS.closeDate
           ],
         position: 3,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+            OPPORTUNITY_STANDARD_FIELD_IDS.company
+          ],
+        position: 4,
         isVisible: true,
         size: 150,
       },

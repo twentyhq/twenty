@@ -1,30 +1,32 @@
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import FileType from 'file-type';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import FileType from 'file-type';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { assert } from 'src/utils/assert';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import {
   PASSWORD_REGEX,
-  hashPassword,
   compareHash,
+  hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -37,6 +39,7 @@ export type SignInUpServiceInput = {
 };
 
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class SignInUpService {
   constructor(
     private readonly fileUploadService: FileUploadService,
@@ -45,7 +48,7 @@ export class SignInUpService {
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly workspaceService: WorkspaceService,
+    private readonly onboardingService: OnboardingService,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
   ) {}
@@ -62,21 +65,26 @@ export class SignInUpService {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
 
-    assert(email, 'Email is required', BadRequestException);
+    if (!email) {
+      throw new AuthException(
+        'Email is required',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
 
     if (password) {
       const isPasswordValid = PASSWORD_REGEX.test(password);
 
-      assert(isPasswordValid, 'Password too weak', BadRequestException);
+      if (!isPasswordValid) {
+        throw new AuthException(
+          'Password too weak',
+          AuthExceptionCode.INVALID_INPUT,
+        );
+      }
     }
 
     const passwordHash = password ? await hashPassword(password) : undefined;
 
-    let imagePath: string | undefined;
-
-    if (picture) {
-      imagePath = await this.uploadPicture(picture);
-    }
     const existingUser = await this.userRepository.findOne({
       where: {
         email: email,
@@ -90,7 +98,12 @@ export class SignInUpService {
         existingUser.passwordHash,
       );
 
-      assert(isValid, 'Wrong password', ForbiddenException);
+      if (!isValid) {
+        throw new AuthException(
+          'Wrong password',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
     }
 
     if (workspaceInviteHash) {
@@ -100,7 +113,7 @@ export class SignInUpService {
         workspaceInviteHash,
         firstName,
         lastName,
-        imagePath,
+        picture,
         existingUser,
       });
     }
@@ -110,7 +123,7 @@ export class SignInUpService {
         passwordHash,
         firstName,
         lastName,
-        imagePath,
+        picture,
       });
     }
 
@@ -123,7 +136,7 @@ export class SignInUpService {
     workspaceInviteHash,
     firstName,
     lastName,
-    imagePath,
+    picture,
     existingUser,
   }: {
     email: string;
@@ -131,27 +144,26 @@ export class SignInUpService {
     workspaceInviteHash: string;
     firstName: string;
     lastName: string;
-    imagePath: string | undefined;
+    picture: SignInUpServiceInput['picture'];
     existingUser: User | null;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash: workspaceInviteHash,
     });
 
-    assert(
-      workspace,
-      'This workspace inviteHash is invalid',
-      ForbiddenException,
-    );
+    if (!workspace) {
+      throw new AuthException(
+        'Invit hash is invalid',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
-    const isWorkspaceActivated =
-      await this.workspaceService.isWorkspaceActivated(workspace.id);
-
-    assert(
-      isWorkspaceActivated,
-      'Workspace is not ready to welcome new members',
-      ForbiddenException,
-    );
+    if (!(workspace.activationStatus === WorkspaceActivationStatus.ACTIVE)) {
+      throw new AuthException(
+        'Workspace is not ready to welcome new members',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     if (existingUser) {
       const updatedUser = await this.userWorkspaceService.addUserToWorkspace(
@@ -161,6 +173,8 @@ export class SignInUpService {
 
       return Object.assign(existingUser, updatedUser);
     }
+
+    const imagePath = await this.uploadPicture(picture, workspace.id);
 
     const userToCreate = this.userRepository.create({
       email: email,
@@ -177,6 +191,18 @@ export class SignInUpService {
     await this.userWorkspaceService.create(user.id, workspace.id);
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
+    await this.onboardingService.setOnboardingConnectAccountPending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
+    await this.onboardingService.setOnboardingCreateProfileCompletion({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
     return user;
   }
 
@@ -185,27 +211,31 @@ export class SignInUpService {
     passwordHash,
     firstName,
     lastName,
-    imagePath,
+    picture,
   }: {
     email: string;
     passwordHash: string | undefined;
     firstName: string;
     lastName: string;
-    imagePath: string | undefined;
+    picture: SignInUpServiceInput['picture'];
   }) {
-    assert(
-      !this.environmentService.get('IS_SIGN_UP_DISABLED'),
-      'Sign up is disabled',
-      ForbiddenException,
-    );
+    if (this.environmentService.get('IS_SIGN_UP_DISABLED')) {
+      throw new AuthException(
+        'Sign up is disabled',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     const workspaceToCreate = this.workspaceRepository.create({
       displayName: '',
       domainName: '',
       inviteHash: v4(),
+      activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
     });
 
     const workspace = await this.workspaceRepository.save(workspaceToCreate);
+
+    const imagePath = await this.uploadPicture(picture, workspace.id);
 
     const userToCreate = this.userRepository.create({
       email: email,
@@ -221,10 +251,34 @@ export class SignInUpService {
 
     await this.userWorkspaceService.create(user.id, workspace.id);
 
+    await this.onboardingService.setOnboardingConnectAccountPending({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
+    await this.onboardingService.setOnboardingCreateProfileCompletion({
+      userId: user.id,
+      workspaceId: workspace.id,
+      value: true,
+    });
+
+    await this.onboardingService.setOnboardingInviteTeamPending({
+      workspaceId: workspace.id,
+      value: true,
+    });
+
     return user;
   }
 
-  async uploadPicture(picture: string): Promise<string> {
+  async uploadPicture(
+    picture: string | null | undefined,
+    workspaceId: string,
+  ): Promise<string | undefined> {
+    if (!picture) {
+      return;
+    }
+
     const buffer = await getImageBufferFromUrl(
       picture,
       this.httpService.axiosRef,
@@ -237,6 +291,7 @@ export class SignInUpService {
       filename: `${v4()}.${type?.ext}`,
       mimeType: type?.mime,
       fileFolder: FileFolder.ProfilePicture,
+      workspaceId,
     });
 
     return paths[0];

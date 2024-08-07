@@ -23,14 +23,14 @@ export type OpenTableCellArgs = {
   pathToShowPage: string;
   customCellHotkeyScope: HotkeyScope | null;
   fieldDefinition: FieldDefinition<FieldMetadata>;
-  entityId: string;
+  recordId: string;
 };
 
 export const useOpenRecordTableCellFromCell = () => {
   const { onOpenTableCell } = useContext(RecordTableContext);
   const cellPosition = useCurrentTableCellPosition();
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
   const { isReadOnly, pathToShowPage, objectNameSingular } = useContext(
     RecordTableRowContext,
   );
@@ -42,7 +42,7 @@ export const useOpenRecordTableCellFromCell = () => {
     onOpenTableCell({
       cellPosition,
       customCellHotkeyScope,
-      entityId,
+      recordId,
       fieldDefinition,
       isReadOnly,
       pathToShowPage,

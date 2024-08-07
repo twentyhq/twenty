@@ -5,19 +5,19 @@ import { useSetRecordFieldValue } from '@/object-record/record-store/contexts/Re
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 type SettingsDataModelSetFieldValueEffectProps = {
-  entityId: string;
+  recordId: string;
   fieldName: string;
   value: unknown;
 };
 
 export const SettingsDataModelSetFieldValueEffect = ({
-  entityId,
+  recordId,
   fieldName,
   value,
 }: SettingsDataModelSetFieldValueEffectProps) => {
   const setFieldValue = useSetRecoilState(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName,
     }),
   );
@@ -26,8 +26,8 @@ export const SettingsDataModelSetFieldValueEffect = ({
 
   useEffect(() => {
     setFieldValue(value);
-    setRecordFieldValue(entityId, fieldName, value);
-  }, [value, setFieldValue, setRecordFieldValue, entityId, fieldName]);
+    setRecordFieldValue(recordId, fieldName, value);
+  }, [value, setFieldValue, setRecordFieldValue, recordId, fieldName]);
 
   return null;
 };

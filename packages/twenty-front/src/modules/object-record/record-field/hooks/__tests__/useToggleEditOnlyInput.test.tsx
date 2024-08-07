@@ -14,7 +14,7 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 
-const entityId = 'entityId';
+const recordId = 'recordId';
 
 const mocks: MockedResponse[] = [
   {
@@ -66,14 +66,14 @@ const mocks: MockedResponse[] = [
         }
       `,
       variables: {
-        idToUpdate: 'entityId',
+        idToUpdate: 'recordId',
         input: { idealCustomerProfile: true },
       },
     },
     result: jest.fn(() => ({
       data: {
         updateWorkspaceMember: {
-          id: 'entityId',
+          id: 'recordId',
         },
       },
     })),
@@ -101,7 +101,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
       <FieldContext.Provider
         value={{
           fieldDefinition: booleanFieldDefinition,
-          entityId,
+          recordId,
           hotkeyScope: 'hotkeyScope',
           isLabelIdentifier: false,
           useUpdateRecord: useUpdateOneRecordMutation,

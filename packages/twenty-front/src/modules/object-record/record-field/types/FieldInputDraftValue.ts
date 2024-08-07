@@ -1,5 +1,6 @@
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
+  FieldActorValue,
   FieldAddressValue,
   FieldBooleanValue,
   FieldCurrencyValue,
@@ -51,6 +52,11 @@ export type FieldAddressDraftValue = {
   addressLng: number | null;
 };
 export type FieldJsonDraftValue = string;
+export type FieldActorDraftValue = {
+  source: string;
+  workspaceMemberId?: string;
+  name: string;
+};
 
 export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
   ? FieldTextDraftValue
@@ -88,4 +94,6 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                                   ? FieldAddressDraftValue
                                   : FieldValue extends FieldJsonValue
                                     ? FieldJsonDraftValue
-                                    : never;
+                                    : FieldValue extends FieldActorValue
+                                      ? FieldActorDraftValue
+                                      : never;

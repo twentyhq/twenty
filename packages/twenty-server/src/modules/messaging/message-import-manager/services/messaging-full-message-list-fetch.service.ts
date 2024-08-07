@@ -2,14 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { GaxiosResponse } from 'gaxios';
 import { gmail_v1 } from 'googleapis';
-import { EntityManager } from 'typeorm';
+import { Any, EntityManager } from 'typeorm';
 
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -35,12 +35,9 @@ export class MessagingFullMessageListFetchService {
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
-    @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationWorkspaceEntity,
-    )
-    private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async processMessageListFetch(
@@ -129,11 +126,19 @@ export class MessagingFullMessageListFetchService {
           firstMessageExternalId = messageExternalIds[0];
         }
 
+        const messageChannelMessageAssociationRepository =
+          await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            'messageChannelMessageAssociation',
+          );
+
         const existingMessageChannelMessageAssociations =
-          await this.messageChannelMessageAssociationRepository.getByMessageExternalIdsAndMessageChannelId(
-            messageExternalIds,
-            messageChannelId,
-            workspaceId,
+          await messageChannelMessageAssociationRepository.find(
+            {
+              where: {
+                messageChannelId,
+                messageExternalId: Any(messageExternalIds),
+              },
+            },
             transactionManager,
           );
 

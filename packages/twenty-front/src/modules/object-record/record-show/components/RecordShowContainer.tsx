@@ -29,8 +29,6 @@ import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
-import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   FieldMetadataType,
@@ -165,7 +163,7 @@ export const RecordShowContainer = ({
       title={
         <FieldContext.Provider
           value={{
-            entityId: objectRecordId,
+            recordId: objectRecordId,
             recoilScopeId:
               objectRecordId + labelIdentifierFieldMetadataItem?.id,
             isLabelIdentifier: false,
@@ -213,7 +211,7 @@ export const RecordShowContainer = ({
                     <FieldContext.Provider
                       key={objectRecordId + fieldMetadataItem.id}
                       value={{
-                        entityId: objectRecordId,
+                        recordId: objectRecordId,
                         maxWidth: 200,
                         recoilScopeId: objectRecordId + fieldMetadataItem.id,
                         isLabelIdentifier: false,
@@ -246,7 +244,7 @@ export const RecordShowContainer = ({
                   <FieldContext.Provider
                     key={objectRecordId + fieldMetadataItem.id}
                     value={{
-                      entityId: objectRecordId,
+                      recordId: objectRecordId,
                       maxWidth: 200,
                       recoilScopeId: objectRecordId + fieldMetadataItem.id,
                       isLabelIdentifier: false,
@@ -279,7 +277,7 @@ export const RecordShowContainer = ({
             <FieldContext.Provider
               key={objectRecordId + fieldMetadataItem.id}
               value={{
-                entityId: objectRecordId,
+                recordId: objectRecordId,
                 recoilScopeId: objectRecordId + fieldMetadataItem.id,
                 isLabelIdentifier: false,
                 fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
@@ -302,27 +300,25 @@ export const RecordShowContainer = ({
   );
 
   return (
-    <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
-      <ShowPageContainer>
-        <ShowPageLeftContainer forceMobile={isInRightDrawer}>
-          {!isMobile && summaryCard}
-          {!isMobile && fieldsBox}
-        </ShowPageLeftContainer>
-        <ShowPageRightContainer
-          targetableObject={{
-            id: objectRecordId,
-            targetObjectNameSingular: objectMetadataItem?.nameSingular,
-          }}
-          timeline
-          tasks
-          notes
-          emails
-          isInRightDrawer={isInRightDrawer}
-          summaryCard={isMobile ? summaryCard : <></>}
-          fieldsBox={fieldsBox}
-          loading={isPrefetchLoading || loading || recordLoading}
-        />
-      </ShowPageContainer>
-    </RecoilScope>
+    <ShowPageContainer>
+      <ShowPageLeftContainer forceMobile={isInRightDrawer}>
+        {!isMobile && summaryCard}
+        {!isMobile && fieldsBox}
+      </ShowPageLeftContainer>
+      <ShowPageRightContainer
+        targetableObject={{
+          id: objectRecordId,
+          targetObjectNameSingular: objectMetadataItem?.nameSingular,
+        }}
+        timeline
+        tasks
+        notes
+        emails
+        isInRightDrawer={isInRightDrawer}
+        summaryCard={isMobile ? summaryCard : <></>}
+        fieldsBox={fieldsBox}
+        loading={isPrefetchLoading || loading || recordLoading}
+      />
+    </ShowPageContainer>
   );
 };

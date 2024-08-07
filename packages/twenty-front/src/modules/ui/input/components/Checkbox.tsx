@@ -1,5 +1,5 @@
-import * as React from 'react';
 import styled from '@emotion/styled';
+import * as React from 'react';
 import { IconCheck, IconMinus } from 'twenty-ui';
 import { v4 } from 'uuid';
 
@@ -49,10 +49,11 @@ const StyledInputContainer = styled.div<InputProps>`
   border-radius: ${({ theme, shape }) =>
     shape === CheckboxShape.Rounded
       ? theme.border.radius.rounded
-      : theme.border.radius.sm};
+      : theme.border.radius.md};
 
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
+  padding: ${({ theme }) => theme.spacing(1)};
   position: relative;
   ${({ hoverable, isChecked, theme, indeterminate, disabled }) => {
     if (!hoverable || disabled === true) return '';

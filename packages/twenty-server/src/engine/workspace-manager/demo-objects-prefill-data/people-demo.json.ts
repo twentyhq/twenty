@@ -1,3 +1,5 @@
+import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from "src/engine/workspace-manager/demo-objects-prefill-data/workspace-member";
+
 export const peopleDemo = [
   {
     firstName: 'Mark',
@@ -8,6 +10,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/mark-young-7edccf6aca',
     jobTitle: 'Surveyor, minerals',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gabriel',
@@ -18,6 +23,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/gabriel-robinson-3157ccba23',
     jobTitle: 'Armed forces logistics/support/administrative officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kimberly',
@@ -28,6 +36,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/kimberly-gordon-4a10fde4c9',
     jobTitle: 'Engineer, manufacturing systems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cindy',
@@ -38,6 +49,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/cindy-baker-788ab17f8b',
     jobTitle: 'Learning disability nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -48,6 +62,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/anthony-may-2020930433',
     jobTitle: 'Optometrist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Vicki',
@@ -58,6 +75,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/vicki-meyer-f2e0fdfbd9',
     jobTitle: 'Farm manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Billy',
@@ -68,6 +88,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/billy-mckinney-709e41f9ba',
     jobTitle: 'Therapist, nutritional',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -78,6 +101,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/andrew-king-9eee067c59',
     jobTitle: 'Paramedic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Todd',
@@ -88,6 +114,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/todd-jones-d1cae42f61',
     jobTitle: 'Media planner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -98,6 +127,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/gregory-perez-5ca5d506c0',
     jobTitle: 'Special effects artist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -108,6 +140,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/vanessa-farmer-c79ab76e62',
     jobTitle: 'Engineer, land',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -118,6 +153,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/elizabeth-chung-72c8e6d73e',
     jobTitle: 'Race relations officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -128,6 +166,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/melissa-huerta-65292000ee',
     jobTitle: 'Museum/gallery exhibitions officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Debbie',
@@ -138,6 +179,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/debbie-johnson-6108ee5a49',
     jobTitle: 'Wellsite geologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kathy',
@@ -148,6 +192,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/kathy-mcclain-cf5890c5b5',
     jobTitle: 'Surveyor, building control',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -158,6 +205,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/michael-elliott-d5e13ac5c8',
     jobTitle: 'Ergonomist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kimberly',
@@ -168,6 +218,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/kimberly-edwards-00862e876a',
     jobTitle: 'Exercise physiologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Regina',
@@ -178,6 +231,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/regina-williams-9d91d1682f',
     jobTitle: 'Clinical scientist, histocompatibility and immunogenetics',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -188,6 +244,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/john-guerrero-f5c763a584',
     jobTitle: 'Wellsite geologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -198,6 +257,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/david-bailey-a321ec2517',
     jobTitle: 'Radiographer, therapeutic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -208,6 +270,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/emily-davidson-4cfca34af8',
     jobTitle: 'Health visitor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -218,6 +283,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/michelle-jackson-bcb3423e3e',
     jobTitle: 'Social research officer, government',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -228,6 +296,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/ryan-romero-36790b1367',
     jobTitle: 'Forest/woodland manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Victor',
@@ -238,6 +309,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/victor-lewis-71ac9f14ee',
     jobTitle: 'Surgeon',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -248,6 +322,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/christopher-powell-2e521c68f3',
     jobTitle: 'Hydrogeologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jack',
@@ -258,6 +335,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/jack-george-1b6352407c',
     jobTitle: 'Engineer, site',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Manuel',
@@ -268,6 +348,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/manuel-lara-f896ffc5d1',
     jobTitle: 'Government social research officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -278,6 +361,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/john-gonzalez-1077ebc9e6',
     jobTitle: 'Horticultural therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Theodore',
@@ -288,6 +374,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/theodore-gonzalez-b0caf15fb1',
     jobTitle: 'Administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -298,6 +387,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/christine-bishop-c6ec520c6c',
     jobTitle: 'Geneticist, molecular',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alejandro',
@@ -308,6 +400,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/alejandro-moran-03db39c63a',
     jobTitle: 'Applications developer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -318,6 +413,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/john-cook-ced58e0bb5',
     jobTitle: 'Chief Marketing Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Leslie',
@@ -328,6 +426,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/leslie-calderon-79bad778f2',
     jobTitle: 'Teacher, music',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Barbara',
@@ -338,6 +439,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/barbara-young-d2423e1be3',
     jobTitle: 'Television floor manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Maria',
@@ -348,6 +452,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/maria-thomas-833d46722e',
     jobTitle: 'Investment banker, operational',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Paul',
@@ -358,6 +465,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/paul-villegas-dda25fb766',
     jobTitle: 'Veterinary surgeon',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bradley',
@@ -368,6 +478,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/bradley-turner-eb4dd1bbce',
     jobTitle: 'Financial controller',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -378,6 +491,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/matthew-alexander-57352bb034',
     jobTitle: 'Engineer, electrical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nancy',
@@ -388,6 +504,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/nancy-green-08c0a785dc',
     jobTitle: 'Horticulturist, amenity',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cindy',
@@ -398,6 +517,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/cindy-martin-cef98190f9',
     jobTitle: 'Geographical information systems officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lori',
@@ -408,6 +530,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/lori-martin-119def9345',
     jobTitle: 'Logistics and distribution manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kathryn',
@@ -418,6 +543,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/kathryn-cruz-602e728f69',
     jobTitle: 'Designer, graphic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -428,6 +556,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/robert-terry-8967a9c9ba',
     jobTitle: 'Sub',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -438,6 +569,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/andrea-walker-1047d1ba76',
     jobTitle: 'Financial adviser',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Steve',
@@ -448,6 +582,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/steve-campos-1225440c77',
     jobTitle: 'Osteopath',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Allison',
@@ -458,6 +595,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/allison-morgan-6486ee71fe',
     jobTitle: 'Microbiologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tamara',
@@ -468,6 +608,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/tamara-melendez-33bb698d07',
     jobTitle: 'Accounting technician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Larry',
@@ -478,6 +621,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/larry-robertson-6829bf55c6',
     jobTitle: 'Production assistant, television',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -488,6 +634,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/lisa-cook-87669acc77',
     jobTitle: 'Clinical cytogeneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kirsten',
@@ -498,6 +647,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/kirsten-moore-91e3033de9',
     jobTitle: 'Media buyer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -508,6 +660,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/amanda-frye-1f5377943e',
     jobTitle: 'Metallurgist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -518,6 +673,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/jennifer-chambers-ca724f5258',
     jobTitle: 'Agricultural engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rodney',
@@ -528,6 +686,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/rodney-roberts-4b08e437c4',
     jobTitle: 'Recycling officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lindsay',
@@ -538,6 +699,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/lindsay-wagner-0562c96aa1',
     jobTitle: 'Psychotherapist, child',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -548,6 +712,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/mary-haynes-a41c2d1798',
     jobTitle: 'Arts development officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -558,6 +725,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/david-phelps-0dbf8cb8d9',
     jobTitle: 'IT technical support officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -568,6 +738,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/patricia-smith-5277401ff1',
     jobTitle: 'Scientist, biomedical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rachel',
@@ -578,6 +751,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/rachel-morse-86b5f8b59c',
     jobTitle: 'Patent attorney',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rhonda',
@@ -588,6 +764,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/rhonda-nelson-0f7ce0e497',
     jobTitle: 'Environmental manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lauren',
@@ -598,6 +777,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/lauren-carroll-319b96609a',
     jobTitle: 'Statistician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shannon',
@@ -608,6 +790,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/shannon-martinez-5f73530423',
     jobTitle: 'Designer, blown glass/stained glass',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -618,6 +803,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/daniel-williams-f8d496db83',
     jobTitle: 'Nature conservation officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Willie',
@@ -628,6 +816,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/willie-cannon-44b80be6a1',
     jobTitle: 'Engineer, electronics',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Donna',
@@ -638,6 +829,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/donna-cole-2daf2f491d',
     jobTitle: 'Land/geomatics surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Morgan',
@@ -648,6 +842,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/morgan-cook-82f95695fe',
     jobTitle: 'Research officer, political party',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -658,6 +855,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/elizabeth-smith-205530e011',
     jobTitle: 'Prison officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nathaniel',
@@ -668,6 +868,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/nathaniel-johnson-847d2defe7',
     jobTitle: 'Geochemist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -678,6 +881,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/rebecca-elliott-033486b7fa',
     jobTitle: 'Fine artist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kristina',
@@ -688,6 +894,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/kristina-olson-be254bb623',
     jobTitle: 'Warden/ranger',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -698,6 +907,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/robert-henderson-39d03b4d6f',
     jobTitle: 'Video editor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kendra',
@@ -708,6 +920,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/kendra-knox-8b8db240fa',
     jobTitle: 'Conservation officer, nature',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Donna',
@@ -718,6 +933,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/donna-jacobs-75f4cb3e8a',
     jobTitle: 'Wellsite geologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -728,6 +946,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/michael-martinez-37a2df073b',
     jobTitle: 'Scientist, water quality',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Natalie',
@@ -738,6 +959,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/natalie-hansen-eba76059eb',
     jobTitle: 'Designer, furniture',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Katie',
@@ -748,6 +972,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/katie-russo-2a475932df',
     jobTitle: 'Tourism officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -758,6 +985,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/danielle-park-fadefa41f3',
     jobTitle: 'Transport planner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -768,6 +998,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/nicholas-guzman-41594d6dc9',
     jobTitle: 'Scientist, research (medical)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brandi',
@@ -778,6 +1011,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/brandi-dodson-428d92f283',
     jobTitle: 'Therapist, drama',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sara',
@@ -788,6 +1024,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/sara-kane-778b92a3ff',
     jobTitle: 'Associate Professor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Allison',
@@ -798,6 +1037,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/allison-howard-5cc9c06425',
     jobTitle: 'Hydrographic surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jonathan',
@@ -808,6 +1050,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/jonathan-drake-5ef0430b02',
     jobTitle: 'Learning disability nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -818,6 +1063,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/samantha-williams-8b316b4a9d',
     jobTitle: 'Technical brewer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Katherine',
@@ -828,6 +1076,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/katherine-mooney-ef2c2c12dd',
     jobTitle: 'Accountant, chartered',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Luis',
@@ -838,6 +1089,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/luis-lloyd-ee56c3462c',
     jobTitle: 'Producer, television/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Travis',
@@ -848,6 +1102,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/travis-serrano-789399815b',
     jobTitle: 'Therapist, art',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -858,6 +1115,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/amy-newton-ff6b79dfce',
     jobTitle: 'Exhibition designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jonathan',
@@ -868,6 +1128,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/jonathan-hawkins-c68fe4ecec',
     jobTitle: 'Surveyor, land/geomatics',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -878,6 +1141,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/patricia-anthony-64ce02febc',
     jobTitle: 'Paediatric nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -888,6 +1154,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/matthew-gomez-68cc301b54',
     jobTitle: 'Site engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jonathan',
@@ -898,6 +1167,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/jonathan-schultz-3c0c1ecc59',
     jobTitle: 'Sports therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -908,6 +1180,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/matthew-cummings-27d772de78',
     jobTitle: 'Designer, interior/spatial',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -918,6 +1193,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/joshua-richards-ec2044ed2a',
     jobTitle: 'Civil engineer, consulting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -928,6 +1206,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/ryan-johnson-7dda846caa',
     jobTitle: 'Office manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Teresa',
@@ -938,6 +1219,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/teresa-terrell-fe92ba9d84',
     jobTitle: "Barrister's clerk",
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -948,6 +1232,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/jacob-jenkins-b378edc103',
     jobTitle: 'Lecturer, higher education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -958,6 +1245,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/michael-myers-5d468b5c78',
     jobTitle: 'Psychologist, clinical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -968,6 +1258,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/jennifer-phillips-83c06e63a9',
     jobTitle: 'Immunologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alison',
@@ -978,6 +1271,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/alison-ortega-0b7bad2804',
     jobTitle: 'Professor Emeritus',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -988,6 +1284,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/gregory-little-bf88b7a274',
     jobTitle: 'Ship broker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Barry',
@@ -998,6 +1297,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/barry-finley-72ad288ea6',
     jobTitle: 'Network engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -1008,6 +1310,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/brian-evans-7848e0a7de',
     jobTitle: 'Information officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Troy',
@@ -1018,6 +1323,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/troy-davidson-20a1718421',
     jobTitle: 'Civil Service fast streamer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Aaron',
@@ -1028,6 +1336,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/aaron-schroeder-c0b91178c9',
     jobTitle: 'Editorial assistant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -1038,6 +1349,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/mary-anderson-17e7aeb95e',
     jobTitle: 'Quality manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -1048,6 +1362,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/david-obrien-5393bdf2d9',
     jobTitle: 'Air cabin crew',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Colin',
@@ -1058,6 +1375,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/colin-miller-fdfec5eb0f',
     jobTitle: 'Museum/gallery conservator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jesus',
@@ -1068,6 +1388,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/jesus-johnson-8a2b7bb431',
     jobTitle: 'Radio broadcast assistant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brooke',
@@ -1078,6 +1401,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/brooke-henderson-98aee4e9a6',
     jobTitle: 'Market researcher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Meredith',
@@ -1088,6 +1414,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/meredith-gregory-a3f977f6ef',
     jobTitle: 'Environmental manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Crystal',
@@ -1098,6 +1427,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/crystal-vaughn-2886394a50',
     jobTitle: 'Operations geologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -1108,6 +1440,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/william-greene-da956010f3',
     jobTitle: 'Surveyor, commercial/residential',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Aaron',
@@ -1118,6 +1453,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/aaron-griffin-361a228e01',
     jobTitle: 'Engineer, maintenance (IT)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -1128,6 +1466,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/steven-smith-6e762c7e90',
     jobTitle: 'Psychologist, forensic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -1138,6 +1479,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/mark-faulkner-5b751ca394',
     jobTitle: 'Nurse, adult',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -1148,6 +1492,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/jeffrey-hunt-c364e07096',
     jobTitle: 'Dramatherapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tara',
@@ -1158,6 +1505,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/tara-mathis-1d1d3c04ed',
     jobTitle: 'Surveyor, minerals',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anna',
@@ -1168,6 +1518,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/anna-davis-ec88f7642f',
     jobTitle: 'Programme researcher, broadcasting/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -1178,6 +1531,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/kevin-johnson-c2a28b524a',
     jobTitle: 'Fast food restaurant manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sergio',
@@ -1188,6 +1544,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/sergio-glenn-5cdb7d803d',
     jobTitle: 'Surgeon',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -1198,6 +1557,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/nicole-allen-d6ccf222ff',
     jobTitle: 'Fine artist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -1208,6 +1570,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/christopher-jones-7b60309d81',
     jobTitle: 'Visual merchandiser',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -1218,6 +1583,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/brandon-sanchez-f78c3a4268',
     jobTitle: 'Radio producer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cindy',
@@ -1228,6 +1596,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/cindy-schmidt-19ce5324d9',
     jobTitle: 'Production assistant, television',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -1238,6 +1609,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/john-gillespie-fa4d7d67f3',
     jobTitle: 'Television/film/video producer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -1248,6 +1622,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/andrew-lyons-02809c0ff1',
     jobTitle: 'Accountant, chartered public finance',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -1258,6 +1635,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/joseph-willis-242605ba96',
     jobTitle: 'Accommodation manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Charles',
@@ -1268,6 +1648,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/charles-stanton-89aca5d45a',
     jobTitle: 'Music tutor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -1278,6 +1661,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/gary-hall-1ec55a0077',
     jobTitle: 'Theme park manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -1288,6 +1674,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/steven-martin-82c1e4ee0a',
     jobTitle: 'Artist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -1298,6 +1687,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/jennifer-mcgee-f4f8b04f40',
     jobTitle: 'Special effects artist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bonnie',
@@ -1308,6 +1700,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/bonnie-warren-c433803c71',
     jobTitle: 'Lobbyist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -1318,6 +1713,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/gregory-martinez-81489f760c',
     jobTitle: 'Secretary, company',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bradley',
@@ -1328,6 +1726,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/bradley-randall-00c2f788ab',
     jobTitle: 'Product manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -1338,6 +1739,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/brian-steele-fe89252d69',
     jobTitle: 'Sound technician, broadcasting/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ann',
@@ -1348,6 +1752,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/ann-mercer-e7eedca5ab',
     jobTitle: 'Editorial assistant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Billy',
@@ -1358,6 +1765,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/billy-fuentes-2b9e1e559f',
     jobTitle: 'Energy manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kelsey',
@@ -1368,6 +1778,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/kelsey-palmer-25e5d90ac8',
     jobTitle: 'Medical secretary',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -1378,6 +1791,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/ryan-holmes-0c335917d6',
     jobTitle: 'Armed forces operational officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Larry',
@@ -1388,6 +1804,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/larry-castro-631a1061ce',
     jobTitle: 'Call centre manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -1398,6 +1817,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/elizabeth-gonzalez-7717b4d0bd',
     jobTitle: 'Automotive engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -1408,6 +1830,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/christopher-matthews-28232e7783',
     jobTitle: 'Surveyor, building',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rodney',
@@ -1418,6 +1843,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/rodney-briggs-634d20e650',
     jobTitle: 'Clinical cytogeneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Donald',
@@ -1428,6 +1856,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/donald-khan-5aae10186f',
     jobTitle: 'Surveyor, rural practice',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Spencer',
@@ -1438,6 +1869,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/spencer-lee-030eb9cd9d',
     jobTitle: 'Multimedia programmer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Katherine',
@@ -1448,6 +1882,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/katherine-parker-87afc741ec',
     jobTitle: 'Arts development officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -1458,6 +1895,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/amanda-jackson-31a0288c40',
     jobTitle: 'Engineer, energy',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kimberly',
@@ -1468,6 +1908,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/kimberly-lloyd-851cd20ebf',
     jobTitle: 'Armed forces operational officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -1478,6 +1921,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/eric-hunter-a131354d18',
     jobTitle: 'Call centre manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -1488,6 +1934,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/ashley-taylor-4aa9cb790c',
     jobTitle: 'Arts administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -1498,6 +1947,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/michael-ayers-a7a9c15b39',
     jobTitle: 'Community pharmacist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -1508,6 +1960,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/stephen-fisher-696b8604f2',
     jobTitle: 'Equities trader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kara',
@@ -1518,6 +1973,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/kara-james-5cf607e6c1',
     jobTitle: 'Maintenance engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -1528,6 +1986,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/gary-lamb-c0f66f8f75',
     jobTitle: 'General practice doctor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -1538,6 +1999,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/james-griffin-8a5e63d24f',
     jobTitle: 'Public relations officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Wanda',
@@ -1548,6 +2012,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/wanda-chambers-8ea5f97b07',
     jobTitle: 'Advertising account planner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -1558,6 +2025,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/lisa-kline-513a938279',
     jobTitle: 'Actuary',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -1568,6 +2038,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/jason-roberts-a33d0ea932',
     jobTitle: 'Tourism officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -1578,6 +2051,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/john-mcpherson-0d3f263d26',
     jobTitle: 'Editor, magazine features',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Karen',
@@ -1588,6 +2064,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/karen-rhodes-239af63ac9',
     jobTitle: 'Commercial art gallery manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kathy',
@@ -1598,6 +2077,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/kathy-sparks-3dcdea4c5a',
     jobTitle: 'Engineer, production',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -1608,6 +2090,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/richard-murphy-66d2f794a5',
     jobTitle: 'Osteopath',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -1618,6 +2103,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/nicole-peterson-2d8cc71386',
     jobTitle: 'Production engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bryan',
@@ -1628,6 +2116,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/bryan-ward-9146d84428',
     jobTitle: 'Interior and spatial designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -1638,6 +2129,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/rebecca-howell-b51b44e75e',
     jobTitle: 'Engineer, electronics',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lori',
@@ -1648,6 +2142,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/lori-bean-adcfd993d8',
     jobTitle: 'Designer, blown glass/stained glass',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -1658,6 +2155,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/kevin-eaton-16b640da6b',
     jobTitle: 'Higher education lecturer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -1668,6 +2168,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/nicholas-wright-6c27afa8b3',
     jobTitle: 'Environmental manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -1678,6 +2181,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/kevin-paul-12c8e885e9',
     jobTitle: 'Health and safety inspector',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -1688,6 +2194,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/joshua-black-08413d2634',
     jobTitle: 'Banker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -1698,6 +2207,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/scott-bruce-f345ae71e4',
     jobTitle: 'Educational psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ebony',
@@ -1708,6 +2220,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/ebony-nixon-6ce991d391',
     jobTitle: 'Arboriculturist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jesse',
@@ -1718,6 +2233,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/jesse-hartman-f27f702502',
     jobTitle: 'Chiropractor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Julie',
@@ -1728,6 +2246,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/julie-whitney-527c01e206',
     jobTitle: 'Leisure centre manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Barbara',
@@ -1738,6 +2259,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/barbara-diaz-5f4a19157d',
     jobTitle: 'Press photographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jordan',
@@ -1748,6 +2272,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/jordan-montoya-f49fb6a720',
     jobTitle: 'Broadcast engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jorge',
@@ -1758,6 +2285,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/jorge-hanson-c899de111f',
     jobTitle: 'General practice doctor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anna',
@@ -1768,6 +2298,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/anna-robbins-8ddf20e83c',
     jobTitle: 'Nurse, mental health',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Steve',
@@ -1778,6 +2311,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/steve-keller-377272ac44',
     jobTitle: 'Industrial buyer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brianna',
@@ -1788,6 +2324,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/brianna-moreno-dae63a4f83',
     jobTitle: 'General practice doctor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shawn',
@@ -1798,6 +2337,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/shawn-krause-f42275b298',
     jobTitle: 'Insurance broker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -1808,6 +2350,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/michael-pierce-b01914124c',
     jobTitle: 'Engineer, broadcasting (operations)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -1818,6 +2363,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/elizabeth-leon-7618636547',
     jobTitle: 'Clinical embryologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Carl',
@@ -1828,6 +2376,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/carl-wagner-c6d92ca2ac',
     jobTitle: 'Programmer, multimedia',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Erica',
@@ -1838,6 +2389,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/erica-taylor-99a8f528f9',
     jobTitle: 'Catering manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sandy',
@@ -1848,6 +2402,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/sandy-gomez-fe6cfbd6f8',
     jobTitle: 'Event organiser',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tracy',
@@ -1858,6 +2415,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/tracy-gray-e7455e5048',
     jobTitle: 'Charity officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -1868,6 +2428,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/amy-davies-6d15292b3d',
     jobTitle: 'Trading standards officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -1878,6 +2441,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/mary-wood-ac63c86744',
     jobTitle: 'Nutritional therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -1888,6 +2454,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/james-green-0c06ff4286',
     jobTitle: 'Journalist, broadcasting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -1898,6 +2467,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/rebecca-petersen-3213856af4',
     jobTitle: 'Licensed conveyancer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Hunter',
@@ -1908,6 +2480,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/hunter-pierce-6873b9e186',
     jobTitle: 'Product manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christian',
@@ -1918,6 +2493,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/christian-bailey-b3f28cc8db',
     jobTitle: 'Community education officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -1928,6 +2506,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/william-mitchell-90c3f0b311',
     jobTitle: 'Insurance account manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brent',
@@ -1938,6 +2519,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/brent-gray-19b7fd459b',
     jobTitle: 'Careers information officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -1948,6 +2532,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/melissa-myers-0802db2cf0',
     jobTitle: 'Arboriculturist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brittney',
@@ -1958,6 +2545,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/brittney-nguyen-c1eb8b312b',
     jobTitle: 'Logistics and distribution manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -1968,6 +2558,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/jacob-franklin-fe55bfc993',
     jobTitle: 'Freight forwarder',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kathy',
@@ -1978,6 +2571,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/kathy-burgess-99f2ff488c',
     jobTitle: 'Learning disability nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -1988,6 +2584,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/nicole-smith-8aec41062c',
     jobTitle: 'Legal secretary',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Troy',
@@ -1998,6 +2597,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/troy-decker-bd98e78a69',
     jobTitle: 'Surveyor, minerals',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Corey',
@@ -2008,6 +2610,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/corey-thompson-f8d368eaf4',
     jobTitle: 'Structural engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Angela',
@@ -2018,6 +2623,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/angela-webster-0702bee349',
     jobTitle: 'Chartered public finance accountant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jenna',
@@ -2028,6 +2636,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/jenna-smith-74d6913e06',
     jobTitle: 'Colour technologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Johnny',
@@ -2038,6 +2649,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/johnny-lee-37995fae9a',
     jobTitle: 'Sports development officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Curtis',
@@ -2048,6 +2662,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/curtis-cross-8df12d4c6d',
     jobTitle: 'Broadcast journalist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Paula',
@@ -2058,6 +2675,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/paula-perez-a4abb3240e',
     jobTitle: 'Bonds trader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -2068,6 +2688,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/stephen-berger-fcf9446666',
     jobTitle: 'Production engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Candace',
@@ -2078,6 +2701,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/candace-michael-a468f60b3c',
     jobTitle: 'Surveyor, building control',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -2088,6 +2714,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/jessica-lawrence-61fd28400c',
     jobTitle: 'Regulatory affairs officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Victoria',
@@ -2098,6 +2727,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/victoria-west-4514ebe192',
     jobTitle: 'Therapist, sports',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -2108,6 +2740,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/matthew-matthews-42bbc7a5f8',
     jobTitle: 'Pathologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Megan',
@@ -2118,6 +2753,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/megan-lopez-936955bbda',
     jobTitle: 'Ophthalmologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kim',
@@ -2128,6 +2766,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/kim-campbell-7d447d5ec6',
     jobTitle: 'Recruitment consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -2138,6 +2779,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/william-ryan-a5c6cbc922',
     jobTitle: 'Ergonomist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lauren',
@@ -2148,6 +2792,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/lauren-walker-74bbb465a8',
     jobTitle: 'Nature conservation officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jordan',
@@ -2158,6 +2805,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/jordan-castro-5db609defa',
     jobTitle: 'Research officer, trade union',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -2168,6 +2818,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/scott-williams-0c2a344935',
     jobTitle: 'Bonds trader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Peter',
@@ -2178,6 +2831,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/peter-thompson-341acf2282',
     jobTitle: 'Waste management officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jill',
@@ -2188,6 +2844,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/jill-williams-15b1d79aa6',
     jobTitle: 'Pathologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joyce',
@@ -2198,6 +2857,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/joyce-diaz-c25c3d067c',
     jobTitle: 'Loss adjuster, chartered',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -2208,6 +2870,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/robert-owens-39e8664408',
     jobTitle: 'Land/geomatics surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -2218,6 +2883,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/christine-fernandez-4bde5f26e0',
     jobTitle: 'Theme park manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -2228,6 +2896,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/gary-jones-a993bf28c1',
     jobTitle: 'Community education officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ronald',
@@ -2238,6 +2909,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/ronald-brown-921558ef53',
     jobTitle: 'Arts administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Curtis',
@@ -2248,6 +2922,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/curtis-oliver-1f7c8563a6',
     jobTitle: 'Oncologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stacy',
@@ -2258,6 +2935,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/stacy-vasquez-72e5c629d2',
     jobTitle: 'Engineer, biomedical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Susan',
@@ -2268,6 +2948,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/susan-hancock-00b3694621',
     jobTitle: 'Charity fundraiser',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -2278,6 +2961,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/amy-conner-65d26933e9',
     jobTitle: 'Web designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Keith',
@@ -2288,6 +2974,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/keith-stein-dae7ba0be7',
     jobTitle: 'Airline pilot',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kristen',
@@ -2298,6 +2987,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/kristen-lane-7988cdb7fc',
     jobTitle: 'Immigration officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Leroy',
@@ -2308,6 +3000,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/leroy-bright-5ce647996d',
     jobTitle: 'Chief Marketing Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bradley',
@@ -2318,6 +3013,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/bradley-patterson-590ba76c7d',
     jobTitle: 'Public house manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -2328,6 +3026,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/sarah-mcdaniel-a2c7767c1e',
     jobTitle: 'Media planner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -2338,6 +3039,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/brandon-boyd-4e2e998802',
     jobTitle: 'Surveyor, insurance',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Carolyn',
@@ -2348,6 +3052,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/carolyn-villarreal-3f2ca6cc5f',
     jobTitle: 'Engineer, automotive',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Harry',
@@ -2358,6 +3065,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/harry-garrett-5faf263278',
     jobTitle: 'Pharmacist, hospital',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -2368,6 +3078,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/richard-lee-8f9dff7c18',
     jobTitle: 'Financial trader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kristen',
@@ -2378,6 +3091,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/kristen-landry-106c6fc0b5',
     jobTitle: 'Facilities manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -2388,6 +3104,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/joshua-burgess-3596563692',
     jobTitle: 'IT technical support officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alicia',
@@ -2398,6 +3117,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/alicia-stevens-428bceb969',
     jobTitle: 'Chiropodist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -2408,6 +3130,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/jason-torres-8250efe63e',
     jobTitle: 'QuickActions analyst',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -2418,6 +3143,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/michael-ortiz-4c03016b05',
     jobTitle: 'Sound technician, broadcasting/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Deanna',
@@ -2428,6 +3156,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/deanna-williams-08b67a9a7c',
     jobTitle: 'Research officer, political party',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -2438,6 +3169,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/kevin-ray-dbea2dd52d',
     jobTitle: 'Naval architect',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tony',
@@ -2448,6 +3182,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/tony-walters-2bfeca8dd4',
     jobTitle: 'Purchasing manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -2458,6 +3195,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/andrew-roberts-41c13e9f43',
     jobTitle: 'Physiotherapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lucas',
@@ -2468,6 +3208,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/lucas-fisher-7a563c63b5',
     jobTitle: 'Materials engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -2478,6 +3221,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/sarah-bates-477cbbc18f',
     jobTitle: 'Educational psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jon',
@@ -2488,6 +3234,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/jon-osborne-e72d657289',
     jobTitle: 'Geologist, engineering',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -2498,6 +3247,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/lisa-green-e3c92b78e0',
     jobTitle: 'Art therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'George',
@@ -2508,6 +3260,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/george-allen-9de1c6f0d2',
     jobTitle: 'Retail merchandiser',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rhonda',
@@ -2518,6 +3273,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/rhonda-smith-7c802edf30',
     jobTitle: 'Therapist, nutritional',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kyle',
@@ -2528,6 +3286,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/kyle-day-bedc45ac4c',
     jobTitle: 'Dispensing optician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Valerie',
@@ -2538,6 +3299,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/valerie-smith-71a58f5833',
     jobTitle: 'Diagnostic radiographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -2548,6 +3312,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/matthew-nelson-a288db243c',
     jobTitle: 'Surveyor, insurance',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Terri',
@@ -2558,6 +3325,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/terri-ramos-eb86c1f353',
     jobTitle: 'Tour manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -2568,6 +3338,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/brian-bell-50b9b8cc1c',
     jobTitle: 'Engineer, electrical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Troy',
@@ -2578,6 +3351,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/troy-stuart-f056c7bfcb',
     jobTitle: 'Corporate investment banker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Beth',
@@ -2588,6 +3364,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/beth-shea-2f51929bb5',
     jobTitle: 'Forensic psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Erin',
@@ -2598,6 +3377,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/erin-barrera-74010827a9',
     jobTitle: 'Youth worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -2608,6 +3390,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/danielle-maynard-ba9f453d8e',
     jobTitle: 'Location manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -2618,6 +3403,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/sarah-oneal-814e3f10b5',
     jobTitle: 'Programmer, multimedia',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Carrie',
@@ -2628,6 +3416,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/carrie-taylor-33e1df2a16',
     jobTitle: 'Archaeologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -2638,6 +3429,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/andrea-smith-63bc9b52c2',
     jobTitle: 'Mechanical engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Adam',
@@ -2648,6 +3442,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/adam-cowan-a8cb02d136',
     jobTitle: 'Sports development officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bryan',
@@ -2658,6 +3455,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/bryan-johnson-ec29fc1f9a',
     jobTitle: 'Clinical molecular geneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -2668,6 +3468,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/richard-jackson-a17e46e0d7',
     jobTitle: 'Engineer, water',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kelly',
@@ -2678,6 +3481,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/kelly-jackson-8b32bfb505',
     jobTitle: 'Pension scheme manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jack',
@@ -2688,6 +3494,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/jack-ingram-e68114f5c7',
     jobTitle: 'Pharmacist, community',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rhonda',
@@ -2698,6 +3507,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/rhonda-jenkins-f071128f22',
     jobTitle: 'Aeronautical engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -2708,6 +3520,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/jacqueline-johnson-dda681b600',
     jobTitle: 'Water quality scientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Casey',
@@ -2718,6 +3533,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/casey-oneill-ab8f249833',
     jobTitle: 'Local government officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kathleen',
@@ -2728,6 +3546,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/kathleen-francis-097093196c',
     jobTitle: 'Paediatric nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -2738,6 +3559,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/gary-woods-4b0cba46d6',
     jobTitle: 'Multimedia specialist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rachel',
@@ -2748,6 +3572,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/rachel-harris-93dfc3611e',
     jobTitle: 'Medical laboratory scientific officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Charlene',
@@ -2758,6 +3585,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/charlene-rose-98947b0547',
     jobTitle: 'Solicitor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Donna',
@@ -2768,6 +3598,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/donna-saunders-4f712712f8',
     jobTitle: 'Actor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -2778,6 +3611,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/thomas-singh-640bdc36f3',
     jobTitle: 'Press sub',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -2788,6 +3624,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/ryan-morales-081c6966a9',
     jobTitle: 'Food technologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christy',
@@ -2798,6 +3637,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/christy-hall-916136bbc9',
     jobTitle: 'Pension scheme manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -2808,6 +3650,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/joshua-hawkins-9a0340bb4e',
     jobTitle: 'Occupational psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jasmine',
@@ -2818,6 +3663,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/jasmine-stanley-94eeb75ca5',
     jobTitle: 'Nutritional therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Morgan',
@@ -2828,6 +3676,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/morgan-thomas-a18e91a104',
     jobTitle: 'Clinical research associate',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Laura',
@@ -2838,6 +3689,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/laura-gomez-7ee145bfc4',
     jobTitle: 'Bookseller',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anne',
@@ -2848,6 +3702,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/anne-montgomery-10245f347a',
     jobTitle: 'Arts development officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tiffany',
@@ -2858,6 +3715,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/tiffany-peterson-fed8500c17',
     jobTitle: 'Multimedia specialist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ian',
@@ -2868,6 +3728,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/ian-martinez-03c2967428',
     jobTitle: 'Phytotherapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shelly',
@@ -2878,6 +3741,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/shelly-rodriguez-42e2b8178f',
     jobTitle: 'Conservation officer, nature',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Philip',
@@ -2888,6 +3754,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/philip-santos-0c763b15db',
     jobTitle: 'Field trials officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -2898,6 +3767,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/michael-foley-a0535b3102',
     jobTitle: 'Exhibition designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -2908,6 +3780,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/david-raymond-1e1178af61',
     jobTitle: 'Psychologist, occupational',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -2918,6 +3793,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/amanda-booker-6781b9995d',
     jobTitle: 'Network engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -2928,6 +3806,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/emily-jenkins-54d2700826',
     jobTitle: 'Technical brewer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -2938,6 +3819,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/timothy-larsen-fb5366ba23',
     jobTitle: 'Geneticist, molecular',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -2948,6 +3832,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/ashley-barrett-014f05cf8c',
     jobTitle: 'Writer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -2958,6 +3845,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/sandra-adkins-8cbb8957df',
     jobTitle: 'Chief Marketing Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kelly',
@@ -2968,6 +3858,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/kelly-johnson-c74ca2d4f3',
     jobTitle: 'Farm manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -2978,6 +3871,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/patricia-rodriguez-e83155aa16',
     jobTitle: 'QuickActions analyst',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dawn',
@@ -2988,6 +3884,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/dawn-scott-c95e0080c3',
     jobTitle: 'Sports therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -2998,6 +3897,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/timothy-jones-eb531fbe5d',
     jobTitle: 'Manufacturing engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -3008,6 +3910,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/william-walker-492bb70711',
     jobTitle: 'Water engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jesus',
@@ -3018,6 +3923,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/jesus-santana-fc2b873356',
     jobTitle: 'Designer, industrial/product',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Maurice',
@@ -3028,6 +3936,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/maurice-carpenter-2f52cbbda1',
     jobTitle: 'Surveyor, insurance',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -3038,6 +3949,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/robert-barnes-b7ef473c08',
     jobTitle: 'Ecologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -3048,6 +3962,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/matthew-aguilar-c9fde35926',
     jobTitle: 'Biomedical scientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -3058,6 +3975,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/anthony-stanley-3854ad13be',
     jobTitle: 'Designer, interior/spatial',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -3068,6 +3988,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/brian-garza-66afe09a9a',
     jobTitle: 'Medical illustrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -3078,6 +4001,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/lisa-oconnor-ec7fe69b0a',
     jobTitle: 'Systems analyst',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -3088,6 +4014,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/william-wilson-fdb80928cc',
     jobTitle: 'Radio broadcast assistant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joanna',
@@ -3098,6 +4027,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/joanna-alvarez-9f444908cb',
     jobTitle: 'Data processing manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Denise',
@@ -3108,6 +4040,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/denise-hill-3e8506c956',
     jobTitle: 'Trade union research officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Marie',
@@ -3118,6 +4053,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/marie-frey-6f12dc710b',
     jobTitle: 'Lecturer, higher education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -3128,6 +4066,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/sarah-anderson-fe0d0f83d5',
     jobTitle: 'Pensions consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -3138,6 +4079,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/mary-garcia-ed7168a5f9',
     jobTitle: 'Optometrist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -3148,6 +4092,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/richard-massey-af5c02d5ad',
     jobTitle: 'Armed forces operational officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Megan',
@@ -3158,6 +4105,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/megan-rodriguez-377a7d26f7',
     jobTitle: 'Editor, magazine features',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -3168,6 +4118,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/sandra-conway-49f0ce34eb',
     jobTitle: 'Press sub',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rachael',
@@ -3178,6 +4131,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/rachael-dalton-6bab20a6a3',
     jobTitle: 'Catering manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Katherine',
@@ -3188,6 +4144,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/katherine-little-d826db995d',
     jobTitle: 'Production assistant, radio',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Faith',
@@ -3198,6 +4157,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/faith-cross-029912b4f5',
     jobTitle: 'Pensions consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -3208,6 +4170,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/amy-farmer-e9024737cf',
     jobTitle: 'Printmaker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stanley',
@@ -3218,6 +4183,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/stanley-todd-d92752ad42',
     jobTitle: 'Psychologist, forensic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bradley',
@@ -3228,6 +4196,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/bradley-miller-4b0d674c5d',
     jobTitle: 'Hospital doctor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sharon',
@@ -3238,6 +4209,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/sharon-rhodes-708695e723',
     jobTitle: 'Lighting technician, broadcasting/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -3248,6 +4222,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/emily-young-721fb2a8e0',
     jobTitle: 'Bonds trader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Victoria',
@@ -3258,6 +4235,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/victoria-harris-6f291283ab',
     jobTitle: 'Hospital pharmacist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -3268,6 +4248,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/andrew-massey-0f7983ac40',
     jobTitle: 'Podiatrist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Heather',
@@ -3278,6 +4261,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/heather-mack-fc2f7ee6fd',
     jobTitle: "Politician's assistant",
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -3288,6 +4274,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/michelle-richards-5d0d907e8c',
     jobTitle: 'Geochemist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Billy',
@@ -3298,6 +4287,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/billy-jacobs-e9d18903f6',
     jobTitle: 'Pensions consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -3308,6 +4300,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/michael-white-6548d80612',
     jobTitle: 'Metallurgist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jose',
@@ -3318,6 +4313,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/jose-frazier-c989680d85',
     jobTitle: 'Conservation officer, historic buildings',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -3328,6 +4326,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/michael-barrett-9a6fdee03b',
     jobTitle: 'Sound technician, broadcasting/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -3338,6 +4339,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/lisa-allen-65f7418d40',
     jobTitle: 'Contracting civil engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kristopher',
@@ -3348,6 +4352,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/kristopher-berg-66eb2e31cf',
     jobTitle: 'Community pharmacist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Regina',
@@ -3358,6 +4365,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/regina-allen-f1f56a375b',
     jobTitle: 'Civil Service administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Angela',
@@ -3368,6 +4378,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/angela-williams-00ba2b783f',
     jobTitle: 'Designer, furniture',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Aaron',
@@ -3378,6 +4391,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/aaron-watts-423d6e63d0',
     jobTitle: 'Commissioning editor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Angela',
@@ -3388,6 +4404,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/angela-callahan-c21517a078',
     jobTitle: 'Merchant navy officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Walter',
@@ -3398,6 +4417,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/walter-mclaughlin-7ec17dd691',
     jobTitle: 'Lecturer, further education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -3408,6 +4430,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/brian-ellis-bc4c380ff5',
     jobTitle: 'Corporate investment banker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -3418,6 +4443,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/joshua-watson-5613c41859',
     jobTitle: 'Scientist, clinical (histocompatibility and immunogenetics)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Monica',
@@ -3428,6 +4456,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/monica-molina-2213f0ccce',
     jobTitle: 'Press sub',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Justin',
@@ -3438,6 +4469,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/justin-castro-43678bde89',
     jobTitle: 'Plant breeder/geneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Austin',
@@ -3448,6 +4482,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/austin-dixon-791d6f8fa6',
     jobTitle: 'Dealer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mitchell',
@@ -3458,6 +4495,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/mitchell-massey-22fdbe6b77',
     jobTitle: 'Phytotherapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -3468,6 +4508,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/eric-reid-4a1a08817b',
     jobTitle: 'TEFL teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -3478,6 +4521,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/andrea-park-80bc0bf8a0',
     jobTitle: 'Brewing technologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Wendy',
@@ -3488,6 +4534,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/wendy-page-7d996e5a2f',
     jobTitle: 'Chief Executive Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -3498,6 +4547,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/vanessa-carpenter-a0b8dc7720',
     jobTitle: 'Chiropractor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -3508,6 +4560,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/lisa-bailey-f737183c93',
     jobTitle: 'Agricultural engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -3518,6 +4573,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/jason-wagner-6eafd392ce',
     jobTitle: 'Surveyor, quantity',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Judith',
@@ -3528,6 +4586,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/judith-moore-e8bdfc83e3',
     jobTitle: 'Translator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -3538,6 +4599,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/steven-moore-a4d5be1e3c',
     jobTitle: 'Accountant, chartered certified',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Darren',
@@ -3548,6 +4612,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/darren-castillo-8ed7a1702b',
     jobTitle: 'Advertising copywriter',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Regina',
@@ -3558,6 +4625,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/regina-quinn-3983eab37e',
     jobTitle: 'Materials engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -3568,6 +4638,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/michelle-delgado-53f8093373',
     jobTitle: 'Soil scientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Miguel',
@@ -3578,6 +4651,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/miguel-rose-31034cf613',
     jobTitle: 'Therapeutic radiographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -3588,6 +4664,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/gary-mason-549d3828f5',
     jobTitle: 'Theatre director',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -3598,6 +4677,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/david-young-ad2e589cdb',
     jobTitle: 'Medical illustrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -3608,6 +4690,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/jennifer-lewis-008f8dc7e6',
     jobTitle: 'Teaching laboratory technician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -3618,6 +4703,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/amanda-carson-8e728fa39a',
     jobTitle: 'Product/process development scientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -3628,6 +4716,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/jeffrey-valentine-ccb2756410',
     jobTitle: 'Surveyor, hydrographic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Helen',
@@ -3638,6 +4729,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/helen-gordon-71ec22bf50',
     jobTitle: 'Engineer, communications',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cameron',
@@ -3648,6 +4742,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/cameron-lopez-e66f1d22d8',
     jobTitle: 'Engineer, production',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Troy',
@@ -3658,6 +4755,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/troy-gray-756cd40db4',
     jobTitle: 'Health and safety inspector',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tonya',
@@ -3668,6 +4768,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/tonya-payne-5e0b7eec25',
     jobTitle: 'Training and development officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'April',
@@ -3678,6 +4781,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/april-williams-f4fa095134',
     jobTitle: 'Tourist information centre manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -3688,6 +4794,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/gregory-baker-58cbfbde95',
     jobTitle: 'Pharmacist, community',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bobby',
@@ -3698,6 +4807,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/bobby-cummings-18e64e1c24',
     jobTitle: 'Mechanical engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -3708,6 +4820,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/melissa-jackson-36c2e59b76',
     jobTitle: 'Pharmacologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lance',
@@ -3718,6 +4833,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/lance-norman-7b07c0a723',
     jobTitle: 'Furniture conservator/restorer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -3728,6 +4846,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/amy-roberts-b98996c9ef',
     jobTitle: 'Cytogeneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kaitlyn',
@@ -3738,6 +4859,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/kaitlyn-kelly-e6d2be7a00',
     jobTitle: 'Commercial/residential surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alan',
@@ -3748,6 +4872,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/alan-perez-6a584f8e83',
     jobTitle: 'Advertising copywriter',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kaylee',
@@ -3758,6 +4885,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/kaylee-garrett-5c56311f4e',
     jobTitle: 'Chief Operating Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Deanna',
@@ -3768,6 +4898,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/deanna-ball-cac5d9cf3c',
     jobTitle: 'Nurse, learning disability',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michele',
@@ -3778,6 +4911,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/michele-crawford-21fd4da56c',
     jobTitle: 'Education officer, environmental',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tommy',
@@ -3788,6 +4924,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/tommy-brown-a3313774fb',
     jobTitle: 'Civil engineer, consulting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -3798,6 +4937,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/mary-smith-e7451d73fb',
     jobTitle: 'Commercial/residential surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -3808,6 +4950,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/danielle-dunn-afadb3743f',
     jobTitle: 'Higher education lecturer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -3818,6 +4963,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/daniel-ward-9eba345b13',
     jobTitle: 'Corporate treasurer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Louis',
@@ -3828,6 +4976,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/louis-bailey-a7c289633b',
     jobTitle: 'Actuary',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melvin',
@@ -3838,6 +4989,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/melvin-rosario-eeb2165a87',
     jobTitle: 'Mental health nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -3848,6 +5002,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/jason-fritz-998e404fcc',
     jobTitle: 'Counselling psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Candice',
@@ -3858,6 +5015,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/candice-weber-8d1a3aa843',
     jobTitle: 'Scientific laboratory technician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -3868,6 +5028,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/john-jones-f3a69bf1c7',
     jobTitle: "Politician's assistant",
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Henry',
@@ -3878,6 +5041,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/henry-gonzalez-ed4236ae1a',
     jobTitle: 'Medical secretary',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kaitlyn',
@@ -3888,6 +5054,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/kaitlyn-brennan-3e779378d9',
     jobTitle: 'Osteopath',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -3898,6 +5067,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/jeffrey-shepard-038f3df4d1',
     jobTitle: 'Designer, graphic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -3908,6 +5080,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/emily-smith-3c11276729',
     jobTitle: 'Claims inspector/assessor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -3918,6 +5093,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/richard-williams-034896141e',
     jobTitle: 'Artist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -3928,6 +5106,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/david-cruz-9821a933f5',
     jobTitle: 'Lecturer, further education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Julie',
@@ -3938,6 +5119,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/julie-smith-4b6473adc4',
     jobTitle: 'Conservator, furniture',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Edward',
@@ -3948,6 +5132,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/edward-russell-34445498de',
     jobTitle: 'Teaching laboratory technician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Beth',
@@ -3958,6 +5145,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/beth-kennedy-956fad5f18',
     jobTitle: 'Passenger transport manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Craig',
@@ -3968,6 +5158,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/craig-maxwell-9b3a04b47e',
     jobTitle: 'Conservator, furniture',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -3978,6 +5171,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/christopher-jackson-0ad43cfe80',
     jobTitle: 'Education officer, community',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -3988,6 +5184,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/jacob-miller-c0d550cede',
     jobTitle: 'Surveyor, land/geomatics',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -3998,6 +5197,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/kevin-williams-41633df75d',
     jobTitle: 'Doctor, general practice',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -4008,6 +5210,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/mary-wiley-2c6f70a754',
     jobTitle: 'Museum/gallery curator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sierra',
@@ -4018,6 +5223,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/sierra-mccullough-9d4780eddd',
     jobTitle: 'Tour manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -4028,6 +5236,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/michelle-mcknight-d4229e04f1',
     jobTitle: 'Adult guidance worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Devin',
@@ -4038,6 +5249,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/devin-aguilar-ed9890f7fd',
     jobTitle: 'Press photographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -4048,6 +5262,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/christopher-figueroa-8ef81242d0',
     jobTitle: 'Theatre stage manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anita',
@@ -4058,6 +5275,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/anita-orr-7648a03041',
     jobTitle: 'Air cabin crew',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -4068,6 +5288,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/richard-young-10948fb6af',
     jobTitle: 'Osteopath',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Justin',
@@ -4078,6 +5301,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/justin-berry-4ac0f93944',
     jobTitle: 'Public house manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -4088,6 +5314,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/timothy-davis-6c07a1c0bc',
     jobTitle: 'Call centre manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -4098,6 +5327,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/brian-williams-07738aaf00',
     jobTitle: 'Media buyer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kyle',
@@ -4108,6 +5340,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/kyle-carr-ae1d05c89e',
     jobTitle: 'Environmental education officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -4118,6 +5353,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/jessica-gonzalez-26ff71c932',
     jobTitle: 'Acupuncturist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Hannah',
@@ -4128,6 +5366,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/hannah-nguyen-af672e539c',
     jobTitle: 'Theatre director',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tina',
@@ -4138,6 +5379,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/tina-salinas-4c6898adb4',
     jobTitle: 'Office manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -4148,6 +5392,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/matthew-king-4fcd69e0e2',
     jobTitle: 'Scientist, forensic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Carrie',
@@ -4158,6 +5405,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/carrie-mayer-19a613bd93',
     jobTitle: 'Furniture conservator/restorer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alan',
@@ -4168,6 +5418,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/alan-guerrero-35f65ce7ed',
     jobTitle: 'Catering manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alan',
@@ -4178,6 +5431,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/alan-edwards-2c5694b583',
     jobTitle: 'Air traffic controller',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ellen',
@@ -4188,6 +5444,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/ellen-hughes-d7dcd7cee8',
     jobTitle: 'Catering manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -4198,6 +5457,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/jennifer-cox-521071720f',
     jobTitle: 'Product designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -4208,6 +5470,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/james-brown-a872fe7489',
     jobTitle: 'Theatre manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kenneth',
@@ -4218,6 +5483,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/kenneth-mason-7bdf5e7f2b',
     jobTitle: 'Financial trader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kent',
@@ -4228,6 +5496,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/kent-mitchell-2685d24cef',
     jobTitle: 'Horticultural consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -4238,6 +5509,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/christine-parker-53b7e92f21',
     jobTitle: 'Dietitian',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -4248,6 +5522,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/christopher-thomas-50eba95625',
     jobTitle: 'Press photographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cole',
@@ -4258,6 +5535,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/cole-mckenzie-0febe188ad',
     jobTitle: 'Transport planner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -4268,6 +5548,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/john-jackson-eaf7698388',
     jobTitle: 'Engineer, land',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Denise',
@@ -4278,6 +5561,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/denise-gregory-2a012e2939',
     jobTitle: 'Community arts worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Deanna',
@@ -4288,6 +5574,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/deanna-mays-d96cf68df8',
     jobTitle: 'Television camera operator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -4298,6 +5587,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/jennifer-smith-cff724d712',
     jobTitle: 'Science writer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dylan',
@@ -4308,6 +5600,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/dylan-jimenez-611f4f7667',
     jobTitle: 'Runner, broadcasting/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amber',
@@ -4318,6 +5613,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/amber-mullins-7c2cf23e98',
     jobTitle: 'Scientist, research (medical)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kirsten',
@@ -4328,6 +5626,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/kirsten-watson-e01dabbf2c',
     jobTitle: 'Radiographer, therapeutic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Holly',
@@ -4338,6 +5639,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/holly-winters-ad7c60377c',
     jobTitle: 'Public house manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -4348,6 +5652,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/matthew-jenkins-d451b82929',
     jobTitle: 'Neurosurgeon',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -4358,6 +5665,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/elizabeth-williams-f8ae89860c',
     jobTitle: 'Ranger/warden',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sophia',
@@ -4368,6 +5678,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/sophia-carpenter-41f6371dcf',
     jobTitle: 'Translator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -4378,6 +5691,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/sarah-duke-9c48b2bc47',
     jobTitle: 'Holiday representative',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Colin',
@@ -4388,6 +5704,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/colin-smith-319020345b',
     jobTitle: 'Gaffer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -4398,6 +5717,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/christine-baldwin-849d34d1c9',
     jobTitle: 'Emergency planning/management officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -4408,6 +5730,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/michael-johns-d7c1497c08',
     jobTitle: 'Waste management officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeffery',
@@ -4418,6 +5743,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/jeffery-griffin-755dd4b413',
     jobTitle: 'Embryologist, clinical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mike',
@@ -4428,6 +5756,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/mike-hernandez-619531cf07',
     jobTitle: 'Conservation officer, nature',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Chelsea',
@@ -4438,6 +5769,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/chelsea-robinson-65dedb9ed7',
     jobTitle: 'Restaurant manager, fast food',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Derek',
@@ -4448,6 +5782,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/derek-small-3b02aeb21a',
     jobTitle: 'Nutritional therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robin',
@@ -4458,6 +5795,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/robin-miranda-3d69d8721e',
     jobTitle: 'Logistics and distribution manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alexander',
@@ -4468,6 +5808,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/alexander-bryant-8e40b5c156',
     jobTitle: 'Museum education officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -4478,6 +5821,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/jennifer-moody-92078fa8a0',
     jobTitle: 'Teacher, adult education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kathleen',
@@ -4488,6 +5834,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/kathleen-coleman-fbba0d93b5',
     jobTitle: 'Exhibition designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Miguel',
@@ -4498,6 +5847,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/miguel-malone-931db4892a',
     jobTitle: 'Industrial buyer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -4508,6 +5860,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/eric-kramer-911574885e',
     jobTitle: 'Surveyor, planning and development',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -4518,6 +5873,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/david-harmon-a02ccbfe74',
     jobTitle: 'Trade mark attorney',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -4528,6 +5886,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/michael-turner-c7db3d22d3',
     jobTitle: 'Illustrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kim',
@@ -4538,6 +5899,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/kim-nelson-e9c0c3ac3b',
     jobTitle: 'Archivist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -4548,6 +5912,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/jason-mcmahon-17a1cf9c23',
     jobTitle: 'Oncologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Spencer',
@@ -4558,6 +5925,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/spencer-mason-511dce37fd',
     jobTitle: 'Investment analyst',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alison',
@@ -4568,6 +5938,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/alison-barber-c6ac41c30c',
     jobTitle: 'Tourism officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alicia',
@@ -4578,6 +5951,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/alicia-kennedy-ffd86f7279',
     jobTitle: 'Civil engineer, consulting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Edward',
@@ -4588,6 +5964,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/edward-parsons-0815f3a265',
     jobTitle: 'Financial controller',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Justin',
@@ -4598,6 +5977,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/justin-petersen-5f4849177a',
     jobTitle: 'Theatre director',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dawn',
@@ -4608,6 +5990,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/dawn-dixon-ab7660d36a',
     jobTitle: 'Musician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Douglas',
@@ -4618,6 +6003,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/douglas-ward-a7e9b5a4ef',
     jobTitle: 'Midwife',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Linda',
@@ -4628,6 +6016,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/linda-nguyen-9543ff5b4b',
     jobTitle: 'General practice doctor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -4638,6 +6029,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/nicole-hernandez-c31e2859c3',
     jobTitle: 'Teacher, early years/pre',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anne',
@@ -4648,6 +6042,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/anne-massey-68ae91f9e7',
     jobTitle: 'Engineer, energy',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jenny',
@@ -4658,6 +6055,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/jenny-esparza-0ce6d348d2',
     jobTitle: 'Trade union research officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -4668,6 +6068,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/robert-ward-9dbe3cfea4',
     jobTitle: 'Air broker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -4678,6 +6081,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/melissa-farrell-e7db325f4e',
     jobTitle: 'Sports administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -4688,6 +6094,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/stephen-powers-848a849fac',
     jobTitle: 'Occupational psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robin',
@@ -4698,6 +6107,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/robin-brown-95dea5c792',
     jobTitle: 'Publishing rights manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Wanda',
@@ -4708,6 +6120,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/wanda-moore-846aac522b',
     jobTitle: 'Chief Technology Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -4718,6 +6133,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/danielle-brown-9468c67469',
     jobTitle: 'Biochemist, clinical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -4728,6 +6146,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/timothy-phillips-f02b8125a6',
     jobTitle: 'Medical sales representative',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -4738,6 +6159,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/daniel-baker-b080dba2cf',
     jobTitle: 'Learning disability nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -4748,6 +6172,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/jason-parker-c8f6658eb8',
     jobTitle: 'Public relations officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Donald',
@@ -4758,6 +6185,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/donald-roy-81242ff295',
     jobTitle: 'Ambulance person',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cameron',
@@ -4768,6 +6198,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/cameron-beck-4a5b8ac2f9',
     jobTitle: 'Animal technologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christina',
@@ -4778,6 +6211,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/christina-carter-20e5617e72',
     jobTitle: 'Historic buildings inspector/conservation officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Roy',
@@ -4788,6 +6224,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/roy-jackson-12ef80ee4f',
     jobTitle: 'Theatre stage manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Valerie',
@@ -4798,6 +6237,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/valerie-green-c4a084e4af',
     jobTitle: 'Dramatherapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -4808,6 +6250,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/ryan-parker-f86f7a2a2c',
     jobTitle: 'Catering manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Spencer',
@@ -4818,6 +6263,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/spencer-cortez-8653fe9874',
     jobTitle: 'Logistics and distribution manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -4828,6 +6276,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/jacqueline-freeman-4dc0ff463f',
     jobTitle: 'English as a second language teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joanne',
@@ -4838,6 +6289,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/joanne-hernandez-22617ea91c',
     jobTitle: 'Research scientist (maths)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -4848,6 +6302,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/brandon-randolph-f206b641f3',
     jobTitle: 'Games developer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -4858,6 +6315,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/william-wells-ddf1c0e80e',
     jobTitle: 'Teacher, secondary school',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Monica',
@@ -4868,6 +6328,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/monica-wall-18fcd0b442',
     jobTitle: 'Clinical molecular geneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -4878,6 +6341,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/patricia-whitehead-b76f160790',
     jobTitle: 'Learning disability nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Chelsey',
@@ -4888,6 +6354,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/chelsey-cruz-3927a3b54f',
     jobTitle: 'Accountant, chartered management',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Marie',
@@ -4898,6 +6367,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/marie-herrera-3c032f2c87',
     jobTitle: 'Teacher, English as a foreign language',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gail',
@@ -4908,6 +6380,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/gail-russell-47081f3909',
     jobTitle: 'Building services engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -4918,6 +6393,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/christopher-whitehead-907e5c7217',
     jobTitle: 'Research officer, trade union',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Vicki',
@@ -4928,6 +6406,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/vicki-gonzales-a6b6db11ce',
     jobTitle: 'Psychologist, counselling',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Paul',
@@ -4938,6 +6419,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/paul-graham-0159c4f113',
     jobTitle: 'Surveyor, commercial/residential',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -4948,6 +6432,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/john-carter-c39f5f879b',
     jobTitle: 'Cabin crew',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dennis',
@@ -4958,6 +6445,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/dennis-taylor-81e83d5e15',
     jobTitle: 'Sports development officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gail',
@@ -4968,6 +6458,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/gail-salinas-6fd9ac936d',
     jobTitle: 'Theatre stage manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stacey',
@@ -4978,6 +6471,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/stacey-doyle-c2b53da3c1',
     jobTitle: 'Engineer, water',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -4988,6 +6484,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/nicholas-jones-37d87e9bef',
     jobTitle: 'Runner, broadcasting/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sheri',
@@ -4998,6 +6497,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/sheri-donaldson-aef36dc097',
     jobTitle: 'Dentist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -5008,6 +6510,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/christopher-christensen-0405d38686',
     jobTitle: 'Public relations officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -5018,6 +6523,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/joshua-hernandez-aaf7b631ad',
     jobTitle: 'Therapist, sports',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -5028,6 +6536,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/ryan-walter-3f704e09d0',
     jobTitle: 'Therapeutic radiographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brandy',
@@ -5038,6 +6549,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/brandy-trevino-a6f561480a',
     jobTitle: 'Herpetologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -5048,6 +6562,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/john-martinez-9b2c36ab60',
     jobTitle: 'Armed forces technical officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -5058,6 +6575,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/jennifer-morris-94daa88e52',
     jobTitle: 'Homeopath',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -5068,6 +6588,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/amanda-barnett-6714ab7883',
     jobTitle: 'Clothing/textile technologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tanner',
@@ -5078,6 +6601,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/tanner-miller-dcf9fa91b8',
     jobTitle: 'Trading standards officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bobby',
@@ -5088,6 +6614,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/bobby-sanchez-b2c15c3790',
     jobTitle: 'Scientist, marine',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -5098,6 +6627,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/brian-cortez-77d96367ee',
     jobTitle: 'Metallurgist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Misty',
@@ -5108,6 +6640,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/misty-jenkins-7bb3609670',
     jobTitle: 'Teacher, primary school',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Erin',
@@ -5118,6 +6653,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/erin-hernandez-701db083a7',
     jobTitle: 'Textile designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Victoria',
@@ -5128,6 +6666,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/victoria-larsen-8bc60c5ec2',
     jobTitle: 'General practice doctor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -5138,6 +6679,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/brian-diaz-97d66d36ca',
     jobTitle: 'Television floor manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Krista',
@@ -5148,6 +6692,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/krista-murphy-51da3fe5d2',
     jobTitle: 'Social researcher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Calvin',
@@ -5158,6 +6705,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/calvin-bond-59b4aeacff',
     jobTitle: 'Early years teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Terry',
@@ -5168,6 +6718,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/terry-perez-68f6738ace',
     jobTitle: 'Teaching laboratory technician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -5178,6 +6731,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/stephen-wilson-009cf79121',
     jobTitle: 'Development worker, international aid',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -5188,6 +6744,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/lisa-johnson-d9406b185e',
     jobTitle: 'Archaeologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tim',
@@ -5198,6 +6757,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/tim-torres-9031065f9f',
     jobTitle: 'Accounting technician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Claudia',
@@ -5208,6 +6770,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/claudia-sosa-8b95753698',
     jobTitle: 'Retail buyer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -5218,6 +6783,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/steven-higgins-004f3810c4',
     jobTitle: 'Environmental health practitioner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -5228,6 +6796,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/james-benson-6cc556ac5b',
     jobTitle: 'Games developer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tyler',
@@ -5238,6 +6809,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/tyler-bishop-b9b8afc542',
     jobTitle: 'Surveyor, land/geomatics',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Monica',
@@ -5248,6 +6822,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/monica-smith-df2db66e3e',
     jobTitle: 'Exercise physiologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jillian',
@@ -5258,6 +6835,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/jillian-carter-9a44a80690',
     jobTitle: 'Forest/woodland manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Roberta',
@@ -5268,6 +6848,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/roberta-graves-5584549fbc',
     jobTitle: 'Camera operator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Clarence',
@@ -5278,6 +6861,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/clarence-flores-bc6d7c12e4',
     jobTitle: 'Publishing copy',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -5288,6 +6874,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/robert-gonzalez-624dd9bd66',
     jobTitle: 'Geologist, engineering',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -5298,6 +6887,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/melissa-lucas-d06ec4efc8',
     jobTitle: 'Youth worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lee',
@@ -5308,6 +6900,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/lee-lewis-c341df06f3',
     jobTitle: 'Graphic designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -5318,6 +6913,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/jessica-preston-011a349bc5',
     jobTitle: 'Therapist, art',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Henry',
@@ -5328,6 +6926,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/henry-west-168b570375',
     jobTitle: 'Programme researcher, broadcasting/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kristin',
@@ -5338,6 +6939,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/kristin-sanchez-16a334fc5e',
     jobTitle: 'Hydrologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Derek',
@@ -5348,6 +6952,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/derek-davis-919fba4163',
     jobTitle: 'Logistics and distribution manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dan',
@@ -5358,6 +6965,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/dan-gonzales-83d3f8867f',
     jobTitle: 'Location manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Edwin',
@@ -5368,6 +6978,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/edwin-garcia-7bcfaf8b3a',
     jobTitle: 'Nurse, mental health',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tonya',
@@ -5378,6 +6991,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/tonya-hooper-da5e36c5c5',
     jobTitle: 'Water engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -5388,6 +7004,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/jennifer-tate-ffbd43bb7e',
     jobTitle: 'Hospital doctor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Earl',
@@ -5398,6 +7017,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/earl-higgins-1785700a3f',
     jobTitle: 'Administrator, sports',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -5408,6 +7030,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/sandra-werner-ca50c4d94a',
     jobTitle: 'Administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -5418,6 +7043,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/brian-johnson-1b262bb370',
     jobTitle: 'Environmental consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -5428,6 +7056,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/jacqueline-bell-41ae313193',
     jobTitle: 'Advice worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeffery',
@@ -5438,6 +7069,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/jeffery-gibson-33288473cf',
     jobTitle: 'Therapist, occupational',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -5448,6 +7082,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/jacqueline-snyder-cdfcd4794c',
     jobTitle: 'Press photographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -5458,6 +7095,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/john-stone-ed440ef104',
     jobTitle: 'Advertising account executive',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -5468,6 +7108,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/elizabeth-allen-f3a164c8d0',
     jobTitle: 'Animator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -5478,6 +7121,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/daniel-knight-71d19ed590',
     jobTitle: 'Producer, television/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Whitney',
@@ -5488,6 +7134,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/whitney-thomas-ef126a0de0',
     jobTitle: 'Ophthalmologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christina',
@@ -5498,6 +7147,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/christina-anderson-f8458640de',
     jobTitle: 'Museum education officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -5508,6 +7160,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/joseph-peterson-0735ee6e8a',
     jobTitle: 'Actor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Larry',
@@ -5518,6 +7173,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/larry-graham-ec62249904',
     jobTitle: 'Surveyor, planning and development',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rachael',
@@ -5528,6 +7186,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/rachael-fox-736e697d7a',
     jobTitle: 'Senior tax professional/tax inspector',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -5538,6 +7199,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/christopher-wilson-f6db69b44e',
     jobTitle: 'Lecturer, further education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Aaron',
@@ -5548,6 +7212,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/aaron-mccarty-4207ebed52',
     jobTitle: 'Engineer, structural',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Albert',
@@ -5558,6 +7225,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/albert-taylor-715173cf8c',
     jobTitle: 'Exercise physiologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Laura',
@@ -5568,6 +7238,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/laura-diaz-83aa93da5c',
     jobTitle: 'Clinical embryologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Hannah',
@@ -5578,6 +7251,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/hannah-craig-e5a9be07cf',
     jobTitle: 'Air traffic controller',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -5588,6 +7264,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/jessica-smith-59aaca3a47',
     jobTitle: 'Seismic interpreter',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -5598,6 +7277,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/michael-george-2f16bc3685',
     jobTitle: 'Insurance risk surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ronald',
@@ -5608,6 +7290,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/ronald-hogan-67f4504d1b',
     jobTitle: 'Engineer, electrical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -5618,6 +7303,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/elizabeth-wright-3d2908f9b7',
     jobTitle: 'Legal secretary',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -5628,6 +7316,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/thomas-zimmerman-83ce4ea20a',
     jobTitle: 'Advertising art director',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Judith',
@@ -5638,6 +7329,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/judith-harris-c394ff92d4',
     jobTitle: 'Teacher, secondary school',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -5648,6 +7342,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/james-massey-14adc3c2b2',
     jobTitle: 'IT sales professional',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Louis',
@@ -5658,6 +7355,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/louis-huynh-8409c77412',
     jobTitle: 'Education officer, environmental',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lori',
@@ -5668,6 +7368,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/lori-alexander-06fabb279c',
     jobTitle: 'Diplomatic Services operational officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anna',
@@ -5678,6 +7381,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/anna-moore-209cbeb00b',
     jobTitle: 'Armed forces operational officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -5688,6 +7394,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/richard-smith-37150fdba0',
     jobTitle: 'Administrator, arts',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -5698,6 +7407,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/eric-hunter-5944420676',
     jobTitle: 'Osteopath',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cody',
@@ -5708,6 +7420,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/cody-todd-e59e1908cb',
     jobTitle: 'Financial planner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -5718,6 +7433,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/nicole-patel-d52be83244',
     jobTitle: 'Glass blower/designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -5728,6 +7446,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/eric-rivera-17c826bef0',
     jobTitle: 'Teacher, primary school',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -5738,6 +7459,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/amy-hall-5b6ee3fd83',
     jobTitle: 'Recycling officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Randy',
@@ -5748,6 +7472,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/randy-trujillo-c9c04e7445',
     jobTitle: 'Production engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -5758,6 +7485,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/ashley-conner-7e1f59d6d0',
     jobTitle: 'Chief Technology Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Adriana',
@@ -5768,6 +7498,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/adriana-larsen-790fff0714',
     jobTitle: 'Financial manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lindsey',
@@ -5778,6 +7511,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/lindsey-reid-9408f405f8',
     jobTitle: 'Geneticist, molecular',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sophia',
@@ -5788,6 +7524,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/sophia-collins-65701c7f41',
     jobTitle: 'Proofreader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -5798,6 +7537,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/joshua-martin-3db7199eeb',
     jobTitle: 'Diplomatic Services operational officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -5808,6 +7550,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/james-adams-fade145464',
     jobTitle: 'Field trials officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Maureen',
@@ -5818,6 +7563,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/maureen-clay-44447f851e',
     jobTitle: 'Ceramics designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brenda',
@@ -5828,6 +7576,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/brenda-moore-431d562885',
     jobTitle: 'Therapist, nutritional',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kathy',
@@ -5838,6 +7589,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/kathy-glover-1481622628',
     jobTitle: 'IT consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -5848,6 +7602,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/jeffrey-jones-74128aa05c',
     jobTitle: 'Corporate treasurer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dylan',
@@ -5858,6 +7615,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/dylan-ramirez-de68206ac6',
     jobTitle: 'Textile designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Derek',
@@ -5868,6 +7628,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/derek-brown-0bd369600e',
     jobTitle: 'Maintenance engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -5878,6 +7641,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/nicole-robles-dc92d47af5',
     jobTitle: 'Customer service manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lauren',
@@ -5888,6 +7654,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/lauren-murray-f56eac5c8b',
     jobTitle: 'Theatre director',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -5898,6 +7667,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/vanessa-jones-83ad40ef01',
     jobTitle: 'Geophysical data processor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joel',
@@ -5908,6 +7680,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/joel-lopez-6b55707c2c',
     jobTitle: 'Civil engineer, contracting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -5918,6 +7693,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/matthew-peterson-55c3973b59',
     jobTitle: 'Chief Marketing Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elaine',
@@ -5928,6 +7706,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/elaine-gonzalez-cb7b12c50a',
     jobTitle: 'Psychologist, educational',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Charles',
@@ -5938,6 +7719,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/charles-jones-dce2f7c6f3',
     jobTitle: 'Research officer, government',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rachel',
@@ -5948,6 +7732,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/rachel-barton-3d81266f5e',
     jobTitle: 'Cartographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alyssa',
@@ -5958,6 +7745,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/alyssa-ellis-c173bc4670',
     jobTitle: 'Sales promotion account executive',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -5968,6 +7758,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/patricia-lopez-149ef1e411',
     jobTitle: 'Consulting civil engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -5978,6 +7771,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/scott-moran-6acf4736cf',
     jobTitle: 'Heritage manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jerome',
@@ -5988,6 +7784,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/jerome-morris-c94af1fc97',
     jobTitle: 'Systems analyst',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -5998,6 +7797,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/christopher-davis-4820898e5c',
     jobTitle: 'Building control surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -6008,6 +7810,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/jessica-downs-9f35d94f5c',
     jobTitle: 'Solicitor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -6018,6 +7823,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/eric-jenkins-aad0386096',
     jobTitle: 'International aid/development worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christy',
@@ -6028,6 +7836,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/christy-ramsey-5a861e76c3',
     jobTitle: 'Pharmacist, hospital',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -6038,6 +7849,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/sarah-evans-f7501659e6',
     jobTitle: 'Exhibitions officer, museum/gallery',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stanley',
@@ -6048,6 +7862,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/stanley-thomas-76273965ad',
     jobTitle: 'Production assistant, television',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Hannah',
@@ -6058,6 +7875,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/hannah-watts-a4b37f2ae2',
     jobTitle: 'Learning mentor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -6068,6 +7888,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/michael-maldonado-94c0630389',
     jobTitle: 'Drilling engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -6078,6 +7901,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/joseph-nguyen-3f0a744a58',
     jobTitle: 'Chartered management accountant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Erin',
@@ -6088,6 +7914,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/erin-garcia-f9967e5d34',
     jobTitle: 'Science writer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -6098,6 +7927,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/eric-howell-cfccf703d3',
     jobTitle: 'Merchandiser, retail',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alexandra',
@@ -6108,6 +7940,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/alexandra-atkins-5fe1b160c9',
     jobTitle: 'Media planner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Raymond',
@@ -6118,6 +7953,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/raymond-mcdonald-68f29c3dc8',
     jobTitle: 'Multimedia specialist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -6128,6 +7966,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/joseph-barrett-942d11d82f',
     jobTitle: 'Geophysical data processor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -6138,6 +7979,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/lisa-salazar-04ed290031',
     jobTitle: 'Health and safety inspector',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Erica',
@@ -6148,6 +7992,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/erica-andrade-64ca983404',
     jobTitle: 'Lecturer, higher education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Adam',
@@ -6158,6 +8005,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/adam-wright-bba29daead',
     jobTitle: 'Psychotherapist, child',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -6168,6 +8018,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/michael-williams-ab0d587602',
     jobTitle: 'Agricultural engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Margaret',
@@ -6178,6 +8031,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/margaret-morales-7c6376f64a',
     jobTitle: 'Scientist, product/process development',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -6188,6 +8044,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/david-nelson-a0ef7e99f1',
     jobTitle: 'Electrical engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Holly',
@@ -6198,6 +8057,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/holly-allen-f9240b572e',
     jobTitle: 'Chief of Staff',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cory',
@@ -6208,6 +8070,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/cory-hicks-63ff8f7cf5',
     jobTitle: 'Charity officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -6218,6 +8083,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/michael-johnson-db4d9dc5c3',
     jobTitle: 'Futures trader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ronnie',
@@ -6228,6 +8096,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/ronnie-martinez-11500b150a',
     jobTitle: 'Camera operator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -6238,6 +8109,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/jason-holden-1ebdcf4241',
     jobTitle: 'Automotive engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Patrick',
@@ -6248,6 +8122,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/patrick-gilbert-61fd32c01e',
     jobTitle: 'Learning disability nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sean',
@@ -6258,6 +8135,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/sean-white-dad0c13021',
     jobTitle: 'Scientist, research (physical sciences)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Valerie',
@@ -6268,6 +8148,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/valerie-martinez-1517f8ad33',
     jobTitle: 'Biomedical engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -6278,6 +8161,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/james-hawkins-1cfac0a73a',
     jobTitle: 'Designer, textile',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mckenzie',
@@ -6288,6 +8174,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/mckenzie-meyer-51b7a8a764',
     jobTitle: 'Pharmacist, community',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Parker',
@@ -6298,6 +8187,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/parker-young-7d7d0c964f',
     jobTitle: 'Electronics engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -6308,6 +8200,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/john-johnson-08ef07ffe9',
     jobTitle: 'Control and instrumentation engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sierra',
@@ -6318,6 +8213,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/sierra-rodriguez-5808a345e5',
     jobTitle: 'Sports therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -6328,6 +8226,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/patricia-thompson-8942d96ec6',
     jobTitle: 'Dance movement psychotherapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Valerie',
@@ -6338,6 +8239,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/valerie-durham-4fef3b9462',
     jobTitle: 'Graphic designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -6348,6 +8252,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/michael-tucker-6c66202d7e',
     jobTitle: 'Advertising account executive',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Martin',
@@ -6358,6 +8265,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/martin-hayes-7645eada45',
     jobTitle: 'Occupational therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brittany',
@@ -6368,6 +8278,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/brittany-watkins-af3eeda76b',
     jobTitle: 'Designer, jewellery',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -6378,6 +8291,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/jacob-dixon-81d8755b18',
     jobTitle: 'Farm manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sheila',
@@ -6388,6 +8304,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/sheila-wilson-b61719f6d6',
     jobTitle: 'Doctor, hospital',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lee',
@@ -6398,6 +8317,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/lee-oliver-a4da08a2ee',
     jobTitle: 'Office manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Aaron',
@@ -6408,6 +8330,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/aaron-moreno-cf9f02bc3b',
     jobTitle: 'Industrial buyer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Diana',
@@ -6418,6 +8343,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/diana-garcia-62a0597c29',
     jobTitle: 'Engineer, biomedical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jonathan',
@@ -6428,6 +8356,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/jonathan-harvey-8c1d8e255a',
     jobTitle: 'English as a second language teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Suzanne',
@@ -6438,6 +8369,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/suzanne-rodriguez-dffb493dbb',
     jobTitle: 'Games developer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kelsey',
@@ -6448,6 +8382,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/kelsey-allen-27c8b08501',
     jobTitle: 'TEFL teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alexander',
@@ -6458,6 +8395,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/alexander-mueller-ce1f7db6fb',
     jobTitle: 'Chartered legal executive (England and Wales)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cynthia',
@@ -6468,6 +8408,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/cynthia-davis-ab0220f93b',
     jobTitle: 'Designer, fashion/clothing',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brittany',
@@ -6478,6 +8421,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/brittany-smith-fb1075699d',
     jobTitle: 'Environmental manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tyler',
@@ -6488,6 +8434,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/tyler-cook-fe2564bd60',
     jobTitle: 'Hydrologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Heather',
@@ -6498,6 +8447,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/heather-peck-09972b54b0',
     jobTitle: 'Designer, television/film set',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Justin',
@@ -6508,6 +8460,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/justin-bender-679fb353e6',
     jobTitle: 'Local government officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sharon',
@@ -6518,6 +8473,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/sharon-phillips-c61cfc876b',
     jobTitle: 'IT sales professional',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Samuel',
@@ -6528,6 +8486,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/samuel-bailey-b423dc1293',
     jobTitle: 'Charity officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -6538,6 +8499,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/thomas-hull-f814264a40',
     jobTitle: 'Professor Emeritus',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shawn',
@@ -6548,6 +8512,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/shawn-collins-01f97c07d8',
     jobTitle: 'Chief Marketing Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -6558,6 +8525,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/matthew-salas-f83a70d28d',
     jobTitle: 'Scientist, product/process development',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -6568,6 +8538,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/sandra-branch-e20208030c',
     jobTitle: 'Programmer, systems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Donald',
@@ -6578,6 +8551,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/donald-burns-eba0c35180',
     jobTitle: 'Interior and spatial designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robin',
@@ -6588,6 +8564,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/robin-allen-bb093171b6',
     jobTitle: 'Personal assistant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -6598,6 +8577,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/andrew-carter-940e806c3e',
     jobTitle: 'Broadcast presenter',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Natalie',
@@ -6608,6 +8590,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/natalie-king-f64767c2da',
     jobTitle: 'Actor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -6618,6 +8603,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/gregory-rosario-17dfa72dac',
     jobTitle: 'Adult guidance worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -6628,6 +8616,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/jeffrey-schultz-396167e978',
     jobTitle: 'Occupational hygienist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -6638,6 +8629,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/michelle-cook-38eb3ee806',
     jobTitle: 'Futures trader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Billy',
@@ -6648,6 +8642,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/billy-hutchinson-ad8e6c722e',
     jobTitle: 'Television camera operator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kim',
@@ -6658,6 +8655,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/kim-rhodes-acaa899835',
     jobTitle: 'Engineer, maintenance (IT)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cristian',
@@ -6668,6 +8668,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/cristian-garcia-2ebbb7bd5e',
     jobTitle: 'Clinical cytogeneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -6678,6 +8681,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/joseph-rodriguez-de666b5949',
     jobTitle: 'Colour technologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dennis',
@@ -6688,6 +8694,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/dennis-blevins-f1a0ae91b0',
     jobTitle: 'Engineer, petroleum',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Charles',
@@ -6698,6 +8707,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/charles-bright-08b96bc983',
     jobTitle: 'Scientist, biomedical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Pamela',
@@ -6708,6 +8720,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/pamela-moore-cf9a7d2df4',
     jobTitle: 'Clinical embryologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -6718,6 +8733,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/andrew-bowen-a1a4379f39',
     jobTitle: 'Industrial/product designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -6728,6 +8746,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/steven-jones-0b032a0b9f',
     jobTitle: 'Radio producer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Randy',
@@ -6738,6 +8759,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/randy-garza-e9a6dd8b85',
     jobTitle: 'Diagnostic radiographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Barbara',
@@ -6748,6 +8772,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/barbara-wallace-69672cb7e7',
     jobTitle: 'Radiation protection practitioner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -6758,6 +8785,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/robert-johnson-799ff9ca07',
     jobTitle: 'Producer, radio',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -6768,6 +8798,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/daniel-perez-a5274e65fd',
     jobTitle: 'Product designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Breanna',
@@ -6778,6 +8811,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/breanna-chapman-6565f5d75b',
     jobTitle: 'Television camera operator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ivan',
@@ -6788,6 +8824,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/ivan-garcia-5b5da68591',
     jobTitle: 'Police officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -6798,6 +8837,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/michelle-thomas-ffd3c66255',
     jobTitle: 'Ranger/warden',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stacey',
@@ -6808,6 +8850,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/stacey-taylor-bb60b7c3b6',
     jobTitle: 'Forensic scientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Randall',
@@ -6818,6 +8863,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/randall-cohen-1b5ce9e43e',
     jobTitle: 'Freight forwarder',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dennis',
@@ -6828,6 +8876,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/dennis-johnson-a5cf409bc9',
     jobTitle: 'Petroleum engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -6838,6 +8889,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/scott-rodriguez-8a8fffb3b1',
     jobTitle: 'Neurosurgeon',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Katrina',
@@ -6848,6 +8902,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/katrina-rodriguez-736608f682',
     jobTitle: 'Glass blower/designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -6858,6 +8915,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/thomas-bradley-06ba80922b',
     jobTitle: 'Automotive engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anna',
@@ -6868,6 +8928,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/anna-hill-ccdca344ff',
     jobTitle: 'Therapist, sports',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Karen',
@@ -6878,6 +8941,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/karen-pratt-7389b464f8',
     jobTitle: 'Editor, commissioning',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Casey',
@@ -6888,6 +8954,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/casey-garza-e265fa80ac',
     jobTitle: 'Homeopath',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mathew',
@@ -6898,6 +8967,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/mathew-duran-667faa2205',
     jobTitle: 'Mechanical engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -6908,6 +8980,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/michael-watson-7e29289ceb',
     jobTitle: 'Scientist, research (physical sciences)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Martha',
@@ -6918,6 +8993,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/martha-lang-37c24a1f79',
     jobTitle: 'Market researcher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Latasha',
@@ -6928,6 +9006,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/latasha-perez-a903374657',
     jobTitle: 'Teacher, primary school',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -6938,6 +9019,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/james-gordon-c6aee9e0e7',
     jobTitle: 'Illustrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Taylor',
@@ -6948,6 +9032,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/taylor-johnson-505c92efc6',
     jobTitle: 'Hotel manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'George',
@@ -6958,6 +9045,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/george-thompson-0b7979e007',
     jobTitle: 'Engineer, mining',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -6968,6 +9058,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/william-gomez-bb381032a2',
     jobTitle: 'Medical physicist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Patrick',
@@ -6978,6 +9071,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/patrick-beck-a53d364316',
     jobTitle: 'Patent examiner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -6988,6 +9084,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/timothy-parker-fa652d4471',
     jobTitle: 'Therapist, drama',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nancy',
@@ -6998,6 +9097,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/nancy-mullen-db4e1644e0',
     jobTitle: 'Chiropodist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amy',
@@ -7008,6 +9110,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/amy-weaver-f6b74416f5',
     jobTitle: 'Cabin crew',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -7018,6 +9123,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/matthew-crawford-65e6eb72da',
     jobTitle: 'Technical author',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -7028,6 +9136,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/daniel-graham-a67e125f10',
     jobTitle: 'Technical sales engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Teresa',
@@ -7038,6 +9149,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/teresa-lang-584a181fe2',
     jobTitle: 'Solicitor, Scotland',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -7048,6 +9162,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/anthony-brooks-b32a3564da',
     jobTitle: 'Aeronautical engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -7058,6 +9175,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/thomas-price-d5c64ebc73',
     jobTitle: 'Counselling psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -7068,6 +9188,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/william-king-f1790dcb3a',
     jobTitle: 'Medical laboratory scientific officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -7078,6 +9201,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/joseph-ramos-c3050c9ec5',
     jobTitle: 'English as a foreign language teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -7088,6 +9214,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/michael-johnson-442bf8f6cc',
     jobTitle: 'Phytotherapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -7098,6 +9227,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/lisa-farmer-7e00712bfa',
     jobTitle: 'Trade mark attorney',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Beth',
@@ -7108,6 +9240,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/beth-tucker-366a3e9978',
     jobTitle: 'Site engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gerald',
@@ -7118,6 +9253,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/gerald-olsen-ec232b4b08',
     jobTitle: 'Seismic interpreter',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Donald',
@@ -7128,6 +9266,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/donald-turner-b84598e436',
     jobTitle: 'Music tutor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -7138,6 +9279,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/mary-robinson-173a75d1ef',
     jobTitle: 'Public house manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -7148,6 +9292,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/jason-johnson-a909a78a1c',
     jobTitle: 'Horticulturist, commercial',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -7158,6 +9305,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/lisa-jenkins-c78e76770a',
     jobTitle: 'Counsellor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -7168,6 +9318,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/kevin-cowan-3177fc23bf',
     jobTitle: 'Recruitment consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tina',
@@ -7178,6 +9331,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/tina-williams-2c3d8afa12',
     jobTitle: 'Scientist, research (maths)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dustin',
@@ -7188,6 +9344,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/dustin-macdonald-afa9526426',
     jobTitle: 'Public relations account executive',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -7198,6 +9357,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/michael-gonzales-3eb48a8cc2',
     jobTitle: "Nurse, children's",
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Allen',
@@ -7208,6 +9370,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/allen-miller-5378b7d05d',
     jobTitle: 'Therapist, speech and language',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Meghan',
@@ -7218,6 +9383,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/meghan-tapia-8d4336f0bc',
     jobTitle: 'Primary school teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Garrett',
@@ -7228,6 +9396,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/garrett-kim-f7e6805c01',
     jobTitle: 'Education administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Heather',
@@ -7238,6 +9409,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/heather-chase-0a2eb1532b',
     jobTitle: 'Engineer, civil (consulting)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -7248,6 +9422,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/kevin-cruz-d3f02830aa',
     jobTitle: 'Naval architect',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Desiree',
@@ -7258,6 +9435,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/desiree-adkins-c85deab253',
     jobTitle: 'Corporate treasurer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Teresa',
@@ -7268,6 +9448,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/teresa-rhodes-f990f416da',
     jobTitle: 'Primary school teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Catherine',
@@ -7278,6 +9461,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/catherine-wilson-7add346581',
     jobTitle: 'Optician, dispensing',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Marvin',
@@ -7288,6 +9474,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/marvin-nelson-fde56b8b5d',
     jobTitle: 'Operational investment banker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Linda',
@@ -7298,6 +9487,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/linda-hull-4d41c26e8b',
     jobTitle: 'Clinical cytogeneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dawn',
@@ -7308,6 +9500,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/dawn-martin-fe75b2575e',
     jobTitle: 'Housing manager/officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Travis',
@@ -7318,6 +9513,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/travis-leon-5c56017c27',
     jobTitle: 'Further education lecturer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -7328,6 +9526,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/jeffrey-anderson-1b6caa26b8',
     jobTitle: 'Merchant navy officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -7338,6 +9539,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/jacqueline-gomez-0bc243917e',
     jobTitle: 'Producer, radio',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Laura',
@@ -7348,6 +9552,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/laura-salazar-b649ef3e65',
     jobTitle: 'Investment analyst',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -7358,6 +9565,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/jacob-berry-b613f63da8',
     jobTitle: 'Dispensing optician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Justin',
@@ -7368,6 +9578,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/justin-cruz-e21f40fce4',
     jobTitle: 'Sports development officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Derek',
@@ -7378,6 +9591,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/derek-avery-2e68141d8b',
     jobTitle: 'Tax adviser',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Julie',
@@ -7388,6 +9604,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/julie-richardson-c004cc7600',
     jobTitle: 'Visual merchandiser',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Linda',
@@ -7398,6 +9617,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/linda-perry-81b2a5fe77',
     jobTitle: 'Records manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shannon',
@@ -7408,6 +9630,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/shannon-johnston-730f636101',
     jobTitle: 'Local government officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Teresa',
@@ -7418,6 +9643,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/teresa-peters-79db7ef10b',
     jobTitle: 'Ecologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -7428,6 +9656,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/vanessa-woods-6e5bdf7c9a',
     jobTitle: 'QuickActions analyst',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -7438,6 +9669,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/ashley-ortiz-5cc26fa72b',
     jobTitle: 'Surveyor, mining',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -7448,6 +9682,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/eric-bailey-c789b6c993',
     jobTitle: 'Financial controller',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -7458,6 +9695,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/rebecca-palmer-ef38ef5cea',
     jobTitle: 'Site engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lee',
@@ -7468,6 +9708,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/lee-jones-0adef06cd7',
     jobTitle: 'Radiographer, therapeutic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Samuel',
@@ -7478,6 +9721,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/samuel-king-57c6f39f1c',
     jobTitle: 'Illustrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -7488,6 +9734,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/timothy-moreno-eb7ae88f2f',
     jobTitle: 'Physiotherapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Darlene',
@@ -7498,6 +9747,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/darlene-jones-e27174b679',
     jobTitle: 'Health physicist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -7508,6 +9760,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/gregory-liu-aac65508df',
     jobTitle: 'Psychiatric nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cheryl',
@@ -7518,6 +9773,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/cheryl-chambers-0f636392e0',
     jobTitle: 'Education officer, community',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -7528,6 +9786,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/mark-gonzalez-4546b149d7',
     jobTitle: 'Adult nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Douglas',
@@ -7538,6 +9799,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/douglas-andrews-7a6a535f81',
     jobTitle: 'Accountant, chartered management',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stephanie',
@@ -7548,6 +9812,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/stephanie-porter-74bdb68326',
     jobTitle: 'Computer games developer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Meghan',
@@ -7558,6 +9825,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/meghan-campbell-5098a6f7a9',
     jobTitle: 'Theatre manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Caitlin',
@@ -7568,6 +9838,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/caitlin-martin-93755bb8ba',
     jobTitle: 'Scientist, research (maths)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kimberly',
@@ -7578,6 +9851,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/kimberly-terry-5f017ebb4b',
     jobTitle: 'Surveyor, building',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Levi',
@@ -7588,6 +9864,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/levi-smith-4d6387a547',
     jobTitle: 'Mental health nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tracy',
@@ -7598,6 +9877,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/tracy-alvarez-633fc7a383',
     jobTitle: 'Environmental health practitioner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -7608,6 +9890,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/david-gonzales-6df036cad1',
     jobTitle: 'Legal secretary',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -7618,6 +9903,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/lisa-tran-e0115b5653',
     jobTitle: 'Therapist, speech and language',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kristin',
@@ -7628,6 +9916,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/kristin-pearson-e0ebe90624',
     jobTitle: 'Editor, film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bruce',
@@ -7638,6 +9929,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/bruce-wood-e61cf3a298',
     jobTitle: 'Charity fundraiser',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stephanie',
@@ -7648,6 +9942,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/stephanie-stout-da19425869',
     jobTitle: 'Conservator, furniture',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Denise',
@@ -7658,6 +9955,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/denise-sandoval-07f4d63a26',
     jobTitle: 'Immunologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -7668,6 +9968,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/christopher-clarke-44a16b8bf4',
     jobTitle: 'Stage manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kimberly',
@@ -7678,6 +9981,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/kimberly-jefferson-ff1550e548',
     jobTitle: 'Advertising account executive',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -7688,6 +9994,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/jeffrey-hunt-faa3d941ee',
     jobTitle: 'Customer service manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nichole',
@@ -7698,6 +10007,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/nichole-lowery-fb08af1201',
     jobTitle: 'Planning and development surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -7708,6 +10020,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/daniel-wiley-9ed6e2002f',
     jobTitle: 'Surveyor, mining',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -7718,6 +10033,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/elizabeth-watson-037218b4e1',
     jobTitle: 'Journalist, broadcasting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -7728,6 +10046,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/sandra-bailey-74db8eab37',
     jobTitle: 'Minerals surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -7738,6 +10059,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/andrew-henson-23fb7e5d05',
     jobTitle: 'Biomedical scientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -7748,6 +10072,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/samantha-alexander-4a24cc632b',
     jobTitle: 'Production assistant, television',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeanette',
@@ -7758,6 +10085,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/jeanette-nichols-a24214c373',
     jobTitle: 'Engineer, biomedical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -7768,6 +10098,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/kevin-williams-0165f2638b',
     jobTitle: 'Broadcast journalist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brenda',
@@ -7778,6 +10111,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/brenda-harper-30b61b982b',
     jobTitle: 'Public relations account executive',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shawn',
@@ -7788,6 +10124,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/shawn-jenkins-c839f2afce',
     jobTitle: 'Optometrist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -7798,6 +10137,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/michelle-bush-2e2e3d23ee',
     jobTitle: 'Teacher, English as a foreign language',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melanie',
@@ -7808,6 +10150,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/melanie-gilbert-01fe35dd5f',
     jobTitle: 'Trading standards officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -7818,6 +10163,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/brandon-sanders-4661fbd2df',
     jobTitle: 'Radiation protection practitioner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -7828,6 +10176,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/samantha-hicks-d7b99728fd',
     jobTitle: 'Firefighter',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joann',
@@ -7838,6 +10189,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/joann-booth-c081ce2c43',
     jobTitle: 'Geoscientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -7848,6 +10202,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/robert-hernandez-5e65b16f59',
     jobTitle: 'Nurse, learning disability',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeremy',
@@ -7858,6 +10215,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/jeremy-stewart-27f2b87ae6',
     jobTitle: 'Chartered public finance accountant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -7868,6 +10228,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/lisa-brown-01aa1694a4',
     jobTitle: 'Patent attorney',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kristine',
@@ -7878,6 +10241,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/kristine-benson-ee3307c3e8',
     jobTitle: 'Financial risk analyst',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stephanie',
@@ -7888,6 +10254,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/stephanie-carter-aa789505dc',
     jobTitle: 'Patent attorney',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Benjamin',
@@ -7898,6 +10267,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/benjamin-castro-5609ebd89b',
     jobTitle: 'Surveyor, mining',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -7908,6 +10280,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/ryan-davis-04fe8f1d38',
     jobTitle: 'Therapeutic radiographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -7918,6 +10293,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/david-rhodes-b30501dc23',
     jobTitle: 'Leisure centre manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -7928,6 +10306,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/elizabeth-evans-1c62f6e072',
     jobTitle: 'Emergency planning/management officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kenneth',
@@ -7938,6 +10319,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/kenneth-solis-abc002b3d7',
     jobTitle: 'Operational researcher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Barbara',
@@ -7948,6 +10332,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/barbara-hudson-d52a7f47e3',
     jobTitle: 'Engineer, manufacturing systems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kelly',
@@ -7958,6 +10345,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/kelly-hooper-9a2d9e03bd',
     jobTitle: 'Automotive engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shannon',
@@ -7968,6 +10358,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/shannon-brown-a9e4eebc94',
     jobTitle: 'Scientist, forensic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lucas',
@@ -7978,6 +10371,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/lucas-price-8220b81a6d',
     jobTitle: 'Health promotion specialist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Theodore',
@@ -7988,6 +10384,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/theodore-booth-28b999e5b3',
     jobTitle: 'Camera operator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -7998,6 +10397,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/christopher-johnson-9e6100ff7b',
     jobTitle: 'Art therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sara',
@@ -8008,6 +10410,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/sara-higgins-3f7fd986f9',
     jobTitle: 'IT sales professional',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kelly',
@@ -8018,6 +10423,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/kelly-brown-759dbe09e0',
     jobTitle: 'Psychologist, clinical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -8028,6 +10436,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/andrea-weaver-6d792fc29a',
     jobTitle: 'Ceramics designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -8038,6 +10449,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/david-ford-ed83f54167',
     jobTitle: 'Designer, furniture',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -8048,6 +10462,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/elizabeth-scott-56456b1569',
     jobTitle: 'Government social research officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Haley',
@@ -8058,6 +10475,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/haley-rodriguez-5998488ad7',
     jobTitle: 'Librarian, public',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joshua',
@@ -8068,6 +10488,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/joshua-harris-c48d311bee',
     jobTitle: 'Energy engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ellen',
@@ -8078,6 +10501,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/ellen-mcdaniel-4308564cbb',
     jobTitle: 'Rural practice surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -8088,6 +10514,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/anthony-macias-cd01ea615c',
     jobTitle: 'Estate manager/land agent',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -8098,6 +10527,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/samantha-bell-3246e99ce4',
     jobTitle: 'Armed forces technical officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Roger',
@@ -8108,6 +10540,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/roger-king-91a87f58dd',
     jobTitle: 'Programme researcher, broadcasting/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Logan',
@@ -8118,6 +10553,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/logan-kim-24c952a76b',
     jobTitle: 'Ranger/warden',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -8128,6 +10566,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/nicole-bass-3323b936fa',
     jobTitle: 'Commercial/residential surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tony',
@@ -8138,6 +10579,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/tony-dean-6a37678e19',
     jobTitle: 'Tax inspector',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mercedes',
@@ -8148,6 +10592,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/mercedes-green-4b158a8688',
     jobTitle: 'Clinical cytogeneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -8158,6 +10605,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/stephen-owens-8863b05296',
     jobTitle: 'Pathologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nathan',
@@ -8168,6 +10618,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/nathan-williamson-ffdb40e0ae',
     jobTitle: 'Publishing copy',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -8178,6 +10631,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/anthony-davis-c8f6c37766',
     jobTitle: 'Ship broker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kathleen',
@@ -8188,6 +10644,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/kathleen-stewart-3c65492da0',
     jobTitle: 'Economist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Victoria',
@@ -8198,6 +10657,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/victoria-ruiz-a5f8ac2c75',
     jobTitle: 'IT trainer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -8208,6 +10670,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/danielle-ibarra-d11e8407ab',
     jobTitle: 'Nurse, adult',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Meghan',
@@ -8218,6 +10683,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/meghan-delgado-7954afab5b',
     jobTitle: 'Psychiatric nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lauren',
@@ -8228,6 +10696,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/lauren-skinner-447a3bcd28',
     jobTitle: 'Psychologist, prison and probation services',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jesse',
@@ -8238,6 +10709,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/jesse-underwood-072dbeda4c',
     jobTitle: 'Pharmacist, hospital',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Antonio',
@@ -8248,6 +10722,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/antonio-gentry-0f29dc0871',
     jobTitle: 'Magazine features editor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gabriela',
@@ -8258,6 +10735,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/gabriela-murphy-e59b96e98f',
     jobTitle: 'Exercise physiologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kyle',
@@ -8268,6 +10748,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/kyle-kramer-3412f7e41b',
     jobTitle: 'Exhibitions officer, museum/gallery',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -8278,6 +10761,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/daniel-burton-c79414d37b',
     jobTitle: 'Commercial horticulturist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -8288,6 +10774,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/mark-stevens-8d430f5e85',
     jobTitle: 'Data processing manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -8298,6 +10787,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/kevin-lawson-3923eb16c8',
     jobTitle: 'Radiographer, therapeutic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -8308,6 +10800,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/christopher-larson-c3acf6c87e',
     jobTitle: 'Research scientist (life sciences)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -8318,6 +10813,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/james-ward-bd728eec7b',
     jobTitle: 'Chief Marketing Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Thomas',
@@ -8328,6 +10826,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/thomas-ramirez-2aeaabdca6',
     jobTitle: 'Claims inspector/assessor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Makayla',
@@ -8338,6 +10839,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/makayla-schmitt-5c93328d2c',
     jobTitle: 'Web designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -8348,6 +10852,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/andrew-miller-f2fe0c545b',
     jobTitle: 'Environmental education officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -8358,6 +10865,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/matthew-perez-e0f9b3e4cb',
     jobTitle: 'Ranger/warden',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Molly',
@@ -8368,6 +10878,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/molly-peterson-9556e9927d',
     jobTitle: 'Environmental consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -8378,6 +10891,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/eric-kennedy-f791a22768',
     jobTitle: 'Garment/textile technologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -8388,6 +10904,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/daniel-nguyen-9ecda3ed3b',
     jobTitle: 'Analytical chemist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Edward',
@@ -8398,6 +10917,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/edward-washington-611f90b992',
     jobTitle: 'Field trials officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stephanie',
@@ -8408,6 +10930,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/stephanie-phillips-7959a94ad5',
     jobTitle: 'Ecologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Francisco',
@@ -8418,6 +10943,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/francisco-leach-ae0211a300',
     jobTitle: 'Photographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -8428,6 +10956,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/lisa-gutierrez-372eee2535',
     jobTitle: 'Community development worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -8438,6 +10969,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/robert-martinez-a6ae2c5b1f',
     jobTitle: 'Secretary/administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Courtney',
@@ -8448,6 +10982,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/courtney-kelley-950cfddf8b',
     jobTitle: 'Environmental education officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Samuel',
@@ -8458,6 +10995,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/samuel-davis-dd4df4491c',
     jobTitle: 'Engineer, technical sales',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Paul',
@@ -8468,6 +11008,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/paul-kim-01704924f8',
     jobTitle: 'Optometrist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -8478,6 +11021,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/samantha-jones-2abb1198e0',
     jobTitle: 'Medical secretary',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -8488,6 +11034,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/daniel-buchanan-962af5531b',
     jobTitle: 'Surveyor, land/geomatics',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sherry',
@@ -8498,6 +11047,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/sherry-oliver-f3bbba4a94',
     jobTitle: 'Buyer, industrial',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -8508,6 +11060,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/richard-burton-eba4d16199',
     jobTitle: 'Trading standards officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Larry',
@@ -8518,6 +11073,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/larry-floyd-a72834d039',
     jobTitle: 'Herpetologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Abigail',
@@ -8528,6 +11086,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/abigail-garrett-fc4de32453',
     jobTitle: 'Training and development officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Craig',
@@ -8538,6 +11099,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/craig-miller-e5dbce647e',
     jobTitle: 'Architect',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christina',
@@ -8548,6 +11112,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/christina-garcia-7ba1c75253',
     jobTitle: 'Radio producer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lynn',
@@ -8558,6 +11125,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/lynn-gallagher-03ab6cdaae',
     jobTitle: 'Management consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Veronica',
@@ -8568,6 +11138,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/veronica-oliver-e46c83d82a',
     jobTitle: 'Theatre stage manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Julie',
@@ -8578,6 +11151,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/julie-stevenson-482959b900',
     jobTitle: 'Pharmacist, community',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kathleen',
@@ -8588,6 +11164,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/kathleen-gardner-b144fa40bf',
     jobTitle: 'Research scientist (life sciences)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -8598,6 +11177,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/james-ward-9590de76ac',
     jobTitle: 'Psychologist, clinical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -8608,6 +11190,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/brandon-baker-79f5bc09a5',
     jobTitle: 'Geologist, wellsite',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cheyenne',
@@ -8618,6 +11203,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/cheyenne-stevens-9102d355f5',
     jobTitle: 'Freight forwarder',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -8628,6 +11216,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/nicholas-chaney-3bd29a6f7f',
     jobTitle: 'Civil engineer, contracting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -8638,6 +11229,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/robert-allen-d4a0e6e38b',
     jobTitle: 'Media buyer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -8648,6 +11242,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/steven-walters-cecce0a460',
     jobTitle: 'Sports administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alexandra',
@@ -8658,6 +11255,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/alexandra-rivera-82738fef4b',
     jobTitle: 'Scientist, research (maths)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -8668,6 +11268,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/robert-doyle-5012cb4f96',
     jobTitle: 'Early years teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melinda',
@@ -8678,6 +11281,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/melinda-graves-4b5dc7a605',
     jobTitle: 'Scientific laboratory technician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Phillip',
@@ -8688,6 +11294,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/phillip-johnson-1dbd354784',
     jobTitle: 'Librarian, public',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kristin',
@@ -8698,6 +11307,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/kristin-garcia-667a8d3bf0',
     jobTitle: 'Maintenance engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Randy',
@@ -8708,6 +11320,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/randy-white-158e05e8b0',
     jobTitle: 'Financial risk analyst',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -8718,6 +11333,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/david-woods-46b2d4b34e',
     jobTitle: 'Emergency planning/management officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Taylor',
@@ -8728,6 +11346,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/taylor-humphrey-7143e1cb93',
     jobTitle: 'Catering manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -8738,6 +11359,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/emily-evans-df56e8e3d2',
     jobTitle: 'Engineer, materials',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mike',
@@ -8748,6 +11372,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/mike-weber-d97f9c1f39',
     jobTitle: 'Health service manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bonnie',
@@ -8758,6 +11385,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/bonnie-anderson-e54636e584',
     jobTitle: 'Town planner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tyler',
@@ -8768,6 +11398,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/tyler-barnett-39213ade04',
     jobTitle: 'Industrial buyer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brenda',
@@ -8778,6 +11411,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/brenda-brown-dbcd1ad947',
     jobTitle: 'Secretary, company',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -8788,6 +11424,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/matthew-mills-0b84ace87f',
     jobTitle: 'Nutritional therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bradley',
@@ -8798,6 +11437,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/bradley-henderson-8d96b99f04',
     jobTitle: "Politician's assistant",
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christopher',
@@ -8808,6 +11450,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/christopher-wilson-04a5992bf8',
     jobTitle: 'Historic buildings inspector/conservation officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Janet',
@@ -8818,6 +11463,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/janet-cooper-5b3b8ebf22',
     jobTitle: 'Mental health nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashlee',
@@ -8828,6 +11476,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/ashlee-barajas-7db08816c2',
     jobTitle: 'Designer, television/film set',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -8838,6 +11489,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/amanda-valenzuela-30589a563a',
     jobTitle: 'Engineer, automotive',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Charles',
@@ -8848,6 +11502,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/charles-evans-afcfd375f0',
     jobTitle: 'Financial planner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Patricia',
@@ -8858,6 +11515,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/patricia-martinez-a6795704a8',
     jobTitle: 'Chartered public finance accountant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -8868,6 +11528,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/andrea-byrd-6adea7eafa',
     jobTitle: 'Ecologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Martin',
@@ -8878,6 +11541,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/martin-hebert-0fdd8cb20a',
     jobTitle: 'Statistician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joyce',
@@ -8888,6 +11554,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/joyce-mathis-4aefab1ba3',
     jobTitle: 'Multimedia specialist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Charles',
@@ -8898,6 +11567,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/charles-ray-d81d2e4cf7',
     jobTitle: 'Communications engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Amanda',
@@ -8908,6 +11580,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/amanda-vega-bc1c79f067',
     jobTitle: 'Occupational therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kathryn',
@@ -8918,6 +11593,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/kathryn-freeman-5cbbc22506',
     jobTitle: 'Wellsite geologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -8928,6 +11606,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/ryan-chambers-2ce1a65a0c',
     jobTitle: 'Agricultural consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dustin',
@@ -8938,6 +11619,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/dustin-carr-aea35977e8',
     jobTitle: 'Ergonomist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eugene',
@@ -8948,6 +11632,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/eugene-sims-35b50bccf6',
     jobTitle: 'Banker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gwendolyn',
@@ -8958,6 +11645,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/gwendolyn-glover-c850972ca2',
     jobTitle: 'Geochemist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -8968,6 +11658,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/kevin-oconnell-366df31264',
     jobTitle: 'Editor, commissioning',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -8978,6 +11671,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/mark-williams-34678a412b',
     jobTitle: 'Education administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jack',
@@ -8988,6 +11684,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/jack-reed-624aef385a',
     jobTitle: 'Corporate treasurer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -8998,6 +11697,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/anthony-green-26a1d57a62',
     jobTitle: 'Land',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Louis',
@@ -9008,6 +11710,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/louis-johnson-dec8e3a5a2',
     jobTitle: 'Pathologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Fernando',
@@ -9018,6 +11723,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/fernando-stephens-d825082895',
     jobTitle: 'Sports development officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tammy',
@@ -9028,6 +11736,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/tammy-soto-dc33b99453',
     jobTitle: 'Consulting civil engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -9038,6 +11749,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/anthony-clay-d0ffc44035',
     jobTitle: 'Site engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -9048,6 +11762,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/jennifer-haney-fe08f83150',
     jobTitle: 'Engineer, broadcasting (operations)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -9058,6 +11775,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/kevin-harris-5184b24b32',
     jobTitle: 'Presenter, broadcasting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Allison',
@@ -9068,6 +11788,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/allison-crawford-67b761b025',
     jobTitle: 'Homeopath',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stacey',
@@ -9078,6 +11801,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/stacey-garcia-9250901bae',
     jobTitle: 'Bonds trader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stacey',
@@ -9088,6 +11814,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/stacey-romero-7728909deb',
     jobTitle: 'Civil Service fast streamer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -9098,6 +11827,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/joseph-bell-0f0d64c86b',
     jobTitle: 'Historic buildings inspector/conservation officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -9108,6 +11840,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/nicholas-edwards-208dfccc7e',
     jobTitle: 'Community development worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -9118,6 +11853,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/brian-freeman-f01b205c86',
     jobTitle: 'Social researcher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -9128,6 +11866,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/christine-johnson-20bfd043a5',
     jobTitle: 'Systems analyst',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -9138,6 +11879,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/christine-brown-cf7634fc0b',
     jobTitle: 'Museum/gallery exhibitions officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Grant',
@@ -9148,6 +11892,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/grant-brown-b0072f7d7c',
     jobTitle: 'Financial trader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Megan',
@@ -9158,6 +11905,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/megan-robinson-ee228aab40',
     jobTitle: 'Cartographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ronald',
@@ -9168,6 +11918,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/ronald-smith-9a58c743fc',
     jobTitle: 'Engineer, aeronautical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tonya',
@@ -9178,6 +11931,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/tonya-chandler-8cba0ccb14',
     jobTitle: 'Surveyor, building',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jose',
@@ -9188,6 +11944,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/jose-jacobs-e5dd5c613f',
     jobTitle: 'Environmental consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -9198,6 +11957,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/william-johnson-fffd051063',
     jobTitle: 'Oceanographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jason',
@@ -9208,6 +11970,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/jason-mitchell-d3f1d47944',
     jobTitle: 'Hydrographic surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Wendy',
@@ -9218,6 +11983,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/wendy-soto-507c1d708f',
     jobTitle: 'Metallurgist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Patrick',
@@ -9228,6 +11996,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/patrick-jones-33ee1b90f5',
     jobTitle: 'Engineer, biomedical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -9238,6 +12009,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/vanessa-ingram-dd5d4ea14e',
     jobTitle: 'Hospital pharmacist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Walter',
@@ -9248,6 +12022,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/walter-rhodes-8cff091883',
     jobTitle: 'Actuary',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Heather',
@@ -9258,6 +12035,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/heather-cardenas-0a0d52106f',
     jobTitle: 'Sport and exercise psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nathan',
@@ -9268,6 +12048,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/nathan-schwartz-db3bb93189',
     jobTitle: 'Merchandiser, retail',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Roger',
@@ -9278,6 +12061,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/roger-gill-367ad4e3fc',
     jobTitle: 'Lighting technician, broadcasting/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cynthia',
@@ -9288,6 +12074,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/cynthia-taylor-c8c2e63cb4',
     jobTitle: 'Biomedical scientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jenna',
@@ -9298,6 +12087,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/jenna-rojas-01776ae7b4',
     jobTitle: 'Clinical biochemist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Trevor',
@@ -9308,6 +12100,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/trevor-chase-c2e65df749',
     jobTitle: 'Lobbyist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -9318,6 +12113,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/scott-murphy-2e879fc86d',
     jobTitle: 'Commissioning editor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Zachary',
@@ -9328,6 +12126,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/zachary-thornton-303f2657b8',
     jobTitle: 'Wellsite geologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Richard',
@@ -9338,6 +12139,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/richard-aguirre-40f00db472',
     jobTitle: 'Barista',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mckenzie',
@@ -9348,6 +12152,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/mckenzie-black-5e934e9a1d',
     jobTitle: 'Scientist, biomedical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -9358,6 +12165,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/jacqueline-randall-38109939cb',
     jobTitle: 'Retail manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sheri',
@@ -9368,6 +12178,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/sheri-taylor-df26d6d5ee',
     jobTitle: 'Commercial art gallery manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brandon',
@@ -9378,6 +12191,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/brandon-acevedo-32a27033d1',
     jobTitle: 'Investment banker, corporate',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Katherine',
@@ -9388,6 +12204,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/katherine-best-9e3dcb6aa0',
     jobTitle: 'Corporate treasurer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -9398,6 +12217,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/daniel-adams-fbc7ca02b9',
     jobTitle: 'Research officer, trade union',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -9408,6 +12230,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/elizabeth-vega-4755e545bd',
     jobTitle: 'Investment banker, corporate',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -9418,6 +12243,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/jennifer-kim-e40f68f1d3',
     jobTitle: 'Counselling psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -9428,6 +12256,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/stephen-saunders-d055c5642e',
     jobTitle: 'Biomedical engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -9438,6 +12269,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/ashley-prince-59d88abe81',
     jobTitle: 'Ophthalmologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Paul',
@@ -9448,6 +12282,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/paul-mckay-00b47ec261',
     jobTitle: 'Physiotherapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shelby',
@@ -9458,6 +12295,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/shelby-hughes-7c90e603de',
     jobTitle: 'Video editor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cheryl',
@@ -9468,6 +12308,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/cheryl-townsend-62c7a27460',
     jobTitle: 'Marketing executive',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brianna',
@@ -9478,6 +12321,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/brianna-peck-ab76fe8301',
     jobTitle: 'Mudlogger',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrew',
@@ -9488,6 +12334,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/andrew-ford-1ddb22e213',
     jobTitle: 'Interpreter',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -9498,6 +12347,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/robert-brown-28cac6c157',
     jobTitle: 'Public house manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joy',
@@ -9508,6 +12360,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/joy-richards-f0af7d1ee4',
     jobTitle: 'Tree surgeon',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -9518,6 +12373,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/jessica-hogan-54aff81ceb',
     jobTitle: 'Land',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -9528,6 +12386,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/lisa-watson-0cae086726',
     jobTitle: 'Graphic designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -9538,6 +12399,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/christine-morton-3d83c68241',
     jobTitle: 'Stage manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -9548,6 +12412,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/brian-lewis-de68c08ac1',
     jobTitle: 'Trade union research officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -9558,6 +12425,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/matthew-fernandez-1cd32d9567',
     jobTitle: 'Lecturer, further education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Linda',
@@ -9568,6 +12438,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/linda-mitchell-825783bf1c',
     jobTitle: 'Mechanical engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Colin',
@@ -9578,6 +12451,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/colin-walker-bc08fcfaa1',
     jobTitle: 'Surveyor, mining',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -9588,6 +12464,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/robert-gray-2c8a3e5f3a',
     jobTitle: 'Development worker, international aid',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Natalie',
@@ -9598,6 +12477,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/natalie-lawrence-d8c06e2d82',
     jobTitle: 'Therapeutic radiographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -9608,6 +12490,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/mark-castro-4184957d96',
     jobTitle: 'Engineer, control and instrumentation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -9618,6 +12503,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/melissa-molina-aae4218215',
     jobTitle: 'Psychologist, clinical',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Terry',
@@ -9628,6 +12516,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/terry-melendez-692cdf776c',
     jobTitle: 'Public relations officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Charlene',
@@ -9638,6 +12529,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/charlene-beck-810d5075ae',
     jobTitle: 'Tax inspector',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Yvonne',
@@ -9648,6 +12542,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/yvonne-avila-cd93548e92',
     jobTitle: 'Merchant navy officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -9658,6 +12555,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/andrea-garcia-21bf3350f1',
     jobTitle: 'Contracting civil engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mary',
@@ -9668,6 +12568,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/mary-goodman-97470c0612',
     jobTitle: 'Metallurgist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shelly',
@@ -9678,6 +12581,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/shelly-powers-8790890d27',
     jobTitle: 'Glass blower/designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Holly',
@@ -9688,6 +12594,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/holly-hensley-111036f6da',
     jobTitle: 'Geophysicist/field seismologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christina',
@@ -9698,6 +12607,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/christina-davis-2b07b44392',
     jobTitle: 'Chiropodist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Adam',
@@ -9708,6 +12620,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/adam-cochran-1657e82dbf',
     jobTitle: 'Communications engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Katherine',
@@ -9718,6 +12633,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/katherine-abbott-ec30f06ab2',
     jobTitle: 'Solicitor, Scotland',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jenna',
@@ -9728,6 +12646,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/jenna-mendez-38ef424a7f',
     jobTitle: 'Automotive engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Steven',
@@ -9738,6 +12659,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/steven-barnes-f5d1f0c993',
     jobTitle: 'Occupational hygienist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -9748,6 +12672,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/ashley-manning-8b3cc7cf6f',
     jobTitle: 'Firefighter',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -9758,6 +12685,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/david-peterson-296c6d71cf',
     jobTitle: 'Scientist, water quality',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Patrick',
@@ -9768,6 +12698,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/patrick-ellis-984f4db9b8',
     jobTitle: 'Graphic designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -9778,6 +12711,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/james-sullivan-711645bcdd',
     jobTitle: 'Chief Strategy Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -9788,6 +12724,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/jeffrey-beck-a78371285a',
     jobTitle: 'Corporate investment banker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joyce',
@@ -9798,6 +12737,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/joyce-phillips-781047cb11',
     jobTitle: 'Community pharmacist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -9808,6 +12750,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/nicholas-sanchez-ba28dda9a9',
     jobTitle: 'Technical sales engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -9818,6 +12763,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/john-perez-55c123ef5d',
     jobTitle: 'Research scientist (physical sciences)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tammy',
@@ -9828,6 +12776,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/tammy-mueller-69c65883c9',
     jobTitle: 'Energy manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Susan',
@@ -9838,6 +12789,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/susan-wong-9581ecf892',
     jobTitle: 'Lobbyist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacob',
@@ -9848,6 +12802,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/jacob-lutz-29f1197777',
     jobTitle: 'Energy engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -9858,6 +12815,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/mark-cruz-88019b5101',
     jobTitle: 'Pilot, airline',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sharon',
@@ -9868,6 +12828,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/sharon-soto-288840ca64',
     jobTitle: 'Therapist, drama',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Maria',
@@ -9878,6 +12841,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/maria-rodgers-3b3e0df751',
     jobTitle: 'Merchandiser, retail',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Scott',
@@ -9888,6 +12854,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/scott-norton-fa28a83774',
     jobTitle: 'Museum/gallery exhibitions officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Caitlin',
@@ -9898,6 +12867,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/caitlin-harper-13e7507d0b',
     jobTitle: 'Animal nutritionist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Elizabeth',
@@ -9908,6 +12880,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/elizabeth-newman-b3274ecf1c',
     jobTitle: 'Curator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -9918,6 +12893,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/rebecca-knight-f9ba229de1',
     jobTitle: 'Marine scientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rebecca',
@@ -9928,6 +12906,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/rebecca-henry-8af895981f',
     jobTitle: 'Graphic designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Douglas',
@@ -9938,6 +12919,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/douglas-mccall-bbacffb65f',
     jobTitle: 'Producer, television/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shelia',
@@ -9948,6 +12932,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/shelia-mcneil-09a1a630f5',
     jobTitle: 'Surveyor, quantity',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Diana',
@@ -9958,6 +12945,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/diana-moore-bfde41a990',
     jobTitle: 'Public house manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Andrea',
@@ -9968,6 +12958,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/andrea-gregory-1bed92c29b',
     jobTitle: 'Clinical cytogeneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sandra',
@@ -9978,6 +12971,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/sandra-houston-5eb9930bec',
     jobTitle: 'Research scientist (maths)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christina',
@@ -9988,6 +12984,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/christina-rangel-14f26a977d',
     jobTitle: 'Immunologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ruben',
@@ -9998,6 +12997,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/ruben-aguilar-abaeafdd06',
     jobTitle: 'Counselling psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Briana',
@@ -10008,6 +13010,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/briana-townsend-b3b34529fe',
     jobTitle: 'Cytogeneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'William',
@@ -10018,6 +13023,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/william-thompson-94dc40f1de',
     jobTitle: 'Equities trader',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -10028,6 +13036,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/ashley-martinez-a406dfe50c',
     jobTitle: 'Ecologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Carla',
@@ -10038,6 +13049,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/carla-wilson-d059473869',
     jobTitle: 'Media buyer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -10048,6 +13062,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/robert-contreras-50f852ba89',
     jobTitle: 'Ecologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Denise',
@@ -10058,6 +13075,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/denise-burton-3a79ce7f23',
     jobTitle: 'Clothing/textile technologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cassidy',
@@ -10068,6 +13088,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/cassidy-mckee-1189782a1e',
     jobTitle: 'Psychotherapist, child',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Angela',
@@ -10078,6 +13101,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/angela-torres-1c99a88f63',
     jobTitle: 'Agricultural engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shirley',
@@ -10088,6 +13114,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/shirley-hall-68f8f386ca',
     jobTitle: 'Editorial assistant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -10098,6 +13127,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/robert-arroyo-956557b51d',
     jobTitle: 'Counselling psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kurt',
@@ -10108,6 +13140,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/kurt-moon-c7b749a5da',
     jobTitle: 'Cabin crew',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicholas',
@@ -10118,6 +13153,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/nicholas-bradshaw-414f2727de',
     jobTitle: 'Financial controller',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tyler',
@@ -10128,6 +13166,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/tyler-murray-244f09586c',
     jobTitle: 'Psychotherapist, child',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shawn',
@@ -10138,6 +13179,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/shawn-lowery-7baa4120f2',
     jobTitle: 'Chartered management accountant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -10148,6 +13192,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/jessica-ward-c7e5de5066',
     jobTitle: 'Acupuncturist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -10158,6 +13205,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/james-vazquez-edc804602a',
     jobTitle: 'Housing manager/officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jeffrey',
@@ -10168,6 +13218,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/jeffrey-moyer-82eb5b4ba8',
     jobTitle: 'Herpetologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -10178,6 +13231,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/matthew-moore-13cab3f864',
     jobTitle: 'Secondary school teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Crystal',
@@ -10188,6 +13244,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/crystal-pena-620fa626fd',
     jobTitle: 'Therapist, occupational',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ann',
@@ -10198,6 +13257,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/ann-mclaughlin-cfe670a52c',
     jobTitle: 'Quality manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Corey',
@@ -10208,6 +13270,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/corey-jones-2b4ff4b6c5',
     jobTitle: 'Nutritional therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -10218,6 +13283,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/james-boyer-dcd4131baf',
     jobTitle: 'Management consultant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Karen',
@@ -10228,6 +13296,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/karen-schroeder-9ded3a0da2',
     jobTitle: 'Chiropodist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -10238,6 +13309,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/ashley-johnson-0d0a8f76d0',
     jobTitle: 'Presenter, broadcasting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Susan',
@@ -10248,6 +13322,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/susan-stevens-75236edd7c',
     jobTitle: 'Psychologist, sport and exercise',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -10258,6 +13335,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/jennifer-deleon-92f894acba',
     jobTitle: 'Development worker, community',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kelsey',
@@ -10268,6 +13348,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/kelsey-lopez-90ffaeecdc',
     jobTitle: 'English as a foreign language teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jill',
@@ -10278,6 +13361,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/jill-hammond-4f87a8c4fd',
     jobTitle: 'Designer, jewellery',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -10288,6 +13374,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/joseph-wu-f673a42110',
     jobTitle: 'Naval architect',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -10298,6 +13387,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/melissa-walker-34f194896b',
     jobTitle: 'Meteorologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -10308,6 +13400,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/lisa-mcdaniel-9ab62dfbef',
     jobTitle: 'Investment banker, corporate',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ruben',
@@ -10318,6 +13413,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/ruben-robinson-0da78d81dc',
     jobTitle: 'Environmental health practitioner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -10328,6 +13426,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/david-novak-c3c6f0fb18',
     jobTitle: 'Pharmacologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Carl',
@@ -10338,6 +13439,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/carl-osborne-4aa9f429ec',
     jobTitle: 'Arts administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -10348,6 +13452,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/jennifer-moore-0468307bea',
     jobTitle: 'Water engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicolas',
@@ -10358,6 +13465,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/nicolas-walton-41b1798348',
     jobTitle: 'Clinical molecular geneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -10368,6 +13478,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/robert-vega-c9f7c2fc77',
     jobTitle: 'Engineer, automotive',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Emily',
@@ -10378,6 +13491,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/emily-morrison-dfcf31f9c8',
     jobTitle: 'Learning disability nurse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -10388,6 +13504,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/michael-johnson-67b413c0fb',
     jobTitle: 'Consulting civil engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Chris',
@@ -10398,6 +13517,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/chris-miller-e5fd1642f6',
     jobTitle: 'Artist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ebony',
@@ -10408,6 +13530,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/ebony-jones-46514a3944',
     jobTitle: 'Armed forces training and education officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bonnie',
@@ -10418,6 +13543,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/bonnie-mcintyre-a8669d6f36',
     jobTitle: 'Gaffer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tom',
@@ -10428,6 +13556,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/tom-dawson-f004272b8c',
     jobTitle: 'Mechanical engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sharon',
@@ -10438,6 +13569,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/sharon-weber-793caf2e63',
     jobTitle: 'Magazine journalist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rodney',
@@ -10448,6 +13582,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/rodney-lewis-ec6d41e8de',
     jobTitle: 'Scientist, research (physical sciences)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jordan',
@@ -10458,6 +13595,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/jordan-norton-0c59185977',
     jobTitle: 'Armed forces training and education officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Stephen',
@@ -10468,6 +13608,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/stephen-kramer-3c9febe618',
     jobTitle: 'Journalist, broadcasting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Hannah',
@@ -10478,6 +13621,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/hannah-miles-a7dda4b311',
     jobTitle: 'Retail manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -10488,6 +13634,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/matthew-gomez-138bea0818',
     jobTitle: 'Landscape architect',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -10498,6 +13647,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/brian-ashley-97ba5b196c',
     jobTitle: 'Clinical psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tyler',
@@ -10508,6 +13660,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/tyler-silva-13e0220240',
     jobTitle: 'Podiatrist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -10518,6 +13673,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/timothy-neal-dc5fb8cee9',
     jobTitle: 'Media buyer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melanie',
@@ -10528,6 +13686,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/melanie-mora-2690667b9b',
     jobTitle: 'Personal assistant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -10538,6 +13699,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/michael-gonzalez-06594d52b5',
     jobTitle: 'Waste management officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -10548,6 +13712,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/anthony-moran-1b9585391d',
     jobTitle: 'Accountant, chartered certified',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kelly',
@@ -10558,6 +13725,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/kelly-taylor-a64148e880',
     jobTitle: 'Nutritional therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jesse',
@@ -10568,6 +13738,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/jesse-lawson-b8e1d0a3a6',
     jobTitle: 'Industrial/product designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kaylee',
@@ -10578,6 +13751,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/kaylee-wilson-816a279b72',
     jobTitle: 'Chartered management accountant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ernest',
@@ -10588,6 +13764,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/ernest-benson-62c7191ff3',
     jobTitle: 'Data scientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Anthony',
@@ -10598,6 +13777,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/anthony-garcia-1d2ba220ca',
     jobTitle: 'Brewing technologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Karen',
@@ -10608,6 +13790,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/karen-moody-f6f256a833',
     jobTitle: 'Conservation officer, nature',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Erin',
@@ -10618,6 +13803,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/erin-jimenez-0cc5ce0c10',
     jobTitle: 'Press sub',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Daniel',
@@ -10628,6 +13816,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/daniel-boyd-2fa5991fba',
     jobTitle: 'Telecommunications researcher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -10638,6 +13829,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/robert-garrett-2fade0517f',
     jobTitle: 'Immigration officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -10648,6 +13842,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/david-vazquez-852b6ab31b',
     jobTitle: 'Purchasing manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Zachary',
@@ -10658,6 +13855,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/zachary-simmons-3b73fdab08',
     jobTitle: 'Education officer, museum',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Melissa',
@@ -10668,6 +13868,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/melissa-wilson-8479abddcc',
     jobTitle: 'General practice doctor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -10678,6 +13881,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/michelle-thompson-bf79635c87',
     jobTitle: 'Counsellor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Donald',
@@ -10688,6 +13894,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/donald-stephens-7f7cf70def',
     jobTitle: 'Private music teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Marcus',
@@ -10698,6 +13907,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/marcus-smith-3a27ce898a',
     jobTitle: 'Clinical biochemist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Norma',
@@ -10708,6 +13920,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/norma-watkins-61bad82fae',
     jobTitle: 'Firefighter',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jody',
@@ -10718,6 +13933,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/jody-morales-9f975a16d2',
     jobTitle: 'Administrator, education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ronald',
@@ -10728,6 +13946,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/ronald-cox-f10c08c550',
     jobTitle: 'Sports coach',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -10738,6 +13959,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/jennifer-horn-7eade4bcb9',
     jobTitle: 'Product designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -10748,6 +13972,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/joseph-jones-dcec25d4d9',
     jobTitle: 'Research scientist (maths)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cody',
@@ -10758,6 +13985,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/cody-blevins-57df0cb073',
     jobTitle: 'Clinical psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Allison',
@@ -10768,6 +13998,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/allison-hickman-07a1fac3cf',
     jobTitle: 'Writer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'David',
@@ -10778,6 +14011,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/david-everett-5a8004bbc1',
     jobTitle: 'Archaeologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -10788,6 +14024,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/james-smith-ccd3177ab7',
     jobTitle: 'Film/video editor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Chad',
@@ -10798,6 +14037,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/chad-stevens-babda7a962',
     jobTitle: 'Higher education careers adviser',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -10808,6 +14050,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/nicole-campbell-47b63850d5',
     jobTitle: 'Plant breeder/geneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -10818,6 +14063,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/eric-johnson-be7867ea1f',
     jobTitle: 'Bookseller',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Judith',
@@ -10828,6 +14076,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/judith-ortiz-d3ecd8a548',
     jobTitle: 'Publishing rights manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Evan',
@@ -10838,6 +14089,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/evan-floyd-73bc237c29',
     jobTitle: 'Chief Operating Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Deborah',
@@ -10848,6 +14102,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/deborah-myers-0014fb575f',
     jobTitle: 'Engineer, energy',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jonathan',
@@ -10858,6 +14115,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/jonathan-valdez-cca544261b',
     jobTitle: 'Manufacturing engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Marie',
@@ -10868,6 +14128,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/marie-davis-50223e7489',
     jobTitle: 'Garment/textile technologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brent',
@@ -10878,6 +14141,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/brent-mcpherson-365c1d18d0',
     jobTitle: 'Data scientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Catherine',
@@ -10888,6 +14154,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/catherine-kim-c3dc33b8f1',
     jobTitle: 'Manufacturing systems engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Evan',
@@ -10898,6 +14167,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/evan-hanson-93ee351985',
     jobTitle: 'Art therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Natalie',
@@ -10908,6 +14180,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/natalie-cooper-043bdf4ec3',
     jobTitle: 'Land',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jacqueline',
@@ -10918,6 +14193,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/jacqueline-martin-3a858a2278',
     jobTitle: 'Product manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -10928,6 +14206,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/ashley-harrington-cdb4eef042',
     jobTitle: 'Immunologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Heather',
@@ -10938,6 +14219,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/heather-jones-6accdac7b2',
     jobTitle: 'Warehouse manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Corey',
@@ -10948,6 +14232,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/corey-martin-e69cbef278',
     jobTitle: 'Loss adjuster, chartered',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Christine',
@@ -10958,6 +14245,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/christine-scott-001224382b',
     jobTitle: 'Historic buildings inspector/conservation officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alicia',
@@ -10968,6 +14258,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/alicia-ball-3870ff3969',
     jobTitle: 'Presenter, broadcasting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Antonio',
@@ -10978,6 +14271,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/antonio-ferguson-995e342c4b',
     jobTitle: 'Production assistant, radio',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Joseph',
@@ -10988,6 +14284,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/joseph-baldwin-03fcc63126',
     jobTitle: 'Heritage manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Devin',
@@ -10998,6 +14297,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/devin-lopez-c9e1d4f2c8',
     jobTitle: 'Surveyor, insurance',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Victoria',
@@ -11008,6 +14310,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-1.png',
     linkedinUrl: '/in/victoria-weber-1d629bb105',
     jobTitle: 'Probation officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Erica',
@@ -11018,6 +14323,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-2.png',
     linkedinUrl: '/in/erica-lamb-ccc3ee1ef0',
     jobTitle: 'Environmental health practitioner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Regina',
@@ -11028,6 +14336,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-3.png',
     linkedinUrl: '/in/regina-rivera-80ffb29755',
     jobTitle: 'Psychologist, sport and exercise',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -11038,6 +14349,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-4.png',
     linkedinUrl: '/in/sarah-hernandez-1e2803fbdb',
     jobTitle: 'Engineer, water',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -11048,6 +14362,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-5.png',
     linkedinUrl: '/in/jessica-graham-c96b6e62d8',
     jobTitle: 'Water engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -11058,6 +14375,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-6.png',
     linkedinUrl: '/in/john-ritter-eb8a8f542a',
     jobTitle: 'Dancer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -11068,6 +14388,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-7.png',
     linkedinUrl: '/in/jessica-bruce-a0631e1611',
     jobTitle: 'Community development worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sara',
@@ -11078,6 +14401,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-8.png',
     linkedinUrl: '/in/sara-larsen-cc08b21030',
     jobTitle: 'Computer games developer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -11088,6 +14414,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-9.png',
     linkedinUrl: '/in/eric-ellison-d200f0e1b9',
     jobTitle: 'Farm manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Katrina',
@@ -11098,6 +14427,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-10.png',
     linkedinUrl: '/in/katrina-butler-3042d9be2a',
     jobTitle: 'Sales executive',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -11108,6 +14440,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-11.png',
     linkedinUrl: '/in/michelle-powers-1f5eda1b79',
     jobTitle: 'Textile designer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -11118,6 +14453,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-12.png',
     linkedinUrl: '/in/jessica-baker-eeaf05a650',
     jobTitle: 'Operational researcher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cory',
@@ -11128,6 +14466,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-13.png',
     linkedinUrl: '/in/cory-cooper-7be856494d',
     jobTitle: 'Community development worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brittany',
@@ -11138,6 +14479,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-14.png',
     linkedinUrl: '/in/brittany-williams-95380b6e0a',
     jobTitle: 'Engineer, control and instrumentation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jessica',
@@ -11148,6 +14492,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-15.png',
     linkedinUrl: '/in/jessica-hinton-fa6b8fd2e2',
     jobTitle: 'Plant breeder/geneticist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Natalie',
@@ -11158,6 +14505,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-16.png',
     linkedinUrl: '/in/natalie-ochoa-b182dc5873',
     jobTitle: 'Museum/gallery conservator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kristine',
@@ -11168,6 +14518,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-17.png',
     linkedinUrl: '/in/kristine-warren-a4821ef1b4',
     jobTitle: 'Senior tax professional/tax inspector',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lindsey',
@@ -11178,6 +14531,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-18.png',
     linkedinUrl: '/in/lindsey-dalton-70af5be384',
     jobTitle: 'Child psychotherapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -11188,6 +14544,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-19.png',
     linkedinUrl: '/in/jennifer-morgan-ab5acc70fc',
     jobTitle: 'Quantity surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Bryan',
@@ -11198,6 +14557,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-20.png',
     linkedinUrl: '/in/bryan-harris-f858052f2c',
     jobTitle: 'Civil engineer, consulting',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Norma',
@@ -11208,6 +14570,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-21.png',
     linkedinUrl: '/in/norma-adkins-6297907f60',
     jobTitle: 'Forest/woodland manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kara',
@@ -11218,6 +14583,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-22.png',
     linkedinUrl: '/in/kara-perry-3dddc5ee1c',
     jobTitle: 'Waste management officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Nicole',
@@ -11228,6 +14596,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-23.png',
     linkedinUrl: '/in/nicole-kelly-793e9bc70f',
     jobTitle: 'Therapist, music',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Annette',
@@ -11238,6 +14609,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-24.png',
     linkedinUrl: '/in/annette-long-45da6c37e7',
     jobTitle: 'Community arts worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'John',
@@ -11248,6 +14622,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-25.png',
     linkedinUrl: '/in/john-stewart-50fd4b2b37',
     jobTitle: 'Land/geomatics surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gregory',
@@ -11258,6 +14635,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-26.png',
     linkedinUrl: '/in/gregory-larson-4f52726447',
     jobTitle: 'Translator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Wanda',
@@ -11268,6 +14648,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-27.png',
     linkedinUrl: '/in/wanda-herrera-10f674edf1',
     jobTitle: 'Therapeutic radiographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sarah',
@@ -11278,6 +14661,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-28.png',
     linkedinUrl: '/in/sarah-davis-c63949c87f',
     jobTitle: 'Architect',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Devin',
@@ -11288,6 +14674,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-29.png',
     linkedinUrl: '/in/devin-snow-b8a26f7352',
     jobTitle: 'Social researcher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gina',
@@ -11298,6 +14687,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-30.png',
     linkedinUrl: '/in/gina-hernandez-40ea9940fd',
     jobTitle: 'Advice worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ronnie',
@@ -11308,6 +14700,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-31.png',
     linkedinUrl: '/in/ronnie-watson-5e8ffd4706',
     jobTitle: 'Press sub',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -11318,6 +14713,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-32.png',
     linkedinUrl: '/in/mark-duran-0a02b4a8ee',
     jobTitle: 'Operational researcher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shawn',
@@ -11328,6 +14726,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-33.png',
     linkedinUrl: '/in/shawn-wolfe-3b9f538b13',
     jobTitle: 'Research officer, government',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Mark',
@@ -11338,6 +14739,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-34.png',
     linkedinUrl: '/in/mark-welch-3a104608c4',
     jobTitle: 'Chief Marketing Officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'James',
@@ -11348,6 +14752,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-35.png',
     linkedinUrl: '/in/james-holland-a99089ebf7',
     jobTitle: 'Engineer, building services',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -11358,6 +14765,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-36.png',
     linkedinUrl: '/in/jennifer-weber-384a97d0de',
     jobTitle: 'Engineer, maintenance',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Beth',
@@ -11368,6 +14778,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-37.png',
     linkedinUrl: '/in/beth-hernandez-7708149061',
     jobTitle: 'Runner, broadcasting/film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -11378,6 +14791,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-38.png',
     linkedinUrl: '/in/eric-barnes-332ab94dce',
     jobTitle: 'Patent attorney',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ryan',
@@ -11388,6 +14804,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-39.png',
     linkedinUrl: '/in/ryan-richardson-36096d0c1f',
     jobTitle: 'Cartographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brandy',
@@ -11398,6 +14817,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-40.png',
     linkedinUrl: '/in/brandy-cowan-bab6874e38',
     jobTitle: 'Patent attorney',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Zachary',
@@ -11408,6 +14830,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-41.png',
     linkedinUrl: '/in/zachary-jensen-ad43305058',
     jobTitle: 'Nurse, adult',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Carrie',
@@ -11418,6 +14843,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-42.png',
     linkedinUrl: '/in/carrie-taylor-c50c9da449',
     jobTitle: 'Designer, furniture',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Timothy',
@@ -11428,6 +14856,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-43.png',
     linkedinUrl: '/in/timothy-williams-0bd12cc799',
     jobTitle: 'Editor, magazine features',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Peter',
@@ -11438,6 +14869,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-44.png',
     linkedinUrl: '/in/peter-rodgers-2b96b2d840',
     jobTitle: 'Scientific laboratory technician',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Julie',
@@ -11448,6 +14882,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-45.png',
     linkedinUrl: '/in/julie-taylor-fa514d063e',
     jobTitle: 'Careers information officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Samuel',
@@ -11458,6 +14895,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-46.png',
     linkedinUrl: '/in/samuel-ortiz-fd07e1761a',
     jobTitle: 'Insurance broker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -11468,6 +14908,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-47.png',
     linkedinUrl: '/in/kevin-lucas-3789d78a4d',
     jobTitle: 'Therapist, occupational',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alexis',
@@ -11478,6 +14921,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-48.png',
     linkedinUrl: '/in/alexis-hernandez-9b63f9db08',
     jobTitle: 'Journalist, magazine',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sophia',
@@ -11488,6 +14934,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-49.png',
     linkedinUrl: '/in/sophia-wood-e6ff6bda50',
     jobTitle: 'Database administrator',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lori',
@@ -11498,6 +14947,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-50.png',
     linkedinUrl: '/in/lori-hunt-242e73a5d1',
     jobTitle: 'Financial planner',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Dennis',
@@ -11508,6 +14960,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-51.png',
     linkedinUrl: '/in/dennis-stark-aac95d0674',
     jobTitle: 'Quality manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robert',
@@ -11518,6 +14973,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-52.png',
     linkedinUrl: '/in/robert-smith-31ba372c60',
     jobTitle: 'Estate manager/land agent',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Megan',
@@ -11528,6 +14986,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-53.png',
     linkedinUrl: '/in/megan-hughes-d7607985f9',
     jobTitle: 'Materials engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kristine',
@@ -11538,6 +14999,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-54.png',
     linkedinUrl: '/in/kristine-osborne-bb389c0df3',
     jobTitle: 'Dietitian',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brandy',
@@ -11548,6 +15012,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-55.png',
     linkedinUrl: '/in/brandy-thomas-9d8f298d17',
     jobTitle: 'Copy',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brad',
@@ -11558,6 +15025,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-56.png',
     linkedinUrl: '/in/brad-long-f8d735beb2',
     jobTitle: 'Personal assistant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Caleb',
@@ -11568,6 +15038,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-57.png',
     linkedinUrl: '/in/caleb-stevens-f00c3e5dd3',
     jobTitle: 'Multimedia specialist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -11578,6 +15051,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-58.png',
     linkedinUrl: '/in/matthew-wall-90d1a29c8e',
     jobTitle: 'Chartered legal executive (England and Wales)',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Cynthia',
@@ -11588,6 +15064,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-59.png',
     linkedinUrl: '/in/cynthia-cook-25e7c0ba3c',
     jobTitle: 'Radiographer, diagnostic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -11598,6 +15077,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-60.png',
     linkedinUrl: '/in/lisa-tate-9456c0ae0b',
     jobTitle: 'Lecturer, higher education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gloria',
@@ -11608,6 +15090,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-61.png',
     linkedinUrl: '/in/gloria-chapman-c537bef76d',
     jobTitle: 'Building services engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Connie',
@@ -11618,6 +15103,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-62.png',
     linkedinUrl: '/in/connie-lewis-c6b975976f',
     jobTitle: 'Insurance risk surveyor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Gary',
@@ -11628,6 +15116,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-63.png',
     linkedinUrl: '/in/gary-harris-619dfa4ebb',
     jobTitle: 'Research officer, trade union',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sharon',
@@ -11638,6 +15129,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-64.png',
     linkedinUrl: '/in/sharon-berger-2da41916fd',
     jobTitle: 'Therapeutic radiographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -11648,6 +15142,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-65.png',
     linkedinUrl: '/in/michael-russo-a3ba403e9b',
     jobTitle: 'Production engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michael',
@@ -11658,6 +15155,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-66.png',
     linkedinUrl: '/in/michael-young-800f26276e',
     jobTitle: 'Charity fundraiser',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Devin',
@@ -11668,6 +15168,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-67.png',
     linkedinUrl: '/in/devin-ramsey-428f24b810',
     jobTitle: 'Educational psychologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sara',
@@ -11678,6 +15181,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-68.png',
     linkedinUrl: '/in/sara-lee-becddd74f2',
     jobTitle: 'Equality and diversity officer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Robin',
@@ -11688,6 +15194,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-69.png',
     linkedinUrl: '/in/robin-stark-868b21526e',
     jobTitle: 'Production engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Sergio',
@@ -11698,6 +15207,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-70.png',
     linkedinUrl: '/in/sergio-burns-994728d1d7',
     jobTitle: 'Fitness centre manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Lisa',
@@ -11708,6 +15220,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-71.png',
     linkedinUrl: '/in/lisa-haas-e3c3871c8d',
     jobTitle: 'Oceanographer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Courtney',
@@ -11718,6 +15233,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-72.png',
     linkedinUrl: '/in/courtney-donaldson-dd063d66c2',
     jobTitle: 'Sports therapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -11728,6 +15246,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-73.png',
     linkedinUrl: '/in/ashley-conrad-96b6f83928',
     jobTitle: 'Manufacturing engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tim',
@@ -11738,6 +15259,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-74.png',
     linkedinUrl: '/in/tim-levine-01557d92c6',
     jobTitle: 'Animal nutritionist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Michelle',
@@ -11748,6 +15272,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-75.png',
     linkedinUrl: '/in/michelle-martinez-905bf6439c',
     jobTitle: 'TEFL teacher',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jennifer',
@@ -11758,6 +15285,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-76.png',
     linkedinUrl: '/in/jennifer-rose-162f9c1d7b',
     jobTitle: 'Logistics and distribution manager',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Casey',
@@ -11768,6 +15298,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-77.png',
     linkedinUrl: '/in/casey-greer-e3d7510c16',
     jobTitle: 'Editor, commissioning',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Crystal',
@@ -11778,6 +15311,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-78.png',
     linkedinUrl: '/in/crystal-mclaughlin-7b67938d55',
     jobTitle: 'Chiropodist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rachel',
@@ -11788,6 +15324,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-79.png',
     linkedinUrl: '/in/rachel-floyd-554e320b10',
     jobTitle: 'Therapist, drama',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Shannon',
@@ -11798,6 +15337,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-80.png',
     linkedinUrl: '/in/shannon-anderson-7e555790c5',
     jobTitle: 'Mudlogger',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Catherine',
@@ -11808,6 +15350,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-81.png',
     linkedinUrl: '/in/catherine-white-759d1e61da',
     jobTitle: 'Barista',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Matthew',
@@ -11818,6 +15363,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-82.png',
     linkedinUrl: '/in/matthew-fisher-4f49bc00ee',
     jobTitle: 'Systems developer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tracy',
@@ -11828,6 +15376,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-83.png',
     linkedinUrl: '/in/tracy-leonard-b9b7beae66',
     jobTitle: 'Psychologist, sport and exercise',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Jenna',
@@ -11838,6 +15389,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-84.png',
     linkedinUrl: '/in/jenna-moore-c17c91ef24',
     jobTitle: 'Senior tax professional/tax inspector',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Alice',
@@ -11848,6 +15402,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-85.png',
     linkedinUrl: '/in/alice-edwards-aefc82ee0c',
     jobTitle: 'Engineer, water',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Theresa',
@@ -11858,6 +15415,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-86.png',
     linkedinUrl: '/in/theresa-orozco-4a2ec9a601',
     jobTitle: 'Journalist, magazine',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -11868,6 +15428,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-87.png',
     linkedinUrl: '/in/samantha-hicks-16b4d5470f',
     jobTitle: 'Herpetologist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Brian',
@@ -11878,6 +15441,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-88.png',
     linkedinUrl: '/in/brian-finley-aa52351d68',
     jobTitle: 'Youth worker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Kevin',
@@ -11888,6 +15454,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-89.png',
     linkedinUrl: '/in/kevin-black-ada9f2fada',
     jobTitle: 'Teacher, adult education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Eric',
@@ -11898,6 +15467,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-90.png',
     linkedinUrl: '/in/eric-peterson-2e15a4a39c',
     jobTitle: 'Ranger/warden',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Samantha',
@@ -11908,6 +15480,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-91.png',
     linkedinUrl: '/in/samantha-steele-a6e15143ce',
     jobTitle: 'Designer, industrial/product',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Tiffany',
@@ -11918,6 +15493,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-92.png',
     linkedinUrl: '/in/tiffany-boyd-5875da90d3',
     jobTitle: 'Editor, film/video',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Larry',
@@ -11928,6 +15506,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-93.png',
     linkedinUrl: '/in/larry-johnston-2639a97c12',
     jobTitle: 'Horticulturist, amenity',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Vanessa',
@@ -11938,6 +15519,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-94.png',
     linkedinUrl: '/in/vanessa-villanueva-cf67adba5d',
     jobTitle: 'Child psychotherapist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Danielle',
@@ -11948,6 +15532,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-95.png',
     linkedinUrl: '/in/danielle-gutierrez-bae65dfff7',
     jobTitle: 'Technical author',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Pamela',
@@ -11958,6 +15545,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-96.png',
     linkedinUrl: '/in/pamela-anderson-79a31bf795',
     jobTitle: 'Geoscientist',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Linda',
@@ -11968,6 +15558,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-97.png',
     linkedinUrl: '/in/linda-young-912fcbd8df',
     jobTitle: 'Ship broker',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Rodney',
@@ -11978,6 +15571,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-98.png',
     linkedinUrl: '/in/rodney-orr-ae717c2f34',
     jobTitle: 'Best boy',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Ashley',
@@ -11988,6 +15584,9 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-99.png',
     linkedinUrl: '/in/ashley-perez-9375a8f7c7',
     jobTitle: 'Chemical engineer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
   {
     firstName: 'Abigail',
@@ -11998,5 +15597,8 @@ export const peopleDemo = [
       'https://twentyhq.github.io/placeholder-images/people/image-100.png',
     linkedinUrl: '/in/abigail-scott-34179b2995',
     jobTitle: 'Radiographer, diagnostic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.HUGO,
+    createdByName: 'Hugo I',
   },
 ];

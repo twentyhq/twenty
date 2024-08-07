@@ -40,14 +40,14 @@ const StyledAddDropdown = styled(Dropdown)`
 export const RecordDetailRelationSection = ({
   loading,
 }: RecordDetailRelationSectionProps) => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
   const {
     fieldName,
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
     relationType,
   } = fieldDefinition.metadata as FieldRelationMetadata;
-  const record = useRecoilValue(recordStoreFamilyState(entityId));
+  const record = useRecoilValue(recordStoreFamilyState(recordId));
 
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
@@ -60,7 +60,7 @@ export const RecordDetailRelationSection = ({
 
   const fieldValue = useRecoilValue<
     ({ id: string } & Record<string, any>) | ObjectRecord[] | null
-  >(recordStoreFamilySelector({ recordId: entityId, fieldName }));
+  >(recordStoreFamilySelector({ recordId, fieldName }));
 
   // TODO: use new relation type
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
@@ -73,7 +73,7 @@ export const RecordDetailRelationSection = ({
 
   const relationRecordIds = relationRecords.map(({ id }) => id);
 
-  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}-${entityId}`;
+  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}-${recordId}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
 
@@ -113,7 +113,7 @@ export const RecordDetailRelationSection = ({
   const filterQueryParams: FilterQueryParams = {
     filter: {
       [relationFieldMetadataItem?.name || '']: {
-        [ViewFilterOperand.Is]: [entityId],
+        [ViewFilterOperand.Is]: [recordId],
       },
     },
   };
@@ -144,7 +144,7 @@ export const RecordDetailRelationSection = ({
       relationObjectMetadataNameSingular,
       relationObjectMetadataItem,
       relationFieldMetadataItem,
-      entityId,
+      recordId,
     });
 
   return (

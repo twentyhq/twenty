@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -21,6 +21,7 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { ServerlessFunctionInterceptor } from 'src/engine/metadata-modules/serverless-function/serverless-function.interceptor';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
 
@@ -66,6 +67,7 @@ export class ServerlessFunctionResolver {
     }
   }
 
+  @UseInterceptors(ServerlessFunctionInterceptor)
   @Mutation(() => ServerlessFunctionDTO)
   async updateOneServerlessFunction(
     @Args('input')
@@ -84,6 +86,7 @@ export class ServerlessFunctionResolver {
     }
   }
 
+  @UseInterceptors(ServerlessFunctionInterceptor)
   @Mutation(() => ServerlessFunctionDTO)
   async createOneServerlessFunction(
     @Args('input')
@@ -106,6 +109,7 @@ export class ServerlessFunctionResolver {
     }
   }
 
+  @UseInterceptors(ServerlessFunctionInterceptor)
   @Mutation(() => ServerlessFunctionDTO)
   async createOneServerlessFunctionFromFile(
     @Args({ name: 'file', type: () => GraphQLUpload })

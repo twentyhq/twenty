@@ -1,12 +1,32 @@
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const filterOutInvalidTimelineActivities = (
   timelineActivities: TimelineActivity[],
-  mainObjectMetadataItem: ObjectMetadataItem,
+  mainObjectSingularName: string,
+  objectMetadataItems: ObjectMetadataItem[],
 ): TimelineActivity[] => {
+  const mainObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === mainObjectSingularName,
+  );
+
+  const noteObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === CoreObjectNameSingular.Note,
+  );
+
+  if (!mainObjectMetadataItem || !noteObjectMetadataItem) {
+    throw new Error('Object metadata items not found');
+  }
+
   const fieldMetadataItemMap = new Map(
     mainObjectMetadataItem.fields.map((field) => [field.name, field]),
+  );
+
+  const noteFieldMetadataItemMap = new Map(
+    noteObjectMetadataItem.fields.map((field) => [field.name, field]),
   );
 
   return timelineActivities.filter((timelineActivity) => {
@@ -17,8 +37,14 @@ export const filterOutInvalidTimelineActivities = (
       return true;
     }
 
+    const isNoteOrTask =
+      timelineActivity.name.startsWith('linked-note') ||
+      timelineActivity.name.startsWith('linked-task');
+
     const validDiffEntries = Object.entries(diff).filter(([diffKey]) =>
-      fieldMetadataItemMap.has(diffKey),
+      isNoteOrTask
+        ? noteFieldMetadataItemMap.has(diffKey)
+        : fieldMetadataItemMap.has(diffKey),
     );
 
     if (validDiffEntries.length === 0) {
