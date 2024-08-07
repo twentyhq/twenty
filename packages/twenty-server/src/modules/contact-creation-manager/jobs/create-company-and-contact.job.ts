@@ -12,6 +12,7 @@ export type CreateCompanyAndContactJobData = {
     displayName: string;
     handle: string;
   }[];
+  source: FieldActorSource;
 };
 
 @Processor(MessageQueue.contactCreationQueue)
@@ -22,7 +23,7 @@ export class CreateCompanyAndContactJob {
 
   @Process(CreateCompanyAndContactJob.name)
   async handle(data: CreateCompanyAndContactJobData): Promise<void> {
-    const { workspaceId, connectedAccount, contactsToCreate } = data;
+    const { workspaceId, connectedAccount, contactsToCreate, source } = data;
 
     await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
       connectedAccount,
@@ -31,7 +32,7 @@ export class CreateCompanyAndContactJob {
         displayName: contact.displayName,
       })),
       workspaceId,
-      FieldActorSource.EMAIL,
+      source,
     );
   }
 }
