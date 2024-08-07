@@ -30,54 +30,6 @@ export class MessageChannelRepository {
     );
   }
 
-  public async getByConnectedAccountId(
-    connectedAccountId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<MessageChannelWorkspaceEntity[]> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."messageChannel" WHERE "connectedAccountId" = $1 AND "type" = 'email' LIMIT 1`,
-      [connectedAccountId],
-      workspaceId,
-      transactionManager,
-    );
-  }
-
-  public async getFirstByConnectedAccountIdOrFail(
-    connectedAccountId: string,
-    workspaceId: string,
-  ): Promise<MessageChannelWorkspaceEntity> {
-    const messageChannel = await this.getFirstByConnectedAccountId(
-      connectedAccountId,
-      workspaceId,
-    );
-
-    if (!messageChannel) {
-      throw new Error(
-        `Message channel for connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
-      );
-    }
-
-    return messageChannel;
-  }
-
-  public async getFirstByConnectedAccountId(
-    connectedAccountId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<MessageChannelWorkspaceEntity | undefined> {
-    const messageChannels = await this.getByConnectedAccountId(
-      connectedAccountId,
-      workspaceId,
-      transactionManager,
-    );
-
-    return messageChannels[0];
-  }
-
   public async getByIds(
     ids: string[],
     workspaceId: string,

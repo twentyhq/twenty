@@ -23,7 +23,6 @@ import {
   ConnectedAccountProvider,
   ConnectedAccountWorkspaceEntity,
 } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import {
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
@@ -48,8 +47,6 @@ export class GoogleAPIsService {
     private readonly environmentService: EnvironmentService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
     private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
@@ -181,11 +178,11 @@ export class GoogleAPIsService {
     });
 
     if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
-      const messageChannels =
-        await this.messageChannelRepository.getByConnectedAccountId(
-          newOrExistingConnectedAccountId,
-          workspaceId,
-        );
+      const messageChannels = await messageChannelRepository.find({
+        where: {
+          connectedAccountId: newOrExistingConnectedAccountId,
+        },
+      });
 
       for (const messageChannel of messageChannels) {
         await this.messageQueueService.add<MessagingMessageListFetchJobData>(
