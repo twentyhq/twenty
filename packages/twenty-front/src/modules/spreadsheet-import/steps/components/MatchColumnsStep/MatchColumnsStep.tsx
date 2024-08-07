@@ -15,12 +15,12 @@ import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogMa
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
-import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
 import { UserTableColumn } from './components/UserTableColumn';
 
-const StyledContent = styled(EnhancedModalLayout.Content)`
+const StyledContent = styled(Modal.Content)`
   align-items: center;
   padding-left: ${({ theme }) => theme.spacing(6)};
   padding-right: ${({ theme }) => theme.spacing(6)};

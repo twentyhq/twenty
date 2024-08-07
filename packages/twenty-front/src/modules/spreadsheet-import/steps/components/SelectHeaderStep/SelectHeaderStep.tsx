@@ -5,7 +5,7 @@ import { Heading } from '@/spreadsheet-import/components/Heading';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { ImportedRow } from '@/spreadsheet-import/types';
 
-import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { SelectHeaderTable } from './components/SelectHeaderTable';
 
 const StyledHeading = styled(Heading)`
@@ -52,7 +52,7 @@ export const SelectHeaderStep = ({
 
   return (
     <>
-      <EnhancedModalLayout.Content>
+      <Modal.Content>
         <StyledHeading title="Select header row" />
         <StyledTableContainer>
           <SelectHeaderTable
@@ -61,7 +61,7 @@ export const SelectHeaderStep = ({
             setSelectedRowIndexes={setSelectedRowIndexes}
           />
         </StyledTableContainer>
-      </EnhancedModalLayout.Content>
+      </Modal.Content>
       <StepNavigationButton
         onClick={handleContinue}
         onBack={onBack}

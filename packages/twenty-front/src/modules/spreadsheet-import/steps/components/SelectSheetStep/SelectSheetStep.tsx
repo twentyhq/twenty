@@ -6,9 +6,9 @@ import { StepNavigationButton } from '@/spreadsheet-import/components/StepNaviga
 import { Radio } from '@/ui/input/components/Radio';
 import { RadioGroup } from '@/ui/input/components/RadioGroup';
 
-import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 
-const StyledContent = styled(EnhancedModalLayout.Content)`
+const StyledContent = styled(Modal.Content)`
   align-items: center;
   padding-left: ${({ theme }) => theme.spacing(6)};
   padding-right: ${({ theme }) => theme.spacing(6)};

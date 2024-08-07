@@ -7,7 +7,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { Button, ButtonAccent } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 
-import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import {
   Section,
   SectionAlignment,
@@ -26,7 +26,7 @@ export type ConfirmationModalProps = {
   confirmButtonAccent?: ButtonAccent;
 };
 
-const StyledConfirmationModal = styled(EnhancedModalLayout)`
+const StyledConfirmationModal = styled(Modal)`
   border-radius: ${({ theme }) => theme.spacing(1)};
   width: calc(400px - ${({ theme }) => theme.spacing(32)});
   height: auto;

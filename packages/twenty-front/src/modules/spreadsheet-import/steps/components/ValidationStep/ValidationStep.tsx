@@ -22,11 +22,11 @@ import { Button } from '@/ui/input/button/components/Button';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { isDefined } from '~/utils/isDefined';
 
-import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
 
-const StyledContent = styled(EnhancedModalLayout.Content)`
+const StyledContent = styled(Modal.Content)`
   padding-left: ${({ theme }) => theme.spacing(6)};
   padding-right: ${({ theme }) => theme.spacing(6)};
 `;

@@ -3,10 +3,10 @@ import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
-import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ModalCloseButton } from './ModalCloseButton';
 
-const StyledModal = styled(EnhancedModalLayout)`
+const StyledModal = styled(Modal)`
   height: 61%;
   min-height: 600px;
   min-width: 800px;

@@ -7,10 +7,10 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
-import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { UploadFlow } from './UploadFlow';
 
-const StyledHeader = styled(EnhancedModalLayout.Header)`
+const StyledHeader = styled(Modal.Header)`
   background-color: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   height: 60px;

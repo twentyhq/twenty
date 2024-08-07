@@ -11,14 +11,14 @@ import { CircularProgressBar } from '@/ui/feedback/progress-bar/components/Circu
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
-import { EnhancedModalLayout } from '@/ui/layout/modal/components/EnhancedModalLayout';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { Columns, MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
 import { UploadStep } from './UploadStep/UploadStep';
 import { ValidationStep } from './ValidationStep/ValidationStep';
 
-const StyledProgressBarContainer = styled(EnhancedModalLayout.Content)`
+const StyledProgressBarContainer = styled(Modal.Content)`
   align-items: center;
   display: flex;
   justify-content: center;
