@@ -45,8 +45,8 @@ export class MessagingMessagesImportCronJob {
     for (const activeWorkspace of activeWorkspaces) {
       const messageChannelRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-          'messageChannel',
           activeWorkspace.id,
+          'messageChannel',
         );
       const messageChannels = await messageChannelRepository.find({
         select: ['id'],
