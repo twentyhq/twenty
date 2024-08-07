@@ -49,7 +49,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
   const [searchParams] = useSearchParams();
-  const fieldType = searchParams.get('fieldType');
+  const fieldType = searchParams.get('fieldType') as SettingsSupportedFieldType;
   const { enqueueSnackBar } = useSnackBar();
 
   const { findActiveObjectMetadataItemBySlug } =
@@ -216,7 +216,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               <StyledSettingsObjectFieldTypeSelect
                 excludedFieldTypes={excludedFieldTypes}
                 fieldMetadataItem={{
-                  type: fieldType as SettingsSupportedFieldType,
+                  type: fieldType,
                 }}
               />
               <SettingsDataModelFieldSettingsFormCard
