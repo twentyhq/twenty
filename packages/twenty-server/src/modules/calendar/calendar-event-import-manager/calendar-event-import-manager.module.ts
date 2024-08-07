@@ -27,7 +27,6 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { RefreshAccessTokenManagerModule } from 'src/modules/connected-account/refresh-access-token-manager/refresh-access-token-manager.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Module({
@@ -41,7 +40,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     ObjectMetadataRepositoryModule.forFeature([
       ConnectedAccountWorkspaceEntity,
       BlocklistWorkspaceEntity,
-      PersonWorkspaceEntity,
       WorkspaceMemberWorkspaceEntity,
     ]),
     CalendarEventParticipantManagerModule,

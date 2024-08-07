@@ -24,6 +24,7 @@ import { MessagingMessageService } from 'src/modules/messaging/message-import-ma
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { isGroupEmail } from 'src/utils/is-group-email';
 import { isWorkEmail } from 'src/utils/is-work-email';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 @Injectable()
 export class MessagingSaveMessagesAndEnqueueContactCreationService {
@@ -121,6 +122,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           workspaceId,
           connectedAccount,
           contactsToCreate,
+          source: FieldActorSource.EMAIL,
         },
       );
     }
