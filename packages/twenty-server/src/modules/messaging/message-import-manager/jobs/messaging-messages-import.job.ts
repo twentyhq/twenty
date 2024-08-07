@@ -4,10 +4,14 @@ import { Process } from 'src/engine/integrations/message-queue/decorators/proces
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
-import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageChannelSyncStage,
+  MessageChannelWorkspaceEntity,
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
@@ -26,6 +30,7 @@ export class MessagingMessagesImportJob {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly gmailFetchMessageContentFromCacheService: MessagingMessagesImportService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   @Process(MessagingMessagesImportJob.name)
@@ -38,10 +43,16 @@ export class MessagingMessagesImportJob {
       messageChannelId,
     });
 
-    const messageChannel = await this.messageChannelRepository.getById(
-      messageChannelId,
-      workspaceId,
-    );
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
+    const messageChannel = await messageChannelRepository.findOne({
+      where: {
+        id: messageChannelId,
+      },
+    });
 
     if (!messageChannel) {
       await this.messagingTelemetryService.track({
