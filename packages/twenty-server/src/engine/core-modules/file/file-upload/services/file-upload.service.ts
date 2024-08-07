@@ -8,12 +8,16 @@ import { v4 as uuidV4 } from 'uuid';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { settings } from 'src/engine/constants/settings';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { getCropSize } from 'src/utils/image';
 
 @Injectable()
 export class FileUploadService {
-  constructor(private readonly fileStorage: FileStorageService) {}
+  constructor(
+    private readonly fileStorage: FileStorageService,
+    private readonly fileService: FileService,
+  ) {}
 
   private async _uploadFile({
     file,
@@ -78,10 +82,14 @@ export class FileUploadService {
       folder,
     });
 
+    const signedPayload = await this.fileService.encodeFileToken({
+      workspace_id: workspaceId,
+    });
+
     return {
       id,
       mimeType,
-      path: `${fileFolder}/${name}`,
+      path: `${fileFolder}/${name}?token=${signedPayload}`,
     };
   }
 
