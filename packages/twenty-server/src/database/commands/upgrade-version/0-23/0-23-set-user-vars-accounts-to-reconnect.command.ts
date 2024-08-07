@@ -6,11 +6,14 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import {
   KeyValuePair,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -36,11 +39,12 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly accountsToReconnectService: AccountsToReconnectService,
     @InjectRepository(KeyValuePair, 'core')
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {
     super();
   }
@@ -58,23 +62,29 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
     _passedParam: string[],
     options: SetUserVarsAccountsToReconnectCommandOptions,
   ): Promise<void> {
-    let activeSubscriptionWorkspaceIds: string[] = [];
+    let activeWorkspaceIds: string[] = [];
 
     if (options.workspaceId) {
-      activeSubscriptionWorkspaceIds = [options.workspaceId];
+      activeWorkspaceIds = [options.workspaceId];
     } else {
-      activeSubscriptionWorkspaceIds =
-        await this.billingSubscriptionService.getActiveSubscriptionWorkspaceIds();
+      const activeWorkspaces = await this.workspaceRepository.find({
+        where: {
+          activationStatus: WorkspaceActivationStatus.ACTIVE,
+          ...(options.workspaceId && { id: options.workspaceId }),
+        },
+      });
+
+      activeWorkspaceIds = activeWorkspaces.map((workspace) => workspace.id);
     }
 
-    if (!activeSubscriptionWorkspaceIds.length) {
+    if (!activeWorkspaceIds.length) {
       this.logger.log(chalk.yellow('No workspace found'));
 
       return;
     } else {
       this.logger.log(
         chalk.green(
-          `Running command on ${activeSubscriptionWorkspaceIds.length} workspaces`,
+          `Running command on ${activeWorkspaceIds.length} workspaces`,
         ),
       );
     }
@@ -85,7 +95,7 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
       key: 'ACCOUNTS_TO_RECONNECT',
     });
 
-    for (const workspaceId of activeSubscriptionWorkspaceIds) {
+    for (const workspaceId of activeWorkspaceIds) {
       try {
         const dataSourceMetadata =
           await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
