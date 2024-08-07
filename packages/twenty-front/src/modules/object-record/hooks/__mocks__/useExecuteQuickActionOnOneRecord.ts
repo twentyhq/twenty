@@ -6,29 +6,40 @@ export const query = gql`
   mutation ExecuteQuickActionOnOnePerson($idToExecuteQuickActionOn: ID!) {
     executeQuickActionOnPerson(id: $idToExecuteQuickActionOn) {
       __typename
-      xLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      id
-      createdAt
-      city
-      email
-      jobTitle
-      name {
-        firstName
-        lastName
-      }
-      phone
+      updatedAt
+      myCustomObjectId
+      whatsapp
       linkedinLink {
         primaryLinkUrl
         primaryLinkLabel
         secondaryLinks
       }
-      updatedAt
+      name {
+        firstName
+        lastName
+      }
+      email
+      position
+      createdBy {
+        source
+        workspaceMemberId
+        name
+      }
       avatarUrl
+      jobTitle
+      xLink {
+        primaryLinkUrl
+        primaryLinkLabel
+        secondaryLinks
+      }
+      performanceRating
+      createdAt
+      phone
+      id
+      city
       companyId
+      intro
+      workPrefereance
     }
   }
 `;

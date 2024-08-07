@@ -26,26 +26,35 @@ const mocks: MockedResponse[] = [
         ) {
           updateCompany(id: $idToUpdate, data: $input) {
             __typename
-            xLink {
-              primaryLinkUrl
-              primaryLinkLabel
-              secondaryLinks
-            }
-            linkedinLink {
-              primaryLinkUrl
-              primaryLinkLabel
-              secondaryLinks
+            id
+            visaSponsorship
+            createdBy {
+              source
+              workspaceMemberId
+              name
             }
             domainName {
               primaryLinkUrl
               primaryLinkLabel
               secondaryLinks
             }
+            introVideo {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            position
             annualRecurringRevenue {
               amountMicros
               currencyCode
             }
-            createdAt
+            employees
+            linkedinLink {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            workPolicy
             address {
               addressStreet1
               addressStreet2
@@ -56,11 +65,17 @@ const mocks: MockedResponse[] = [
               addressLat
               addressLng
             }
-            updatedAt
             name
+            updatedAt
+            xLink {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            myCustomField
+            createdAt
             accountOwnerId
-            employees
-            id
+            tagline
             idealCustomerProfile
           }
         }
