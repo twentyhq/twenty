@@ -48,8 +48,9 @@ export class MessagingMessagesImportCronJob {
           activeWorkspace.id,
           'messageChannel',
         );
+
       const messageChannels = await messageChannelRepository.find({
-        select: ['id'],
+        select: ['id', 'isSyncEnabled', 'syncStage'],
       });
 
       for (const messageChannel of messageChannels) {
