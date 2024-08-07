@@ -64,11 +64,18 @@ export class BlocklistItemDeleteMessagesJob {
       );
     }
 
-    const messageChannels =
-      await this.messageChannelRepository.getIdsByWorkspaceMemberId(
-        workspaceMemberId,
-        workspaceId,
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
       );
+
+    const messageChannels = await messageChannelRepository.find({
+      where: {
+        connectedAccount: {
+          accountOwnerId: workspaceMemberId,
+        },
+      },
+    });
 
     const messageChannelIds = messageChannels.map(({ id }) => id);
 
@@ -79,17 +86,15 @@ export class BlocklistItemDeleteMessagesJob {
         'messageChannelMessageAssociation',
       );
 
-    for (const messageChannelId of messageChannelIds) {
-      messageChannelMessageAssociationRepository.delete({
-        messageChannelId,
-        message: {
-          messageParticipants: {
-            handle,
-            role: Any(rolesToDelete),
-          },
+    messageChannelMessageAssociationRepository.delete({
+      messageChannelId: Any(messageChannelIds),
+      message: {
+        messageParticipants: {
+          handle,
+          role: Any(rolesToDelete),
         },
-      });
-    }
+      },
+    });
 
     await this.threadCleanerService.cleanWorkspaceThreads(workspaceId);
 

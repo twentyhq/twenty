@@ -65,27 +65,6 @@ export class MessageChannelRepository {
     return messageChannels[0];
   }
 
-  public async getIdsByWorkspaceMemberId(
-    workspaceMemberId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<MessageChannelWorkspaceEntity[]> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    const messageChannelIds =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT "messageChannel".id FROM ${dataSourceSchema}."messageChannel" "messageChannel"
-        JOIN ${dataSourceSchema}."connectedAccount" ON "messageChannel"."connectedAccountId" = ${dataSourceSchema}."connectedAccount"."id"
-        WHERE ${dataSourceSchema}."connectedAccount"."accountOwnerId" = $1`,
-        [workspaceMemberId],
-        workspaceId,
-        transactionManager,
-      );
-
-    return messageChannelIds;
-  }
-
   public async updateSyncStatus(
     id: string,
     syncStatus: MessageChannelSyncStatus,
