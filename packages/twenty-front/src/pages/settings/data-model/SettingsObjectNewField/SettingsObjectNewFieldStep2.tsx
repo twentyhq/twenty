@@ -50,7 +50,6 @@ export const SettingsObjectNewFieldStep2 = () => {
   const { objectSlug = '' } = useParams();
   const [searchParams] = useSearchParams();
   const fieldType = searchParams.get('fieldType');
-  const navigateBack = searchParams.get('navigateBack');
   const { enqueueSnackBar } = useSnackBar();
 
   const { findActiveObjectMetadataItemBySlug } =
@@ -148,11 +147,7 @@ export const SettingsObjectNewFieldStep2 = () => {
         });
       }
 
-      if (navigateBack?.toLowerCase() === 'true') {
-        navigate(-1);
-      } else {
-        navigate(`/settings/objects/${objectSlug}`);
-      }
+      navigate(`/settings/objects/${objectSlug}`);
 
       // TODO: fix optimistic update logic
       // Forcing a refetch for now but it's not ideal
@@ -198,8 +193,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                   isSaveDisabled={!canSave}
                   isCancelDisabled={isSubmitting}
                   onCancel={() => {
-                    if (navigateBack?.toLowerCase() === 'true') navigate(-1);
-                    else navigate(`/settings/objects/${objectSlug}`);
+                    navigate(`/settings/objects/${objectSlug}`);
                   }}
                   onSave={formConfig.handleSubmit(handleSave)}
                 />
