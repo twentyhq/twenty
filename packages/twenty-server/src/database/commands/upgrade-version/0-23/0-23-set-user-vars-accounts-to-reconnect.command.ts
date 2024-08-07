@@ -5,7 +5,6 @@ import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import {
   KeyValuePair,
   KeyValuePairType,
@@ -14,7 +13,6 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CalendarChannelSyncStatus } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
@@ -36,8 +34,6 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
     SetUserVarsAccountsToReconnectCommand.name,
   );
   constructor(
-    private readonly typeORMService: TypeORMService,
-    private readonly dataSourceService: DataSourceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly accountsToReconnectService: AccountsToReconnectService,
@@ -97,70 +93,60 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
 
     for (const workspaceId of activeWorkspaceIds) {
       try {
-        const dataSourceMetadata =
-          await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
+        const connectedAccountRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
             workspaceId,
-          )[0];
+            'connectedAccount',
+          );
 
-        const workspaceDataSource =
-          await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-        if (workspaceDataSource) {
-          const connectedAccountRepository =
-            await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-              workspaceId,
-              'connectedAccount',
-            );
-
-          try {
-            const connectedAccountsInFailedInsufficientPermissions =
-              await connectedAccountRepository.find({
-                select: {
-                  id: true,
-                  accountOwner: {
-                    userId: true,
+        try {
+          const connectedAccountsInFailedInsufficientPermissions =
+            await connectedAccountRepository.find({
+              select: {
+                id: true,
+                accountOwner: {
+                  userId: true,
+                },
+              },
+              where: [
+                {
+                  messageChannels: {
+                    syncStatus:
+                      MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
                   },
                 },
-                where: [
-                  {
-                    messageChannels: {
-                      syncStatus:
-                        MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-                    },
+                {
+                  calendarChannels: {
+                    syncStatus:
+                      CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
                   },
-                  {
-                    calendarChannels: {
-                      syncStatus:
-                        CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-                    },
-                  },
-                ],
-                relations: {
-                  accountOwner: true,
                 },
-              });
+              ],
+              relations: {
+                accountOwner: true,
+              },
+            });
 
-            for (const connectedAccount of connectedAccountsInFailedInsufficientPermissions) {
-              try {
-                await this.accountsToReconnectService.addAccountToReconnectByKey(
-                  AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
-                  connectedAccount.accountOwner.userId,
-                  workspaceId,
-                  connectedAccount.id,
-                );
-              } catch (error) {
-                this.logger.error(
-                  `Failed to add account to reconnect for workspace ${workspaceId}: ${error.message}`,
-                );
-                throw error;
-              }
+          for (const connectedAccount of connectedAccountsInFailedInsufficientPermissions) {
+            try {
+              await this.accountsToReconnectService.addAccountToReconnectByKey(
+                AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
+                connectedAccount.accountOwner.userId,
+                workspaceId,
+                connectedAccount.id,
+              );
+            } catch (error) {
+              this.logger.error(
+                `Failed to add account to reconnect for workspace ${workspaceId}: ${error.message}`,
+              );
+              throw error;
             }
-          } catch (error) {
-            this.logger.log(
-              chalk.red(`Running command on workspace ${workspaceId} failed`),
-            );
-            throw error;
           }
+        } catch (error) {
+          this.logger.log(
+            chalk.red(`Running command on workspace ${workspaceId} failed`),
+          );
+          throw error;
         }
 
         await this.workspaceCacheVersionService.incrementVersion(workspaceId);
