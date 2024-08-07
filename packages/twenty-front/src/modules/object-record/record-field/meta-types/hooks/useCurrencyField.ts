@@ -14,7 +14,7 @@ import { isFieldCurrency } from '../../types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '../../types/guards/isFieldCurrencyValue';
 
 export const useCurrencyField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.Currency,
@@ -26,7 +26,7 @@ export const useCurrencyField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldCurrencyValue>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );
@@ -56,7 +56,7 @@ export const useCurrencyField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldCurrencyValue>(`${entityId}-${fieldName}`);
+    useRecordFieldInput<FieldCurrencyValue>(`${recordId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

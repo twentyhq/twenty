@@ -53,7 +53,7 @@ export const useMockFieldContext = ({
               basePathToShowPage: isLabelIdentifier
                 ? basePathToShowPage
                 : undefined,
-              entityId: objectRecordId,
+              recordId: objectRecordId,
               recoilScopeId: objectRecordId + fieldMetadataItem.id,
               isLabelIdentifier,
               fieldDefinition: formatFieldMetadataItemAsColumnDefinition({

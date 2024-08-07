@@ -114,8 +114,8 @@ export const otherPersonMock = {
 };
 
 export const relationFromManyFieldDisplayMock = {
-  entityId: '20202020-2d40-4e49-8df4-9c6a049191df',
-  relationEntityId: '20202020-c21e-4ec2-873b-de4264d89025',
+  recordId: '20202020-2d40-4e49-8df4-9c6a049191df',
+  relationRecordId: '20202020-c21e-4ec2-873b-de4264d89025',
   entityValue: {
     __typename: 'Person',
     asd: '',

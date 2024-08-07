@@ -5,17 +5,19 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 
 export const RecordTableCellFieldInput = () => {
   const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
     useContext(RecordTableContext);
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+
+  const { recordId, fieldDefinition } = useContext(FieldContext);
   const isFieldReadOnly = useIsFieldReadOnly();
 
   const handleEnter: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -26,7 +28,7 @@ export const RecordTableCellFieldInput = () => {
   const handleSubmit: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -40,7 +42,7 @@ export const RecordTableCellFieldInput = () => {
   const handleClickOutside: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -50,7 +52,7 @@ export const RecordTableCellFieldInput = () => {
   const handleEscape: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -60,7 +62,7 @@ export const RecordTableCellFieldInput = () => {
   const handleTab: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -71,7 +73,7 @@ export const RecordTableCellFieldInput = () => {
   const handleShiftTab: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
-      entityId,
+      recordId,
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
@@ -81,7 +83,10 @@ export const RecordTableCellFieldInput = () => {
 
   return (
     <FieldInput
-      recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
+      recordFieldInputdId={getRecordFieldInputId(
+        recordId,
+        fieldDefinition?.metadata?.fieldName,
+      )}
       onCancel={handleCancel}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}

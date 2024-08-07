@@ -89,7 +89,7 @@ export const SettingsDataModelFieldPreview = ({
 
   const fieldName =
     fieldMetadataItem.name || `${fieldMetadataItem.type}-new-field`;
-  const entityId =
+  const recordId =
     previewRecord?.id ??
     `${objectMetadataItem.nameSingular}-${fieldName}-preview`;
 
@@ -99,7 +99,7 @@ export const SettingsDataModelFieldPreview = ({
         <SettingsDataModelSetRecordEffect record={previewRecord} />
       ) : (
         <SettingsDataModelSetFieldValueEffect
-          entityId={entityId}
+          recordId={recordId}
           fieldName={fieldName}
           value={fieldPreviewValue}
         />
@@ -116,7 +116,7 @@ export const SettingsDataModelFieldPreview = ({
         )}
         <FieldContext.Provider
           value={{
-            entityId,
+            recordId,
             isLabelIdentifier,
             fieldDefinition: {
               type: fieldMetadataItem.type,

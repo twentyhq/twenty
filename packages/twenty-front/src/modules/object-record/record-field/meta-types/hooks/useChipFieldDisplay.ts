@@ -12,7 +12,7 @@ import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldA
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useChipFieldDisplay = () => {
-  const { entityId, fieldDefinition, isLabelIdentifier } =
+  const { recordId, fieldDefinition, isLabelIdentifier } =
     useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
@@ -31,7 +31,7 @@ export const useChipFieldDisplay = () => {
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
-  const recordValue = useRecordValue(entityId);
+  const recordValue = useRecordValue(recordId);
 
   if (!isNonEmptyString(objectNameSingular)) {
     throw new Error('Object metadata name singular is not a non-empty string');

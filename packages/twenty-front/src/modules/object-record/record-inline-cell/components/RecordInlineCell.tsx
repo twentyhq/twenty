@@ -15,6 +15,7 @@ import { useInlineCell } from '../hooks/useInlineCell';
 
 import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 
 type RecordInlineCellProps = {
   readonly?: boolean;
@@ -28,7 +29,7 @@ export const RecordInlineCell = ({
   loading,
   isCentered,
 }: RecordInlineCellProps) => {
-  const { fieldDefinition, entityId } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -97,7 +98,7 @@ export const RecordInlineCell = ({
         isCentered={isCentered}
         editModeContent={
           <FieldInput
-            recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
+            recordFieldInputdId={getRecordFieldInputId(recordId, fieldDefinition?.metadata?.fieldName)}
             onEnter={handleEnter}
             onCancel={handleCancel}
             onEscape={handleEscape}
