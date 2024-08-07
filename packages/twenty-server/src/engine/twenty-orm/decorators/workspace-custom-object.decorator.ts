@@ -1,7 +1,13 @@
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-export function WorkspaceCustomObject(): ClassDecorator {
+interface WorkspaceCustomEntityOptions {
+  softDelete?: boolean;
+}
+
+export function WorkspaceCustomObject(
+  options: WorkspaceCustomEntityOptions = {},
+): ClassDecorator {
   return (target) => {
     const gate = TypedReflect.getMetadata(
       'workspace:gate-metadata-args',
@@ -11,6 +17,7 @@ export function WorkspaceCustomObject(): ClassDecorator {
     metadataArgsStorage.addExtendedEntities({
       target,
       gate,
+      softDelete: options.softDelete,
     });
   };
 }

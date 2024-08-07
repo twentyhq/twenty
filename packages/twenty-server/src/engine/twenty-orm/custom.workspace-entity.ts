@@ -21,7 +21,9 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-@WorkspaceCustomObject()
+@WorkspaceCustomObject({
+  softDelete: true,
+})
 export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
@@ -56,6 +58,16 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     },
   })
   createdBy: ActorMetadata;
+
+  @WorkspaceField({
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Deleted at',
+    description: 'Date when the record was deleted',
+    icon: 'IconCalendarMinus',
+  })
+  @WorkspaceIsNullable()
+  deletedAt?: Date | null;
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.activityTargets,

@@ -21,6 +21,7 @@ export class EntitySchemaFactory {
   ): Promise<EntitySchema> {
     const columns = this.entitySchemaColumnFactory.create(
       objectMetadata.fields,
+      objectMetadata.softDelete ?? false,
     );
 
     const relations = await this.entitySchemaRelationFactory.create(

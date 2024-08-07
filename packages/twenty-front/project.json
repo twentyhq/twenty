@@ -119,7 +119,7 @@
     },
     "graphql:generate": {
       "executor": "nx:run-commands",
-      "defaultConfiguration": "data",
+      "defaultConfiguration": "metadata",
       "options": {
         "cwd": "{projectRoot}",
         "command": "dotenv cross-var graphql-codegen -- --config={args.config}"

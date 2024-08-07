@@ -540,6 +540,7 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
+    let query: string;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
@@ -555,21 +556,35 @@ export class WorkspaceQueryRunnerService {
         args,
       );
 
-    const query = await this.workspaceQueryBuilderFactory.deleteMany(
-      hookedArgs,
-      {
+    if (objectMetadataItem.softDelete) {
+      query = await this.workspaceQueryBuilderFactory.updateMany(
+        {
+          filter: hookedArgs.filter,
+          data: {
+            deletedAt: new Date().toISOString(),
+          },
+        },
+        {
+          ...options,
+          atMost: maximumRecordAffected,
+        },
+      );
+    } else {
+      query = await this.workspaceQueryBuilderFactory.deleteMany(hookedArgs, {
         ...options,
         atMost: maximumRecordAffected,
-      },
-    );
+      });
+    }
 
     const result = await this.execute(query, authContext.workspace.id);
+
+    console.log('result', JSON.stringify(result, null, 2));
 
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
         result,
         objectMetadataItem,
-        'deleteFrom',
+        objectMetadataItem.softDelete ? 'update' : 'deleteFrom',
         authContext.workspace.id,
       )
     )?.records;
@@ -606,6 +621,7 @@ export class WorkspaceQueryRunnerService {
         authContext.workspace.id,
         objectMetadataItem.nameSingular,
       );
+    let query: string;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
@@ -618,10 +634,22 @@ export class WorkspaceQueryRunnerService {
         args,
       );
 
-    const query = await this.workspaceQueryBuilderFactory.deleteOne(
-      hookedArgs,
-      options,
-    );
+    if (objectMetadataItem.softDelete) {
+      query = await this.workspaceQueryBuilderFactory.updateOne(
+        {
+          id: hookedArgs.id,
+          data: {
+            deletedAt: new Date().toISOString(),
+          },
+        },
+        options,
+      );
+    } else {
+      query = await this.workspaceQueryBuilderFactory.deleteOne(
+        hookedArgs,
+        options,
+      );
+    }
 
     const existingRecord = await repository.findOne({
       where: { id: args.id },
@@ -633,7 +661,7 @@ export class WorkspaceQueryRunnerService {
       await this.parseResult<PGGraphQLMutation<Record>>(
         result,
         objectMetadataItem,
-        'deleteFrom',
+        objectMetadataItem.softDelete ? 'update' : 'deleteFrom',
         authContext.workspace.id,
       )
     )?.records;
