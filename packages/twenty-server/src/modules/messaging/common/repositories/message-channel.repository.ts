@@ -4,9 +4,9 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
-  MessageChannelWorkspaceEntity,
-  MessageChannelSyncStatus,
   MessageChannelSyncStage,
+  MessageChannelSyncStatus,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
@@ -14,59 +14,6 @@ export class MessageChannelRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
-
-  public async create(
-    messageChannel: Pick<
-      MessageChannelWorkspaceEntity,
-      | 'id'
-      | 'connectedAccountId'
-      | 'type'
-      | 'handle'
-      | 'visibility'
-      | 'syncStatus'
-    >,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<void> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."messageChannel" ("id", "connectedAccountId", "type", "handle", "visibility", "syncStatus")
-      VALUES ($1, $2, $3, $4, $5, $6)`,
-      [
-        messageChannel.id,
-        messageChannel.connectedAccountId,
-        messageChannel.type,
-        messageChannel.handle,
-        messageChannel.visibility,
-        messageChannel.syncStatus,
-      ],
-      workspaceId,
-      transactionManager,
-    );
-  }
-
-  public async resetSync(
-    connectedAccountId: string,
-    workspaceId: string,
-    transactionManager?: EntityManager,
-  ): Promise<void> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
-    await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel"
-      SET "syncStatus" = NULL,
-      "syncStage" = '${MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING}',
-      "syncCursor" = '',
-      "syncStageStartedAt" = NULL
-      WHERE "connectedAccountId" = $1`,
-      [connectedAccountId],
-      workspaceId,
-      transactionManager,
-    );
-  }
 
   public async getAll(
     workspaceId: string,

@@ -25,6 +25,7 @@ import {
 } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import {
+  MessageChannelSyncStage,
   MessageChannelSyncStatus,
   MessageChannelType,
   MessageChannelVisibility,
@@ -88,6 +89,11 @@ export class GoogleAPIsService {
         'calendarChannel',
       );
 
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
     const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
     await workspaceDataSource.transaction(async (manager: EntityManager) => {
@@ -105,7 +111,7 @@ export class GoogleAPIsService {
           manager,
         );
 
-        await this.messageChannelRepository.create(
+        await messageChannelRepository.save(
           {
             id: v4(),
             connectedAccountId: newOrExistingConnectedAccountId,
@@ -115,7 +121,7 @@ export class GoogleAPIsService {
               messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
             syncStatus: MessageChannelSyncStatus.ONGOING,
           },
-          workspaceId,
+          {},
           manager,
         );
 
@@ -159,9 +165,16 @@ export class GoogleAPIsService {
           newOrExistingConnectedAccountId,
         );
 
-        await this.messageChannelRepository.resetSync(
-          newOrExistingConnectedAccountId,
-          workspaceId,
+        await messageChannelRepository.update(
+          {
+            connectedAccountId: newOrExistingConnectedAccountId,
+          },
+          {
+            syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+            syncStatus: null,
+            syncCursor: '',
+            syncStageStartedAt: null,
+          },
           manager,
         );
       }
