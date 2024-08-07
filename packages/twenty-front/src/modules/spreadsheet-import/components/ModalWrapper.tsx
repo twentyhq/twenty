@@ -43,8 +43,6 @@ export const ModalWrapper = ({
     <>
       {isOpen && (
         <StyledModal size="large" onClose={onClose} isClosable={true}>
-          {/*Remove onClose and isClosable if do not this compoenent key hotscoped */}
-
           <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
             <ModalCloseButton onClose={onClose} />
             {children}
