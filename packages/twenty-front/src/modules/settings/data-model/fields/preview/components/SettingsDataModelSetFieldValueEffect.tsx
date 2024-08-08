@@ -1,8 +1,9 @@
 import { useSetRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { useUpsertedPreviewRecord } from '@/settings/data-model/fields/preview/hooks/useUpsertedPreviewRecord';
+import { previewRecordIdState } from '@/settings/data-model/fields/preview/states/previewRecordIdState';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
 type SettingsDataModelSetFieldValueEffectProps = {
@@ -16,7 +17,12 @@ export const SettingsDataModelSetFieldValueEffect = ({
   fieldName,
   value,
 }: SettingsDataModelSetFieldValueEffectProps) => {
-  const upsertedPreviewRecord = useUpsertedPreviewRecord();
+  const previewRecordId = useRecoilValue(previewRecordIdState);
+
+  const upsertedPreviewRecord = useRecoilValue(
+    recordStoreFamilyState(previewRecordId ?? ''),
+  );
+
   const setFieldValue = useSetRecoilState(
     recordStoreFamilySelector({
       recordId,

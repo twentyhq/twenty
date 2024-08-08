@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useSetRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useSetRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
-import { useSetPreviewRecordId } from '@/settings/data-model/fields/preview/hooks/previewRecordIdHooks';
+import { previewRecordIdState } from '@/settings/data-model/fields/preview/states/previewRecordIdState';
+import { useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 
 type SettingsDataModelSetRecordEffectProps = {
   record: ObjectRecord;
@@ -15,7 +16,8 @@ export const SettingsDataModelSetRecordEffect = ({
 }: SettingsDataModelSetRecordEffectProps) => {
   const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
   const setRecordFieldValue = useSetRecordFieldValue();
-  const setPreviewRecordId = useSetPreviewRecordId();
+
+  const setPreviewRecordId = useSetRecoilState(previewRecordIdState);
 
   useEffect(() => {
     upsertRecordsInStore([record]);

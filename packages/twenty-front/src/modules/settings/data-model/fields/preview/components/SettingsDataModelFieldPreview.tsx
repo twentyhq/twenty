@@ -59,6 +59,7 @@ export const SettingsDataModelFieldPreview = ({
   withFieldLabel = true,
 }: SettingsDataModelFieldPreviewProps) => {
   const theme = useTheme();
+
   const { getIcon } = useIcons();
   const FieldIcon = getIcon(fieldMetadataItem.icon);
 

@@ -11,6 +11,7 @@ export const getFieldPreviewValue = ({
   fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'defaultValue'>;
 }) => {
   if (!isFieldTypeSupportedInSettings(fieldMetadataItem.type)) return null;
+
   if (
     !isFieldValueEmpty({
       fieldDefinition: { type: fieldMetadataItem.type },
