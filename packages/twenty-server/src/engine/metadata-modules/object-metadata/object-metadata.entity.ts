@@ -70,7 +70,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   isAuditLogged: boolean;
 
   @Column({ nullable: true, type: 'boolean' })
-  softDelete?: boolean | null;
+  isSoftDeletable?: boolean | null;
 
   @Column({ nullable: true, type: 'uuid' })
   labelIdentifierFieldMetadataId?: string | null;

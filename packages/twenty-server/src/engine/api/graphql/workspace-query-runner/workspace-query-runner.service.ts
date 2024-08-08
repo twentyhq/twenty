@@ -105,7 +105,7 @@ export class WorkspaceQueryRunnerService {
         ...hookedArgs,
         filter: {
           ...hookedArgs.filter,
-          ...(objectMetadataItem.softDelete
+          ...(objectMetadataItem.isSoftDeletable
             ? { deletedAt: { is: 'NULL' } }
             : {}),
         },
@@ -164,7 +164,7 @@ export class WorkspaceQueryRunnerService {
         ...hookedArgs,
         filter: {
           ...hookedArgs.filter,
-          ...(objectMetadataItem.softDelete
+          ...(objectMetadataItem.isSoftDeletable
             ? { deletedAt: { is: 'NULL' } }
             : {}),
         },
@@ -572,7 +572,7 @@ export class WorkspaceQueryRunnerService {
         args,
       );
 
-    if (objectMetadataItem.softDelete) {
+    if (objectMetadataItem.isSoftDeletable) {
       query = await this.workspaceQueryBuilderFactory.updateMany(
         {
           filter: hookedArgs.filter,
@@ -594,13 +594,11 @@ export class WorkspaceQueryRunnerService {
 
     const result = await this.execute(query, authContext.workspace.id);
 
-    console.log('result', JSON.stringify(result, null, 2));
-
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
         result,
         objectMetadataItem,
-        objectMetadataItem.softDelete ? 'update' : 'deleteFrom',
+        objectMetadataItem.isSoftDeletable ? 'update' : 'deleteFrom',
         authContext.workspace.id,
       )
     )?.records;
@@ -650,7 +648,7 @@ export class WorkspaceQueryRunnerService {
         args,
       );
 
-    if (objectMetadataItem.softDelete) {
+    if (objectMetadataItem.isSoftDeletable) {
       query = await this.workspaceQueryBuilderFactory.updateOne(
         {
           id: hookedArgs.id,
@@ -677,7 +675,7 @@ export class WorkspaceQueryRunnerService {
       await this.parseResult<PGGraphQLMutation<Record>>(
         result,
         objectMetadataItem,
-        objectMetadataItem.softDelete ? 'update' : 'deleteFrom',
+        objectMetadataItem.isSoftDeletable ? 'update' : 'deleteFrom',
         authContext.workspace.id,
       )
     )?.records;

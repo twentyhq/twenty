@@ -5,13 +5,13 @@ export class AddSoftDelete1723038077987 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."objectMetadata" ADD "softDelete" boolean`,
+      `ALTER TABLE "metadata"."objectMetadata" ADD "isSoftDeletable" boolean`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."objectMetadata" DROP COLUMN "softDelete"`,
+      `ALTER TABLE "metadata"."objectMetadata" DROP COLUMN "isSoftDeletable"`,
     );
   }
 }
