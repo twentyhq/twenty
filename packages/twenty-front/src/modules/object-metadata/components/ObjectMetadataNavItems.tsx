@@ -130,6 +130,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
                 <AnimatePresence>
                   {shouldSubItemsBeDisplayed && (
                     <motion.div
+                      key={objectMetadataItem.id}
                       initial="hidden"
                       animate="visible"
                       exit="hidden"
@@ -143,17 +144,15 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
                             : viewA.position - viewB.position,
                         )
                         .map((view) => (
-                          <div>
-                            <NavigationDrawerSubItem
-                              label={view.name}
-                              to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
-                              active={
-                                currentPathWithSearch ===
-                                `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
-                              }
-                              Icon={getIcon(view.icon)}
-                            />
-                          </div>
+                          <NavigationDrawerSubItem
+                            label={view.name}
+                            to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
+                            active={
+                              currentPathWithSearch ===
+                              `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
+                            }
+                            Icon={getIcon(view.icon)}
+                          />
                         ))}
                     </motion.div>
                   )}
