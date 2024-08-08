@@ -20,7 +20,6 @@ export class GetMessagesFromPersonIdsService {
 
   async getMessagesFromPersonIds(
     workspaceMemberId: string,
-    workspaceId: string,
     personIds: string[],
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
@@ -100,7 +99,7 @@ export class GetMessagesFromPersonIdsService {
     const threadVisibilityByThreadId =
       await this.timelineMessagingService.getThreadVisibilityByThreadId(
         messageThreadIds,
-        threadParticipants,
+        threadParticipantsByThreadId,
         workspaceMemberId,
       );
 

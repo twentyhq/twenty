@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
+import { Any } from 'typeorm';
+
+import { TimelineThread } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
+import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 type TimelineThreadParticipant = {
   personId: string;
@@ -23,43 +27,102 @@ export class TimelineMessagingService {
     personIds: string[],
     offset: number,
     pageSize: number,
-  ): Promise<MessageThreadWorkspaceEntity[]> {
+  ): Promise<
+    Omit<
+      TimelineThread,
+      | 'firstParticipant'
+      | 'lastTwoParticipants'
+      | 'participantCount'
+      | 'read'
+      | 'visibility'
+    >[]
+  > {
     const messageThreadRepository =
       await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
         'messageThread',
       );
 
-    return messageThreadRepository
-      .createQueryBuilder('messageThread')
-      .select([
-        'messageThread.id',
-        'messageThread.lastMessageReceivedAt',
-        'messageThread.lastMessageId',
-        'messageThread.lastMessageBody',
-        '(SELECT COUNT(*) FROM message m WHERE m.messageThreadId = messageThread.id) AS messageCount',
-        '(SELECT message.subject FROM message WHERE message.messageThreadId = messageThread.id ORDER BY message.receivedAt ASC LIMIT 1) AS subject',
-      ])
-      .addSelect(
-        'ROW_NUMBER() OVER (PARTITION BY messageThread.id ORDER BY MAX(message."receivedAt") DESC)',
-        'rowNumber',
-      )
-      .leftJoin('messageThread.messages', 'message')
-      .leftJoin('message.participants', 'messageParticipant')
-      .where('messageParticipant.personId IN (:...personIds)', { personIds })
-      .andWhere(
-        'EXISTS (SELECT 1 FROM messageChannelMessageAssociation mcma WHERE mcma.messageId = message.id)',
-      )
-      .groupBy('messageThread.id')
-      .addGroupBy('message.id')
-      .orderBy('message.receivedAt', 'DESC')
-      .limit(pageSize)
-      .offset(offset)
+    const messageThreads = await messageThreadRepository.find({
+      where: {
+        messages: {
+          messageParticipants: {
+            id: Any(personIds),
+          },
+        },
+      },
+      relations: ['messages', 'messages.messageParticipants'],
+      order: {
+        messages: {
+          receivedAt: 'DESC',
+        },
+      },
+      skip: offset,
+      take: pageSize,
+    });
+
+    const messageThreadIds = messageThreads.map(
+      (messageThread) => messageThread.id,
+    );
+
+    const messageRepository =
+      await this.twentyORMManager.getRepository<MessageWorkspaceEntity>(
+        'message',
+      );
+
+    const lastMessages = await messageRepository.find({
+      where: {
+        messageThreadId: Any(messageThreadIds),
+      },
+      order: {
+        receivedAt: 'DESC',
+      },
+      take: 1,
+    });
+
+    const firstMessages = await messageRepository.find({
+      where: {
+        messageThreadId: Any(messageThreadIds),
+      },
+      order: {
+        receivedAt: 'ASC',
+      },
+      take: 1,
+    });
+
+    const numberOfMessagesInThread = await messageRepository
+      .createQueryBuilder('message')
+      .select('message.messageThreadId', 'messageThreadId')
+      .addSelect('COUNT(*)', 'messageCount')
+      .groupBy('message.messageThreadId')
       .getRawMany();
+
+    return messageThreads.map((messageThread) => {
+      const lastMessage = lastMessages.find(
+        (message) => message.messageThreadId === messageThread.id,
+      );
+      const firstMessage = firstMessages.find(
+        (message) => message.messageThreadId === messageThread.id,
+      );
+
+      const messageCount = numberOfMessagesInThread.find(
+        (messageCount) => messageCount.messageThreadId === messageThread.id,
+      )?.messageCount;
+
+      return {
+        id: messageThread.id,
+        subject: firstMessage?.subject ?? '',
+        lastMessageBody: lastMessage?.text ?? '',
+        lastMessageReceivedAt: lastMessage?.receivedAt ?? new Date(),
+        numberOfMessagesInThread: messageCount,
+      };
+    });
   }
 
   public async getThreadVisibilityByThreadId(
     messageThreadIds: string[],
-    threadParticipants: MessageParticipantWorkspaceEntity[],
+    threadParticipantsByThreadId: {
+      [key: string]: MessageParticipantWorkspaceEntity[];
+    },
     workspaceMemberId: string,
   ): Promise<{
     [key: string]: MessageChannelVisibility;
@@ -71,11 +134,10 @@ export class TimelineMessagingService {
           messageThreadId,
         ) => {
           const threadMessagesWithWorkspaceMemberInParticipants =
-            threadParticipants?.filter(
-              (threadMessage) =>
-                threadMessage.id === messageThreadId &&
-                threadMessage.workspaceMemberId === workspaceMemberId,
-            ) ?? [];
+            threadParticipantsByThreadId[messageThreadId].filter(
+              (threadParticipant) =>
+                threadParticipant.workspaceMemberId === workspaceMemberId,
+            );
 
           if (threadMessagesWithWorkspaceMemberInParticipants.length === 0)
             messageThreadIdsForWhichWorkspaceMemberIsInNotParticipantsAcc.push(
@@ -96,8 +158,15 @@ export class TimelineMessagingService {
       .createQueryBuilder('messageThread')
       .select(['messageThread.id', 'messageChannel.visibility'])
       .leftJoin('messageThread.messages', 'message')
-      .leftJoin('message.channels', 'messageChannel')
-      .where('messageThread.id IN (:...messageThreadIds)', {
+      .leftJoin(
+        'message.messageChannelMessageAssociations',
+        'messageChannelMessageAssociation',
+      )
+      .leftJoin(
+        'messageChannelMessageAssociation.messageChannel',
+        'messageChannel',
+      )
+      .where('messageThread.id = ANY(:messageThreadIds)', {
         messageThreadIds:
           messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants,
       })

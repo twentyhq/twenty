@@ -1,9 +1,15 @@
 import { TimelineThread } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { extractFirstAndLastTwoActiveParticipants } from 'src/engine/core-modules/messaging/utils/extract-first-and-last-two-participants.util';
-import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 
 export const formatThreads = (
-  threads: MessageThreadWorkspaceEntity[],
+  threads: Omit<
+    TimelineThread,
+    | 'firstParticipant'
+    | 'lastTwoParticipants'
+    | 'participantCount'
+    | 'read'
+    | 'visibility'
+  >[],
   threadParticipantsByThreadId: any,
   threadVisibilityByThreadId: any,
 ): TimelineThread[] => {
@@ -12,6 +18,8 @@ export const formatThreads = (
     ...extractFirstAndLastTwoActiveParticipants(
       threadParticipantsByThreadId[thread.id],
     ),
+    participantCount: threadParticipantsByThreadId[thread.id].length,
     visibility: threadVisibilityByThreadId[thread.id],
+    read: true,
   }));
 };

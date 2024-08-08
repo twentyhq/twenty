@@ -15,7 +15,6 @@ export class GetMessagesFromCompanyIdService {
 
   async getMessagesFromCompanyId(
     workspaceMemberId: string,
-    workspaceId: string,
     companyId: string,
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
@@ -45,7 +44,6 @@ export class GetMessagesFromCompanyIdService {
     const messageThreads =
       await this.getMessagesFromPersonIdsService.getMessagesFromPersonIds(
         workspaceMemberId,
-        workspaceId,
         personIds,
         page,
         pageSize,
