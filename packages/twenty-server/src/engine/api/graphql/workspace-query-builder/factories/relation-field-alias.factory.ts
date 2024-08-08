@@ -12,7 +12,6 @@ import {
   RelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
 import { getFieldArgumentsByKey } from 'src/engine/api/graphql/workspace-query-builder/utils/get-field-arguments-by-key.util';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 
@@ -27,7 +26,6 @@ export class RelationFieldAliasFactory {
     @Inject(forwardRef(() => FieldsStringFactory))
     private readonly fieldsStringFactory: CircularDep<FieldsStringFactory>,
     private readonly argsStringFactory: ArgsStringFactory,
-    private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
   create(
@@ -36,6 +34,7 @@ export class RelationFieldAliasFactory {
     fieldMetadata: FieldMetadataInterface,
     objectMetadataCollection: ObjectMetadataInterface[],
     info: GraphQLResolveInfo,
+    withSoftDeleted?: boolean,
   ): Promise<string> {
     if (!isRelationFieldMetadataType(fieldMetadata.type)) {
       throw new Error(`Field ${fieldMetadata.name} is not a relation field`);
@@ -47,6 +46,7 @@ export class RelationFieldAliasFactory {
       fieldMetadata,
       objectMetadataCollection,
       info,
+      withSoftDeleted,
     );
   }
 
@@ -56,6 +56,7 @@ export class RelationFieldAliasFactory {
     fieldMetadata: FieldMetadataInterface,
     objectMetadataCollection: ObjectMetadataInterface[],
     info: GraphQLResolveInfo,
+    withSoftDeleted?: boolean,
   ): Promise<string> {
     const relationMetadata =
       fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
@@ -98,9 +99,19 @@ export class RelationFieldAliasFactory {
       relationDirection === RelationDirection.FROM
     ) {
       const args = getFieldArgumentsByKey(info, fieldKey);
+
+      // If the referenced object is soft deletable, we need to filter out the deleted objects
+      if (!withSoftDeleted && referencedObjectMetadata.isSoftDeletable) {
+        args.filter = {
+          deletedAt: { is: 'NULL' },
+          ...args.filter,
+        };
+      }
+
       const argsString = this.argsStringFactory.create(
         args,
         referencedObjectMetadata.fields ?? [],
+        !withSoftDeleted && !!referencedObjectMetadata.isSoftDeletable,
       );
       const fieldsString =
         await this.fieldsStringFactory.createFieldsStringRecursive(
@@ -108,6 +119,7 @@ export class RelationFieldAliasFactory {
           fieldValue,
           referencedObjectMetadata.fields ?? [],
           objectMetadataCollection,
+          withSoftDeleted ?? false,
         );
 
       return `
@@ -137,6 +149,7 @@ export class RelationFieldAliasFactory {
         fieldValue,
         referencedObjectMetadata.fields ?? [],
         objectMetadataCollection,
+        withSoftDeleted ?? false,
       );
 
     // Otherwise it means it's a relation destination is of kind ONE

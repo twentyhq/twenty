@@ -101,22 +101,17 @@ export class WorkspaceQueryRunnerService {
       );
 
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      {
-        ...hookedArgs,
-        filter: {
-          ...hookedArgs.filter,
-          ...(objectMetadataItem.isSoftDeletable
-            ? { deletedAt: { is: 'NULL' } }
-            : {}),
-        },
-      },
+      hookedArgs,
       options,
       ResolverArgsType.FindMany,
     )) as FindManyResolverArgs<Filter, OrderBy>;
 
     const query = await this.workspaceQueryBuilderFactory.findMany(
       computedArgs,
-      options,
+      {
+        ...options,
+        withSoftDeleted: !!args.filter?.deletedAt,
+      },
     );
 
     const result = await this.execute(query, authContext.workspace.id);
@@ -160,22 +155,17 @@ export class WorkspaceQueryRunnerService {
       );
 
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      {
-        ...hookedArgs,
-        filter: {
-          ...hookedArgs.filter,
-          ...(objectMetadataItem.isSoftDeletable
-            ? { deletedAt: { is: 'NULL' } }
-            : {}),
-        },
-      },
+      hookedArgs,
       options,
       ResolverArgsType.FindOne,
     )) as FindOneResolverArgs<Filter>;
 
     const query = await this.workspaceQueryBuilderFactory.findOne(
       computedArgs,
-      options,
+      {
+        ...options,
+        withSoftDeleted: !!args.filter?.deletedAt,
+      },
     );
 
     const result = await this.execute(query, authContext.workspace.id);

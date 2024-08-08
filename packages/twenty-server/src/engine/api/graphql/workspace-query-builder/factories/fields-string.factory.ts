@@ -22,19 +22,27 @@ export class FieldsStringFactory {
     private readonly relationFieldAliasFactory: RelationFieldAliasFactory,
   ) {}
 
-  create(
+  async create(
     info: GraphQLResolveInfo,
     fieldMetadataCollection: FieldMetadataInterface[],
     objectMetadataCollection: ObjectMetadataInterface[],
+    withSoftDeleted?: boolean,
   ): Promise<string> {
     const selectedFields: Partial<Record> = graphqlFields(info);
 
-    return this.createFieldsStringRecursive(
+    console.log('selectedFields', JSON.stringify(selectedFields, null, 2));
+
+    const res = await this.createFieldsStringRecursive(
       info,
       selectedFields,
       fieldMetadataCollection,
       objectMetadataCollection,
+      withSoftDeleted ?? false,
     );
+
+    console.log('res', res);
+
+    return res;
   }
 
   async createFieldsStringRecursive(
@@ -42,6 +50,7 @@ export class FieldsStringFactory {
     selectedFields: Partial<Record>,
     fieldMetadataCollection: FieldMetadataInterface[],
     objectMetadataCollection: ObjectMetadataInterface[],
+    withSoftDeleted: boolean,
     accumulator = '',
   ): Promise<string> {
     const fieldMetadataMap = new Map(
@@ -65,6 +74,7 @@ export class FieldsStringFactory {
             fieldMetadata,
             objectMetadataCollection,
             info,
+            withSoftDeleted,
           );
 
           fieldAlias = alias;
@@ -91,6 +101,7 @@ export class FieldsStringFactory {
           fieldValue,
           fieldMetadataCollection,
           objectMetadataCollection,
+          withSoftDeleted,
           accumulator,
         );
         accumulator += `}\n`;
