@@ -444,7 +444,6 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   name: '20202020-ba07-4ffd-ba63-009491f5749c',
   position: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
   createdBy: '20202020-be0e-4971-865b-32ca87cbb315',
-  deletedAt: '20202020-7857-4ff5-8cdb-1b21482bc305',
   activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',
   noteTargets: '20202020-01fd-4f37-99dc-9427a444018a',
   taskTargets: '20202020-0860-4566-b865-bff3c626c303',
