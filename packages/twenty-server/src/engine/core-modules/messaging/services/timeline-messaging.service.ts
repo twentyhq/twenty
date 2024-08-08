@@ -46,7 +46,7 @@ export class TimelineMessagingService {
       where: {
         messages: {
           messageParticipants: {
-            id: Any(personIds),
+            personId: Any(personIds),
           },
         },
       },
