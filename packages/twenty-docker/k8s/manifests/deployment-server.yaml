@@ -33,8 +33,6 @@ spec:
           value: "https://crm.example.com:443"
         - name: FRONT_BASE_URL
           value: "https://crm.example.com:443"
-        - name: BACKEND_SERVER_URL
-          value: "https://crm.example.com:443"
         - name: PG_DATABASE_URL
           value: "postgres://twenty:twenty@twenty-db.twentycrm.svc.cluster.local/default"
         - name: ENABLE_DB_MIGRATIONS
@@ -83,6 +81,8 @@ spec:
         tty: true
         volumeMounts:
         - mountPath: /app/docker-data
+          name: twentycrm-server-data
+        - mountPath: /app/.local-storage
           name: twentycrm-server-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always
