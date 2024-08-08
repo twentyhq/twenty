@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ChartResult } from 'src/engine/core-modules/chart/dtos/chart-result.dto';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
@@ -13,7 +14,10 @@ import {
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ChartMeasure } from 'src/modules/charts/standard-objects/chart.workspace-entity';
+import {
+  ChartMeasure,
+  ChartWorkspaceEntity,
+} from 'src/modules/charts/standard-objects/chart.workspace-entity';
 
 @Injectable()
 export class ChartService {
@@ -22,6 +26,7 @@ export class ChartService {
     private readonly objectMetadataService: ObjectMetadataService,
     @InjectRepository(RelationMetadataEntity, 'metadata')
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
+    private readonly fieldMetadataService: FieldMetadataService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -61,13 +66,9 @@ export class ChartService {
   private async getJoinOperations(
     workspaceId: string,
     sourceObjectNameSingular: string,
-    fieldPath: string,
+    fieldPath: string[],
   ) {
-    const fieldPathParts = fieldPath.split('.');
-
-    if (fieldPathParts.length < 2) return [];
-
-    const relationPathParts = fieldPathParts.slice(0, -1);
+    if (fieldPath.length < 2) return [];
 
     let objectMetadata =
       await this.objectMetadataService.findOneOrFailWithinWorkspace(
@@ -84,11 +85,7 @@ export class ChartService {
       toTableName?: string;
     }[] = [];
 
-    for (const [index, fieldName] of relationPathParts.entries()) {
-      const fieldMetadataId = objectMetadata.fields.find(
-        (field) => field.name === fieldName,
-      )?.id;
-
+    for (const fieldMetadataId of fieldPath) {
       const relationMetadata = await this.getRelationMetadata(
         workspaceId,
         fieldMetadataId,
@@ -128,7 +125,6 @@ export class ChartService {
         'fieldMetadataId',
         fieldMetadataId,
         oppositeObjectMetadata.fields.map(({ name }) => name),
-        fieldName,
       );
 
       objectMetadata = oppositeObjectMetadata;
@@ -162,9 +158,7 @@ export class ChartService {
   }
 
   async run(workspaceId: string, chartId: string): Promise<ChartResult> {
-    return { chartResult: '[{"measure": 3}]' };
-
-    /*     const repository =
+    const repository =
       await this.twentyORMManager.getRepository(ChartWorkspaceEntity);
     const chart = await repository.findOneByOrFail({ id: chartId });
 
@@ -185,13 +179,30 @@ export class ChartService {
       chart.fieldPath,
     );
 
+    const targetFieldMetadataId: string | undefined =
+      chart.fieldPath[chart.fieldPath.length - 1];
+
+    if (!targetFieldMetadataId) {
+      return {};
+    }
+    const targetFieldMetadata =
+      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          id: targetFieldMetadataId,
+        },
+      });
+
+    if (!targetFieldMetadata) {
+      throw new Error('Invalid field metadata id');
+    }
     const measureSelectColumn = this.getMeasureSelectColumn(
       chart.measure,
-      chart.fieldPath,
+      targetFieldMetadata.name,
     );
+
     const groupByClause = chart?.groupBy && `GROUP BY ${chart?.groupBy}`;
 
-    const selectColumns = [measureSelectColumn, chart?.groupBy].filter(
+    const selectColumns = [measureSelectColumn /* groupByColumn */].filter(
       (col) => !!col,
     );
 
@@ -210,7 +221,7 @@ export class ChartService {
 SELECT ${selectColumns.join(', ')}
 FROM "${dataSourceSchema}"."${computeObjectTargetTable(objectMetadata)}" table_0
 ${joinClauses}
-${groupByClause}
+${'' /* groupByClause */}
 LIMIT 1000;
 `.trim();
 
@@ -224,6 +235,6 @@ LIMIT 1000;
 
     console.log('result', JSON.stringify(result, undefined, 2));
 
-    return { chartResult: JSON.stringify(result) }; */
+    return { chartResult: JSON.stringify(result) };
   }
 }

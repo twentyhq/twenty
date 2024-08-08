@@ -148,7 +148,7 @@ export enum CaptchaDriverType {
 
 export type ChartResult = {
   __typename?: 'ChartResult';
-  chartResult: Scalars['String'];
+  chartResult?: Maybe<Scalars['String']>;
 };
 
 export type ClientConfig = {
@@ -1250,7 +1250,7 @@ export type ChartDataQueryVariables = Exact<{
 }>;
 
 
-export type ChartDataQuery = { __typename?: 'Query', chartData: { __typename?: 'ChartResult', chartResult: string } };
+export type ChartDataQuery = { __typename?: 'Query', chartData: { __typename?: 'ChartResult', chartResult?: string | null } };
 
 export type TrackMutationVariables = Exact<{
   type: Scalars['String'];
