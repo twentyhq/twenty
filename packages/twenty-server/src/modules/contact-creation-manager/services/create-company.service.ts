@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
-import { EntityManager, ILike } from 'typeorm';
 import uniqBy from 'lodash.uniqby';
+import { EntityManager, ILike } from 'typeorm';
 
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { extractDomainFromLink } from 'src/modules/contact-creation-manager/utils/extract-domain-from-link.util';
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeDisplayName } from 'src/utils/compute-display-name';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 type CompanyToCreate = {
   domainName: string;
