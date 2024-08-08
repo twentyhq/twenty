@@ -59,16 +59,6 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   })
   createdBy: ActorMetadata;
 
-  @WorkspaceField({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.deletedAt,
-    type: FieldMetadataType.DATE_TIME,
-    label: 'Deleted at',
-    description: 'Date when the record was deleted',
-    icon: 'IconCalendarMinus',
-  })
-  @WorkspaceIsNullable()
-  deletedAt?: Date | null;
-
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.activityTargets,
     label: 'Activities',

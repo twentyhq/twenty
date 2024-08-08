@@ -26,7 +26,7 @@ export abstract class BaseWorkspaceEntity {
     icon: 'IconCalendar',
     defaultValue: 'now',
   })
-  createdAt: Date;
+  createdAt: string;
 
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
@@ -36,7 +36,7 @@ export abstract class BaseWorkspaceEntity {
     icon: 'IconCalendarClock',
     defaultValue: 'now',
   })
-  updatedAt: Date;
+  updatedAt: string;
 
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
@@ -46,5 +46,5 @@ export abstract class BaseWorkspaceEntity {
     icon: 'IconCalendarMinus',
   })
   @WorkspaceIsNullable()
-  deletedAt?: Date | null;
+  deletedAt?: string | null;
 }
