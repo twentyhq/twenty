@@ -7937,6 +7937,75 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                 "toRelationMetadata": null
                             }
                         },
+                                                {
+                            "__typename": "fieldEdge",
+                            "node": {
+                                "__typename": "field",
+                                "id": "af19a3ba-b725-4b9d-a0b7-8bf6b04fadds",
+                                "type": "MULTI_SELECT",
+                                "name": "testMultiSelect",
+                                "label": "Test Multi Select",
+                                "description": "Test Multi Select",
+                                "icon": "IconSelect",
+                                "isCustom": false,
+                                "isActive": true,
+                                "isSystem": true,
+                                "isNullable": false,
+                                "createdAt": "2024-08-02T16:00:05.938Z",
+                                "updatedAt": "2024-08-02T16:00:05.938Z",
+                                "defaultValue": null,
+                                "options": null,
+                                "relationDefinition": null,
+                                "fromRelationMetadata": null,
+                                "toRelationMetadata": null
+                            }
+                        },
+                        {
+                            "__typename": "fieldEdge",
+                            "node": {
+                                "__typename": "field",
+                                "id": "tt929592-4f74-419e-8b26-6d216859078f",
+                                "type": "RAW_JSON",
+                                "name": "testRawJson",
+                                "label": "Test Raw Json",
+                                "description": "Json value for event details",
+                                "icon": "IconListDetails",
+                                "isCustom": false,
+                                "isActive": true,
+                                "isSystem": true,
+                                "isNullable": true,
+                                "createdAt": "2024-08-02T16:00:05.938Z",
+                                "updatedAt": "2024-08-02T16:00:05.938Z",
+                                "defaultValue": null,
+                                "options": null,
+                                "relationDefinition": null,
+                                "fromRelationMetadata": null,
+                                "toRelationMetadata": null
+                            }
+                        },
+                        {
+                            "__typename": "fieldEdge",
+                            "node": {
+                                "__typename": "field",
+                                "id": "vv929592-4f74-419e-8b26-6d216859078f",
+                                "type": "RATING",
+                                "name": "testRating",
+                                "label": "Rating",
+                                "description": "Rating value",
+                                "icon": "IconListDetails",
+                                "isCustom": false,
+                                "isActive": true,
+                                "isSystem": true,
+                                "isNullable": true,
+                                "createdAt": "2024-08-02T16:00:05.938Z",
+                                "updatedAt": "2024-08-02T16:00:05.938Z",
+                                "defaultValue": null,
+                                "options": null,
+                                "relationDefinition": null,
+                                "fromRelationMetadata": null,
+                                "toRelationMetadata": null
+                            }
+                        },
                         {
                             "__typename": "fieldEdge",
                             "node": {
