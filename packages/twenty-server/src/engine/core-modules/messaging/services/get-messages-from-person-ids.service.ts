@@ -5,7 +5,8 @@ import { Any } from 'typeorm';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { TimelineThreadsWithTotal } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
-import { formatThreadParticipant } from 'src/engine/core-modules/messaging/utils/formatThreadParticipant.util';
+import { formatThreadParticipant } from 'src/engine/core-modules/messaging/utils/format-thread-participant.util';
+import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -101,7 +102,6 @@ export class GetMessagesFromPersonIdsService {
         messageThreadIds,
         threadParticipants,
         workspaceMemberId,
-        workspaceId,
       );
 
     return {

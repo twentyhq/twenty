@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -18,10 +17,7 @@ type TimelineThreadParticipant = {
 
 @Injectable()
 export class TimelineMessagingService {
-  constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly twentyORMManager: TwentyORMManager,
-  ) {}
+  constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async getMessageThreads(
     personIds: string[],
@@ -65,13 +61,9 @@ export class TimelineMessagingService {
     messageThreadIds: string[],
     threadParticipants: MessageParticipantWorkspaceEntity[],
     workspaceMemberId: string,
-    workspaceId: string,
   ): Promise<{
     [key: string]: MessageChannelVisibility;
   }> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
     const messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants =
       messageThreadIds.reduce(
         (
@@ -95,28 +87,21 @@ export class TimelineMessagingService {
         [],
       );
 
-    const threadVisibility:
-      | {
-          id: string;
-          visibility: MessageChannelVisibility;
-        }[]
-      | undefined = await this.workspaceDataSourceService.executeRawQuery(
-      `
-    SELECT
-        message."messageThreadId" AS id,
-        "messageChannel".visibility
-    FROM
-        ${dataSourceSchema}."message" message
-    LEFT JOIN
-        ${dataSourceSchema}."messageChannelMessageAssociation" "messageChannelMessageAssociation" ON "messageChannelMessageAssociation"."messageId" = message.id
-    LEFT JOIN
-        ${dataSourceSchema}."messageChannel" "messageChannel" ON "messageChannel".id = "messageChannelMessageAssociation"."messageChannelId"
-    WHERE
-        message."messageThreadId" = ANY($1)
-    `,
-      [messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants],
-      workspaceId,
-    );
+    const messageThreadRepository =
+      await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
+        'messageThread',
+      );
+
+    const threadVisibility = await messageThreadRepository
+      .createQueryBuilder('messageThread')
+      .select(['messageThread.id', 'messageChannel.visibility'])
+      .leftJoin('messageThread.messages', 'message')
+      .leftJoin('message.channels', 'messageChannel')
+      .where('messageThread.id IN (:...messageThreadIds)', {
+        messageThreadIds:
+          messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants,
+      })
+      .getRawMany();
 
     const visibilityValues = Object.values(MessageChannelVisibility);
 
