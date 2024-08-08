@@ -105,7 +105,7 @@ export class CreateCompanyAndContactService {
       filteredContactsToCreateWithCompanyDomainNames
         .filter((participant) => participant.companyDomainName)
         .map((participant) => ({
-          domainName: participant.companyDomainName!,
+          domainName: participant.companyDomainName,
           createdBySource: source,
           createdByWorkspaceMember: connectedAccount.accountOwner,
         })),
@@ -196,7 +196,7 @@ export class CreateCompanyAndContactService {
           name: 'person.created',
           workspaceId,
           // FixMe: TypeORM typing issue... id is always returned when using save
-          recordId: createdPerson.id!,
+          recordId: createdPerson.id,
           objectMetadata,
           properties: {
             after: createdPerson,

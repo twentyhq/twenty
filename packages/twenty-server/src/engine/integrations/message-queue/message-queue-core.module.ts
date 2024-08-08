@@ -63,9 +63,12 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
     const driverProvider: Provider = {
       provide: QUEUE_DRIVER,
       useFactory: async (...args: any[]) => {
-        const config = await options.useFactory!(...args);
+        if (options.useFactory) {
+          const config = await options.useFactory(...args);
 
-        return this.createDriver(config);
+          return this.createDriver(config);
+        }
+        throw new Error('useFactory is not defined');
       },
       inject: options.inject || [],
     };
