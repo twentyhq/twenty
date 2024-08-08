@@ -132,6 +132,37 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               secondaryLinks: null,
             },
           },
+          testSelect: {
+            __typename: 'Select',
+            value: 'Option 1',
+            label: 'Option 1',
+          },
+          testMultiSelect: {
+            __typename: 'MultiSelect',
+            values: [
+              {
+                __typename: 'Select',
+                value: 'Option 1',
+                label: 'Option 1',
+              },
+            ],
+          },
+          testRating: {
+            __typename: 'Rating',
+            value: 3,
+          },
+          testJson: {
+            __typename: 'Json',
+            value: {
+              key: 'value',
+            },
+          },
+          testActor: {
+            __typename: 'Actor',
+            source: 'MANUAL',
+            workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+            name: 'Tim Apple',
+          },
         },
       },
       {
@@ -227,6 +258,37 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
               primaryLinkLabel: '',
               secondaryLinks: null,
             },
+          },
+          testSelect: {
+            __typename: 'Select',
+            value: 'Option 1',
+            label: 'Option 1',
+          },
+          testMultiSelect: {
+            __typename: 'MultiSelect',
+            values: [
+              {
+                __typename: 'Select',
+                value: 'Option 1',
+                label: 'Option 1',
+              },
+            ],
+          },
+          testRating: {
+            __typename: 'Rating',
+            value: 3,
+          },
+          testJson: {
+            __typename: 'Json',
+            value: {
+              key: 'value',
+            },
+          },
+          testActor: {
+            __typename: 'Actor',
+            source: 'MANUAL',
+            workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+            name: 'Tim Apple',
           },
         },
       },
