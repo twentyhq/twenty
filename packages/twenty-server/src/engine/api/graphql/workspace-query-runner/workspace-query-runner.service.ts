@@ -101,7 +101,15 @@ export class WorkspaceQueryRunnerService {
       );
 
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      hookedArgs,
+      {
+        ...hookedArgs,
+        filter: {
+          ...hookedArgs.filter,
+          ...(objectMetadataItem.softDelete
+            ? { deletedAt: { is: 'NULL' } }
+            : {}),
+        },
+      },
       options,
       ResolverArgsType.FindMany,
     )) as FindManyResolverArgs<Filter, OrderBy>;
@@ -152,7 +160,15 @@ export class WorkspaceQueryRunnerService {
       );
 
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      hookedArgs,
+      {
+        ...hookedArgs,
+        filter: {
+          ...hookedArgs.filter,
+          ...(objectMetadataItem.softDelete
+            ? { deletedAt: { is: 'NULL' } }
+            : {}),
+        },
+      },
       options,
       ResolverArgsType.FindOne,
     )) as FindOneResolverArgs<Filter>;

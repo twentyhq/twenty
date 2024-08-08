@@ -68,10 +68,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       skip: skip || !objectMetadataItem || !currentWorkspaceMember,
       variables: {
-        filter: {
-          ...filter,
-          ...(objectMetadataItem.softDelete ? { deletedAt: null } : {}),
-        },
+        filter,
         orderBy,
         lastCursor: cursorFilter?.cursor ?? undefined,
         limit: cursorFilter?.limit ?? limit,
