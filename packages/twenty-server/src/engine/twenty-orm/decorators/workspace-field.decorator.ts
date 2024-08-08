@@ -1,11 +1,12 @@
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
+import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { TypedReflect } from 'src/utils/typed-reflect';
-import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 
 export interface WorkspaceFieldOptions<
   T extends FieldMetadataType | 'default',
@@ -17,6 +18,7 @@ export interface WorkspaceFieldOptions<
   icon?: string;
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
+  settings?: FieldMetadataSettings<T>;
 }
 
 export function WorkspaceField<T extends FieldMetadataType>(

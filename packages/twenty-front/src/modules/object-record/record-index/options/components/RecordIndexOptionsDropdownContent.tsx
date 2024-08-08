@@ -30,10 +30,13 @@ import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
+import { useLocation } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
 
 type RecordIndexOptionsMenu = 'fields' | 'hiddenFields';
 
@@ -125,6 +128,11 @@ export const RecordIndexOptionsDropdownContent = ({
     viewType,
   });
 
+  const location = useLocation();
+  const setNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
+
   return (
     <>
       {!currentMenu && (
@@ -191,7 +199,12 @@ export const RecordIndexOptionsDropdownContent = ({
           )}
           <DropdownMenuSeparator />
 
-          <UndecoratedLink to={settingsUrl}>
+          <UndecoratedLink
+            to={settingsUrl}
+            onClick={() => {
+              setNavigationMemorizedUrl(location.pathname + location.search);
+            }}
+          >
             <DropdownMenuItemsContainer>
               <MenuItem LeftIcon={IconSettings} text="Edit Fields" />
             </DropdownMenuItemsContainer>
@@ -199,7 +212,7 @@ export const RecordIndexOptionsDropdownContent = ({
         </>
       )}
 
-      {viewType === ViewType.Kanban && (
+      {viewType === ViewType.Kanban && !currentMenu && (
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>

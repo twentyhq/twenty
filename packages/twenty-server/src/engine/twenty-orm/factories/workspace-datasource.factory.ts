@@ -26,20 +26,20 @@ export class WorkspaceDatasourceFactory {
 
   public async create(
     workspaceId: string,
-    cacheVersion: string | null,
+    workspaceSchemaVersion: string | null,
   ): Promise<WorkspaceDataSource> {
-    const desiredCacheVersion =
-      cacheVersion ??
+    const desiredWorkspaceSchemaVersion =
+      workspaceSchemaVersion ??
       (await this.workspaceCacheVersionService.getVersion(workspaceId));
 
-    if (!desiredCacheVersion) {
+    if (!desiredWorkspaceSchemaVersion) {
       throw new Error('Cache version not found');
     }
 
-    const latestCacheVersion =
+    const latestWorkspaceSchemaVersion =
       await this.workspaceCacheVersionService.getVersion(workspaceId);
 
-    if (latestCacheVersion !== desiredCacheVersion) {
+    if (latestWorkspaceSchemaVersion !== desiredWorkspaceSchemaVersion) {
       throw new Error('Cache version mismatch');
     }
 
@@ -70,7 +70,7 @@ export class WorkspaceDatasourceFactory {
     }
 
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
-      `${workspaceId}-${cacheVersion}`,
+      `${workspaceId}-${latestWorkspaceSchemaVersion}`,
       async () => {
         const dataSourceMetadata =
           await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(

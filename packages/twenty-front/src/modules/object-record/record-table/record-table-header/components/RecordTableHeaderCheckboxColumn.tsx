@@ -47,6 +47,7 @@ export const RecordTableHeaderCheckboxColumn = () => {
     <StyledColumnHeaderCell>
       <StyledContainer>
         <Checkbox
+          hoverable
           checked={checked}
           onChange={onChange}
           indeterminate={indeterminate}

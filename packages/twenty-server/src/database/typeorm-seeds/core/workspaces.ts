@@ -1,6 +1,9 @@
 import { DataSource } from 'typeorm';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 
 const tableName = 'workspace';
 
@@ -15,7 +18,12 @@ export const seedWorkspaces = async (
   const workspaces: {
     [key: string]: Pick<
       Workspace,
-      'id' | 'displayName' | 'domainName' | 'inviteHash' | 'logo'
+      | 'id'
+      | 'displayName'
+      | 'domainName'
+      | 'inviteHash'
+      | 'logo'
+      | 'activationStatus'
     >;
   } = {
     [SEED_APPLE_WORKSPACE_ID]: {
@@ -24,6 +32,7 @@ export const seedWorkspaces = async (
       domainName: 'apple.dev',
       inviteHash: 'apple.dev-invite-hash',
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     },
     [SEED_TWENTY_WORKSPACE_ID]: {
       id: workspaceId,
@@ -31,6 +40,7 @@ export const seedWorkspaces = async (
       domainName: 'twenty.dev',
       inviteHash: 'twenty.dev-invite-hash',
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png',
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
     },
   };
 
@@ -43,6 +53,7 @@ export const seedWorkspaces = async (
       'domainName',
       'inviteHash',
       'logo',
+      'activationStatus',
     ])
     .orIgnore()
     .values(workspaces[workspaceId])

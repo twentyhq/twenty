@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   QueryRunner,
@@ -9,34 +9,34 @@ import {
   TableUnique,
 } from 'typeorm';
 
-import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
-  WorkspaceMigrationTableAction,
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnCreate,
   WorkspaceMigrationColumnCreateRelation,
-  WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnDropRelation,
-  WorkspaceMigrationTableActionType,
   WorkspaceMigrationForeignTable,
   WorkspaceMigrationIndexAction,
   WorkspaceMigrationIndexActionType,
+  WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
 
-import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
+import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
+  private readonly logger = new Logger(WorkspaceMigrationRunnerService.name);
+
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly workspaceMigrationEnumService: WorkspaceMigrationEnumService,
     private readonly workspaceMigrationTypeService: WorkspaceMigrationTypeService,
   ) {}
@@ -78,6 +78,8 @@ export class WorkspaceMigrationRunnerService {
 
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await queryRunner.query(`SET LOCAL search_path TO ${schemaName}`);
 
     try {
       // Loop over each migration and create or update the table
@@ -203,7 +205,20 @@ export class WorkspaceMigrationRunnerService {
           );
           break;
         case WorkspaceMigrationIndexActionType.DROP:
-          await queryRunner.dropIndex(`${schemaName}.${tableName}`, index.name);
+          try {
+            await queryRunner.dropIndex(
+              `${schemaName}.${tableName}`,
+              index.name,
+            );
+          } catch (error) {
+            // Ignore error if index does not exist
+            if (
+              error.message ===
+              `Supplied index ${index.name} was not found in table ${schemaName}.${tableName}`
+            ) {
+              continue;
+            }
+          }
           break;
         default:
           throw new Error(`Migration index action not supported`);
@@ -227,7 +242,7 @@ export class WorkspaceMigrationRunnerService {
       new Table({
         name: tableName,
         schema: schemaName,
-        columns: customTableDefaultColumns,
+        columns: customTableDefaultColumns(tableName),
       }),
       true,
     );

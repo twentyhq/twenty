@@ -245,6 +245,7 @@ export const RecordBoardCard = () => {
           )}
           <StyledCheckboxContainer className="checkbox-container">
             <Checkbox
+              hoverable
               checked={isCurrentCardSelected}
               onChange={() => setIsCurrentCardSelected(!isCurrentCardSelected)}
               variant={CheckboxVariant.Secondary}
@@ -262,7 +263,7 @@ export const RecordBoardCard = () => {
               >
                 <FieldContext.Provider
                   value={{
-                    entityId: recordId,
+                    recordId,
                     maxWidth: 156,
                     recoilScopeId: recordId + fieldDefinition.fieldMetadataId,
                     isLabelIdentifier: false,

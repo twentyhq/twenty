@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ModalCloseButton } from './ModalCloseButton';
 
 const StyledModal = styled(Modal)`
@@ -16,7 +16,7 @@ const StyledModal = styled(Modal)`
     min-width: auto;
     min-height: auto;
     width: 100%;
-    height: 100%;
+    height: 80%;
   }
 `;
 
@@ -40,11 +40,15 @@ export const ModalWrapper = ({
   const { rtl } = useSpreadsheetImportInternal();
 
   return (
-    <StyledModal isOpen={isOpen} size="large">
-      <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
-        <ModalCloseButton onClose={onClose} />
-        {children}
-      </StyledRtlLtr>
-    </StyledModal>
+    <>
+      {isOpen && (
+        <StyledModal size="large" onClose={onClose} isClosable={true}>
+          <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
+            <ModalCloseButton onClose={onClose} />
+            {children}
+          </StyledRtlLtr>
+        </StyledModal>
+      )}
+    </>
   );
 };

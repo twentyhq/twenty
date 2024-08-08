@@ -80,7 +80,7 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCalendar',
   })
   @WorkspaceIsNullable()
-  receivedAt: string | null;
+  receivedAt: Date | null;
 
   @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageThread,

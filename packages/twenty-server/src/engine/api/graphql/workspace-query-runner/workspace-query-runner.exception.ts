@@ -8,7 +8,7 @@ export class WorkspaceQueryRunnerException extends CustomException {
 }
 
 export enum WorkspaceQueryRunnerExceptionCode {
-  INVALID_QUERY_INPUT = 'INVALID_FIELD_INPUT',
+  INVALID_QUERY_INPUT = 'INVALID_QUERY_INPUT',
   DATA_NOT_FOUND = 'DATA_NOT_FOUND',
   QUERY_TIMEOUT = 'QUERY_TIMEOUT',
   QUERY_VIOLATES_UNIQUE_CONSTRAINT = 'QUERY_VIOLATES_UNIQUE_CONSTRAINT',

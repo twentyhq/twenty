@@ -26,22 +26,35 @@ const companyMocks = [
         ) {
           createCompanies(data: $data, upsert: $upsert) {
             __typename
-            xLink {
+            id
+            visaSponsorship
+            createdBy {
+              source
+              workspaceMemberId
+              name
+            }
+            domainName {
               primaryLinkUrl
               primaryLinkLabel
               secondaryLinks
             }
+            introVideo {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            position
+            annualRecurringRevenue {
+              amountMicros
+              currencyCode
+            }
+            employees
             linkedinLink {
               primaryLinkUrl
               primaryLinkLabel
               secondaryLinks
             }
-            domainName
-            annualRecurringRevenue {
-              amountMicros
-              currencyCode
-            }
-            createdAt
+            workPolicy
             address {
               addressStreet1
               addressStreet2
@@ -52,11 +65,17 @@ const companyMocks = [
               addressLat
               addressLng
             }
-            updatedAt
             name
+            updatedAt
+            xLink {
+              primaryLinkUrl
+              primaryLinkLabel
+              secondaryLinks
+            }
+            myCustomField
+            createdAt
             accountOwnerId
-            employees
-            id
+            tagline
             idealCustomerProfile
           }
         }
@@ -64,11 +83,12 @@ const companyMocks = [
       variables: {
         data: [
           {
-            domainName: 'example.com',
+            createdBy: { source: 'IMPORT' },
             employees: 0,
             idealCustomerProfile: true,
             name: 'Example Company',
             id: companyId,
+            visaSponsorship: false,
           },
         ],
         upsert: true,
@@ -157,7 +177,6 @@ describe('useSpreadsheetCompanyImport', () => {
             {
               id: companyId,
               name: 'Example Company',
-              domainName: 'example.com',
               idealCustomerProfile: true,
               employees: '0',
             },
@@ -167,7 +186,6 @@ describe('useSpreadsheetCompanyImport', () => {
             {
               id: companyId,
               name: 'Example Company',
-              domainName: 'example.com',
               __index: 'cbc3985f-dde9-46d1-bae2-c124141700ac',
               idealCustomerProfile: true,
               employees: '0',

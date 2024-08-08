@@ -30,6 +30,7 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.MULTI_SELECT,
     FieldMetadataType.POSITION,
     FieldMetadataType.RAW_JSON,
+    FieldMetadataType.RICH_TEXT,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {
@@ -132,6 +133,15 @@ export const mapFieldMetadataToGraphqlQuery = (
         addressCountry
         addressLat
         addressLng
+      }
+    `;
+  } else if (fieldType === FieldMetadataType.ACTOR) {
+    return `
+      ${field.name}
+      {
+        source
+        workspaceMemberId
+        name
       }
     `;
   }

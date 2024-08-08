@@ -1,12 +1,7 @@
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
-import { useCreateActivityInCache } from '@/activities/hooks/useCreateActivityInCache';
-import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
-import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
-import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
-import { ActivityType } from '@/activities/types/Activity';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
@@ -14,54 +9,84 @@ import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPage
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
+import { Note } from '@/activities/types/Note';
+import { NoteTarget } from '@/activities/types/NoteTarget';
+import { Task } from '@/activities/types/Task';
+import { TaskTarget } from '@/activities/types/TaskTarget';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
-export const useOpenCreateActivityDrawer = () => {
+export const useOpenCreateActivityDrawer = ({
+  activityObjectNameSingular,
+}: {
+  activityObjectNameSingular:
+    | CoreObjectNameSingular.Note
+    | CoreObjectNameSingular.Task;
+}) => {
   const { openRightDrawer } = useRightDrawer();
 
   const setHotkeyScope = useSetHotkeyScope();
 
-  const { createActivityInCache } = useCreateActivityInCache();
+  const { createOneRecord: createOneActivity } = useCreateOneRecord<
+    Task | Note
+  >({
+    objectNameSingular: activityObjectNameSingular,
+  });
+
+  const { createOneRecord: createOneActivityTarget } = useCreateOneRecord<
+    TaskTarget | NoteTarget
+  >({
+    objectNameSingular:
+      activityObjectNameSingular === CoreObjectNameSingular.Task
+        ? CoreObjectNameSingular.TaskTarget
+        : CoreObjectNameSingular.NoteTarget,
+  });
 
   const setActivityTargetableEntityArray = useSetRecoilState(
     activityTargetableEntityArrayState,
   );
   const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
-
-  const setIsCreatingActivity = useSetRecoilState(isActivityInCreateModeState);
-
-  const setTemporaryActivityForEditor = useSetRecoilState(
-    temporaryActivityForEditorState,
+  const setViewableRecordNameSingular = useSetRecoilState(
+    viewableRecordNameSingularState,
   );
 
-  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState);
-
-  const [, setIsUpsertingActivityInDB] = useRecoilState(
+  const setIsUpsertingActivityInDB = useSetRecoilState(
     isUpsertingActivityInDBState,
   );
 
   const openCreateActivityDrawer = async ({
-    type,
     targetableObjects,
     customAssignee,
   }: {
-    type: ActivityType;
     targetableObjects: ActivityTargetableObject[];
     customAssignee?: WorkspaceMember;
   }) => {
-    const { createdActivityInCache } = createActivityInCache({
-      type,
-      targetObject: targetableObjects[0],
-      customAssignee,
+    const activity = await createOneActivity({
+      assigneeId: customAssignee?.id,
     });
 
-    setActivityIdInDrawer(createdActivityInCache.id);
-    setTemporaryActivityForEditor(createdActivityInCache);
-    setIsCreatingActivity(true);
+    const targetableObjectRelationIdName = `${targetableObjects[0].targetObjectNameSingular}Id`;
+
+    await createOneActivityTarget({
+      taskId:
+        activityObjectNameSingular === CoreObjectNameSingular.Task
+          ? activity.id
+          : undefined,
+      noteId:
+        activityObjectNameSingular === CoreObjectNameSingular.Note
+          ? activity.id
+          : undefined,
+      [targetableObjectRelationIdName]: targetableObjects[0].id,
+    });
+
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-    setViewableRecordId(createdActivityInCache.id);
+    setViewableRecordId(activity.id);
+    setViewableRecordNameSingular(activityObjectNameSingular);
     setActivityTargetableEntityArray(targetableObjects ?? []);
-    openRightDrawer(RightDrawerPages.CreateActivity);
+
+    openRightDrawer(RightDrawerPages.ViewRecord);
     setIsUpsertingActivityInDB(false);
   };
 

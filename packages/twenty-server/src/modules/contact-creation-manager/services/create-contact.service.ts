@@ -3,49 +3,61 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/contact-creation-manager/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
-import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { computeDisplayName } from 'src/utils/compute-display-name';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 type ContactToCreate = {
   handle: string;
   displayName: string;
   companyId?: string;
-};
-
-type FormattedContactToCreate = {
-  id: string;
-  handle: string;
-  firstName: string;
-  lastName: string;
-  companyId?: string;
+  createdBySource: FieldActorSource;
+  createdByWorkspaceMember?: WorkspaceMemberWorkspaceEntity | null;
 };
 
 @Injectable()
 export class CreateContactService {
   constructor(
-    @InjectObjectMetadataRepository(PersonWorkspaceEntity)
-    private readonly personRepository: PersonRepository,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   private formatContacts(
     contactsToCreate: ContactToCreate[],
-  ): FormattedContactToCreate[] {
+    lastPersonPosition: number,
+  ): DeepPartial<PersonWorkspaceEntity>[] {
     return contactsToCreate.map((contact) => {
       const id = v4();
 
-      const { handle, displayName, companyId } = contact;
+      const {
+        handle,
+        displayName,
+        companyId,
+        createdBySource,
+        createdByWorkspaceMember,
+      } = contact;
 
       const { firstName, lastName } =
         getFirstNameAndLastNameFromHandleAndDisplayName(handle, displayName);
+      const createdByName = computeDisplayName(createdByWorkspaceMember?.name);
 
       return {
         id,
-        handle,
-        firstName,
-        lastName,
+        email: handle,
+        name: {
+          firstName,
+          lastName,
+        },
         companyId,
+        createdBy: {
+          source: createdBySource,
+          workspaceMemberId: contact.createdByWorkspaceMember?.id,
+          name: createdByName,
+        },
+        position: ++lastPersonPosition,
       };
     });
   }
@@ -54,15 +66,42 @@ export class CreateContactService {
     contactsToCreate: ContactToCreate[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<PersonWorkspaceEntity[]> {
+  ): Promise<DeepPartial<PersonWorkspaceEntity>[]> {
     if (contactsToCreate.length === 0) return [];
 
-    const formattedContacts = this.formatContacts(contactsToCreate);
+    const personRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        PersonWorkspaceEntity,
+      );
 
-    return await this.personRepository.createPeople(
-      formattedContacts,
-      workspaceId,
+    const lastPersonPosition = await this.getLastPersonPosition(
+      personRepository,
       transactionManager,
     );
+
+    const formattedContacts = this.formatContacts(
+      contactsToCreate,
+      lastPersonPosition,
+    );
+
+    return personRepository.save(
+      formattedContacts,
+      undefined,
+      transactionManager,
+    );
+  }
+
+  private async getLastPersonPosition(
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>,
+    transactionManager?: EntityManager,
+  ): Promise<number> {
+    const lastPersonPosition = await personRepository.maximum(
+      'position',
+      undefined,
+      transactionManager,
+    );
+
+    return lastPersonPosition ?? 0;
   }
 }

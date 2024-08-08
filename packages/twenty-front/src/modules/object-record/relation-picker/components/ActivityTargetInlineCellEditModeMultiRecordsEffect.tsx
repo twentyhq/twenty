@@ -7,6 +7,7 @@ import {
 } from 'recoil';
 
 import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
 import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
 import {
@@ -48,9 +49,14 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
   const relationPickerSearchFilter = useRecoilValue(
     relationPickerSearchFilterState,
   );
+
   const { filteredSelectedObjectRecords, loading, objectRecordsToSelect } =
     useMultiObjectSearch({
       searchFilterValue: relationPickerSearchFilter,
+      excludedObjects: [
+        CoreObjectNameSingular.Task,
+        CoreObjectNameSingular.Note,
+      ],
       selectedObjectRecordIds,
       excludedObjectRecordIds: [],
       limit: 10,

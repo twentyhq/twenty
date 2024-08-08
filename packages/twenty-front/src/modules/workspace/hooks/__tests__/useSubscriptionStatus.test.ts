@@ -1,5 +1,5 @@
-import { act } from 'react-dom/test-utils';
 import { renderHook } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
@@ -8,12 +8,15 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { SubscriptionStatus } from '~/generated/graphql';
+import {
+  SubscriptionStatus,
+  WorkspaceActivationStatus,
+} from '~/generated/graphql';
 
 const currentWorkspace = {
   id: '1',
   currentBillingSubscription: { status: SubscriptionStatus.Incomplete },
-  activationStatus: 'active',
+  activationStatus: WorkspaceActivationStatus.Active,
   allowImpersonation: true,
 } as CurrentWorkspace;
 

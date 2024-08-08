@@ -6,7 +6,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsAppearance } from '../SettingsAppearance';
+import { SettingsAppearance } from '../profile/appearance/components/SettingsAppearance';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsAppearance',

@@ -1,7 +1,9 @@
-import { Address } from 'nodemailer/lib/mailer';
-
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import {
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -22,10 +24,13 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { AddressMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
@@ -48,13 +53,13 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.domainName,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.LINKS,
     label: 'Domain Name',
     description:
       'The company website URL. We use this url to fetch the company icon',
     icon: 'IconLink',
   })
-  domainName?: string;
+  domainName?: LinksMetadata;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.employees,
@@ -105,7 +110,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMap',
   })
   @WorkspaceIsNullable()
-  address: Address;
+  address: AddressMetadata;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.idealCustomerProfile,
@@ -128,6 +133,19 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   position: number | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: 'Created by',
+    icon: 'IconCreativeCommonsSa',
+    description: 'The creator of the record',
+    defaultValue: {
+      source: `'${FieldActorSource.MANUAL}'`,
+      name: "''",
+    },
+  })
+  createdBy: ActorMetadata;
 
   // Relations
   @WorkspaceRelation({
@@ -169,7 +187,30 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
   activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: COMPANY_STANDARD_FIELD_IDS.taskTargets,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Tasks',
+    description: 'Tasks tied to the company',
+    icon: 'IconCheckbox',
+    inverseSideTarget: () => TaskTargetWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: COMPANY_STANDARD_FIELD_IDS.noteTargets,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Notes',
+    description: 'Notes tied to the company',
+    icon: 'IconNotes',
+    inverseSideTarget: () => NoteTargetWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.opportunities,

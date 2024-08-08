@@ -37,6 +37,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
 
     payload.workspaceId = workspaceId;
     payload.userId = userId;
+    payload.name = 'user.signup';
 
     this.eventEmitter.emit('user.signup', payload);
 
@@ -80,6 +81,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       after: workspaceMember[0],
     };
     payload.recordId = workspaceMember[0].id;
+    payload.name = 'workspaceMember.created';
 
     this.eventEmitter.emit('workspaceMember.created', payload);
   }

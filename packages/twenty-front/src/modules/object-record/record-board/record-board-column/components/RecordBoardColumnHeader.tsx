@@ -88,6 +88,11 @@ export const RecordBoardColumnHeader = () => {
               : 'transparent'
           }
           text={columnDefinition.title}
+          weight={
+            columnDefinition.type === RecordBoardColumnDefinitionType.Value
+              ? 'regular'
+              : 'medium'
+          }
         />
         {!!boardColumnTotal && <StyledAmount>${boardColumnTotal}</StyledAmount>}
         <StyledNumChildren>{recordCount}</StyledNumChildren>

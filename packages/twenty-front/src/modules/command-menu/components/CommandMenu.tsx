@@ -1,21 +1,24 @@
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useMemo, useRef } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
-import { Avatar, IconNotes, IconSparkles, IconX } from 'twenty-ui';
 
 import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hooks/useOpenCopilotRightDrawer';
 import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { Activity } from '@/activities/types/Activity';
+import { Note } from '@/activities/types/Note';
+import { CommandGroup } from '@/command-menu/components/CommandGroup';
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { commandMenuCommandsState } from '@/command-menu/states/commandMenuCommandsState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { Command, CommandType } from '@/command-menu/types/Command';
 import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { Person } from '@/people/types/Person';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -24,18 +27,17 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo, useRef } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { Key } from 'ts-key-enum';
+import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
-import { isDefined } from '~/utils/isDefined';
 
-import { useCommandMenu } from '../hooks/useCommandMenu';
-import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
-import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
-import { Command, CommandType } from '../types/Command';
-
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { CommandGroup } from './CommandGroup';
-import { CommandMenuItem } from './CommandMenuItem';
+const SEARCH_BAR_HEIGHT = 56;
+const SEARCH_BAR_PADDING = 3;
+const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
 const StyledCommandMenu = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -61,12 +63,12 @@ const StyledInputContainer = styled.div`
 
   display: flex;
   font-size: ${({ theme }) => theme.font.size.lg};
-  height: 56px;
+  height: ${SEARCH_BAR_HEIGHT}px;
   margin: 0;
   outline: none;
   position: relative;
 
-  padding: 0 ${({ theme }) => theme.spacing(3)};
+  padding: 0 ${({ theme }) => theme.spacing(SEARCH_BAR_PADDING)};
 `;
 
 const StyledInput = styled.input`
@@ -101,7 +103,13 @@ const StyledList = styled.div`
   transition-property: height;
 `;
 
-const StyledInnerList = styled.div`
+const StyledInnerList = styled.div<{ isMobile: boolean }>`
+  max-height: ${({ isMobile }) =>
+    isMobile
+      ? `calc(100dvh - ${SEARCH_BAR_HEIGHT}px - ${
+          SEARCH_BAR_PADDING * 2
+        }px - ${MOBILE_NAVIGATION_BAR_HEIGHT}px)`
+      : `calc(100dvh - ${SEARCH_BAR_HEIGHT}px - ${SEARCH_BAR_PADDING * 2}px)`};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(1)};
@@ -122,7 +130,9 @@ export const CommandMenu = () => {
   const { toggleCommandMenu, onItemClick, closeCommandMenu } = useCommandMenu();
   const commandMenuRef = useRef<HTMLDivElement>(null);
 
-  const openActivityRightDrawer = useOpenActivityRightDrawer();
+  const openActivityRightDrawer = useOpenActivityRightDrawer({
+    objectNameSingular: CoreObjectNameSingular.Note,
+  });
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [commandMenuSearch, setCommandMenuSearch] = useRecoilState(
     commandMenuSearchState,
@@ -182,14 +192,25 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { records: activities } = useFindManyRecords<Activity>({
+  const { records: notes } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: CoreObjectNameSingular.Activity,
+    objectNameSingular: CoreObjectNameSingular.Note,
     filter: commandMenuSearch
       ? makeOrFilterVariables([
           { title: { ilike: `%${commandMenuSearch}%` } },
           { body: { ilike: `%${commandMenuSearch}%` } },
         ])
+      : undefined,
+    limit: 3,
+  });
+
+  const { records: opportunities } = useFindManyRecords({
+    skip: !isCommandMenuOpened,
+    objectNameSingular: CoreObjectNameSingular.Opportunity,
+    filter: commandMenuSearch
+      ? {
+          name: { ilike: `%${commandMenuSearch}%` },
+        }
       : undefined,
     limit: 3,
   });
@@ -214,24 +235,35 @@ export const CommandMenu = () => {
     [companies],
   );
 
-  const activityCommands = useMemo(
+  const opportunityCommands = useMemo(
     () =>
-      activities.map((activity) => ({
-        id: activity.id,
-        label: activity.title ?? '',
-        to: '',
-        onCommandClick: () => openActivityRightDrawer(activity.id),
+      opportunities.map(({ id, name }) => ({
+        id,
+        label: name ?? '',
+        to: `object/opportunity/${id}`,
       })),
-    [activities, openActivityRightDrawer],
+    [opportunities],
+  );
+
+  const noteCommands = useMemo(
+    () =>
+      notes.map((note) => ({
+        id: note.id,
+        label: note.title ?? '',
+        to: '',
+        onCommandClick: () => openActivityRightDrawer(note.id),
+      })),
+    [notes, openActivityRightDrawer],
   );
 
   const otherCommands = useMemo(() => {
     return [
       ...peopleCommands,
       ...companyCommands,
-      ...activityCommands,
+      ...opportunityCommands,
+      ...noteCommands,
     ] as Command[];
-  }, [peopleCommands, companyCommands, activityCommands]);
+  }, [peopleCommands, companyCommands, noteCommands, opportunityCommands]);
 
   const checkInShortcuts = (cmd: Command, search: string) => {
     return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
@@ -291,7 +323,8 @@ export const CommandMenu = () => {
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people.map((person) => person.id))
     .concat(companies.map((company) => company.id))
-    .concat(activities.map((activity) => activity.id));
+    .concat(opportunities.map((opportunity) => opportunity.id))
+    .concat(notes.map((note) => note.id));
 
   return (
     <>
@@ -317,7 +350,7 @@ export const CommandMenu = () => {
           </StyledInputContainer>
           <StyledList>
             <ScrollWrapper>
-              <StyledInnerList>
+              <StyledInnerList isMobile={isMobile}>
                 <SelectableList
                   selectableListId="command-menu-list"
                   selectableItemIdArray={selectableItemIds}
@@ -339,7 +372,8 @@ export const CommandMenu = () => {
                     !matchingNavigateCommand.length &&
                     !people.length &&
                     !companies.length &&
-                    !activities.length && (
+                    !notes.length &&
+                    !opportunities.length && (
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
                   {isCopilotEnabled && (
@@ -429,7 +463,7 @@ export const CommandMenu = () => {
                               placeholderColorSeed={company.id}
                               placeholder={company.name}
                               avatarUrl={getLogoUrlFromDomainName(
-                                company.domainName,
+                                getCompanyDomainName(company),
                               )}
                             />
                           )}
@@ -437,15 +471,38 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     ))}
                   </CommandGroup>
-                  <CommandGroup heading="Notes">
-                    {activities.map((activity) => (
-                      <SelectableItem itemId={activity.id} key={activity.id}>
+                  <CommandGroup heading="Opportunities">
+                    {opportunities.map((opportunity) => (
+                      <SelectableItem
+                        itemId={opportunity.id}
+                        key={opportunity.id}
+                      >
                         <CommandMenuItem
-                          id={activity.id}
+                          id={opportunity.id}
+                          key={opportunity.id}
+                          label={opportunity.name}
+                          to={`object/opportunity/${opportunity.id}`}
+                          Icon={() => (
+                            <Avatar
+                              type="rounded"
+                              avatarUrl={null}
+                              placeholderColorSeed={opportunity.id}
+                              placeholder={opportunity.name}
+                            />
+                          )}
+                        />
+                      </SelectableItem>
+                    ))}
+                  </CommandGroup>
+                  <CommandGroup heading="Notes">
+                    {notes.map((note) => (
+                      <SelectableItem itemId={note.id} key={note.id}>
+                        <CommandMenuItem
+                          id={note.id}
                           Icon={IconNotes}
-                          key={activity.id}
-                          label={activity.title ?? ''}
-                          onClick={() => openActivityRightDrawer(activity.id)}
+                          key={note.id}
+                          label={note.title ?? ''}
+                          onClick={() => openActivityRightDrawer(note.id)}
                         />
                       </SelectableItem>
                     ))}

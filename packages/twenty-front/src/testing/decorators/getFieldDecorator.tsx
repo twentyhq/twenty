@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { Decorator } from '@storybook/react';
+import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -108,7 +108,7 @@ export const getFieldDecorator =
       <RecordFieldValueSelectorContextProvider>
         <FieldContext.Provider
           value={{
-            entityId: record.id,
+            recordId: record.id,
             basePathToShowPage: '/object-record/',
             isLabelIdentifier,
             fieldDefinition: formatFieldMetadataItemAsColumnDefinition({

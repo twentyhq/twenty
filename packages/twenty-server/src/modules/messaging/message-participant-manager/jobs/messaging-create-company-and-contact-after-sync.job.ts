@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -84,6 +85,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
       connectedAccount,
       contactsToCreate,
       workspaceId,
+      FieldActorSource.EMAIL,
     );
 
     this.logger.log(

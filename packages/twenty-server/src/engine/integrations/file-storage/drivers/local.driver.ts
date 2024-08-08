@@ -1,7 +1,12 @@
-import * as fs from 'fs/promises';
 import { createReadStream, existsSync } from 'fs';
-import { join, dirname } from 'path';
+import * as fs from 'fs/promises';
+import { dirname, join } from 'path';
 import { Readable } from 'stream';
+
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 
 import { StorageDriver } from './interfaces/storage-driver.interface';
 
@@ -65,6 +70,49 @@ export class LocalDriver implements StorageDriver {
       params.filename,
     );
 
-    return createReadStream(filePath);
+    try {
+      return createReadStream(filePath);
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      throw error;
+    }
+  }
+
+  async move(params: {
+    from: { folderPath: string; filename: string };
+    to: { folderPath: string; filename: string };
+  }): Promise<void> {
+    const fromPath = join(
+      `${this.options.storagePath}/`,
+      params.from.folderPath,
+      params.from.filename,
+    );
+
+    const toPath = join(
+      `${this.options.storagePath}/`,
+      params.to.folderPath,
+      params.to.filename,
+    );
+
+    await this.createFolder(dirname(toPath));
+
+    try {
+      await fs.rename(fromPath, toPath);
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      throw error;
+    }
   }
 }

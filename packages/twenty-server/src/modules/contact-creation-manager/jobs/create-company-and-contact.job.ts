@@ -1,6 +1,7 @@
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
 
@@ -11,6 +12,7 @@ export type CreateCompanyAndContactJobData = {
     displayName: string;
     handle: string;
   }[];
+  source: FieldActorSource;
 };
 
 @Processor(MessageQueue.contactCreationQueue)
@@ -21,7 +23,7 @@ export class CreateCompanyAndContactJob {
 
   @Process(CreateCompanyAndContactJob.name)
   async handle(data: CreateCompanyAndContactJobData): Promise<void> {
-    const { workspaceId, connectedAccount, contactsToCreate } = data;
+    const { workspaceId, connectedAccount, contactsToCreate, source } = data;
 
     await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
       connectedAccount,
@@ -30,6 +32,7 @@ export class CreateCompanyAndContactJob {
         displayName: contact.displayName,
       })),
       workspaceId,
+      source,
     );
   }
 }

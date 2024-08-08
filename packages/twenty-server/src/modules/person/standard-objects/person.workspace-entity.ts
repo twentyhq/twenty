@@ -1,5 +1,9 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import {
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -22,7 +26,9 @@ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/co
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 @WorkspaceEntity({
@@ -33,6 +39,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
   description: 'A person',
   icon: 'IconUser',
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
+  imageIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
 })
 export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -122,6 +129,19 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   position: number | null;
 
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: 'Created by',
+    icon: 'IconCreativeCommonsSa',
+    description: 'The creator of the record',
+    defaultValue: {
+      source: `'${FieldActorSource.MANUAL}'`,
+      name: "''",
+    },
+  })
+  createdBy: ActorMetadata;
+
   // Relations
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.company,
@@ -141,8 +161,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'POC for Opportunities',
-    description: 'Point of Contact for Opportunities',
+    label: 'Linked Opportunities',
+    description:
+      'List of opportunities for which that person is the point of contact',
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'pointOfContact',
@@ -159,7 +180,30 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => ActivityTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsSystem()
   activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.taskTargets,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Tasks',
+    description: 'Tasks tied to the contact',
+    icon: 'IconCheckbox',
+    inverseSideTarget: () => TaskTargetWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.noteTargets,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Notes',
+    description: 'Notes tied to the contact',
+    icon: 'IconNotes',
+    inverseSideTarget: () => NoteTargetWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.favorites,
