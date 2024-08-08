@@ -18,9 +18,9 @@ import {
   SaveOptions,
   UpdateResult,
 } from 'typeorm';
+import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
-import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 

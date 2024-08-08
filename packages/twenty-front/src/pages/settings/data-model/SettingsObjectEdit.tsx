@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-props-no-spreading */
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { useEffect } from 'react';
@@ -28,6 +30,7 @@ import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
 const objectEditFormSchema = z
   .object({})
@@ -103,66 +106,67 @@ export const SettingsObjectEdit = () => {
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        <SettingsPageContainer>
-          <SettingsHeaderContainer>
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Objects',
-                  href: settingsObjectsPagePath,
-                },
-                {
-                  children: activeObjectMetadataItem.labelPlural,
-                  href: `${settingsObjectsPagePath}/${objectSlug}`,
-                },
-                { children: 'Edit' },
-              ]}
-            />
-            {activeObjectMetadataItem.isCustom && (
-              <SaveAndCancelButtons
-                isSaveDisabled={!canSave}
-                isCancelDisabled={isSubmitting}
-                onCancel={() =>
-                  navigate(`${settingsObjectsPagePath}/${objectSlug}`)
-                }
-                onSave={formConfig.handleSubmit(handleSave)}
+    <RecordFieldValueSelectorContextProvider>
+      <FormProvider {...formConfig}>
+        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+          <SettingsPageContainer>
+            <SettingsHeaderContainer>
+              <Breadcrumb
+                links={[
+                  {
+                    children: 'Objects',
+                    href: settingsObjectsPagePath,
+                  },
+                  {
+                    children: activeObjectMetadataItem.labelPlural,
+                    href: `${settingsObjectsPagePath}/${objectSlug}`,
+                  },
+                  { children: 'Edit' },
+                ]}
               />
-            )}
-          </SettingsHeaderContainer>
-          <Section>
-            <H2Title
-              title="About"
-              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-            />
-            <SettingsDataModelObjectAboutForm
-              disabled={!activeObjectMetadataItem.isCustom}
-              disableNameEdit
-              objectMetadataItem={activeObjectMetadataItem}
-            />
-          </Section>
-          <Section>
-            <H2Title
-              title="Settings"
-              description="Choose the fields that will identify your records"
-            />
-            <SettingsDataModelObjectSettingsFormCard
-              objectMetadataItem={activeObjectMetadataItem}
-            />
-          </Section>
-          <Section>
-            <H2Title title="Danger zone" description="Deactivate object" />
-            <Button
-              Icon={IconArchive}
-              title="Deactivate"
-              size="small"
-              onClick={handleDisable}
-            />
-          </Section>
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </FormProvider>
+              {activeObjectMetadataItem.isCustom && (
+                <SaveAndCancelButtons
+                  isSaveDisabled={!canSave}
+                  isCancelDisabled={isSubmitting}
+                  onCancel={() =>
+                    navigate(`${settingsObjectsPagePath}/${objectSlug}`)
+                  }
+                  onSave={formConfig.handleSubmit(handleSave)}
+                />
+              )}
+            </SettingsHeaderContainer>
+            <Section>
+              <H2Title
+                title="About"
+                description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+              />
+              <SettingsDataModelObjectAboutForm
+                disabled={!activeObjectMetadataItem.isCustom}
+                disableNameEdit
+                objectMetadataItem={activeObjectMetadataItem}
+              />
+            </Section>
+            <Section>
+              <H2Title
+                title="Settings"
+                description="Choose the fields that will identify your records"
+              />
+              <SettingsDataModelObjectSettingsFormCard
+                objectMetadataItem={activeObjectMetadataItem}
+              />
+            </Section>
+            <Section>
+              <H2Title title="Danger zone" description="Deactivate object" />
+              <Button
+                Icon={IconArchive}
+                title="Deactivate"
+                size="small"
+                onClick={handleDisable}
+              />
+            </Section>
+          </SettingsPageContainer>
+        </SubMenuTopBarContainer>
+      </FormProvider>
+    </RecordFieldValueSelectorContextProvider>
   );
 };
