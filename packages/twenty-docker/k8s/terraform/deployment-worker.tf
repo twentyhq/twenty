@@ -1,17 +1,17 @@
-resource "kubernetes_deployment" "twentycrm_server" {
+resource "kubernetes_deployment" "twentycrm_worker" {
   metadata {
-    name      = "${var.twentycrm_app_name}-server"
+    name      = "${var.twentycrm_app_name}-worker"
     namespace = kubernetes_namespace.twentycrm.metadata.0.name
     labels = {
-      app = "${var.twentycrm_app_name}-server"
+      app = "${var.twentycrm_app_name}-worker"
     }
   }
 
   spec {
-    replicas = var.twentycrm_server_replicas
+    replicas = var.twentycrm_worker_replicas
     selector {
       match_labels = {
-        app = "${var.twentycrm_app_name}-server"
+        app = "${var.twentycrm_app_name}-worker"
       }
     }
 
@@ -26,31 +26,17 @@ resource "kubernetes_deployment" "twentycrm_server" {
     template {
       metadata {
         labels = {
-          app = "${var.twentycrm_app_name}-server"
+          app = "${var.twentycrm_app_name}-worker"
         }
       }
 
       spec {
         container {
-          image = var.twentycrm_server_image
-          name  = var.twentycrm_app_name
-          stdin = true
-          tty   = true
-
-          security_context {
-            allow_privilege_escalation = true
-            privileged                 = true
-            run_as_user                = 1000
-          }
-
-          env {
-            name  = "PORT"
-            value = "3000"
-          }
-          env {
-            name  = "DEBUG_MODE"
-            value = false
-          }
+          image   = var.twentycrm_server_image
+          name    = var.twentycrm_app_name
+          stdin   = true
+          tty     = true
+          command = ["yarn", "worker:prod"]
 
           env {
             name  = "SERVER_URL"
@@ -69,12 +55,7 @@ resource "kubernetes_deployment" "twentycrm_server" {
 
           env {
             name  = "ENABLE_DB_MIGRATIONS"
-            value = "true"
-          }
-
-          env {
-            name  = "SIGN_IN_PREFILLED"
-            value = "true"
+            value = "false" #it already runs on the server
           }
 
           env {
@@ -85,6 +66,7 @@ resource "kubernetes_deployment" "twentycrm_server" {
             name  = "MESSAGE_QUEUE_TYPE"
             value = "pg-boss"
           }
+
           env {
             name = "ACCESS_TOKEN_SECRET"
             value_from {
@@ -125,11 +107,6 @@ resource "kubernetes_deployment" "twentycrm_server" {
             }
           }
 
-          port {
-            container_port = 3000
-            protocol       = "TCP"
-          }
-
           resources {
             requests = {
               cpu    = "250m"
@@ -139,19 +116,6 @@ resource "kubernetes_deployment" "twentycrm_server" {
               cpu    = "1000m"
               memory = "1024Mi"
             }
-          }
-
-          volume_mount {
-            name       = "server-data"
-            mount_path = var.twentycrm_server_data_mount_path
-          }
-        }
-
-        volume {
-          name = "server-data"
-
-          persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.server.metadata.0.name
           }
         }
 
