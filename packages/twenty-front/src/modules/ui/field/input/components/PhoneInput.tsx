@@ -1,12 +1,13 @@
+import styled from '@emotion/styled';
 import { useEffect, useRef, useState } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
-import styled from '@emotion/styled';
 import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 
+import { E164Number } from 'libphonenumber-js';
 import 'react-phone-number-input/style.css';
 
 const StyledContainer = styled.div`
@@ -89,9 +90,9 @@ export const PhoneInput = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
 
-  const handleChange = (newValue: string) => {
+  const handleChange = (newValue: E164Number) => {
     setInternalValue(newValue);
-    onChange?.(newValue);
+    onChange?.(newValue as string);
   };
 
   useEffect(() => {

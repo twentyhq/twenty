@@ -16629,6 +16629,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/js-levenshtein@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "@types/js-levenshtein@npm:1.1.3"
+  checksum: 10c0/025f2bd8d865cfa7a996799a1a2f2a77fa2fc74a28971aa035a103de35d7c1e3d949721a88f57fdb532815bbcb2bf7019196a608ed0a8bbd1023d64c52bb251b
+  languageName: node
+  linkType: hard
+
 "@types/js-yaml@npm:^4.0.0":
   version: 4.0.9
   resolution: "@types/js-yaml@npm:4.0.9"
@@ -47536,6 +47543,7 @@ __metadata:
     "@types/graphql-upload": "npm:^8.0.12"
     "@types/jest": "npm:^29.5.11"
     "@types/js-cookie": "npm:^3.0.3"
+    "@types/js-levenshtein": "npm:^1.1.3"
     "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/lodash.chunk": "npm:^4.2.9"
     "@types/lodash.compact": "npm:^3.0.9"
