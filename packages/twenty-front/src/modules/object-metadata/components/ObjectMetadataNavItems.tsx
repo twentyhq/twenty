@@ -130,7 +130,6 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
                 <AnimatePresence>
                   {shouldSubItemsBeDisplayed && (
                     <motion.div
-                      key={objectMetadataItem.id}
                       initial="hidden"
                       animate="visible"
                       exit="hidden"
@@ -152,6 +151,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
                               `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
                             }
                             Icon={getIcon(view.icon)}
+                            key={view.id}
                           />
                         ))}
                     </motion.div>
