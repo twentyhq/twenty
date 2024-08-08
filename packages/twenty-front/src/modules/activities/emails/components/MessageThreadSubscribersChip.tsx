@@ -45,7 +45,7 @@ export const MessageThreadSubscribersChip = ({
       ? `+${numberOfMessageThreadSubscribers - MAX_NUMBER_OF_AVATARS}`
       : null;
 
-  const label = isPrivateThread ? privateLabel : (moreAvatarsLabel ?? '');
+  const label = isPrivateThread ? privateLabel : moreAvatarsLabel ?? '';
 
   return (
     <Chip
