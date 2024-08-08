@@ -23,7 +23,7 @@ import { loggerLink } from '../utils';
 const logger = loggerLink(() => 'Twenty');
 
 export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
-  onError?: (err: GraphQLFormattedError | undefined) => void;
+  onError?: (err: readonly GraphQLFormattedError[] | undefined) => void;
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
@@ -80,9 +80,8 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       const errorLink = onError(
         ({ graphQLErrors, networkError, forward, operation }) => {
           if (isDefined(graphQLErrors)) {
+            onErrorCb?.(graphQLErrors);
             for (const graphQLError of graphQLErrors) {
-              onErrorCb?.(graphQLError);
-
               if (graphQLError.message === 'Unauthorized') {
                 return fromPromise(
                   renewToken(uri, this.tokenPair)

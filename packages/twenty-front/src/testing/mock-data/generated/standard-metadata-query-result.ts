@@ -7918,7 +7918,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                             "__typename": "fieldEdge",
                             "node": {
                                 "__typename": "field",
-                                "id": "af19a3ba-b725-4b9d-a0b7-8bf6b04fadbf",
+                                "id": "5dcef112-ce1b-46c1-a33a-4d1394628c34",
                                 "type": "DATE_TIME",
                                 "name": "updatedAt",
                                 "label": "Update date",
@@ -7941,7 +7941,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                             "__typename": "fieldEdge",
                             "node": {
                                 "__typename": "field",
-                                "id": "af19a3ba-b725-4b9d-a0b7-8bf6b04fadds",
+                                "id": "277d8939-1ead-4cdb-a560-854644219779",
                                 "type": "MULTI_SELECT",
                                 "name": "testMultiSelect",
                                 "label": "Test Multi Select",
@@ -7964,7 +7964,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                             "__typename": "fieldEdge",
                             "node": {
                                 "__typename": "field",
-                                "id": "tt929592-4f74-419e-8b26-6d216859078f",
+                                "id": "f207dd14-f05e-4f29-b222-8993d4680f31",
                                 "type": "RAW_JSON",
                                 "name": "testRawJson",
                                 "label": "Test Raw Json",
@@ -7987,7 +7987,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                             "__typename": "fieldEdge",
                             "node": {
                                 "__typename": "field",
-                                "id": "vv929592-4f74-419e-8b26-6d216859078f",
+                                "id": "81db846a-a2f9-4b31-8931-81fac5cdd1b6",
                                 "type": "RATING",
                                 "name": "testRating",
                                 "label": "Rating",
