@@ -110,7 +110,7 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconForms',
   })
   @WorkspaceIsNullable()
-  fieldPath: string;
+  fieldPath: string[];
 
   @WorkspaceRelation({
     standardId: CHART_STANDARD_FIELD_IDS.chartFilters,
@@ -127,13 +127,13 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: CHART_STANDARD_FIELD_IDS.groupBy,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.FIELD_PATH,
     label: 'Group By',
     description: 'Group by clause for the chart',
     icon: 'IconStack2',
   })
   @WorkspaceIsNullable()
-  groupBy: string;
+  groupBy: string[];
 
   @WorkspaceField({
     standardId: CHART_STANDARD_FIELD_IDS.position,
