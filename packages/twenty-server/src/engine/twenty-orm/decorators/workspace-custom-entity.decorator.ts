@@ -5,7 +5,7 @@ interface WorkspaceCustomEntityOptions {
   softDelete?: boolean;
 }
 
-export function WorkspaceCustomObject(
+export function WorkspaceCustomEntity(
   options: WorkspaceCustomEntityOptions = {},
 ): ClassDecorator {
   return (target) => {
