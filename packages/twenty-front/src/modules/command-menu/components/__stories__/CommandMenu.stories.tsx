@@ -13,6 +13,8 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { getPeopleMock } from '~/testing/mock-data/people';
 import {
   mockDefaultWorkspace,
   mockedWorkspaceMemberData,
@@ -20,6 +22,9 @@ import {
 import { sleep } from '~/utils/sleep';
 
 import { CommandMenu } from '../CommandMenu';
+
+const peopleMock = getPeopleMock();
+const companiesMock = getCompaniesMock();
 
 const openTimeout = 50;
 
@@ -88,16 +93,16 @@ export const DefaultWithoutSearch: Story = {
   },
 };
 
-export const MatchingCompanyActivityCreateNavigate: Story = {
+export const MatchingPersonCompanyActivityCreateNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Search');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'n');
+    expect(await canvas.findByText('Linkedin')).toBeInTheDocument();
+    expect(await canvas.findByText(companiesMock[0].name)).toBeInTheDocument();
     expect(await canvas.findByText('Create Note')).toBeInTheDocument();
     expect(await canvas.findByText('Go to Companies')).toBeInTheDocument();
-    expect(await canvas.findByText('Go to Opportunities')).toBeInTheDocument();
-    expect(await canvas.findByText('Go to Settings')).toBeInTheDocument();
   },
 };
 
@@ -112,13 +117,12 @@ export const OnlyMatchingCreateAndNavigate: Story = {
   },
 };
 
-export const NotMatchingAnything: Story = {
+export const AtleastMatchingOnePerson: Story = {
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Search');
     await sleep(openTimeout);
-    await userEvent.type(searchInput, 'asdasdasd');
-    // FIXME: We need to fix the filters in graphql
-    // expect(await canvas.findByText('No results found')).toBeInTheDocument();
+    await userEvent.type(searchInput, 'alex');
+    expect(await canvas.findByText('Sylvie Palmer')).toBeInTheDocument();
   },
 };
