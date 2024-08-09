@@ -36,7 +36,7 @@ const meta: Meta<typeof SupportDropdown> = {
 
       return <Story />;
     },
-    PrefetchLoadedDecorator
+    PrefetchLoadedDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

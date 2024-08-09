@@ -13,7 +13,6 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import {
   mockDefaultWorkspace,
@@ -24,7 +23,6 @@ import { sleep } from '~/utils/sleep';
 import { CommandMenu } from '../CommandMenu';
 
 const peopleMock = getPeopleMock();
-const companiesMock = getCompaniesMock();
 
 const openTimeout = 50;
 
