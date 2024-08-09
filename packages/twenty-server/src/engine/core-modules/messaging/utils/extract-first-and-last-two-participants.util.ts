@@ -15,8 +15,8 @@ export const extractFirstAndLastTwoActiveParticipants = (
   if (activeMessageParticipants.length === 0) {
     return {
       firstParticipant: {
-        personId: '',
-        workspaceMemberId: '',
+        personId: null,
+        workspaceMemberId: null,
         firstName: '',
         lastName: '',
         displayName: '',

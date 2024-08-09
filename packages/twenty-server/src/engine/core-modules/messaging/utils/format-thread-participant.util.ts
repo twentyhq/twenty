@@ -4,8 +4,8 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 export const formatThreadParticipant = (
   threadParticipant: MessageParticipantWorkspaceEntity,
 ): TimelineThreadParticipant => ({
-  personId: threadParticipant.personId || '',
-  workspaceMemberId: threadParticipant.workspaceMemberId || '',
+  personId: threadParticipant.personId,
+  workspaceMemberId: threadParticipant.workspaceMemberId,
   firstName:
     threadParticipant.person?.name?.firstName ||
     threadParticipant.workspaceMember?.name.firstName ||
