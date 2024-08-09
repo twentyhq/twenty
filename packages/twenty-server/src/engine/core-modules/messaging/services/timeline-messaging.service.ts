@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Any } from 'typeorm';
+import { Any, Not } from 'typeorm';
 
 import { TimelineThread } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -81,32 +81,43 @@ export class TimelineMessagingService {
   ): Promise<{
     [key: string]: MessageChannelVisibility;
   }> {
-    const messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants =
-      messageThreadIds.reduce(
-        (
-          messageThreadIdsForWhichWorkspaceMemberIsInNotParticipantsAcc: string[],
-          messageThreadId,
-        ) => {
-          const threadMessagesWithWorkspaceMemberInParticipants =
-            threadParticipantsByThreadId[messageThreadId].filter(
-              (threadParticipant) =>
-                threadParticipant.workspaceMemberId === workspaceMemberId,
-            );
-
-          if (threadMessagesWithWorkspaceMemberInParticipants.length === 0)
-            messageThreadIdsForWhichWorkspaceMemberIsInNotParticipantsAcc.push(
-              messageThreadId,
-            );
-
-          return messageThreadIdsForWhichWorkspaceMemberIsInNotParticipantsAcc;
-        },
-        [],
-      );
-
     const messageThreadRepository =
       await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
         'messageThread',
       );
+
+    const threadsWithoutWorkspaceMember = await messageThreadRepository.find({
+      select: {
+        id: true,
+      },
+      where: [
+        // Today, if the participant handle is not equal to the workspace member's handle, the participant is not linked to the workspace member
+        {
+          id: Any(messageThreadIds),
+          messages: {
+            messageParticipants: {
+              workspaceMemberId: Not(workspaceMemberId),
+            },
+          },
+        },
+        {
+          id: Any(messageThreadIds),
+          messages: {
+            messageChannelMessageAssociations: {
+              messageChannel: {
+                connectedAccount: {
+                  accountOwnerId: Not(workspaceMemberId),
+                },
+              },
+            },
+          },
+        },
+      ],
+    });
+
+    const threadIdsWithoutWorkspaceMember = threadsWithoutWorkspaceMember.map(
+      (thread) => thread.id,
+    );
 
     const threadVisibility = await messageThreadRepository
       .createQueryBuilder()
@@ -122,8 +133,7 @@ export class TimelineMessagingService {
         'messageChannel',
       )
       .where('messageThread.id = ANY(:messageThreadIds)', {
-        messageThreadIds:
-          messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants,
+        messageThreadIds: threadIdsWithoutWorkspaceMember,
       })
       .getRawMany();
 
@@ -156,9 +166,7 @@ export class TimelineMessagingService {
     } = messageThreadIds.reduce((threadVisibilityAcc, messageThreadId) => {
       // If the workspace member is not in the participants of the thread, use the visibility value from the query
       threadVisibilityAcc[messageThreadId] =
-        messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants.includes(
-          messageThreadId,
-        )
+        threadIdsWithoutWorkspaceMember.includes(messageThreadId)
           ? (threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotInParticipants?.[
               messageThreadId
             ] ?? MessageChannelVisibility.METADATA)
