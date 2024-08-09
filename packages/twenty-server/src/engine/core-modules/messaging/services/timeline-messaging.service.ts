@@ -32,6 +32,14 @@ export class TimelineMessagingService {
       );
 
     const messageThreads = await messageThreadRepository.find({
+      select: {
+        id: true,
+        messages: {
+          receivedAt: true,
+          subject: true,
+          text: true,
+        },
+      },
       where: {
         messages: {
           messageParticipants: {
