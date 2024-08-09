@@ -8,7 +8,7 @@ import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { UploadFlow } from './UploadFlow';
+import { SpreadsheetImportStepper } from './SpreadsheetImportStepper';
 
 const StyledHeader = styled(Modal.Header)`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -29,7 +29,7 @@ const stepTitles = {
   validationStep: 'Validate data',
 } as const;
 
-export const Steps = () => {
+export const SpreadsheetImportStepperContainer = () => {
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const { steps, initialStep } = useSpreadsheetImportInitialStep(
@@ -45,11 +45,15 @@ export const Steps = () => {
       <StyledHeader>
         <StepBar activeStep={activeStep}>
           {steps.map((key) => (
-            <StepBar.Step label={stepTitles[key]} key={key} />
+            <StepBar.Step
+              activeStep={activeStep}
+              label={stepTitles[key]}
+              key={key}
+            />
           ))}
         </StepBar>
       </StyledHeader>
-      <UploadFlow nextStep={nextStep} prevStep={prevStep} />
+      <SpreadsheetImportStepper nextStep={nextStep} prevStep={prevStep} />
     </>
   );
 };

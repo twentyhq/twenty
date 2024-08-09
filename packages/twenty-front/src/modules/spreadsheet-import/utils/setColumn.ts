@@ -11,7 +11,7 @@ import { uniqueEntries } from './uniqueEntries';
 export const setColumn = <T extends string>(
   oldColumn: Column<T>,
   field?: Field<T>,
-  data?: MatchColumnsStepProps<T>['data'],
+  data?: MatchColumnsStepProps['data'],
 ): Column<T> => {
   if (field?.fieldType.type === 'select') {
     const fieldOptions = field.fieldType.options;
