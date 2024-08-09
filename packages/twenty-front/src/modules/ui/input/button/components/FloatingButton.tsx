@@ -19,7 +19,12 @@ export type FloatingButtonProps = {
   to?: string;
 };
 
-const StyledButton = styled.button<
+const shouldForwardProp = (prop: string) =>
+  !['applyBlur', 'applyShadow', 'focus', 'position', 'size', 'to'].includes(
+    prop,
+  );
+
+const StyledButton = styled('button', { shouldForwardProp })<
   Pick<
     FloatingButtonProps,
     | 'size'

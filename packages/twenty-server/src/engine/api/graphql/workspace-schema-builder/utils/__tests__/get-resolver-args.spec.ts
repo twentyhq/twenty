@@ -50,9 +50,6 @@ describe('getResolverArgs', () => {
     deleteOne: {
       id: { type: GraphQLID, isNullable: false },
     },
-    executeQuickActionOnOne: {
-      id: { type: GraphQLID, isNullable: false },
-    },
   };
 
   // Test each resolver type

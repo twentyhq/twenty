@@ -1,10 +1,16 @@
 import { renderHook } from '@testing-library/react';
 
 import { useTimelineActivities } from '@/activities/timelineActivities/hooks/useTimelineActivities';
+import { ReactNode } from 'react';
+import { RecoilRoot } from 'recoil';
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: jest.fn(),
 }));
+
+const Wrapper = ({ children }: { children: ReactNode }) => (
+  <RecoilRoot>{children}</RecoilRoot>
+);
 
 describe('useTimelineActivities', () => {
   afterEach(() => {
@@ -52,8 +58,9 @@ describe('useTimelineActivities', () => {
       records: mockedTimelineActivities,
     });
 
-    const { result } = renderHook(() =>
-      useTimelineActivities(mockTargetableObject),
+    const { result } = renderHook(
+      () => useTimelineActivities(mockTargetableObject),
+      { wrapper: Wrapper },
     );
 
     expect(result.current.timelineActivities).toEqual(mockedTimelineActivities);

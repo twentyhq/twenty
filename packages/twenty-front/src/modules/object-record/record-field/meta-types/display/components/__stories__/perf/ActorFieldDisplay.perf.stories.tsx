@@ -1,5 +1,4 @@
 import { ActorFieldDisplay } from '@/object-record/record-field/meta-types/display/components/ActorFieldDisplay';
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
@@ -13,11 +12,10 @@ const meta: Meta = {
   decorators: [
     MemoryRouterDecorator,
     ChipGeneratorsDecorator,
-    getFieldDecorator('person', 'actor', {
+    getFieldDecorator('company', 'createdBy', {
+      id: '1',
       name: 'John Doe',
-      source: 'API',
-      workspaceMemberId: undefined,
-    } satisfies FieldActorValue),
+    }),
     ComponentDecorator,
   ],
   component: ActorFieldDisplay,

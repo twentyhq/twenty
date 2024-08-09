@@ -8,6 +8,9 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
+import { ViewType } from '@/views/types/ViewType';
 import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
 
 export const sleep = (ms: number) =>
@@ -27,6 +30,7 @@ export type UseTableDataOptions = {
     rows: ObjectRecord[],
     columns: ColumnDefinition<FieldMetadata>[],
   ) => void | Promise<void>;
+  viewType?: ViewType;
 };
 
 type ExportProgress = {
@@ -42,6 +46,7 @@ export const useTableData = ({
   pageSize = 30,
   recordIndexId,
   callback,
+  viewType = ViewType.Table,
 }: UseTableDataOptions) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [inflight, setInflight] = useState(false);
@@ -58,6 +63,17 @@ export const useTableData = ({
     hasUserSelectedAllRowsState,
   } = useRecordTableStates(recordIndexId);
 
+  const { hiddenBoardFields } = useRecordIndexOptionsForBoard({
+    objectNameSingular,
+    recordBoardId: recordIndexId,
+    viewBarId: recordIndexId,
+  });
+
+  const { kanbanFieldMetadataNameState } = useRecordBoardStates(recordIndexId);
+  const kanbanFieldMetadataName = useRecoilValue(kanbanFieldMetadataNameState);
+  const hiddenKanbanFieldColumn = hiddenBoardFields.find(
+    (column) => column.metadata.fieldName === kanbanFieldMetadataName,
+  );
   const columns = useRecoilValue(visibleTableColumnsSelector());
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
@@ -165,7 +181,14 @@ export const useTableData = ({
         });
       };
 
-      const res = callback(records, columns);
+      const finalColumns = [
+        ...columns,
+        ...(hiddenKanbanFieldColumn && viewType === ViewType.Kanban
+          ? [hiddenKanbanFieldColumn]
+          : []),
+      ];
+
+      const res = callback(records, finalColumns);
 
       if (res instanceof Promise) {
         res.then(complete);
@@ -189,6 +212,8 @@ export const useTableData = ({
     loading,
     callback,
     previousRecordCount,
+    hiddenKanbanFieldColumn,
+    viewType,
   ]);
 
   return {

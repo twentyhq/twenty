@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: twentycrm-server
-  name: twentycrm-server
+    app: twentycrm-worker
+  name: twentycrm-worker
   namespace: twentycrm
 spec:
   progressDeadlineSeconds: 600
@@ -15,20 +15,18 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: twentycrm-server
+      app: twentycrm-worker
   template:
     metadata:
       labels:
-        app: twentycrm-server
+        app: twentycrm-worker
     spec:
       volumes:
-      - name: twentycrm-server-data
+      - name: twentycrm-worker-data
         persistentVolumeClaim:
-          claimName: twentycrm-server-pvc
+          claimName: twentycrm-worker-pvc
       containers:
       - env:
-        - name: PORT
-          value: 3000
         - name: SERVER_URL
           value: "https://crm.example.com:443"
         - name: FRONT_BASE_URL
@@ -36,9 +34,7 @@ spec:
         - name: PG_DATABASE_URL
           value: "postgres://twenty:twenty@twenty-db.twentycrm.svc.cluster.local/default"
         - name: ENABLE_DB_MIGRATIONS
-          value: "true"
-        - name: SIGN_IN_PREFILLED
-          value: "true"
+          value: "false" # it already runs on the server
         - name: STORAGE_TYPE
           value: "local"
         - name: "MESSAGE_QUEUE_TYPE"
@@ -66,10 +62,9 @@ spec:
       - image: twentycrm/twenty:latest
         imagePullPolicy: Always
         name: twentycrm
-        ports:
-        - containerPort: 3000
-          name: http-tcp
-          protocol: TCP
+        command:
+        - yarn
+        - worker:prod
         resources:
           requests:
             memory: "256Mi"
@@ -79,10 +74,5 @@ spec:
             cpu: "1000m"
         stdin: true
         tty: true
-        volumeMounts:
-        - mountPath: /app/docker-data
-          name: twentycrm-server-data
-        - mountPath: /app/.local-storage
-          name: twentycrm-server-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always

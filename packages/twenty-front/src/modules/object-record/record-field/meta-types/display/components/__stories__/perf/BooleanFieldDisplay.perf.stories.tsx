@@ -10,7 +10,7 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/BooleanFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('person', 'testBoolean'),
+    getFieldDecorator('company', 'idealCustomerProfile'),
     ComponentDecorator,
   ],
   component: BooleanFieldDisplay,

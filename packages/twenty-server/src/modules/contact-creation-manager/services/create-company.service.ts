@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
-import { EntityManager, ILike } from 'typeorm';
 import uniqBy from 'lodash.uniqby';
+import { EntityManager, ILike } from 'typeorm';
 
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { extractDomainFromLink } from 'src/modules/contact-creation-manager/utils/extract-domain-from-link.util';
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeDisplayName } from 'src/utils/compute-display-name';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 type CompanyToCreate = {
-  domainName: string;
+  domainName: string | undefined;
   createdBySource: FieldActorSource;
   createdByWorkspaceMember?: WorkspaceMemberWorkspaceEntity | null;
 };
@@ -186,7 +186,9 @@ export class CreateCompanyService {
     return lastCompanyPosition ?? 0;
   }
 
-  private async getCompanyInfoFromDomainName(domainName: string): Promise<{
+  private async getCompanyInfoFromDomainName(
+    domainName: string | undefined,
+  ): Promise<{
     name: string;
     city: string;
   }> {
@@ -196,12 +198,12 @@ export class CreateCompanyService {
       const data = response.data;
 
       return {
-        name: data.name ?? getCompanyNameFromDomainName(domainName),
+        name: data.name ?? getCompanyNameFromDomainName(domainName ?? ''),
         city: data.city,
       };
     } catch (e) {
       return {
-        name: getCompanyNameFromDomainName(domainName),
+        name: getCompanyNameFromDomainName(domainName ?? ''),
         city: '',
       };
     }

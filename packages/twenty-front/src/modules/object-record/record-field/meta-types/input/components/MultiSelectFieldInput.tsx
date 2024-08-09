@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -42,8 +42,8 @@ export const MultiSelectFieldInput = ({
   const [searchFilter, setSearchFilter] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const selectedOptions = fieldDefinition.metadata.options.filter(
-    (option) => fieldValues?.includes(option.value),
+  const selectedOptions = fieldDefinition.metadata.options.filter((option) =>
+    fieldValues?.includes(option.value),
   );
 
   const optionsInDropDown = fieldDefinition.metadata.options;

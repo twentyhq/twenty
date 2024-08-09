@@ -37,8 +37,8 @@ spec:
         ports:
         - containerPort: 5432
           name: tcp
-          protocol: TCP    
-        resources: 
+          protocol: TCP
+        resources:
           requests:
             memory: "256Mi"
             cpu: "250m"
