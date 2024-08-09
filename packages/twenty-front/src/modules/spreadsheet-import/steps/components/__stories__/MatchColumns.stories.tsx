@@ -3,7 +3,7 @@ import { Meta } from '@storybook/react';
 import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
 import { MatchColumnsStep } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
+import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -68,15 +68,11 @@ export const Default = () => (
           headerValues={mockData[0] as string[]}
           data={mockData.slice(1)}
           onBack={() => null}
-          setState={() => null}
-          setPreviousState={() => null}
+          setCurrentStepState={() => null}
+          setPreviousStepState={() => null}
+          currentStepState={{} as SpreadsheetImportStep}
           nextStep={() => null}
           errorToast={() => null}
-          state={{
-            type: SpreadsheetImportStepType.matchColumns,
-            data: mockData.slice(1),
-            headerValues: mockData[0],
-          }}
         />
       </ModalWrapper>
     </ReactSpreadsheetImportContextProvider>

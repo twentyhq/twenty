@@ -25,11 +25,11 @@ export const Default = () => (
       <ModalWrapper isOpen={true} onClose={() => null}>
         <UploadStep
           setUploadedFile={() => null}
-          setState={() => null}
+          setCurrentStepState={() => null}
           errorToast={() => null}
           nextStep={() => null}
-          setPreviousState={() => null}
-          state={{
+          setPreviousStepState={() => null}
+          currentStepState={{
             type: SpreadsheetImportStepType.upload,
           }}
         />

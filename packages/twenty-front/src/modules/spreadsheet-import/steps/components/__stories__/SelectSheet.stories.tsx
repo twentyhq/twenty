@@ -25,13 +25,32 @@ export const Default = () => (
       <ModalWrapper isOpen={true} onClose={() => null}>
         <SelectSheetStep
           sheetNames={sheetNames}
-          setState={() => null}
-          setPreviousState={() => null}
-          errorToast={() => null}
-          state={{
+          setCurrentStepState={() => {}}
+          setPreviousStepState={() => {}}
+          currentStepState={{
             type: SpreadsheetImportStepType.selectSheet,
-            data: [],
+            workbook: {
+              SheetNames: sheetNames,
+              Sheets: {
+                Sheet1: {
+                  A1: 1,
+                  A2: 2,
+                  A3: 3,
+                },
+                Sheet2: {
+                  A1: 1,
+                  A2: 2,
+                  A3: 3,
+                },
+                Sheet3: {
+                  A1: 1,
+                  A2: 2,
+                  A3: 3,
+                },
+              },
+            },
           }}
+          errorToast={() => null}
           onBack={() => Promise.resolve()}
         />
       </ModalWrapper>

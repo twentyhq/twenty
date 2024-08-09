@@ -26,15 +26,14 @@ export const Default = () => (
       <ModalWrapper isOpen={true} onClose={() => null}>
         <SelectHeaderStep
           importedRows={headerSelectionTableFields}
-          setState={() => null}
-          nextStep={() => null}
-          setPreviousState={() => null}
+          setCurrentStepState={() => null}
+          nextStep={() => Promise.resolve()}
+          setPreviousStepState={() => null}
           errorToast={() => null}
           onBack={() => Promise.resolve()}
-          state={{
-            type: SpreadsheetImportStepType.matchColumns,
-            data: [],
-            headerValues: [],
+          currentStepState={{
+            type: SpreadsheetImportStepType.selectHeader,
+            data: headerSelectionTableFields,
           }}
         />
       </ModalWrapper>

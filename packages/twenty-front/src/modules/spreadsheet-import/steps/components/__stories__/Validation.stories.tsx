@@ -31,7 +31,7 @@ export const Default = () => (
           file={file}
           importedColumns={importedColums}
           onBack={() => Promise.resolve()}
-          setState={() => null}
+          setCurrentStepState={() => null}
         />
       </ModalWrapper>
     </ReactSpreadsheetImportContextProvider>
