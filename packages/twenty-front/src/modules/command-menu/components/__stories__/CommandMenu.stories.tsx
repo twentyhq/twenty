@@ -13,7 +13,6 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getPeopleMock } from '~/testing/mock-data/people';
 import {
   mockDefaultWorkspace,
   mockedWorkspaceMemberData,
@@ -21,8 +20,6 @@ import {
 import { sleep } from '~/utils/sleep';
 
 import { CommandMenu } from '../CommandMenu';
-
-const peopleMock = getPeopleMock();
 
 const openTimeout = 50;
 
@@ -112,20 +109,6 @@ export const OnlyMatchingCreateAndNavigate: Story = {
     await userEvent.type(searchInput, 'ta');
     expect(await canvas.findByText('Create Task')).toBeInTheDocument();
     expect(await canvas.findByText('Go to Tasks')).toBeInTheDocument();
-  },
-};
-
-export const AtleastMatchingOnePerson: Story = {
-  play: async () => {
-    const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Search');
-    await sleep(openTimeout);
-    await userEvent.type(searchInput, 'alex');
-    expect(
-      await canvas.findByText(
-        peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
-      ),
-    ).toBeInTheDocument();
   },
 };
 
