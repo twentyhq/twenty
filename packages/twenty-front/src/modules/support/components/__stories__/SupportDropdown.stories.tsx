@@ -1,6 +1,6 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { within, userEvent } from '@storybook/test';
+import { userEvent, within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -14,6 +14,8 @@ import {
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
+import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { SupportDropdown } from '@/support/components/SupportDropdown';
 
 const meta: Meta<typeof SupportDropdown> = {
@@ -27,11 +29,19 @@ const meta: Meta<typeof SupportDropdown> = {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,
       );
+      const setAreViewsPrefetched = useSetRecoilState(
+        prefetchIsLoadedFamilyState(PrefetchKey.AllViews),
+      );
+      const setAreFavoritesPrefetched = useSetRecoilState(
+        prefetchIsLoadedFamilyState(PrefetchKey.AllFavorites),
+      );
 
       setCurrentWorkspace(mockDefaultWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setCurrentUser(mockedUserData);
       setSupportChat({ supportDriver: 'front', supportFrontChatId: '1234' });
+      setAreViewsPrefetched(true);
+      setAreFavoritesPrefetched(true);
 
       return <Story />;
     },
