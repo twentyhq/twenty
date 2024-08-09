@@ -3,7 +3,8 @@ import { CountRecordsItem } from '@/object-record/field-path-picker/components/C
 import { FieldSelectItem } from '@/object-record/field-path-picker/components/FieldSelectItem';
 import { COUNT_RECORDS_ITEM_KEY } from '@/object-record/field-path-picker/constants/CountRecordsItemKey';
 import { FIELD_PATH_PICKER_SELECTABLE_LIST_ID } from '@/object-record/field-path-picker/constants/FieldPathPickerSelectableListId';
-import { getViewFieldMetadataItems } from '@/object-record/field-path-picker/utils/getViewFieldMetadataItems';
+import { getViewObjectMetadata } from '@/object-record/field-path-picker/utils/getViewObjectMetadata';
+import { isSelectableFieldPathPart } from '@/object-record/field-path-picker/utils/isSelectableFieldPathPart';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { FieldFieldPathValue } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -13,6 +14,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useRef } from 'react';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 interface FieldPathPickerProps {
   value?: FieldFieldPathValue | undefined;
@@ -26,7 +28,10 @@ interface FieldPathPickerProps {
   onEscape: (newFieldPath: string[]) => void;
   onTab?: (newFieldPath: string[]) => void;
   onShiftTab?: (newFieldPath: string[]) => void;
-  onChange: (newFieldPath: string[]) => void;
+  onChange: (
+    newFieldPath: string[],
+    lastFieldMetadataType: FieldMetadataType,
+  ) => void;
 }
 
 export const FieldPathPicker = (props: FieldPathPickerProps) => {
@@ -56,11 +61,14 @@ export const FieldPathPicker = (props: FieldPathPickerProps) => {
 
   if (!sourceObjectMetadata) return <div>No source object selected</div>;
 
-  const selectableFieldMetadataItems = getViewFieldMetadataItems(
+  const viewObjectMetadata = getViewObjectMetadata(
     objectMetadataItems,
     sourceObjectMetadata,
     props.value,
   );
+
+  const selectableFieldMetadataItems =
+    viewObjectMetadata?.fields.filter(isSelectableFieldPathPart) ?? [];
 
   const selectableItemIds = [
     COUNT_RECORDS_ITEM_KEY,
@@ -80,13 +88,18 @@ export const FieldPathPicker = (props: FieldPathPickerProps) => {
             selectableItemIdArray={selectableItemIds}
             hotkeyScope={props.hotkeyScope}
           >
-            <CountRecordsItem
-              key={COUNT_RECORDS_ITEM_KEY}
-              onSelect={() => {
-                // TODO: Close without calling props.onClickOutside that takes event as first parameter
-              }}
-            />
-            <DropdownMenuSeparator />
+            <>
+              <CountRecordsItem
+                key={COUNT_RECORDS_ITEM_KEY}
+                onSelect={() => {
+                  props.onEnter(props.value ?? []);
+                }}
+                objectLabelPlural={viewObjectMetadata?.labelPlural}
+              />
+              {selectableFieldMetadataItems.length > 0 && (
+                <DropdownMenuSeparator />
+              )}
+            </>
             {noResult ? (
               <MenuItem text="No result" />
             ) : (
@@ -95,7 +108,10 @@ export const FieldPathPicker = (props: FieldPathPickerProps) => {
                   key={fieldMetadata.id}
                   fieldMetadata={fieldMetadata}
                   onSelect={() =>
-                    props.onChange([...(props.value ?? []), fieldMetadata.id])
+                    props.onChange(
+                      [...(props.value ?? []), fieldMetadata.id],
+                      fieldMetadata.type,
+                    )
                   }
                 />
               ))

@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isSelectableFieldPathPart } from '@/object-record/field-path-picker/utils/isSelectableFieldPathPart';
 
-export const getViewFieldMetadataItems = (
+export const getViewObjectMetadata = (
   objectMetadataItems: ObjectMetadataItem[],
   sourceObjectMetadata: ObjectMetadataItem,
   fieldPath: string[] | undefined | null,
@@ -12,9 +12,7 @@ export const getViewFieldMetadataItems = (
     .flatMap((objectMetadata) => objectMetadata.fields)
     .filter(isSelectableFieldPathPart);
 
-  let viewFieldMetadataItems = sourceObjectMetadata.fields.filter(
-    isSelectableFieldPathPart,
-  );
+  let viewObjectMetadata = sourceObjectMetadata;
 
   for (const fieldPathFieldMetadataId of fieldPathFieldMetadataIds) {
     const fieldPathFieldMetadata = allFieldMetadataItems.find(
@@ -25,7 +23,7 @@ export const getViewFieldMetadataItems = (
         `Could not resolve field metadata id '${fieldPathFieldMetadataId}' in field path.`,
       );
     const { relationDefinition } = fieldPathFieldMetadata;
-    if (!relationDefinition) return []; // TODO: Throw error?
+    if (!relationDefinition) return; // TODO: Throw error?
 
     const nextObjectMetadataId =
       relationDefinition.sourceFieldMetadata.id === fieldPathFieldMetadataId
@@ -36,10 +34,8 @@ export const getViewFieldMetadataItems = (
     );
     if (!nextObjectMetadata) throw new Error();
 
-    viewFieldMetadataItems = nextObjectMetadata.fields.filter(
-      isSelectableFieldPathPart,
-    );
+    viewObjectMetadata = nextObjectMetadata;
   }
 
-  return viewFieldMetadataItems;
+  return viewObjectMetadata;
 };

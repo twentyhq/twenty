@@ -8,6 +8,7 @@ import { IconTallymarks } from 'twenty-ui';
 
 interface CountRecordsItemProps {
   onSelect: () => void;
+  objectLabelPlural?: string;
 }
 
 export const CountRecordsItem = (props: CountRecordsItemProps) => {
@@ -23,7 +24,10 @@ export const CountRecordsItem = (props: CountRecordsItemProps) => {
       onClick={() => props.onSelect()}
       isKeySelected={isSelectedByKeyboard}
     >
-      <MenuItemLeftContent LeftIcon={IconTallymarks} text="Count records" />
+      <MenuItemLeftContent
+        LeftIcon={IconTallymarks}
+        text={`Count ${props.objectLabelPlural?.toLowerCase() ?? 'records'}`}
+      />
     </StyledMenuItemBase>
   );
 };

@@ -28,13 +28,6 @@ export const ACTIVITY_STANDARD_FIELD_IDS = {
   assignee: '20202020-4259-48e4-9e77-6b92991906d5',
 };
 
-export const ANALYTICS_QUERY_FILTER_STANDARD_FIELD_IDS = {
-  chart: '20202020-9a7e-4ddb-9099-dba16a93aab6',
-  field: '20202020-24f0-4f4d-a845-b7d80e5c661b',
-  operator: '20202020-3994-49f3-a0c0-9bd77978879a',
-  value: '20202020-2b74-47ea-8a9d-f5d97f3f95f3',
-};
-
 export const API_KEY_STANDARD_FIELD_IDS = {
   name: '20202020-72e6-4079-815b-436ce8a62f23',
   expiresAt: '20202020-659b-4241-af59-66515b8e7d40',
