@@ -87,16 +87,6 @@ export default defineConfig(({ command, mode }) => {
       }),
     ],
 
-    resolve: {
-      alias: {
-        // strange issue with the storybook dark-mode plugin
-        // probably to be remove in the future?
-        'storybook/internal/theming': '@storybook/theming',
-        'storybook/internal/components': '@storybook/components',
-        'storybook/internal/manager-api': '@storybook/manager-api',
-      },
-    },
-
     build: {
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',
