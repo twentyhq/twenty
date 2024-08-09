@@ -20,7 +20,6 @@ export enum ResolverArgsType {
   UpdateMany = 'UpdateMany',
   DeleteOne = 'DeleteOne',
   DeleteMany = 'DeleteMany',
-  ExecuteQuickActionOnOne = 'ExecuteQuickActionOnOne',
 }
 
 export interface FindManyResolverArgs<
@@ -76,10 +75,6 @@ export interface UpdateManyResolverArgs<
 }
 
 export interface DeleteOneResolverArgs {
-  id: string;
-}
-
-export interface ExecuteQuickActionOnOneResolverArgs {
   id: string;
 }
 
