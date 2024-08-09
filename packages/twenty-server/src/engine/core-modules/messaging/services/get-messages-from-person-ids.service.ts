@@ -82,7 +82,6 @@ export class GetMessagesFromPersonIdsService {
       [key: string]: MessageParticipantWorkspaceEntity[];
     } = threadParticipants.reduce(
       (threadParticipantsAcc, threadParticipant) => {
-        console.log('threadParticipant', threadParticipant);
         if (!threadParticipant.message.messageThreadId)
           return threadParticipantsAcc;
 

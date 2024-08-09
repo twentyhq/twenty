@@ -12,6 +12,21 @@ export const extractFirstAndLastTwoActiveParticipants = (
   const activeMessageParticipants =
     filterActiveParticipants(messageParticipants);
 
+  if (activeMessageParticipants.length === 0) {
+    return {
+      firstParticipant: {
+        personId: '',
+        workspaceMemberId: '',
+        firstName: '',
+        lastName: '',
+        displayName: '',
+        avatarUrl: '',
+        handle: '',
+      },
+      lastTwoParticipants: [],
+    };
+  }
+
   const firstParticipant = formatThreadParticipant(
     activeMessageParticipants[0],
   );

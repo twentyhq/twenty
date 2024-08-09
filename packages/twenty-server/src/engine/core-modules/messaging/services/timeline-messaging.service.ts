@@ -7,7 +7,6 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
-import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 type TimelineThreadParticipant = {
   personId: string;
@@ -60,60 +59,17 @@ export class TimelineMessagingService {
       take: pageSize,
     });
 
-    const messageThreadIds = messageThreads.map(
-      (messageThread) => messageThread.id,
-    );
-
-    const messageRepository =
-      await this.twentyORMManager.getRepository<MessageWorkspaceEntity>(
-        'message',
-      );
-
-    const lastMessages = await messageRepository.find({
-      where: {
-        messageThreadId: Any(messageThreadIds),
-      },
-      order: {
-        receivedAt: 'DESC',
-      },
-      take: 1,
-    });
-
-    const firstMessages = await messageRepository.find({
-      where: {
-        messageThreadId: Any(messageThreadIds),
-      },
-      order: {
-        receivedAt: 'ASC',
-      },
-      take: 1,
-    });
-
-    const numberOfMessagesInThread = await messageRepository
-      .createQueryBuilder('message')
-      .select('message.messageThreadId', 'messageThreadId')
-      .addSelect('COUNT(*)', 'messageCount')
-      .groupBy('message.messageThreadId')
-      .getRawMany();
-
     return messageThreads.map((messageThread) => {
-      const lastMessage = lastMessages.find(
-        (message) => message.messageThreadId === messageThread.id,
-      );
-      const firstMessage = firstMessages.find(
-        (message) => message.messageThreadId === messageThread.id,
-      );
-
-      const messageCount = numberOfMessagesInThread.find(
-        (messageCount) => messageCount.messageThreadId === messageThread.id,
-      )?.messageCount;
+      const lastMessage = messageThread.messages[0];
+      const firstMessage =
+        messageThread.messages[messageThread.messages.length - 1];
 
       return {
         id: messageThread.id,
-        subject: firstMessage?.subject ?? '',
-        lastMessageBody: lastMessage?.text ?? '',
-        lastMessageReceivedAt: lastMessage?.receivedAt ?? new Date(),
-        numberOfMessagesInThread: messageCount,
+        subject: firstMessage.subject,
+        lastMessageBody: lastMessage.text,
+        lastMessageReceivedAt: lastMessage.receivedAt ?? new Date(),
+        numberOfMessagesInThread: messageThread.messages.length,
       };
     });
   }
