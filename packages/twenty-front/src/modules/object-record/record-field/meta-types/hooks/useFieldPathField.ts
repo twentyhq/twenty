@@ -14,7 +14,7 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
 export const useFieldPathField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.FieldPath,
@@ -26,14 +26,14 @@ export const useFieldPathField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldFieldPathValue>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId: recordId,
       fieldName: fieldName,
     }),
   );
 
   const sourceObjectNameSingular = useRecoilValue<FieldTextValue>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId: recordId,
       fieldName: 'sourceObjectNameSingular',
     }),
   );

@@ -7,6 +7,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
+  FieldMetadataDefaultActor,
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
@@ -48,9 +49,11 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.SELECT]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.MULTI_SELECT]: [FieldMetadataDefaultValueStringArray],
   [FieldMetadataType.ADDRESS]: [FieldMetadataDefaultValueAddress],
+  [FieldMetadataType.RICH_TEXT]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
   [FieldMetadataType.LINKS]: [FieldMetadataDefaultValueLinks],
   [FieldMetadataType.FIELD_PATH]: [FieldMetadataDefaultValueStringArray],
+  [FieldMetadataType.ACTOR]: [FieldMetadataDefaultActor],
 };
 
 type ValidationResult = {

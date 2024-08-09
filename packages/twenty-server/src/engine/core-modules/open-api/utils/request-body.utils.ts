@@ -27,3 +27,32 @@ export const getArrayRequestBody = (name: string) => {
     },
   };
 };
+
+export const getFindDuplicatesRequestBody = (name: string) => {
+  return {
+    description: 'body',
+    required: true,
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'array',
+              items: {
+                $ref: `#/components/schemas/${name}`,
+              },
+            },
+            ids: {
+              type: 'array',
+              items: {
+                type: 'string',
+                format: 'uuid',
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+};

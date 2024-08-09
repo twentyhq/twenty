@@ -36,6 +36,7 @@ describe('objectRecordChangedValues', () => {
     const result = objectRecordChangedValues(
       oldRecord,
       newRecord,
+      ['name'],
       mockObjectMetadata,
     );
 
@@ -58,6 +59,7 @@ it('ignores changes to the updatedAt field', () => {
   const result = objectRecordChangedValues(
     oldRecord,
     newRecord,
+    [],
     mockObjectMetadata,
   );
 
@@ -79,6 +81,7 @@ it('returns an empty object when there are no changes', () => {
   const result = objectRecordChangedValues(
     oldRecord,
     newRecord,
+    ['name', 'value'],
     mockObjectMetadata,
   );
 
@@ -108,6 +111,7 @@ it('correctly handles a mix of changed, unchanged, and special case values', () 
   const result = objectRecordChangedValues(
     oldRecord,
     newRecord,
+    ['name', 'config', 'status'],
     mockObjectMetadata,
   );
 

@@ -19,7 +19,7 @@ import {
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
-import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
+import { useOpenObjectRecordsSpreasheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreasheetImportDialog';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -30,10 +30,13 @@ import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
+import { useLocation } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
 
 type RecordIndexOptionsMenu = 'fields' | 'hiddenFields';
 
@@ -114,8 +117,8 @@ export const RecordIndexOptionsDropdownContent = ({
       ? handleBoardFieldVisibilityChange
       : handleColumnVisibilityChange;
 
-  const { openRecordSpreadsheetImport } =
-    useSpreadsheetRecordImport(objectNameSingular);
+  const { openObjectRecordsSpreasheetImportDialog } =
+    useOpenObjectRecordsSpreasheetImportDialog(objectNameSingular);
 
   const { progress, download } = useExportTableData({
     delayMs: 100,
@@ -123,6 +126,11 @@ export const RecordIndexOptionsDropdownContent = ({
     objectNameSingular,
     recordIndexId,
   });
+
+  const location = useLocation();
+  const setNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
 
   return (
     <>
@@ -135,7 +143,7 @@ export const RecordIndexOptionsDropdownContent = ({
             hasSubMenu
           />
           <MenuItem
-            onClick={() => openRecordSpreadsheetImport()}
+            onClick={() => openObjectRecordsSpreasheetImportDialog()}
             LeftIcon={IconFileImport}
             text="Import"
           />
@@ -190,7 +198,12 @@ export const RecordIndexOptionsDropdownContent = ({
           )}
           <DropdownMenuSeparator />
 
-          <UndecoratedLink to={settingsUrl}>
+          <UndecoratedLink
+            to={settingsUrl}
+            onClick={() => {
+              setNavigationMemorizedUrl(location.pathname + location.search);
+            }}
+          >
             <DropdownMenuItemsContainer>
               <MenuItem LeftIcon={IconSettings} text="Edit Fields" />
             </DropdownMenuItemsContainer>
@@ -198,7 +211,7 @@ export const RecordIndexOptionsDropdownContent = ({
         </>
       )}
 
-      {viewType === ViewType.Kanban && (
+      {viewType === ViewType.Kanban && !currentMenu && (
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>

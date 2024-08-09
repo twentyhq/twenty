@@ -49,12 +49,12 @@ const DateFieldValueGater = ({
 
 type DateFieldInputWithContextProps = DateTimeFieldInputProps & {
   value: Date;
-  entityId?: string;
+  recordId?: string;
 };
 
 const DateFieldInputWithContext = ({
   value,
-  entityId,
+  recordId,
   onEscape,
   onEnter,
   onClickOutside,
@@ -79,7 +79,7 @@ const DateFieldInputWithContext = ({
             objectMetadataNameSingular: 'person',
           },
         }}
-        entityId={entityId}
+        recordId={recordId}
       >
         <DateFieldValueSetterEffect value={value} />
         <DateFieldValueGater

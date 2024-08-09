@@ -10,12 +10,12 @@ import {
 } from '../../types/FieldMetadata';
 
 export const useFieldPathFieldDisplay = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { fieldName } = fieldDefinition.metadata;
 
   const fieldValue = useRecordFieldValue<FieldFieldPathValue | undefined>(
-    entityId,
+    recordId,
     fieldName,
   );
 

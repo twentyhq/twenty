@@ -1,12 +1,17 @@
+import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export interface CompositeProperty {
+export interface CompositeProperty<
+  Type extends FieldMetadataType = FieldMetadataType,
+> {
   name: string;
   description?: string;
-  type: FieldMetadataType;
+  type: Type;
   hidden: 'input' | 'output' | true | false;
   isRequired: boolean;
   isArray?: boolean;
+  options?: FieldMetadataOptions<Type>;
 }
 
 export interface CompositeType {

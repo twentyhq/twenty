@@ -13,6 +13,7 @@ import {
   ObjectTypeDefinitionKind,
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { computeCompositePropertyTarget } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-composite-property-target.util';
 
 @Injectable()
 export class CompositeObjectTypeDefinitionFactory {
@@ -62,8 +63,12 @@ export class CompositeObjectTypeDefinitionFactory {
         continue;
       }
 
+      const target = computeCompositePropertyTarget(
+        compositeType.type,
+        property,
+      );
       const type = this.outputTypeFactory.create(
-        property.name,
+        target,
         property.type,
         kind,
         options,

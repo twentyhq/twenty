@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
-import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
 import { EventList } from '@/activities/timelineActivities/components/EventList';
+import { TimelineCreateButtonGroup } from '@/activities/timelineActivities/components/TimelineCreateButtonGroup';
 import { useTimelineActivities } from '@/activities/timelineActivities/hooks/useTimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
@@ -35,8 +35,10 @@ const StyledMainContainer = styled.div`
 
 export const TimelineActivities = ({
   targetableObject,
+  isInRightDrawer = false,
 }: {
   targetableObject: ActivityTargetableObject;
+  isInRightDrawer?: boolean;
 }) => {
   const { timelineActivities, loading, fetchMoreRecords } =
     useTimelineActivities(targetableObject);
@@ -63,7 +65,7 @@ export const TimelineActivities = ({
             There are no activities associated with this record.{' '}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-        <TimelineCreateButtonGroup />
+        <TimelineCreateButtonGroup isInRightDrawer={isInRightDrawer} />
       </AnimatedPlaceholderEmptyContainer>
     );
   }

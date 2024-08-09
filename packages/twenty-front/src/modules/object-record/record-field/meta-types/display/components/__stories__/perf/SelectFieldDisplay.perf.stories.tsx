@@ -10,7 +10,7 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/SelectFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('person', 'testSelect'),
+    getFieldDecorator('task', 'status'),
     ComponentDecorator,
   ],
   component: SelectFieldDisplay,

@@ -77,6 +77,7 @@ export class TypeMapperService {
       [FieldMetadataType.POSITION, PositionScalarType],
       [FieldMetadataType.RAW_JSON, RawJSONScalar],
       [FieldMetadataType.FIELD_PATH, FieldPathScalarType],
+      [FieldMetadataType.RICH_TEXT, GraphQLString],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -113,6 +114,7 @@ export class TypeMapperService {
       [FieldMetadataType.POSITION, FloatFilterType],
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
       [FieldMetadataType.FIELD_PATH, FieldPathFilterType],
+      [FieldMetadataType.RICH_TEXT, StringFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
@@ -137,6 +139,7 @@ export class TypeMapperService {
       [FieldMetadataType.POSITION, OrderByDirectionType],
       [FieldMetadataType.RAW_JSON, OrderByDirectionType],
       [FieldMetadataType.FIELD_PATH, OrderByDirectionType],
+      [FieldMetadataType.RICH_TEXT, OrderByDirectionType],
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);

@@ -35,6 +35,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Select,
         FieldMetadataType.Currency,
         FieldMetadataType.Rating,
+        FieldMetadataType.Actor,
       ].includes(field.type)
     ) {
       return acc;
@@ -88,6 +89,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'ADDRESS';
     case FieldMetadataType.Rating:
       return 'RATING';
+    case FieldMetadataType.Actor:
+      return 'ACTOR';
     default:
       return 'TEXT';
   }

@@ -2,7 +2,6 @@ import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
@@ -17,21 +16,18 @@ export const usePrefetchedData = <T extends ObjectRecord>(
     prefetchIsLoadedFamilyState(prefetchKey),
   );
 
-  const prefetchQueryKey = PREFETCH_CONFIG[prefetchKey];
+  const { operationSignatureFactory, objectNameSingular } =
+    PREFETCH_CONFIG[prefetchKey];
 
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: prefetchQueryKey.objectNameSingular,
+    objectNameSingular,
   });
 
   const { records } = useFindManyRecords<T>({
     skip: !isDataPrefetched,
-    objectNameSingular: prefetchQueryKey.objectNameSingular,
+    objectNameSingular: objectNameSingular,
     recordGqlFields:
-      prefetchQueryKey.fields ??
-      generateDepthOneRecordGqlFields({
-        objectMetadataItem,
-      }),
-    filter,
+      operationSignatureFactory({ objectMetadataItem }).fields ?? filter,
   });
 
   return {

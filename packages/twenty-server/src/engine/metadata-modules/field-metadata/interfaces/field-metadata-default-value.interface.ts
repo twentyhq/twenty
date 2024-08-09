@@ -1,4 +1,5 @@
 import {
+  FieldMetadataDefaultActor,
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
@@ -9,6 +10,7 @@ import {
   FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueNumber,
   FieldMetadataDefaultValueRawJson,
+  FieldMetadataDefaultValueRichText,
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueStringArray,
   FieldMetadataDefaultValueUuidFunction,
@@ -46,6 +48,8 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
   [FieldMetadataType.FIELD_PATH]: FieldMetadataDefaultValueStringArray;
+  [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
+  [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
 };
 
 export type FieldMetadataClassValidation =

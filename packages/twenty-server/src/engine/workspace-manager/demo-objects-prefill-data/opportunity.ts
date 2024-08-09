@@ -1,3 +1,4 @@
+import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from 'src/engine/workspace-manager/demo-objects-prefill-data/workspace-member';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -18,12 +19,16 @@ const generateRandomAmountMicros = () => {
 const generateOpportunities = (companies) => {
   return companies.map((company) => ({
     id: v4(),
+    name: company.name,
     amountAmountMicros: generateRandomAmountMicros(),
     amountCurrencyCode: 'USD',
     closeDate: new Date(),
     stage: getRandomStage(),
     pointOfContactId: company.personId,
     companyId: company.id,
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   }));
 };
 
@@ -45,12 +50,16 @@ export const opportunityPrefillDemoData = async (
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',
+      'name',
       'amountAmountMicros',
       'amountCurrencyCode',
       'closeDate',
       'stage',
       'pointOfContactId',
       'companyId',
+      'createdBySource',
+      'createdByWorkspaceMemberId',
+      'createdByName',
       'position',
     ])
     .orIgnore()

@@ -1,6 +1,6 @@
-import { ReactNode, useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ReactNode, useMemo } from 'react';
 import { Nullable, useIcons } from 'twenty-ui';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -13,6 +13,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 import { RELATION_TYPES } from '../../constants/RelationTypes';
 
+import { RelationMetadataType } from '~/generated-metadata/graphql';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {
@@ -89,7 +90,12 @@ export const SettingsObjectFieldItemTableRow = ({
       <TableCell>
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
-          label={relationObjectMetadataItem?.labelPlural}
+          label={
+            relationType === RelationMetadataType.ManyToOne ||
+            relationType === RelationMetadataType.OneToOne
+              ? relationObjectMetadataItem?.labelSingular
+              : relationObjectMetadataItem?.labelPlural
+          }
           to={
             relationObjectMetadataItem?.namePlural &&
             !relationObjectMetadataItem.isSystem

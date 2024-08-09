@@ -4,7 +4,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const generateEmptyFieldValue = (
-  fieldMetadataItem: FieldMetadataItem,
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'fromRelationMetadata'>,
 ) => {
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.Email:
@@ -86,6 +86,16 @@ export const generateEmptyFieldValue = (
     }
     case FieldMetadataType.FieldPath: {
       return null;
+    }
+    case FieldMetadataType.RichText: {
+      return null;
+    }
+    case FieldMetadataType.Actor: {
+      return {
+        source: 'MANUAL',
+        workspaceMemberId: null,
+        name: '',
+      };
     }
     default: {
       throw new Error('Unhandled FieldMetadataType');

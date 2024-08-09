@@ -26,6 +26,7 @@ const getFieldProperties = (type: FieldMetadataType): Property => {
       return { type: 'string', format: 'uuid' };
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONE:
+    case FieldMetadataType.RICH_TEXT:
       return { type: 'string' };
     case FieldMetadataType.EMAIL:
       return { type: 'string', format: 'email' };
@@ -72,6 +73,7 @@ const getSchemaComponentsProperties = (
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.FULL_NAME:
       case FieldMetadataType.ADDRESS:
+      case FieldMetadataType.ACTOR:
         itemProperty = {
           type: 'object',
           properties: compositeTypeDefintions

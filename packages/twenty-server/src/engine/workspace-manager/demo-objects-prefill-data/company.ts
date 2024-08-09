@@ -11,11 +11,14 @@ export const companyPrefillDemoData = async (
     .insert()
     .into(`${schemaName}.company`, [
       'name',
-      'domainName',
+      'domainNamePrimaryLinkUrl',
       'addressAddressCity',
       'employees',
-      'linkedinLinkUrl',
-      'position',
+      'linkedinLinkPrimaryLinkUrl',
+      'createdBySource',
+      'createdByWorkspaceMemberId',
+      'createdByName',
+      'position'
     ])
     .orIgnore()
     .values(

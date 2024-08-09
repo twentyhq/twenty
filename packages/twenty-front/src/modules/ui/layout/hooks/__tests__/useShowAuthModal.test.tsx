@@ -9,6 +9,7 @@ import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefau
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';
 
 jest.mock('@/onboarding/hooks/useOnboardingStatus');
 const setupMockOnboardingStatus = (
@@ -331,7 +332,7 @@ describe('useShowAuthModal', () => {
         SubscriptionStatus.Trialing,
       ];
       expect(testCases.length).toEqual(
-        Object.keys(AppPath).length *
+        (Object.keys(AppPath).length - UNTESTED_APP_PATHS.length) *
           (Object.keys(OnboardingStatus).length +
             (Object.keys(SubscriptionStatus).length -
               untestedSubscriptionStatus.length)),

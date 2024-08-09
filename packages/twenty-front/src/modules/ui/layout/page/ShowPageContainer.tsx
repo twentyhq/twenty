@@ -1,5 +1,5 @@
-import { ReactElement } from 'react';
 import styled from '@emotion/styled';
+import { ReactElement } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -16,6 +16,7 @@ const StyledInnerContainer = styled.div`
   display: flex;
   flex-direction: ${() => (useIsMobile() ? 'column' : 'row')};
   width: 100%;
+  height: 100%;
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)`

@@ -46,7 +46,7 @@ import { isFieldTextValue } from '../types/guards/isFieldTextValue';
 
 export const usePersistField = () => {
   const {
-    entityId,
+    recordId,
     fieldDefinition,
     useUpdateRecord = () => [],
   } = useContext(FieldContext);
@@ -143,7 +143,7 @@ export const usePersistField = () => {
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;
           set(
-            recordStoreFamilySelector({ recordId: entityId, fieldName }),
+            recordStoreFamilySelector({ recordId, fieldName }),
             valueToPersist,
           );
 
@@ -151,7 +151,7 @@ export const usePersistField = () => {
             const value = valueToPersist as EntityForSelect;
             updateRecord?.({
               variables: {
-                where: { id: entityId },
+                where: { id: recordId },
                 updateOneRecordInput: {
                   [fieldName]: value,
                   [`${fieldName}Id`]: value?.id ?? null,
@@ -163,7 +163,7 @@ export const usePersistField = () => {
 
           updateRecord?.({
             variables: {
-              where: { id: entityId },
+              where: { id: recordId },
               updateOneRecordInput: {
                 [fieldName]: valueToPersist,
               },
@@ -179,7 +179,7 @@ export const usePersistField = () => {
           );
         }
       },
-    [entityId, fieldDefinition, updateRecord],
+    [recordId, fieldDefinition, updateRecord],
   );
 
   return persistField;

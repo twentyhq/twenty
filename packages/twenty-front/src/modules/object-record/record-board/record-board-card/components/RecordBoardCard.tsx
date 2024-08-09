@@ -210,6 +210,10 @@ export const RecordBoardCard = () => {
     return null;
   }
 
+  const visibleFieldDefinitionsFiltered = visibleFieldDefinitions.filter(
+    (boardField) => !boardField.isLabelIdentifier,
+  );
+
   return (
     <StyledBoardCardWrapper onContextMenu={handleContextMenu}>
       <RecordValueSetterEffect recordId={recordId} />
@@ -241,6 +245,7 @@ export const RecordBoardCard = () => {
           )}
           <StyledCheckboxContainer className="checkbox-container">
             <Checkbox
+              hoverable
               checked={isCurrentCardSelected}
               onChange={() => setIsCurrentCardSelected(!isCurrentCardSelected)}
               variant={CheckboxVariant.Secondary}
@@ -252,13 +257,13 @@ export const RecordBoardCard = () => {
             isOpen={!isCardInCompactMode || !isCompactModeActive}
             initial={false}
           >
-            {visibleFieldDefinitions.map((fieldDefinition) => (
+            {visibleFieldDefinitionsFiltered.map((fieldDefinition) => (
               <PreventSelectOnClickContainer
                 key={fieldDefinition.fieldMetadataId}
               >
                 <FieldContext.Provider
                   value={{
-                    entityId: recordId,
+                    recordId,
                     maxWidth: 156,
                     recoilScopeId: recordId + fieldDefinition.fieldMetadataId,
                     isLabelIdentifier: false,

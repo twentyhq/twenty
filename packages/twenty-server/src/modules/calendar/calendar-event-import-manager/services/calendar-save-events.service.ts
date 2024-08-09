@@ -6,8 +6,6 @@ import { Any } from 'typeorm';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inject-workspace-datasource.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
@@ -21,13 +19,12 @@ import {
   CreateCompanyAndContactJob,
   CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 @Injectable()
 export class CalendarSaveEventsService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    @InjectWorkspaceDatasource()
-    private readonly workspaceDataSource: WorkspaceDataSource,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -119,7 +116,9 @@ export class CalendarSaveEventsService {
     const savedCalendarEventParticipantsToEmit: CalendarEventParticipantWorkspaceEntity[] =
       [];
 
-    await this.workspaceDataSource?.transaction(async (transactionManager) => {
+    const workspaceDataSource = await this.twentyORMManager.getDatasource();
+
+    await workspaceDataSource?.transaction(async (transactionManager) => {
       await calendarEventRepository.save(eventsToSave, {}, transactionManager);
 
       await calendarEventRepository.save(
@@ -143,6 +142,7 @@ export class CalendarSaveEventsService {
 
     this.eventEmitter.emit(`calendarEventParticipant.matched`, {
       workspaceId,
+      name: 'calendarEventParticipant.matched',
       workspaceMemberId: connectedAccount.accountOwnerId,
       calendarEventParticipants: savedCalendarEventParticipantsToEmit,
     });
@@ -154,6 +154,7 @@ export class CalendarSaveEventsService {
           workspaceId,
           connectedAccount,
           contactsToCreate: participantsToSave,
+          source: FieldActorSource.CALENDAR,
         },
       );
     }

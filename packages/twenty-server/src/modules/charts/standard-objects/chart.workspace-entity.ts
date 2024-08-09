@@ -30,6 +30,7 @@ export enum ChartMeasure {
   labelPlural: 'Charts',
   description: 'A chart for data visualization',
   icon: 'IconChartBar',
+  labelIdentifierStandardId: CHART_STANDARD_FIELD_IDS.name,
 })
 export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({

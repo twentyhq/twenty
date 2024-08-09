@@ -1,25 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import {
-  BadRequestException,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
 
 import crypto from 'crypto';
 
 import { IsNull, MoreThan, Repository } from 'typeorm';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
-import { EmailService } from 'src/engine/integrations/email/email.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EmailService } from 'src/engine/integrations/email/email.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 import { TokenService } from './token.service';
 
@@ -34,10 +30,8 @@ describe('TokenService', () => {
       providers: [
         TokenService,
         {
-          provide: JwtService,
-          useValue: {
-            sign: jest.fn().mockReturnValue('mock-jwt-token'),
-          },
+          provide: JwtWrapperService,
+          useValue: {},
         },
         {
           provide: JwtAuthStrategy,
@@ -108,7 +102,7 @@ describe('TokenService', () => {
       expect(result.passwordResetTokenExpiresAt).toBeDefined();
     });
 
-    it('should throw BadRequestException if an existing valid token is found', async () => {
+    it('should throw AuthException if an existing valid token is found', async () => {
       const mockUser = { id: '1', email: 'test@example.com' } as User;
       const mockToken = {
         userId: '1',
@@ -122,18 +116,18 @@ describe('TokenService', () => {
 
       await expect(
         service.generatePasswordResetToken(mockUser.email),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(AuthException);
     });
 
-    it('should throw NotFoundException if no user is found', async () => {
+    it('should throw AuthException if no user is found', async () => {
       jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(null);
 
       await expect(
         service.generatePasswordResetToken('nonexistent@example.com'),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(AuthException);
     });
 
-    it('should throw InternalServerErrorException if environment variable is not found', async () => {
+    it('should throw AuthException if environment variable is not found', async () => {
       const mockUser = { id: '1', email: 'test@example.com' } as User;
 
       jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(mockUser);
@@ -141,7 +135,7 @@ describe('TokenService', () => {
 
       await expect(
         service.generatePasswordResetToken(mockUser.email),
-      ).rejects.toThrow(InternalServerErrorException);
+      ).rejects.toThrow(AuthException);
     });
   });
 
@@ -183,17 +177,17 @@ describe('TokenService', () => {
       expect(result).toEqual({ id: mockUser.id, email: mockUser.email });
     });
 
-    it('should throw NotFoundException if token is invalid or expired', async () => {
+    it('should throw AuthException if token is invalid or expired', async () => {
       const resetToken = 'invalid-reset-token';
 
       jest.spyOn(appTokenRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
         service.validatePasswordResetToken(resetToken),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(AuthException);
     });
 
-    it('should throw NotFoundException if user does not exist for a valid token', async () => {
+    it('should throw AuthException if user does not exist for a valid token', async () => {
       const resetToken = 'orphan-token';
       const hashedToken = crypto
         .createHash('sha256')
@@ -214,10 +208,10 @@ describe('TokenService', () => {
 
       await expect(
         service.validatePasswordResetToken(resetToken),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(AuthException);
     });
 
-    it('should throw NotFoundException if token is revoked', async () => {
+    it('should throw AuthException if token is revoked', async () => {
       const resetToken = 'revoked-token';
       const hashedToken = crypto
         .createHash('sha256')
@@ -236,7 +230,7 @@ describe('TokenService', () => {
         .mockResolvedValue(mockToken as AppToken);
       await expect(
         service.validatePasswordResetToken(resetToken),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(AuthException);
     });
   });
 });

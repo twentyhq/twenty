@@ -48,7 +48,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         action: WorkspaceMigrationColumnActionType.CREATE,
         columnName,
         columnType: fieldMetadataTypeToColumnType(fieldMetadata.type),
-        isNullable: fieldMetadata.isNullable,
+        isNullable: fieldMetadata.isNullable ?? true,
         defaultValue: serializedDefaultValue,
         isArray: fieldMetadata.type === FieldMetadataType.FIELD_PATH,
       },
@@ -82,7 +82,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         currentColumnDefinition: {
           columnName: currentColumnName,
           columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
-          isNullable: currentFieldMetadata.isNullable,
+          isNullable: currentFieldMetadata.isNullable ?? true,
           defaultValue: serializeDefaultValue(
             currentFieldMetadata.defaultValue,
           ),
@@ -91,7 +91,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         alteredColumnDefinition: {
           columnName: alteredColumnName,
           columnType: fieldMetadataTypeToColumnType(alteredFieldMetadata.type),
-          isNullable: alteredFieldMetadata.isNullable,
+          isNullable: alteredFieldMetadata.isNullable ?? true,
           defaultValue: serializedDefaultValue,
           isArray: currentFieldMetadata.type === FieldMetadataType.FIELD_PATH,
         },

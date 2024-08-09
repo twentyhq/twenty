@@ -2,6 +2,8 @@ import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGq
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
+import { Company } from '@/companies/types/Company';
+import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { isRecordMatchingFilter } from './isRecordMatchingFilter';
 
 const companiesMock = getCompaniesMock();
@@ -123,10 +125,19 @@ describe('isRecordMatchingFilter', () => {
 
       const companyMockNotInFilter = {
         ...companiesMock[0],
-        domainName: companyMockInFilter.domainName + 'Different',
+        domainName: {
+          primaryLinkUrl:
+            getCompanyDomainName(companyMockInFilter as Company) + 'Different',
+        },
       };
 
-      const filter = { domainName: { eq: companyMockInFilter.domainName } };
+      const filter = {
+        domainName: {
+          primaryLinkUrl: {
+            eq: getCompanyDomainName(companyMockInFilter as Company),
+          },
+        },
+      };
 
       expect(
         isRecordMatchingFilter({
@@ -228,7 +239,9 @@ describe('isRecordMatchingFilter', () => {
         and: [
           {
             domainName: {
-              eq: companyMockInFilter.domainName,
+              primaryLinkUrl: {
+                eq: getCompanyDomainName(companyMockInFilter as Company),
+              },
             },
           },
           {
@@ -317,14 +330,23 @@ describe('isRecordMatchingFilter', () => {
 
       const companyMockNotInFilter = {
         ...companiesMock[0],
-        domainName: companyMockInFilter.domainName + 'Different',
+        domainName: {
+          primaryLinkUrl:
+            getCompanyDomainName(companyMockInFilter as Company) + 'Different',
+        },
         employees: 5,
         name: companyMockInFilter.name + 'Different',
       };
 
       const filter: RecordGqlOperationFilter = {
         and: [
-          { domainName: { eq: companyMockInFilter.domainName } },
+          {
+            domainName: {
+              primaryLinkUrl: {
+                eq: getCompanyDomainName(companyMockInFilter as Company),
+              },
+            },
+          },
           {
             or: [
               { employees: { eq: companyMockInFilter.employees } },
@@ -478,13 +500,17 @@ describe('isRecordMatchingFilter', () => {
       const companyMockNotInFilter = {
         ...companiesMock[0],
         name: companyMockInFilter.name + 'Different',
-        domainName: companyMockInFilter.name + 'Different',
+        domainName: { primaryLinkUrl: companyMockInFilter.name + 'Different' },
       };
 
       const filter = {
         or: {
           name: { eq: companyMockInFilter.name },
-          domainName: { eq: companyMockInFilter.domainName },
+          domainName: {
+            primaryLinkUrl: {
+              eq: getCompanyDomainName(companyMockInFilter as Company),
+            },
+          },
         },
       };
 

@@ -1,12 +1,15 @@
 import { useContext } from 'react';
 
+import { ActorFieldDisplay } from '@/object-record/record-field/meta-types/display/components/ActorFieldDisplay';
 import { BooleanFieldDisplay } from '@/object-record/record-field/meta-types/display/components/BooleanFieldDisplay';
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
 import { RatingFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RatingFieldDisplay';
 import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
 
 import { FieldPathFieldDisplay } from '@/object-record/record-field/meta-types/display/components/FieldPathFieldDisplay';
+import { RichTextFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RichTextFieldDisplay';
 import { isFieldIdentifierDisplay } from '@/object-record/record-field/meta-types/display/utils/isFieldIdentifierDisplay';
+import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldFieldPath } from '@/object-record/record-field/types/guards/isFieldFieldPath';
@@ -14,6 +17,7 @@ import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldL
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
+import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -97,5 +101,9 @@ export const FieldDisplay = () => {
     <RatingFieldDisplay />
   ) : isFieldFieldPath(fieldDefinition) ? (
     <FieldPathFieldDisplay />
+  ) : isFieldRichText(fieldDefinition) ? (
+    <RichTextFieldDisplay />
+  ) : isFieldActor(fieldDefinition) ? (
+    <ActorFieldDisplay />
   ) : null;
 };

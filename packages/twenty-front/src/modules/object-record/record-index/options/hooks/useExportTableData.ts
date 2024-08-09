@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
 import { json2csv } from 'json-2-csv';
+import { useMemo } from 'react';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { useProcessRecordsForCSVExport } from '@/object-record/record-index/options/hooks/useProcessRecordsForCSVExport';
 import {
   useTableData,
   UseTableDataOptions,
@@ -66,12 +67,15 @@ export const generateCsv: GenerateExport = ({
         .filter(isDefined)
         .join(' '),
     };
+
     const fieldsWithSubFields = rows.find((row) => {
       const fieldValue = (row as any)[column.field];
+
       const hasSubFields =
         fieldValue &&
         typeof fieldValue === 'object' &&
         !Array.isArray(fieldValue);
+
       return hasSubFields;
     });
 
@@ -84,8 +88,10 @@ export const generateCsv: GenerateExport = ({
           field: `${column.field}.${key}`,
           title: `${column.title} ${key[0].toUpperCase() + key.slice(1)}`,
         }));
+
       return nestedFieldsWithoutTypename;
     }
+
     return [column];
   });
 
@@ -138,12 +144,17 @@ export const useExportTableData = ({
   pageSize = 30,
   recordIndexId,
 }: UseExportTableDataOptions) => {
+  const { processRecordsForCSVExport } =
+    useProcessRecordsForCSVExport(objectNameSingular);
+
   const downloadCsv = useMemo(
     () =>
-      (rows: ObjectRecord[], columns: ColumnDefinition<FieldMetadata>[]) => {
-        csvDownloader(filename, { rows, columns });
+      (records: ObjectRecord[], columns: ColumnDefinition<FieldMetadata>[]) => {
+        const recordsProcessedForExport = processRecordsForCSVExport(records);
+
+        csvDownloader(filename, { rows: recordsProcessedForExport, columns });
       },
-    [filename],
+    [filename, processRecordsForCSVExport],
   );
 
   const { getTableData: download, progress } = useTableData({

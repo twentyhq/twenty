@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 import { isDefined } from '~/utils/isDefined';
 
@@ -16,7 +16,7 @@ type ContainerProps = {
 const StyledContainer = styled.div<ContainerProps>`
   align-items: center;
   background-color: ${({ theme, isOn, color }) =>
-    isOn ? color ?? theme.color.blue : theme.background.quaternary};
+    isOn ? (color ?? theme.color.blue) : theme.background.quaternary};
   border-radius: 10px;
   cursor: pointer;
   display: flex;

@@ -3,7 +3,13 @@ import styled from '@emotion/styled';
 import { format } from 'date-fns';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Avatar, AvatarGroup, IconArrowRight, IconLock } from 'twenty-ui';
+import {
+  Avatar,
+  AvatarGroup,
+  IconArrowRight,
+  IconLock,
+  isDefined,
+} from 'twenty-ui';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
@@ -14,10 +20,10 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
-import { CalendarChannelVisibility } from '~/generated/graphql';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
-import { isDefined } from '~/utils/isDefined';
+import {
+  CalendarChannelVisibility,
+  TimelineCalendarEvent,
+} from '~/generated-metadata/graphql';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -163,7 +169,7 @@ export const CalendarEventRow = ({
               key={[participant.workspaceMemberId, participant.displayName]
                 .filter(isDefined)
                 .join('-')}
-              avatarUrl={getImageAbsoluteURIOrBase64(participant.avatarUrl)}
+              avatarUrl={participant.avatarUrl}
               placeholder={
                 participant.firstName && participant.lastName
                   ? `${participant.firstName} ${participant.lastName}`

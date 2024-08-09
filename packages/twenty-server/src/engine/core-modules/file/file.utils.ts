@@ -4,8 +4,8 @@ import { basename } from 'path';
 
 import { KebabCase } from 'type-fest';
 
-import { kebabCase } from 'src/utils/kebab-case';
 import { settings } from 'src/engine/constants/settings';
+import { kebabCase } from 'src/utils/kebab-case';
 
 import { FileFolder } from './interfaces/file-folder.interface';
 
@@ -23,7 +23,11 @@ export const checkFilePath = (filePath: string): string => {
     throw new BadRequestException(`Folder ${folder} is not allowed`);
   }
 
-  if (size && !settings.storage.imageCropSizes[folder]?.includes(size)) {
+  if (
+    folder !== kebabCase(FileFolder.ServerlessFunction) &&
+    size &&
+    !settings.storage.imageCropSizes[folder]?.includes(size)
+  ) {
     throw new BadRequestException(`Size ${size} is not allowed`);
   }
 
