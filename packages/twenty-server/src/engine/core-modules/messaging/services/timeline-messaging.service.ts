@@ -90,7 +90,7 @@ export class TimelineMessagingService {
       select: {
         id: true,
       },
-      where: [
+      where:
         // Today, if the participant handle is not equal to the workspace member's handle, the participant is not linked to the workspace member
         {
           id: Any(messageThreadIds),
@@ -98,11 +98,6 @@ export class TimelineMessagingService {
             messageParticipants: {
               workspaceMemberId: Not(workspaceMemberId),
             },
-          },
-        },
-        {
-          id: Any(messageThreadIds),
-          messages: {
             messageChannelMessageAssociations: {
               messageChannel: {
                 connectedAccount: {
@@ -112,7 +107,6 @@ export class TimelineMessagingService {
             },
           },
         },
-      ],
     });
 
     const threadIdsWithoutWorkspaceMember = threadsWithoutWorkspaceMember.map(
