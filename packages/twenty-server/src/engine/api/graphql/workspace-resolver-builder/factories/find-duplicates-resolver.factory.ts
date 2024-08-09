@@ -25,9 +25,9 @@ export class FindDuplicatesResolverFactory
   ): Resolver<FindDuplicatesResolverArgs> {
     const internalContext = context;
 
-    return (_source, args, context, info) => {
+    return async (_source, args, context, info) => {
       try {
-        return this.workspaceQueryRunnerService.findDuplicates(args, {
+        return await this.workspaceQueryRunnerService.findDuplicates(args, {
           authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
           info,
