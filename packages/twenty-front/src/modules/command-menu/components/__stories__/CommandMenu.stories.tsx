@@ -14,7 +14,6 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { getPeopleMock } from '~/testing/mock-data/people';
 import {
   mockDefaultWorkspace,
   mockedWorkspaceMemberData,
@@ -23,7 +22,6 @@ import { sleep } from '~/utils/sleep';
 
 import { CommandMenu } from '../CommandMenu';
 
-const peopleMock = getPeopleMock();
 const companiesMock = getCompaniesMock();
 
 const openTimeout = 50;
