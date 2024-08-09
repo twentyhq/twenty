@@ -111,8 +111,9 @@ export class TimelineMessagingService {
       );
 
     const threadVisibility = await messageThreadRepository
-      .createQueryBuilder('messageThread')
-      .select(['messageThread.id', 'messageChannel.visibility'])
+      .createQueryBuilder()
+      .select('messageThread.id', 'id')
+      .addSelect('messageChannel.visibility', 'visibility')
       .leftJoin('messageThread.messages', 'message')
       .leftJoin(
         'message.messageChannelMessageAssociations',
