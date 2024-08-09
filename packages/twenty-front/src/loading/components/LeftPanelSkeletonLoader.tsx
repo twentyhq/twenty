@@ -17,7 +17,7 @@ const StyledItemsContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   height: calc(100dvh - 32px);
   margin-bottom: auto;
   max-width: 204px;
