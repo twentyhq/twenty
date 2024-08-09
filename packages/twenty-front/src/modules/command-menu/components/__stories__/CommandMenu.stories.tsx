@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
+import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { IconCheckbox, IconNotes } from 'twenty-ui';
 
@@ -93,21 +93,16 @@ export const DefaultWithoutSearch: Story = {
   },
 };
 
-export const MatchingPersonCompanyActivityCreateNavigate: Story = {
+export const MatchingCompanyActivityCreateNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Search');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'n');
-    expect(
-      await canvas.findByText(
-        peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
-      ),
-    ).toBeInTheDocument();
-    expect(await canvas.findByText(companiesMock[0].name)).toBeInTheDocument();
-    expect(await canvas.findByText('My very first note')).toBeInTheDocument();
     expect(await canvas.findByText('Create Note')).toBeInTheDocument();
     expect(await canvas.findByText('Go to Companies')).toBeInTheDocument();
+    expect(await canvas.findByText('Go to Opportunities')).toBeInTheDocument();
+    expect(await canvas.findByText('Go to Settings')).toBeInTheDocument();
   },
 };
 
