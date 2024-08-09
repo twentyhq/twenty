@@ -1,6 +1,6 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { within, userEvent } from '@storybook/test';
+import { userEvent, within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -15,6 +15,7 @@ import {
 } from '~/testing/mock-data/users';
 
 import { SupportDropdown } from '@/support/components/SupportDropdown';
+import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
 
 const meta: Meta<typeof SupportDropdown> = {
   title: 'Modules/Support/SupportDropdown',
@@ -35,6 +36,7 @@ const meta: Meta<typeof SupportDropdown> = {
 
       return <Story />;
     },
+    PrefetchLoadedDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

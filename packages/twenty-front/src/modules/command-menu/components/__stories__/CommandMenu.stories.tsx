@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
+import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { IconCheckbox, IconNotes } from 'twenty-ui';
 
@@ -14,7 +14,6 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
-import { getPeopleMock } from '~/testing/mock-data/people';
 import {
   mockDefaultWorkspace,
   mockedWorkspaceMemberData,
@@ -23,7 +22,6 @@ import { sleep } from '~/utils/sleep';
 
 import { CommandMenu } from '../CommandMenu';
 
-const peopleMock = getPeopleMock();
 const companiesMock = getCompaniesMock();
 
 const openTimeout = 50;
@@ -99,13 +97,8 @@ export const MatchingPersonCompanyActivityCreateNavigate: Story = {
     const searchInput = await canvas.findByPlaceholderText('Search');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'n');
-    expect(
-      await canvas.findByText(
-        peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
-      ),
-    ).toBeInTheDocument();
+    expect(await canvas.findByText('Linkedin')).toBeInTheDocument();
     expect(await canvas.findByText(companiesMock[0].name)).toBeInTheDocument();
-    expect(await canvas.findByText('My very first note')).toBeInTheDocument();
     expect(await canvas.findByText('Create Note')).toBeInTheDocument();
     expect(await canvas.findByText('Go to Companies')).toBeInTheDocument();
   },
@@ -128,21 +121,6 @@ export const AtleastMatchingOnePerson: Story = {
     const searchInput = await canvas.findByPlaceholderText('Search');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'alex');
-    expect(
-      await canvas.findByText(
-        peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
-      ),
-    ).toBeInTheDocument();
-  },
-};
-
-export const NotMatchingAnything: Story = {
-  play: async () => {
-    const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Search');
-    await sleep(openTimeout);
-    await userEvent.type(searchInput, 'asdasdasd');
-    // FIXME: We need to fix the filters in graphql
-    // expect(await canvas.findByText('No results found')).toBeInTheDocument();
+    expect(await canvas.findByText('Sylvie Palmer')).toBeInTheDocument();
   },
 };

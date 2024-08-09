@@ -83,23 +83,13 @@ export const Date: Story = {
   },
 };
 
-export const Link: Story = {
+export const Links: Story = {
   args: {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ name, type }) =>
-        name === 'linkedinLink' && type === FieldMetadataType.Link,
+        name === 'linkedinLink' && type === FieldMetadataType.Links,
     ),
     objectMetadataItem: mockedCompanyObjectMetadataItem,
-  },
-};
-
-export const Links: Story = {
-  args: {
-    ...Link.args,
-    fieldMetadataItem: {
-      ...Link.args!.fieldMetadataItem!,
-      type: FieldMetadataType.Links,
-    },
   },
 };
 

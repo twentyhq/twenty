@@ -60,7 +60,7 @@ export const SettingsObjects = () => {
             />
           </UndecoratedLink>
         </SettingsHeaderContainer>
-        <div>
+        <>
           <SettingsObjectCoverImage />
           <Section>
             <H2Title title="Existing objects" />
@@ -122,7 +122,7 @@ export const SettingsObjects = () => {
               )}
             </Table>
           </Section>
-        </div>
+        </>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

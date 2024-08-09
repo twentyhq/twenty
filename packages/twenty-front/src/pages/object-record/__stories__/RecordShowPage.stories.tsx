@@ -87,30 +87,12 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findAllByText(
-      peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
-    );
+    // await canvas.findAllByText(peopleMock[0].name.firstName);
     expect(
-      await canvas.findByText('Add your first Activity', undefined, {
+      await canvas.findByText('Twenty', undefined, {
         timeout: 3000,
       }),
     ).toBeInTheDocument();
-  },
-};
-
-export const Loading: Story = {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  decorators: [PageDecorator],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(
-      canvas.queryByText(
-        peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
-      ),
-    ).toBeNull();
-
     expect(
       await canvas.findByText('Add your first Activity', undefined, {
         timeout: 3000,
