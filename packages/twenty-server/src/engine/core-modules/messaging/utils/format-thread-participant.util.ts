@@ -19,6 +19,8 @@ export const formatThreadParticipant = (
     threadParticipant.person?.name?.lastName ||
     threadParticipant.workspaceMember?.name.firstName ||
     threadParticipant.workspaceMember?.name.lastName ||
+    threadParticipant.displayName ||
+    threadParticipant.handle ||
     '',
   avatarUrl:
     threadParticipant.person?.avatarUrl ||
