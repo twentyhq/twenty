@@ -15,8 +15,6 @@ const StyledContainer = styled.div<{ isMultiWorkspace: boolean }>`
   display: flex;
   gap: ${({ theme, isMultiWorkspace }) =>
     !isMultiWorkspace ? theme.spacing(2) : null};
-  padding: ${({ theme, isMultiWorkspace }) =>
-    !isMultiWorkspace ? theme.spacing(1) : null};
   height: ${({ theme }) => theme.spacing(8)};
   user-select: none;
 `;
