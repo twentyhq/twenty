@@ -3,29 +3,15 @@ import { filterActiveParticipants } from 'src/engine/core-modules/messaging/util
 import { formatThreadParticipant } from 'src/engine/core-modules/messaging/utils/format-thread-participant.util';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
-export const extractFirstAndLastTwoActiveParticipants = (
+export const extractParticipantSummary = (
   messageParticipants: MessageParticipantWorkspaceEntity[],
 ): {
   firstParticipant: TimelineThreadParticipant;
   lastTwoParticipants: TimelineThreadParticipant[];
+  participantCount: number;
 } => {
   const activeMessageParticipants =
     filterActiveParticipants(messageParticipants);
-
-  if (activeMessageParticipants.length === 0) {
-    return {
-      firstParticipant: {
-        personId: null,
-        workspaceMemberId: null,
-        firstName: '',
-        lastName: '',
-        displayName: '',
-        avatarUrl: '',
-        handle: '',
-      },
-      lastTwoParticipants: [],
-    };
-  }
 
   const firstParticipant = formatThreadParticipant(
     activeMessageParticipants[0],
@@ -62,5 +48,6 @@ export const extractFirstAndLastTwoActiveParticipants = (
   return {
     firstParticipant,
     lastTwoParticipants,
+    participantCount: activeMessageParticipants.length,
   };
 };
