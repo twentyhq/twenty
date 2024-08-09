@@ -14,9 +14,8 @@ import {
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
 
-import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { SupportDropdown } from '@/support/components/SupportDropdown';
+import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
 
 const meta: Meta<typeof SupportDropdown> = {
   title: 'Modules/Support/SupportDropdown',
@@ -29,22 +28,15 @@ const meta: Meta<typeof SupportDropdown> = {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,
       );
-      const setAreViewsPrefetched = useSetRecoilState(
-        prefetchIsLoadedFamilyState(PrefetchKey.AllViews),
-      );
-      const setAreFavoritesPrefetched = useSetRecoilState(
-        prefetchIsLoadedFamilyState(PrefetchKey.AllFavorites),
-      );
 
       setCurrentWorkspace(mockDefaultWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
       setCurrentUser(mockedUserData);
       setSupportChat({ supportDriver: 'front', supportFrontChatId: '1234' });
-      setAreViewsPrefetched(true);
-      setAreFavoritesPrefetched(true);
 
       return <Story />;
     },
+    PrefetchLoadedDecorator
   ],
   parameters: {
     msw: graphqlMocks,
