@@ -18,7 +18,7 @@ async function bootstrap() {
     exceptionHandlerService = app.get(ExceptionHandlerService);
 
     // Inject our logger
-    app.useLogger(loggerService);
+    app.useLogger(loggerService ?? false);
   } catch (err) {
     loggerService?.error(err?.message, err?.name);
 
