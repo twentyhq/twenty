@@ -50,7 +50,6 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadsWithTotal)
   async getTimelineThreadsFromPersonId(
-    // @AuthWorkspace() { id: workspaceId }: Workspace,
     @AuthUser() user: User,
     @Args() { personId, page, pageSize }: GetTimelineThreadsFromPersonIdArgs,
   ) {
@@ -73,7 +72,6 @@ export class TimelineMessagingResolver {
 
   @Query(() => TimelineThreadsWithTotal)
   async getTimelineThreadsFromCompanyId(
-    //@AuthWorkspace() { id: workspaceId }: Workspace,
     @AuthUser() user: User,
     @Args() { companyId, page, pageSize }: GetTimelineThreadsFromCompanyIdArgs,
   ) {
