@@ -13,9 +13,16 @@ export class ArgsStringFactory {
   create(
     initialArgs: Record<string, any> | undefined,
     fieldMetadataCollection: FieldMetadataInterface[],
+    softDeletable?: boolean,
   ): string | null {
     if (!initialArgs) {
       return null;
+    }
+    if (softDeletable) {
+      initialArgs.filter = {
+        deletedAt: { is: 'NULL' },
+        ...initialArgs.filter,
+      };
     }
     let argsString = '';
     const computedArgs = this.argsAliasFactory.create(

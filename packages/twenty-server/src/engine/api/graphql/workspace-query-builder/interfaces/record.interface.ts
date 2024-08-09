@@ -3,6 +3,7 @@ export interface Record {
   [key: string]: any;
   createdAt: string;
   updatedAt: string;
+  deletedAt: string | null;
 }
 
 export type RecordFilter = {

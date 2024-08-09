@@ -1,6 +1,6 @@
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-export function WorkspaceIsPimaryField(): PropertyDecorator {
+export function WorkspaceIsPrimaryField(): PropertyDecorator {
   return (object, propertyKey) => {
     TypedReflect.defineMetadata(
       'workspace:is-primary-field-metadata-args',

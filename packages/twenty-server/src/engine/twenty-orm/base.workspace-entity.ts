@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsPimaryField } from 'src/engine/twenty-orm/decorators/workspace-is-primary-field.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsPrimaryField } from 'src/engine/twenty-orm/decorators/workspace-is-primary-field.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
@@ -13,7 +14,7 @@ export abstract class BaseWorkspaceEntity {
     defaultValue: 'uuid',
     icon: 'Icon123',
   })
-  @WorkspaceIsPimaryField()
+  @WorkspaceIsPrimaryField()
   @WorkspaceIsSystem()
   id: string;
 
@@ -25,7 +26,7 @@ export abstract class BaseWorkspaceEntity {
     icon: 'IconCalendar',
     defaultValue: 'now',
   })
-  createdAt: Date;
+  createdAt: string;
 
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt,
@@ -35,5 +36,15 @@ export abstract class BaseWorkspaceEntity {
     icon: 'IconCalendarClock',
     defaultValue: 'now',
   })
-  updatedAt: Date;
+  updatedAt: string;
+
+  @WorkspaceField({
+    standardId: BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Deleted at',
+    description: 'Date when the record was deleted',
+    icon: 'IconCalendarMinus',
+  })
+  @WorkspaceIsNullable()
+  deletedAt?: string | null;
 }

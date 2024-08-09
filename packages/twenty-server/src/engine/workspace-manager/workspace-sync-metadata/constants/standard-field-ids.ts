@@ -53,6 +53,7 @@ export const BASE_OBJECT_STANDARD_FIELD_IDS = {
   id: '20202020-eda0-4cee-9577-3eb357e3c22b',
   createdAt: '20202020-66ac-4502-9975-e4d959c50311',
   updatedAt: '20202020-d767-4622-bdcf-d8a084834d86',
+  deletedAt: '20202020-b9a7-48d8-8387-b9a3090a50ec',
 };
 
 export const BLOCKLIST_STANDARD_FIELD_IDS = {

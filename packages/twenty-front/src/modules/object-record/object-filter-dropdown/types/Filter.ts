@@ -4,6 +4,7 @@ import { FilterDefinition } from './FilterDefinition';
 
 export type Filter = {
   id: string;
+  variant?: 'default' | 'trash';
   fieldMetadataId: string;
   value: string;
   displayValue: string;
