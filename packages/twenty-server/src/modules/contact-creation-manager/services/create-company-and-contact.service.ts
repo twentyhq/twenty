@@ -7,8 +7,10 @@ import compact from 'lodash.compact';
 import { Any, EntityManager, Repository } from 'typeorm';
 
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
@@ -22,8 +24,6 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkEmail } from 'src/utils/is-work-email';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -105,7 +105,7 @@ export class CreateCompanyAndContactService {
       filteredContactsToCreateWithCompanyDomainNames
         .filter((participant) => participant.companyDomainName)
         .map((participant) => ({
-          domainName: participant.companyDomainName!,
+          domainName: participant.companyDomainName,
           createdBySource: source,
           createdByWorkspaceMember: connectedAccount.accountOwner,
         })),
@@ -196,7 +196,7 @@ export class CreateCompanyAndContactService {
           name: 'person.created',
           workspaceId,
           // FixMe: TypeORM typing issue... id is always returned when using save
-          recordId: createdPerson.id!,
+          recordId: createdPerson.id as string,
           objectMetadata,
           properties: {
             after: createdPerson,

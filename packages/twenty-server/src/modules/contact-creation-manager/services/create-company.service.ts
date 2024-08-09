@@ -14,7 +14,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 import { computeDisplayName } from 'src/utils/compute-display-name';
 
 type CompanyToCreate = {
-  domainName: string;
+  domainName: string | undefined;
   createdBySource: FieldActorSource;
   createdByWorkspaceMember?: WorkspaceMemberWorkspaceEntity | null;
 };
@@ -186,7 +186,9 @@ export class CreateCompanyService {
     return lastCompanyPosition ?? 0;
   }
 
-  private async getCompanyInfoFromDomainName(domainName: string): Promise<{
+  private async getCompanyInfoFromDomainName(
+    domainName: string | undefined,
+  ): Promise<{
     name: string;
     city: string;
   }> {
@@ -196,12 +198,12 @@ export class CreateCompanyService {
       const data = response.data;
 
       return {
-        name: data.name ?? getCompanyNameFromDomainName(domainName),
+        name: data.name ?? getCompanyNameFromDomainName(domainName ?? ''),
         city: data.city,
       };
     } catch (e) {
       return {
-        name: getCompanyNameFromDomainName(domainName),
+        name: getCompanyNameFromDomainName(domainName ?? ''),
         city: '',
       };
     }
