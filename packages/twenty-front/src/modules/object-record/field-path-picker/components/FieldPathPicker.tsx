@@ -28,10 +28,8 @@ interface FieldPathPickerProps {
   onEscape: (newFieldPath: string[]) => void;
   onTab?: (newFieldPath: string[]) => void;
   onShiftTab?: (newFieldPath: string[]) => void;
-  onChange: (
-    newFieldPath: string[],
-    lastFieldMetadataType: FieldMetadataType,
-  ) => void;
+  onChange: (newFieldPath: string[]) => void;
+  maxDepth: number;
 }
 
 export const FieldPathPicker = (props: FieldPathPickerProps) => {
@@ -107,12 +105,19 @@ export const FieldPathPicker = (props: FieldPathPickerProps) => {
                 <FieldSelectItem
                   key={fieldMetadata.id}
                   fieldMetadata={fieldMetadata}
-                  onSelect={() =>
-                    props.onChange(
-                      [...(props.value ?? []), fieldMetadata.id],
-                      fieldMetadata.type,
-                    )
-                  }
+                  onSelect={() => {
+                    const newFieldPath = [
+                      ...(props.value ?? []),
+                      fieldMetadata.id,
+                    ];
+                    const shouldClose =
+                      fieldMetadata.type !== FieldMetadataType.Relation ||
+                      newFieldPath.length >= props.maxDepth;
+                    if (shouldClose) {
+                      return props.onEnter(newFieldPath);
+                    }
+                    props.onChange(newFieldPath);
+                  }}
                 />
               ))
             )}

@@ -1,7 +1,6 @@
 import { FieldPathPicker } from '@/object-record/field-path-picker/components/FieldPathPicker';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useFieldPathField } from '@/object-record/record-field/meta-types/hooks/useFieldPathField';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { FieldInputEvent } from './DateFieldInput';
 
 export type FieldPathFieldInputProps = {
@@ -54,13 +53,7 @@ export const FieldPathFieldInput = ({
     onShiftTab?.(() => persistField(newFieldPath));
   };
 
-  const handleChange = (
-    newFieldPath: string[],
-    lastFieldMetadataType: FieldMetadataType,
-  ) => {
-    if (lastFieldMetadataType !== FieldMetadataType.Relation) {
-      return onEnter?.(() => persistField(newFieldPath));
-    }
+  const handleChange = (newFieldPath: string[]) => {
     setDraftValue(newFieldPath);
   };
 
@@ -75,6 +68,7 @@ export const FieldPathFieldInput = ({
       onShiftTab={handleShiftTab}
       onTab={handleTab}
       onChange={handleChange}
+      maxDepth={3}
     />
   );
 };
