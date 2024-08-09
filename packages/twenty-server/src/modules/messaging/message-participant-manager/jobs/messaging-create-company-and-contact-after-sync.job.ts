@@ -1,15 +1,16 @@
 import { Logger } from '@nestjs/common';
 
+import { Any, IsNull } from 'typeorm';
+
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
 import {
   MessageChannelContactAutoCreationPolicy,
   MessageChannelWorkspaceEntity,
@@ -28,12 +29,9 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
   );
   constructor(
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelService: MessageChannelRepository,
-    @InjectObjectMetadataRepository(MessageParticipantWorkspaceEntity)
-    private readonly messageParticipantRepository: MessageParticipantRepository,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   @Process(MessagingCreateCompanyAndContactAfterSyncJob.name)
@@ -45,12 +43,18 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
     );
     const { workspaceId, messageChannelId } = data;
 
-    const messageChannel = await this.messageChannelService.getByIds(
-      [messageChannelId],
-      workspaceId,
-    );
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
 
-    const { contactAutoCreationPolicy, connectedAccountId } = messageChannel[0];
+    const messageChannel = await messageChannelRepository.findOneOrFail({
+      where: {
+        id: messageChannelId,
+      },
+    });
+
+    const { contactAutoCreationPolicy, connectedAccountId } = messageChannel;
 
     if (
       contactAutoCreationPolicy === MessageChannelContactAutoCreationPolicy.NONE
@@ -69,17 +73,29 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
       );
     }
 
-    const contactsToCreate =
+    const messageParticipantRepository =
+      await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
+        'messageParticipant',
+      );
+
+    const directionFilter =
       contactAutoCreationPolicy ===
       MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED
-        ? await this.messageParticipantRepository.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+        ? Any(['incoming', 'outgoing'])
+        : 'outgoing';
+
+    const contactsToCreate = await messageParticipantRepository.find({
+      where: {
+        message: {
+          messageChannelMessageAssociations: {
             messageChannelId,
-            workspaceId,
-          )
-        : await this.messageParticipantRepository.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberIdAndMessageOutgoing(
-            messageChannelId,
-            workspaceId,
-          );
+          },
+          direction: directionFilter,
+        },
+        personId: IsNull(),
+        workspaceMemberId: IsNull(),
+      },
+    });
 
     await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
       connectedAccount,

@@ -6,13 +6,13 @@ import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { RefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/services/refresh-access-token.service';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
@@ -40,12 +40,11 @@ export class MessagingMessagesImportService {
     private readonly messagingTelemetryService: MessagingTelemetryService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
     private readonly emailAliasManagerService: EmailAliasManagerService,
     private readonly isFeatureEnabledService: IsFeatureEnabledService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   async processMessageBatchImport(
@@ -73,7 +72,6 @@ export class MessagingMessagesImportService {
 
     await this.messagingChannelSyncStatusService.markAsMessagesImportOngoing(
       messageChannel.id,
-      workspaceId,
     );
 
     let accessToken: string;
@@ -139,7 +137,6 @@ export class MessagingMessagesImportService {
     if (!messageIdsToFetch?.length) {
       await this.messagingChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
         messageChannel.id,
-        workspaceId,
       );
 
       return await this.trackMessageImportCompleted(
@@ -180,23 +177,26 @@ export class MessagingMessagesImportService {
       ) {
         await this.messagingChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
           messageChannel.id,
-          workspaceId,
         );
       } else {
         await this.messagingChannelSyncStatusService.scheduleMessagesImport(
           messageChannel.id,
-          workspaceId,
         );
       }
 
-      await this.messageChannelRepository.resetThrottleFailureCount(
-        messageChannel.id,
-        workspaceId,
-      );
+      const messageChannelRepository =
+        await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+          'messageChannel',
+        );
 
-      await this.messageChannelRepository.resetSyncStageStartedAt(
-        messageChannel.id,
-        workspaceId,
+      await messageChannelRepository.update(
+        {
+          id: messageChannel.id,
+        },
+        {
+          throttleFailureCount: 0,
+          syncStageStartedAt: null,
+        },
       );
 
       return await this.trackMessageImportCompleted(

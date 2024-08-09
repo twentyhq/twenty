@@ -8,6 +8,7 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -15,7 +16,6 @@ import {
   BlocklistItemDeleteMessagesJob,
   BlocklistItemDeleteMessagesJobData,
 } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-item-delete-messages.job';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
@@ -27,8 +27,7 @@ export class MessagingBlocklistListener {
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   @OnEvent('blocklist.created')
@@ -61,14 +60,19 @@ export class MessagingBlocklistListener {
       return;
     }
 
-    const messageChannel =
-      await this.messageChannelRepository.getByConnectedAccountId(
-        connectedAccount[0].id,
-        workspaceId,
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
       );
 
+    const messageChannel = await messageChannelRepository.findOneOrFail({
+      where: {
+        connectedAccountId: connectedAccount[0].id,
+      },
+    });
+
     await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
-      messageChannel[0].id,
+      messageChannel.id,
       workspaceId,
     );
   }
@@ -98,14 +102,19 @@ export class MessagingBlocklistListener {
       return;
     }
 
-    const messageChannel =
-      await this.messageChannelRepository.getByConnectedAccountId(
-        connectedAccount[0].id,
-        workspaceId,
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
       );
 
+    const messageChannel = await messageChannelRepository.findOneOrFail({
+      where: {
+        connectedAccountId: connectedAccount[0].id,
+      },
+    });
+
     await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
-      messageChannel[0].id,
+      messageChannel.id,
       workspaceId,
     );
   }

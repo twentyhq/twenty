@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import snakeCase from 'lodash.snakecase';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/message-import-manager/constants/messaging-throttle-max-attempts';
@@ -28,8 +28,7 @@ export class MessagingErrorHandlingService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async handleGmailError(
@@ -263,21 +262,18 @@ export class MessagingErrorHandlingService {
       case 'full-message-list-fetch':
         await this.messagingChannelSyncStatusService.scheduleFullMessageListFetch(
           messageChannel.id,
-          workspaceId,
         );
         break;
 
       case 'partial-message-list-fetch':
         await this.messagingChannelSyncStatusService.schedulePartialMessageListFetch(
           messageChannel.id,
-          workspaceId,
         );
         break;
 
       case 'messages-import':
         await this.messagingChannelSyncStatusService.scheduleMessagesImport(
           messageChannel.id,
-          workspaceId,
         );
         break;
 
@@ -290,9 +286,17 @@ export class MessagingErrorHandlingService {
     messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
-    await this.messageChannelRepository.incrementThrottleFailureCount(
-      messageChannel.id,
-      workspaceId,
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
+    await messageChannelRepository.increment(
+      {
+        id: messageChannel.id,
+      },
+      'throttleFailureCount',
+      1,
     );
 
     await this.messagingTelemetryService.track({
