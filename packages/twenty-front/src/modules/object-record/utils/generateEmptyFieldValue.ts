@@ -84,6 +84,9 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.RawJson: {
       return null;
     }
+    case FieldMetadataType.FieldPath: {
+      return null;
+    }
     case FieldMetadataType.RichText: {
       return null;
     }

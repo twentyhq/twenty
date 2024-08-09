@@ -5,6 +5,7 @@ import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.modu
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
+import { ChartModule } from 'src/engine/core-modules/chart/chart.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
@@ -35,6 +36,7 @@ import { FileModule } from './file/file.module';
     WorkspaceModule,
     AISQLQueryModule,
     PostgresCredentialsModule,
+    ChartModule,
     WorkflowTriggerCoreModule,
   ],
   exports: [

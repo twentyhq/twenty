@@ -60,6 +60,16 @@ export const BLOCKLIST_STANDARD_FIELD_IDS = {
   workspaceMember: '20202020-548d-4084-a947-fa20a39f7c06',
 };
 
+export const CHART_STANDARD_FIELD_IDS = {
+  name: '20202020-e5aa-45b1-aec0-431420660570',
+  description: '20202020-71b2-4df1-8cb3-120d55272b12',
+  measure: '20202020-e764-4295-bb56-9b757287174b',
+  sourceObjectNameSingular: '20202020-1e61-41f2-b921-4b2b21b25002',
+  fieldPath: '20202020-b301-49fc-a26e-55f1a482a4c8',
+  groupBy: '20202020-c5e7-4158-bd3e-3ab1283b52a3',
+  position: '20202020-b014-4ead-b2f4-5cbb9c67cd05',
+};
+
 export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS = {
   calendarChannel: '20202020-93ee-4da4-8d58-0282c4a9cb7d',
   calendarEvent: '20202020-5aa5-437e-bb86-f42d457783e3',

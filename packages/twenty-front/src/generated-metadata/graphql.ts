@@ -154,6 +154,11 @@ export enum CaptchaDriverType {
   Turnstile = 'Turnstile'
 }
 
+export type ChartResult = {
+  __typename?: 'ChartResult';
+  chartResult: Scalars['String']['output'];
+};
+
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   api: ApiConfig;
@@ -351,6 +356,7 @@ export enum FieldMetadataType {
   Date = 'DATE',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
+  FieldPath = 'FIELD_PATH',
   FullName = 'FULL_NAME',
   Link = 'LINK',
   Links = 'LINKS',
@@ -775,6 +781,7 @@ export type ProductPricesEntity = {
 export type Query = {
   __typename?: 'Query';
   billingPortalSession: SessionEntity;
+  chartData: ChartResult;
   checkUserExists: UserExists;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
@@ -805,6 +812,11 @@ export type Query = {
 
 export type QueryBillingPortalSessionArgs = {
   returnUrlPath?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryChartDataArgs = {
+  chartId: Scalars['String']['input'];
 };
 
 

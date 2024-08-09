@@ -8,6 +8,7 @@ import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/cale
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
+import { ChartWorkspaceEntity } from 'src/modules/charts/standard-objects/chart.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -49,6 +50,7 @@ export const standardObjectMetadataDefinitions = [
   CalendarChannelWorkspaceEntity,
   CalendarChannelEventAssociationWorkspaceEntity,
   CalendarEventParticipantWorkspaceEntity,
+  ChartWorkspaceEntity,
   CommentWorkspaceEntity,
   CompanyWorkspaceEntity,
   ConnectedAccountWorkspaceEntity,

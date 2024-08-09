@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -147,6 +147,11 @@ export enum CaptchaDriverType {
   Turnstile = 'Turnstile'
 }
 
+export type ChartResult = {
+  __typename?: 'ChartResult';
+  chartResult?: Maybe<Scalars['String']>;
+};
+
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   api: ApiConfig;
@@ -160,6 +165,28 @@ export type ClientConfig = {
   signUpDisabled: Scalars['Boolean'];
   support: Support;
   telemetry: Telemetry;
+};
+
+export type CreateFieldInput = {
+  defaultValue?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  isNullable?: InputMaybe<Scalars['Boolean']>;
+  isRemoteCreation?: InputMaybe<Scalars['Boolean']>;
+  isSystem?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  name: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+  options?: InputMaybe<Scalars['JSON']>;
+  settings?: InputMaybe<Scalars['JSON']>;
+  type: FieldMetadataType;
+};
+
+export type CreateOneFieldMetadataInput = {
+  /** The record to create */
+  field: CreateFieldInput;
 };
 
 export type CreateServerlessFunctionFromFileInput = {
@@ -184,8 +211,18 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
+export type DeleteOneFieldInput = {
+  /** The id of the field to delete. */
+  id: Scalars['UUID'];
+};
+
 export type DeleteOneObjectInput = {
   /** The id of the record to delete. */
+  id: Scalars['UUID'];
+};
+
+export type DeleteOneRelationInput = {
+  /** The id of the relation to delete. */
   id: Scalars['UUID'];
 };
 
@@ -249,13 +286,14 @@ export type FieldConnection = {
 
 /** Type of the field */
 export enum FieldMetadataType {
+  Actor = 'ACTOR',
   Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
-  Actor = 'ACTOR',
   Currency = 'CURRENCY',
   Date = 'DATE',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
+  FieldPath = 'FIELD_PATH',
   FullName = 'FULL_NAME',
   Link = 'LINK',
   Links = 'LINKS',
@@ -326,11 +364,15 @@ export type Mutation = {
   challenge: LoginToken;
   checkoutSession: SessionEntity;
   createOneAppToken: AppToken;
+  createOneField: Field;
   createOneObject: Object;
+  createOneRelation: Relation;
   createOneServerlessFunction: ServerlessFunction;
   createOneServerlessFunctionFromFile: ServerlessFunction;
   deleteCurrentWorkspace: Workspace;
+  deleteOneField: Field;
   deleteOneObject: Object;
+  deleteOneRelation: Relation;
   deleteOneServerlessFunction: ServerlessFunction;
   deleteUser: User;
   disablePostgresProxy: PostgresCredentials;
@@ -344,12 +386,13 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
+  runWorkflowVersion: WorkflowTriggerResult;
   sendInviteLink: SendInviteLink;
   signUp: LoginToken;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
-  triggerWorkflow: WorkflowTriggerResult;
   updateBillingSubscription: UpdateBillingEntity;
+  updateOneField: Field;
   updateOneObject: Object;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
@@ -392,6 +435,11 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
+export type MutationCreateOneFieldArgs = {
+  input: CreateOneFieldMetadataInput;
+};
+
+
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
 };
@@ -403,8 +451,18 @@ export type MutationCreateOneServerlessFunctionFromFileArgs = {
 };
 
 
+export type MutationDeleteOneFieldArgs = {
+  input: DeleteOneFieldInput;
+};
+
+
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
+};
+
+
+export type MutationDeleteOneRelationArgs = {
+  input: DeleteOneRelationInput;
 };
 
 
@@ -457,6 +515,11 @@ export type MutationRenewTokenArgs = {
 };
 
 
+export type MutationRunWorkflowVersionArgs = {
+  input: RunWorkflowVersionInput;
+};
+
+
 export type MutationSendInviteLinkArgs = {
   emails: Array<Scalars['String']>;
 };
@@ -476,8 +539,8 @@ export type MutationTrackArgs = {
 };
 
 
-export type MutationTriggerWorkflowArgs = {
-  workflowVersionId: Scalars['String'];
+export type MutationUpdateOneFieldArgs = {
+  input: UpdateOneFieldMetadataInput;
 };
 
 
@@ -597,11 +660,14 @@ export type ProductPricesEntity = {
 export type Query = {
   __typename?: 'Query';
   billingPortalSession: SessionEntity;
+  chartData: ChartResult;
   checkUserExists: UserExists;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
+  field: Field;
+  fields: FieldConnection;
   findWorkspaceFromInviteHash: Workspace;
   getAISQLQuery: AisqlQueryResult;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
@@ -612,6 +678,8 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   object: Object;
   objects: ObjectConnection;
+  relation: Relation;
+  relations: RelationConnection;
   serverlessFunction: ServerlessFunction;
   serverlessFunctions: ServerlessFunctionConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
@@ -620,6 +688,11 @@ export type Query = {
 
 export type QueryBillingPortalSessionArgs = {
   returnUrlPath?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryChartDataArgs = {
+  chartId: Scalars['String'];
 };
 
 
@@ -742,6 +815,13 @@ export enum RemoteTableStatus {
   NotSynced = 'NOT_SYNCED',
   Synced = 'SYNCED'
 }
+
+export type RunWorkflowVersionInput = {
+  /** Execution result in JSON format */
+  payload?: InputMaybe<Scalars['JSON']>;
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String'];
+};
 
 export type SendInviteLink = {
   __typename?: 'SendInviteLink';
@@ -947,6 +1027,20 @@ export type UpdateBillingEntity = {
   success: Scalars['Boolean'];
 };
 
+export type UpdateFieldInput = {
+  defaultValue?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  isNullable?: InputMaybe<Scalars['Boolean']>;
+  isSystem?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  options?: InputMaybe<Scalars['JSON']>;
+  settings?: InputMaybe<Scalars['JSON']>;
+};
+
 export type UpdateObjectPayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
@@ -957,6 +1051,13 @@ export type UpdateObjectPayload = {
   labelSingular?: InputMaybe<Scalars['String']>;
   namePlural?: InputMaybe<Scalars['String']>;
   nameSingular?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateOneFieldMetadataInput = {
+  /** The id of the record to update */
+  id: Scalars['UUID'];
+  /** The record to update */
+  update: UpdateFieldInput;
 };
 
 export type UpdateOneObjectInput = {
@@ -1087,6 +1188,7 @@ export type WorkspaceFeatureFlagsArgs = {
 export enum WorkspaceActivationStatus {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE',
+  OngoingCreation = 'ONGOING_CREATION',
   PendingCreation = 'PENDING_CREATION'
 }
 
@@ -1273,6 +1375,13 @@ export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
 
 
 export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+
+export type ChartDataQueryVariables = Exact<{
+  chartId: Scalars['String'];
+}>;
+
+
+export type ChartDataQuery = { __typename?: 'Query', chartData: { __typename?: 'ChartResult', chartResult?: string | null } };
 
 export type TrackMutationVariables = Exact<{
   type: Scalars['String'];
@@ -1827,6 +1936,41 @@ export function useGetTimelineThreadsFromPersonIdLazyQuery(baseOptions?: Apollo.
 export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdQuery>;
 export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
 export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
+export const ChartDataDocument = gql`
+    query ChartData($chartId: String!) {
+  chartData(chartId: $chartId) {
+    chartResult
+  }
+}
+    `;
+
+/**
+ * __useChartDataQuery__
+ *
+ * To run a query within a React component, call `useChartDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChartDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChartDataQuery({
+ *   variables: {
+ *      chartId: // value for 'chartId'
+ *   },
+ * });
+ */
+export function useChartDataQuery(baseOptions: Apollo.QueryHookOptions<ChartDataQuery, ChartDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ChartDataQuery, ChartDataQueryVariables>(ChartDataDocument, options);
+      }
+export function useChartDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ChartDataQuery, ChartDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ChartDataQuery, ChartDataQueryVariables>(ChartDataDocument, options);
+        }
+export type ChartDataQueryHookResult = ReturnType<typeof useChartDataQuery>;
+export type ChartDataLazyQueryHookResult = ReturnType<typeof useChartDataLazyQuery>;
+export type ChartDataQueryResult = Apollo.QueryResult<ChartDataQuery, ChartDataQueryVariables>;
 export const TrackDocument = gql`
     mutation Track($type: String!, $data: JSON!) {
   track(type: $type, data: $data) {

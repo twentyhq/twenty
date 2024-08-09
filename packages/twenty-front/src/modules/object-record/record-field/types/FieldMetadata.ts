@@ -95,6 +95,12 @@ export type FieldRawJsonMetadata = {
   placeHolder: string;
 };
 
+export type FieldFieldPathMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+  placeHolder: string;
+};
+
 export type FieldRichTextMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -169,6 +175,7 @@ export type FieldMetadata =
   | FieldTextMetadata
   | FieldUuidMetadata
   | FieldAddressMetadata
+  | FieldFieldPathMetadata
   | FieldActorMetadata;
 
 export type FieldTextValue = string;
@@ -215,6 +222,8 @@ export type FieldRelationValue<
 
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
+
+export type FieldFieldPathValue = string[] | null;
 
 export type FieldActorValue = {
   source: string;

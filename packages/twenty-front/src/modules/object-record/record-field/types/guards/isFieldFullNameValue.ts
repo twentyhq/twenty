@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { FieldFullNameValue } from '../FieldMetadata';
 
-const fullnameSchema = z.object({
+const fullNameSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
 });
@@ -10,4 +10,4 @@ const fullnameSchema = z.object({
 export const isFieldFullNameValue = (
   fieldValue: unknown,
 ): fieldValue is FieldFullNameValue =>
-  fullnameSchema.safeParse(fieldValue).success;
+  fullNameSchema.safeParse(fieldValue).success;

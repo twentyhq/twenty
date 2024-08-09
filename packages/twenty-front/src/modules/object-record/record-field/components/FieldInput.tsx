@@ -20,7 +20,9 @@ import { isFieldRelationToOneObject } from '@/object-record/record-field/types/g
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
+import { FieldPathFieldInput } from '@/object-record/record-field/meta-types/input/components/FieldPathFieldInput';
 import { RichTextFieldInput } from '@/object-record/record-field/meta-types/input/components/RichTextFieldInput';
+import { isFieldFieldPath } from '@/object-record/record-field/types/guards/isFieldFieldPath';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
@@ -171,6 +173,14 @@ export const FieldInput = ({
         />
       ) : isFieldRawJson(fieldDefinition) ? (
         <RawJsonFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
+      ) : isFieldFieldPath(fieldDefinition) ? (
+        <FieldPathFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}

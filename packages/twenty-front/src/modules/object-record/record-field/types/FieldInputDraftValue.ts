@@ -6,6 +6,7 @@ import {
   FieldCurrencyValue,
   FieldDateTimeValue,
   FieldEmailValue,
+  FieldFieldPathValue,
   FieldFullNameValue,
   FieldJsonValue,
   FieldLinksValue,
@@ -52,6 +53,7 @@ export type FieldAddressDraftValue = {
   addressLng: number | null;
 };
 export type FieldJsonDraftValue = string;
+export type FieldFieldPathDraftValue = string[];
 export type FieldActorDraftValue = {
   source: string;
   workspaceMemberId?: string;
@@ -94,6 +96,8 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                                   ? FieldAddressDraftValue
                                   : FieldValue extends FieldJsonValue
                                     ? FieldJsonDraftValue
-                                    : FieldValue extends FieldActorValue
-                                      ? FieldActorDraftValue
-                                      : never;
+                                    : FieldValue extends FieldFieldPathValue
+                                      ? FieldFieldPathDraftValue
+                                      : FieldValue extends FieldActorValue
+                                        ? FieldActorDraftValue
+                                        : never;

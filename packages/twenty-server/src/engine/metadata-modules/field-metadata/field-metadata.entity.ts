@@ -42,6 +42,7 @@ export enum FieldMetadataType {
   POSITION = 'POSITION',
   ADDRESS = 'ADDRESS',
   RAW_JSON = 'RAW_JSON',
+  FIELD_PATH = 'FIELD_PATH',
   RICH_TEXT = 'RICH_TEXT',
   ACTOR = 'ACTOR',
 }

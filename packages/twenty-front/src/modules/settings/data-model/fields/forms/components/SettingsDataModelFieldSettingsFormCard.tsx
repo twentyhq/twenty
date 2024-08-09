@@ -96,6 +96,7 @@ const previewableTypes = [
   FieldMetadataType.Relation,
   FieldMetadataType.Select,
   FieldMetadataType.Text,
+  FieldMetadataType.FieldPath,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({

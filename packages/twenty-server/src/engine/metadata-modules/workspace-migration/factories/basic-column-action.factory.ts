@@ -50,6 +50,7 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
         columnType: fieldMetadataTypeToColumnType(fieldMetadata.type),
         isNullable: fieldMetadata.isNullable ?? true,
         defaultValue: serializedDefaultValue,
+        isArray: fieldMetadata.type === FieldMetadataType.FIELD_PATH,
       },
     ];
   }
@@ -85,12 +86,14 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
           defaultValue: serializeDefaultValue(
             currentFieldMetadata.defaultValue,
           ),
+          isArray: currentFieldMetadata.type === FieldMetadataType.FIELD_PATH,
         },
         alteredColumnDefinition: {
           columnName: alteredColumnName,
           columnType: fieldMetadataTypeToColumnType(alteredFieldMetadata.type),
           isNullable: alteredFieldMetadata.isNullable ?? true,
           defaultValue: serializedDefaultValue,
+          isArray: currentFieldMetadata.type === FieldMetadataType.FIELD_PATH,
         },
       },
     ];

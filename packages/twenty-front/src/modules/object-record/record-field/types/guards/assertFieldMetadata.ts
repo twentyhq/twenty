@@ -9,6 +9,7 @@ import {
   FieldDateMetadata,
   FieldDateTimeMetadata,
   FieldEmailMetadata,
+  FieldFieldPathMetadata,
   FieldFullNameMetadata,
   FieldLinkMetadata,
   FieldLinksMetadata,
@@ -62,11 +63,13 @@ type AssertFieldMetadataFunction = <
                                     ? FieldAddressMetadata
                                     : E extends 'RAW_JSON'
                                       ? FieldRawJsonMetadata
-                                      : E extends 'RICH_TEXT'
-                                        ? FieldTextMetadata
-                                        : E extends 'ACTOR'
-                                          ? FieldActorMetadata
-                                          : never,
+                                      : E extends 'FIELD_PATH'
+                                        ? FieldFieldPathMetadata
+                                        : E extends 'RICH_TEXT'
+                                          ? FieldTextMetadata
+                                          : E extends 'ACTOR'
+                                            ? FieldActorMetadata
+                                            : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

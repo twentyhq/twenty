@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { activitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all.view';
+import { chartsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/charts-all.view';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
@@ -25,6 +26,7 @@ export const viewPrefillData = async (
     await notesAllView(objectMetadataMap),
     await tasksAllView(objectMetadataMap),
     await tasksByStatusView(objectMetadataMap),
+    await chartsAllView(objectMetadataMap),
   ];
 
   const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({

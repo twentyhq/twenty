@@ -1,6 +1,6 @@
-import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react';
 import { RGBA, TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
