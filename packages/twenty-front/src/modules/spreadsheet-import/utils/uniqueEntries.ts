@@ -6,7 +6,7 @@ import {
 } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 
 export const uniqueEntries = <T extends string>(
-  data: MatchColumnsStepProps<T>['data'],
+  data: MatchColumnsStepProps['data'],
   index: number,
 ): Partial<MatchedOptions<T>>[] =>
   uniqBy(

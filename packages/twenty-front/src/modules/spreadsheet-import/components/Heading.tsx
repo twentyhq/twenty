@@ -20,7 +20,7 @@ const StyledTitle = styled.span`
 `;
 
 const StyledDescription = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin-top: ${({ theme }) => theme.spacing(3)};

@@ -1,5 +1,5 @@
-import React from 'react';
 import styled from '@emotion/styled';
+import React from 'react';
 
 import { Columns } from '../MatchColumnsStep';
 
@@ -24,9 +24,12 @@ const StyledGrid = styled.div`
 
 type HeightProps = {
   height?: `${number}px`;
+  withBorder?: boolean;
 };
 
 const StyledGridRow = styled.div<HeightProps>`
+  border-bottom: ${({ withBorder, theme }) =>
+    withBorder && `1px solid ${theme.border.color.medium}`};
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -34,7 +37,7 @@ const StyledGridRow = styled.div<HeightProps>`
 `;
 
 type PositionProps = {
-  position: 'left' | 'right';
+  position: 'left' | 'right' | 'full-line';
 };
 
 const StyledGridCell = styled.div<PositionProps>`
@@ -50,11 +53,21 @@ const StyledGridCell = styled.div<PositionProps>`
       return `
         padding-left: ${theme.spacing(4)};
         padding-right: ${theme.spacing(2)};
+        padding-top:  ${theme.spacing(4)};
+      `;
+    }
+    if (position === 'full-line') {
+      return `
+        padding-left: ${theme.spacing(2)};
+        padding-right: ${theme.spacing(4)};
+        padding-top:  ${theme.spacing(0)};
+        width: 100%;
       `;
     }
     return `
       padding-left: ${theme.spacing(2)};
       padding-right: ${theme.spacing(4)};
+      padding-top:  ${theme.spacing(4)};
     `;
   }};
 `;
@@ -89,12 +102,17 @@ type ColumnGridProps<T extends string> = {
     columns: Columns<T>,
     columnIndex: number,
   ) => React.ReactNode;
+  renderUnmatchedColumn: (
+    columns: Columns<T>,
+    columnIndex: number,
+  ) => React.ReactNode;
 };
 
 export const ColumnGrid = <T extends string>({
   columns,
   renderUserColumn,
   renderTemplateColumn,
+  renderUnmatchedColumn,
 }: ColumnGridProps<T>) => {
   return (
     <>
@@ -107,15 +125,29 @@ export const ColumnGrid = <T extends string>({
           {columns.map((column, index) => {
             const userColumn = renderUserColumn(columns, index);
             const templateColumn = renderTemplateColumn(columns, index);
+            const unmatchedColumn = renderUnmatchedColumn(columns, index);
+            const isSelect = 'matchedOptions' in columns[index];
+            const isLast = index === columns.length - 1;
 
             if (React.isValidElement(userColumn)) {
               return (
-                <StyledGridRow key={index}>
-                  <StyledGridCell position="left">{userColumn}</StyledGridCell>
-                  <StyledGridCell position="right">
-                    {templateColumn}
-                  </StyledGridCell>
-                </StyledGridRow>
+                <div key={index}>
+                  <StyledGridRow withBorder={!isSelect && !isLast}>
+                    <StyledGridCell position="left">
+                      {userColumn}
+                    </StyledGridCell>
+                    <StyledGridCell position="right">
+                      {templateColumn}
+                    </StyledGridCell>
+                  </StyledGridRow>
+                  {isSelect && (
+                    <StyledGridRow withBorder={!isLast}>
+                      <StyledGridCell position="full-line">
+                        {unmatchedColumn}
+                      </StyledGridCell>
+                    </StyledGridRow>
+                  )}
+                </div>
               );
             }
 

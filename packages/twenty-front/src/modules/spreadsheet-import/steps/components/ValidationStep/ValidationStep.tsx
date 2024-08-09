@@ -1,6 +1,12 @@
 import styled from '@emotion/styled';
-import { useCallback, useMemo, useState } from 'react';
-// @ts-expect-error Todo: remove usage of react-data-grid
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
+// @ts-expect-error Todo: remove usage of react-data-grid`
 import { RowsChangeData } from 'react-data-grid';
 import { IconTrash } from 'twenty-ui';
 
@@ -22,6 +28,8 @@ import { Button } from '@/ui/input/button/components/Button';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { isDefined } from '~/utils/isDefined';
 
+import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
@@ -71,15 +79,15 @@ type ValidationStepProps<T extends string> = {
   initialData: ImportedStructuredRow<T>[];
   importedColumns: Columns<string>;
   file: File;
-  onSubmitStart?: () => void;
   onBack: () => void;
+  setCurrentStepState: Dispatch<SetStateAction<SpreadsheetImportStep>>;
 };
 
 export const ValidationStep = <T extends string>({
   initialData,
   importedColumns,
   file,
-  onSubmitStart,
+  setCurrentStepState,
   onBack,
 }: ValidationStepProps<T>) => {
   const { enqueueDialog } = useDialogManager();
@@ -209,7 +217,11 @@ export const ValidationStep = <T extends string>({
         allStructuredRows: data,
       } satisfies ImportValidationResult<T>,
     );
-    onSubmitStart?.();
+
+    setCurrentStepState({
+      type: SpreadsheetImportStepType.loading,
+    });
+
     await onSubmit(calculatedData, file);
     onClose();
   };

@@ -123,6 +123,38 @@ export const useBuildAvailableFieldsForImport = () => {
               ),
           });
         });
+      } else if (fieldMetadataItem.type === FieldMetadataType.Select) {
+        availableFieldsForImport.push({
+          icon: getIcon(fieldMetadataItem.icon),
+          label: fieldMetadataItem.label,
+          key: fieldMetadataItem.name,
+          fieldType: {
+            type: 'select',
+            options:
+              fieldMetadataItem.options?.map((option) => ({
+                label: option.label,
+                value: option.value,
+                color: option.color,
+              })) || [],
+          },
+          fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
+            fieldMetadataItem.type,
+            fieldMetadataItem.label + ' (ID)',
+          ),
+        });
+      } else if (fieldMetadataItem.type === FieldMetadataType.Boolean) {
+        availableFieldsForImport.push({
+          icon: getIcon(fieldMetadataItem.icon),
+          label: fieldMetadataItem.label,
+          key: fieldMetadataItem.name,
+          fieldType: {
+            type: 'checkbox',
+          },
+          fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
+            fieldMetadataItem.type,
+            fieldMetadataItem.label,
+          ),
+        });
       } else {
         availableFieldsForImport.push({
           icon: getIcon(fieldMetadataItem.icon),
