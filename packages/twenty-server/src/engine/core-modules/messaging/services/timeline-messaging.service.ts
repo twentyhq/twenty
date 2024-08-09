@@ -8,16 +8,6 @@ import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 
-type TimelineThreadParticipant = {
-  personId: string;
-  workspaceMemberId: string;
-  firstName: string;
-  lastName: string;
-  displayName: string;
-  avatarUrl: string;
-  handle: string;
-};
-
 @Injectable()
 export class TimelineMessagingService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
