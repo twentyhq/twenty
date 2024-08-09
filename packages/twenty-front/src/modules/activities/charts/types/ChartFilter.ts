@@ -1,9 +1,8 @@
-import { AnalyticsQuery } from '@/activities/charts/types/AnalyticsQuery';
+// TODO - Should charts have share filters with the rest of the app?
 
 export interface ChartFilter {
   id: string;
-  analyticsQuery: AnalyticsQuery;
-  analyticsQueryId: string;
+  chartId: string;
   field: string;
   operator: ChartFilterOperator;
   value: string;

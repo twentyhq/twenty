@@ -1,4 +1,3 @@
-import { ChartFilter } from '@/activities/charts/types/ChartFilter';
 
 export interface Chart {
   id: string;
@@ -7,7 +6,6 @@ export interface Chart {
   measure: ChartMeasure;
   sourceObjectNameSingular: string;
   fieldPath: string;
-  chartFilters: ChartFilter[];
   groupBy: string;
   result: any; // TODO
   resultCreatedAt: string;

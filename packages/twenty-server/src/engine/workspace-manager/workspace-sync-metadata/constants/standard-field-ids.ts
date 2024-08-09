@@ -73,7 +73,6 @@ export const CHART_STANDARD_FIELD_IDS = {
   measure: '20202020-e764-4295-bb56-9b757287174b',
   sourceObjectNameSingular: '20202020-1e61-41f2-b921-4b2b21b25002',
   fieldPath: '20202020-b301-49fc-a26e-55f1a482a4c8',
-  chartFilters: '20202020-9703-4059-8b49-50a44cf3da26',
   groupBy: '20202020-c5e7-4158-bd3e-3ab1283b52a3',
   position: '20202020-b014-4ead-b2f4-5cbb9c67cd05',
 };

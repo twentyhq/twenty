@@ -1,19 +1,13 @@
-import { Relation } from 'typeorm';
-
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import {
-  RelationMetadataType,
-  RelationOnDeleteAction,
-} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CHART_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { ChartFilterWorkspaceEntity } from 'src/modules/charts/standard-objects/chart-filter.workspace-entity';
 
 export enum ChartMeasure {
   AVERAGE = 'AVERAGE',
@@ -31,6 +25,9 @@ export enum ChartMeasure {
   description: 'A chart for data visualization',
   icon: 'IconChartBar',
   labelIdentifierStandardId: CHART_STANDARD_FIELD_IDS.name,
+})
+@WorkspaceGate({
+  featureFlag: FeatureFlagKey.IsChartsEnabled,
 })
 export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -112,19 +109,6 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   fieldPath: string[];
-
-  @WorkspaceRelation({
-    standardId: CHART_STANDARD_FIELD_IDS.chartFilters,
-    label: 'Chart filters',
-    description: 'Filters of the chart',
-    icon: 'IconFilter',
-    type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => ChartFilterWorkspaceEntity,
-    inverseSideFieldKey: 'chart',
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  chartFilters: Relation<ChartFilterWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: CHART_STANDARD_FIELD_IDS.groupBy,

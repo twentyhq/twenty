@@ -5,6 +5,7 @@ import { Chart as ChartType } from '@/activities/charts/types/Chart';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useTheme } from '@emotion/react';
 import { useChartDataQuery } from '~/generated/graphql';
 
 const StyledChartContainer = styled.div`
@@ -20,6 +21,8 @@ interface ChartProps {
 }
 
 export const Chart = (props: ChartProps) => {
+  const theme = useTheme();
+
   const { record: chart, loading: chartLoading } = useFindOneRecord<ChartType>({
     objectRecordId: props.targetableObject.id,
     objectNameSingular: props.targetableObject.targetObjectNameSingular,
@@ -47,13 +50,15 @@ export const Chart = (props: ChartProps) => {
 
   if (!chartResult) return;
 
+  const margin = theme.spacingMultiplicator * 12;
+
   return (
     <StyledChartContainer>
       <ResponsiveBar
         data={chartResult}
         keys={['measure']}
         indexBy={chart?.groupBy}
-        margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+        margin={{ top: margin, right: margin, bottom: margin, left: margin }}
         padding={0.4}
         valueScale={{ type: 'linear' }}
         animate={true}

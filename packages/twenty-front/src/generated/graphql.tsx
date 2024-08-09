@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -167,6 +167,28 @@ export type ClientConfig = {
   telemetry: Telemetry;
 };
 
+export type CreateFieldInput = {
+  defaultValue?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  isNullable?: InputMaybe<Scalars['Boolean']>;
+  isRemoteCreation?: InputMaybe<Scalars['Boolean']>;
+  isSystem?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  name: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+  options?: InputMaybe<Scalars['JSON']>;
+  settings?: InputMaybe<Scalars['JSON']>;
+  type: FieldMetadataType;
+};
+
+export type CreateOneFieldMetadataInput = {
+  /** The record to create */
+  field: CreateFieldInput;
+};
+
 export type CreateServerlessFunctionFromFileInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
@@ -196,6 +218,11 @@ export type DeleteOneFieldInput = {
 
 export type DeleteOneObjectInput = {
   /** The id of the record to delete. */
+  id: Scalars['UUID'];
+};
+
+export type DeleteOneRelationInput = {
+  /** The id of the relation to delete. */
   id: Scalars['UUID'];
 };
 
@@ -259,9 +286,9 @@ export type FieldConnection = {
 
 /** Type of the field */
 export enum FieldMetadataType {
+  Actor = 'ACTOR',
   Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
-  Actor = 'ACTOR',
   Currency = 'CURRENCY',
   Date = 'DATE',
   DateTime = 'DATE_TIME',
@@ -339,11 +366,13 @@ export type Mutation = {
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
+  createOneRelation: Relation;
   createOneServerlessFunction: ServerlessFunction;
   createOneServerlessFunctionFromFile: ServerlessFunction;
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
   deleteOneObject: Object;
+  deleteOneRelation: Relation;
   deleteOneServerlessFunction: ServerlessFunction;
   deleteUser: User;
   disablePostgresProxy: PostgresCredentials;
@@ -357,11 +386,11 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
+  runWorkflowVersion: WorkflowTriggerResult;
   sendInviteLink: SendInviteLink;
   signUp: LoginToken;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
-  triggerWorkflow: WorkflowTriggerResult;
   updateBillingSubscription: UpdateBillingEntity;
   updateOneField: Field;
   updateOneObject: Object;
@@ -406,6 +435,11 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
+export type MutationCreateOneFieldArgs = {
+  input: CreateOneFieldMetadataInput;
+};
+
+
 export type MutationCreateOneServerlessFunctionArgs = {
   input: CreateServerlessFunctionInput;
 };
@@ -417,8 +451,18 @@ export type MutationCreateOneServerlessFunctionFromFileArgs = {
 };
 
 
+export type MutationDeleteOneFieldArgs = {
+  input: DeleteOneFieldInput;
+};
+
+
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
+};
+
+
+export type MutationDeleteOneRelationArgs = {
+  input: DeleteOneRelationInput;
 };
 
 
@@ -471,6 +515,11 @@ export type MutationRenewTokenArgs = {
 };
 
 
+export type MutationRunWorkflowVersionArgs = {
+  input: RunWorkflowVersionInput;
+};
+
+
 export type MutationSendInviteLinkArgs = {
   emails: Array<Scalars['String']>;
 };
@@ -490,8 +539,8 @@ export type MutationTrackArgs = {
 };
 
 
-export type MutationTriggerWorkflowArgs = {
-  workflowVersionId: Scalars['String'];
+export type MutationUpdateOneFieldArgs = {
+  input: UpdateOneFieldMetadataInput;
 };
 
 
@@ -629,6 +678,8 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   object: Object;
   objects: ObjectConnection;
+  relation: Relation;
+  relations: RelationConnection;
   serverlessFunction: ServerlessFunction;
   serverlessFunctions: ServerlessFunctionConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
@@ -764,6 +815,13 @@ export enum RemoteTableStatus {
   NotSynced = 'NOT_SYNCED',
   Synced = 'SYNCED'
 }
+
+export type RunWorkflowVersionInput = {
+  /** Execution result in JSON format */
+  payload?: InputMaybe<Scalars['JSON']>;
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String'];
+};
 
 export type SendInviteLink = {
   __typename?: 'SendInviteLink';
@@ -1130,6 +1188,7 @@ export type WorkspaceFeatureFlagsArgs = {
 export enum WorkspaceActivationStatus {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE',
+  OngoingCreation = 'ONGOING_CREATION',
   PendingCreation = 'PENDING_CREATION'
 }
 

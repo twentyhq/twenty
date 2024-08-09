@@ -8,8 +8,6 @@
 export const STANDARD_OBJECT_IDS = {
   activityTarget: '20202020-2945-440e-8d1a-f84672d33d5e',
   activity: '20202020-39aa-4a89-843b-eb5f2a8b677f',
-  analyticsQuery: '20202020-6cad-4f2d-8164-d70f000ccbb7',
-  analyticsQueryFilter: '20202020-2712-40b2-9063-0ab434ed6990',
   apiKey: '20202020-4c00-401d-8cda-ec6a4c41cd7d',
   attachment: '20202020-bd3d-4c60-8dca-571c71d4447a',
   blocklist: '20202020-0408-4f38-b8a8-4d5e3e26e24d',

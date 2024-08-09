@@ -1,8 +1,6 @@
 export enum CoreObjectNameSingular {
   Activity = 'activity',
   ActivityTarget = 'activityTarget',
-  AnalyticsQuery = 'analyticsQuery',
-  AnalyticsQueryFilter = 'analyticsQueryFilter',
   ApiKey = 'apiKey',
   Attachment = 'attachment',
   Blocklist = 'blocklist',
