@@ -3,15 +3,7 @@
   "compilerOptions": {
     "types": ["node"]
   },
-  "exclude": [
-    "**/__mocks__/**/*",
-    "**/*.spec.ts",
-    "**/*.spec.tsx",
-    "**/*.stories.ts",
-    "**/*.stories.tsx",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-  ],
+  "exclude": ["**/__mocks__/**/*"],
   "include": [
     "src/**/*.js",
     "src/**/*.jsx",
