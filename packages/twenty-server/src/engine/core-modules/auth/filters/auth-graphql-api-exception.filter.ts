@@ -23,7 +23,7 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
         throw new UserInputError(exception.message);
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
         throw new ForbiddenError(exception.message);
-      case AuthExceptionCode.UNAUTHORIZED:
+      case AuthExceptionCode.UNAUTHENTICATED:
         throw new AuthenticationError(exception.message);
       case AuthExceptionCode.INVALID_DATA:
       case AuthExceptionCode.INTERNAL_SERVER_ERROR:
