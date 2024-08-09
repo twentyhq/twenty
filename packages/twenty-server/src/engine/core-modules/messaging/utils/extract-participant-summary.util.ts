@@ -37,12 +37,13 @@ export const extractParticipantSummary = (
           threadParticipant.handle !== lastParticipant.handle,
       );
 
-    if (activeMessageParticipantsWithoutFirstAndLastParticipants.length > 0)
+    if (activeMessageParticipantsWithoutFirstAndLastParticipants.length > 0) {
       lastTwoParticipants.push(
         formatThreadParticipant(
           activeMessageParticipantsWithoutFirstAndLastParticipants.slice(-1)[0],
         ),
       );
+    }
   }
 
   return {
