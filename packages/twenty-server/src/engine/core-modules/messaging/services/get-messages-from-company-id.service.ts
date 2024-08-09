@@ -34,7 +34,7 @@ export class GetMessagesFromCompanyIdService {
       })
     ).map((person) => person.id);
 
-    if (!personIds) {
+    if (personIds.length === 0) {
       return {
         totalNumberOfThreads: 0,
         timelineThreads: [],
