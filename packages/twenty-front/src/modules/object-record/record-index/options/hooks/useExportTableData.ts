@@ -143,6 +143,7 @@ export const useExportTableData = ({
   objectNameSingular,
   pageSize = 30,
   recordIndexId,
+  viewType,
 }: UseExportTableDataOptions) => {
   const { processRecordsForCSVExport } =
     useProcessRecordsForCSVExport(objectNameSingular);
@@ -164,6 +165,7 @@ export const useExportTableData = ({
     pageSize,
     recordIndexId,
     callback: downloadCsv,
+    viewType,
   });
 
   return { progress, download };
