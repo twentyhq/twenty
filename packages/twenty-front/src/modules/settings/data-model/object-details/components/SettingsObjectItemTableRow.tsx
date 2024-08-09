@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useIcons } from 'twenty-ui';
@@ -10,10 +10,11 @@ import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLab
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
-type SettingsObjectItemTableRowProps = {
+export type SettingsObjectItemTableRowProps = {
   action: ReactNode;
   objectItem: ObjectMetadataItem;
   to?: string;
+  updateInstanceCount: (id: string, instanceCount: number) => void;
 };
 
 export const StyledObjectTableRow = styled(TableRow)`
@@ -34,12 +35,18 @@ export const SettingsObjectItemTableRow = ({
   action,
   objectItem,
   to,
+  updateInstanceCount,
 }: SettingsObjectItemTableRowProps) => {
   const theme = useTheme();
 
   const { totalCount } = useFindManyRecords({
     objectNameSingular: objectItem.nameSingular,
   });
+  useEffect(() => {
+    //Hoist instance count to parent component state to determine sort order
+    updateInstanceCount(objectItem.id, totalCount || 0);
+  }, [objectItem.id, totalCount, updateInstanceCount]);
+
   const { getIcon } = useIcons();
   const Icon = getIcon(objectItem.icon);
   const objectTypeLabel = getObjectTypeLabel(objectItem);
