@@ -4,8 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ChartResult } from 'src/engine/core-modules/chart/dtos/chart-result.dto';
+import { JoinOperation } from 'src/engine/core-modules/chart/types/JoinOperation';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
   RelationMetadataEntity,
@@ -18,6 +20,10 @@ import {
   ChartMeasure,
   ChartWorkspaceEntity,
 } from 'src/modules/charts/standard-objects/chart.workspace-entity';
+
+// TODO:
+// 1. Add table aliases to joins to support "company -> person -> company (again)" field path OR only allow selecting objects once in field path.
+// 2. Add groupBy support
 
 @Injectable()
 export class ChartService {
@@ -78,18 +84,24 @@ export class ChartService {
         },
       );
 
-    const tables: {
-      fromTableName: string;
-      fromFieldName: string;
-      toFieldName?: string;
-      toTableName?: string;
-    }[] = [];
+    const tables: JoinOperation[] = [];
 
     for (const fieldMetadataId of fieldPath) {
       const relationMetadata = await this.getRelationMetadata(
         workspaceId,
         fieldMetadataId,
       );
+
+      if (!relationMetadata) {
+        break;
+      }
+
+      const oppositeObjectMetadata =
+        relationMetadata?.fromObjectMetadataId === objectMetadata.id
+          ? relationMetadata?.toObjectMetadata
+          : relationMetadata?.fromObjectMetadata;
+
+      if (!oppositeObjectMetadata) throw new Error();
 
       switch (relationMetadata?.relationType) {
         case RelationMetadataType.ONE_TO_MANY: {
@@ -105,6 +117,7 @@ export class ChartService {
               relationMetadata.toFieldMetadata.name,
               { isForeignKey: true },
             ),
+            joinTableName: computeObjectTargetTable(oppositeObjectMetadata),
           });
           break;
         }
@@ -114,46 +127,98 @@ export class ChartService {
           );
       }
 
-      const oppositeObjectMetadata =
-        relationMetadata?.fromObjectMetadataId === objectMetadata.id
-          ? relationMetadata?.toObjectMetadata
-          : relationMetadata?.fromObjectMetadata;
-
-      if (!oppositeObjectMetadata) throw new Error();
-
-      console.log(
-        'fieldMetadataId',
-        fieldMetadataId,
-        oppositeObjectMetadata.fields.map(({ name }) => name),
-      );
-
       objectMetadata = oppositeObjectMetadata;
     }
 
     return tables;
   }
 
+  private getJoinClauses(
+    dataSourceSchema: string,
+    joinOperations: JoinOperation[],
+  ): string[] {
+    return joinOperations.map((joinOperation, i) => {
+      return `JOIN "${dataSourceSchema}"."${joinOperation.joinTableName}" ON "${joinOperation.fromTableName}"."${joinOperation.fromFieldName}" = "${joinOperation.toTableName}"."${
+        joinOperation.toFieldName
+      }"`;
+    });
+  }
+
+  private async getTargetTableAndColumn(
+    workspaceId: string,
+    sourceObjectMetadata: ObjectMetadataEntity,
+    fieldPath?: string[],
+  ): Promise<{
+    targetTableName: string;
+    targetColumnName?: string;
+  }> {
+    if (!fieldPath) {
+      return {
+        targetTableName: computeObjectTargetTable(sourceObjectMetadata),
+      };
+    }
+
+    const lastFieldFieldMetadataId: string | undefined =
+      fieldPath[fieldPath.length - 1];
+
+    const lastFieldFieldMetadata =
+      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          id: lastFieldFieldMetadataId,
+        },
+      });
+
+    if (!lastFieldFieldMetadata) {
+      throw new Error('Invalid field metadata id');
+    }
+
+    const lastFieldObjectMetadata =
+      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          id: lastFieldFieldMetadata.objectMetadataId,
+        },
+      });
+
+    if (!lastFieldObjectMetadata) {
+      throw new Error(
+        `Object metadata not found for id ${lastFieldFieldMetadata.objectMetadataId}`,
+      );
+    }
+
+    return {
+      targetTableName: computeObjectTargetTable(lastFieldObjectMetadata),
+      targetColumnName: lastFieldFieldMetadata.name,
+    };
+  }
+
   /**
    *
    * @param chartMeasure
-   * @param targetSelectColumn e.g. 'table_1.employees'
+   * @param targetColumnName e.g. 'table_1.employees'
    * @returns
    */
   private getMeasureSelectColumn(
     chartMeasure: ChartMeasure,
-    targetSelectColumn: string,
+    targetTableName: string,
+    targetColumnName?: string,
   ) {
+    if (!targetColumnName && chartMeasure !== ChartMeasure.COUNT) {
+      throw new Error(
+        'Chart measure must be count when target column is undefined',
+      );
+    }
+
     switch (chartMeasure) {
       case ChartMeasure.COUNT:
         return 'COUNT(*) as measure';
       case ChartMeasure.AVERAGE:
-        return `AVG(${targetSelectColumn}) as measure`;
+        return `AVG("${targetTableName}"."${targetColumnName}") as measure`;
       case ChartMeasure.MIN:
-        return `MIN(${targetSelectColumn}) as measure`;
+        return `MIN("${targetTableName}"."${targetColumnName}") as measure`;
       case ChartMeasure.MAX:
-        return `MAX(${targetSelectColumn}) as measure`;
+        return `MAX("${targetTableName}"."${targetColumnName}") as measure`;
       case ChartMeasure.SUM:
-        return `SUM(${targetSelectColumn}) as measure`;
+        return `SUM("${targetTableName}"."${targetColumnName}") as measure`;
     }
   }
 
@@ -165,7 +230,7 @@ export class ChartService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const objectMetadata =
+    const sourceObjectMetadata =
       await this.objectMetadataService.findOneOrFailWithinWorkspace(
         workspaceId,
         {
@@ -173,59 +238,78 @@ export class ChartService {
         },
       );
 
-    const joinOperations = await this.getJoinOperations(
+    const sourceTableName = computeObjectTargetTable(sourceObjectMetadata);
+
+    const targetJoinOperations = await this.getJoinOperations(
       workspaceId,
       chart.sourceObjectNameSingular,
       chart.fieldPath,
     );
 
-    const targetFieldMetadataId: string | undefined =
-      chart.fieldPath[chart.fieldPath.length - 1];
-
-    if (!targetFieldMetadataId) {
-      return {};
-    }
-    const targetFieldMetadata =
-      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: {
-          id: targetFieldMetadataId,
-        },
-      });
-
-    if (!targetFieldMetadata) {
-      throw new Error('Invalid field metadata id');
-    }
-    const measureSelectColumn = this.getMeasureSelectColumn(
-      chart.measure,
-      targetFieldMetadata.name,
+    const groupByJoinOperations = await this.getJoinOperations(
+      workspaceId,
+      chart.sourceObjectNameSingular,
+      chart.groupBy,
     );
 
-    const groupByClause = chart?.groupBy && `GROUP BY ${chart?.groupBy}`;
+    const lastGroupByJoinOperation =
+      groupByJoinOperations[groupByJoinOperations.length - 1];
+
+    const groupByTableName =
+      groupByJoinOperations.length > 0
+        ? lastGroupByJoinOperation.fromTableName
+        : sourceTableName;
+
+    /*     const groupByColumnName = await this.getTargetTableAndColumn(
+      workspaceId,
+      chart.fieldPath,
+    ); */
+
+    const x = this.getJoinClauses(dataSourceSchema, groupByJoinOperations).join(
+      '\n',
+    );
+
+    const { targetTableName, targetColumnName } =
+      await this.getTargetTableAndColumn(
+        workspaceId,
+        sourceObjectMetadata,
+        chart.fieldPath,
+      );
+
+    const targetJoinClauses = this.getJoinClauses(
+      dataSourceSchema,
+      targetJoinOperations,
+    ).join('\n');
+
+    const groupByClause =
+      chart?.groupBy && chart?.groupBy.length > 0
+        ? `GROUP BY "${groupByTableName}"."${'' /* groupByColumnName */}"`
+        : undefined;
+
+    const lastTargetJoinOperation =
+      targetJoinOperations[targetJoinOperations.length - 1];
+
+    const measureSelectColumn = this.getMeasureSelectColumn(
+      chart.measure,
+      targetTableName,
+      targetColumnName,
+    );
 
     const selectColumns = [measureSelectColumn /* groupByColumn */].filter(
       (col) => !!col,
     );
 
-    const joinClauses = joinOperations
-      .map(
-        (joinOperation, i) =>
-          `JOIN "${dataSourceSchema}"."${joinOperation.toTableName}" table_${
-            i + 1
-          } ON table_${i}."${joinOperation.fromFieldName}" = table_${i + 1}."${
-            joinOperation.toFieldName
-          }"`,
-      )
-      .join('\n');
+    const joinClauses = [targetJoinClauses /* groupByJoinClauses */].join('\n');
 
     const sqlQuery = `
 SELECT ${selectColumns.join(', ')}
-FROM "${dataSourceSchema}"."${computeObjectTargetTable(objectMetadata)}" table_0
+FROM "${dataSourceSchema}"."${sourceTableName}"
 ${joinClauses}
 ${'' /* groupByClause */}
 LIMIT 1000;
 `.trim();
 
-    console.log('sqlQuery', sqlQuery);
+    console.log('sqlQuery\n', sqlQuery);
 
     const result = await this.workspaceDataSourceService.executeRawQuery(
       sqlQuery,
