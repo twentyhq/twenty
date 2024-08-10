@@ -65,6 +65,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: false,
       },
+      {
+        key: FeatureFlagKey.IsChartsEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

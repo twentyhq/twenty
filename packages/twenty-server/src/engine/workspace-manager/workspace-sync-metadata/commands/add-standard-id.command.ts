@@ -4,6 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
@@ -53,19 +54,19 @@ export class AddStandardIdCommand extends CommandRunner {
             dataSourceId: '',
           },
           {
-            IS_BLOCKLIST_ENABLED: true,
-            IS_EVENT_OBJECT_ENABLED: true,
-            IS_AIRTABLE_INTEGRATION_ENABLED: true,
-            IS_POSTGRESQL_INTEGRATION_ENABLED: true,
-            IS_STRIPE_INTEGRATION_ENABLED: false,
-            IS_COPILOT_ENABLED: false,
-            IS_MESSAGING_ALIAS_FETCHING_ENABLED: true,
-            IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED: true,
-            IS_FREE_ACCESS_ENABLED: false,
-            IS_CHARTS_ENABLED: false,
-            IS_FUNCTION_SETTINGS_ENABLED: false,
-            IS_WORKFLOW_ENABLED: false,
-            IS_MESSAGE_THREAD_SUBSCRIBER_ENABLED: false,
+            [FeatureFlagKey.IsBlocklistEnabled]: true,
+            [FeatureFlagKey.IsEventObjectEnabled]: true,
+            [FeatureFlagKey.IsAirtableIntegrationEnabled]: true,
+            [FeatureFlagKey.IsPostgreSQLIntegrationEnabled]: true,
+            [FeatureFlagKey.IsStripeIntegrationEnabled]: false,
+            [FeatureFlagKey.IsCopilotEnabled]: false,
+            [FeatureFlagKey.IsMessagingAliasFetchingEnabled]: true,
+            [FeatureFlagKey.IsGoogleCalendarSyncV2Enabled]: true,
+            [FeatureFlagKey.IsFreeAccessEnabled]: false,
+            [FeatureFlagKey.IsChartsEnabled]: false,
+            [FeatureFlagKey.IsFunctionSettingsEnabled]: false,
+            [FeatureFlagKey.IsWorkflowEnabled]: false,
+            [FeatureFlagKey.IsMessageThreadSubscriberEnabled]: false,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(

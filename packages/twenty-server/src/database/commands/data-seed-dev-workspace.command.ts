@@ -100,7 +100,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         });
       }
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error(error.message, error.stack);
 
       return;
     }
@@ -216,11 +216,12 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
               entityManager,
               dataSourceMetadata.schema,
               objectMetadataMap,
+              featureFlags,
             );
           },
         );
       } catch (error) {
-        this.logger.error(error);
+        this.logger.error(error, error.stack);
       }
 
       await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);

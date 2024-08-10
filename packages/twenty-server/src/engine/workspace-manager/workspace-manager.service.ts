@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -133,10 +134,16 @@ export class WorkspaceManagerService {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
+    const featureFlagRepository =
+      workspaceDataSource.getRepository<FeatureFlagEntity>('featureFlag');
+
+    const featureFlags = await featureFlagRepository.find({});
+
     await standardObjectsPrefillData(
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
+      featureFlags,
     );
   }
 
@@ -163,10 +170,16 @@ export class WorkspaceManagerService {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
+    const featureFlagRepository =
+      workspaceDataSource.getRepository<FeatureFlagEntity>('featureFlag');
+
+    const featureFlags = await featureFlagRepository.find({});
+
     await demoObjectsPrefillData(
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
+      featureFlags,
     );
   }
 

@@ -1,5 +1,6 @@
 import { DataSource, EntityManager } from 'typeorm';
 
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { companyPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/company';
 import { personPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/person';
@@ -9,6 +10,7 @@ export const standardObjectsPrefillData = async (
   workspaceDataSource: DataSource,
   schemaName: string,
   objectMetadata: ObjectMetadataEntity[],
+  featureFlags?: FeatureFlagEntity[],
 ) => {
   const objectMetadataMap = objectMetadata.reduce((acc, object) => {
     if (!object.standardId) {
@@ -34,6 +36,11 @@ export const standardObjectsPrefillData = async (
   workspaceDataSource.transaction(async (entityManager: EntityManager) => {
     await companyPrefillData(entityManager, schemaName);
     await personPrefillData(entityManager, schemaName);
-    await viewPrefillData(entityManager, schemaName, objectMetadataMap);
+    await viewPrefillData(
+      entityManager,
+      schemaName,
+      objectMetadataMap,
+      featureFlags,
+    );
   });
 };
