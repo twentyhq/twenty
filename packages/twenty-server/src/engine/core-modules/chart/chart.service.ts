@@ -22,7 +22,7 @@ import {
 } from 'src/modules/charts/standard-objects/chart.workspace-entity';
 
 // TODO:
-// 1. Add table aliases to joins to support "company -> person -> company (again)" field path OR only allow selecting objects once in field path.
+// 1. Add table aliases to joins to support same table occurring in field path twice. Only "last joined" / "target" table aliases need to be used elsewhere in the query!
 // 2. Add groupBy support
 
 @Injectable()
@@ -264,10 +264,6 @@ export class ChartService {
       workspaceId,
       chart.fieldPath,
     ); */
-
-    const x = this.getJoinClauses(dataSourceSchema, groupByJoinOperations).join(
-      '\n',
-    );
 
     const { targetTableName, targetColumnName } =
       await this.getTargetTableAndColumn(
