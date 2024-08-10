@@ -4,7 +4,13 @@ import { useFieldPathFieldDisplay } from '@/object-record/record-field/meta-type
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { createPortal } from 'react-dom';
-import { AppTooltip, IconCaretRightFilled, Tag, TooltipDelay } from 'twenty-ui';
+import {
+  AppTooltip,
+  GRAY_SCALE,
+  IconCaretRightFilled,
+  Tag,
+  TooltipDelay,
+} from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -13,6 +19,10 @@ const StyledContainer = styled.div`
 
 const StyledIconCaretRightFilled = styled(IconCaretRightFilled)`
   color: ${({ theme }) => theme.color.gray40};
+`;
+
+const StyledEmptyValue = styled.div`
+  color: ${GRAY_SCALE.gray35};
 `;
 
 export const FieldPathFieldDisplay = () => {
@@ -50,14 +60,14 @@ export const FieldPathFieldDisplay = () => {
     })
     .join('');
 
-  // TODO: Tooltip - display full field path
   return (
     <>
       <StyledContainer id={containerId}>
-        {fieldLabels.map((fieldName, i) => {
+        {fieldLabels.length === 0 && <StyledEmptyValue>Empty</StyledEmptyValue>}
+        {fieldLabels.map((fieldLabel, i) => {
           const isLast = i === fieldLabels.length - 1;
           return [
-            <Tag preventShrink color="gray" text={fieldName as string} />,
+            <Tag preventShrink color="gray" text={fieldLabel as string} />,
             isLast ? null : (
               <StyledIconCaretRightFilled size={theme.icon.size.sm} />
             ),
