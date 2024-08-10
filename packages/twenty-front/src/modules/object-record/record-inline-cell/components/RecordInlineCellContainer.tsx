@@ -135,7 +135,7 @@ export const RecordInlineCellContainer = ({
             </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
-          {!showLabel && !fieldDefinition?.disableTooltip && (
+          {label && !fieldDefinition?.disableTooltip && (
             <AppTooltip
               anchorSelect={`#${labelId}`}
               content={label}
