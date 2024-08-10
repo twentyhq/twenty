@@ -50,7 +50,7 @@ export const FieldPathPicker = (props: FieldPathPickerProps) => {
 
   const noResult = false;
 
-  const onSearchQueryChange = (e: any) => {};
+  const onSearchQueryChange = () => {}; // TODO
 
   const sourceObjectMetadata = objectMetadataItems.find(
     (objectMetadata) =>

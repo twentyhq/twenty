@@ -21,9 +21,9 @@ export const FieldPathFieldInput = ({
   const {
     draftValue,
     setDraftValue,
-    fieldDefinition,
+    /* fieldDefinition,
     fieldValue,
-    setFieldValue,
+    setFieldValue, */
     hotkeyScope,
     sourceObjectNameSingular,
   } = useFieldPathField();
