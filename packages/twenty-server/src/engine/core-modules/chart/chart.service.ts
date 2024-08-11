@@ -4,7 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ChartResult } from 'src/engine/core-modules/chart/dtos/chart-result.dto';
-import { JoinOperation } from 'src/engine/core-modules/chart/types/JoinOperation';
+import { AliasPrefix } from 'src/engine/core-modules/chart/types/alias-prefix.type';
+import { JoinOperation } from 'src/engine/core-modules/chart/types/join-operation.type';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -22,8 +23,8 @@ import {
 } from 'src/modules/charts/standard-objects/chart.workspace-entity';
 
 // TODO:
-// 1. Add table aliases to joins to support same table occurring in field path twice. Only "last joined" / "target" table aliases need to be used elsewhere in the query!
-// 2. Add groupBy support
+// 1. Add groupBy support
+// 2. Composite type support (most importantly for currencies)
 
 @Injectable()
 export class ChartService {
@@ -65,14 +66,15 @@ export class ChartService {
     return relationMetadata;
   }
 
-  /**
-   *
-   * @param fieldPath e.g. 'people.employees'
-   */
+  private computeJoinTableAlias(aliasPrefix: AliasPrefix, i: number) {
+    return `table_${aliasPrefix}_${i}`;
+  }
+
   private async getJoinOperations(
     workspaceId: string,
     sourceObjectNameSingular: string,
     fieldPath: string[],
+    aliasPrefix: AliasPrefix,
   ) {
     if (fieldPath.length < 2) return [];
 
@@ -84,9 +86,13 @@ export class ChartService {
         },
       );
 
+    const sourceTableName = computeObjectTargetTable(objectMetadata);
+
     const tables: JoinOperation[] = [];
 
-    for (const fieldMetadataId of fieldPath) {
+    for (let i = 0; i < fieldPath.length; i++) {
+      const fieldMetadataId = fieldPath[i];
+
       const relationMetadata = await this.getRelationMetadata(
         workspaceId,
         fieldMetadataId,
@@ -106,18 +112,24 @@ export class ChartService {
       switch (relationMetadata?.relationType) {
         case RelationMetadataType.ONE_TO_MANY: {
           await tables.push({
-            fromTableName: await computeObjectTargetTable(
-              relationMetadata.fromObjectMetadata,
-            ),
-            fromFieldName: 'id',
-            toTableName: await computeObjectTargetTable(
-              relationMetadata.toObjectMetadata,
-            ),
-            toFieldName: computeColumnName(
-              relationMetadata.toFieldMetadata.name,
-              { isForeignKey: true },
-            ),
             joinTableName: computeObjectTargetTable(oppositeObjectMetadata),
+            joinTableAlias: this.computeJoinTableAlias(aliasPrefix, i),
+            joinFieldName:
+              relationMetadata?.fromObjectMetadataId === objectMetadata.id
+                ? computeColumnName(relationMetadata.toFieldMetadata.name, {
+                    isForeignKey: true,
+                  })
+                : 'id',
+            existingTableAlias:
+              i === 0
+                ? sourceTableName
+                : this.computeJoinTableAlias(aliasPrefix, i - 1),
+            existingFieldName:
+              relationMetadata?.fromObjectMetadataId === objectMetadata.id
+                ? 'id'
+                : computeColumnName(relationMetadata.toFieldMetadata.name, {
+                    isForeignKey: true,
+                  }),
           });
           break;
         }
@@ -138,8 +150,8 @@ export class ChartService {
     joinOperations: JoinOperation[],
   ): string[] {
     return joinOperations.map((joinOperation, i) => {
-      return `JOIN "${dataSourceSchema}"."${joinOperation.joinTableName}" ON "${joinOperation.fromTableName}"."${joinOperation.fromFieldName}" = "${joinOperation.toTableName}"."${
-        joinOperation.toFieldName
+      return `JOIN "${dataSourceSchema}"."${joinOperation.joinTableName}" "${joinOperation.joinTableAlias}" ON "${joinOperation.existingTableAlias}"."${joinOperation.existingFieldName}" = "${joinOperation.joinTableAlias}"."${
+        joinOperation.joinFieldName
       }"`;
     });
   }
@@ -244,12 +256,14 @@ export class ChartService {
       workspaceId,
       chart.sourceObjectNameSingular,
       chart.fieldPath,
+      'target',
     );
 
     const groupByJoinOperations = await this.getJoinOperations(
       workspaceId,
       chart.sourceObjectNameSingular,
       chart.groupBy,
+      'group_by',
     );
 
     const lastGroupByJoinOperation =
@@ -257,7 +271,7 @@ export class ChartService {
 
     const groupByTableName =
       groupByJoinOperations.length > 0
-        ? lastGroupByJoinOperation.fromTableName
+        ? lastGroupByJoinOperation.joinTableAlias
         : sourceTableName;
 
     /*     const groupByColumnName = await this.getTargetTableAndColumn(
@@ -265,12 +279,24 @@ export class ChartService {
       chart.fieldPath,
     ); */
 
-    const { targetTableName, targetColumnName } =
-      await this.getTargetTableAndColumn(
-        workspaceId,
-        sourceObjectMetadata,
-        chart.fieldPath,
-      );
+    const targetTableName =
+      targetJoinOperations.length > 0
+        ? targetJoinOperations[targetJoinOperations.length - 1].joinTableAlias
+        : computeObjectTargetTable(sourceObjectMetadata);
+
+    const targetColumnName =
+      targetJoinOperations.length > 0
+        ? targetJoinOperations[targetJoinOperations.length - 1].joinFieldName
+        : (
+            await this.fieldMetadataService.findOneWithinWorkspace(
+              workspaceId,
+              {
+                where: {
+                  id: chart.fieldPath[0],
+                },
+              },
+            )
+          )?.name;
 
     const targetJoinClauses = this.getJoinClauses(
       dataSourceSchema,
@@ -301,8 +327,7 @@ export class ChartService {
 SELECT ${selectColumns.join(', ')}
 FROM "${dataSourceSchema}"."${sourceTableName}"
 ${joinClauses}
-${'' /* groupByClause */}
-LIMIT 1000;
+${'' /* groupByClause */};
 `.trim();
 
     console.log('sqlQuery\n', sqlQuery);
