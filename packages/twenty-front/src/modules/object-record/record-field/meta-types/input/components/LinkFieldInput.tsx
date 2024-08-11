@@ -5,7 +5,7 @@ import { useLinkField } from '../../hooks/useLinkField';
 
 import { FieldInputEvent } from './DateTimeFieldInput';
 
-export type LinkFieldInputProps = {
+type LinkFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

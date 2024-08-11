@@ -25,7 +25,7 @@ const StyledRelationPickerContainer = styled.div`
   top: -1px;
 `;
 
-export type SelectFieldInputProps = {
+type SelectFieldInputProps = {
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
 };
