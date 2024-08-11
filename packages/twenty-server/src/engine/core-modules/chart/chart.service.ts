@@ -66,8 +66,64 @@ export class ChartService {
     return relationMetadata;
   }
 
+  private async getOppositeObjectMetadata(
+    relationMetadata: RelationMetadataEntity,
+    objectMetadata: ObjectMetadataEntity,
+  ) {
+    const oppositeObjectMetadata =
+      relationMetadata?.fromObjectMetadataId === objectMetadata.id
+        ? relationMetadata?.toObjectMetadata
+        : relationMetadata?.fromObjectMetadata;
+
+    if (!oppositeObjectMetadata) throw new Error();
+
+    return oppositeObjectMetadata;
+  }
+
   private computeJoinTableAlias(aliasPrefix: AliasPrefix, i: number) {
     return `table_${aliasPrefix}_${i}`;
+  }
+
+  private getJoinOperation(
+    objectMetadata: ObjectMetadataEntity,
+    index: number,
+    sourceTableName: string,
+    aliasPrefix: AliasPrefix,
+    oppositeObjectMetadata: ObjectMetadataEntity,
+    relationMetadata: RelationMetadataEntity,
+  ): JoinOperation | undefined {
+    const fromIsExistingTable =
+      relationMetadata?.fromObjectMetadataId === objectMetadata.id;
+    const toJoinFieldName = computeColumnName(
+      relationMetadata.toFieldMetadata.name,
+      {
+        isForeignKey: true,
+      },
+    );
+    const fromJoinFieldName = 'id';
+
+    switch (relationMetadata?.relationType) {
+      case RelationMetadataType.ONE_TO_MANY: {
+        return {
+          joinTableName: computeObjectTargetTable(oppositeObjectMetadata),
+          joinTableAlias: this.computeJoinTableAlias(aliasPrefix, index),
+          joinFieldName: fromIsExistingTable
+            ? toJoinFieldName
+            : fromJoinFieldName,
+          existingTableAlias:
+            index === 0
+              ? sourceTableName
+              : this.computeJoinTableAlias(aliasPrefix, index - 1),
+          existingFieldName: fromIsExistingTable
+            ? fromJoinFieldName
+            : toJoinFieldName,
+        };
+      }
+      default:
+        throw new Error(
+          `Chart query construction is not implemented for relation type '${relationMetadata?.relationType}'`,
+        );
+    }
   }
 
   private async getJoinOperations(
@@ -77,7 +133,6 @@ export class ChartService {
     aliasPrefix: AliasPrefix,
   ) {
     if (fieldPath.length < 2) return [];
-
     let objectMetadata =
       await this.objectMetadataService.findOneOrFailWithinWorkspace(
         workspaceId,
@@ -85,9 +140,7 @@ export class ChartService {
           where: { nameSingular: sourceObjectNameSingular },
         },
       );
-
     const sourceTableName = computeObjectTargetTable(objectMetadata);
-
     const tables: JoinOperation[] = [];
 
     for (let i = 0; i < fieldPath.length; i++) {
@@ -98,47 +151,25 @@ export class ChartService {
         fieldMetadataId,
       );
 
-      if (!relationMetadata) {
-        break;
-      }
+      if (!relationMetadata) break;
 
-      const oppositeObjectMetadata =
-        relationMetadata?.fromObjectMetadataId === objectMetadata.id
-          ? relationMetadata?.toObjectMetadata
-          : relationMetadata?.fromObjectMetadata;
+      const oppositeObjectMetadata = await this.getOppositeObjectMetadata(
+        relationMetadata,
+        objectMetadata,
+      );
 
-      if (!oppositeObjectMetadata) throw new Error();
+      const joinOperation = this.getJoinOperation(
+        objectMetadata,
+        i,
+        sourceTableName,
+        aliasPrefix,
+        oppositeObjectMetadata,
+        relationMetadata,
+      );
 
-      switch (relationMetadata?.relationType) {
-        case RelationMetadataType.ONE_TO_MANY: {
-          await tables.push({
-            joinTableName: computeObjectTargetTable(oppositeObjectMetadata),
-            joinTableAlias: this.computeJoinTableAlias(aliasPrefix, i),
-            joinFieldName:
-              relationMetadata?.fromObjectMetadataId === objectMetadata.id
-                ? computeColumnName(relationMetadata.toFieldMetadata.name, {
-                    isForeignKey: true,
-                  })
-                : 'id',
-            existingTableAlias:
-              i === 0
-                ? sourceTableName
-                : this.computeJoinTableAlias(aliasPrefix, i - 1),
-            existingFieldName:
-              relationMetadata?.fromObjectMetadataId === objectMetadata.id
-                ? 'id'
-                : computeColumnName(relationMetadata.toFieldMetadata.name, {
-                    isForeignKey: true,
-                  }),
-          });
-          break;
-        }
-        default:
-          throw new Error(
-            `Chart query construction is not implemented for relation type '${relationMetadata?.relationType}'`,
-          );
-      }
+      if (!joinOperation) break;
 
+      tables.push(joinOperation);
       objectMetadata = oppositeObjectMetadata;
     }
 
@@ -156,53 +187,6 @@ export class ChartService {
     });
   }
 
-  private async getTargetTableAndColumn(
-    workspaceId: string,
-    sourceObjectMetadata: ObjectMetadataEntity,
-    fieldPath?: string[],
-  ): Promise<{
-    targetTableName: string;
-    targetColumnName?: string;
-  }> {
-    if (!fieldPath) {
-      return {
-        targetTableName: computeObjectTargetTable(sourceObjectMetadata),
-      };
-    }
-
-    const lastFieldFieldMetadataId: string | undefined =
-      fieldPath[fieldPath.length - 1];
-
-    const lastFieldFieldMetadata =
-      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: {
-          id: lastFieldFieldMetadataId,
-        },
-      });
-
-    if (!lastFieldFieldMetadata) {
-      throw new Error('Invalid field metadata id');
-    }
-
-    const lastFieldObjectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: {
-          id: lastFieldFieldMetadata.objectMetadataId,
-        },
-      });
-
-    if (!lastFieldObjectMetadata) {
-      throw new Error(
-        `Object metadata not found for id ${lastFieldFieldMetadata.objectMetadataId}`,
-      );
-    }
-
-    return {
-      targetTableName: computeObjectTargetTable(lastFieldObjectMetadata),
-      targetColumnName: lastFieldFieldMetadata.name,
-    };
-  }
-
   /**
    *
    * @param chartMeasure
@@ -211,7 +195,7 @@ export class ChartService {
    */
   private getMeasureSelectColumn(
     chartMeasure: ChartMeasure,
-    targetTableName: string,
+    targetTableAlias: string,
     targetColumnName?: string,
   ) {
     if (!targetColumnName && chartMeasure !== ChartMeasure.COUNT) {
@@ -224,14 +208,41 @@ export class ChartService {
       case ChartMeasure.COUNT:
         return 'COUNT(*) as measure';
       case ChartMeasure.AVERAGE:
-        return `AVG("${targetTableName}"."${targetColumnName}") as measure`;
+        return `AVG("${targetTableAlias}"."${targetColumnName}") as measure`;
       case ChartMeasure.MIN:
-        return `MIN("${targetTableName}"."${targetColumnName}") as measure`;
+        return `MIN("${targetTableAlias}"."${targetColumnName}") as measure`;
       case ChartMeasure.MAX:
-        return `MAX("${targetTableName}"."${targetColumnName}") as measure`;
+        return `MAX("${targetTableAlias}"."${targetColumnName}") as measure`;
       case ChartMeasure.SUM:
-        return `SUM("${targetTableName}"."${targetColumnName}") as measure`;
+        return `SUM("${targetTableAlias}"."${targetColumnName}") as measure`;
     }
+  }
+
+  private async getTableAliasAndColumn(
+    workspaceId: string,
+    joinOperations: JoinOperation[],
+    sourceTableName: string,
+    firstFieldMetadataId?: string,
+  ) {
+    if (joinOperations.length > 0) {
+      const lastJoinOperation = joinOperations[joinOperations.length - 1];
+
+      return {
+        targetTableAlias: lastJoinOperation.joinTableAlias,
+        targetColumnName: lastJoinOperation.joinFieldName,
+      };
+    }
+
+    return {
+      targetTableAlias: sourceTableName,
+      targetColumnName: (
+        await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+          where: {
+            id: firstFieldMetadataId,
+          },
+        })
+      )?.name,
+    };
   }
 
   async run(workspaceId: string, chartId: string): Promise<ChartResult> {
@@ -259,7 +270,20 @@ export class ChartService {
       'target',
     );
 
-    const groupByJoinOperations = await this.getJoinOperations(
+    const targetJoinClauses = this.getJoinClauses(
+      dataSourceSchema,
+      targetJoinOperations,
+    ).join('\n');
+
+    const { targetTableAlias, targetColumnName } =
+      await this.getTableAliasAndColumn(
+        workspaceId,
+        targetJoinOperations,
+        sourceTableName,
+        chart.fieldPath[0],
+      );
+
+    /* const groupByJoinOperations = await this.getJoinOperations(
       workspaceId,
       chart.sourceObjectNameSingular,
       chart.groupBy,
@@ -274,46 +298,14 @@ export class ChartService {
         ? lastGroupByJoinOperation.joinTableAlias
         : sourceTableName;
 
-    /*     const groupByColumnName = await this.getTargetTableAndColumn(
-      workspaceId,
-      chart.fieldPath,
-    ); */
-
-    const targetTableName =
-      targetJoinOperations.length > 0
-        ? targetJoinOperations[targetJoinOperations.length - 1].joinTableAlias
-        : computeObjectTargetTable(sourceObjectMetadata);
-
-    const targetColumnName =
-      targetJoinOperations.length > 0
-        ? targetJoinOperations[targetJoinOperations.length - 1].joinFieldName
-        : (
-            await this.fieldMetadataService.findOneWithinWorkspace(
-              workspaceId,
-              {
-                where: {
-                  id: chart.fieldPath[0],
-                },
-              },
-            )
-          )?.name;
-
-    const targetJoinClauses = this.getJoinClauses(
-      dataSourceSchema,
-      targetJoinOperations,
-    ).join('\n');
-
     const groupByClause =
       chart?.groupBy && chart?.groupBy.length > 0
-        ? `GROUP BY "${groupByTableName}"."${'' /* groupByColumnName */}"`
-        : undefined;
-
-    const lastTargetJoinOperation =
-      targetJoinOperations[targetJoinOperations.length - 1];
+        ? `GROUP BY "${groupByTableName}"."${groupByColumnName}"`
+        : undefined; */
 
     const measureSelectColumn = this.getMeasureSelectColumn(
       chart.measure,
-      targetTableName,
+      targetTableAlias,
       targetColumnName,
     );
 
@@ -324,11 +316,11 @@ export class ChartService {
     const joinClauses = [targetJoinClauses /* groupByJoinClauses */].join('\n');
 
     const sqlQuery = `
-SELECT ${selectColumns.join(', ')}
-FROM "${dataSourceSchema}"."${sourceTableName}"
-${joinClauses}
-${'' /* groupByClause */};
-`.trim();
+      SELECT ${selectColumns.join(', ')}
+      FROM "${dataSourceSchema}"."${sourceTableName}"
+      ${joinClauses}
+      ${'' /* groupByClause */};
+    `;
 
     console.log('sqlQuery\n', sqlQuery);
 
