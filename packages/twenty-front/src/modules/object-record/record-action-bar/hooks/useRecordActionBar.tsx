@@ -1,20 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-import {
-  IconClick,
-  IconFileExport,
-  IconHeart,
-  IconHeartOff,
-  IconMail,
-  IconPuzzle,
-  IconTrash,
-} from 'twenty-ui';
+import { IconFileExport, IconHeart, IconHeartOff, IconTrash } from 'twenty-ui';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
-import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
 import { useDeleteTableData } from '@/object-record/record-index/options/hooks/useDeleteTableData';
 import {
   displayedExportProgress,
@@ -25,7 +16,6 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from '~/utils/isDefined';
 
 type useRecordActionBarProps = {
@@ -47,10 +37,6 @@ export const useRecordActionBar = ({
     useState(false);
 
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
-
-  const { executeQuickActionOnOneRecord } = useExecuteQuickActionOnOneRecord({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
 
   const handleFavoriteButtonClick = useRecoilCallback(
     ({ snapshot }) =>
@@ -98,15 +84,6 @@ export const useRecordActionBar = ({
   const handleDeleteClick = useCallback(() => {
     deleteTableData(selectedRecordIds);
   }, [deleteTableData, selectedRecordIds]);
-
-  const handleExecuteQuickActionOnClick = useCallback(async () => {
-    callback?.();
-    await Promise.all(
-      selectedRecordIds.map(async (recordId) => {
-        await executeQuickActionOnOneRecord(recordId);
-      }),
-    );
-  }, [callback, executeQuickActionOnOneRecord, selectedRecordIds]);
 
   const { progress, download } = useExportTableData({
     ...baseTableDataParams,
@@ -168,10 +145,6 @@ export const useRecordActionBar = ({
     ],
   );
 
-  const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
-    'IS_QUICK_ACTIONS_ENABLED',
-  );
-
   const hasOnlyOneRecordSelected = selectedRecordIds.length === 1;
 
   const isFavorite =
@@ -212,12 +185,13 @@ export const useRecordActionBar = ({
 
     setActionBarEntries: useCallback(() => {
       setActionBarEntriesState([
-        ...(dataExecuteQuickActionOnmentEnabled
-          ? [
+        /*
               {
                 label: 'Actions',
                 Icon: IconClick,
-                subActions: [
+                subActions: 
+                
+                /* [
                   {
                     label: 'Enrich',
                     Icon: IconPuzzle,
@@ -228,16 +202,9 @@ export const useRecordActionBar = ({
                     Icon: IconMail,
                   },
                 ],
-              },
-            ]
-          : []),
+          */
         ...menuActions,
       ]);
-    }, [
-      menuActions,
-      dataExecuteQuickActionOnmentEnabled,
-      handleExecuteQuickActionOnClick,
-      setActionBarEntriesState,
-    ]),
+    }, [menuActions, setActionBarEntriesState]),
   };
 };

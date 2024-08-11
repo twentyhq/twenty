@@ -6,6 +6,8 @@ import {
   User,
   Workspace,
   WorkspaceActivationStatus,
+  WorkspaceMemberDateFormatEnum,
+  WorkspaceMemberTimeFormatEnum,
 } from '~/generated/graphql';
 
 type MockedUser = Pick<
@@ -85,6 +87,9 @@ export const mockedWorkspaceMemberData: WorkspaceMember = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   userId: '2603c1f9-0172-4ea6-986c-eeaccdf7f4cf',
   userEmail: 'charles@test.com',
+  dateFormat: WorkspaceMemberDateFormatEnum.DayFirst,
+  timeFormat: WorkspaceMemberTimeFormatEnum.Hour_24,
+  timeZone: 'America/New_York',
 };
 
 export const mockedUserData: MockedUser = {

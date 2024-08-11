@@ -25,9 +25,9 @@ export class UpdateManyResolverFactory
   ): Resolver<UpdateManyResolverArgs> {
     const internalContext = context;
 
-    return (_source, args, context, info) => {
+    return async (_source, args, context, info) => {
       try {
-        return this.workspaceQueryRunnerService.updateMany(args, {
+        return await this.workspaceQueryRunnerService.updateMany(args, {
           authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
           info,

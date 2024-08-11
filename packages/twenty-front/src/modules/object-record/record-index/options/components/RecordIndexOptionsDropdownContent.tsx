@@ -125,6 +125,7 @@ export const RecordIndexOptionsDropdownContent = ({
     filename: `${objectNameSingular}.csv`,
     objectNameSingular,
     recordIndexId,
+    viewType,
   });
 
   const location = useLocation();
