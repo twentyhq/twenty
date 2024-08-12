@@ -52,6 +52,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { withSoftDeleted } from 'src/engine/api/graphql/workspace-query-runner/utils/with-soft-deleted.util';
 
 import {
   PGGraphQLMutation,
@@ -110,7 +111,7 @@ export class WorkspaceQueryRunnerService {
       computedArgs,
       {
         ...options,
-        withSoftDeleted: !!args.filter?.deletedAt,
+        withSoftDeleted: withSoftDeleted(args.filter),
       },
     );
 
@@ -164,7 +165,7 @@ export class WorkspaceQueryRunnerService {
       computedArgs,
       {
         ...options,
-        withSoftDeleted: !!args.filter?.deletedAt,
+        withSoftDeleted: withSoftDeleted(args.filter),
       },
     );
 

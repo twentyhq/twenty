@@ -39,14 +39,6 @@ export class FindManyQueryFactory {
       !options.withSoftDeleted && !!options.objectMetadataItem.isSoftDeletable,
     );
 
-    console.log(
-      'argsString',
-      args,
-      argsString,
-      options.withSoftDeleted,
-      options.objectMetadataItem.isSoftDeletable,
-    );
-
     return `
       query {
         ${computeObjectTargetTable(options.objectMetadataItem)}Collection${

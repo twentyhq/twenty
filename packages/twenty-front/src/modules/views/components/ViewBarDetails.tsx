@@ -157,11 +157,6 @@ export const ViewBarDetails = ({
     return null;
   }
 
-  console.log(
-    'currentViewWithCombinedFiltersAndSorts?.viewFilters: ',
-    currentViewWithCombinedFiltersAndSorts?.viewFilters,
-  );
-
   return (
     <StyledBar>
       <StyledFilterContainer>
@@ -171,6 +166,7 @@ export const ViewBarDetails = ({
               key={viewFilter.fieldMetadataId}
               // Why do we have two types, Filter and ViewFilter?
               // Why key defition is already present in the Filter type and added on the fly here with mapViewFiltersToFilters ?
+              // Also as filter is spread into viewFilter, definition is present
               // FixMe: Ugly hack to make it work
               viewFilter={viewFilter as unknown as Filter}
             />

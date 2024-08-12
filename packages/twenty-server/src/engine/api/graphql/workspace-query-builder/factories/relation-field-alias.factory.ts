@@ -100,14 +100,6 @@ export class RelationFieldAliasFactory {
     ) {
       const args = getFieldArgumentsByKey(info, fieldKey);
 
-      // If the referenced object is soft deletable, we need to filter out the deleted objects
-      if (!withSoftDeleted && referencedObjectMetadata.isSoftDeletable) {
-        args.filter = {
-          deletedAt: { is: 'NULL' },
-          ...args.filter,
-        };
-      }
-
       const argsString = this.argsStringFactory.create(
         args,
         referencedObjectMetadata.fields ?? [],

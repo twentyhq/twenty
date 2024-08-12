@@ -38,7 +38,6 @@ import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 
 type RecordIndexOptionsMenu = 'fields' | 'hiddenFields';
@@ -61,8 +60,6 @@ export const RecordIndexOptionsDropdownContent = ({
   const [currentMenu, setCurrentMenu] = useState<
     RecordIndexOptionsMenu | undefined
   >(undefined);
-
-  const { upsertCombinedViewFilter } = useCombinedViewFilters();
 
   const resetMenu = () => setCurrentMenu(undefined);
 
@@ -164,7 +161,10 @@ export const RecordIndexOptionsDropdownContent = ({
             text={displayedExportProgress(progress)}
           />
           <MenuItem
-            onClick={handleToggleTrashColumnFilter}
+            onClick={() => {
+              handleToggleTrashColumnFilter();
+              closeDropdown();
+            }}
             LeftIcon={IconTrash}
             text="Trash"
           />

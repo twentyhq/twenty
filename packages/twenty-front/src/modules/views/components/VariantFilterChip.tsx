@@ -15,8 +15,7 @@ export const VariantFilterChip = ({ viewFilter }: VariantFilterChipProps) => {
   const { getIcon } = useIcons();
 
   const handleRemoveClick = () => {
-    // FixMe: Why it's not working ?
-    removeCombinedViewFilter(viewFilter.fieldMetadataId);
+    removeCombinedViewFilter(viewFilter.id);
   };
 
   const variant = useMemo(() => {

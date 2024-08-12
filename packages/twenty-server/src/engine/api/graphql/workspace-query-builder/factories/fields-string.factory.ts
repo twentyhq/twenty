@@ -30,8 +30,6 @@ export class FieldsStringFactory {
   ): Promise<string> {
     const selectedFields: Partial<Record> = graphqlFields(info);
 
-    console.log('selectedFields', JSON.stringify(selectedFields, null, 2));
-
     const res = await this.createFieldsStringRecursive(
       info,
       selectedFields,
@@ -39,8 +37,6 @@ export class FieldsStringFactory {
       objectMetadataCollection,
       withSoftDeleted ?? false,
     );
-
-    console.log('res', res);
 
     return res;
   }

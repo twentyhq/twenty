@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { stringifyWithoutKeyQuote } from 'src/engine/api/graphql/workspace-query-builder/utils/stringify-without-key-quote.util';
+import { isDefined } from 'src/utils/is-defined';
 
 import { ArgsAliasFactory } from './args-alias.factory';
 
@@ -20,8 +21,9 @@ export class ArgsStringFactory {
     }
     if (softDeletable) {
       initialArgs.filter = {
-        deletedAt: { is: 'NULL' },
-        ...initialArgs.filter,
+        and: [initialArgs.filter, { deletedAt: { is: 'NULL' } }].filter(
+          isDefined,
+        ),
       };
     }
     let argsString = '';
