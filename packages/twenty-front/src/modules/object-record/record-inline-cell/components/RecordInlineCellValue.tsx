@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellDisplayMode } from '@/object-record/record-inline-cell/components/RecordInlineCellDisplayMode';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
@@ -69,8 +68,7 @@ export const RecordInlineCellValue = () => {
           onClick={handleDisplayModeClick}
           isCentered={isCentered}
         >
-          <RecordInlineCellDisplayMode
-          >
+          <RecordInlineCellDisplayMode>
             {displayModeContent}
           </RecordInlineCellDisplayMode>
         </StyledClickableContainer>

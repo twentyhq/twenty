@@ -16,7 +16,10 @@ import { useInlineCell } from '../hooks/useInlineCell';
 import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
-import { RecordInlineCellContext, RecordInlineCellContextProps } from './RecordInlineCellContext';
+import {
+  RecordInlineCellContext,
+  RecordInlineCellContextProps,
+} from './RecordInlineCellContext';
 
 type RecordInlineCellProps = {
   readonly?: boolean;
@@ -78,8 +81,12 @@ export const RecordInlineCell = ({
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
     readonly: cellIsReadOnly,
     buttonIcon: buttonIcon,
-    customEditHotkeyScope: isFieldRelation(fieldDefinition) ? {scope: RelationPickerHotkeyScope.RelationPicker} : undefined,
-    IconLabel: fieldDefinition.iconName ? getIcon(fieldDefinition.iconName) : undefined,
+    customEditHotkeyScope: isFieldRelation(fieldDefinition)
+      ? { scope: RelationPickerHotkeyScope.RelationPicker }
+      : undefined,
+    IconLabel: fieldDefinition.iconName
+      ? getIcon(fieldDefinition.iconName)
+      : undefined,
     label: fieldDefinition.label,
     labelWidth: fieldDefinition.labelWidth,
     showLabel: fieldDefinition.showLabel,
@@ -103,8 +110,8 @@ export const RecordInlineCell = ({
     displayModeContent: <FieldDisplay />,
     isDisplayModeFixHeight: undefined,
     editModeContentOnly: isFieldInputOnly,
-    loading: loading
-  }
+    loading: loading,
+  };
 
   return (
     <FieldFocusContextProvider>

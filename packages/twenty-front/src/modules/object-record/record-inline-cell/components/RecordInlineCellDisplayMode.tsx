@@ -4,12 +4,14 @@ import styled from '@emotion/styled';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { RecordInlineCellContainerProps } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
-import { RecordInlineCellContextProps, useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
+import {
+  RecordInlineCellContextProps,
+  useRecordInlineCellContext,
+} from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
-   Pick<
+  Pick<
     RecordInlineCellContextProps,
     'isDisplayModeFixHeight' | 'disableHoverEffect'
   > & { isHovered?: boolean }
@@ -54,7 +56,6 @@ const StyledEmptyField = styled.div`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-
 export const RecordInlineCellDisplayMode = ({
   children,
 }: React.PropsWithChildren<unknown>) => {
@@ -62,12 +63,11 @@ export const RecordInlineCellDisplayMode = ({
 
   const {
     editModeContentOnly,
-   
+
     showLabel,
     label,
-    buttonIcon
+    buttonIcon,
   } = useRecordInlineCellContext();
-
 
   const isDisplayModeContentEmpty = useIsFieldEmpty();
   const showEditButton =
@@ -80,13 +80,11 @@ export const RecordInlineCellDisplayMode = ({
 
   const shouldDisplayEditModeOnFocus = isFocused && isFieldInputOnly;
 
-  const emptyPlaceHolder = showLabel ? 'Empty' : label
+  const emptyPlaceHolder = showLabel ? 'Empty' : label;
 
   return (
     <>
-      <StyledRecordInlineCellNormalModeOuterContainer
-        isHovered={isFocused}
-      >
+      <StyledRecordInlineCellNormalModeOuterContainer isHovered={isFocused}>
         <StyledRecordInlineCellNormalModeInnerContainer>
           {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
           !children ? (

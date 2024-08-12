@@ -22,7 +22,7 @@ export type RecordInlineCellContextProps = {
 const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
   readonly: false,
   IconLabel: undefined,
-  label: "",
+  label: '',
   labelWidth: 0,
   showLabel: false,
   buttonIcon: undefined,
@@ -34,9 +34,12 @@ const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
   disableHoverEffect: false,
   loading: false,
   isCentered: false,
-}
+};
 
-export const RecordInlineCellContext = createContext<RecordInlineCellContextProps>(defaultRecordInlineCellContextProp);
+export const RecordInlineCellContext =
+  createContext<RecordInlineCellContextProps>(
+    defaultRecordInlineCellContextProp,
+  );
 
 export const useRecordInlineCellContext = (): RecordInlineCellContextProps => {
   const context = useContext(RecordInlineCellContext);
