@@ -9,6 +9,8 @@ import {
   CalendarChannelSyncStatus,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 
 @Injectable()
 export class CalendarChannelSyncStatusService {
@@ -16,6 +18,7 @@ export class CalendarChannelSyncStatusService {
     private readonly twentyORMManager: TwentyORMManager,
     @InjectCacheStorage(CacheStorageNamespace.Calendar)
     private readonly cacheStorage: CacheStorageService,
+    private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
   public async scheduleFullCalendarEventListFetch(calendarChannelId: string) {
@@ -157,5 +160,42 @@ export class CalendarChannelSyncStatusService {
       syncStatus: CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
       syncStage: CalendarChannelSyncStage.FAILED,
     });
+
+    await this.addToAccountsToReconnect(calendarChannelId, workspaceId);
+  }
+
+  private async addToAccountsToReconnect(
+    calendarChannelId: string,
+    workspaceId: string,
+  ) {
+    const calendarChannelRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+        'calendarChannel',
+      );
+
+    const calendarChannel = await calendarChannelRepository.findOne({
+      where: {
+        id: calendarChannelId,
+      },
+      relations: {
+        connectedAccount: {
+          accountOwner: true,
+        },
+      },
+    });
+
+    if (!calendarChannel) {
+      return;
+    }
+
+    const userId = calendarChannel.connectedAccount.accountOwner.userId;
+    const connectedAccountId = calendarChannel.connectedAccount.id;
+
+    await this.accountsToReconnectService.addAccountToReconnectByKey(
+      AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
+      userId,
+      workspaceId,
+      connectedAccountId,
+    );
   }
 }

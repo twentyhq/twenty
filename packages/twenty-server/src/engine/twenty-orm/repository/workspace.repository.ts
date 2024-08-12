@@ -18,9 +18,9 @@ import {
   SaveOptions,
   UpdateResult,
 } from 'typeorm';
-import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
+import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -634,7 +634,7 @@ export class WorkspaceRepository<
         );
 
       throw new Error(
-        `Object metadata for object "${objectMetadataName}" is missing` +
+        `Object metadata for object "${objectMetadataName}" is missing ` +
           `in workspace "${this.internalContext.workspaceId}" ` +
           `with object metadata collection length: ${objectMetadataCollection?.length}`,
       );

@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { WorkspaceActivationStatus } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useObjectNamePluralFromSingular = ({
@@ -20,7 +21,7 @@ export const useObjectNamePluralFromSingular = ({
     }),
   );
 
-  if (currentWorkspace?.activationStatus !== 'active') {
+  if (currentWorkspace?.activationStatus !== WorkspaceActivationStatus.Active) {
     objectMetadataItem =
       mockObjectMetadataItems.find(
         (objectMetadataItem) =>

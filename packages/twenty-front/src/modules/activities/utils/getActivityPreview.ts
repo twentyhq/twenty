@@ -1,4 +1,6 @@
-export const getActivityPreview = (activityBody: string) => {
+// TODO: merge with getFirstNonEmptyLineOfRichText (and one duplicate I saw and also added a note on)
+
+export const getActivityPreview = (activityBody: string | null) => {
   const noteBody = activityBody ? JSON.parse(activityBody) : [];
 
   return noteBody.length

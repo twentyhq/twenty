@@ -6,7 +6,6 @@ import {
   ServerError,
   ServerParseError,
 } from '@apollo/client';
-import { GraphQLErrors } from '@apollo/client/errors';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { RetryLink } from '@apollo/client/link/retry';
@@ -17,13 +16,14 @@ import { AuthTokenPair } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { logDebug } from '~/utils/logDebug';
 
+import { GraphQLFormattedError } from 'graphql';
 import { ApolloManager } from '../types/apolloManager.interface';
 import { loggerLink } from '../utils';
 
 const logger = loggerLink(() => 'Twenty');
 
 export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
-  onError?: (err: GraphQLErrors | undefined) => void;
+  onError?: (err: readonly GraphQLFormattedError[] | undefined) => void;
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
@@ -81,7 +81,6 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         ({ graphQLErrors, networkError, forward, operation }) => {
           if (isDefined(graphQLErrors)) {
             onErrorCb?.(graphQLErrors);
-
             for (const graphQLError of graphQLErrors) {
               if (graphQLError.message === 'Unauthorized') {
                 return fromPromise(

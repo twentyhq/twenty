@@ -1,11 +1,13 @@
-import { ReactElement } from 'react';
 import styled from '@emotion/styled';
+import { ReactElement } from 'react';
 
 import { EventsGroup } from '@/activities/timelineActivities/components/EventsGroup';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
+import { filterOutInvalidTimelineActivities } from '@/activities/timelineActivities/utils/filterOutInvalidTimelineActivities';
 import { groupEventsByMonth } from '@/activities/timelineActivities/utils/groupEventsByMonth';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 type EventListProps = {
@@ -29,11 +31,19 @@ const StyledTimelineContainer = styled.div`
 `;
 
 export const EventList = ({ events, targetableObject }: EventListProps) => {
-  const groupedEvents = groupEventsByMonth(events);
-
   const mainObjectMetadataItem = useObjectMetadataItem({
     objectNameSingular: targetableObject.targetObjectNameSingular,
   }).objectMetadataItem;
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const filteredEvents = filterOutInvalidTimelineActivities(
+    events,
+    targetableObject.targetObjectNameSingular,
+    objectMetadataItems,
+  );
+
+  const groupedEvents = groupEventsByMonth(filteredEvents);
 
   return (
     <ScrollWrapper>

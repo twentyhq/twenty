@@ -31,6 +31,8 @@ spec:
           value: 3000
         - name: SERVER_URL
           value: "https://crm.example.com:443"
+        - name: FRONT_BASE_URL
+          value: "https://crm.example.com:443"
         - name: PG_DATABASE_URL
           value: "postgres://twenty:twenty@twenty-db.twentycrm.svc.cluster.local/default"
         - name: ENABLE_DB_MIGRATIONS
@@ -39,6 +41,8 @@ spec:
           value: "true"
         - name: STORAGE_TYPE
           value: "local"
+        - name: "MESSAGE_QUEUE_TYPE"
+          value: "pg-boss"
         - name: ACCESS_TOKEN_SECRET
           valueFrom:
             secretKeyRef:
@@ -65,8 +69,8 @@ spec:
         ports:
         - containerPort: 3000
           name: http-tcp
-          protocol: TCP    
-        resources: 
+          protocol: TCP
+        resources:
           requests:
             memory: "256Mi"
             cpu: "250m"
@@ -76,6 +80,8 @@ spec:
         stdin: true
         tty: true
         volumeMounts:
+        - mountPath: /app/docker-data
+          name: twentycrm-server-data
         - mountPath: /app/.local-storage
           name: twentycrm-server-data
       dnsPolicy: ClusterFirst

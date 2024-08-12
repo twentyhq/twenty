@@ -27,11 +27,11 @@ const objectMetadataItems = getObjectMetadataItemsMock();
 
 const RelationFieldValueSetterEffect = () => {
   const setEntity = useSetRecoilState(
-    recordStoreFamilyState(mockPerformance.entityId),
+    recordStoreFamilyState(mockPerformance.recordId),
   );
 
   const setRelationEntity = useSetRecoilState(
-    recordStoreFamilyState(mockPerformance.relationEntityId),
+    recordStoreFamilyState(mockPerformance.relationRecordId),
   );
 
   const setRecordValue = useSetRecordValue();
@@ -64,7 +64,7 @@ const meta: Meta = {
         <RecordFieldValueSelectorContextProvider>
           <RecordTableContext.Provider
             value={{
-              viewBarId: mockPerformance.entityId,
+              viewBarId: mockPerformance.recordId,
               objectMetadataItem: mockPerformance.objectMetadataItem as any,
               onUpsertRecord: () => {},
               onOpenTableCell: () => {},
@@ -87,13 +87,13 @@ const meta: Meta = {
                 value={{
                   objectNameSingular:
                     mockPerformance.entityValue.__typename.toLocaleLowerCase(),
-                  recordId: mockPerformance.entityId,
+                  recordId: mockPerformance.recordId,
                   rowIndex: 0,
                   pathToShowPage:
                     getBasePathToShowPage({
                       objectNameSingular:
                         mockPerformance.entityValue.__typename.toLocaleLowerCase(),
-                    }) + mockPerformance.entityId,
+                    }) + mockPerformance.recordId,
                   isSelected: false,
                   isReadOnly: false,
                   isDragging: false,
@@ -113,7 +113,7 @@ const meta: Meta = {
                 >
                   <FieldContext.Provider
                     value={{
-                      entityId: mockPerformance.entityId,
+                      recordId: mockPerformance.recordId,
                       basePathToShowPage: '/object-record/',
                       isLabelIdentifier: false,
                       fieldDefinition: {

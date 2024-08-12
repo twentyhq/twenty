@@ -13,6 +13,8 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
+import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
+import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import { RecordInlineCellContext, RecordInlineCellContextProps } from './RecordInlineCellContext';
 
@@ -27,12 +29,16 @@ export const RecordInlineCell = ({
   loading,
   isCentered,
 }: RecordInlineCellProps) => {
-  const { fieldDefinition, entityId } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
+  const isFieldReadOnly = useIsFieldReadOnly();
+
   const { closeInlineCell } = useInlineCell();
+
+  const cellIsReadOnly = readonly || isFieldReadOnly;
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -70,7 +76,7 @@ export const RecordInlineCell = ({
   const { getIcon } = useIcons();
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
-    readonly: readonly,
+    readonly: cellIsReadOnly,
     buttonIcon: buttonIcon,
     customEditHotkeyScope: isFieldRelation(fieldDefinition) ? {scope: RelationPickerHotkeyScope.RelationPicker} : undefined,
     IconLabel: fieldDefinition.iconName ? getIcon(fieldDefinition.iconName) : undefined,
@@ -80,7 +86,10 @@ export const RecordInlineCell = ({
     isCentered: isCentered,
     editModeContent: (
       <FieldInput
-        recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
+        recordFieldInputdId={getRecordFieldInputId(
+          recordId,
+          fieldDefinition?.metadata?.fieldName,
+        )}
         onEnter={handleEnter}
         onCancel={handleCancel}
         onEscape={handleEscape}
@@ -88,7 +97,7 @@ export const RecordInlineCell = ({
         onTab={handleTab}
         onShiftTab={handleShiftTab}
         onClickOutside={handleClickOutside}
-        isReadOnly={readonly}
+        isReadOnly={cellIsReadOnly}
       />
     ),
     displayModeContent: <FieldDisplay />,

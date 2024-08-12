@@ -1,7 +1,6 @@
 import { useCallback, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useLocation } from 'react-router-dom';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconSettings, useIcons } from 'twenty-ui';
 
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
@@ -13,7 +12,9 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { objectMetadataItem } = useContext(RecordTableContext);
@@ -34,10 +35,10 @@ export const RecordTableHeaderPlusButtonContent = () => {
     [handleColumnVisibilityChange, closeDropdown],
   );
 
-  const StyledMenuItemLink = styled(Link)`
-    text-decoration: none;
-    width: 100%;
-  `;
+  const location = useLocation();
+  const setNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
 
   return (
     <>
@@ -57,11 +58,14 @@ export const RecordTableHeaderPlusButtonContent = () => {
         </>
       )}
       <DropdownMenuItemsContainer>
-        <StyledMenuItemLink
+        <UndecoratedLink
           to={`/settings/objects/${getObjectSlug(objectMetadataItem)}`}
+          onClick={() => {
+            setNavigationMemorizedUrl(location.pathname + location.search);
+          }}
         >
           <MenuItem LeftIcon={IconSettings} text="Customize fields" />
-        </StyledMenuItemLink>
+        </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </>
   );

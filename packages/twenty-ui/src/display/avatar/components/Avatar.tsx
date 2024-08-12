@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
@@ -8,7 +8,7 @@ import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPr
 import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { ThemeContext } from '@ui/theme';
-import { Nullable, stringToHslColor } from '@ui/utilities';
+import { Nullable, getImageAbsoluteURI, stringToHslColor } from '@ui/utilities';
 
 const StyledAvatar = styled.div<{
   size: AvatarSize;
@@ -73,15 +73,21 @@ export const Avatar = ({
     invalidAvatarUrlsState,
   );
 
-  const noAvatarUrl = !isNonEmptyString(avatarUrl);
+  const avatarImageURI = useMemo(
+    () => getImageAbsoluteURI(avatarUrl),
+    [avatarUrl],
+  );
+
+  const noAvatarUrl = !isNonEmptyString(avatarImageURI);
 
   const placeholderChar = placeholder?.[0]?.toLocaleUpperCase();
 
-  const showPlaceholder = noAvatarUrl || invalidAvatarUrls.includes(avatarUrl);
+  const showPlaceholder =
+    noAvatarUrl || invalidAvatarUrls.includes(avatarImageURI);
 
   const handleImageError = () => {
-    if (isNonEmptyString(avatarUrl)) {
-      setInvalidAvatarUrls((prev) => [...prev, avatarUrl]);
+    if (isNonEmptyString(avatarImageURI)) {
+      setInvalidAvatarUrls((prev) => [...prev, avatarImageURI]);
     }
   };
 
@@ -105,7 +111,7 @@ export const Avatar = ({
       {showPlaceholder ? (
         placeholderChar
       ) : (
-        <StyledImage src={avatarUrl} onError={handleImageError} alt="" />
+        <StyledImage src={avatarImageURI} onError={handleImageError} alt="" />
       )}
     </StyledAvatar>
   );

@@ -1,4 +1,4 @@
-import { isEmailBlocklisted } from 'src/modules/calendar-messaging-participant-manager/utils/is-email-blocklisted.util';
+import { isEmailBlocklisted } from 'src/modules/blocklist/utils/is-email-blocklisted.util';
 import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
 
 // Todo: refactor this into several utils

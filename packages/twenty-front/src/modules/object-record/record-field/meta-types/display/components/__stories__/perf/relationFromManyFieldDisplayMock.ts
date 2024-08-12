@@ -3,7 +3,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const fieldValue = [
   {
     __typename: 'Company',
-    domainName: 'google.com',
+    domainName: { primaryLinkUrl: 'google.com', primaryLinkLabel: '' },
     xLink: {
       __typename: 'Link',
       primaryLinkLabel: '',
@@ -31,7 +31,7 @@ export const fieldValue = [
   },
   {
     __typename: 'Company',
-    domainName: 'airbnb.com',
+    domainName: { primaryLinkUrl: 'airbnb.com', primaryLinkLabel: '' },
     xLink: {
       __typename: 'Link',
       primaryLinkLabel: '',
@@ -69,7 +69,7 @@ export const otherPersonMock = {
     createdAt: '2024-05-01T13:16:29.046Z',
     company: {
       __typename: 'Company',
-      domainName: 'google.com',
+      domainName: { primaryLinkUrl: 'google.com', primaryLinkLabel: '' },
       xLink: {
         __typename: 'Link',
         primaryLinkLabel: '',
@@ -114,8 +114,8 @@ export const otherPersonMock = {
 };
 
 export const relationFromManyFieldDisplayMock = {
-  entityId: '20202020-2d40-4e49-8df4-9c6a049191df',
-  relationEntityId: '20202020-c21e-4ec2-873b-de4264d89025',
+  recordId: '20202020-2d40-4e49-8df4-9c6a049191df',
+  relationRecordId: '20202020-c21e-4ec2-873b-de4264d89025',
   entityValue: {
     __typename: 'Person',
     asd: '',
@@ -125,7 +125,7 @@ export const relationFromManyFieldDisplayMock = {
     createdAt: '2024-05-01T13:16:29.046Z',
     company: {
       __typename: 'Company',
-      domainName: 'google.com',
+      domainName: { primaryLinkUrl: 'google.com', primaryLinkLabel: '' },
       xLink: {
         __typename: 'Link',
         primaryLinkLabel: '',
@@ -169,7 +169,10 @@ export const relationFromManyFieldDisplayMock = {
   },
   relationFieldValue: {
     __typename: 'Company',
-    domainName: 'microsoft.com',
+    domainName: {
+      primaryLinkLabel: '',
+      primaryLinkUrl: 'microsoft.com',
+    },
     xLink: {
       __typename: 'Link',
       primaryLinkLabel: '',
