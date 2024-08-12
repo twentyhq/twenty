@@ -7,7 +7,6 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceHealthModule } from 'src/engine/workspace-manager/workspace-health/workspace-health.module';
 import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
-import { AddStandardIdCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/add-standard-id.command';
 import { ConvertRecordPositionsToIntegers } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/convert-record-positions-to-integers.command';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
 
@@ -27,7 +26,6 @@ import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.ser
   ],
   providers: [
     SyncWorkspaceMetadataCommand,
-    AddStandardIdCommand,
     ConvertRecordPositionsToIntegers,
     SyncWorkspaceLoggerService,
   ],
