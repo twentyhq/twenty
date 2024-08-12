@@ -1,7 +1,7 @@
 import { FieldPathPicker } from '@/object-record/field-path-picker/components/FieldPathPicker';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { useFieldPathField } from '@/object-record/record-field/meta-types/hooks/useFieldPathField';
-import { FieldInputEvent } from './DateFieldInput';
+import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type FieldPathFieldInputProps = {
   onClickOutside?: FieldInputEvent;
