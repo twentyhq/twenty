@@ -23,7 +23,7 @@ const StyledRelationPickerContainer = styled.div`
   top: -1px;
 `;
 
-export type MultiSelectFieldInputProps = {
+type MultiSelectFieldInputProps = {
   onCancel?: () => void;
 };
 
