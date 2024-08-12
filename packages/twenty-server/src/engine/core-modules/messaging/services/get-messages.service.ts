@@ -4,10 +4,13 @@ import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/mess
 import { TimelineThreadsWithTotal } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Injectable()
-export class GetMessagesFromPersonIdsService {
+export class GetMessagesService {
   constructor(
+    private readonly twentyORMManager: TwentyORMManager,
     private readonly timelineMessagingService: TimelineMessagingService,
   ) {}
 
@@ -56,5 +59,43 @@ export class GetMessagesFromPersonIdsService {
         threadVisibilityByThreadId,
       ),
     };
+  }
+
+  async getMessagesFromCompanyId(
+    workspaceMemberId: string,
+    companyId: string,
+    page = 1,
+    pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+  ): Promise<TimelineThreadsWithTotal> {
+    const personRepository =
+      await this.twentyORMManager.getRepository<PersonWorkspaceEntity>(
+        'person',
+      );
+    const personIds = (
+      await personRepository.find({
+        where: {
+          companyId,
+        },
+        select: {
+          id: true,
+        },
+      })
+    ).map((person) => person.id);
+
+    if (personIds.length === 0) {
+      return {
+        totalNumberOfThreads: 0,
+        timelineThreads: [],
+      };
+    }
+
+    const messageThreads = await this.getMessagesFromPersonIds(
+      workspaceMemberId,
+      personIds,
+      page,
+      pageSize,
+    );
+
+    return messageThreads;
   }
 }

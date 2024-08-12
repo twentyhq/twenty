@@ -6,8 +6,7 @@ import { Max } from 'class-validator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TIMELINE_THREADS_MAX_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { TimelineThreadsWithTotal } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
-import { GetMessagesFromCompanyIdService } from 'src/engine/core-modules/messaging/services/get-messages-from-company-id.service';
-import { GetMessagesFromPersonIdsService } from 'src/engine/core-modules/messaging/services/get-messages-from-person-ids.service';
+import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -43,8 +42,7 @@ class GetTimelineThreadsFromCompanyIdArgs {
 @Resolver(() => TimelineThreadsWithTotal)
 export class TimelineMessagingResolver {
   constructor(
-    private readonly getMessagesFromPersonIdsService: GetMessagesFromPersonIdsService,
-    private readonly getMessagesFromCompanyIdService: GetMessagesFromCompanyIdService,
+    private readonly getMessagesFromPersonIdsService: GetMessagesService,
     private readonly userService: UserService,
   ) {}
 
@@ -82,7 +80,7 @@ export class TimelineMessagingResolver {
     }
 
     const timelineThreads =
-      await this.getMessagesFromCompanyIdService.getMessagesFromCompanyId(
+      await this.getMessagesFromPersonIdsService.getMessagesFromCompanyId(
         workspaceMember.id,
         companyId,
         page,
