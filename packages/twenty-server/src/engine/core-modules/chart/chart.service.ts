@@ -218,6 +218,7 @@ export class ChartService {
     }
   }
 
+  // Returns wrong column name if last field is not a relationship / count field
   private async getTableAliasAndColumn(
     workspaceId: string,
     joinOperations: JoinOperation[],
@@ -227,22 +228,22 @@ export class ChartService {
     if (joinOperations.length > 0) {
       const lastJoinOperation = joinOperations[joinOperations.length - 1];
 
-      return {
-        targetTableAlias: lastJoinOperation.joinTableAlias,
-        targetColumnName: lastJoinOperation.joinFieldName,
-      };
+      const tableAlias = lastJoinOperation.joinTableAlias;
+      const columnName = lastJoinOperation.joinFieldName;
+
+      return [tableAlias, columnName] as const;
     }
 
-    return {
-      targetTableAlias: sourceTableName,
-      targetColumnName: (
-        await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
-          where: {
-            id: firstFieldMetadataId,
-          },
-        })
-      )?.name,
-    };
+    const tableAlias = sourceTableName;
+    const columnName = (
+      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          id: firstFieldMetadataId,
+        },
+      })
+    )?.name;
+
+    return [tableAlias, columnName] as const;
   }
 
   async run(workspaceId: string, chartId: string): Promise<ChartResult> {
@@ -273,9 +274,9 @@ export class ChartService {
     const targetJoinClauses = this.getJoinClauses(
       dataSourceSchema,
       targetJoinOperations,
-    ).join('\n');
+    );
 
-    const { targetTableAlias, targetColumnName } =
+    const [targetTableAlias, targetColumnName] =
       await this.getTableAliasAndColumn(
         workspaceId,
         targetJoinOperations,
@@ -283,25 +284,35 @@ export class ChartService {
         chart.fieldPath[0],
       );
 
-    /* const groupByJoinOperations = await this.getJoinOperations(
+    const groupByJoinOperations = await this.getJoinOperations(
       workspaceId,
       chart.sourceObjectNameSingular,
       chart.groupBy,
       'group_by',
     );
 
-    const lastGroupByJoinOperation =
-      groupByJoinOperations[groupByJoinOperations.length - 1];
+    const groupByJoinClauses = this.getJoinClauses(
+      dataSourceSchema,
+      groupByJoinOperations,
+    );
 
-    const groupByTableName =
-      groupByJoinOperations.length > 0
-        ? lastGroupByJoinOperation.joinTableAlias
-        : sourceTableName;
+    const [groupByTableAlias, groupByColumnName] =
+      await this.getTableAliasAndColumn(
+        workspaceId,
+        groupByJoinOperations,
+        sourceTableName,
+        chart.groupBy[0],
+      );
+
+    const groupBySelectColumn =
+      chart.groupBy && chart.groupBy.length > 0
+        ? `"${groupByTableAlias}"."${groupByColumnName}"`
+        : undefined;
 
     const groupByClause =
-      chart?.groupBy && chart?.groupBy.length > 0
-        ? `GROUP BY "${groupByTableName}"."${groupByColumnName}"`
-        : undefined; */
+      chart.groupBy && chart.groupBy.length > 0
+        ? `GROUP BY "${groupByTableAlias}"."${groupByColumnName}"`
+        : '';
 
     const measureSelectColumn = this.getMeasureSelectColumn(
       chart.measure,
@@ -309,17 +320,20 @@ export class ChartService {
       targetColumnName,
     );
 
-    const selectColumns = [measureSelectColumn /* groupByColumn */].filter(
+    const selectColumns = [measureSelectColumn, groupBySelectColumn].filter(
       (col) => !!col,
     );
 
-    const joinClauses = [targetJoinClauses /* groupByJoinClauses */].join('\n');
+    const joinClausesString = [targetJoinClauses, groupByJoinClauses]
+      .flat()
+      .filter((col) => col)
+      .join('\n');
 
     const sqlQuery = `
       SELECT ${selectColumns.join(', ')}
       FROM "${dataSourceSchema}"."${sourceTableName}"
-      ${joinClauses}
-      ${'' /* groupByClause */};
+      ${joinClausesString}
+      ${groupByClause};
     `;
 
     console.log('sqlQuery\n', sqlQuery);

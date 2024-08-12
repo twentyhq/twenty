@@ -52,12 +52,14 @@ export const Chart = (props: ChartProps) => {
 
   const margin = theme.spacingMultiplicator * 12;
 
+  const indexBy = Object.keys(chartResult[0]).find((key) => key !== 'measure');
+
   return (
     <StyledChartContainer>
       <ResponsiveBar
         data={chartResult}
         keys={['measure']}
-        indexBy={chart?.groupBy}
+        indexBy={indexBy}
         margin={{ top: margin, right: margin, bottom: margin, left: margin }}
         padding={0.4}
         valueScale={{ type: 'linear' }}
