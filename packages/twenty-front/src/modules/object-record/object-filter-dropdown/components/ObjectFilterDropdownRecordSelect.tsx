@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
@@ -131,6 +132,8 @@ export const ObjectFilterDropdownRecordSelect = ({
 
   return (
     <MultipleRecordSelectDropdown
+      selectableListId="object-filter-record-select-id"
+      hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
       recordsToSelect={recordsToSelect}
       filteredSelectedRecords={filteredSelectedRecords}
       selectedRecords={selectedRecords}

@@ -2,6 +2,7 @@ import { isObject } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
+  ActorFilter,
   AddressFilter,
   AndObjectRecordFilter,
   BooleanFilter,
@@ -255,6 +256,17 @@ export const isRecordMatchingFilter = ({
           currencyFilter: filterValue as CurrencyFilter,
           value: record[filterKey].amountMicros,
         });
+      }
+      case FieldMetadataType.Actor: {
+        const actorFilter = filterValue as ActorFilter;
+
+        return (
+          actorFilter.name === undefined ||
+          isMatchingStringFilter({
+            stringFilter: actorFilter.name,
+            value: record[filterKey].name,
+          })
+        );
       }
       case FieldMetadataType.Relation: {
         throw new Error(

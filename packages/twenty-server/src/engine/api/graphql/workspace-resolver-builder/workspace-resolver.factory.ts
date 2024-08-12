@@ -4,23 +4,23 @@ import { IResolvers } from '@graphql-tools/utils';
 
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
-import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
-import { ExecuteQuickActionOnOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/execute-quick-action-on-one-resolver.factory';
+import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 
+import { CreateManyResolverFactory } from './factories/create-many-resolver.factory';
+import { CreateOneResolverFactory } from './factories/create-one-resolver.factory';
+import { DeleteOneResolverFactory } from './factories/delete-one-resolver.factory';
 import { FindDuplicatesResolverFactory } from './factories/find-duplicates-resolver.factory';
 import { FindManyResolverFactory } from './factories/find-many-resolver.factory';
 import { FindOneResolverFactory } from './factories/find-one-resolver.factory';
-import { CreateManyResolverFactory } from './factories/create-many-resolver.factory';
-import { CreateOneResolverFactory } from './factories/create-one-resolver.factory';
 import { UpdateOneResolverFactory } from './factories/update-one-resolver.factory';
-import { DeleteOneResolverFactory } from './factories/delete-one-resolver.factory';
+import { WorkspaceResolverBuilderFactoryInterface } from './interfaces/workspace-resolver-builder-factory.interface';
 import {
   WorkspaceResolverBuilderMethodNames,
   WorkspaceResolverBuilderMethods,
 } from './interfaces/workspace-resolvers-builder.interface';
-import { WorkspaceResolverBuilderFactoryInterface } from './interfaces/workspace-resolver-builder-factory.interface';
 
 @Injectable()
 export class WorkspaceResolverFactory {
@@ -34,14 +34,12 @@ export class WorkspaceResolverFactory {
     private readonly createOneResolverFactory: CreateOneResolverFactory,
     private readonly updateOneResolverFactory: UpdateOneResolverFactory,
     private readonly deleteOneResolverFactory: DeleteOneResolverFactory,
-    private readonly executeQuickActionOnOneResolverFactory: ExecuteQuickActionOnOneResolverFactory,
     private readonly updateManyResolverFactory: UpdateManyResolverFactory,
     private readonly deleteManyResolverFactory: DeleteManyResolverFactory,
   ) {}
 
   async create(
-    workspaceId: string,
-    userId: string | undefined,
+    authContext: AuthContext,
     objectMetadataCollection: ObjectMetadataInterface[],
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
   ): Promise<IResolvers> {
@@ -56,7 +54,6 @@ export class WorkspaceResolverFactory {
       ['createOne', this.createOneResolverFactory],
       ['updateOne', this.updateOneResolverFactory],
       ['deleteOne', this.deleteOneResolverFactory],
-      ['executeQuickActionOnOne', this.executeQuickActionOnOneResolverFactory],
       ['updateMany', this.updateManyResolverFactory],
       ['deleteMany', this.deleteManyResolverFactory],
     ]);
@@ -82,8 +79,7 @@ export class WorkspaceResolverFactory {
         }
 
         resolvers.Query[resolverName] = resolverFactory.create({
-          workspaceId,
-          userId,
+          authContext,
           objectMetadataItem: objectMetadata,
           fieldMetadataCollection: objectMetadata.fields,
           objectMetadataCollection: objectMetadataCollection,
@@ -106,8 +102,7 @@ export class WorkspaceResolverFactory {
         }
 
         resolvers.Mutation[resolverName] = resolverFactory.create({
-          workspaceId,
-          userId,
+          authContext,
           objectMetadataItem: objectMetadata,
           fieldMetadataCollection: objectMetadata.fields,
           objectMetadataCollection: objectMetadataCollection,

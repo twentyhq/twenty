@@ -43,14 +43,14 @@ export const useSetRecordTableData = ({
           hasUserSelectedAllRowsState,
         );
 
-        const entityIds = newRecords.map((entity) => entity.id);
+        const recordIds = newRecords.map((record) => record.id);
 
-        if (!isDeeplyEqual(currentRowIds, entityIds)) {
-          set(tableRowIdsState, entityIds);
+        if (!isDeeplyEqual(currentRowIds, recordIds)) {
+          set(tableRowIdsState, recordIds);
         }
 
         if (hasUserSelectedAllRows) {
-          for (const rowId of entityIds) {
+          for (const rowId of recordIds) {
             set(isRowSelectedFamilyState(rowId), true);
           }
         }

@@ -1,12 +1,5 @@
 import { DocSearch } from '@docsearch/react';
-import { StoredDocSearchHit } from '@docsearch/react/dist/esm/types';
 import { env } from 'next-runtime-env';
-
-interface AlgoliaHit extends StoredDocSearchHit {
-  _snippetResult?: {
-    content: { value: string };
-  };
-}
 
 interface AlgoliaDocSearchProps {
   pathname: string;
@@ -18,7 +11,7 @@ export const AlgoliaDocSearch = ({ pathname }: AlgoliaDocSearchProps) => {
     : 'developer';
   return (
     <DocSearch
-      hitComponent={({ hit }: { hit: AlgoliaHit }) => (
+      hitComponent={({ hit }: { hit: any }) => (
         <section className="DocSearch-Hits">
           <a href={hit.url}>
             <div className="DocSearch-Hit-Container">

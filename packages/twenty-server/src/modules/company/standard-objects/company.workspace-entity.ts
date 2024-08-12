@@ -1,7 +1,9 @@
-import { Address } from 'nodemailer/lib/mailer';
-
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import {
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -28,6 +30,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { AddressMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
@@ -56,7 +59,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
       'The company website URL. We use this url to fetch the company icon',
     icon: 'IconLink',
   })
-  domainName?: string;
+  domainName?: LinksMetadata;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.employees,
@@ -107,7 +110,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMap',
   })
   @WorkspaceIsNullable()
-  address: Address;
+  address: AddressMetadata;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.idealCustomerProfile,
@@ -130,6 +133,19 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   position: number | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: 'Created by',
+    icon: 'IconCreativeCommonsSa',
+    description: 'The creator of the record',
+    defaultValue: {
+      source: `'${FieldActorSource.MANUAL}'`,
+      name: "''",
+    },
+  })
+  createdBy: ActorMetadata;
 
   // Relations
   @WorkspaceRelation({

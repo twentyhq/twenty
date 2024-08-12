@@ -11,7 +11,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldEmail } from '../../types/guards/isFieldEmail';
 
 export const useEmailField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.Email, isFieldEmail, fieldDefinition);
 
@@ -19,13 +19,13 @@ export const useEmailField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<string>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldEmailValue>(`${entityId}-${fieldName}`);
+    useRecordFieldInput<FieldEmailValue>(`${recordId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

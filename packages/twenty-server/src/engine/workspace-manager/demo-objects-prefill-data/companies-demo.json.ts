@@ -1,3 +1,5 @@
+import { DEMO_SEED_WORKSPACE_MEMBER_IDS } from "src/engine/workspace-manager/demo-objects-prefill-data/workspace-member";
+
 export const companiesDemo = [
   {
     name: 'Google',
@@ -5,6 +7,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 284571,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/google',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Microsoft',
@@ -12,6 +17,9 @@ export const companiesDemo = [
     addressAddressCity: 'Redmond',
     employees: 226067,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/microsoft',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Meta',
@@ -19,6 +27,9 @@ export const companiesDemo = [
     addressAddressCity: 'Menlo Park',
     employees: 119511,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/meta',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SLB',
@@ -26,6 +37,9 @@ export const companiesDemo = [
     addressAddressCity: 'Houston',
     employees: 113151,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/slbglobal',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Cisco',
@@ -33,6 +47,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 99625,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cisco',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Uber',
@@ -40,6 +57,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 90545,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/uber-com',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Salesforce',
@@ -47,6 +67,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 71322,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/salesforce',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Amdocs',
@@ -54,6 +77,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chesterfield',
     employees: 35731,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/amdocs',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'VMware',
@@ -61,6 +87,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 34759,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vmware',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'GlobalLogic',
@@ -68,6 +97,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 24461,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/globallogic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ServiceNow',
@@ -75,6 +107,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 24104,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/servicenow',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SS&C Technologies',
@@ -82,6 +117,9 @@ export const companiesDemo = [
     addressAddressCity: 'Windsor',
     employees: 20311,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ss-c-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Workday',
@@ -89,6 +127,9 @@ export const companiesDemo = [
     addressAddressCity: 'Pleasanton',
     employees: 20036,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/workday',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Red Hat',
@@ -96,6 +137,9 @@ export const companiesDemo = [
     addressAddressCity: 'Raleigh',
     employees: 19945,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/red-hat',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'NetSuite',
@@ -103,6 +147,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 19269,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/netsuite',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Synopsys Inc',
@@ -110,6 +157,9 @@ export const companiesDemo = [
     addressAddressCity: 'Sunnyvale',
     employees: 18061,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/synopsys',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Siemens Digital Industries Software',
@@ -117,6 +167,9 @@ export const companiesDemo = [
     addressAddressCity: 'Plano',
     employees: 17262,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/siemenssoftware',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SAS',
@@ -124,6 +177,9 @@ export const companiesDemo = [
     addressAddressCity: 'Cary',
     employees: 16287,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sas',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Intuit',
@@ -131,6 +187,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 15851,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/intuit',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Broadcom Software',
@@ -138,6 +197,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 15127,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/broadcomsoftware',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Autodesk',
@@ -145,6 +207,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 14593,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/autodesk',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Epic',
@@ -152,6 +217,9 @@ export const companiesDemo = [
     addressAddressCity: 'Verona',
     employees: 13765,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/epic1979',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Bosch USA',
@@ -159,6 +227,9 @@ export const companiesDemo = [
     addressAddressCity: 'Farmington',
     employees: 13754,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/boschusa',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Cloud Software Group',
@@ -166,6 +237,9 @@ export const companiesDemo = [
     addressAddressCity: 'Fort Lauderdale',
     employees: 13111,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cloudsoftwaregroup',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Pitney Bowes',
@@ -173,6 +247,9 @@ export const companiesDemo = [
     addressAddressCity: 'Stamford',
     employees: 12306,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pitney-bowes',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Juniper Networks',
@@ -180,6 +257,9 @@ export const companiesDemo = [
     addressAddressCity: 'Sunnyvale',
     employees: 11928,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/juniper-networks',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Chegg Inc.',
@@ -187,6 +267,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 10790,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/chegg-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Teradata',
@@ -194,6 +277,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Diego',
     employees: 10748,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/teradata',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'NICE',
@@ -201,6 +287,9 @@ export const companiesDemo = [
     addressAddressCity: 'Hoboken',
     employees: 10258,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nice-systems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Cadence Design Systems',
@@ -208,6 +297,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 9377,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cadence-design-systems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Cox Automotive Inc.',
@@ -215,6 +307,9 @@ export const companiesDemo = [
     addressAddressCity: 'Atlanta',
     employees: 9331,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cox-automotive-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Trimble Inc.',
@@ -222,6 +317,9 @@ export const companiesDemo = [
     addressAddressCity: 'Broomfield',
     employees: 9311,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/trimble',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: '[24]7.ai',
@@ -229,6 +327,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 9170,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/24-7-ai',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Akamai Technologies',
@@ -236,6 +337,9 @@ export const companiesDemo = [
     addressAddressCity: 'Cambridge',
     employees: 9168,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/akamai-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Splunk',
@@ -243,6 +347,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 8891,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/splunk',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Okta',
@@ -250,6 +357,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 8860,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/okta-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Ceridian',
@@ -257,6 +367,9 @@ export const companiesDemo = [
     addressAddressCity: 'Minneapolis',
     employees: 8813,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ceridian',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'RealPage, Inc.',
@@ -264,6 +377,9 @@ export const companiesDemo = [
     addressAddressCity: 'Richardson',
     employees: 8227,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/realpage',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Freelance',
@@ -271,6 +387,9 @@ export const companiesDemo = [
     addressAddressCity: 'Ny',
     employees: 8180,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pro-freelance',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Stripe',
@@ -278,6 +397,9 @@ export const companiesDemo = [
     addressAddressCity: 'South San Francisco',
     employees: 8145,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stripe',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Shutterfly',
@@ -285,6 +407,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 8070,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/shutterfly',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Unity',
@@ -292,6 +417,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 8063,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/unity',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Veeva Systems',
@@ -299,6 +427,9 @@ export const companiesDemo = [
     addressAddressCity: 'Pleasanton',
     employees: 7831,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/veeva-systems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Nuance Communications',
@@ -306,6 +437,9 @@ export const companiesDemo = [
     addressAddressCity: 'Burlington',
     employees: 7761,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nuance-communications',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Freshworks',
@@ -313,6 +447,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Mateo',
     employees: 7687,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/freshworks-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Seal Software, a DocuSign Company',
@@ -320,6 +457,9 @@ export const companiesDemo = [
     addressAddressCity: 'Walnut Creek',
     employees: 7586,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/seal-software-group',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'DocuSign',
@@ -327,6 +467,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 7557,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/docusign',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Nutanix',
@@ -334,6 +477,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 7454,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nutanix',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Genesys',
@@ -341,6 +487,9 @@ export const companiesDemo = [
     addressAddressCity: 'Menlo Park',
     employees: 7371,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/genesys',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SAP Concur',
@@ -348,6 +497,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bellevue',
     employees: 7305,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sapconcur',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Square',
@@ -355,6 +507,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 7233,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/joinsquare',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Snap Inc.',
@@ -362,6 +517,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Monica',
     employees: 7219,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/snap-inc-co',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MathWorks',
@@ -369,6 +527,9 @@ export const companiesDemo = [
     addressAddressCity: 'Natick',
     employees: 7188,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/the-mathworks_2',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'PTC',
@@ -376,6 +537,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 7119,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ptcinc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Ansys',
@@ -383,6 +547,9 @@ export const companiesDemo = [
     addressAddressCity: 'Canonsburg',
     employees: 7112,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ansys-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Aricent',
@@ -390,6 +557,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 7016,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aricent',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Databricks',
@@ -397,6 +567,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 6927,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/databricks',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Shipt',
@@ -404,6 +577,9 @@ export const companiesDemo = [
     addressAddressCity: 'Birmingham',
     employees: 6902,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/shipt',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'CSG',
@@ -411,6 +587,9 @@ export const companiesDemo = [
     addressAddressCity: 'Englewood',
     employees: 6849,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/csg-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Twilio',
@@ -418,6 +597,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 6721,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/twilio-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Veritas Technologies LLC',
@@ -425,6 +607,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 6718,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/veritas-technologies-llc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Citrix',
@@ -432,6 +617,9 @@ export const companiesDemo = [
     addressAddressCity: 'Fort Lauderdale',
     employees: 6528,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/citrix',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Tyler Technologies',
@@ -439,6 +627,9 @@ export const companiesDemo = [
     addressAddressCity: 'Plano',
     employees: 6496,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tyler-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Esri',
@@ -446,6 +637,9 @@ export const companiesDemo = [
     addressAddressCity: 'Redlands',
     employees: 6463,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/esri',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Paycom',
@@ -453,6 +647,9 @@ export const companiesDemo = [
     addressAddressCity: 'Oklahoma City',
     employees: 6378,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/paycom',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Roblox',
@@ -460,6 +657,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Mateo',
     employees: 6297,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/roblox',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Zendesk',
@@ -467,6 +667,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 6255,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zendesk',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Newfold Digital',
@@ -474,6 +677,9 @@ export const companiesDemo = [
     addressAddressCity: 'Jacksonville',
     employees: 6213,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/newfold',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Informatica',
@@ -481,6 +687,9 @@ export const companiesDemo = [
     addressAddressCity: 'Redwood City',
     employees: 5850,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/informatica',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Caf\u00e9',
@@ -488,6 +697,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 5795,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/get-cafe',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Mavenir',
@@ -495,6 +707,9 @@ export const companiesDemo = [
     addressAddressCity: 'Richardson',
     employees: 5763,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mavenir',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Allscripts',
@@ -502,6 +717,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 5719,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/allscripts',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Yardi',
@@ -509,6 +727,9 @@ export const companiesDemo = [
     addressAddressCity: 'Goleta',
     employees: 5583,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/yardi',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Datadog',
@@ -516,6 +737,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 5470,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datadog',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Epicor',
@@ -523,6 +747,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 5310,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/epicor-software-corp',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Hexagon Asset Lifecycle Intelligence',
@@ -531,13 +758,19 @@ export const companiesDemo = [
     employees: 5262,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/hexagonassetlifecycleintelligence',
-  },
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
+    },
   {
     name: 'Blue Yonder',
     domainName: 'blueyonder.com',
     addressAddressCity: 'Scottsdale',
     employees: 5205,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/blueyonder',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MongoDB',
@@ -545,6 +778,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 5182,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mongodbinc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'uTest',
@@ -552,6 +788,9 @@ export const companiesDemo = [
     addressAddressCity: 'Framingham',
     employees: 5125,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/utest',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Paylocity',
@@ -559,6 +798,9 @@ export const companiesDemo = [
     addressAddressCity: 'Schaumburg',
     employees: 5095,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/paylocity',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'IAC',
@@ -566,6 +808,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 5040,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/iac',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Toast',
@@ -573,6 +818,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 5008,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/toast-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Bentley Systems',
@@ -580,6 +828,9 @@ export const companiesDemo = [
     addressAddressCity: 'Exton',
     employees: 4862,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bentley-systems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Owner.com',
@@ -587,6 +838,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 4677,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/profitboss',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'eClinicalWorks',
@@ -594,6 +848,9 @@ export const companiesDemo = [
     addressAddressCity: 'Westborough',
     employees: 4661,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eclinicalworks',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Altimetrik',
@@ -601,6 +858,9 @@ export const companiesDemo = [
     addressAddressCity: 'Southfield',
     employees: 4629,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/altimetrik',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'CA Technologies',
@@ -608,6 +868,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 4616,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ca-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Dynatrace',
@@ -615,6 +878,9 @@ export const companiesDemo = [
     addressAddressCity: 'Waltham',
     employees: 4502,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dynatrace',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Sprinklr',
@@ -622,6 +888,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 4495,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sprinklr',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'UiPath',
@@ -629,6 +898,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 4484,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/uipath',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'The Reynolds and Reynolds Company',
@@ -637,13 +909,19 @@ export const companiesDemo = [
     employees: 4473,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/the-reynolds-and-reynolds-company',
-  },
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
+    },
   {
     name: 'Stealth',
     domainName: 'stealthstartup.com',
     addressAddressCity: 'San Francisco',
     employees: 4472,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stealthstartup',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'WEX',
@@ -651,6 +929,9 @@ export const companiesDemo = [
     addressAddressCity: 'Portland',
     employees: 4377,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wexinc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'HighRadius',
@@ -658,6 +939,9 @@ export const companiesDemo = [
     addressAddressCity: 'Houston',
     employees: 4316,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/highradius',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Avalara',
@@ -665,6 +949,9 @@ export const companiesDemo = [
     addressAddressCity: 'Seattle',
     employees: 4311,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avalara',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Manhattan Associates',
@@ -672,6 +959,9 @@ export const companiesDemo = [
     addressAddressCity: 'Atlanta',
     employees: 4236,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/manhattan-associates',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Aspen Technology',
@@ -679,6 +969,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bedford',
     employees: 4194,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aspen-technology',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Hyland',
@@ -686,6 +979,9 @@ export const companiesDemo = [
     addressAddressCity: 'Westlake',
     employees: 4166,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hyland-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Palantir Technologies',
@@ -693,6 +989,9 @@ export const companiesDemo = [
     addressAddressCity: 'Denver',
     employees: 4104,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/palantir-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Market America, Inc.',
@@ -700,6 +999,9 @@ export const companiesDemo = [
     addressAddressCity: 'Greensboro',
     employees: 4091,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/market-america-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Procore Technologies',
@@ -707,6 +1009,9 @@ export const companiesDemo = [
     addressAddressCity: 'Carpinteria',
     employees: 4010,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/procore-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ZoomInfo',
@@ -714,6 +1019,9 @@ export const companiesDemo = [
     addressAddressCity: 'Vancouver',
     employees: 3875,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zoominfo',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'TIBCO',
@@ -721,6 +1029,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 3871,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tibco',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'GE Digital',
@@ -728,6 +1039,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Ramon',
     employees: 3849,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ge-digital',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'RMS',
@@ -735,6 +1049,9 @@ export const companiesDemo = [
     addressAddressCity: 'Newark',
     employees: 3844,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rms',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Tableau',
@@ -742,6 +1059,9 @@ export const companiesDemo = [
     addressAddressCity: 'Seattle',
     employees: 3838,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tableau-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Extreme Networks',
@@ -749,6 +1069,9 @@ export const companiesDemo = [
     addressAddressCity: 'Morrisville',
     employees: 3799,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/extreme-networks',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Smartsheet',
@@ -756,6 +1079,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bellevue',
     employees: 3798,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/smartsheet-com',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Quest Software',
@@ -763,6 +1089,9 @@ export const companiesDemo = [
     addressAddressCity: 'Aliso Viejo',
     employees: 3795,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/quest-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Motive',
@@ -770,6 +1099,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 3788,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/motive-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Retired Life',
@@ -777,6 +1109,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 3774,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/retired-life',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Dropbox',
@@ -784,6 +1119,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 3751,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dropbox',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Deltek',
@@ -791,6 +1129,9 @@ export const companiesDemo = [
     addressAddressCity: 'Herndon',
     employees: 3727,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/deltek',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'e2open',
@@ -798,6 +1139,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 3694,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/e2open',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Altair',
@@ -805,6 +1149,9 @@ export const companiesDemo = [
     addressAddressCity: 'Troy',
     employees: 3596,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/altair-engineering',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Gopuff',
@@ -812,6 +1159,9 @@ export const companiesDemo = [
     addressAddressCity: 'Philadelphia',
     employees: 3574,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gopuff',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'FICO',
@@ -819,6 +1169,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bozeman',
     employees: 3511,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fico',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Elastic',
@@ -826,6 +1179,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 3489,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/elastic-co',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Blackbaud',
@@ -833,6 +1189,9 @@ export const companiesDemo = [
     addressAddressCity: 'Charleston',
     employees: 3478,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/blackbaud',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MicroStrategy',
@@ -840,6 +1199,9 @@ export const companiesDemo = [
     addressAddressCity: 'Vienna',
     employees: 3469,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/microstrategy',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Discord',
@@ -847,6 +1209,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 3467,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/discord',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Inovalon',
@@ -854,6 +1219,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bowie',
     employees: 3459,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/inovalon',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Progress',
@@ -861,6 +1229,9 @@ export const companiesDemo = [
     addressAddressCity: 'Burlington',
     employees: 3428,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/progress-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Rubrik',
@@ -868,6 +1239,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 3370,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rubrik-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Axtria - Ingenious Insights',
@@ -875,6 +1249,9 @@ export const companiesDemo = [
     addressAddressCity: 'Berkeley Heights',
     employees: 3367,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/axtria',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Audible',
@@ -882,6 +1259,9 @@ export const companiesDemo = [
     addressAddressCity: 'Newark',
     employees: 3192,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/audible',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Kaseya',
@@ -889,6 +1269,9 @@ export const companiesDemo = [
     addressAddressCity: 'Miami',
     employees: 3191,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kaseya',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MRI Software',
@@ -896,6 +1279,9 @@ export const companiesDemo = [
     addressAddressCity: 'Solon',
     employees: 3107,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mri-software-llc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'CyberArk',
@@ -903,6 +1289,9 @@ export const companiesDemo = [
     addressAddressCity: 'Newton Center',
     employees: 3099,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cyber-ark-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Cornerstone OnDemand',
@@ -910,6 +1299,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Monica',
     employees: 3089,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cornerstone-ondemand',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Reddit, Inc.',
@@ -917,6 +1309,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 3061,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/reddit-com',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Ivanti',
@@ -924,6 +1319,9 @@ export const companiesDemo = [
     addressAddressCity: 'South Jordan',
     employees: 3056,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ivanti',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Cloudera',
@@ -931,6 +1329,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 3007,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cloudera',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Medidata Solutions',
@@ -938,6 +1339,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 3001,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/medidata-solutions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Commvault',
@@ -945,6 +1349,9 @@ export const companiesDemo = [
     addressAddressCity: 'Eatontown',
     employees: 2974,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/commvault',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ConnectWise',
@@ -952,6 +1359,9 @@ export const companiesDemo = [
     addressAddressCity: 'Tampa',
     employees: 2937,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/connectwise',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'BILL',
@@ -959,6 +1369,9 @@ export const companiesDemo = [
     addressAddressCity: 'Alviso',
     employees: 2932,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bill',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Alteryx',
@@ -966,6 +1379,9 @@ export const companiesDemo = [
     addressAddressCity: 'Irvine',
     employees: 2916,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/alteryx',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MNC Software',
@@ -973,6 +1389,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Diego',
     employees: 2912,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mnc-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Celonis',
@@ -980,6 +1399,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 2906,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/celonis',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Attachmate',
@@ -987,6 +1409,9 @@ export const companiesDemo = [
     addressAddressCity: 'Seattle',
     employees: 2889,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/attachmate',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'NETSCOUT',
@@ -994,6 +1419,9 @@ export const companiesDemo = [
     addressAddressCity: 'Westford',
     employees: 2853,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/netscout',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Confluent',
@@ -1001,6 +1429,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 2844,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/confluent',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Samsara',
@@ -1008,6 +1439,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 2824,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/samsara',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Chetu, Inc.',
@@ -1015,6 +1449,9 @@ export const companiesDemo = [
     addressAddressCity: 'Fort Lauderdale',
     employees: 2809,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/chetu-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Kronos Incorporated',
@@ -1022,6 +1459,9 @@ export const companiesDemo = [
     addressAddressCity: 'Lowell',
     employees: 2808,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kronos',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Qlik',
@@ -1029,6 +1469,9 @@ export const companiesDemo = [
     addressAddressCity: 'King Of Prussia',
     employees: 2779,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/qlik',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Vertafore',
@@ -1036,6 +1479,9 @@ export const companiesDemo = [
     addressAddressCity: 'Denver',
     employees: 2768,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vertafore',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Asana',
@@ -1043,6 +1489,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 2753,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/asana',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Jamf',
@@ -1050,6 +1499,9 @@ export const companiesDemo = [
     addressAddressCity: 'Minneapolis',
     employees: 2721,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jamf-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Paycor',
@@ -1057,6 +1509,9 @@ export const companiesDemo = [
     addressAddressCity: 'Cincinnati',
     employees: 2719,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/paycor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Hudl',
@@ -1064,6 +1519,9 @@ export const companiesDemo = [
     addressAddressCity: 'Lincoln',
     employees: 2709,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hudl',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Precisely',
@@ -1071,6 +1529,9 @@ export const companiesDemo = [
     addressAddressCity: 'Burlington',
     employees: 2662,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/preciselydata',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'New Relic',
@@ -1078,6 +1539,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 2636,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/new-relic-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Aptean',
@@ -1085,6 +1549,9 @@ export const companiesDemo = [
     addressAddressCity: 'Alpharetta',
     employees: 2617,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aptean',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'o9 Solutions, Inc.',
@@ -1092,6 +1559,9 @@ export const companiesDemo = [
     addressAddressCity: 'Dallas',
     employees: 2612,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/o9solutions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SpotOn',
@@ -1099,6 +1569,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 2608,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/spoton',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Automation Anywhere',
@@ -1106,6 +1579,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 2588,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/automation-anywhere',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Tekion Corp',
@@ -1113,6 +1589,9 @@ export const companiesDemo = [
     addressAddressCity: 'Pleasanton',
     employees: 2579,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tekion',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Aurora',
@@ -1120,6 +1599,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 2557,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aurora-inc.',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SolarWinds',
@@ -1127,6 +1609,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 2529,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/solarwinds',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'GoTo',
@@ -1134,6 +1619,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 2505,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/goto',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'PROS',
@@ -1141,6 +1629,9 @@ export const companiesDemo = [
     addressAddressCity: 'Houston',
     employees: 2479,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pros',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Miro',
@@ -1148,6 +1639,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 2445,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mirohq',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Kofax',
@@ -1155,6 +1649,9 @@ export const companiesDemo = [
     addressAddressCity: 'Irvine',
     employees: 2442,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kofax',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Accolite Digital',
@@ -1162,6 +1659,9 @@ export const companiesDemo = [
     addressAddressCity: 'Addison',
     employees: 2438,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/accolitedigital',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'HashiCorp',
@@ -1169,6 +1669,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 2436,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hashicorp',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Pluralsight',
@@ -1176,6 +1679,9 @@ export const companiesDemo = [
     addressAddressCity: 'Draper',
     employees: 2433,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pluralsight',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Bottomline Technologies',
@@ -1183,6 +1689,9 @@ export const companiesDemo = [
     addressAddressCity: 'Portsmouth',
     employees: 2407,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bottomline-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Anaplan',
@@ -1190,6 +1699,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 2401,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/anaplan',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'OneTrust',
@@ -1197,6 +1709,9 @@ export const companiesDemo = [
     addressAddressCity: 'Atlanta',
     employees: 2383,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/onetrust',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Medallia',
@@ -1204,6 +1719,9 @@ export const companiesDemo = [
     addressAddressCity: 'Pleasanton',
     employees: 2381,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/medallia-inc.',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SailPoint',
@@ -1211,6 +1729,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 2366,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sailpoint-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Appian Corporation',
@@ -1218,6 +1739,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mc Lean',
     employees: 2345,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/appian-corporation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Dealertrack',
@@ -1225,6 +1749,9 @@ export const companiesDemo = [
     addressAddressCity: 'New Hyde Park',
     employees: 2335,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dealertrack',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'impact.com',
@@ -1232,6 +1759,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Barbara',
     employees: 2327,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/impactdotcom',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Inhabit\u00ae',
@@ -1239,6 +1769,9 @@ export const companiesDemo = [
     addressAddressCity: 'Knoxville',
     employees: 2286,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/inhabit-iq',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SymphonyAI',
@@ -1246,6 +1779,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 2282,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/symphonyai',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'CCC Intelligent Solutions',
@@ -1253,6 +1789,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 2282,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ccc-intelligent-solutions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Toshiba Global Commerce Solutions',
@@ -1260,6 +1799,9 @@ export const companiesDemo = [
     addressAddressCity: 'Durham',
     employees: 2281,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/toshibacommerce',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Vertex Inc.',
@@ -1267,6 +1809,9 @@ export const companiesDemo = [
     addressAddressCity: 'King Of Prussia',
     employees: 2265,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vertex-inc.',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'PRO Unlimited',
@@ -1274,6 +1819,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 2264,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/prounlimited',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Five9',
@@ -1281,6 +1829,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Ramon',
     employees: 2253,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/five9',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Cohesity',
@@ -1288,6 +1839,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 2252,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cohesity',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Wind River',
@@ -1295,6 +1849,9 @@ export const companiesDemo = [
     addressAddressCity: 'Alameda',
     employees: 2244,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wind-river',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Icertis',
@@ -1302,6 +1859,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bellevue',
     employees: 2233,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/icertis',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Navan',
@@ -1309,6 +1869,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 2221,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/navan',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Diligent',
@@ -1317,13 +1880,19 @@ export const companiesDemo = [
     employees: 2215,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/diligent-board-member-services',
-  },
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
+    },
   {
     name: 'Applied Systems',
     domainName: 'appliedsystems.com',
     addressAddressCity: 'University Park',
     employees: 2198,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/applied-systems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Forcepoint',
@@ -1331,6 +1900,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 2196,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/forcepoint',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Compuware',
@@ -1338,6 +1910,9 @@ export const companiesDemo = [
     addressAddressCity: 'Detroit',
     employees: 2183,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/compuware',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Netsmart',
@@ -1345,6 +1920,9 @@ export const companiesDemo = [
     addressAddressCity: 'Leawood',
     employees: 2177,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/netsmart',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'The Apache Software Foundation',
@@ -1353,13 +1931,19 @@ export const companiesDemo = [
     employees: 2177,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/the-apache-software-foundation',
-  },
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
+    },
   {
     name: 'ArisGlobal',
     domainName: 'arisglobal.com',
     addressAddressCity: 'Miami',
     employees: 2168,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aris-global',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'WORKING BY MY SELF',
@@ -1367,6 +1951,9 @@ export const companiesDemo = [
     addressAddressCity: 'Fort Lauderdale',
     employees: 2148,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/working-by-my-self',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Varonis',
@@ -1374,6 +1961,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 2140,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/varonis',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Fever',
@@ -1381,6 +1971,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 2125,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fever-up',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Agilysys',
@@ -1388,6 +1981,9 @@ export const companiesDemo = [
     addressAddressCity: 'Alpharetta',
     employees: 2081,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/agilysys',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'OutSystems',
@@ -1395,6 +1991,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 2057,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/outsystems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Entrata',
@@ -1402,6 +2001,9 @@ export const companiesDemo = [
     addressAddressCity: 'Lehi',
     employees: 2045,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/entratasoftware',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Verkada',
@@ -1409,6 +2011,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Mateo',
     employees: 2044,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/verkada',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Majesco',
@@ -1416,6 +2021,9 @@ export const companiesDemo = [
     addressAddressCity: 'Morristown',
     employees: 2021,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/majesco',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Boomi',
@@ -1423,6 +2031,9 @@ export const companiesDemo = [
     addressAddressCity: 'Wayne',
     employees: 2009,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/boomi-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'PDI Technologies',
@@ -1430,6 +2041,9 @@ export const companiesDemo = [
     addressAddressCity: 'Alpharetta',
     employees: 2005,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pdi-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ServiceTitan',
@@ -1437,6 +2051,9 @@ export const companiesDemo = [
     addressAddressCity: 'Glendale',
     employees: 1997,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/servicetitan',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Sitecore',
@@ -1444,6 +2061,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1943,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sitecore',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SAP SuccessFactors',
@@ -1451,6 +2071,9 @@ export const companiesDemo = [
     addressAddressCity: 'South San Francisco',
     employees: 1941,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/successfactors',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Postman',
@@ -1458,6 +2081,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1928,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/postman-platform',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Scale AI',
@@ -1465,6 +2091,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1906,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/scaleai',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Duck Creek Technologies',
@@ -1472,6 +2101,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 1894,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/duck-creek-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MICROS Systems Inc',
@@ -1479,6 +2111,9 @@ export const companiesDemo = [
     addressAddressCity: 'Columbia',
     employees: 1882,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/micros-systems-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Riverbed Technology',
@@ -1486,6 +2121,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1874,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/riverbed-technology',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Fast Enterprises, LLC',
@@ -1493,6 +2131,9 @@ export const companiesDemo = [
     addressAddressCity: 'Englewood',
     employees: 1833,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fast-enterprises',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Alvaria, Inc.',
@@ -1500,6 +2141,9 @@ export const companiesDemo = [
     addressAddressCity: 'Westford',
     employees: 1830,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/alvaria-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'BlackLine',
@@ -1507,6 +2151,9 @@ export const companiesDemo = [
     addressAddressCity: 'Woodland Hills',
     employees: 1826,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/blackline',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: '3Pillar Global',
@@ -1514,6 +2161,9 @@ export const companiesDemo = [
     addressAddressCity: 'Fairfax',
     employees: 1824,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/3pillar-global',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Saama',
@@ -1521,6 +2171,9 @@ export const companiesDemo = [
     addressAddressCity: 'Campbell',
     employees: 1809,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/saama-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Ancestry',
@@ -1528,6 +2181,9 @@ export const companiesDemo = [
     addressAddressCity: 'Lehi',
     employees: 1794,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ancestry.com',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'insightsoftware',
@@ -1535,6 +2191,9 @@ export const companiesDemo = [
     addressAddressCity: 'Raleigh',
     employees: 1788,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/outcomes-by-insightsoftware',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Ebix',
@@ -1542,6 +2201,9 @@ export const companiesDemo = [
     addressAddressCity: 'Duluth',
     employees: 1757,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ebix',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Zuora',
@@ -1549,6 +2211,9 @@ export const companiesDemo = [
     addressAddressCity: 'Redwood City',
     employees: 1746,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zuora',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'IntelyCare',
@@ -1556,6 +2221,9 @@ export const companiesDemo = [
     addressAddressCity: 'Quincy',
     employees: 1731,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/intelycare',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Axway',
@@ -1563,6 +2231,9 @@ export const companiesDemo = [
     addressAddressCity: 'Scottsdale',
     employees: 1731,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/axway',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Community Brands',
@@ -1570,6 +2241,9 @@ export const companiesDemo = [
     addressAddressCity: 'Saint Petersburg',
     employees: 1731,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/communitybrands',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'InterSystems',
@@ -1577,6 +2251,9 @@ export const companiesDemo = [
     addressAddressCity: 'Cambridge',
     employees: 1730,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/intersystems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Mozilla',
@@ -1584,6 +2261,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1721,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mozilla-corporation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Semrush',
@@ -1591,6 +2271,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 1706,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/semrush',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Avid',
@@ -1598,6 +2281,9 @@ export const companiesDemo = [
     addressAddressCity: 'Burlington',
     employees: 1705,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avid-technology',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Conga',
@@ -1605,6 +2291,9 @@ export const companiesDemo = [
     addressAddressCity: 'Broomfield',
     employees: 1695,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/conga',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'InfoBeans',
@@ -1612,6 +2301,9 @@ export const companiesDemo = [
     addressAddressCity: 'Danville',
     employees: 1691,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/infobeans',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'AppFolio, Inc.',
@@ -1619,6 +2311,9 @@ export const companiesDemo = [
     addressAddressCity: 'Goleta',
     employees: 1688,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/appfolio-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Sovos',
@@ -1626,6 +2321,9 @@ export const companiesDemo = [
     addressAddressCity: 'Wilmington',
     employees: 1684,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sovos',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'nCino, Inc.',
@@ -1633,6 +2331,9 @@ export const companiesDemo = [
     addressAddressCity: 'Wilmington',
     employees: 1680,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ncino-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Vistex',
@@ -1640,6 +2341,9 @@ export const companiesDemo = [
     addressAddressCity: 'Hoffman Estates',
     employees: 1677,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vistex',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Taboola',
@@ -1647,6 +2351,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1677,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/taboola',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'EverCommerce',
@@ -1654,6 +2361,9 @@ export const companiesDemo = [
     addressAddressCity: 'Denver',
     employees: 1673,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/evercommerce',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Virgin Pulse',
@@ -1661,6 +2371,9 @@ export const companiesDemo = [
     addressAddressCity: 'Providence',
     employees: 1666,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/virgin-pulse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Houzz',
@@ -1668,6 +2381,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 1641,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/houzz',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'AvidXchange, Inc.',
@@ -1675,6 +2391,9 @@ export const companiesDemo = [
     addressAddressCity: 'Charlotte',
     employees: 1639,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avidxchange-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Planview, Inc.',
@@ -1682,6 +2401,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 1634,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/planview',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'HackerRank',
@@ -1689,6 +2411,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 1632,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hackerrank',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Clearwater Analytics',
@@ -1696,6 +2421,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boise',
     employees: 1615,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/clearwateranalytics',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Outreach',
@@ -1703,6 +2431,9 @@ export const companiesDemo = [
     addressAddressCity: 'Seattle',
     employees: 1612,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/outreach-saas',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Everbridge',
@@ -1710,6 +2441,9 @@ export const companiesDemo = [
     addressAddressCity: 'Burlington',
     employees: 1607,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/everbridge',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Zycus',
@@ -1717,6 +2451,9 @@ export const companiesDemo = [
     addressAddressCity: 'Princeton',
     employees: 1604,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zycus',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Bullhorn',
@@ -1724,6 +2461,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 1604,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bullhorn',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'LivePerson',
@@ -1731,6 +2471,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1603,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/liveperson',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Relativity',
@@ -1738,6 +2481,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 1601,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/relativityhq',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'HealthEdge',
@@ -1745,6 +2491,9 @@ export const companiesDemo = [
     addressAddressCity: 'Burlington',
     employees: 1600,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/healthedge',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'QAD',
@@ -1752,6 +2501,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Barbara',
     employees: 1598,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/qad',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Braze',
@@ -1759,6 +2511,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1598,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/braze-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Exadel',
@@ -1766,6 +2521,9 @@ export const companiesDemo = [
     addressAddressCity: 'Walnut Creek',
     employees: 1592,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/exadel',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Phenom',
@@ -1773,6 +2531,9 @@ export const companiesDemo = [
     addressAddressCity: 'Ambler',
     employees: 1592,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/phenomtxm',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Bazaarvoice',
@@ -1780,6 +2541,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 1587,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bazaarvoice',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'AppDynamics',
@@ -1787,6 +2551,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1553,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/appdynamics',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Mitchell International',
@@ -1794,6 +2561,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Diego',
     employees: 1548,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mitchell-international',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Talkdesk',
@@ -1801,6 +2571,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1491,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/talkdesk',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Hughes Systique Corporation (HSC)',
@@ -1808,6 +2581,9 @@ export const companiesDemo = [
     addressAddressCity: 'Rockville',
     employees: 1481,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hsc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Avature',
@@ -1815,6 +2591,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1478,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avature',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Anyone Home Inc',
@@ -1822,6 +2601,9 @@ export const companiesDemo = [
     addressAddressCity: 'Lake Forest',
     employees: 1476,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/anyone-home-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Engineer.ai',
@@ -1829,6 +2611,9 @@ export const companiesDemo = [
     addressAddressCity: 'Venice',
     employees: 1474,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/engineer.ai',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Apptio',
@@ -1836,6 +2621,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bellevue',
     employees: 1467,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/apptio',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'KMS Technology, Inc.',
@@ -1843,6 +2631,9 @@ export const companiesDemo = [
     addressAddressCity: 'Atlanta',
     employees: 1464,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kms-technology',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'JFrog',
@@ -1850,6 +2641,9 @@ export const companiesDemo = [
     addressAddressCity: 'Sunnyvale',
     employees: 1459,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jfrog-ltd',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ASG Technologies',
@@ -1857,6 +2651,9 @@ export const companiesDemo = [
     addressAddressCity: 'Naples',
     employees: 1459,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/asg',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Seismic',
@@ -1864,6 +2661,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Diego',
     employees: 1457,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/seismic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ModMed',
@@ -1871,6 +2671,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boca Raton',
     employees: 1452,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/modernizing-medicine',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ACV Auctions',
@@ -1878,6 +2681,9 @@ export const companiesDemo = [
     addressAddressCity: 'Buffalo',
     employees: 1450,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/acv-auctions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Cerence Inc.',
@@ -1885,6 +2691,9 @@ export const companiesDemo = [
     addressAddressCity: 'Burlington',
     employees: 1448,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cerence',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Via',
@@ -1892,6 +2701,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1446,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ridewithvia',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Kingsoft',
@@ -1899,6 +2711,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 1445,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kingsoft',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Model N',
@@ -1906,6 +2721,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Mateo',
     employees: 1445,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/modeln',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ThoughtSpot',
@@ -1913,6 +2731,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 1436,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/thoughtspot',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SSS',
@@ -1920,6 +2741,9 @@ export const companiesDemo = [
     addressAddressCity: 'Littleton',
     employees: 1431,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/employee-based-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'BeyondTrust',
@@ -1927,6 +2751,9 @@ export const companiesDemo = [
     addressAddressCity: 'Duluth',
     employees: 1428,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/beyondtrust',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MetricStream',
@@ -1934,6 +2761,9 @@ export const companiesDemo = [
     addressAddressCity: 'Alviso',
     employees: 1426,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/metricstream',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'LogMeIn',
@@ -1941,6 +2771,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 1425,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/logmein',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Khoros',
@@ -1948,6 +2781,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 1424,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/khoros',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Sprout Social, Inc.',
@@ -1955,6 +2791,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 1416,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sprout-social-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Odessa',
@@ -1962,6 +2801,9 @@ export const companiesDemo = [
     addressAddressCity: 'Philadelphia',
     employees: 1415,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/odessa-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Enverus',
@@ -1969,6 +2811,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 1404,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/enverus-energy',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'AvePoint',
@@ -1976,6 +2821,9 @@ export const companiesDemo = [
     addressAddressCity: 'Jersey City',
     employees: 1404,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avepoint',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Gong',
@@ -1983,6 +2831,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1398,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gong-io',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Syncfusion',
@@ -1990,6 +2841,9 @@ export const companiesDemo = [
     addressAddressCity: 'Morrisville',
     employees: 1397,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/syncfusion',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Ping Identity',
@@ -1997,6 +2851,9 @@ export const companiesDemo = [
     addressAddressCity: 'Denver',
     employees: 1388,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ping-identity',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'WellSky',
@@ -2004,6 +2861,9 @@ export const companiesDemo = [
     addressAddressCity: 'Overland Park',
     employees: 1387,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wellsky',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Tricentis',
@@ -2011,6 +2871,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 1383,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tricentis',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Taskrabbit',
@@ -2018,6 +2881,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1383,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/taskrabbit',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Syniti',
@@ -2025,6 +2891,9 @@ export const companiesDemo = [
     addressAddressCity: 'Needham Heights',
     employees: 1372,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/synitidata',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'BigCommerce',
@@ -2032,6 +2901,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 1360,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bigcommerce',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'OEC',
@@ -2039,6 +2911,9 @@ export const companiesDemo = [
     addressAddressCity: 'Richfield',
     employees: 1357,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/oeconnection',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Calsoft',
@@ -2046,6 +2921,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 1357,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/calsoft',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Taller',
@@ -2053,6 +2931,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1351,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/taller-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Planet',
@@ -2060,6 +2941,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1348,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/planet-labs',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: '6sense',
@@ -2067,6 +2951,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1346,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/6sense',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Vitech Systems Group',
@@ -2074,6 +2961,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1345,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vitech-systems-group',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Smarsh',
@@ -2081,6 +2971,9 @@ export const companiesDemo = [
     addressAddressCity: 'Portland',
     employees: 1344,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/smarsh',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'NICE Actimize',
@@ -2088,6 +2981,9 @@ export const companiesDemo = [
     addressAddressCity: 'Hoboken',
     employees: 1343,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/actimize',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Dataiku',
@@ -2095,6 +2991,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1340,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dataiku',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Liferay',
@@ -2102,6 +3001,9 @@ export const companiesDemo = [
     addressAddressCity: 'Diamond Bar',
     employees: 1329,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/liferay-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Gainsight',
@@ -2109,6 +3011,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1328,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gainsight',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Infotech',
@@ -2116,6 +3021,9 @@ export const companiesDemo = [
     addressAddressCity: 'Gainesville',
     employees: 1322,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/infotech-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'JAGGAER',
@@ -2123,6 +3031,9 @@ export const companiesDemo = [
     addressAddressCity: 'Morrisville',
     employees: 1317,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jaggaer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Checkr, Inc.',
@@ -2130,6 +3041,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1304,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/checkr-com',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'CARFAX',
@@ -2137,6 +3051,9 @@ export const companiesDemo = [
     addressAddressCity: 'Centreville',
     employees: 1296,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/carfax',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Lucid Software',
@@ -2144,6 +3061,9 @@ export const companiesDemo = [
     addressAddressCity: 'South Jordan',
     employees: 1295,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lucidsoftware',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Domo',
@@ -2151,6 +3071,9 @@ export const companiesDemo = [
     addressAddressCity: 'American Fork',
     employees: 1293,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/domotalk',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Podium',
@@ -2158,6 +3081,9 @@ export const companiesDemo = [
     addressAddressCity: 'Lehi',
     employees: 1292,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/podium',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Mendix',
@@ -2165,6 +3091,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 1290,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mendix',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'EDB',
@@ -2172,6 +3101,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bedford',
     employees: 1289,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/edbpostgres',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'OneStream Software',
@@ -2179,6 +3111,9 @@ export const companiesDemo = [
     addressAddressCity: 'Birmingham',
     employees: 1288,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/onestream-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Rent.',
@@ -2186,6 +3121,9 @@ export const companiesDemo = [
     addressAddressCity: 'Atlanta',
     employees: 1285,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rentsolutions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Waystar',
@@ -2193,6 +3131,9 @@ export const companiesDemo = [
     addressAddressCity: 'Louisville',
     employees: 1273,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/waystar',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: '2020',
@@ -2200,6 +3141,9 @@ export const companiesDemo = [
     addressAddressCity: 'Westford',
     employees: 1267,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/2020spaces',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'isolved',
@@ -2207,6 +3151,9 @@ export const companiesDemo = [
     addressAddressCity: 'Charlotte',
     employees: 1261,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/isolved',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Art Technology Group',
@@ -2214,6 +3161,9 @@ export const companiesDemo = [
     addressAddressCity: 'Cambridge',
     employees: 1259,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/atg',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'CAST',
@@ -2221,6 +3171,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1259,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cast',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'OCLC',
@@ -2228,6 +3181,9 @@ export const companiesDemo = [
     addressAddressCity: 'Dublin',
     employees: 1258,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/oclc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Mediaocean',
@@ -2235,6 +3191,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1255,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mediaocean',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Bandwidth Inc.',
@@ -2242,6 +3201,9 @@ export const companiesDemo = [
     addressAddressCity: 'Raleigh',
     employees: 1252,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bandwidth-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Hexagon Safety, Infrastructure & Geospatial',
@@ -2249,6 +3211,9 @@ export const companiesDemo = [
     addressAddressCity: 'Madison',
     employees: 1252,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hexagon-geospatial',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Wish',
@@ -2256,6 +3221,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1248,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wishshopping',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Sagitec Solutions',
@@ -2263,6 +3231,9 @@ export const companiesDemo = [
     addressAddressCity: 'Saint Paul',
     employees: 1244,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sagitec-solutions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Zinnia ',
@@ -2270,6 +3241,9 @@ export const companiesDemo = [
     addressAddressCity: 'Greenwich',
     employees: 1243,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zinniatm',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'CureMD',
@@ -2277,6 +3251,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1243,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/curemd',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Druva',
@@ -2284,6 +3261,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 1238,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/druva',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Restaurant365',
@@ -2292,13 +3272,19 @@ export const companiesDemo = [
     employees: 1234,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/restaurant365-cloud-erp-for-restaurants',
-  },
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
+    },
   {
     name: 'Lawson Software',
     domainName: 'lawson.com',
     addressAddressCity: 'New York',
     employees: 1231,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lawson-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'AlphaSense',
@@ -2306,6 +3292,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1223,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/alphasense',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ECI Software Solutions',
@@ -2313,6 +3302,9 @@ export const companiesDemo = [
     addressAddressCity: 'Fort Worth',
     employees: 1223,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eci-software--solutions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Wrike',
@@ -2320,6 +3312,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Diego',
     employees: 1210,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wrike',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Syndigo',
@@ -2327,6 +3322,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 1208,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/syndigo',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Gigamon',
@@ -2334,6 +3332,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 1196,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gigamon',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Fastly',
@@ -2341,6 +3342,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1188,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fastly',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Cantaloupe Inc',
@@ -2348,6 +3352,9 @@ export const companiesDemo = [
     addressAddressCity: 'Malvern',
     employees: 1187,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cantaloupeinc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'EagleView',
@@ -2355,6 +3362,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bellevue',
     employees: 1184,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eagleview-technologies-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Litera',
@@ -2362,6 +3372,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 1183,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/literamicrosystems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Collibra',
@@ -2369,6 +3382,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1183,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/collibra',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Picsart',
@@ -2376,6 +3392,9 @@ export const companiesDemo = [
     addressAddressCity: 'Miami Beach',
     employees: 1180,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/picsart-photo-studio',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'CalAmp',
@@ -2383,6 +3402,9 @@ export const companiesDemo = [
     addressAddressCity: 'Irvine',
     employees: 1180,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/calamp-corp',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ESS',
@@ -2390,6 +3412,9 @@ export const companiesDemo = [
     addressAddressCity: 'Tempe',
     employees: 1178,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ess',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Grafana Labs',
@@ -2397,6 +3422,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1178,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/grafana-labs',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Fivetran',
@@ -2404,6 +3432,9 @@ export const companiesDemo = [
     addressAddressCity: 'Oakland',
     employees: 1176,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fivetran',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'CentralSquare Technologies',
@@ -2411,6 +3442,9 @@ export const companiesDemo = [
     addressAddressCity: 'Lake Mary',
     employees: 1175,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/centralsqtech',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'StubHub',
@@ -2418,6 +3452,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1164,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stubhub',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'EIS Ltd',
@@ -2425,6 +3462,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1154,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eisgroupltd',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Tebra',
@@ -2432,6 +3472,9 @@ export const companiesDemo = [
     addressAddressCity: 'Corona Del Mar',
     employees: 1151,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tebra',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Benefitfocus',
@@ -2439,6 +3482,9 @@ export const companiesDemo = [
     addressAddressCity: 'Charleston',
     employees: 1148,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/benefitfocus',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'NISC',
@@ -2446,6 +3492,9 @@ export const companiesDemo = [
     addressAddressCity: 'Lake Saint Louis',
     employees: 1140,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nisc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Dell Compellent',
@@ -2453,6 +3502,9 @@ export const companiesDemo = [
     addressAddressCity: 'Eden Prairie',
     employees: 1138,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dell-compellent',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Radancy',
@@ -2460,6 +3512,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1137,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/radancy',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Granicus',
@@ -2467,6 +3522,9 @@ export const companiesDemo = [
     addressAddressCity: 'Denver',
     employees: 1134,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/granicusinc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ACTIVE Network',
@@ -2474,6 +3532,9 @@ export const companiesDemo = [
     addressAddressCity: 'Plano',
     employees: 1134,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/the-active-network',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Acquia',
@@ -2481,6 +3542,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 1134,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/acquia',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'WalkMe\u2122',
@@ -2488,6 +3552,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1127,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/walkme',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Outbrain',
@@ -2495,6 +3562,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1123,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/outbrain',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'WillowTree',
@@ -2502,6 +3572,9 @@ export const companiesDemo = [
     addressAddressCity: 'Charlottesville',
     employees: 1117,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/willowtreeapps',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'LogicMonitor',
@@ -2509,6 +3582,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Barbara',
     employees: 1113,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/logicmonitor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Jellysmack',
@@ -2516,6 +3592,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 1109,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jellysmack',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Henry Schein One',
@@ -2523,6 +3602,9 @@ export const companiesDemo = [
     addressAddressCity: 'American Fork',
     employees: 1108,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/henry-schein-one',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Prometheus Group',
@@ -2530,6 +3612,9 @@ export const companiesDemo = [
     addressAddressCity: 'Raleigh',
     employees: 1102,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/prometheusgroup',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Atlas',
@@ -2537,6 +3622,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 1101,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/atlashxm',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Dialpad',
@@ -2544,6 +3632,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Ramon',
     employees: 1101,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dialpad',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Accruent',
@@ -2551,6 +3642,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 1098,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/accruent',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Charles River Development',
@@ -2558,6 +3652,9 @@ export const companiesDemo = [
     addressAddressCity: 'Burlington',
     employees: 1090,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/charles-river-development',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Flexera',
@@ -2565,6 +3662,9 @@ export const companiesDemo = [
     addressAddressCity: 'Itasca',
     employees: 1089,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/flexera',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Quotient Technology Inc.',
@@ -2572,6 +3672,9 @@ export const companiesDemo = [
     addressAddressCity: 'Salt Lake City',
     employees: 1087,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/quotient-technology',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Sage Intacct, Inc.',
@@ -2579,6 +3682,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 1087,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sageintacct',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Plaid',
@@ -2586,6 +3692,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1081,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/plaid-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'C3 AI',
@@ -2593,6 +3702,9 @@ export const companiesDemo = [
     addressAddressCity: 'Redwood City',
     employees: 1077,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/c3-ai',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Upland Software',
@@ -2600,6 +3712,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 1072,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/upland-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Zapier',
@@ -2607,6 +3722,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1066,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zapier',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'WSO2',
@@ -2614,6 +3732,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 1065,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wso2',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Auctane',
@@ -2621,6 +3742,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 1055,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/auctane',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Salesloft',
@@ -2628,6 +3752,9 @@ export const companiesDemo = [
     addressAddressCity: 'Atlanta',
     employees: 1055,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/salesloft',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'RLDatix',
@@ -2635,6 +3762,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 1048,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rldatix',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SS&C Blue Prism',
@@ -2642,6 +3772,9 @@ export const companiesDemo = [
     addressAddressCity: 'Windsor',
     employees: 1048,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/blue-prism-limited',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Waitr',
@@ -2649,6 +3782,9 @@ export const companiesDemo = [
     addressAddressCity: 'Lafayette',
     employees: 1043,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/waitr-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Software Engineering Institute | Carnegie Mellon University',
@@ -2657,7 +3793,10 @@ export const companiesDemo = [
     employees: 1043,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/software-engineering-institute',
-  },
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
+    },
   {
     name: 'Downey Unified School District',
     domainName: 'dusd.net',
@@ -2665,13 +3804,19 @@ export const companiesDemo = [
     employees: 1038,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/downey-unified-school-district',
-  },
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
+    },
   {
     name: 'Private Access, Inc.',
     domainName: 'privateaccess.com',
     addressAddressCity: 'Irvine',
     employees: 1037,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/private-access-inc.',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'iManage',
@@ -2679,6 +3824,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 1036,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/imanage',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'QASource',
@@ -2686,6 +3834,9 @@ export const companiesDemo = [
     addressAddressCity: 'Pleasanton',
     employees: 1032,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/qasource',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Azuga, Inc.',
@@ -2693,6 +3844,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 1026,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/azuga-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Talent Systems, LLC',
@@ -2700,6 +3854,9 @@ export const companiesDemo = [
     addressAddressCity: 'Los Angeles',
     employees: 1022,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/talent-systems-llc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Datasite',
@@ -2707,6 +3864,9 @@ export const companiesDemo = [
     addressAddressCity: 'Minneapolis',
     employees: 1021,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datasiteglobal',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'AVASOFT',
@@ -2714,6 +3874,9 @@ export const companiesDemo = [
     addressAddressCity: 'Blue Bell',
     employees: 1017,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/avasoft',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'DataRobot',
@@ -2721,6 +3884,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 1015,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datarobot',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Technisys',
@@ -2728,6 +3894,9 @@ export const companiesDemo = [
     addressAddressCity: 'Miami',
     employees: 1014,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/technisys',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'project44',
@@ -2735,6 +3904,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 1013,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/project-44',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Imprivata',
@@ -2742,6 +3914,9 @@ export const companiesDemo = [
     addressAddressCity: 'Waltham',
     employees: 1013,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/imprivata',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Webflow',
@@ -2749,6 +3924,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1011,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/webflow-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Blend',
@@ -2756,6 +3934,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 1011,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/blend-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Egnyte',
@@ -2763,6 +3944,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 1009,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/egnyte',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SS&C Eze',
@@ -2770,6 +3954,9 @@ export const companiesDemo = [
     addressAddressCity: 'Windsor',
     employees: 1008,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ezesoftware',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Tipalti',
@@ -2777,6 +3964,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Mateo',
     employees: 1007,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tipalti',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Altium\u00ae',
@@ -2784,6 +3974,9 @@ export const companiesDemo = [
     addressAddressCity: 'La Jolla',
     employees: 1005,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/altium',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'airSlate',
@@ -2791,6 +3984,9 @@ export const companiesDemo = [
     addressAddressCity: 'Brookline',
     employees: 1001,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/airslate',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Arbisoft',
@@ -2798,6 +3994,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mckinney',
     employees: 996,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/arbisoft',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Airtable',
@@ -2805,6 +4004,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 989,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/airtable',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Birdeye',
@@ -2812,6 +4014,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 988,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/birdeye',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Ultimate Software',
@@ -2819,6 +4024,9 @@ export const companiesDemo = [
     addressAddressCity: 'Fort Lauderdale',
     employees: 988,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ultimate-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Homecare Homebase',
@@ -2826,6 +4034,9 @@ export const companiesDemo = [
     addressAddressCity: 'Dallas',
     employees: 987,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/homecare-homebase',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'DISCO',
@@ -2833,6 +4044,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 984,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/cs-disco-llc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Highspot',
@@ -2840,6 +4054,9 @@ export const companiesDemo = [
     addressAddressCity: 'Seattle',
     employees: 982,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/highspot',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Sagent',
@@ -2847,6 +4064,9 @@ export const companiesDemo = [
     addressAddressCity: 'King Of Prussia',
     employees: 981,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sagent-lending-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Apollo.io',
@@ -2854,6 +4074,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 981,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/apolloio',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'PAS',
@@ -2861,6 +4084,9 @@ export const companiesDemo = [
     addressAddressCity: 'Houston',
     employees: 981,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pas',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Wikimedia Foundation',
@@ -2868,6 +4094,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 981,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wikimedia-foundation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Nintex',
@@ -2875,6 +4104,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bellevue',
     employees: 978,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/nintex',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'RUCKUS Networks',
@@ -2882,6 +4114,9 @@ export const companiesDemo = [
     addressAddressCity: 'Sunnyvale',
     employees: 978,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ruckus-networks',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ForgeRock',
@@ -2889,6 +4124,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 977,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/forgerock',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Trading Technologies',
@@ -2896,6 +4134,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 975,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/trading-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'KANINI',
@@ -2903,6 +4144,9 @@ export const companiesDemo = [
     addressAddressCity: 'Nashville',
     employees: 972,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kanini',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Dealer.com',
@@ -2910,6 +4154,9 @@ export const companiesDemo = [
     addressAddressCity: 'Burlington',
     employees: 962,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dealer-com',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'WS',
@@ -2917,6 +4164,9 @@ export const companiesDemo = [
     addressAddressCity: 'Pinehurst',
     employees: 960,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wbem-solutions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Kyriba',
@@ -2924,6 +4174,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Diego',
     employees: 960,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kyriba',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Demandbase',
@@ -2931,6 +4184,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 958,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/demandbase',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Sumo Logic',
@@ -2938,6 +4194,9 @@ export const companiesDemo = [
     addressAddressCity: 'Redwood City',
     employees: 954,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sumo-logic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Edifecs',
@@ -2945,6 +4204,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bellevue',
     employees: 949,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/edifecs',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ibi | Information Builders',
@@ -2952,6 +4214,9 @@ export const companiesDemo = [
     addressAddressCity: 'Fort Lauderdale',
     employees: 948,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/information-builders',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Emburse',
@@ -2959,6 +4224,9 @@ export const companiesDemo = [
     addressAddressCity: 'Los Angeles',
     employees: 941,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/emburse',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ConstructConnect',
@@ -2966,6 +4234,9 @@ export const companiesDemo = [
     addressAddressCity: 'Cincinnati',
     employees: 940,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/constructconnect',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Perforce Software',
@@ -2973,6 +4244,9 @@ export const companiesDemo = [
     addressAddressCity: 'Minneapolis',
     employees: 939,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/perforce',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Insurity',
@@ -2980,6 +4254,9 @@ export const companiesDemo = [
     addressAddressCity: 'Hartford',
     employees: 938,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/insurity',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'webOS',
@@ -2987,6 +4264,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 936,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/webos',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Zenoti',
@@ -2994,6 +4274,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bellevue',
     employees: 934,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zenoti',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Intapp',
@@ -3001,6 +4284,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 930,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/intapp',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'OATI',
@@ -3008,6 +4294,9 @@ export const companiesDemo = [
     addressAddressCity: 'Minneapolis',
     employees: 930,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/oati',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Frontline Education',
@@ -3015,6 +4304,9 @@ export const companiesDemo = [
     addressAddressCity: 'Malvern',
     employees: 926,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/frontline-education',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Aspect Software',
@@ -3022,6 +4314,9 @@ export const companiesDemo = [
     addressAddressCity: 'Westford',
     employees: 920,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aspect-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'GreyOrange',
@@ -3029,6 +4324,9 @@ export const companiesDemo = [
     addressAddressCity: 'Roswell',
     employees: 919,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/gogreyorange',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Sirion',
@@ -3036,6 +4334,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bellevue',
     employees: 918,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sirionlabs',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'In Time Tec',
@@ -3043,6 +4344,9 @@ export const companiesDemo = [
     addressAddressCity: 'Meridian',
     employees: 917,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/in-time-tec',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Operative',
@@ -3050,6 +4354,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 910,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/operative',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Kore.ai',
@@ -3057,6 +4364,9 @@ export const companiesDemo = [
     addressAddressCity: 'Orlando',
     employees: 908,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kore-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Redis',
@@ -3064,6 +4374,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 908,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/redisinc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Addepar',
@@ -3071,6 +4384,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 907,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/addepar',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'TCP Software',
@@ -3078,6 +4394,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 902,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tcpsoftware',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'TraceLink',
@@ -3085,6 +4404,9 @@ export const companiesDemo = [
     addressAddressCity: 'Wilmington',
     employees: 897,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tracelink',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Benchling',
@@ -3092,6 +4414,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 895,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/benchling',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Housecall Pro',
@@ -3099,6 +4424,9 @@ export const companiesDemo = [
     addressAddressCity: 'Denver',
     employees: 894,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/housecallpro',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Turnitin',
@@ -3106,6 +4434,9 @@ export const companiesDemo = [
     addressAddressCity: 'Oakland',
     employees: 885,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/turnitin',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Schr\u00f6dinger',
@@ -3113,6 +4444,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 885,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/schr-dinger',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'eGain Corporation',
@@ -3120,6 +4454,9 @@ export const companiesDemo = [
     addressAddressCity: 'Sunnyvale',
     employees: 879,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/egain-corporation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Brightly',
@@ -3127,6 +4464,9 @@ export const companiesDemo = [
     addressAddressCity: 'Cary',
     employees: 878,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/brightlysoftware',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Snap-on Business Solutions',
@@ -3134,6 +4474,9 @@ export const companiesDemo = [
     addressAddressCity: 'Richfield',
     employees: 876,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/snap-on-business-solutions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ACS Technologies',
@@ -3141,6 +4484,9 @@ export const companiesDemo = [
     addressAddressCity: 'Florence',
     employees: 874,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/acs-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Uniphore',
@@ -3148,6 +4494,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 872,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/uniphore',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Folio3 Software',
@@ -3155,6 +4504,9 @@ export const companiesDemo = [
     addressAddressCity: 'Belmont',
     employees: 872,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/folio3',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MHC',
@@ -3162,6 +4514,9 @@ export const companiesDemo = [
     addressAddressCity: 'Burnsville',
     employees: 871,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mhcautomation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Xactly Corp',
@@ -3169,6 +4524,9 @@ export const companiesDemo = [
     addressAddressCity: 'Los Gatos',
     employees: 865,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/xactly-corporation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Weave',
@@ -3176,6 +4534,9 @@ export const companiesDemo = [
     addressAddressCity: 'Lehi',
     employees: 864,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/getweave',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Microworkers',
@@ -3183,6 +4544,9 @@ export const companiesDemo = [
     addressAddressCity: 'Frisco',
     employees: 862,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/microworkers.com',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Trilogy',
@@ -3190,6 +4554,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 861,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/trilogy',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Akvelon, Inc.',
@@ -3197,6 +4564,9 @@ export const companiesDemo = [
     addressAddressCity: 'Bellevue',
     employees: 860,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/akvelon',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'iPipeline',
@@ -3204,6 +4574,9 @@ export const companiesDemo = [
     addressAddressCity: 'Exton',
     employees: 856,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ipipeline',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Salary.com',
@@ -3211,6 +4584,9 @@ export const companiesDemo = [
     addressAddressCity: 'Wellesley Hills',
     employees: 854,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/salarydotcom',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'PandaDoc',
@@ -3218,6 +4594,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 851,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pandadoc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MSC Software',
@@ -3225,6 +4604,9 @@ export const companiesDemo = [
     addressAddressCity: 'Newport Beach',
     employees: 849,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/msc-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Harness',
@@ -3232,6 +4614,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 848,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/harnessinc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ActiveCampaign',
@@ -3239,6 +4624,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 848,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/activecampaign-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Doximity',
@@ -3246,6 +4634,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 848,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/doximity',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Couchbase',
@@ -3253,6 +4644,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 847,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/couchbase',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Lytx, Inc.',
@@ -3260,6 +4654,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Diego',
     employees: 845,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lytxinc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Pendo.io',
@@ -3267,6 +4664,9 @@ export const companiesDemo = [
     addressAddressCity: 'Raleigh',
     employees: 844,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pendo-io',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Workato',
@@ -3274,6 +4674,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 842,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/workato',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Saviynt',
@@ -3281,6 +4684,9 @@ export const companiesDemo = [
     addressAddressCity: 'El Segundo',
     employees: 842,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/saviynt',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SmartBear',
@@ -3288,6 +4694,9 @@ export const companiesDemo = [
     addressAddressCity: 'Somerville',
     employees: 838,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/smartbear',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Rovi Corporation (now TiVo)',
@@ -3295,6 +4704,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Carlos',
     employees: 837,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rovi',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Handshake',
@@ -3302,6 +4714,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 833,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/team-handshake',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Navitaire, an Amadeus company',
@@ -3309,6 +4724,9 @@ export const companiesDemo = [
     addressAddressCity: 'Minneapolis',
     employees: 829,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/navitaire',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'OneSpan',
@@ -3316,6 +4734,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 826,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/onespan',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Bitsight',
@@ -3323,6 +4744,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 824,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bitsight',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ID.me',
@@ -3330,6 +4754,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mc Lean',
     employees: 823,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/id.me',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SymphonyAI Retail CPG',
@@ -3337,6 +4764,9 @@ export const companiesDemo = [
     addressAddressCity: 'Frisco',
     employees: 823,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/symphonyretailcpg',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Unilog',
@@ -3344,6 +4774,9 @@ export const companiesDemo = [
     addressAddressCity: 'Wayne',
     employees: 823,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/unilog-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Teletrac Navman',
@@ -3351,6 +4784,9 @@ export const companiesDemo = [
     addressAddressCity: 'Irvine',
     employees: 821,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/teletrac',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Buildertrend',
@@ -3358,6 +4794,9 @@ export const companiesDemo = [
     addressAddressCity: 'Omaha',
     employees: 819,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/buildertrend',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Tecsys Inc.',
@@ -3365,6 +4804,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 816,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tecsys-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ThousandEyes (part of Cisco)',
@@ -3372,6 +4814,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 816,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/thousandeyes',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Greenhouse Software',
@@ -3379,6 +4824,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 814,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/greenhouse-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Exiger',
@@ -3386,6 +4834,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 811,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/exiger',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MBO Partners',
@@ -3393,6 +4844,9 @@ export const companiesDemo = [
     addressAddressCity: 'Ashburn',
     employees: 808,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mbo-partners',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Neo4j',
@@ -3400,6 +4854,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Mateo',
     employees: 808,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/neo4j',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'VTS',
@@ -3407,6 +4864,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 805,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/we-are-vts',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Slice',
@@ -3414,6 +4874,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 805,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/slice',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Amplitude',
@@ -3421,6 +4884,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 803,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/amplitude-analytics',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Daxko',
@@ -3428,6 +4894,9 @@ export const companiesDemo = [
     addressAddressCity: 'Birmingham',
     employees: 802,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/daxko',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'AppLovin',
@@ -3435,6 +4904,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 802,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/applovin',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Xometry',
@@ -3442,6 +4914,9 @@ export const companiesDemo = [
     addressAddressCity: 'Rockville',
     employees: 801,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/xometry',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Quickbase',
@@ -3449,6 +4924,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 796,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/quickbase',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Agora',
@@ -3456,6 +4934,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 793,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/agora-lab-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'InMoment',
@@ -3463,6 +4944,9 @@ export const companiesDemo = [
     addressAddressCity: 'South Jordan',
     employees: 793,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/weareinmoment',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'PatientPoint\u00ae',
@@ -3470,6 +4954,9 @@ export const companiesDemo = [
     addressAddressCity: 'Cincinnati',
     employees: 789,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/patientpoint',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'HHAeXchange',
@@ -3477,6 +4964,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 788,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hhaexchange',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'NinjaOne',
@@ -3484,6 +4974,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 787,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ninjaone',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Zywave',
@@ -3491,6 +4984,9 @@ export const companiesDemo = [
     addressAddressCity: 'Milwaukee',
     employees: 785,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/zywave',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Adobe Marketo',
@@ -3498,6 +4994,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 784,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/adobemarketoengage',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MasterControl',
@@ -3505,6 +5004,9 @@ export const companiesDemo = [
     addressAddressCity: 'Salt Lake City',
     employees: 783,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mastercontrol',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Jumio Corporation',
@@ -3512,6 +5014,9 @@ export const companiesDemo = [
     addressAddressCity: 'Sunnyvale',
     employees: 779,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jumio-corporation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'CRMNEXT',
@@ -3519,6 +5024,9 @@ export const companiesDemo = [
     addressAddressCity: 'Raleigh',
     employees: 778,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/crmnext',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ChannelAdvisor',
@@ -3526,6 +5034,9 @@ export const companiesDemo = [
     addressAddressCity: 'Morrisville',
     employees: 777,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/channeladvisor',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SumTotal Systems, LLC',
@@ -3533,6 +5044,9 @@ export const companiesDemo = [
     addressAddressCity: 'Gainesville',
     employees: 776,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sumtotal-systems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Payscale',
@@ -3540,6 +5054,9 @@ export const companiesDemo = [
     addressAddressCity: 'Seattle',
     employees: 775,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/payscale',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Riskonnect, Inc.',
@@ -3547,6 +5064,9 @@ export const companiesDemo = [
     addressAddressCity: 'Kennesaw',
     employees: 775,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/riskonnect-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Riskified',
@@ -3554,6 +5074,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 770,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/riskified',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Shopkeeper',
@@ -3561,6 +5084,9 @@ export const companiesDemo = [
     addressAddressCity: 'Pompano Beach',
     employees: 770,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/shopkeeperapp',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Stack Overflow',
@@ -3568,6 +5094,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 768,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stack-overflow',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Netwrix Corporation',
@@ -3575,6 +5104,9 @@ export const companiesDemo = [
     addressAddressCity: 'Frisco',
     employees: 768,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/netwrix-corporation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Securonix',
@@ -3582,6 +5114,9 @@ export const companiesDemo = [
     addressAddressCity: 'Addison',
     employees: 767,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/securonix',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Draup',
@@ -3589,6 +5124,9 @@ export const companiesDemo = [
     addressAddressCity: 'Spring',
     employees: 766,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/draupplatform',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'eQ Technologic',
@@ -3596,6 +5134,9 @@ export const companiesDemo = [
     addressAddressCity: 'Costa Mesa',
     employees: 766,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eq-technologic',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Mindtickle',
@@ -3603,6 +5144,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 765,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mindtickle',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Omnitracs',
@@ -3610,6 +5154,9 @@ export const companiesDemo = [
     addressAddressCity: 'Roanoke',
     employees: 764,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/omnitracs',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Programmer',
@@ -3617,6 +5164,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 762,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/programmer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Navis',
@@ -3624,6 +5174,9 @@ export const companiesDemo = [
     addressAddressCity: 'Alpharetta',
     employees: 761,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/navis',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'AuditBoard',
@@ -3631,6 +5184,9 @@ export const companiesDemo = [
     addressAddressCity: 'Cerritos',
     employees: 759,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/auditboard',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Algolia',
@@ -3638,6 +5194,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 759,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/algolia',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'YML',
@@ -3645,6 +5204,9 @@ export const companiesDemo = [
     addressAddressCity: 'Redwood City',
     employees: 754,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ymlco',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Bolt',
@@ -3652,6 +5214,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 750,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/bolt-com',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Dandy',
@@ -3659,6 +5224,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 745,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/dandyofficial',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Diverse Lynx',
@@ -3666,6 +5234,9 @@ export const companiesDemo = [
     addressAddressCity: 'Princeton',
     employees: 743,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/diverselynx',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'JMP',
@@ -3673,6 +5244,9 @@ export const companiesDemo = [
     addressAddressCity: 'Cary',
     employees: 741,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jmp',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ON24',
@@ -3680,6 +5254,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 741,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/on24',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'LabVantage Solutions, Inc',
@@ -3687,6 +5264,9 @@ export const companiesDemo = [
     addressAddressCity: 'Somerset',
     employees: 740,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/labvantage',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Exabeam',
@@ -3694,6 +5274,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Mateo',
     employees: 739,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/exabeam',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Iterable',
@@ -3701,6 +5284,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 739,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/iterable',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Clari',
@@ -3708,6 +5294,9 @@ export const companiesDemo = [
     addressAddressCity: 'Sunnyvale',
     employees: 737,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/clari',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Komodo Health',
@@ -3715,6 +5304,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 737,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/komodo-health',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Alation',
@@ -3722,6 +5314,9 @@ export const companiesDemo = [
     addressAddressCity: 'Redwood City',
     employees: 736,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/alation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Celigo',
@@ -3729,6 +5324,9 @@ export const companiesDemo = [
     addressAddressCity: 'Redwood City',
     employees: 733,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/celigo-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Aptos Retail',
@@ -3736,6 +5334,9 @@ export const companiesDemo = [
     addressAddressCity: 'Alpharetta',
     employees: 733,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aptos-retail',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'WorkForce Software',
@@ -3743,6 +5344,9 @@ export const companiesDemo = [
     addressAddressCity: 'Livonia',
     employees: 721,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/workforce-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'HPE Security - Data Security',
@@ -3750,6 +5354,9 @@ export const companiesDemo = [
     addressAddressCity: 'Sunnyvale',
     employees: 713,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/hpe-security-data-security',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'DDN Storage',
@@ -3757,6 +5364,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chatsworth',
     employees: 712,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ddn-storage',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'KPA',
@@ -3764,6 +5374,9 @@ export const companiesDemo = [
     addressAddressCity: 'Broomfield',
     employees: 709,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/kpa-llc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Lohika',
@@ -3771,6 +5384,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Mateo',
     employees: 705,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lohika',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Qualifacts',
@@ -3778,6 +5394,9 @@ export const companiesDemo = [
     addressAddressCity: 'Nashville',
     employees: 705,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/qualifacts',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Centric Software',
@@ -3785,6 +5404,9 @@ export const companiesDemo = [
     addressAddressCity: 'Campbell',
     employees: 705,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/centric-software',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Omdena',
@@ -3792,6 +5414,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 704,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/omdena',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'AccountantsWorld',
@@ -3799,6 +5424,9 @@ export const companiesDemo = [
     addressAddressCity: 'Hauppauge',
     employees: 704,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/accountantsworld',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Aderant',
@@ -3806,6 +5434,9 @@ export const companiesDemo = [
     addressAddressCity: 'Atlanta',
     employees: 704,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aderant',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Python Software Foundation',
@@ -3813,6 +5444,9 @@ export const companiesDemo = [
     addressAddressCity: 'Beaverton',
     employees: 704,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/python-software-foundation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'OpenGov Inc.',
@@ -3820,6 +5454,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 703,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/opengov-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Denodo',
@@ -3827,6 +5464,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 702,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/denodo-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'NEOGOV',
@@ -3834,6 +5474,9 @@ export const companiesDemo = [
     addressAddressCity: 'El Segundo',
     employees: 698,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/neogov',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'VertexOne',
@@ -3841,6 +5484,9 @@ export const companiesDemo = [
     addressAddressCity: 'Dallas',
     employees: 696,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/vertex-one',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'The Linux Foundation',
@@ -3848,6 +5494,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 694,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/the-linux-foundation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Reputation',
@@ -3855,6 +5504,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Ramon',
     employees: 694,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/reputation-com',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Relevantz ',
@@ -3862,6 +5514,9 @@ export const companiesDemo = [
     addressAddressCity: 'Alpharetta',
     employees: 691,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/relevantz',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'M-Files',
@@ -3869,6 +5524,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 691,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/m-files-corporation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Homebase',
@@ -3876,6 +5534,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 688,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/homebase-app',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Calypso Technology',
@@ -3883,6 +5544,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 688,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/calypso-technology',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Viewpoint',
@@ -3891,13 +5555,19 @@ export const companiesDemo = [
     employees: 686,
     linkedinLinkPrimaryLinkUrl:
       'https://linkedin.com/company/viewpoint-construction-software',
-  },
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
+    },
   {
     name: 'Devo',
     domainName: 'devo.com',
     addressAddressCity: 'Cambridge',
     employees: 685,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/devoinc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'WebPT',
@@ -3905,6 +5575,9 @@ export const companiesDemo = [
     addressAddressCity: 'Phoenix',
     employees: 685,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/webpt',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MatrixCare',
@@ -3912,6 +5585,9 @@ export const companiesDemo = [
     addressAddressCity: 'Minneapolis',
     employees: 683,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/matrixcare',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Sisense',
@@ -3919,6 +5595,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 683,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sisense',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Calendly',
@@ -3926,6 +5605,9 @@ export const companiesDemo = [
     addressAddressCity: 'Atlanta',
     employees: 681,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/calendly',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Placer.ai',
@@ -3933,6 +5615,9 @@ export const companiesDemo = [
     addressAddressCity: 'Los Altos',
     employees: 677,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/placer',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'MResult',
@@ -3940,6 +5625,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mystic',
     employees: 674,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mresult',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Coherent Solutions',
@@ -3947,6 +5635,9 @@ export const companiesDemo = [
     addressAddressCity: 'Minneapolis',
     employees: 672,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/coherent-solutions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Mirantis',
@@ -3954,6 +5645,9 @@ export const companiesDemo = [
     addressAddressCity: 'Campbell',
     employees: 671,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mirantis',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Simplify Healthcare',
@@ -3961,6 +5655,9 @@ export const companiesDemo = [
     addressAddressCity: 'Aurora',
     employees: 671,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/simplifyhealthcare',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'JumpCloud',
@@ -3968,6 +5665,9 @@ export const companiesDemo = [
     addressAddressCity: 'Louisville',
     employees: 671,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/jumpcloud',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ASAP',
@@ -3975,6 +5675,9 @@ export const companiesDemo = [
     addressAddressCity: 'Lafayette',
     employees: 667,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/asap',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Xoxoday',
@@ -3982,6 +5685,9 @@ export const companiesDemo = [
     addressAddressCity: 'Redwood City',
     employees: 666,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/xoxoday',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'DataStax',
@@ -3989,6 +5695,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 666,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/datastax',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Foursquare',
@@ -3996,6 +5705,9 @@ export const companiesDemo = [
     addressAddressCity: 'New York',
     employees: 665,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/foursquare',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'LastPass',
@@ -4003,6 +5715,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 664,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lastpass',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SOCi, Inc.',
@@ -4010,6 +5725,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Diego',
     employees: 664,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/soci-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Stratus Technologies',
@@ -4017,6 +5735,9 @@ export const companiesDemo = [
     addressAddressCity: 'Maynard',
     employees: 662,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/stratus-technologies',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'AdvancedMD',
@@ -4024,6 +5745,9 @@ export const companiesDemo = [
     addressAddressCity: 'South Jordan',
     employees: 661,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/advancedmd',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Matterport',
@@ -4031,6 +5755,9 @@ export const companiesDemo = [
     addressAddressCity: 'Sunnyvale',
     employees: 660,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/matterport',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Samsung Research America (SRA)',
@@ -4038,6 +5765,9 @@ export const companiesDemo = [
     addressAddressCity: 'Mountain View',
     employees: 658,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/sra-samsungreasearchamerica',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Creatio',
@@ -4045,6 +5775,9 @@ export const companiesDemo = [
     addressAddressCity: 'Boston',
     employees: 657,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/creatioglobal',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Branch',
@@ -4052,6 +5785,9 @@ export const companiesDemo = [
     addressAddressCity: 'Palo Alto',
     employees: 657,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/branch-metrics',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Versa Networks',
@@ -4059,6 +5795,9 @@ export const companiesDemo = [
     addressAddressCity: 'Alviso',
     employees: 655,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/versa-networks',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Mitek Systems',
@@ -4066,6 +5805,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Diego',
     employees: 653,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/miteksystems',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'PDF Solutions',
@@ -4073,6 +5815,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 653,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/pdf-solutions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'ESO',
@@ -4080,6 +5825,9 @@ export const companiesDemo = [
     addressAddressCity: 'Austin',
     employees: 652,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eso-solutions',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Mural',
@@ -4087,6 +5835,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 650,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/mural.co',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'FourKites, Inc.',
@@ -4094,6 +5845,9 @@ export const companiesDemo = [
     addressAddressCity: 'Chicago',
     employees: 650,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/fourkites-inc',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Aras Corporation',
@@ -4101,6 +5855,9 @@ export const companiesDemo = [
     addressAddressCity: 'Andover',
     employees: 648,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/aras-corporation',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Delphix',
@@ -4108,6 +5865,9 @@ export const companiesDemo = [
     addressAddressCity: 'Redwood City',
     employees: 648,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/delphix',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Wolfram',
@@ -4115,6 +5875,9 @@ export const companiesDemo = [
     addressAddressCity: 'Champaign',
     employees: 644,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/wolfram-research',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Eightfold',
@@ -4122,6 +5885,9 @@ export const companiesDemo = [
     addressAddressCity: 'Santa Clara',
     employees: 643,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/eightfoldai',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Quark Software Inc.',
@@ -4129,6 +5895,9 @@ export const companiesDemo = [
     addressAddressCity: 'Grand Rapids',
     employees: 641,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/quark',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'connectRN',
@@ -4136,6 +5905,9 @@ export const companiesDemo = [
     addressAddressCity: 'Waltham',
     employees: 640,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/connectrn',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'RSI',
@@ -4143,6 +5915,9 @@ export const companiesDemo = [
     addressAddressCity: 'Pembroke',
     employees: 638,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/revenue-solutions-inc-',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Macrosoft',
@@ -4150,6 +5925,9 @@ export const companiesDemo = [
     addressAddressCity: 'Parsippany',
     employees: 638,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/macrosoft',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Paradox',
@@ -4157,6 +5935,9 @@ export const companiesDemo = [
     addressAddressCity: 'Scottsdale',
     employees: 637,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/paradoxolivia',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'SmartRecruiters',
@@ -4164,6 +5945,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 637,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/smartrecruiters',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Tealium',
@@ -4171,6 +5955,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Diego',
     employees: 635,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tealium',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Securiti',
@@ -4178,6 +5965,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Jose',
     employees: 634,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/securitiai',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Lattice',
@@ -4185,6 +5975,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Francisco',
     employees: 634,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/lattice-hq',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'TuSimple',
@@ -4192,6 +5985,9 @@ export const companiesDemo = [
     addressAddressCity: 'San Diego',
     employees: 633,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/tusimple',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'Ceipal',
@@ -4199,6 +5995,9 @@ export const companiesDemo = [
     addressAddressCity: 'Rochester',
     employees: 633,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/ceipal',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
   {
     name: 'RSD',
@@ -4206,5 +6005,8 @@ export const companiesDemo = [
     addressAddressCity: 'Waltham',
     employees: 633,
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/company/rsd',
+    createdBySource: 'MANUAL',
+    createdByWorkspaceMemberId: DEMO_SEED_WORKSPACE_MEMBER_IDS.NOAH,
+    createdByName: 'Noah A',
   },
 ];

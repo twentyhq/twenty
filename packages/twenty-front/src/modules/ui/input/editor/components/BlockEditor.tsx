@@ -7,6 +7,7 @@ import { ClipboardEvent } from 'react';
 
 import { blockSchema } from '@/activities/blocks/schema';
 import { getSlashMenu } from '@/activities/blocks/slashMenu';
+import { CustomSideMenu } from '@/ui/input/editor/components/CustomSideMenu';
 import {
   CustomSlashMenu,
   SuggestionItem,
@@ -35,7 +36,12 @@ const StyledEditor = styled.div`
     font-style: normal;
   }
   & .mantine-ActionIcon-icon {
+    height: 20px;
     width: 20px;
+    background: transparent;
+  }
+  & .bn-editor {
+    padding-inline: 36px;
   }
   & .bn-container .bn-drag-handle {
     width: 20px;
@@ -44,6 +50,48 @@ const StyledEditor = styled.div`
   & .bn-block-content[data-content-type='checkListItem'] > div > div {
     display: flex;
     align-items: center;
+  }
+  & .bn-drag-handle-menu {
+    background: ${({ theme }) => theme.background.transparent.secondary};
+    backdrop-filter: blur(12px) saturate(200%) contrast(50%) brightness(130%);
+    box-shadow:
+      0px 2px 4px rgba(0, 0, 0, 0.04),
+      2px 4px 16px rgba(0, 0, 0, 0.12);
+    min-width: 160px;
+    min-height: 96px;
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid ${({ theme }) => theme.border.color.medium};
+    left: 26px;
+  }
+  & .mantine-Menu-item {
+    background-color: transparent;
+    min-width: 152px;
+    min-height: 32px;
+
+    font-style: normal;
+    font-family: ${({ theme }) => theme.font.family};
+    font-weight: ${({ theme }) => theme.font.weight.regular};
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
+  & .mantine-ActionIcon-root:hover {
+    box-shadow:
+      0px 0px 4px rgba(0, 0, 0, 0.08),
+      0px 2px 4px rgba(0, 0, 0, 0.04);
+    background: ${({ theme }) => theme.background.transparent.primary};
+    backdrop-filter: blur(20px);
+    border: 1px solid ${({ theme }) => theme.border.color.light};
+  }
+  & .bn-side-menu .mantine-UnstyledButton-root:not(.mantine-Menu-item) svg {
+    height: 20px;
+    width: 20px;
+  }
+
+  & .bn-mantine .bn-side-menu > [draggable='true'] {
+    margin-bottom: 5px;
+  }
+  & .bn-color-picker-dropdown {
+    margin-left: 8px;
   }
 `;
 
@@ -83,7 +131,9 @@ export const BlockEditor = ({
         editor={editor}
         theme={blockNoteTheme}
         slashMenu={false}
+        sideMenu={false}
       >
+        <CustomSideMenu editor={editor} />
         <SuggestionMenuController
           triggerCharacter={'/'}
           getItems={async (query) =>

@@ -4,7 +4,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import styled from '@emotion/styled';
 
 const StyledShowPageActivityContainer = styled.div`
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(6)};
   width: 100%;
 `;
 export const ShowPageActivityContainer = ({

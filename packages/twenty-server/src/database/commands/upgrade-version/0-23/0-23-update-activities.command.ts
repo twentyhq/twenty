@@ -34,7 +34,7 @@ type CoreLogicFunction = (params: {
 }) => Promise<void>;
 
 @Command({
-  name: 'migrate-0.23:update-activities-type',
+  name: 'upgrade-0.23:update-activities-type',
   description: 'Migrate Activity object to Note and Task objects',
 })
 export class UpdateActivitiesCommand extends CommandRunner {

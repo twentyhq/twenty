@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
+import { ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import {
@@ -72,10 +72,10 @@ describe('useFilteredObjectMetadataItems', () => {
 
     act(() => {
       const res = result.current.findObjectMetadataItemById(
-        '20202020-480c-434e-b4c7-e22408b97047',
+        'ff2881da-89f6-4f15-8f0a-e3f355ea3b94',
       );
       expect(res).toBeDefined();
-      expect(res?.namePlural).toBe('companies');
+      expect(res?.namePlural).toBe('people');
     });
   });
 

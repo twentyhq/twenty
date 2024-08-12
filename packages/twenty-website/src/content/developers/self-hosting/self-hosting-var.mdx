@@ -180,13 +180,22 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 ### Data enrichment and AI
 
 <ArticleTable options={[
-    ['OPENROUTER_API_KEY', '', "The API key for openrouter.ai, an abstraction layer over models from Mistral, OpenAI and more"],
     ['OPENAI_API_KEY', 'sk-proj-abcdabcd...', "OpenAI API key"],
     ['LLM_CHAT_MODEL_DRIVER', 'openai', "LLM provider"],
     ['LLM_TRACING_DRIVER', 'langfuse', "Where to output LangChain logs. 'langfuse' or 'console'."],
     ['LANGFUSE_SECRET_KEY', 'sk-lf-abcdabcd-abcd...', "Langfuse secret key"],
     ['LANGFUSE_PUBLIC_KEY', 'pk-lf-abcdabcd-abcd...', "Langfuse public key"],
 ]}></ArticleTable>
+
+### Serverless functions
+This feature is WIP and is not yet useful for most users.
+<ArticleTable options={[
+    ['SERVERLESS_TYPE', 'local', "Functions can either be executed through Lambda or directly by the main node process"],
+    ['SERVERLESS_LAMBDA_REGION', 'us-east-1', 'If you use the Lambda driver, region of the Lambda function'],
+    ['SERVERLESS_LAMBDA_ROLE', 'arn:aws:iam::121334:role/lambda-execution-role', "If you use the Lambda drive, name of the IAM role with the right permissions"],
+]}></ArticleTable>
+
+
 
 
 ### Support Chat

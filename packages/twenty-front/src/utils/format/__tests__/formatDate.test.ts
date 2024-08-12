@@ -25,7 +25,6 @@ describe('formatToHumanReadableTime', () => {
     const date = new Date('2022-01-01T12:30:00Z');
     const result = formatToHumanReadableTime(date, 'UTC');
 
-    // it seems when running locally on MacOS the space is not the same
     expect(['12:30 PM', '12:30 PM']).toContain(result);
   });
 });

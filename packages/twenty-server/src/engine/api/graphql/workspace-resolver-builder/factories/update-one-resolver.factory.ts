@@ -28,9 +28,8 @@ export class UpdateOneResolverFactory
     return async (_source, args, context, info) => {
       try {
         return await this.workspaceQueryRunnerService.updateOne(args, {
+          authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
-          workspaceId: internalContext.workspaceId,
-          userId: internalContext.userId,
           info,
           fieldMetadataCollection: internalContext.fieldMetadataCollection,
           objectMetadataCollection: internalContext.objectMetadataCollection,

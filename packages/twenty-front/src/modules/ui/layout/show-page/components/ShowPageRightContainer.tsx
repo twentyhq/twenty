@@ -29,6 +29,7 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   flex-direction: column;
   justify-content: start;
   width: 100%;
+  height: 100%;
 `;
 
 const StyledTabListContainer = styled.div`
@@ -38,6 +39,19 @@ const StyledTabListContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
+`;
+
+const StyledGreyBox = styled.div<{ isInRightDrawer: boolean }>`
+  background: ${({ theme, isInRightDrawer }) =>
+    isInRightDrawer ? theme.background.secondary : ''};
+  border: ${({ isInRightDrawer, theme }) =>
+    isInRightDrawer ? `1px solid ${theme.border.color.medium}` : ''};
+  border-radius: ${({ isInRightDrawer, theme }) =>
+    isInRightDrawer ? theme.border.radius.md : ''};
+  height: ${({ isInRightDrawer }) => (isInRightDrawer ? 'auto' : '100%')};
+
+  margin: ${({ isInRightDrawer, theme }) =>
+    isInRightDrawer ? theme.spacing(4) : ''};
 `;
 
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
@@ -151,7 +165,6 @@ export const ShowPageRightContainer = ({
       hide: !shouldDisplayCalendarTab,
     },
   ];
-
   const renderActiveTabContent = () => {
     switch (activeTabId) {
       case 'timeline':
@@ -173,7 +186,12 @@ export const ShowPageRightContainer = ({
           )
         );
       case 'fields':
-        return fieldsBox;
+        return (
+          <StyledGreyBox isInRightDrawer={isInRightDrawer}>
+            {fieldsBox}
+          </StyledGreyBox>
+        );
+
       case 'tasks':
         return <ObjectTasks targetableObject={targetableObject} />;
       case 'notes':
@@ -188,10 +206,8 @@ export const ShowPageRightContainer = ({
         return <></>;
     }
   };
-
   return (
     <StyledShowPageRightContainer isMobile={isMobile}>
-      {summaryCard}
       <StyledTabListContainer>
         <TabList
           loading={loading}
@@ -199,6 +215,7 @@ export const ShowPageRightContainer = ({
           tabs={tabs}
         />
       </StyledTabListContainer>
+      {summaryCard}
       {renderActiveTabContent()}
     </StyledShowPageRightContainer>
   );

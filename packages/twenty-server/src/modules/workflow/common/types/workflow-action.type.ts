@@ -1,14 +1,20 @@
-import { WorkflowSettingsType } from 'src/modules/workflow/common/types/workflow-settings.type';
+import { WorkflowCodeSettingsType } from 'src/modules/workflow/common/types/workflow-settings.type';
 
 export enum WorkflowActionType {
   CODE = 'CODE',
 }
 
-export type WorkflowAction = {
+type CommonWorkflowAction = {
   name: string;
   displayName: string;
-  type: WorkflowActionType;
   valid: boolean;
-  settings: WorkflowSettingsType;
-  nextAction?: WorkflowAction;
+};
+
+type WorkflowCodeAction = CommonWorkflowAction & {
+  type: WorkflowActionType.CODE;
+  settings: WorkflowCodeSettingsType;
+};
+
+export type WorkflowAction = WorkflowCodeAction & {
+  nextAction: WorkflowAction;
 };

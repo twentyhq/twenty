@@ -9,7 +9,7 @@ import { Task } from '@/activities/types/Task';
 
 const task: Task = {
   id: '123',
-  status: null,
+  status: 'DONE',
   title: 'Test',
   body: 'Test',
   dueAt: '2024-03-15T07:33:14.212Z',
@@ -25,23 +25,23 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        mutation UpdateOneActivity(
-          $idToUpdate: ID!
-          $input: ActivityUpdateInput!
-        ) {
-          updateActivity(id: $idToUpdate, data: $input) {
+        mutation UpdateOneTask($idToUpdate: ID!, $input: TaskUpdateInput!) {
+          updateTask(id: $idToUpdate, data: $input) {
             __typename
-            createdAt
-            reminderAt
-            authorId
-            title
             status
+            assigneeId
             updatedAt
             body
+            createdAt
             dueAt
-            type
+            position
             id
-            assigneeId
+            title
+            createdBy {
+              source
+              workspaceMemberId
+              name
+            }
           }
         }
       `,
@@ -52,7 +52,7 @@ const mocks: MockedResponse[] = [
     },
     result: jest.fn(() => ({
       data: {
-        updateActivity: {
+        updateTask: {
           __typename: 'Activity',
           createdAt: '2024-03-15T07:33:14.212Z',
           reminderAt: null,

@@ -1,21 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import {
-  WorkflowTriggerException,
-  WorkflowTriggerExceptionCode,
-} from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
-import {
-  WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/common/types/workflow-action.type';
+import { WorkflowAction } from 'src/modules/workflow/common/types/workflow-action.type';
+import { WorkflowActionRunnerFactory } from 'src/modules/workflow/workflow-action-runner/workflow-action-runner.factory';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
 @Injectable()
 export class WorkflowRunnerService {
   constructor(
-    private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly workflowActionRunnerFactory: WorkflowActionRunnerFactory,
   ) {}
 
   async run({
@@ -33,51 +26,48 @@ export class WorkflowRunnerService {
       return payload;
     }
 
-    let result: object | undefined = undefined;
+    const workflowActionRunner = this.workflowActionRunnerFactory.get(
+      action.type,
+    );
 
-    switch (action.type) {
-      case WorkflowActionType.CODE: {
-        const executionResult = await this.serverlessFunctionService.executeOne(
-          action.settings.serverlessFunctionId,
-          workspaceId,
-          payload,
-        );
+    const result = await workflowActionRunner.execute({
+      action,
+      workspaceId,
+      payload,
+    });
 
-        if (executionResult.data) {
-          result = executionResult.data;
-          break;
-        }
-        if (!executionResult.error) {
-          throw new Error('Execution result error, no data or error');
-        }
-        if (action.settings.errorHandlingOptions.continueOnFailure.value) {
-          result = payload;
-          break;
-        } else if (
-          action.settings.errorHandlingOptions.retryOnFailure.value &&
-          attemptCount < MAX_RETRIES_ON_FAILURE
-        ) {
-          return await this.run({
-            action,
-            workspaceId,
-            payload,
-            attemptCount: attemptCount + 1,
-          });
-        } else {
-          return executionResult.error;
-        }
-      }
-      default:
-        throw new WorkflowTriggerException(
-          `Unknown action type '${action.type}'`,
-          WorkflowTriggerExceptionCode.INVALID_ACTION_TYPE,
-        );
+    if (result.data) {
+      return await this.run({
+        action: action.nextAction,
+        workspaceId,
+        payload: result.data,
+      });
     }
 
-    return await this.run({
-      action: action.nextAction,
-      workspaceId,
-      payload: result,
-    });
+    if (!result.error) {
+      throw new Error('Execution result error, no data or error');
+    }
+
+    if (action.settings.errorHandlingOptions.continueOnFailure.value) {
+      return await this.run({
+        action: action.nextAction,
+        workspaceId,
+        payload,
+      });
+    }
+
+    if (
+      action.settings.errorHandlingOptions.retryOnFailure.value &&
+      attemptCount < MAX_RETRIES_ON_FAILURE
+    ) {
+      return await this.run({
+        action,
+        workspaceId,
+        payload,
+        attemptCount: attemptCount + 1,
+      });
+    }
+
+    return result.error;
   }
 }

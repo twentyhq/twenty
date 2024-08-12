@@ -13,7 +13,7 @@ import { isFieldSelect } from '../../types/guards/isFieldSelect';
 import { isFieldSelectValue } from '../../types/guards/isFieldSelectValue';
 
 export const useSelectField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.Select, isFieldSelect, fieldDefinition);
 
@@ -21,7 +21,7 @@ export const useSelectField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<FieldSelectValue>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );
@@ -30,7 +30,7 @@ export const useSelectField = () => {
   const persistField = usePersistField();
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldSelectValue>(`${entityId}-${fieldName}`);
+    useRecordFieldInput<FieldSelectValue>(`${recordId}-${fieldName}`);
   const draftValue = useRecoilValue(getDraftValueSelector());
 
   return {

@@ -9,12 +9,12 @@ import {
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
 export const useMultiSelectFieldDisplay = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { fieldName } = fieldDefinition.metadata;
 
   const fieldValue = useRecordFieldValue<FieldMultiSelectValue | undefined>(
-    entityId,
+    recordId,
     fieldName,
   );
 

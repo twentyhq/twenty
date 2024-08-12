@@ -125,7 +125,11 @@ export class EntitySchemaColumnFactory {
       };
 
       if (isEnumFieldMetadataType(compositeProperty.type)) {
-        throw new Error('Enum composite properties are not yet supported');
+        const values = compositeProperty.options?.map((option) => option.value);
+
+        if (values && values.length > 0) {
+          entitySchemaColumnMap[columnName].enum = values;
+        }
       }
     }
 

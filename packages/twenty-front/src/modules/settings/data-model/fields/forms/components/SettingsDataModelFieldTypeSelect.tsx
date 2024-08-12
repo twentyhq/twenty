@@ -1,5 +1,5 @@
-import { Controller, useFormContext } from 'react-hook-form';
 import omit from 'lodash.omit';
+import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
