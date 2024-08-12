@@ -129,10 +129,10 @@ export class ChartService {
   private async getJoinOperations(
     workspaceId: string,
     sourceObjectNameSingular: string,
-    fieldPath: string[],
     aliasPrefix: AliasPrefix,
+    fieldPath?: string[],
   ) {
-    if (fieldPath.length < 2) return [];
+    if (!fieldPath || fieldPath.length < 2) return [];
     let objectMetadata =
       await this.objectMetadataService.findOneOrFailWithinWorkspace(
         workspaceId,
@@ -267,8 +267,8 @@ export class ChartService {
     const targetJoinOperations = await this.getJoinOperations(
       workspaceId,
       chart.sourceObjectNameSingular,
-      chart.fieldPath,
       'target',
+      chart.target,
     );
 
     const targetJoinClauses = this.getJoinClauses(
@@ -281,14 +281,14 @@ export class ChartService {
         workspaceId,
         targetJoinOperations,
         sourceTableName,
-        chart.fieldPath[0],
+        chart.target?.[0],
       );
 
     const groupByJoinOperations = await this.getJoinOperations(
       workspaceId,
       chart.sourceObjectNameSingular,
-      chart.groupBy,
       'group_by',
+      chart.groupBy,
     );
 
     const groupByJoinClauses = this.getJoinClauses(
@@ -301,7 +301,7 @@ export class ChartService {
         workspaceId,
         groupByJoinOperations,
         sourceTableName,
-        chart.groupBy[0],
+        chart.groupBy?.[0],
       );
 
     const groupBySelectColumn =

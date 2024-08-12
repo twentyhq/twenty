@@ -101,14 +101,14 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
   sourceObjectNameSingular: string;
 
   @WorkspaceField({
-    standardId: CHART_STANDARD_FIELD_IDS.fieldPath,
+    standardId: CHART_STANDARD_FIELD_IDS.target,
     type: FieldMetadataType.FIELD_PATH,
-    label: 'Field path',
-    description: 'Dot-separated path from source object to the target field.',
+    label: 'Target',
+    description: 'Path from source object to the target field.',
     icon: 'IconForms',
   })
   @WorkspaceIsNullable()
-  fieldPath: string[];
+  target: string[];
 
   @WorkspaceField({
     standardId: CHART_STANDARD_FIELD_IDS.groupBy,
