@@ -23,8 +23,7 @@ import {
 } from 'src/modules/charts/standard-objects/chart.workspace-entity';
 
 // TODO:
-// 1. Fix getTableAliasAndColumn
-// 2. Composite type support (most importantly for currencies)
+// 1. Composite type support (most importantly for currencies)
 
 @Injectable()
 export class ChartService {
@@ -132,7 +131,7 @@ export class ChartService {
     aliasPrefix: AliasPrefix,
     fieldPath?: string[],
   ) {
-    if (!fieldPath || fieldPath.length < 2) return [];
+    if (!fieldPath || fieldPath.length === 0) return [];
     let objectMetadata =
       await this.objectMetadataService.findOneOrFailWithinWorkspace(
         workspaceId,
@@ -223,25 +222,27 @@ export class ChartService {
     workspaceId: string,
     joinOperations: JoinOperation[],
     sourceTableName: string,
-    firstFieldMetadataId?: string,
+    fieldPath?: string[],
   ) {
+    const lastFieldMetadataId = fieldPath?.[fieldPath?.length - 1];
+
+    const columnName = (
+      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          id: lastFieldMetadataId,
+        },
+      })
+    )?.name;
+
     if (joinOperations.length > 0) {
       const lastJoinOperation = joinOperations[joinOperations.length - 1];
 
       const tableAlias = lastJoinOperation.joinTableAlias;
-      const columnName = lastJoinOperation.joinFieldName;
 
       return [tableAlias, columnName] as const;
     }
 
     const tableAlias = sourceTableName;
-    const columnName = (
-      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: {
-          id: firstFieldMetadataId,
-        },
-      })
-    )?.name;
 
     return [tableAlias, columnName] as const;
   }
@@ -281,7 +282,7 @@ export class ChartService {
         workspaceId,
         targetJoinOperations,
         sourceTableName,
-        chart.target?.[0],
+        chart.target,
       );
 
     const groupByJoinOperations = await this.getJoinOperations(
@@ -301,7 +302,7 @@ export class ChartService {
         workspaceId,
         groupByJoinOperations,
         sourceTableName,
-        chart.groupBy?.[0],
+        chart.groupBy,
       );
 
     const groupBySelectColumn =
