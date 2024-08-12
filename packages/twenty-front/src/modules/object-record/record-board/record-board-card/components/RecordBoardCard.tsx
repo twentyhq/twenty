@@ -23,6 +23,7 @@ import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
+import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -198,7 +199,10 @@ export const RecordBoardCard = () => {
     return [updateEntity, { loading: false }];
   };
 
+  const scrollWrapperRef = useContext(ScrollWrapperContext);
+
   const { ref: cardRef, inView } = useInView({
+    root: scrollWrapperRef.current,
     rootMargin: '1000px',
   });
 
