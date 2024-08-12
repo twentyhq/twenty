@@ -12,71 +12,115 @@ import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/stand
 export class TimelineMessagingService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
-  public async getMessageThreads(
+  public async getAndCountMessageThreads(
     personIds: string[],
     offset: number,
     pageSize: number,
-  ): Promise<
-    Omit<
+  ): Promise<{
+    messageThreads: Omit<
       TimelineThread,
       | 'firstParticipant'
       | 'lastTwoParticipants'
       | 'participantCount'
       | 'read'
       | 'visibility'
-    >[]
-  > {
+    >[];
+    totalNumberOfThreads: number;
+  }> {
     const messageThreadRepository =
       await this.twentyORMManager.getRepository<MessageThreadWorkspaceEntity>(
         'messageThread',
       );
 
-    const messageThreads = await messageThreadRepository.find({
-      select: {
-        id: true,
-        messages: {
-          receivedAt: true,
-          subject: true,
-          text: true,
-        },
-      },
-      where: {
-        messages: {
-          messageParticipants: {
-            personId: Any(personIds),
+    const [messageThreads, totalNumberOfThreads] =
+      await messageThreadRepository.findAndCount({
+        select: {
+          id: true,
+          messages: {
+            receivedAt: true,
+            subject: true,
+            text: true,
           },
         },
+        where: {
+          messages: {
+            messageParticipants: {
+              personId: Any(personIds),
+            },
+          },
+        },
+        relations: ['messages', 'messages.messageParticipants'],
+        order: {
+          messages: {
+            receivedAt: 'DESC',
+          },
+        },
+        skip: offset,
+        take: pageSize,
+      });
+
+    return {
+      messageThreads: messageThreads.map((messageThread) => {
+        const lastMessage = messageThread.messages[0];
+        const firstMessage =
+          messageThread.messages[messageThread.messages.length - 1];
+
+        return {
+          id: messageThread.id,
+          subject: firstMessage.subject,
+          lastMessageBody: lastMessage.text,
+          lastMessageReceivedAt: lastMessage.receivedAt ?? new Date(),
+          numberOfMessagesInThread: messageThread.messages.length,
+        };
+      }),
+      totalNumberOfThreads,
+    };
+  }
+
+  public async getThreadParticipantsByThreadId(
+    messageThreadIds: string[],
+  ): Promise<{
+    [key: string]: MessageParticipantWorkspaceEntity[];
+  }> {
+    const messageParticipantRepository =
+      await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
+        'messageParticipant',
+      );
+
+    const threadParticipants = await messageParticipantRepository.find({
+      where: {
+        message: {
+          messageThreadId: Any(messageThreadIds),
+        },
       },
-      relations: ['messages', 'messages.messageParticipants'],
       order: {
-        messages: {
+        message: {
           receivedAt: 'DESC',
         },
       },
-      skip: offset,
-      take: pageSize,
+      relations: ['person', 'workspaceMember', 'message'],
     });
 
-    return messageThreads.map((messageThread) => {
-      const lastMessage = messageThread.messages[0];
-      const firstMessage =
-        messageThread.messages[messageThread.messages.length - 1];
+    return threadParticipants.reduce(
+      (threadParticipantsAcc, threadParticipant) => {
+        if (!threadParticipant.message.messageThreadId)
+          return threadParticipantsAcc;
 
-      return {
-        id: messageThread.id,
-        subject: firstMessage.subject,
-        lastMessageBody: lastMessage.text,
-        lastMessageReceivedAt: lastMessage.receivedAt ?? new Date(),
-        numberOfMessagesInThread: messageThread.messages.length,
-      };
-    });
+        if (!threadParticipantsAcc[threadParticipant.message.messageThreadId])
+          threadParticipantsAcc[threadParticipant.message.messageThreadId] = [];
+
+        threadParticipantsAcc[threadParticipant.message.messageThreadId].push(
+          threadParticipant,
+        );
+
+        return threadParticipantsAcc;
+      },
+      {},
+    );
   }
 
   public async getThreadVisibilityByThreadId(
     messageThreadIds: string[],
-    threadParticipantsByThreadId: {
-      [key: string]: MessageParticipantWorkspaceEntity[];
-    },
     workspaceMemberId: string,
   ): Promise<{
     [key: string]: MessageChannelVisibility;
