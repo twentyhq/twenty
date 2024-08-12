@@ -5,6 +5,11 @@ import { WorkflowActionRunnerFactory } from 'src/modules/workflow/workflow-actio
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
+export type WorkflowRunOutput = {
+  data?: object;
+  error?: object;
+};
+
 @Injectable()
 export class WorkflowRunnerService {
   constructor(
@@ -21,9 +26,11 @@ export class WorkflowRunnerService {
     workspaceId: string;
     payload?: object;
     attemptCount?: number;
-  }) {
+  }): Promise<WorkflowRunOutput> {
     if (!action) {
-      return payload;
+      return {
+        data: payload,
+      };
     }
 
     const workflowActionRunner = this.workflowActionRunnerFactory.get(
@@ -68,6 +75,8 @@ export class WorkflowRunnerService {
       });
     }
 
-    return result.error;
+    return {
+      error: result.error,
+    };
   }
 }

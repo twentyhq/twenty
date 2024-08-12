@@ -5,10 +5,13 @@ import { Process } from 'src/engine/integrations/message-queue/decorators/proces
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   RunWorkflowJobData,
   WorkflowRunnerJob,
 } from 'src/modules/workflow/workflow-runner/workflow-runner.job';
+import { WorkflowStatusService } from 'src/modules/workflow/workflow-status/workflow-status.service';
 
 export type WorkflowEventTriggerJobData = {
   workspaceId: string;
@@ -23,13 +26,34 @@ export class WorkflowEventTriggerJob {
   constructor(
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workflowStatusService: WorkflowStatusService,
   ) {}
 
   @Process(WorkflowEventTriggerJob.name)
   async handle(data: WorkflowEventTriggerJobData): Promise<void> {
+    const workflowRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
+        data.workspaceId,
+        'workflow',
+      );
+
+    const workflow = await workflowRepository.findOneByOrFail({
+      id: data.workflowId,
+    });
+
+    if (!workflow.publishedVersionId) {
+      throw new Error('Workflow has no published version');
+    }
+
+    await this.workflowStatusService.createWorkflowRun(
+      data.workspaceId,
+      workflow.publishedVersionId,
+    );
+
     this.messageQueueService.add<RunWorkflowJobData>(WorkflowRunnerJob.name, {
       workspaceId: data.workspaceId,
-      workflowId: data.workflowId,
+      workflowVersionId: workflow.publishedVersionId,
       payload: data.payload,
     });
   }
