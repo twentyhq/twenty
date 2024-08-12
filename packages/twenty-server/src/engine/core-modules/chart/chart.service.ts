@@ -23,7 +23,7 @@ import {
 } from 'src/modules/charts/standard-objects/chart.workspace-entity';
 
 // TODO:
-// 1. Add groupBy support
+// 1. Fix getTableAliasAndColumn
 // 2. Composite type support (most importantly for currencies)
 
 @Injectable()
