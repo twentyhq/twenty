@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Any, Not } from 'typeorm';
+import { Any, IsNull, Not, Or } from 'typeorm';
 
 import { TimelineThread } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -96,7 +96,7 @@ export class TimelineMessagingService {
           id: Any(messageThreadIds),
           messages: {
             messageParticipants: {
-              workspaceMemberId: Not(workspaceMemberId),
+              workspaceMemberId: Or(Not(workspaceMemberId), IsNull()),
             },
             messageChannelMessageAssociations: {
               messageChannel: {
