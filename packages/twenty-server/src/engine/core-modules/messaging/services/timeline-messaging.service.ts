@@ -86,22 +86,61 @@ export class TimelineMessagingService {
       await this.twentyORMManager.getRepository<MessageParticipantWorkspaceEntity>(
         'messageParticipant',
       );
+    const threadParticipants = await messageParticipantRepository
+      .createQueryBuilder()
+      .select('messageParticipant')
+      .addSelect('message.messageThreadId')
+      .leftJoinAndSelect('messageParticipant.person', 'person')
+      .leftJoinAndSelect(
+        'messageParticipant.workspaceMember',
+        'workspaceMember',
+      )
+      .leftJoin('messageParticipant.message', 'message')
+      .where('message.messageThreadId = ANY(:messageThreadIds)', {
+        messageThreadIds,
+      })
+      .andWhere('messageParticipant.role = :role', { role: 'from' })
+      .orderBy('message.messageThreadId')
+      .addOrderBy('message.receivedAt', 'DESC')
+      .distinctOn([
+        'message.messageThreadId',
+        'message.receivedAt',
+        'messageParticipant.handle',
+      ])
+      .getMany();
 
-    const threadParticipants = await messageParticipantRepository.find({
-      where: {
-        message: {
-          messageThreadId: Any(messageThreadIds),
+    // This because composie fields are not handled correctly by the ORM
+    const threadParticipantsWithCompositeFields = threadParticipants.map(
+      (threadParticipant) => ({
+        ...threadParticipant,
+        person: {
+          id: threadParticipant.person?.id,
+          name: {
+            //eslint-disable-next-line
+            //@ts-ignore
+            firstName: threadParticipant.person?.nameFirstName,
+            //eslint-disable-next-line
+            //@ts-ignore
+            lastName: threadParticipant.person?.nameLastName,
+          },
+          avatarUrl: threadParticipant.person?.avatarUrl,
         },
-      },
-      order: {
-        message: {
-          receivedAt: 'DESC',
+        workspaceMember: {
+          id: threadParticipant.workspaceMember?.id,
+          name: {
+            //eslint-disable-next-line
+            //@ts-ignore
+            firstName: threadParticipant.workspaceMember?.nameFirstName,
+            //eslint-disable-next-line
+            //@ts-ignore
+            lastName: threadParticipant.workspaceMember?.nameLastName,
+          },
+          avatarUrl: threadParticipant.workspaceMember?.avatarUrl,
         },
-      },
-      relations: ['person', 'workspaceMember', 'message'],
-    });
+      }),
+    );
 
-    return threadParticipants.reduce(
+    return threadParticipantsWithCompositeFields.reduce(
       (threadParticipantsAcc, threadParticipant) => {
         if (!threadParticipant.message.messageThreadId)
           return threadParticipantsAcc;
