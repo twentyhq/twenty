@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -17,6 +17,7 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
@@ -35,7 +36,7 @@ import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
-  typeof settingsFieldFormSchema
+  ReturnType<typeof settingsFieldFormSchema>
 >;
 
 const StyledSettingsObjectFieldTypeSelect = styled(
@@ -47,6 +48,8 @@ const StyledSettingsObjectFieldTypeSelect = styled(
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
+  const [searchParams] = useSearchParams();
+  const fieldType = searchParams.get('fieldType') as SettingsSupportedFieldType;
   const { enqueueSnackBar } = useSnackBar();
 
   const { findActiveObjectMetadataItemBySlug } =
@@ -58,7 +61,11 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
-    resolver: zodResolver(settingsFieldFormSchema),
+    resolver: zodResolver(
+      settingsFieldFormSchema(
+        activeObjectMetadataItem?.fields.map((value) => value.name),
+      ),
+    ),
   });
 
   useEffect(() => {
@@ -108,8 +115,8 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const canSave =
-    formConfig.formState.isValid && !formConfig.formState.isSubmitting;
+  const { isValid, isSubmitting } = formConfig.formState;
+  const canSave = isValid && !isSubmitting;
 
   const handleSave = async (
     formValues: SettingsDataModelNewFieldFormValues,
@@ -133,26 +140,20 @@ export const SettingsObjectNewFieldStep2 = () => {
             objectMetadataId: relationFormValues.objectMetadataId,
           },
         });
-
-        // TODO: fix optimistic update logic
-        // Forcing a refetch for now but it's not ideal
-        await apolloClient.refetchQueries({
-          include: ['FindManyViews', 'CombinedFindManyRecords'],
-        });
       } else {
         await createMetadataField({
           ...formValues,
           objectMetadataId: activeObjectMetadataItem.id,
         });
-
-        // TODO: fix optimistic update logic
-        // Forcing a refetch for now but it's not ideal
-        await apolloClient.refetchQueries({
-          include: ['FindManyViews', 'CombinedFindManyRecords'],
-        });
       }
 
       navigate(`/settings/objects/${objectSlug}`);
+
+      // TODO: fix optimistic update logic
+      // Forcing a refetch for now but it's not ideal
+      await apolloClient.refetchQueries({
+        include: ['FindManyViews', 'CombinedFindManyRecords'],
+      });
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
@@ -162,20 +163,18 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const excludedFieldTypes: SettingsSupportedFieldType[] = (
     [
-      // FieldMetadataType.Email,
-      // FieldMetadataType.FullName,
-      // FieldMetadataType.Link,
+      FieldMetadataType.Link,
       FieldMetadataType.Numeric,
-      FieldMetadataType.Probability,
-      // FieldMetadataType.Uuid,
-      // FieldMetadataType.Phone,
+      FieldMetadataType.RichText,
+      FieldMetadataType.Actor,
     ] as const
   ).filter(isDefined);
 
   return (
     <RecordFieldValueSelectorContextProvider>
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-      <FormProvider {...formConfig}>
+      <FormProvider // eslint-disable-next-line react/jsx-props-no-spreading
+        {...formConfig}
+      >
         <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
           <SettingsPageContainer>
             <SettingsHeaderContainer>
@@ -192,6 +191,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               {!activeObjectMetadataItem.isRemote && (
                 <SaveAndCancelButtons
                   isSaveDisabled={!canSave}
+                  isCancelDisabled={isSubmitting}
                   onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
                   onSave={formConfig.handleSubmit(handleSave)}
                 />
@@ -202,7 +202,9 @@ export const SettingsObjectNewFieldStep2 = () => {
                 title="Name and description"
                 description="The name and description of this field"
               />
-              <SettingsDataModelFieldAboutForm />
+              <SettingsDataModelFieldAboutForm
+                maxLength={FIELD_NAME_MAXIMUM_LENGTH}
+              />
             </Section>
             <Section>
               <H2Title
@@ -211,6 +213,9 @@ export const SettingsObjectNewFieldStep2 = () => {
               />
               <StyledSettingsObjectFieldTypeSelect
                 excludedFieldTypes={excludedFieldTypes}
+                fieldMetadataItem={{
+                  type: fieldType,
+                }}
               />
               <SettingsDataModelFieldSettingsFormCard
                 fieldMetadataItem={{

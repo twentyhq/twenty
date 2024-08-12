@@ -17,6 +17,10 @@
       "path": "../packages/twenty-front"
     },
     {
+      "name": "packages/twenty-ui",
+      "path": "../packages/twenty-ui"
+    },
+    {
       "name": "packages/twenty-postgres",
       "path": "../packages/twenty-postgres"
     },
@@ -43,21 +47,21 @@
     "[typescript]": {
       "editor.formatOnSave": false,
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true,
+        "source.fixAll.eslint": "explicit",
         "source.addMissingImports": "always"
       }
     },
     "[javascript]": {
       "editor.formatOnSave": false,
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true,
+        "source.fixAll.eslint": "explicit",
         "source.addMissingImports": "always"
       }
     },
     "[typescriptreact]": {
       "editor.formatOnSave": false,
       "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true,
+        "source.fixAll.eslint": "explicit",
         "source.addMissingImports": "always"
       }
     },

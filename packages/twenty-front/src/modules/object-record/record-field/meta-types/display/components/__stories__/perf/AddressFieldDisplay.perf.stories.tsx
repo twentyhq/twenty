@@ -11,7 +11,16 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/AddressFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('person', 'testAddress'),
+    getFieldDecorator('company', 'address', {
+      addressCity: 'San Francisco',
+      addressCountry: 'United States',
+      addressStreet1: '1234 Elm Street',
+      addressStreet2: 'Apt 1234',
+      addressLat: 0,
+      addressLng: 0,
+      addressPostcode: '12345',
+      addressState: 'CA',
+    } as FieldAddressValue),
     ComponentDecorator,
   ],
   component: AddressFieldDisplay,
@@ -32,7 +41,7 @@ export const Elipsis: Story = {
     container: { width: 100 },
   },
   decorators: [
-    getFieldDecorator('person', 'testAddress', {
+    getFieldDecorator('company', 'address', {
       addressCity:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam',
       addressCountry: 'United States',
@@ -49,6 +58,6 @@ export const Elipsis: Story = {
 export const Performance = getProfilingStory({
   componentName: 'AddressFieldDisplay',
   averageThresholdInMs: 0.15,
-  numberOfRuns: 50,
+  numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });

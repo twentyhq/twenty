@@ -1,10 +1,8 @@
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
+import { normalizeGQLField } from '~/utils/normalizeGQLField';
 
 const mockObjectMetadataItems = getObjectMetadataItemsMock();
-
-const formatGQLString = (inputString: string) =>
-  inputString.replace(/^\s*[\r\n]/gm, '');
 
 const personObjectMetadataItem = mockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
@@ -22,7 +20,7 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
         (field) => field.name === 'id',
       )!,
     });
-    expect(formatGQLString(res)).toEqual('id');
+    expect(normalizeGQLField(res)).toEqual(normalizeGQLField('id'));
   });
   it('should return fieldName if composite', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
@@ -31,11 +29,13 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
         (field) => field.name === 'name',
       )!,
     });
-    expect(formatGQLString(res)).toEqual(`name
+    expect(normalizeGQLField(res)).toEqual(
+      normalizeGQLField(`name
 {
   firstName
   lastName
-}`);
+}`),
+    );
   });
 
   it('should return non relation subFields if relation', async () => {
@@ -45,20 +45,28 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
         (field) => field.name === 'company',
       )!,
     });
-    expect(formatGQLString(res)).toEqual(`company
+    expect(normalizeGQLField(res)).toEqual(
+      normalizeGQLField(`company
 {
 __typename
 xLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 linkedinLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 domainName
+{
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
+}
 annualRecurringRevenue
 {
   amountMicros
@@ -66,13 +74,24 @@ annualRecurringRevenue
 }
 createdAt
 address
+{
+  addressStreet1
+  addressStreet2
+  addressCity
+  addressState
+  addressCountry
+  addressPostcode
+  addressLat
+  addressLng
+}
 updatedAt
 name
 accountOwnerId
 employees
 id
 idealCustomerProfile
-}`);
+}`),
+    );
   });
 
   it('should return only return relation subFields that are in recordGqlFields', async () => {
@@ -83,10 +102,14 @@ idealCustomerProfile
         people: true,
         xLink: true,
         linkedinLink: true,
-        domainName: true,
+        domainName: {
+          primaryLinkUrl: true,
+          primaryLinkLabel: true,
+          secondaryLinks: true,
+        },
         annualRecurringRevenue: true,
         createdAt: true,
-        address: true,
+        address: { addressStreet1: true },
         updatedAt: true,
         name: true,
         accountOwnerId: true,
@@ -98,13 +121,15 @@ idealCustomerProfile
         (field) => field.name === 'company',
       )!,
     });
-    expect(formatGQLString(res)).toEqual(`company
+    expect(normalizeGQLField(res)).toEqual(
+      normalizeGQLField(`company
 {
 __typename
 xLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 accountOwner
 {
@@ -118,10 +143,16 @@ id
 }
 linkedinLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 domainName
+{
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
+}
 annualRecurringRevenue
 {
   amountMicros
@@ -129,6 +160,16 @@ annualRecurringRevenue
 }
 createdAt
 address
+{
+  addressStreet1
+  addressStreet2
+  addressCity
+  addressState
+  addressCountry
+  addressPostcode
+  addressLat
+  addressLng
+}
 updatedAt
 people
 {
@@ -137,8 +178,9 @@ people
 __typename
 xLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 id
 createdAt
@@ -153,8 +195,9 @@ name
 phone
 linkedinLink
 {
-  label
-  url
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
 }
 updatedAt
 avatarUrl
@@ -167,6 +210,7 @@ accountOwnerId
 employees
 id
 idealCustomerProfile
-}`);
+}`),
+    );
   });
 });

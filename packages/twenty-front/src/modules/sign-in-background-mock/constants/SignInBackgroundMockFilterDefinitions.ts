@@ -1,3 +1,4 @@
+import { COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 
 export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
@@ -5,7 +6,7 @@ export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
     fieldMetadataId: '20202020-5e4e-4007-a630-8a2617914889',
     label: 'Domain Name',
     iconName: 'IconLink',
-    type: 'TEXT',
+    type: 'LINKS',
   },
   {
     fieldMetadataId: '20202020-7fbd-41ad-b64d-25a15ff62f04',
@@ -14,7 +15,7 @@ export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
     type: 'NUMBER',
   },
   {
-    fieldMetadataId: '20202020-6d30-4111-9f40-b4301906fd3c',
+    fieldMetadataId: COMPANY_LABEL_IDENTIFIER_FIELD_METADATA_ID,
     label: 'Name',
     iconName: 'IconBuildingSkyscraper',
     type: 'TEXT',
@@ -23,7 +24,7 @@ export const SIGN_IN_BACKGROUND_MOCK_FILTER_DEFINITIONS = [
     fieldMetadataId: '20202020-ad10-4117-a039-3f04b7a5f939',
     label: 'Address',
     iconName: 'IconMap',
-    type: 'TEXT',
+    type: 'ADDRESS',
   },
   {
     fieldMetadataId: '20202020-0739-495d-8e70-c0807f6b2268',

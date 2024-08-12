@@ -1,3 +1,4 @@
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
@@ -75,7 +76,7 @@ const fieldMultiSelectMock = {
   ],
 };
 
-const fieldRelationMock = {
+export const fieldRelationMock = {
   name: 'fieldRelation',
   type: FieldMetadataType.RELATION,
   fromRelationMetadata: {
@@ -145,13 +146,6 @@ const fieldNumericMock = {
   defaultValue: null,
 };
 
-const fieldProbabilityMock = {
-  name: 'fieldProbability',
-  type: FieldMetadataType.PROBABILITY,
-  isNullable: true,
-  defaultValue: null,
-};
-
 const fieldFullNameMock = {
   name: 'fieldFullName',
   type: FieldMetadataType.FULL_NAME,
@@ -196,6 +190,23 @@ const fieldRawJsonMock = {
   defaultValue: null,
 };
 
+const fieldRichTextMock = {
+  name: 'fieldRichText',
+  type: FieldMetadataType.RICH_TEXT,
+  isNullable: true,
+  defaultValue: null,
+};
+
+const fieldActorMock = {
+  name: 'fieldActor',
+  type: FieldMetadataType.ACTOR,
+  isNullable: true,
+  defaultValue: {
+    source: FieldActorSource.MANUAL,
+    name: '',
+  },
+};
+
 export const fields = [
   fieldUuidMock,
   fieldTextMock,
@@ -206,7 +217,6 @@ export const fields = [
   fieldBooleanMock,
   fieldNumberMock,
   fieldNumericMock,
-  fieldProbabilityMock,
   fieldLinkMock,
   fieldLinksMock,
   fieldCurrencyMock,
@@ -218,6 +228,8 @@ export const fields = [
   fieldPositionMock,
   fieldAddressMock,
   fieldRawJsonMock,
+  fieldRichTextMock,
+  fieldActorMock,
 ];
 
 export const objectMetadataItemMock = {

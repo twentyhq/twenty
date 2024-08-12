@@ -6,18 +6,18 @@ import {
 type FieldContextProviderProps = {
   children: React.ReactNode;
   fieldDefinition: GenericFieldContextType['fieldDefinition'];
-  entityId?: string;
+  recordId?: string;
 };
 
 export const FieldContextProvider = ({
   children,
   fieldDefinition,
-  entityId,
+  recordId,
 }: FieldContextProviderProps) => {
   return (
     <FieldContext.Provider
       value={{
-        entityId: entityId ?? '1',
+        recordId: recordId ?? '1',
         isLabelIdentifier: false,
         recoilScopeId: '1',
         hotkeyScope: 'hotkey-scope',

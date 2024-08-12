@@ -8,10 +8,10 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
-import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 
 export const RecordShowPage = () => {
   const parameters = useParams<{
@@ -40,11 +40,10 @@ export const RecordShowPage = () => {
       <RecordValueSetterEffect recordId={objectRecordId} />
       <PageContainer>
         <PageTitle title={pageTitle} />
-        <PageHeader
-          title={pageName ?? ''}
-          hasBackButton
-          Icon={headerIcon}
-          loading={loading}
+        <RecordShowPageHeader
+          objectNameSingular={objectNameSingular}
+          objectRecordId={objectRecordId}
+          headerIcon={headerIcon}
         >
           <>
             <PageFavoriteButton
@@ -64,7 +63,7 @@ export const RecordShowPage = () => {
               objectNameSingular={objectNameSingular}
             />
           </>
-        </PageHeader>
+        </RecordShowPageHeader>
         <PageBody>
           <TimelineActivityContext.Provider
             value={{

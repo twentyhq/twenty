@@ -1,4 +1,8 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  WorkspaceMigrationException,
+  WorkspaceMigrationExceptionCode,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
 export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
   fieldMetadataType: Type,
@@ -11,6 +15,7 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.UUID:
       return 'uuid';
     case FieldMetadataType.TEXT:
+    case FieldMetadataType.RICH_TEXT:
       return 'text';
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
@@ -18,7 +23,6 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.NUMERIC:
       return 'numeric';
     case FieldMetadataType.NUMBER:
-    case FieldMetadataType.PROBABILITY:
     case FieldMetadataType.POSITION:
       return 'float';
     case FieldMetadataType.BOOLEAN:
@@ -34,6 +38,9 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.RAW_JSON:
       return 'jsonb';
     default:
-      throw new Error(`Cannot convert ${fieldMetadataType} to column type.`);
+      throw new WorkspaceMigrationException(
+        `Cannot convert ${fieldMetadataType} to column type.`,
+        WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
+      );
   }
 };

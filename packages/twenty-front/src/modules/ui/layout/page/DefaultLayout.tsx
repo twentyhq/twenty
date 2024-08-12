@@ -1,9 +1,7 @@
-import { Outlet } from 'react-router-dom';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-
-import { AuthModal } from '@/auth/components/Modal';
+import { Outlet } from 'react-router-dom';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
@@ -16,12 +14,13 @@ import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/DesktopNavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useScreenSize } from '@/ui/utilities/screen-size/hooks/useScreenSize';
+import { AuthModal } from '@/auth/components/AuthModal';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh;
   position: relative;
   scrollbar-color: ${({ theme }) => theme.border.color.medium};
   scrollbar-width: 4px;

@@ -1,7 +1,8 @@
 import { EntityManager } from 'typeorm';
 
-import { DEV_SEED_PERSON_IDS } from 'src/database/typeorm-seeds/workspace/people';
 import { DEV_SEED_COMPANY_IDS } from 'src/database/typeorm-seeds/workspace/companies';
+import { DEV_SEED_PERSON_IDS } from 'src/database/typeorm-seeds/workspace/people';
+import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
 
 const tableName = 'opportunity';
 
@@ -25,11 +26,13 @@ export const seedOpportunity = async (
       'amountAmountMicros',
       'amountCurrencyCode',
       'closeDate',
-      'probability',
       'stage',
       'position',
       'pointOfContactId',
       'companyId',
+      'createdBySource',
+      'createdByWorkspaceMemberId',
+      'createdByName',
     ])
     .orIgnore()
     .values([
@@ -39,11 +42,13 @@ export const seedOpportunity = async (
         amountAmountMicros: 100000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
-        probability: 0.5,
         stage: 'NEW',
         position: 1,
         pointOfContactId: DEV_SEED_PERSON_IDS.CHRISTOPH,
         companyId: DEV_SEED_COMPANY_IDS.LINKEDIN,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
+        createdByName: 'Jony Ive',
       },
       {
         id: DEV_SEED_OPPORTUNITY_IDS.OPPORTUNITY_2,
@@ -51,11 +56,13 @@ export const seedOpportunity = async (
         amountAmountMicros: 2000000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
-        probability: 0.5,
         stage: 'MEETING',
         position: 2,
         pointOfContactId: DEV_SEED_PERSON_IDS.CHRISTOPHER_G,
         companyId: DEV_SEED_COMPANY_IDS.FACEBOOK,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
+        createdByName: 'Jony Ive',
       },
       {
         id: DEV_SEED_OPPORTUNITY_IDS.OPPORTUNITY_3,
@@ -63,11 +70,13 @@ export const seedOpportunity = async (
         amountAmountMicros: 300000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
-        probability: 0.5,
         stage: 'PROPOSAL',
         position: 3,
         pointOfContactId: DEV_SEED_PERSON_IDS.NICHOLAS,
         companyId: DEV_SEED_COMPANY_IDS.MICROSOFT,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
+        createdByName: 'Jony Ive',
       },
       {
         id: DEV_SEED_OPPORTUNITY_IDS.OPPORTUNITY_4,
@@ -75,11 +84,13 @@ export const seedOpportunity = async (
         amountAmountMicros: 4000000,
         amountCurrencyCode: 'USD',
         closeDate: new Date(),
-        probability: 0.5,
         stage: 'PROPOSAL',
         position: 4,
         pointOfContactId: DEV_SEED_PERSON_IDS.MATTHEW,
         companyId: DEV_SEED_COMPANY_IDS.MICROSOFT,
+        createdBySource: 'MANUAL',
+        createdByWorkspaceMemberId: null,
+        createdByName: '',
       },
     ])
     .execute();

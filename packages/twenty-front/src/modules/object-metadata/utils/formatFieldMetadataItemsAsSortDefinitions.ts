@@ -1,6 +1,6 @@
 import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { SORTABLE_FIELD_METADATA_TYPES } from '@/object-metadata/constants/SortableFieldMetadataTypes';
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatFieldMetadataItemsAsSortDefinitions = ({
@@ -9,17 +9,7 @@ export const formatFieldMetadataItemsAsSortDefinitions = ({
   fields: Array<ObjectMetadataItem['fields'][0]>;
 }): SortDefinition[] =>
   fields.reduce((acc, field) => {
-    if (
-      ![
-        FieldMetadataType.DateTime,
-        FieldMetadataType.Date,
-        FieldMetadataType.Number,
-        FieldMetadataType.Text,
-        FieldMetadataType.Boolean,
-        FieldMetadataType.Select,
-        FieldMetadataType.Phone,
-      ].includes(field.type)
-    ) {
+    if (!SORTABLE_FIELD_METADATA_TYPES.includes(field.type)) {
       return acc;
     }
 

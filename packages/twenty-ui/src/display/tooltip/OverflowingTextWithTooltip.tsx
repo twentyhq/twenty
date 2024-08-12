@@ -86,7 +86,7 @@ export const OverflowingTextWithTooltip = ({
           <div onClick={handleTooltipClick}>
             <AppTooltip
               anchorSelect={`#${textElementId}`}
-              content={mutliline ? undefined : text ?? ''}
+              content={mutliline ? undefined : (text ?? '')}
               offset={5}
               isOpen
               noArrow

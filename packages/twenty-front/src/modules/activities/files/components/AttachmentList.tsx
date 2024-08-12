@@ -1,5 +1,5 @@
-import { ReactElement, useState } from 'react';
 import styled from '@emotion/styled';
+import { ReactElement, useState } from 'react';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -34,7 +34,7 @@ const StyledTitleBar = styled.h3`
   width: 100%;
 `;
 
-const StyledTitle = styled.h3`
+const StyledTitle = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;

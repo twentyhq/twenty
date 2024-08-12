@@ -1,9 +1,9 @@
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
-  WorkspaceMigrationTableAction,
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnCreate,
+  WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -24,6 +24,7 @@ export const buildMigrationsToCreateRemoteTableRelations = (
         }),
         columnType: primaryKeyColumnType,
         isNullable: true,
+        defaultValue: null,
       } satisfies WorkspaceMigrationColumnCreate,
     ],
   }));

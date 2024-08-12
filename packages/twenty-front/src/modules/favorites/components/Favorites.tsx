@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { Avatar } from 'twenty-ui';
+import { Avatar, isDefined } from 'twenty-ui';
 
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
@@ -10,8 +10,8 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { useFavorites } from '../hooks/useFavorites';
 
 const StyledContainer = styled(NavigationDrawerSection)`
@@ -35,6 +35,8 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
 `;
 
 export const Favorites = () => {
+  const currentUser = useRecoilValue(currentUserState);
+
   const { favorites, handleReorderFavorite } = useFavorites();
   const loading = useIsPrefetchLoading();
 
@@ -42,7 +44,7 @@ export const Favorites = () => {
     useNavigationSection('Favorites');
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
 
-  if (loading) {
+  if (loading && isDefined(currentUser)) {
     return <FavoritesSkeletonLoader />;
   }
 
@@ -80,8 +82,8 @@ export const Favorites = () => {
                         label={labelIdentifier}
                         Icon={() => (
                           <StyledAvatar
-                            entityId={recordId}
-                            avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl)}
+                            placeholderColorSeed={recordId}
+                            avatarUrl={avatarUrl}
                             type={avatarType}
                             placeholder={labelIdentifier}
                             className="fav-avatar"

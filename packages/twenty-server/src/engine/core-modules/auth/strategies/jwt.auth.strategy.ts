@@ -1,23 +1,23 @@
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
-import { assert } from 'src/utils/assert';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 
 export type JwtPayload = { sub: string; workspaceId: string; jti?: string };
-export type PassportUser = { user?: User; workspace: Workspace };
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -37,15 +37,28 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: JwtPayload): Promise<PassportUser> {
+  async validate(payload: JwtPayload): Promise<AuthContext> {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.workspaceId ?? payload.sub,
     });
+    let user: User | null = null;
+    let apiKey: ApiKeyWorkspaceEntity | null = null;
 
     if (!workspace) {
-      throw new UnauthorizedException();
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
     }
+
     if (payload.jti) {
+      // TODO: Check why it's not working
+      // const apiKeyRepository =
+      //   await this.twentyORMGlobalManager.getRepositoryForWorkspace<ApiKeyWorkspaceEntity>(
+      //     workspace.id,
+      //     'apiKey',
+      //   );
+
       const dataSourceMetadata =
         await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
           workspace.id,
@@ -54,18 +67,20 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       const workspaceDataSource =
         await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-      const apiKey = await workspaceDataSource?.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."apiKey" WHERE id = '${payload.jti}'`,
+      const res = await workspaceDataSource?.query(
+        `SELECT * FROM ${dataSourceMetadata.schema}."apiKey" WHERE id = $1`,
+        [payload.jti],
       );
 
-      assert(
-        apiKey.length === 1 && !apiKey?.[0].revokedAt,
-        'This API Key is revoked',
-        ForbiddenException,
-      );
+      apiKey = res?.[0];
+
+      if (!apiKey || apiKey.revokedAt) {
+        throw new AuthException(
+          'This API Key is revoked',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
     }
-
-    let user;
 
     if (payload.workspaceId) {
       user = await this.userRepository.findOne({
@@ -73,10 +88,13 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         relations: ['defaultWorkspace'],
       });
       if (!user) {
-        throw new UnauthorizedException();
+        throw new AuthException(
+          'User not found',
+          AuthExceptionCode.INVALID_INPUT,
+        );
       }
     }
 
-    return { user, workspace };
+    return { user, apiKey, workspace };
   }
 }

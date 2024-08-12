@@ -2,15 +2,15 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { WorkspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { WorkspaceQueryBuilderOptions } from 'src/engine/api/graphql/workspace-query-builder/interfaces/workspace-query-builder-options.interface';
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { stringifyWithoutKeyQuote } from 'src/engine/api/graphql/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
-import { FieldsStringFactory } from './fields-string.factory';
 import { ArgsAliasFactory } from './args-alias.factory';
+import { FieldsStringFactory } from './fields-string.factory';
 
 @Injectable()
 export class CreateManyQueryFactory {
@@ -30,8 +30,9 @@ export class CreateManyQueryFactory {
       options.fieldMetadataCollection,
       options.objectMetadataCollection,
     );
-    const computedArgs = this.argsAliasFactory.create(
-      args,
+
+    const computedArgsData = this.argsAliasFactory.create(
+      args.data,
       options.fieldMetadataCollection,
     );
 
@@ -40,7 +41,7 @@ export class CreateManyQueryFactory {
         insertInto${computeObjectTargetTable(
           options.objectMetadataItem,
         )}Collection(objects: ${stringifyWithoutKeyQuote(
-          computedArgs.data.map((datum) => ({
+          computedArgsData.map((datum) => ({
             id: uuidv4(),
             ...datum,
           })),

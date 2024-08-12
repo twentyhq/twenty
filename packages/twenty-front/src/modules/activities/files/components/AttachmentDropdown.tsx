@@ -1,4 +1,9 @@
-import { IconDotsVertical, IconDownload, IconTrash } from 'twenty-ui';
+import {
+  IconDotsVertical,
+  IconDownload,
+  IconPencil,
+  IconTrash,
+} from 'twenty-ui';
 
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -10,12 +15,14 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 type AttachmentDropdownProps = {
   onDownload: () => void;
   onDelete: () => void;
+  onRename: () => void;
   scopeKey: string;
 };
 
 export const AttachmentDropdown = ({
   onDownload,
   onDelete,
+  onRename,
   scopeKey,
 }: AttachmentDropdownProps) => {
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
@@ -32,6 +39,11 @@ export const AttachmentDropdown = ({
     closeDropdown();
   };
 
+  const handleRename = () => {
+    onRename();
+    closeDropdown();
+  };
+
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -45,6 +57,11 @@ export const AttachmentDropdown = ({
               text="Download"
               LeftIcon={IconDownload}
               onClick={handleDownload}
+            />
+            <MenuItem
+              text="Rename"
+              LeftIcon={IconPencil}
+              onClick={handleRename}
             />
             <MenuItem
               text="Delete"

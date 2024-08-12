@@ -78,18 +78,6 @@ describe('validateDefaultValueForType', () => {
     ).toBe(false);
   });
 
-  it('should validate number default value for PROBABILITY type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.PROBABILITY, 0.5).isValid,
-    ).toBe(true);
-  });
-
-  it('should return false for invalid number default value for PROBABILITY type', () => {
-    expect(
-      validateDefaultValueForType(FieldMetadataType.PROBABILITY, '50%').isValid,
-    ).toBe(false);
-  });
-
   it('should validate boolean default value for BOOLEAN type', () => {
     expect(
       validateDefaultValueForType(FieldMetadataType.BOOLEAN, true).isValid,

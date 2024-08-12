@@ -1,19 +1,18 @@
 import {
   Controller,
   Headers,
-  Req,
-  RawBodyRequest,
   Logger,
   Post,
+  RawBodyRequest,
+  Req,
   Res,
 } from '@nestjs/common';
 
 import { Response } from 'express';
 
-import {
-  BillingService,
-  WebhookEvent,
-} from 'src/engine/core-modules/billing/billing.service';
+import { WebhookEvent } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingWebhookService } from 'src/engine/core-modules/billing/services/billing-webhook.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
 
 @Controller('billing')
@@ -22,7 +21,8 @@ export class BillingController {
 
   constructor(
     private readonly stripeService: StripeService,
-    private readonly billingService: BillingService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingWehbookService: BillingWebhookService,
   ) {}
 
   @Post('/webhooks')
@@ -42,7 +42,7 @@ export class BillingController {
     );
 
     if (event.type === WebhookEvent.SETUP_INTENT_SUCCEEDED) {
-      await this.billingService.handleUnpaidInvoices(event.data);
+      await this.billingSubscriptionService.handleUnpaidInvoices(event.data);
     }
 
     if (
@@ -58,7 +58,7 @@ export class BillingController {
         return;
       }
 
-      await this.billingService.upsertBillingSubscription(
+      await this.billingWehbookService.processStripeEvent(
         workspaceId,
         event.data,
       );

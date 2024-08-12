@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 
-import { shouldFilterException } from 'src/engine/utils/global-exception-handler.util';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { LoggerService } from 'src/engine/integrations/logger/logger.service';
+import { shouldFilterException } from 'src/engine/utils/global-exception-handler.util';
 import { QueueWorkerModule } from 'src/queue-worker/queue-worker.module';
 
 async function bootstrap() {
@@ -18,7 +18,7 @@ async function bootstrap() {
     exceptionHandlerService = app.get(ExceptionHandlerService);
 
     // Inject our logger
-    app.useLogger(loggerService!);
+    app.useLogger(loggerService ?? false);
   } catch (err) {
     loggerService?.error(err?.message, err?.name);
 

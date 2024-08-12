@@ -40,6 +40,7 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     targetFieldMetadataName:
       field.relationDefinition?.targetFieldMetadata?.name ?? '',
     options: field.options,
+    isNullable: field.isNullable,
   };
 
   return {

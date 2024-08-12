@@ -1,0 +1,51 @@
+---
+title: Upgrade guide
+icon: TbCloud
+image: /images/user-guide/notes/notes_header.png
+---
+
+## General guidelines 
+
+Always make sure to backup your database before starting the upgrade process.
+
+## If you used Docker Compose
+
+1. In a terminal, on the host where Twenty is running, turn off Twenty: `docker compose down`
+
+2. Upgrade the version by changing the `TAG` value in the .env file near your docker-compose.
+
+3. Bring Twenty back online with `docker-compose up -d`
+ 
+## Data Migration
+
+Migrating a CRM is a bit trickier than migrating a traditional software, because the data model of Standard Object has to evolve smoothly along your custom objects.
+
+## v0.21.0 to v0.22.0
+
+Run the following commands:
+
+```
+yarn database:migrate:prod 
+yarn command:prod workspace:sync-metadata -f 
+yarn command:prod upgrade-0.22
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the Database.  
+The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.  
+The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
+
+## v0.22.0 to v0.23.0
+
+Run the following commands:
+
+```
+yarn database:migrate:prod 
+yarn command:prod workspace:sync-metadata -f 
+yarn command:prod upgrade-0.23
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the Database.  
+The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces. We're introducing Task and Notes as standard object and will be deprecating the Activity object.
+The `yarn command:prod upgrade-0.23` takes care of the data migration, including transferring activities to tasks/notes.
+
+<ArticleEditContent></ArticleEditContent>

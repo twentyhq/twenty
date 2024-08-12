@@ -1,29 +1,20 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
-  Entity,
-  Unique,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   ManyToOne,
+  PrimaryGeneratedColumn,
   Relation,
+  Unique,
+  UpdateDateColumn,
 } from 'typeorm';
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-
-export enum FeatureFlagKeys {
-  IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
-  IsEventObjectEnabled = 'IS_EVENT_OBJECT_ENABLED',
-  IsAirtableIntegrationEnabled = 'IS_AIRTABLE_INTEGRATION_ENABLED',
-  IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
-  IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
-  IsContactCreationForSentAndReceivedEmailsEnabled = 'IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED',
-  IsGoogleCalendarSyncV2Enabled = 'IS_GOOGLE_CALENDAR_SYNC_V2_ENABLED',
-}
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'featureFlag', schema: 'core' })
 @ObjectType('FeatureFlag')
@@ -33,9 +24,9 @@ export class FeatureFlagEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field()
+  @Field(() => String)
   @Column({ nullable: false, type: 'text' })
-  key: FeatureFlagKeys;
+  key: FeatureFlagKey;
 
   @Field()
   @Column({ nullable: false, type: 'uuid' })

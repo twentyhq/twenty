@@ -1,27 +1,35 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import {
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
+import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
-import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.opportunity,
@@ -30,6 +38,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
   labelPlural: 'Opportunities',
   description: 'An opportunity',
   icon: 'IconTargetArrow',
+  labelIdentifierStandardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
 export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
@@ -63,16 +72,6 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   closeDate: Date | null;
 
   @WorkspaceField({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probability,
-    type: FieldMetadataType.TEXT,
-    label: 'Probability',
-    description: 'Opportunity probability',
-    icon: 'IconProgressCheck',
-    defaultValue: "'0'",
-  })
-  probability: string;
-
-  @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
     type: FieldMetadataType.SELECT,
     label: 'Stage',
@@ -92,6 +91,7 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: "'NEW'",
   })
+  @WorkspaceIndex()
   stage: string;
 
   @WorkspaceField({
@@ -104,6 +104,19 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   position: number | null;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: 'Created by',
+    icon: 'IconCreativeCommonsSa',
+    description: 'The creator of the record',
+    defaultValue: {
+      source: `'${FieldActorSource.MANUAL}'`,
+      name: "''",
+    },
+  })
+  createdBy: ActorMetadata;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
@@ -160,7 +173,30 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
   activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.taskTargets,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Tasks',
+    description: 'Tasks tied to the opportunity',
+    icon: 'IconCheckbox',
+    inverseSideTarget: () => TaskTargetWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.noteTargets,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Notes',
+    description: 'Notes tied to the opportunity',
+    icon: 'IconNotes',
+    inverseSideTarget: () => NoteTargetWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.attachments,
@@ -185,4 +221,15 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceField({
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probabilityDeprecated,
+    type: FieldMetadataType.TEXT,
+    label: 'Probability',
+    description: 'Opportunity probability',
+    icon: 'IconProgressCheck',
+    defaultValue: "'0'",
+  })
+  @WorkspaceIsDeprecated()
+  probability: string;
 }

@@ -1,28 +1,36 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import {
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
-import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
+import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { COMPANY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
-import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { AddressMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
@@ -31,6 +39,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
   labelPlural: 'Companies',
   description: 'A company',
   icon: 'IconBuildingSkyscraper',
+  labelIdentifierStandardId: COMPANY_STANDARD_FIELD_IDS.name,
 })
 export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -44,22 +53,13 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.domainName,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.LINKS,
     label: 'Domain Name',
     description:
       'The company website URL. We use this url to fetch the company icon',
     icon: 'IconLink',
   })
-  domainName?: string;
-
-  @WorkspaceField({
-    standardId: COMPANY_STANDARD_FIELD_IDS.address,
-    type: FieldMetadataType.TEXT,
-    label: 'Address',
-    description: 'The company address',
-    icon: 'IconMap',
-  })
-  address: string;
+  domainName?: LinksMetadata;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.employees,
@@ -73,23 +73,23 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
-    type: FieldMetadataType.LINK,
+    type: FieldMetadataType.LINKS,
     label: 'Linkedin',
     description: 'The company Linkedin account',
     icon: 'IconBrandLinkedin',
   })
   @WorkspaceIsNullable()
-  linkedinLink: LinkMetadata | null;
+  linkedinLink: LinksMetadata | null;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.xLink,
-    type: FieldMetadataType.LINK,
+    type: FieldMetadataType.LINKS,
     label: 'X',
     description: 'The company Twitter/X account',
     icon: 'IconBrandX',
   })
   @WorkspaceIsNullable()
-  xLink: LinkMetadata | null;
+  xLink: LinksMetadata | null;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.annualRecurringRevenue,
@@ -101,6 +101,16 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   annualRecurringRevenue: CurrencyMetadata | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.address,
+    type: FieldMetadataType.ADDRESS,
+    label: 'Address',
+    description: 'Address of the company',
+    icon: 'IconMap',
+  })
+  @WorkspaceIsNullable()
+  address: AddressMetadata;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.idealCustomerProfile,
@@ -123,6 +133,19 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   position: number | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: 'Created by',
+    icon: 'IconCreativeCommonsSa',
+    description: 'The creator of the record',
+    defaultValue: {
+      source: `'${FieldActorSource.MANUAL}'`,
+      name: "''",
+    },
+  })
+  createdBy: ActorMetadata;
 
   // Relations
   @WorkspaceRelation({
@@ -164,7 +187,30 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
   activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: COMPANY_STANDARD_FIELD_IDS.taskTargets,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Tasks',
+    description: 'Tasks tied to the company',
+    icon: 'IconCheckbox',
+    inverseSideTarget: () => TaskTargetWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: COMPANY_STANDARD_FIELD_IDS.noteTargets,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Notes',
+    description: 'Notes tied to the company',
+    icon: 'IconNotes',
+    inverseSideTarget: () => NoteTargetWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.opportunities,
@@ -215,4 +261,16 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.address_deprecated,
+    type: FieldMetadataType.TEXT,
+    label: 'Address (deprecated) ',
+    description:
+      'Address of the company - deprecated in favor of new address field',
+    icon: 'IconMap',
+  })
+  @WorkspaceIsDeprecated()
+  @WorkspaceIsNullable()
+  addressOld: string;
 }

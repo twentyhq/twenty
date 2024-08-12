@@ -9,7 +9,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldBoolean } from '../../types/guards/isFieldBoolean';
 
 export const useBooleanField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
     FieldMetadataType.Boolean,
@@ -21,7 +21,7 @@ export const useBooleanField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<boolean>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );

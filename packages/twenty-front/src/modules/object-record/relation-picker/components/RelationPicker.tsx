@@ -11,7 +11,7 @@ import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRela
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 
 export type RelationPickerProps = {
-  recordId?: string;
+  selectedRecordId?: string;
   onSubmit: (selectedEntity: EntityForSelect | null) => void;
   onCancel?: () => void;
   width?: number;
@@ -21,7 +21,7 @@ export type RelationPickerProps = {
 };
 
 export const RelationPicker = ({
-  recordId,
+  selectedRecordId,
   onSubmit,
   onCancel,
   excludeRecordIds,
@@ -52,7 +52,7 @@ export const RelationPicker = ({
     ({ id }) => id === fieldDefinition.metadata.relationFieldMetadataId,
   );
 
-  const { entityId } = useContext(FieldContext);
+  const { recordId } = useContext(FieldContext);
 
   const { createNewRecordAndOpenRightDrawer } =
     useAddNewRecordAndOpenRightDrawer({
@@ -60,7 +60,7 @@ export const RelationPicker = ({
         fieldDefinition.metadata.relationObjectMetadataNameSingular,
       relationObjectMetadataItem,
       relationFieldMetadataItem,
-      entityId,
+      recordId,
     });
 
   return (
@@ -75,7 +75,7 @@ export const RelationPicker = ({
         fieldDefinition.metadata.relationObjectMetadataNameSingular
       }
       relationPickerScopeId={relationPickerScopeId}
-      selectedRelationRecordIds={recordId ? [recordId] : []}
+      selectedRelationRecordIds={selectedRecordId ? [selectedRecordId] : []}
       excludedRelationRecordIds={excludeRecordIds}
     />
   );

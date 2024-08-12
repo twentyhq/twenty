@@ -9,14 +9,15 @@ import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocus
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 
 export type RecordTableContextProps = {
+  viewBarId: string;
   objectMetadataItem: ObjectMetadataItem;
   onUpsertRecord: ({
     persistField,
-    entityId,
+    recordId,
     fieldName,
   }: {
     persistField: () => void;
-    entityId: string;
+    recordId: string;
     fieldName: string;
   }) => void;
   onOpenTableCell: (args: OpenTableCellArgs) => void;
@@ -26,6 +27,8 @@ export type RecordTableContextProps = {
   onContextMenu: (event: React.MouseEvent, recordId: string) => void;
   onCellMouseEnter: (args: HandleContainerMouseEnterArgs) => void;
   visibleTableColumns: ColumnDefinition<FieldMetadata>[];
+  recordTableId: string;
+  objectNameSingular: string;
 };
 
 export const RecordTableContext = createContext<RecordTableContextProps>(

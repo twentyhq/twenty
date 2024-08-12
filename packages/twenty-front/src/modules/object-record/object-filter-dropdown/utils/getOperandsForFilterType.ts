@@ -20,6 +20,7 @@ export const getOperandsForFilterType = (
     case 'PHONE':
     case 'LINK':
     case 'LINKS':
+    case 'ACTOR':
       return [
         ViewFilterOperand.Contains,
         ViewFilterOperand.DoesNotContain,
@@ -30,6 +31,13 @@ export const getOperandsForFilterType = (
     case 'DATE_TIME':
     case 'DATE':
       return [
+        ViewFilterOperand.GreaterThan,
+        ViewFilterOperand.LessThan,
+        ...emptyOperands,
+      ];
+    case 'RATING':
+      return [
+        ViewFilterOperand.Is,
         ViewFilterOperand.GreaterThan,
         ViewFilterOperand.LessThan,
         ...emptyOperands,

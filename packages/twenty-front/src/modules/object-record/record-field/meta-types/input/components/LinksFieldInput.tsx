@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconCheck, IconPlus } from 'twenty-ui';
 
@@ -24,7 +24,7 @@ const StyledDropdownMenu = styled(DropdownMenu)`
   top: -1px;
 `;
 
-export type LinksFieldInputProps = {
+type LinksFieldInputProps = {
   onCancel?: () => void;
 };
 
@@ -124,6 +124,33 @@ export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
   };
 
   const handleDeleteLink = (index: number) => {
+    const hasOnlyOneLastLink = links.length === 1;
+
+    if (hasOnlyOneLastLink) {
+      persistLinksField({
+        primaryLinkUrl: '',
+        primaryLinkLabel: '',
+        secondaryLinks: null,
+      });
+
+      handleDropdownClose();
+
+      return;
+    }
+
+    const isRemovingPrimary = index === 0;
+    if (isRemovingPrimary) {
+      const [, nextPrimaryLink, ...nextSecondaryLinks] = links;
+
+      persistLinksField({
+        primaryLinkUrl: nextPrimaryLink.url ?? '',
+        primaryLinkLabel: nextPrimaryLink.label ?? '',
+        secondaryLinks: nextSecondaryLinks,
+      });
+
+      return;
+    }
+
     persistLinksField({
       ...fieldValue,
       secondaryLinks: toSpliced(fieldValue.secondaryLinks ?? [], index - 1, 1),

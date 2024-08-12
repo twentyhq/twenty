@@ -4,7 +4,6 @@ import { GraphQLISODateTime } from '@nestjs/graphql';
 import {
   GraphQLBoolean,
   GraphQLEnumType,
-  GraphQLFloat,
   GraphQLID,
   GraphQLInputObjectType,
   GraphQLInputType,
@@ -17,25 +16,25 @@ import {
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
-  StringFilterType,
+  BigFloatFilterType,
+  BooleanFilterType,
   DateFilterType,
   FloatFilterType,
-  BooleanFilterType,
-  BigFloatFilterType,
   RawJsonFilterType,
+  StringFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
-import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
+import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
 import {
   BigFloatScalarType,
   UUIDScalarType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
 import { RawJSONScalar } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/raw-json.scalar';
-import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
 import { getNumberFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-filter-type.util';
 import { getNumberScalarType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-scalar-type.util';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export interface TypeOptions<T = any> {
   nullable?: boolean;
@@ -73,9 +72,9 @@ export class TypeMapperService {
         ),
       ],
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
-      [FieldMetadataType.PROBABILITY, GraphQLFloat],
       [FieldMetadataType.POSITION, PositionScalarType],
       [FieldMetadataType.RAW_JSON, RawJSONScalar],
+      [FieldMetadataType.RICH_TEXT, GraphQLString],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -109,9 +108,9 @@ export class TypeMapperService {
         ),
       ],
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
-      [FieldMetadataType.PROBABILITY, FloatFilterType],
       [FieldMetadataType.POSITION, FloatFilterType],
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
+      [FieldMetadataType.RICH_TEXT, StringFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
@@ -130,12 +129,12 @@ export class TypeMapperService {
       [FieldMetadataType.BOOLEAN, OrderByDirectionType],
       [FieldMetadataType.NUMBER, OrderByDirectionType],
       [FieldMetadataType.NUMERIC, OrderByDirectionType],
-      [FieldMetadataType.PROBABILITY, OrderByDirectionType],
       [FieldMetadataType.RATING, OrderByDirectionType],
       [FieldMetadataType.SELECT, OrderByDirectionType],
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
       [FieldMetadataType.POSITION, OrderByDirectionType],
       [FieldMetadataType.RAW_JSON, OrderByDirectionType],
+      [FieldMetadataType.RICH_TEXT, OrderByDirectionType],
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);

@@ -1,5 +1,5 @@
-import { useContext, useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { useContext, useEffect } from 'react';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldFocusContext } from '@/object-record/record-field/contexts/FieldFocusContext';
@@ -23,7 +23,11 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/MultiSelectFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('person', 'testMultiSelect'),
+    getFieldDecorator('company', 'testMultiSelect', [
+      'Option 1',
+      'Option 2',
+      'Option 3',
+    ]),
     ComponentDecorator,
   ],
   component: MultiSelectFieldDisplay,

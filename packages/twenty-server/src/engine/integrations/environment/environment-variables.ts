@@ -2,39 +2,42 @@ import { LogLevel } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
+  IsBoolean,
+  IsDefined,
   IsEnum,
+  IsNumber,
   IsOptional,
   IsString,
   IsUrl,
+  Max,
+  Min,
   ValidateIf,
   validateSync,
-  IsBoolean,
-  IsNumber,
-  IsDefined,
-  Min,
-  Max,
 } from 'class-validator';
 
 import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.interface';
 import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
+import { LLMChatModelDriver } from 'src/engine/integrations/llm-chat-model/interfaces/llm-chat-model.interface';
+import { LLMTracingDriver } from 'src/engine/integrations/llm-tracing/interfaces/llm-tracing.interface';
 
-import { assert } from 'src/utils/assert';
+import { CacheStorageType } from 'src/engine/integrations/cache-storage/types/cache-storage-type.enum';
+import { CaptchaDriverType } from 'src/engine/integrations/captcha/interfaces';
 import { CastToStringArray } from 'src/engine/integrations/environment/decorators/cast-to-string-array.decorator';
+import { IsStrictlyLowerThan } from 'src/engine/integrations/environment/decorators/is-strictly-lower-than.decorator';
 import { ExceptionHandlerDriver } from 'src/engine/integrations/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/integrations/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/integrations/logger/interfaces';
-import { IsStrictlyLowerThan } from 'src/engine/integrations/environment/decorators/is-strictly-lower-than.decorator';
-import { CaptchaDriverType } from 'src/engine/integrations/captcha/interfaces';
 import { MessageQueueDriverType } from 'src/engine/integrations/message-queue/interfaces';
-import { CacheStorageType } from 'src/engine/integrations/cache-storage/types/cache-storage-type.enum';
+import { ServerlessDriverType } from 'src/engine/integrations/serverless/serverless.interface';
+import { assert } from 'src/utils/assert';
 
+import { CastToBoolean } from './decorators/cast-to-boolean.decorator';
+import { CastToLogLevelArray } from './decorators/cast-to-log-level-array.decorator';
+import { CastToPositiveNumber } from './decorators/cast-to-positive-number.decorator';
+import { IsAWSRegion } from './decorators/is-aws-region.decorator';
 import { IsDuration } from './decorators/is-duration.decorator';
 import { AwsRegion } from './interfaces/aws-region.interface';
-import { IsAWSRegion } from './decorators/is-aws-region.decorator';
-import { CastToBoolean } from './decorators/cast-to-boolean.decorator';
 import { SupportDriver } from './interfaces/support.interface';
-import { CastToPositiveNumber } from './decorators/cast-to-positive-number.decorator';
-import { CastToLogLevelArray } from './decorators/cast-to-log-level-array.decorator';
 
 export class EnvironmentVariables {
   // Misc
@@ -202,6 +205,30 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 
+  // Custom Code Engine
+  @IsEnum(ServerlessDriverType)
+  @IsOptional()
+  SERVERLESS_TYPE: ServerlessDriverType = ServerlessDriverType.Local;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsAWSRegion()
+  SERVERLESS_LAMBDA_REGION: AwsRegion;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_ROLE: string;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_ACCESS_KEY_ID: string;
+
+  @ValidateIf((env) => env.SERVERLESS_TYPE === ServerlessDriverType.Lambda)
+  @IsString()
+  @IsOptional()
+  SERVERLESS_LAMBDA_SECRET_ACCESS_KEY: string;
+
   // Storage
   @IsEnum(StorageDriverType)
   @IsOptional()
@@ -219,6 +246,16 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   STORAGE_S3_ENDPOINT: string;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  @IsOptional()
+  STORAGE_S3_ACCESS_KEY_ID: string;
+
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
+  @IsString()
+  @IsOptional()
+  STORAGE_S3_SECRET_ACCESS_KEY: string;
 
   @IsString()
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
@@ -357,7 +394,15 @@ export class EnvironmentVariables {
 
   EMAIL_SMTP_PASSWORD: string;
 
-  OPENROUTER_API_KEY: string;
+  LLM_CHAT_MODEL_DRIVER: LLMChatModelDriver;
+
+  OPENAI_API_KEY: string;
+
+  LANGFUSE_SECRET_KEY: string;
+
+  LANGFUSE_PUBLIC_KEY: string;
+
+  LLM_TRACING_DRIVER: LLMTracingDriver = LLMTracingDriver.Console;
 
   @CastToPositiveNumber()
   API_RATE_LIMITING_TTL = 100;

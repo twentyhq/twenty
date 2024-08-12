@@ -3,9 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useGetAvailableFieldsForKanban = () => {
   const { viewObjectMetadataIdState } = useViewStates();
@@ -31,12 +33,21 @@ export const useGetAvailableFieldsForKanban = () => {
   const navigateToSelectSettings = useCallback(() => {
     setNavigationMemorizedUrl(location.pathname + location.search);
 
-    navigate(`/settings/objects/${objectMetadataItem?.namePlural}`);
+    if (isDefined(objectMetadataItem?.namePlural)) {
+      navigate(
+        `/settings/objects/${getObjectSlug(
+          objectMetadataItem,
+        )}/new-field/step-2?fieldType=${FieldMetadataType.Select}`,
+      );
+    } else {
+      navigate(`/settings/objects`);
+    }
   }, [
-    navigate,
-    objectMetadataItem?.namePlural,
     setNavigationMemorizedUrl,
-    location,
+    location.pathname,
+    location.search,
+    objectMetadataItem,
+    navigate,
   ]);
 
   return {

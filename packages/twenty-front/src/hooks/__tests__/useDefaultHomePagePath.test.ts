@@ -7,7 +7,7 @@ import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMet
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { AppPath } from '@/types/AppPath';
 import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
-import { mockedUsersData } from '~/testing/mock-data/users';
+import { mockedUserData } from '~/testing/mock-data/users';
 
 const objectMetadataItem = getObjectMetadataItemsMock()[0];
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
@@ -36,7 +36,7 @@ const renderHooks = (withCurrentUser: boolean) => {
     () => {
       const setCurrentUser = useSetRecoilState(currentUserState);
       if (withCurrentUser) {
-        setCurrentUser(mockedUsersData[0]);
+        setCurrentUser(mockedUserData);
       }
       return useDefaultHomePagePath();
     },

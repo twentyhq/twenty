@@ -1,10 +1,9 @@
+import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { EntityChipVariant, IconEye } from 'twenty-ui';
+import { AvatarChipVariant, IconEye } from 'twenty-ui';
 
-import { RecordChip } from '@/object-record/components/RecordChip';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -14,6 +13,7 @@ import {
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
+import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
@@ -206,6 +206,10 @@ export const RecordBoardCard = () => {
     return null;
   }
 
+  const visibleFieldDefinitionsFiltered = visibleFieldDefinitions.filter(
+    (boardField) => !boardField.isLabelIdentifier,
+  );
+
   return (
     <StyledBoardCardWrapper onContextMenu={handleContextMenu}>
       <RecordValueSetterEffect recordId={recordId} />
@@ -218,10 +222,10 @@ export const RecordBoardCard = () => {
         }}
       >
         <StyledBoardCardHeader showCompactView={isCompactModeActive}>
-          <RecordChip
+          <RecordIdentifierChip
             objectNameSingular={objectMetadataItem.nameSingular}
             record={record}
-            variant={EntityChipVariant.Transparent}
+            variant={AvatarChipVariant.Transparent}
           />
           {isCompactModeActive && (
             <StyledCompactIconContainer className="compact-icon-container">
@@ -237,6 +241,7 @@ export const RecordBoardCard = () => {
           )}
           <StyledCheckboxContainer className="checkbox-container">
             <Checkbox
+              hoverable
               checked={isCurrentCardSelected}
               onChange={() => setIsCurrentCardSelected(!isCurrentCardSelected)}
               variant={CheckboxVariant.Secondary}
@@ -248,13 +253,13 @@ export const RecordBoardCard = () => {
             isOpen={!isCardInCompactMode || !isCompactModeActive}
             initial={false}
           >
-            {visibleFieldDefinitions.map((fieldDefinition) => (
+            {visibleFieldDefinitionsFiltered.map((fieldDefinition) => (
               <PreventSelectOnClickContainer
                 key={fieldDefinition.fieldMetadataId}
               >
                 <FieldContext.Provider
                   value={{
-                    entityId: recordId,
+                    recordId,
                     maxWidth: 156,
                     recoilScopeId: recordId + fieldDefinition.fieldMetadataId,
                     isLabelIdentifier: false,

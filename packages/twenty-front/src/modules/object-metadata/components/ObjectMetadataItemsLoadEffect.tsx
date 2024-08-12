@@ -6,6 +6,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { WorkspaceActivationStatus } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -25,7 +26,7 @@ export const ObjectMetadataItemsLoadEffect = () => {
   useEffect(() => {
     const toSetObjectMetadataItems =
       isUndefinedOrNull(currentUser) ||
-      currentWorkspace?.activationStatus !== 'active'
+      currentWorkspace?.activationStatus !== WorkspaceActivationStatus.Active
         ? getObjectMetadataItemsMock()
         : newObjectMetadataItems;
     if (

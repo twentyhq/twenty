@@ -7,18 +7,22 @@ import { StyledMenuItemSelect } from './MenuItemSelect';
 
 type MenuItemSelectTagProps = {
   selected: boolean;
+  isKeySelected?: boolean;
   className?: string;
   onClick?: () => void;
-  color: ThemeColor;
+  color: ThemeColor | 'transparent';
   text: string;
+  variant?: 'solid' | 'outline';
 };
 
 export const MenuItemSelectTag = ({
   color,
   selected,
+  isKeySelected,
   className,
   onClick,
   text,
+  variant = 'solid',
 }: MenuItemSelectTagProps) => {
   const theme = useTheme();
 
@@ -27,9 +31,10 @@ export const MenuItemSelectTag = ({
       onClick={onClick}
       className={className}
       selected={selected}
+      isKeySelected={isKeySelected}
     >
       <StyledMenuItemLeftContent>
-        <Tag color={color} text={text} />
+        <Tag variant={variant} color={color} text={text} />
       </StyledMenuItemLeftContent>
       {selected && <IconCheck size={theme.icon.size.sm} />}
     </StyledMenuItemSelect>

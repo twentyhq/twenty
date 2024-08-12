@@ -1,5 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
+import { IDField } from '@ptc-org/nestjs-query-graphql';
+import Stripe from 'stripe';
 import {
   Column,
   CreateDateColumn,
@@ -11,12 +13,31 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
-import Stripe from 'stripe';
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+
+export enum SubscriptionStatus {
+  Active = 'active',
+  Canceled = 'canceled',
+  Incomplete = 'incomplete',
+  IncompleteExpired = 'incomplete_expired',
+  PastDue = 'past_due',
+  Paused = 'paused',
+  Trialing = 'trialing',
+  Unpaid = 'unpaid',
+}
+
+export enum SubscriptionInterval {
+  Day = 'day',
+  Month = 'month',
+  Week = 'week',
+  Year = 'year',
+}
+
+registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
+registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
 
 @Entity({ name: 'billingSubscription', schema: 'core' })
 @ObjectType('BillingSubscription')
@@ -49,12 +70,20 @@ export class BillingSubscription {
   @Column({ unique: true, nullable: false })
   stripeSubscriptionId: string;
 
-  @Field(() => String)
-  @Column({ type: 'text', nullable: false })
-  status: Stripe.Subscription.Status;
+  @Field(() => SubscriptionStatus)
+  @Column({
+    type: 'enum',
+    enum: Object.values(SubscriptionStatus),
+    nullable: false,
+  })
+  status: SubscriptionStatus;
 
-  @Field(() => String, { nullable: true })
-  @Column({ type: 'text', nullable: true })
+  @Field(() => SubscriptionInterval, { nullable: true })
+  @Column({
+    type: 'enum',
+    enum: Object.values(SubscriptionInterval),
+    nullable: true,
+  })
   interval: Stripe.Price.Recurring.Interval;
 
   @OneToMany(

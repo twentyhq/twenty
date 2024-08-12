@@ -16,7 +16,7 @@ export const RecordIndexBoardColumnLoaderEffect = ({
 }: {
   recordBoardId: string;
   objectNameSingular: string;
-  boardFieldSelectValue: string;
+  boardFieldSelectValue: string | null;
   boardFieldMetadataId: string | null;
   columnId: string;
 }) => {

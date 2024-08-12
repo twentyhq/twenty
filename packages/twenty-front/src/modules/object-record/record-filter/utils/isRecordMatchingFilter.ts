@@ -2,6 +2,7 @@ import { isObject } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
+  ActorFilter,
   AddressFilter,
   AndObjectRecordFilter,
   BooleanFilter,
@@ -9,6 +10,7 @@ import {
   DateFilter,
   FloatFilter,
   FullNameFilter,
+  LinksFilter,
   NotObjectRecordFilter,
   OrObjectRecordFilter,
   RecordGqlOperationFilter,
@@ -143,6 +145,7 @@ export const isRecordMatchingFilter = ({
       case FieldMetadataType.Email:
       case FieldMetadataType.Phone:
       case FieldMetadataType.Select:
+      case FieldMetadataType.Rating:
       case FieldMetadataType.MultiSelect:
       case FieldMetadataType.Text: {
         return isMatchingStringFilter({
@@ -206,6 +209,23 @@ export const isRecordMatchingFilter = ({
           });
         });
       }
+      case FieldMetadataType.Links: {
+        const linksFilter = filterValue as LinksFilter;
+
+        const keys = ['primaryLinkLabel', 'primaryLinkUrl'] as const;
+
+        return keys.some((key) => {
+          const value = linksFilter[key];
+          if (value === undefined) {
+            return false;
+          }
+
+          return isMatchingStringFilter({
+            stringFilter: value,
+            value: record[filterKey][key],
+          });
+        });
+      }
       case FieldMetadataType.DateTime: {
         return isMatchingDateFilter({
           dateFilter: filterValue as DateFilter,
@@ -236,6 +256,17 @@ export const isRecordMatchingFilter = ({
           currencyFilter: filterValue as CurrencyFilter,
           value: record[filterKey].amountMicros,
         });
+      }
+      case FieldMetadataType.Actor: {
+        const actorFilter = filterValue as ActorFilter;
+
+        return (
+          actorFilter.name === undefined ||
+          isMatchingStringFilter({
+            stringFilter: actorFilter.name,
+            value: record[filterKey].name,
+          })
+        );
       }
       case FieldMetadataType.Relation: {
         throw new Error(

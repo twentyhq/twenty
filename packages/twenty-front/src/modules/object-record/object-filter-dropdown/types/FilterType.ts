@@ -12,4 +12,6 @@ export type FilterType =
   | 'RELATION'
   | 'ADDRESS'
   | 'SELECT'
-  | 'MULTI_SELECT';
+  | 'RATING'
+  | 'MULTI_SELECT'
+  | 'ACTOR';

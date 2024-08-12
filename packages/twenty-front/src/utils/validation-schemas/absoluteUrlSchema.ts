@@ -6,6 +6,18 @@ export const absoluteUrlSchema = z
   .or(
     z
       .string()
-      .transform((value) => `https://${value}`)
+      .transform((value) => {
+        try {
+          const url = `https://${value}`.trim();
+          return isNaN(Number(value.trim())) &&
+            new URL(url) &&
+            /\.[a-z]{2,}$/.test(url)
+            ? url
+            : '';
+        } catch {
+          return '';
+        }
+      })
       .pipe(z.string().url()),
-  );
+  )
+  .or(z.literal(''));

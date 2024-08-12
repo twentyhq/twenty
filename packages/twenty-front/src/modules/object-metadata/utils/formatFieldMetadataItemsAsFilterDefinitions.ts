@@ -34,13 +34,10 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Relation,
         FieldMetadataType.Select,
         FieldMetadataType.Currency,
+        FieldMetadataType.Rating,
+        FieldMetadataType.Actor,
       ].includes(field.type)
     ) {
-      return acc;
-    }
-
-    // Todo: remove once Rating fieldtype is implemented
-    if (field.name === 'probability') {
       return acc;
     }
 
@@ -90,6 +87,10 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'MULTI_SELECT';
     case FieldMetadataType.Address:
       return 'ADDRESS';
+    case FieldMetadataType.Rating:
+      return 'RATING';
+    case FieldMetadataType.Actor:
+      return 'ACTOR';
     default:
       return 'TEXT';
   }

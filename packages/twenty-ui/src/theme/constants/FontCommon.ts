@@ -10,7 +10,7 @@ export const FONT_COMMON = {
   },
   weight: {
     regular: 400,
-    medium: 'var(--twentycrm-font-weight-medium)',
+    medium: 500,
     semiBold: 600,
   },
   family: 'Inter, sans-serif',

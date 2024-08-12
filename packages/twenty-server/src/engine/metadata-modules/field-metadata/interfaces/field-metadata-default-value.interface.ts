@@ -1,16 +1,18 @@
 import {
+  FieldMetadataDefaultActor,
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
   FieldMetadataDefaultValueDateTime,
   FieldMetadataDefaultValueFullName,
-  FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueLink,
+  FieldMetadataDefaultValueLinks,
+  FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueNumber,
+  FieldMetadataDefaultValueRawJson,
+  FieldMetadataDefaultValueRichText,
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueUuidFunction,
-  FieldMetadataDefaultValueNowFunction,
-  FieldMetadataDefaultValueLinks,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -35,7 +37,6 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.POSITION]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.PROBABILITY]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;
   [FieldMetadataType.LINKS]: FieldMetadataDefaultValueLinks;
   [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency;
@@ -45,6 +46,8 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
+  [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
+  [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
 };
 
 export type FieldMetadataClassValidation =

@@ -1,24 +1,28 @@
-import { useCallback, useRef } from 'react';
-import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useDebouncedCallback } from 'use-debounce';
-
 import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/relation-picker/components/MultipleObjectRecordOnClickOutsideEffect';
 import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/components/MultipleObjectRecordSelectItem';
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
 import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-
+import styled from '@emotion/styled';
+import { useCallback, useEffect, useRef } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { Key } from 'ts-key-enum';
+import { IconPlus, isDefined } from 'twenty-ui';
+import { useDebouncedCallback } from 'use-debounce';
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
   width: 100%;
@@ -26,11 +30,15 @@ export const StyledSelectableItem = styled(SelectableItem)`
 export const MultiRecordSelect = ({
   onChange,
   onSubmit,
+  onCreate,
 }: {
   onChange?: (changedRecordForSelectId: string) => void;
   onSubmit?: () => void;
+  onCreate?: ((searchInput?: string) => void) | (() => void);
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const setHotkeyScope = useSetHotkeyScope();
+  const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
   const relationPickerScopedId = useAvailableScopeIdOrThrow(
     RelationPickerScopeInternalContext,
@@ -39,6 +47,9 @@ export const MultiRecordSelect = ({
   const { objectRecordsIdsMultiSelectState, recordMultiSelectIsLoadingState } =
     useObjectRecordMultiSelectScopedStates(relationPickerScopedId);
 
+  const { handleResetSelectedPosition } = useSelectableList(
+    MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
+  );
   const recordMultiSelectIsLoading = useRecoilValue(
     recordMultiSelectIsLoadingState,
   );
@@ -58,12 +69,33 @@ export const MultiRecordSelect = ({
     leading: true,
   });
 
+  useEffect(() => {
+    setHotkeyScope(relationPickerScopedId);
+  }, [setHotkeyScope, relationPickerScopedId]);
+
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onSubmit?.();
+      goBackToPreviousHotkeyScope();
+      handleResetSelectedPosition();
+    },
+    relationPickerScopedId,
+    [onSubmit, goBackToPreviousHotkeyScope, handleResetSelectedPosition],
+  );
+
+  const debouncedOnCreate = useDebouncedCallback(
+    () => onCreate?.(relationPickerSearchFilter),
+    500,
+  );
+
   const handleFilterChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       debouncedSetSearchFilter(event.currentTarget.value);
     },
     [debouncedSetSearchFilter],
   );
+
   return (
     <>
       <MultipleObjectRecordOnClickOutsideEffect
@@ -87,14 +119,21 @@ export const MultiRecordSelect = ({
               <SelectableList
                 selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
                 selectableItemIdArray={objectRecordsIdsMultiSelect}
-                hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+                hotkeyScope={relationPickerScopedId}
+                onEnter={(selectedId) => {
+                  onChange?.(selectedId);
+                  handleResetSelectedPosition();
+                }}
               >
                 {objectRecordsIdsMultiSelect?.map((recordId) => {
                   return (
                     <MultipleObjectRecordSelectItem
                       key={recordId}
                       objectRecordId={recordId}
-                      onChange={onChange}
+                      onChange={(recordId) => {
+                        onChange?.(recordId);
+                        handleResetSelectedPosition();
+                      }}
                     />
                   );
                 })}
@@ -102,6 +141,18 @@ export const MultiRecordSelect = ({
               {objectRecordsIdsMultiSelect?.length === 0 && (
                 <MenuItem text="No result" />
               )}
+            </>
+          )}
+          {isDefined(onCreate) && (
+            <>
+              {objectRecordsIdsMultiSelect.length > 0 && (
+                <DropdownMenuSeparator />
+              )}
+              <CreateNewButton
+                onClick={debouncedOnCreate}
+                LeftIcon={IconPlus}
+                text="Add New"
+              />
             </>
           )}
         </DropdownMenuItemsContainer>

@@ -1,10 +1,10 @@
-import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
 import {
   fields,
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 describe('computeSchemaComponents', () => {
   it('should test all field types', () => {
@@ -53,9 +53,6 @@ describe('computeSchemaComponents', () => {
             type: 'integer',
           },
           fieldNumeric: {
-            type: 'number',
-          },
-          fieldProbability: {
             type: 'number',
           },
           fieldLink: {
@@ -135,6 +132,24 @@ describe('computeSchemaComponents', () => {
             type: 'object',
           },
           fieldRawJson: {
+            type: 'object',
+          },
+          fieldRichText: {
+            type: 'string',
+          },
+          fieldActor: {
+            properties: {
+              source: {
+                type: 'string',
+              },
+              workspaceMemberId: {
+                type: 'string',
+                format: 'uuid',
+              },
+              name: {
+                type: 'string',
+              },
+            },
             type: 'object',
           },
         },

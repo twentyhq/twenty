@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
+import { useContext, useState } from 'react';
 import { IconDotsVertical, Tag } from 'twenty-ui';
 
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
+import { RecordBoardColumnDefinitionType } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
@@ -25,14 +26,11 @@ const StyledAmount = styled.div`
 
 const StyledNumChildren = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.rounded};
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   height: 24px;
   justify-content: center;
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
-  margin-left: auto;
   width: 16px;
 `;
 
@@ -79,14 +77,26 @@ export const RecordBoardColumnHeader = () => {
       >
         <Tag
           onClick={handleBoardColumnMenuOpen}
-          color={columnDefinition.color}
+          variant={
+            columnDefinition.type === RecordBoardColumnDefinitionType.Value
+              ? 'solid'
+              : 'outline'
+          }
+          color={
+            columnDefinition.type === RecordBoardColumnDefinitionType.Value
+              ? columnDefinition.color
+              : 'transparent'
+          }
           text={columnDefinition.title}
+          weight={
+            columnDefinition.type === RecordBoardColumnDefinitionType.Value
+              ? 'regular'
+              : 'medium'
+          }
         />
         {!!boardColumnTotal && <StyledAmount>${boardColumnTotal}</StyledAmount>}
-        {!isHeaderHovered && (
-          <StyledNumChildren>{recordCount}</StyledNumChildren>
-        )}
-        {isHeaderHovered && (
+        <StyledNumChildren>{recordCount}</StyledNumChildren>
+        {isHeaderHovered && columnDefinition.actions.length > 0 && (
           <StyledHeaderActions>
             <LightIconButton
               accent="tertiary"
@@ -96,7 +106,7 @@ export const RecordBoardColumnHeader = () => {
           </StyledHeaderActions>
         )}
       </StyledHeader>
-      {isBoardColumnMenuOpen && (
+      {isBoardColumnMenuOpen && columnDefinition.actions.length > 0 && (
         <RecordBoardColumnDropdownMenu
           onClose={handleBoardColumnMenuClose}
           stageId={columnDefinition.id}

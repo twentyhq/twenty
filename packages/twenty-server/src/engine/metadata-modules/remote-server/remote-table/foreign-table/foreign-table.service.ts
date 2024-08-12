@@ -1,20 +1,24 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import {
   RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
+import {
+  ForeignTableException,
+  ForeignTableExceptionCode,
+} from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception';
 import { getForeignTableColumnName } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/utils/get-foreign-table-column-name.util';
 import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   ReferencedTable,
-  WorkspaceMigrationTableActionType,
+  WorkspaceMigrationColumnAction,
   WorkspaceMigrationForeignColumnDefinition,
   WorkspaceMigrationForeignTable,
-  WorkspaceMigrationColumnAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -73,6 +77,8 @@ export class ForeignTableService {
                     columnName: getForeignTableColumnName(column.columnName),
                     columnType: column.dataType,
                     distantColumnName: column.columnName,
+                    isNullable: false,
+                    defaultValue: null,
                   }) satisfies WorkspaceMigrationForeignColumnDefinition,
               ),
               referencedTable,
@@ -90,8 +96,9 @@ export class ForeignTableService {
     } catch (exception) {
       this.workspaceMigrationService.deleteById(workspaceMigration.id);
 
-      throw new BadRequestException(
+      throw new ForeignTableException(
         'Could not create foreign table. The table may already exists or a column type may not be supported.',
+        ForeignTableExceptionCode.INVALID_FOREIGN_TABLE_INPUT,
       );
     }
   }
@@ -130,7 +137,10 @@ export class ForeignTableService {
     } catch (exception) {
       this.workspaceMigrationService.deleteById(workspaceMigration.id);
 
-      throw new BadRequestException('Could not alter foreign table.');
+      throw new ForeignTableException(
+        'Could not alter foreign table.',
+        ForeignTableExceptionCode.FOREIGN_TABLE_MUTATION_NOT_ALLOWED,
+      );
     }
   }
 
@@ -167,7 +177,10 @@ export class ForeignTableService {
       case RemoteServerType.STRIPE_FDW:
         return { object: distantTableName };
       default:
-        throw new BadRequestException('Foreign data wrapper not supported');
+        throw new ForeignTableException(
+          'Foreign data wrapper not supported',
+          ForeignTableExceptionCode.INVALID_FOREIGN_TABLE_INPUT,
+        );
     }
   }
 }
