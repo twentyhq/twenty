@@ -84,6 +84,7 @@ import { SettingsBilling } from '~/pages/settings/SettingsBilling';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
+import { WorkflowShowPage } from '~/pages/workflows/WorkflowShowPage';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 const ProvidersThatNeedRouterContext = () => {
@@ -162,6 +163,10 @@ const createRouter = (
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />
+          <Route
+            path={AppPath.WorkflowShowPage}
+            element={<WorkflowShowPage />}
+          />
 
           <Route
             path={AppPath.SettingsCatchAll}
