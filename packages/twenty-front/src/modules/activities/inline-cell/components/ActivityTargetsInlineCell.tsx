@@ -79,17 +79,19 @@ export const ActivityTargetsInlineCell = ({
                 editModeContent: (
                   <ActivityTargetInlineCellEditMode
                     activity={activity}
-                    activityTargetWithTargetRecords={activityTargetObjectRecords}
+                    activityTargetWithTargetRecords={
+                      activityTargetObjectRecords
+                    }
                     activityObjectNameSingular={activityObjectNameSingular}
-                />
+                  />
                 ),
-                label: "Relations",
+                label: 'Relations',
                 displayModeContent: (
                   <ActivityTargetChips
                     activityTargetObjectRecords={activityTargetObjectRecords}
                     maxWidth={maxWidth}
                   />
-                )
+                ),
               }}
             >
               <RecordInlineCellContainer />
