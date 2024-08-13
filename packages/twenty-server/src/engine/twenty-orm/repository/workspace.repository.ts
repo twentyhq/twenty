@@ -424,17 +424,9 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
-    const objectMetadataCollection =
-      await this.internalContext.workspaceCacheStorage.getObjectMetadataCollection(
-        this.internalContext.workspaceId,
-      );
 
     const formatedEntity = await this.formatData(entity);
     const result = await manager.insert(this.target, formatedEntity);
-
-    if (!objectMetadataCollection) {
-      throw new Error('Object metadata collection is missing');
-    }
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -618,9 +610,7 @@ export class WorkspaceRepository<
   /**
    * PRIVATE METHODS
    */
-  private async getObjectMetadataFromTarget(
-    objectMetadataCollection: ObjectMetadataEntity[],
-  ) {
+  private async getObjectMetadataFromTarget() {
     const objectMetadataName =
       typeof this.target === 'string'
         ? this.target
@@ -633,7 +623,7 @@ export class WorkspaceRepository<
       throw new Error('Object metadata name is missing');
     }
 
-    const objectMetadata = objectMetadataCollection?.find(
+    const objectMetadata = this.internalContext.objectMetadataCollection.find(
       (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
     );
 
@@ -641,7 +631,7 @@ export class WorkspaceRepository<
       throw new Error(
         `Object metadata for object "${objectMetadataName}" is missing ` +
           `in workspace "${this.internalContext.workspaceId}" ` +
-          `with object metadata collection length: ${objectMetadataCollection?.length}`,
+          `with object metadata collection length: ${this.internalContext.objectMetadataCollection.length}`,
       );
     }
 
@@ -683,9 +673,7 @@ export class WorkspaceRepository<
       ) as Promise<T>;
     }
 
-    const objectMetadata = await this.getObjectMetadataFromTarget(
-      this.internalContext.objectMetadataCollection,
-    );
+    const objectMetadata = await this.getObjectMetadataFromTarget();
 
     const compositeFieldMetadataCollection =
       await this.getCompositeFieldMetadataCollection(objectMetadata);
@@ -737,9 +725,7 @@ export class WorkspaceRepository<
     data: T,
     objectMetadata?: ObjectMetadataEntity,
   ): Promise<T> {
-    objectMetadata ??= await this.getObjectMetadataFromTarget(
-      this.internalContext.objectMetadataCollection,
-    );
+    objectMetadata ??= await this.getObjectMetadataFromTarget();
 
     if (!data) {
       return data;
