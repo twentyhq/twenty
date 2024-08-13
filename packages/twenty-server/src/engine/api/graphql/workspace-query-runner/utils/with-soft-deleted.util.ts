@@ -18,8 +18,10 @@ export const withSoftDeleted = <T extends RecordFilter>(
       return true;
     }
 
-    if (typeof value === 'object') {
-      return withSoftDeleted(value);
+    if (typeof value === 'object' && value !== null) {
+      if (withSoftDeleted(value)) {
+        return true;
+      }
     }
   }
 

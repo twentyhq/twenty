@@ -1,9 +1,10 @@
-import { ReactNode, useMemo } from 'react';
 import styled from '@emotion/styled';
+import { ReactNode, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
@@ -15,7 +16,6 @@ import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { VariantFilterChip } from './VariantFilterChip';
-import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
