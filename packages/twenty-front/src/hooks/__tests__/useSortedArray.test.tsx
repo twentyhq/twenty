@@ -2,16 +2,16 @@ import { renderHook } from '@testing-library/react';
 import React, { ReactNode } from 'react';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 
-import { sortedFieldByTableFamilyState } from '@/activities/states/tableSortFamilyState';
-import { OrderBy } from '@/object-metadata/types/OrderBy';
 import {
-    mockedTableData as tableData,
-    tableDataSortedByFieldsCountInAscendingOrder,
-    tableDataSortedByFieldsCountInDescendingOrder,
-    tableDataSortedBylabelInAscendingOrder,
-    tableDataSortedBylabelInDescendingOrder,
+  mockedTableData as tableData,
+  tableDataSortedByFieldsCountInAscendingOrder,
+  tableDataSortedByFieldsCountInDescendingOrder,
+  tableDataSortedBylabelInAscendingOrder,
+  tableDataSortedBylabelInDescendingOrder,
 } from '~/testing/mock-data/tableData';
 
+import { OrderBy } from '@/types/OrderBy';
+import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { useSortedArray } from '../useSortedArray';
 
 interface WrapperProps {
@@ -30,7 +30,6 @@ describe('useSortedArray hook', () => {
       set(
         sortedFieldByTableFamilyState({
           tableId: 'SettingsObjectDetail',
-          initialFieldName: 'labelPlural',
         }),
         {
           fieldName,
@@ -44,7 +43,7 @@ describe('useSortedArray hook', () => {
       () =>
         useSortedArray(tableData, {
           tableId: 'SettingsObjectDetail',
-          initialFieldName: 'labelPlural',
+          fields: [],
         }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
@@ -67,7 +66,7 @@ describe('useSortedArray hook', () => {
       () =>
         useSortedArray(tableData, {
           tableId: 'SettingsObjectDetail',
-          initialFieldName: 'labelPlural',
+          fields: [],
         }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
@@ -90,7 +89,7 @@ describe('useSortedArray hook', () => {
       () =>
         useSortedArray(tableData, {
           tableId: 'SettingsObjectDetail',
-          initialFieldName: 'labelPlural',
+          fields: [],
         }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
@@ -113,7 +112,7 @@ describe('useSortedArray hook', () => {
       () =>
         useSortedArray(tableData, {
           tableId: 'SettingsObjectDetail',
-          initialFieldName: 'labelPlural',
+          fields: [],
         }),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
