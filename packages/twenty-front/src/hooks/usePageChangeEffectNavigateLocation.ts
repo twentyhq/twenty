@@ -99,6 +99,14 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.Completed &&
+    subscriptionStatus === SubscriptionStatus.Canceled &&
+    isMatchingLocation(AppPath.PlanRequired)
+  ) {
+    return;
+  }
+
+  if (
+    onboardingStatus === OnboardingStatus.Completed &&
     isMatchingOnboardingRoute
   ) {
     return defaultHomePagePath;

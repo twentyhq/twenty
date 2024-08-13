@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { DataSource } from 'typeorm';
+import { DataSource, QueryFailedError } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
@@ -150,6 +150,10 @@ export class WorkspaceSyncMetadataService {
       );
     } catch (error) {
       this.logger.error('Sync of standard objects failed with:', error);
+
+      if (error instanceof QueryFailedError && (error as any).detail) {
+        this.logger.error((error as any).detail);
+      }
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();

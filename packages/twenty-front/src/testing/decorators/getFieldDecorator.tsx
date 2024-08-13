@@ -14,18 +14,21 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 import { getPeopleMock } from '~/testing/mock-data/people';
+import { mockedTasks } from '~/testing/mock-data/tasks';
 import { isDefined } from '~/utils/isDefined';
 
 const RecordMockSetterEffect = ({
   companies,
   people,
+  tasks,
 }: {
   companies: ObjectRecord[];
   people: ObjectRecord[];
+  tasks: ObjectRecord[];
 }) => {
   const setRecordValue = useSetRecordValue();
 
-  const setRecordInBothStores = useRecoilCallback(
+  const setRecordInStores = useRecoilCallback(
     ({ set }) =>
       (record: ObjectRecord) => {
         set(recordStoreFamilyState(record.id), record);
@@ -36,20 +39,24 @@ const RecordMockSetterEffect = ({
 
   useEffect(() => {
     for (const company of companies) {
-      setRecordInBothStores(company);
+      setRecordInStores(company);
     }
 
     for (const person of people) {
-      setRecordInBothStores(person);
+      setRecordInStores(person);
     }
-  }, [setRecordInBothStores, companies, people]);
+
+    for (const task of tasks) {
+      setRecordInStores(task);
+    }
+  }, [companies, people, tasks, setRecordInStores]);
 
   return null;
 };
 
 export const getFieldDecorator =
   (
-    objectNameSingular: 'company' | 'person',
+    objectNameSingular: 'company' | 'person' | 'task',
     fieldName: string,
     fieldValue?: any,
   ): Decorator =>
@@ -74,7 +81,19 @@ export const getFieldDecorator =
           ]
         : peopleMock;
 
-    const record = objectNameSingular === 'company' ? companies[0] : people[0];
+    const tasksMock = mockedTasks;
+
+    const tasks =
+      objectNameSingular === 'task'
+        ? [{ ...tasksMock[0], [fieldName]: fieldValue }, ...tasksMock.slice(1)]
+        : tasksMock;
+
+    const record =
+      objectNameSingular === 'company'
+        ? companies[0]
+        : objectNameSingular === 'person'
+          ? people[0]
+          : tasks[0];
 
     if (isDefined(fieldValue)) {
       (record as any)[fieldName] = fieldValue;
@@ -113,13 +132,17 @@ export const getFieldDecorator =
             isLabelIdentifier,
             fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
               field: fieldMetadataItem,
-              position: record.position ?? 0,
+              position: 0,
               objectMetadataItem,
             }),
             hotkeyScope: 'hotkey-scope',
           }}
         >
-          <RecordMockSetterEffect companies={companies} people={people} />
+          <RecordMockSetterEffect
+            companies={companies}
+            people={people}
+            tasks={tasks}
+          />
           <Story />
         </FieldContext.Provider>
       </RecordFieldValueSelectorContextProvider>

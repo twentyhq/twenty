@@ -143,17 +143,16 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
                             : viewA.position - viewB.position,
                         )
                         .map((view) => (
-                          <div>
-                            <NavigationDrawerSubItem
-                              label={view.name}
-                              to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
-                              active={
-                                currentPathWithSearch ===
-                                `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
-                              }
-                              Icon={getIcon(view.icon)}
-                            />
-                          </div>
+                          <NavigationDrawerSubItem
+                            label={view.name}
+                            to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
+                            active={
+                              currentPathWithSearch ===
+                              `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
+                            }
+                            Icon={getIcon(view.icon)}
+                            key={view.id}
+                          />
                         ))}
                     </motion.div>
                   )}

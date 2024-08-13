@@ -96,7 +96,10 @@ export const SettingsDataModelFieldPreview = ({
   return (
     <>
       {previewRecord ? (
-        <SettingsDataModelSetRecordEffect record={previewRecord} />
+        <SettingsDataModelSetRecordEffect
+          fieldName={fieldName}
+          record={previewRecord}
+        />
       ) : (
         <SettingsDataModelSetFieldValueEffect
           recordId={recordId}

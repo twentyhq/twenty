@@ -10,7 +10,7 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/RatingFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('person', 'testRating'),
+    getFieldDecorator('company', 'testRating'),
     ComponentDecorator,
   ],
   component: RatingFieldDisplay,
