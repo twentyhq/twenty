@@ -10,6 +10,8 @@ import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInput
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
+import { useRecordInlineCellContext } from './RecordInlineCellContext';
+
 const StyledIconContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -78,23 +80,10 @@ export type RecordInlineCellContainerProps = {
   isCentered?: boolean;
 };
 
-// TODO: refactor props drilling with a RecordInlineCellContext
-export const RecordInlineCellContainer = ({
-  readonly,
-  IconLabel,
-  label,
-  labelWidth,
-  showLabel,
-  buttonIcon,
-  editModeContent,
-  displayModeContent,
-  customEditHotkeyScope,
-  editModeContentOnly,
-  isDisplayModeFixHeight,
-  disableHoverEffect,
-  loading = false,
-  isCentered,
-}: RecordInlineCellContainerProps) => {
+export const RecordInlineCellContainer = () => {
+  const { readonly, IconLabel, label, labelWidth, showLabel } =
+    useRecordInlineCellContext();
+
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { setIsFocused } = useFieldFocus();
@@ -149,22 +138,7 @@ export const RecordInlineCellContainer = ({
         </StyledLabelAndIconContainer>
       )}
       <StyledValueContainer>
-        <RecordInlineCellValue
-          {...{
-            displayModeContent,
-            customEditHotkeyScope,
-            disableHoverEffect,
-            editModeContent,
-            editModeContentOnly,
-            isDisplayModeFixHeight,
-            buttonIcon,
-            label,
-            loading,
-            readonly,
-            showLabel,
-            isCentered,
-          }}
-        />
+        <RecordInlineCellValue />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>
   );

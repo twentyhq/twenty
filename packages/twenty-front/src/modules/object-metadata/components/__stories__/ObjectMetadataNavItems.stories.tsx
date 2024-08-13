@@ -9,6 +9,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
+import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
 import { ObjectMetadataNavItems } from '../ObjectMetadataNavItems';
 
 const meta: Meta<typeof ObjectMetadataNavItems> = {
@@ -20,6 +21,7 @@ const meta: Meta<typeof ObjectMetadataNavItems> = {
     ComponentWithRouterDecorator,
     ComponentWithRecoilScopeDecorator,
     SnackBarDecorator,
+    PrefetchLoadedDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

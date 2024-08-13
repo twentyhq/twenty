@@ -25,9 +25,9 @@ export class CreateManyResolverFactory
   ): Resolver<CreateManyResolverArgs> {
     const internalContext = context;
 
-    return (_source, args, context, info) => {
+    return async (_source, args, context, info) => {
       try {
-        return this.workspaceQueryRunnerService.createMany(args, {
+        return await this.workspaceQueryRunnerService.createMany(args, {
           authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
           info,

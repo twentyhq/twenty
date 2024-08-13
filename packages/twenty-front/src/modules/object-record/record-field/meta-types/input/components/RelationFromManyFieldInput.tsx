@@ -12,7 +12,7 @@ import { MultiRecordSelect } from '@/object-record/relation-picker/components/Mu
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 
-export type RelationFromManyFieldInputProps = {
+type RelationFromManyFieldInputProps = {
   onSubmit?: FieldInputEvent;
 };
 

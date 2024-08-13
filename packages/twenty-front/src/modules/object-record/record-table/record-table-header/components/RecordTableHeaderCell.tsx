@@ -60,6 +60,9 @@ const StyledColumnHeaderCell = styled.th<{
       }`;
     }
   }};
+  div {
+    overflow: hidden;
+  }
 `;
 
 const StyledResizeHandler = styled.div`
