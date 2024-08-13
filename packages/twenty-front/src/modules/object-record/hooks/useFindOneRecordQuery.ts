@@ -48,8 +48,6 @@ export const useFindOneRecordQuery = ({
       },
   `;
 
-  console.log(findOneRecordQuery);
-
   return {
     findOneRecordQuery,
   };

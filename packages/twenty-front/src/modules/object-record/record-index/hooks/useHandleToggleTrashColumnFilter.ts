@@ -6,8 +6,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
-import { isDefined } from '~/utils/isDefined';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { isDefined } from '~/utils/isDefined';
 
 type UseHandleToggleTrashColumnFilterProps = {
   objectNameSingular: string;
@@ -47,7 +47,7 @@ export const useHandleToggleTrashColumnFilter = ({
 
     const newFilter: Filter = {
       id: v4(),
-      variant: 'trash',
+      variant: 'danger',
       fieldMetadataId: trashFieldMetadata.id,
       operand: ViewFilterOperand.IsNotEmpty,
       displayValue: '',

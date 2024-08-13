@@ -6,7 +6,7 @@ const StyledChip = styled.div<{ variant: SortOrFitlerChipVariant }>`
   align-items: center;
   background-color: ${({ theme, variant }) => {
     switch (variant) {
-      case 'delete':
+      case 'danger':
         return theme.background.danger;
       case 'default':
       default:
@@ -16,7 +16,7 @@ const StyledChip = styled.div<{ variant: SortOrFitlerChipVariant }>`
   border: 1px solid
     ${({ theme, variant }) => {
       switch (variant) {
-        case 'delete':
+        case 'danger':
           return theme.border.color.danger;
         case 'default':
         default:
@@ -26,7 +26,7 @@ const StyledChip = styled.div<{ variant: SortOrFitlerChipVariant }>`
   border-radius: 4px;
   color: ${({ theme, variant }) => {
     switch (variant) {
-      case 'delete':
+      case 'danger':
         return theme.color.red;
       case 'default':
       default:
@@ -60,7 +60,7 @@ const StyledDelete = styled.div<{ variant: SortOrFitlerChipVariant }>`
   &:hover {
     background-color: ${({ theme, variant }) => {
       switch (variant) {
-        case 'delete':
+        case 'danger':
           return theme.color.red20;
         case 'default':
         default:
@@ -75,7 +75,7 @@ const StyledLabelKey = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-type SortOrFitlerChipVariant = 'default' | 'delete';
+type SortOrFitlerChipVariant = 'default' | 'danger';
 
 type SortOrFilterChipProps = {
   labelKey?: string;

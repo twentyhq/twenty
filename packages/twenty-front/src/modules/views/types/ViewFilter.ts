@@ -3,7 +3,7 @@ import { ViewFilterOperand } from './ViewFilterOperand';
 export type ViewFilter = {
   __typename: 'ViewFilter';
   id: string;
-  variant?: 'default' | 'trash';
+  variant?: 'default' | 'danger';
   fieldMetadataId: string;
   operand: ViewFilterOperand;
   value: string;
