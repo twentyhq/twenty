@@ -15,7 +15,7 @@ interface RelationDetails {
 export async function determineRelationDetails(
   fieldMetadata: FieldMetadataEntity,
   relationMetadata: RelationMetadataEntity,
-  objectMetadataCollection?: ObjectMetadataEntity[],
+  objectMetadataCollection: ObjectMetadataEntity[],
 ): Promise<RelationDetails> {
   const relationType = computeRelationType(fieldMetadata, relationMetadata);
   let fromObjectMetadata: ObjectMetadataEntity | undefined =
@@ -27,7 +27,7 @@ export async function determineRelationDetails(
   if (relationType === 'many-to-one') {
     fromObjectMetadata = fieldMetadata.object;
 
-    toObjectMetadata = objectMetadataCollection?.find(
+    toObjectMetadata = objectMetadataCollection.find(
       (objectMetadata) =>
         objectMetadata.id === relationMetadata.fromObjectMetadataId,
     );

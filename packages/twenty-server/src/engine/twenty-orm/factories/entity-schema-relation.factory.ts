@@ -42,6 +42,10 @@ export class EntitySchemaRelationFactory {
           workspaceId,
         );
 
+      if (!objectMetadataCollection) {
+        throw new Error('Object metadata collection not found');
+      }
+
       const relationDetails = await determineRelationDetails(
         fieldMetadata,
         relationMetadata,
