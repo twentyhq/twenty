@@ -47,8 +47,8 @@ export const seedOpportunity = async (
         pointOfContactId: DEV_SEED_PERSON_IDS.CHRISTOPH,
         companyId: DEV_SEED_COMPANY_IDS.LINKEDIN,
         createdBySource: 'MANUAL',
-        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
-        createdByName: 'Jony Ive',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Cook',
       },
       {
         id: DEV_SEED_OPPORTUNITY_IDS.OPPORTUNITY_2,
@@ -61,8 +61,8 @@ export const seedOpportunity = async (
         pointOfContactId: DEV_SEED_PERSON_IDS.CHRISTOPHER_G,
         companyId: DEV_SEED_COMPANY_IDS.FACEBOOK,
         createdBySource: 'MANUAL',
-        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
-        createdByName: 'Jony Ive',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Cook',
       },
       {
         id: DEV_SEED_OPPORTUNITY_IDS.OPPORTUNITY_3,
@@ -75,8 +75,8 @@ export const seedOpportunity = async (
         pointOfContactId: DEV_SEED_PERSON_IDS.NICHOLAS,
         companyId: DEV_SEED_COMPANY_IDS.MICROSOFT,
         createdBySource: 'MANUAL',
-        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.JONY,
-        createdByName: 'Jony Ive',
+        createdByWorkspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
+        createdByName: 'Tim Cook',
       },
       {
         id: DEV_SEED_OPPORTUNITY_IDS.OPPORTUNITY_4,
