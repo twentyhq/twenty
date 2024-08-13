@@ -5,7 +5,9 @@ import { Repository } from 'typeorm';
 
 import { ChartResult } from 'src/engine/core-modules/chart/dtos/chart-result.dto';
 import { AliasPrefix } from 'src/engine/core-modules/chart/types/alias-prefix.type';
+import { CommonTableExpressionDefinition } from 'src/engine/core-modules/chart/types/common-table-expression-definition.type';
 import { JoinOperation } from 'src/engine/core-modules/chart/types/join-operation.type';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -247,6 +249,49 @@ export class ChartService {
     return [tableAlias, columnName] as const;
   }
 
+  private async getCommonTableExpressionDefinitions(
+    selectFields: {
+      tableName: string;
+      fieldMetadataType: FieldMetadataType;
+      fieldName: string;
+    }[],
+  ): Promise<CommonTableExpressionDefinition[]> {
+    return selectFields
+      .map(({ tableName, fieldMetadataType, fieldName }, i) => {
+        const newTableName = `${tableName}_cte_${i}`;
+        const replacesTableName = tableName;
+
+        switch (fieldMetadataType) {
+          case FieldMetadataType.CURRENCY:
+            return {
+              newTableName,
+              replacesTableName,
+              withQuery: `
+              WITH ${newTableName} AS (
+                SELECT
+                  ${fieldName}AmountMicros / 1000000.0 *
+                  CASE ${fieldName}CurrencyCode
+                    WHEN 'EUR' THEN 1.10
+                    WHEN 'GBP' THEN 1.29
+                    WHEN 'USD' THEN 1.00
+                    -- More
+                    ELSE 1.0
+                  END AS ${fieldName}
+                FROM
+                  ${replacesTableName}
+              )
+            `,
+            };
+        }
+
+        return;
+      })
+      .filter(
+        (commonTableExpressionDefinition) =>
+          commonTableExpressionDefinition !== undefined,
+      );
+  }
+
   async run(workspaceId: string, chartId: string): Promise<ChartResult> {
     const repository =
       await this.twentyORMManager.getRepository(ChartWorkspaceEntity);
@@ -315,6 +360,19 @@ export class ChartService {
         ? `GROUP BY "${groupByTableAlias}"."${groupByColumnName}"`
         : '';
 
+    const commonTableExpressionDefinitions =
+      await this.getCommonTableExpressionDefinitions([
+        {
+          tableName: targetTableAlias,
+          fieldMetadataType: FieldMetadataType.CURRENCY,
+          fieldName: 'annualRecurringRevenue',
+        },
+      ]);
+
+    const commonTableExpressions = commonTableExpressionDefinitions
+      .map(({ withQuery }) => withQuery)
+      .join('\n');
+
     const measureSelectColumn = this.getMeasureSelectColumn(
       chart.measure,
       targetTableAlias,
@@ -331,6 +389,7 @@ export class ChartService {
       .join('\n');
 
     const sqlQuery = `
+      ${'' /* commonTableExpressions */}
       SELECT ${selectColumns.join(', ')}
       FROM "${dataSourceSchema}"."${sourceTableName}"
       ${joinClausesString}

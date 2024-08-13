@@ -6,7 +6,6 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 const numericFieldMetadataTypes = new Set([
   FieldMetadataType.Currency,
   FieldMetadataType.Number,
-  FieldMetadataType.Rating,
 ]);
 
 export const isSelectableFieldPathPart = (
