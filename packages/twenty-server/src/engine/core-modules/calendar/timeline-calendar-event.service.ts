@@ -22,7 +22,6 @@ export class TimelineCalendarEventService {
   ): Promise<TimelineCalendarEventsWithTotal> {
     const offset = (page - 1) * pageSize;
 
-    console.time('getCalendarEventsFromPersonIds');
     const calendarEventRepository =
       await this.twentyORMManager.getRepository<CalendarEventWorkspaceEntity>(
         'calendarEvent',
