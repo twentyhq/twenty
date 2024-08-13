@@ -24,7 +24,7 @@ export type ParticipantWithId = Participant & {
   id: string;
 };
 
-export type Attachment = {
+type Attachment = {
   id: string;
   filename: string;
   size: number;

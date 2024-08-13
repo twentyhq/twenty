@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconCheck, IconPlus } from 'twenty-ui';
 
@@ -24,7 +24,7 @@ const StyledDropdownMenu = styled(DropdownMenu)`
   top: -1px;
 `;
 
-export type LinksFieldInputProps = {
+type LinksFieldInputProps = {
   onCancel?: () => void;
 };
 
