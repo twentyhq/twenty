@@ -6,10 +6,8 @@ import { Any } from 'typeorm';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -26,8 +24,6 @@ export class MessagingPartialMessageListFetchService {
 
   constructor(
     private readonly gmailClientProvider: MessagingGmailClientProvider,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
@@ -44,7 +40,6 @@ export class MessagingPartialMessageListFetchService {
   ): Promise<void> {
     await this.messagingChannelSyncStatusService.markAsMessagesListFetchOngoing(
       messageChannel.id,
-      workspaceId,
     );
 
     const lastSyncHistoryId = messageChannel.syncCursor;
@@ -69,14 +64,19 @@ export class MessagingPartialMessageListFetchService {
       return;
     }
 
-    await this.messageChannelRepository.resetThrottleFailureCount(
-      messageChannel.id,
-      workspaceId,
-    );
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
 
-    await this.messageChannelRepository.resetSyncStageStartedAt(
-      messageChannel.id,
-      workspaceId,
+    await messageChannelRepository.update(
+      {
+        id: messageChannel.id,
+      },
+      {
+        throttleFailureCount: 0,
+        syncStageStartedAt: null,
+      },
     );
 
     if (!historyId) {
@@ -92,7 +92,6 @@ export class MessagingPartialMessageListFetchService {
 
       await this.messagingChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
         messageChannel.id,
-        workspaceId,
       );
 
       return;
@@ -147,15 +146,21 @@ export class MessagingPartialMessageListFetchService {
       `Deleted ${messagesDeleted.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
-    await this.messageChannelRepository.updateLastSyncCursorIfHigher(
-      messageChannel.id,
-      historyId,
-      workspaceId,
-    );
+    const currentSyncCursor = messageChannel.syncCursor;
+
+    if (!currentSyncCursor || historyId > currentSyncCursor) {
+      await messageChannelRepository.update(
+        {
+          id: messageChannel.id,
+        },
+        {
+          syncCursor: historyId,
+        },
+      );
+    }
 
     await this.messagingChannelSyncStatusService.scheduleMessagesImport(
       messageChannel.id,
-      workspaceId,
     );
   }
 }
