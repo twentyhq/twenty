@@ -18,9 +18,9 @@ import {
   SaveOptions,
   UpdateResult,
 } from 'typeorm';
+import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
-import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -69,6 +69,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findBy(this.target, computedOptions.where);
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -81,6 +82,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findAndCount(this.target, computedOptions);
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -96,6 +98,7 @@ export class WorkspaceRepository<
       this.target,
       computedOptions.where,
     );
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -108,6 +111,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findOne(this.target, computedOptions);
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -120,6 +124,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findOneBy(this.target, computedOptions.where);
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -132,6 +137,7 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findOneOrFail(this.target, computedOptions);
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -147,6 +153,7 @@ export class WorkspaceRepository<
       this.target,
       computedOptions.where,
     );
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -235,6 +242,7 @@ export class WorkspaceRepository<
       formattedEntityOrEntities,
       options,
     );
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -423,8 +431,17 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
+    const objectMetadataCollection =
+      await this.internalContext.workspaceCacheStorage.getObjectMetadataCollection(
+        this.internalContext.workspaceId,
+      );
+
     const formatedEntity = await this.formatData(entity);
     const result = await manager.insert(this.target, formatedEntity);
+
+    if (!objectMetadataCollection) {
+      throw new Error('Object metadata collection is missing');
+    }
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -608,7 +625,9 @@ export class WorkspaceRepository<
   /**
    * PRIVATE METHODS
    */
-  private async getObjectMetadataFromTarget() {
+  private async getObjectMetadataFromTarget(
+    objectMetadataCollection: ObjectMetadataEntity[],
+  ) {
     const objectMetadataName =
       typeof this.target === 'string'
         ? this.target
@@ -621,18 +640,11 @@ export class WorkspaceRepository<
       throw new Error('Object metadata name is missing');
     }
 
-    const objectMetadata =
-      await this.internalContext.workspaceCacheStorage.getObjectMetadata(
-        this.internalContext.workspaceId,
-        (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
-      );
+    const objectMetadata = objectMetadataCollection?.find(
+      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
+    );
 
     if (!objectMetadata) {
-      const objectMetadataCollection =
-        await this.internalContext.workspaceCacheStorage.getObjectMetadataCollection(
-          this.internalContext.workspaceId,
-        );
-
       throw new Error(
         `Object metadata for object "${objectMetadataName}" is missing ` +
           `in workspace "${this.internalContext.workspaceId}" ` +
@@ -678,7 +690,9 @@ export class WorkspaceRepository<
       ) as Promise<T>;
     }
 
-    const objectMetadata = await this.getObjectMetadataFromTarget();
+    const objectMetadata = await this.getObjectMetadataFromTarget(
+      this.internalContext.objectMetadataCollection,
+    );
 
     const compositeFieldMetadataCollection =
       await this.getCompositeFieldMetadataCollection(objectMetadata);
@@ -730,7 +744,9 @@ export class WorkspaceRepository<
     data: T,
     objectMetadata?: ObjectMetadataEntity,
   ): Promise<T> {
-    objectMetadata ??= await this.getObjectMetadataFromTarget();
+    objectMetadata ??= await this.getObjectMetadataFromTarget(
+      this.internalContext.objectMetadataCollection,
+    );
 
     if (!data) {
       return data;
@@ -806,15 +822,13 @@ export class WorkspaceRepository<
 
       if (relationMetadata) {
         const toObjectMetadata =
-          await this.internalContext.workspaceCacheStorage.getObjectMetadata(
-            relationMetadata.workspaceId,
+          this.internalContext.objectMetadataCollection.find(
             (objectMetadata) =>
               objectMetadata.id === relationMetadata.toObjectMetadataId,
           );
 
         const fromObjectMetadata =
-          await this.internalContext.workspaceCacheStorage.getObjectMetadata(
-            relationMetadata.workspaceId,
+          this.internalContext.objectMetadataCollection.find(
             (objectMetadata) =>
               objectMetadata.id === relationMetadata.fromObjectMetadataId,
           );
@@ -833,6 +847,7 @@ export class WorkspaceRepository<
 
         newData[key] = await this.formatResult(
           value,
+
           relationType === 'one-to-many'
             ? toObjectMetadata
             : fromObjectMetadata,

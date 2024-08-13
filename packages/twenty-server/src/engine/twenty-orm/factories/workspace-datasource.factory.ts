@@ -94,6 +94,7 @@ export class WorkspaceDatasourceFactory {
           {
             workspaceId,
             workspaceCacheStorage: this.workspaceCacheStorageService,
+            objectMetadataCollection: cachedObjectMetadataCollection,
           },
           {
             url:
