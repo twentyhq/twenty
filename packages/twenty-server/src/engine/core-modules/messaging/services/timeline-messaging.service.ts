@@ -90,6 +90,7 @@ export class TimelineMessagingService {
       .createQueryBuilder()
       .select('messageParticipant')
       .addSelect('message.messageThreadId')
+      .addSelect('message.receivedAt')
       .leftJoinAndSelect('messageParticipant.person', 'person')
       .leftJoinAndSelect(
         'messageParticipant.workspaceMember',
@@ -101,16 +102,18 @@ export class TimelineMessagingService {
       })
       .andWhere('messageParticipant.role = :role', { role: 'from' })
       .orderBy('message.messageThreadId')
-      .addOrderBy('message.receivedAt', 'DESC')
-      .distinctOn([
-        'message.messageThreadId',
-        'message.receivedAt',
-        'messageParticipant.handle',
-      ])
+      .distinctOn(['message.messageThreadId', 'messageParticipant.handle'])
       .getMany();
 
-    // This because composie fields are not handled correctly by the ORM
-    const threadParticipantsWithCompositeFields = threadParticipants.map(
+    // This is because subqueries are not handled by twentyORM
+    const orderedThreadParticipants = threadParticipants.sort(
+      (a, b) =>
+        (a.message.receivedAt ?? new Date()).getTime() -
+        (b.message.receivedAt ?? new Date()).getTime(),
+    );
+
+    // This is because composite fields are not handled correctly by the ORM
+    const threadParticipantsWithCompositeFields = orderedThreadParticipants.map(
       (threadParticipant) => ({
         ...threadParticipant,
         person: {
