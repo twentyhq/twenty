@@ -59,13 +59,11 @@ export class MessagingOngoingStaleJob {
           case MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING:
             await this.messagingChannelSyncStatusService.schedulePartialMessageListFetch(
               messageChannel.id,
-              workspaceId,
             );
             break;
           case MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING:
             await this.messagingChannelSyncStatusService.scheduleMessagesImport(
               messageChannel.id,
-              workspaceId,
             );
             break;
           default:
