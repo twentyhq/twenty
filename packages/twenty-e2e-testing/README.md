@@ -3,32 +3,27 @@
 ### Run end-to-end tests
 
 ```
-yarn playwright test
+yarn run test:e2e
 ```
 
 ### Start the interactive UI mode
 
 ```
-yarn playwright test --ui
+yarn run test:e2e:ui
 ```
 
 ### Run test only on Desktop Chrome
 
 ```
-yarn playwright test --project=chromium
+yarn run test:e2e:chrome
 ```
 
 ### Run test in specific file
 ```
-yarn playwright test example
+yarn run test:e2e <filename>
 ```
 
 ### Runs the tests in debug mode.
 ```
-yarn playwright test --debug
-```
-
-### Auto generate tests with Codegen
-```
-yarn playwright codegen
+yarn run test:e2e:debug
 ```
