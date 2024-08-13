@@ -49,7 +49,7 @@ export class TimelineMessagingService {
             },
           },
         },
-        relations: ['messages', 'messages.messageParticipants'],
+        relations: ['messages'],
         order: {
           messages: {
             receivedAt: 'DESC',
