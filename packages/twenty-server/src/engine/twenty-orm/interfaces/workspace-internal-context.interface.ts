@@ -1,6 +1,6 @@
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export interface WorkspaceInternalContext {
   workspaceId: string;
-  workspaceCacheStorage: WorkspaceCacheStorageService;
+  objectMetadataCollection: ObjectMetadataEntity[];
 }
