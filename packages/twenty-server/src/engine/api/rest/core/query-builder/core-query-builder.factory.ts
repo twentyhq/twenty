@@ -2,24 +2,26 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
-import { DeleteQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/delete-query.factory';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { CreateOneQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/create-one-query.factory';
-import { UpdateQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/update-query.factory';
-import { FindOneQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/find-one-query.factory';
-import { FindManyQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/find-many-query.factory';
-import { DeleteVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/delete-variables.factory';
-import { CreateVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/create-variables.factory';
-import { UpdateVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/update-variables.factory';
-import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
-import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
-import { computeDepth } from 'src/engine/api/rest/core/query-builder/utils/compute-depth.utils';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { Query } from 'src/engine/api/rest/core/types/query.type';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { CreateManyQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/create-many-query.factory';
+import { CreateOneQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/create-one-query.factory';
+import { CreateVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/create-variables.factory';
+import { DeleteQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/delete-query.factory';
+import { DeleteVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/delete-variables.factory';
+import { FindDuplicatesQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/find-duplicates-query.factory';
+import { FindDuplicatesVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/find-duplicates-variables.factory';
+import { FindManyQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/find-many-query.factory';
+import { FindOneQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/find-one-query.factory';
+import { GetVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/get-variables.factory';
+import { UpdateQueryFactory } from 'src/engine/api/rest/core/query-builder/factories/update-query.factory';
+import { UpdateVariablesFactory } from 'src/engine/api/rest/core/query-builder/factories/update-variables.factory';
+import { computeDepth } from 'src/engine/api/rest/core/query-builder/utils/compute-depth.utils';
 import { parseCoreBatchPath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-batch-path.utils';
+import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { Query } from 'src/engine/api/rest/core/types/query.type';
+import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 
 @Injectable()
 export class CoreQueryBuilderFactory {
@@ -30,10 +32,12 @@ export class CoreQueryBuilderFactory {
     private readonly updateQueryFactory: UpdateQueryFactory,
     private readonly findOneQueryFactory: FindOneQueryFactory,
     private readonly findManyQueryFactory: FindManyQueryFactory,
+    private readonly findDuplicatesQueryFactory: FindDuplicatesQueryFactory,
     private readonly deleteVariablesFactory: DeleteVariablesFactory,
     private readonly createVariablesFactory: CreateVariablesFactory,
     private readonly updateVariablesFactory: UpdateVariablesFactory,
     private readonly getVariablesFactory: GetVariablesFactory,
+    private readonly findDuplicatesVariablesFactory: FindDuplicatesVariablesFactory,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly tokenService: TokenService,
     private readonly environmentService: EnvironmentService,
@@ -159,6 +163,17 @@ export class CoreQueryBuilderFactory {
         ? this.findOneQueryFactory.create(objectMetadata, depth)
         : this.findManyQueryFactory.create(objectMetadata, depth),
       variables: this.getVariablesFactory.create(id, request, objectMetadata),
+    };
+  }
+
+  async findDuplicates(request: Request): Promise<Query> {
+    const { object: parsedObject } = parseCorePath(request);
+    const objectMetadata = await this.getObjectMetadata(request, parsedObject);
+    const depth = computeDepth(request);
+
+    return {
+      query: this.findDuplicatesQueryFactory.create(objectMetadata, depth),
+      variables: this.findDuplicatesVariablesFactory.create(request),
     };
   }
 }

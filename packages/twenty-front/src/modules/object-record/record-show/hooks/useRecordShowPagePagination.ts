@@ -1,17 +1,16 @@
 /* eslint-disable @nx/workspace-no-navigate-prefer-link */
+import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useRecordIdsFromFindManyCacheRootQuery';
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
-import { isNonEmptyString } from '@sniptt/guards';
-import { getRelayCursorFromRecordId } from '~/utils/getRelayCursorFromRecordId';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useRecordShowPagePagination = (
@@ -37,57 +36,69 @@ export const useRecordShowPagePagination = (
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
-  const recordGqlFields = generateDepthOneRecordGqlFields({
-    objectMetadataItem,
-  });
-
   const { filter, orderBy } =
     useQueryVariablesFromActiveFieldsOfViewOrDefaultView({
       objectMetadataItem,
       viewId: viewIdQueryParam,
     });
 
-  const cursor = getRelayCursorFromRecordId(objectRecordId);
+  const { loading: loadingCursor, pageInfo: currentRecordsPageInfo } =
+    useFindManyRecords({
+      filter: {
+        id: { eq: objectRecordId },
+      },
+      orderBy,
+      limit: 1,
+      objectNameSingular,
+      recordGqlFields: { id: true },
+    });
 
-  const {
-    loading: loadingRecordBefore,
-    records: recordsBefore,
-    totalCount: totalCountBefore,
-  } = useFindManyRecords({
-    filter,
-    orderBy,
-    cursorFilter: isNonEmptyString(cursor)
-      ? {
-          cursorDirection: 'before',
-          cursor: cursor,
-          limit: 1,
-        }
-      : undefined,
-    objectNameSingular,
-    recordGqlFields,
-  });
+  const cursorFromRequest = currentRecordsPageInfo?.endCursor;
 
-  const {
-    loading: loadingRecordAfter,
-    records: recordsAfter,
-    totalCount: totalCountAfter,
-  } = useFindManyRecords({
-    filter,
-    orderBy,
-    cursorFilter: cursor
-      ? {
-          cursorDirection: 'after',
-          cursor: cursor,
-          limit: 1,
-        }
-      : undefined,
-    objectNameSingular,
-    recordGqlFields,
-  });
+  const [totalCountBefore, setTotalCountBefore] = useState<number>(0);
+  const [totalCountAfter, setTotalCountAfter] = useState<number>(0);
 
-  const totalCount = Math.max(totalCountBefore ?? 0, totalCountAfter ?? 0);
+  const { loading: loadingRecordBefore, records: recordsBefore } =
+    useFindManyRecords({
+      skip: loadingCursor,
+      fetchPolicy: 'network-only',
+      filter,
+      orderBy,
+      cursorFilter: isNonEmptyString(cursorFromRequest)
+        ? {
+            cursorDirection: 'before',
+            cursor: cursorFromRequest,
+            limit: 1,
+          }
+        : undefined,
+      objectNameSingular,
+      recordGqlFields: { id: true },
+      onCompleted: (_, pagination) => {
+        setTotalCountBefore(pagination?.totalCount ?? 0);
+      },
+    });
 
-  const loading = loadingRecordAfter || loadingRecordBefore;
+  const { loading: loadingRecordAfter, records: recordsAfter } =
+    useFindManyRecords({
+      skip: loadingCursor,
+      filter,
+      fetchPolicy: 'network-only',
+      orderBy,
+      cursorFilter: cursorFromRequest
+        ? {
+            cursorDirection: 'after',
+            cursor: cursorFromRequest,
+            limit: 1,
+          }
+        : undefined,
+      objectNameSingular,
+      recordGqlFields: { id: true },
+      onCompleted: (_, pagination) => {
+        setTotalCountAfter(pagination?.totalCount ?? 0);
+      },
+    });
+
+  const loading = loadingRecordAfter || loadingRecordBefore || loadingCursor;
 
   const isThereARecordBefore = recordsBefore.length > 0;
   const isThereARecordAfter = recordsAfter.length > 0;
@@ -131,6 +142,8 @@ export const useRecordShowPagePagination = (
   const rankFoundInFiew = rankInView > -1;
 
   const objectLabel = capitalize(objectMetadataItem.namePlural);
+
+  const totalCount = Math.max(1, totalCountBefore, totalCountAfter);
 
   const viewNameWithCount = rankFoundInFiew
     ? `${rankInView + 1} of ${totalCount} in ${objectLabel}`

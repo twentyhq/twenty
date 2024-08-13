@@ -4,8 +4,8 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CanAccessCalendarEventService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/can-access-calendar-event.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 
@@ -17,27 +17,34 @@ export class CalendarEventFindOnePreQueryHook
   implements WorkspaceQueryHookInstance
 {
   constructor(
-    @InjectWorkspaceRepository(CalendarChannelEventAssociationWorkspaceEntity)
-    private readonly calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>,
+    private readonly twentyORMManager: TwentyORMManager,
     private readonly canAccessCalendarEventService: CanAccessCalendarEventService,
   ) {}
 
   async execute(
-    userId: string,
-    workspaceId: string,
+    authContext: AuthContext,
+    objectName: string,
     payload: FindOneResolverArgs,
-  ): Promise<void> {
+  ): Promise<FindOneResolverArgs> {
     if (!payload?.filter?.id?.eq) {
       throw new BadRequestException('id filter is required');
     }
 
-    // TODO: Re-implement this using twenty ORM
+    if (!authContext.user?.id) {
+      throw new BadRequestException('User id is required');
+    }
+
+    const calendarChannelEventAssociationRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        'calendarChannelEventAssociation',
+      );
+
     const calendarChannelCalendarEventAssociations =
-      await this.calendarChannelEventAssociationRepository.find({
+      await calendarChannelEventAssociationRepository.find({
         where: {
           calendarEventId: payload?.filter?.id?.eq,
         },
-        relations: ['calendarChannel.connectedAccount'],
+        relations: ['calendarChannel', 'calendarChannel.connectedAccount'],
       });
 
     if (calendarChannelCalendarEventAssociations.length === 0) {
@@ -45,9 +52,11 @@ export class CalendarEventFindOnePreQueryHook
     }
 
     await this.canAccessCalendarEventService.canAccessCalendarEvent(
-      userId,
-      workspaceId,
+      authContext.user.id,
+      authContext.workspace.id,
       calendarChannelCalendarEventAssociations,
     );
+
+    return payload;
   }
 }

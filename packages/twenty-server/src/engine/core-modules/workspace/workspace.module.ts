@@ -7,6 +7,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -29,6 +30,7 @@ import { WorkspaceService } from './services/workspace.service';
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         BillingModule,
+        FileModule,
         FileUploadModule,
         WorkspaceCacheVersionModule,
         NestjsQueryTypeOrmModule.forFeature(

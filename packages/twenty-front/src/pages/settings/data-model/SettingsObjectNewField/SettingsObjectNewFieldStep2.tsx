@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -48,6 +48,8 @@ const StyledSettingsObjectFieldTypeSelect = styled(
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
+  const [searchParams] = useSearchParams();
+  const fieldType = searchParams.get('fieldType') as SettingsSupportedFieldType;
   const { enqueueSnackBar } = useSnackBar();
 
   const { findActiveObjectMetadataItemBySlug } =
@@ -161,13 +163,10 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const excludedFieldTypes: SettingsSupportedFieldType[] = (
     [
-      // FieldMetadataType.Email,
-      // FieldMetadataType.FullName,
       FieldMetadataType.Link,
       FieldMetadataType.Numeric,
-      // FieldMetadataType.Probability,
-      // FieldMetadataType.Uuid,
-      // FieldMetadataType.Phone,
+      FieldMetadataType.RichText,
+      FieldMetadataType.Actor,
     ] as const
   ).filter(isDefined);
 
@@ -214,6 +213,9 @@ export const SettingsObjectNewFieldStep2 = () => {
               />
               <StyledSettingsObjectFieldTypeSelect
                 excludedFieldTypes={excludedFieldTypes}
+                fieldMetadataItem={{
+                  type: fieldType,
+                }}
               />
               <SettingsDataModelFieldSettingsFormCard
                 fieldMetadataItem={{

@@ -16,7 +16,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldNumber } from '../../types/guards/isFieldNumber';
 
 export const useNumberField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(FieldMetadataType.Number, isFieldNumber, fieldDefinition);
 
@@ -24,7 +24,7 @@ export const useNumberField = () => {
 
   const [fieldValue, setFieldValue] = useRecoilState<number | null>(
     recordStoreFamilySelector({
-      recordId: entityId,
+      recordId,
       fieldName: fieldName,
     }),
   );
@@ -42,7 +42,7 @@ export const useNumberField = () => {
   };
 
   const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldNumberValue>(`${entityId}-${fieldName}`);
+    useRecordFieldInput<FieldNumberValue>(`${recordId}-${fieldName}`);
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 

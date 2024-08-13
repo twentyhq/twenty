@@ -3,8 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Any } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
@@ -29,10 +28,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 @Injectable()
 export class CalendarEventsImportService {
   constructor(
-    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
-    @InjectWorkspaceRepository(CalendarChannelEventAssociationWorkspaceEntity)
-    private readonly calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>,
+    private readonly twentyORMManager: TwentyORMManager,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
@@ -79,8 +75,13 @@ export class CalendarEventsImportService {
       return;
     }
 
+    const calendarChannelRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+        'calendarChannel',
+      );
+
     if (!calendarEvents || calendarEvents?.length === 0) {
-      await this.calendarChannelRepository.update(
+      await calendarChannelRepository.update(
         {
           id: calendarChannel.id,
         },
@@ -117,7 +118,12 @@ export class CalendarEventsImportService {
       workspaceId,
     );
 
-    await this.calendarChannelEventAssociationRepository.delete({
+    const calendarChannelEventAssociationRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        'calendarChannelEventAssociation',
+      );
+
+    await calendarChannelEventAssociationRepository.delete({
       eventExternalId: Any(cancelledEventExternalIds),
       calendarChannel: {
         id: calendarChannel.id,
@@ -128,7 +134,7 @@ export class CalendarEventsImportService {
       workspaceId,
     );
 
-    await this.calendarChannelRepository.update(
+    await calendarChannelRepository.update(
       {
         id: calendarChannel.id,
       },

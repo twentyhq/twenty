@@ -1,9 +1,9 @@
-import { useContext } from 'react';
 import styled from '@emotion/styled';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useLinkedObject } from '@/activities/timeline/hooks/useLinkedObject';
 import { TimelineActivityContext } from '@/activities/timelineActivities/contexts/TimelineActivityContext';
+import { useLinkedObject } from '@/activities/timelineActivities/hooks/useLinkedObject';
 import { EventIconDynamicComponent } from '@/activities/timelineActivities/rows/components/EventIconDynamicComponent';
 import { EventRowDynamicComponent } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';

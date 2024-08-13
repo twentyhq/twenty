@@ -7,6 +7,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { isDefined } from '~/utils/isDefined';
 
+import { WorkspaceActivationStatus } from '~/generated/graphql';
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
 export const useObjectMetadataItem = ({
@@ -26,7 +27,7 @@ export const useObjectMetadataItem = ({
 
   let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if (currentWorkspace?.activationStatus !== 'active') {
+  if (currentWorkspace?.activationStatus !== WorkspaceActivationStatus.Active) {
     objectMetadataItem =
       mockObjectMetadataItems.find(
         (objectMetadataItem) =>

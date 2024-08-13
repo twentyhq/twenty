@@ -95,6 +95,16 @@ export type FieldRawJsonMetadata = {
   placeHolder: string;
 };
 
+export type FieldRichTextMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
+export type FieldPositionMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldDefinitionRelationType =
   | 'FROM_MANY_OBJECTS'
   | 'FROM_ONE_OBJECT'
@@ -137,6 +147,11 @@ export type FieldMultiSelectMetadata = {
   options: { label: string; color: ThemeColor; value: string }[];
 };
 
+export type FieldActorMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
@@ -153,7 +168,8 @@ export type FieldMetadata =
   | FieldMultiSelectMetadata
   | FieldTextMetadata
   | FieldUuidMetadata
-  | FieldAddressMetadata;
+  | FieldAddressMetadata
+  | FieldActorMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
@@ -185,7 +201,7 @@ export type FieldAddressValue = {
   addressLat: number | null;
   addressLng: number | null;
 };
-export type FieldRatingValue = (typeof RATING_VALUES)[number];
+export type FieldRatingValue = (typeof RATING_VALUES)[number] | null;
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
@@ -199,3 +215,9 @@ export type FieldRelationValue<
 
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
+
+export type FieldActorValue = {
+  source: string;
+  workspaceMemberId?: string;
+  name: string;
+};

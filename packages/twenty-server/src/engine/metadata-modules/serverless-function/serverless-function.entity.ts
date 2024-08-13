@@ -12,6 +12,10 @@ export enum ServerlessFunctionSyncStatus {
   READY = 'READY',
 }
 
+export enum ServerlessFunctionRuntime {
+  NODE18 = 'nodejs18.x',
+}
+
 @Entity('serverlessFunction')
 @Unique('IndexOnNameAndWorkspaceIdUnique', ['name', 'workspaceId'])
 export class ServerlessFunctionEntity {
@@ -21,8 +25,17 @@ export class ServerlessFunctionEntity {
   @Column({ nullable: false })
   name: string;
 
+  @Column({ nullable: true })
+  description: string;
+
   @Column({ nullable: false })
   sourceCodeHash: string;
+
+  @Column({ nullable: false })
+  sourceCodeFullPath: string;
+
+  @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE18 })
+  runtime: ServerlessFunctionRuntime;
 
   @Column({
     nullable: false,

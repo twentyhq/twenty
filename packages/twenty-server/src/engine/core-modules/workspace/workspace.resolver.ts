@@ -1,33 +1,34 @@
+import { UseGuards } from '@nestjs/common';
 import {
-  Resolver,
-  Query,
   Args,
   Mutation,
-  ResolveField,
   Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { assert } from 'src/utils/assert';
-import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
-import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
-import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
 import { SendInviteLinkInput } from 'src/engine/core-modules/workspace/dtos/send-invite-link.input';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
+import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { assert } from 'src/utils/assert';
+import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { Workspace } from './workspace.entity';
 
@@ -41,7 +42,8 @@ export class WorkspaceResolver {
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly fileUploadService: FileUploadService,
-    private readonly billingWorkspaceService: BillingWorkspaceService,
+    private readonly fileService: FileService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
   @Query(() => Workspace)
@@ -85,30 +87,24 @@ export class WorkspaceResolver {
       filename,
       mimeType: mimetype,
       fileFolder,
+      workspaceId: id,
     });
 
     await this.workspaceService.updateOne(id, {
       logo: paths[0],
     });
 
-    return paths[0];
+    const workspaceLogoToken = await this.fileService.encodeFileToken({
+      workspace_id: id,
+    });
+
+    return `${paths[0]}?token=${workspaceLogoToken}`;
   }
 
   @UseGuards(DemoEnvGuard)
   @Mutation(() => Workspace)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
-  }
-
-  @ResolveField(() => String)
-  async activationStatus(
-    @Parent() workspace: Workspace,
-  ): Promise<'active' | 'inactive'> {
-    if (await this.workspaceService.isWorkspaceActivated(workspace.id)) {
-      return 'active';
-    }
-
-    return 'inactive';
   }
 
   @ResolveField(() => String, { nullable: true })
@@ -122,14 +118,29 @@ export class WorkspaceResolver {
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
   ): Promise<BillingSubscription | null> {
-    return this.billingWorkspaceService.getCurrentBillingSubscription({
-      workspaceId: workspace.id,
-    });
+    return this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+      { workspaceId: workspace.id },
+    );
   }
 
   @ResolveField(() => Number)
-  async workspaceMembersCount(): Promise<number | undefined> {
-    return await this.userWorkspaceService.getWorkspaceMemberCount();
+  async workspaceMembersCount(
+    @Parent() workspace: Workspace,
+  ): Promise<number | undefined> {
+    return await this.userWorkspaceService.getUserCount(workspace.id);
+  }
+
+  @ResolveField(() => String)
+  async logo(@Parent() workspace: Workspace): Promise<string> {
+    if (workspace.logo) {
+      const workspaceLogoToken = await this.fileService.encodeFileToken({
+        workspace_id: workspace.id,
+      });
+
+      return `${workspace.logo}?token=${workspaceLogoToken}`;
+    }
+
+    return workspace.logo ?? '';
   }
 
   @Mutation(() => SendInviteLink)

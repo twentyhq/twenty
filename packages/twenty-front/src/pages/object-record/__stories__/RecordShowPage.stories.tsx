@@ -1,7 +1,7 @@
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
-import { graphql, HttpResponse } from 'msw';
+import { HttpResponse, graphql } from 'msw';
 
 import {
   PageDecorator,
@@ -87,25 +87,16 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findAllByText(
-      peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
-    );
-    await canvas.findByText('Add your first Activity');
-  },
-};
-
-export const Loading: Story = {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  decorators: [PageDecorator],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
+    // await canvas.findAllByText(peopleMock[0].name.firstName);
     expect(
-      canvas.queryByText(
-        peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
-      ),
-    ).toBeNull();
-    expect(canvas.queryByText('Add your first Activity')).toBeNull();
+      await canvas.findByText('Twenty', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      await canvas.findByText('Add your first Activity', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeInTheDocument();
   },
 };

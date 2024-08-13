@@ -20,6 +20,7 @@ import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-in
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 
+import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -40,7 +41,8 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledContainerWithPadding = styled.div`
+const StyledContainerWithPadding = styled.div<{ fullHeight?: boolean }>`
+  height: ${({ fullHeight }) => (fullHeight ? '100%' : 'auto')};
   padding-left: ${({ theme }) => theme.table.horizontalCellPadding};
 `;
 
@@ -92,10 +94,6 @@ export const RecordIndexContainer = ({
 
         setTableColumns(newFieldDefinitions);
 
-        const newRecordIndexFieldDefinitions = newFieldDefinitions.filter(
-          (boardField) => !boardField.isLabelIdentifier,
-        );
-
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
           .getValue();
@@ -103,10 +101,10 @@ export const RecordIndexContainer = ({
         if (
           !isDeeplyEqual(
             existingRecordIndexFieldDefinitions,
-            newRecordIndexFieldDefinitions,
+            newFieldDefinitions,
           )
         ) {
-          set(recordIndexFieldDefinitionsState, newRecordIndexFieldDefinitions);
+          set(recordIndexFieldDefinitionsState, newFieldDefinitions);
         }
       },
     [columnDefinitions, setTableColumns],
@@ -128,6 +126,7 @@ export const RecordIndexContainer = ({
 
   return (
     <StyledContainer>
+      <InformationBannerWrapper />
       <RecordFieldValueSelectorContextProvider>
         <SpreadsheetImportProvider>
           <StyledContainerWithPadding>
@@ -193,7 +192,7 @@ export const RecordIndexContainer = ({
             </>
           )}
           {recordIndexViewType === ViewType.Kanban && (
-            <StyledContainerWithPadding>
+            <StyledContainerWithPadding fullHeight>
               <RecordIndexBoardContainer
                 recordBoardId={recordIndexId}
                 viewBarId={recordIndexId}

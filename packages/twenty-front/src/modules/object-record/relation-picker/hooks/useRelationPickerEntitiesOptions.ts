@@ -37,7 +37,7 @@ export const useRelationPickerEntitiesOptions = ({
     ],
     orderByField: 'createdAt',
     selectedIds: selectedRelationRecordIds,
-    excludeEntityIds: excludedRelationRecordIds,
+    excludeRecordIds: excludedRelationRecordIds,
     objectNameSingular: relationObjectNameSingular,
   });
 

@@ -1,21 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { isDefined } from 'class-validator';
 import differenceWith from 'lodash.differencewith';
 import { Any } from 'typeorm';
 
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/calendar-event';
+import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
 
 @Injectable()
 export class CalendarEventParticipantService {
   constructor(
-    @InjectWorkspaceRepository(CalendarEventParticipantWorkspaceEntity)
-    private readonly calendarEventParticipantRepository: WorkspaceRepository<CalendarEventParticipantWorkspaceEntity>,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly twentyORMManager: TwentyORMManager,
+    private readonly matchParticipantService: MatchParticipantService<CalendarEventParticipantWorkspaceEntity>,
   ) {}
 
   public async upsertAndDeleteCalendarEventParticipants(
@@ -23,8 +21,13 @@ export class CalendarEventParticipantService {
     participantsToUpdate: CalendarEventParticipantWithCalendarEventId[],
     transactionManager?: any,
   ): Promise<void> {
+    const calendarEventParticipantRepository =
+      await this.twentyORMManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+        'calendarEventParticipant',
+      );
+
     const existingCalendarEventParticipants =
-      await this.calendarEventParticipantRepository.find({
+      await calendarEventParticipantRepository.find({
         where: {
           calendarEventId: Any(
             participantsToUpdate
@@ -74,7 +77,7 @@ export class CalendarEventParticipantService {
           participantToUpdate.calendarEventId,
     );
 
-    await this.calendarEventParticipantRepository.delete(
+    await calendarEventParticipantRepository.delete(
       {
         id: Any(
           calendarEventParticipantsToDelete.map(
@@ -86,7 +89,7 @@ export class CalendarEventParticipantService {
     );
 
     for (const calendarEventParticipantToUpdate of calendarEventParticipantsToUpdate) {
-      await this.calendarEventParticipantRepository.update(
+      await calendarEventParticipantRepository.update(
         {
           calendarEventId: calendarEventParticipantToUpdate.calendarEventId,
           handle: calendarEventParticipantToUpdate.handle,
@@ -100,93 +103,16 @@ export class CalendarEventParticipantService {
 
     participantsToSave.push(...newCalendarEventParticipants);
 
-    await this.calendarEventParticipantRepository.save(
+    const savedParticipants = await calendarEventParticipantRepository.save(
       participantsToSave,
       {},
       transactionManager,
     );
-  }
 
-  public async matchCalendarEventParticipants(
-    workspaceId: string,
-    email: string,
-    personId?: string,
-    workspaceMemberId?: string,
-  ) {
-    const calendarEventParticipantsToUpdate =
-      await this.calendarEventParticipantRepository.find({
-        where: {
-          handle: email,
-        },
-      });
-
-    const calendarEventParticipantIdsToUpdate =
-      calendarEventParticipantsToUpdate.map((participant) => participant.id);
-
-    if (personId) {
-      await this.calendarEventParticipantRepository.update(
-        {
-          id: Any(calendarEventParticipantIdsToUpdate),
-        },
-        {
-          person: {
-            id: personId,
-          },
-        },
-      );
-
-      const updatedCalendarEventParticipants =
-        await this.calendarEventParticipantRepository.find({
-          where: {
-            id: Any(calendarEventParticipantIdsToUpdate),
-          },
-        });
-
-      this.eventEmitter.emit(`calendarEventParticipant.matched`, {
-        workspaceId,
-        workspaceMemberId: null,
-        calendarEventParticipants: updatedCalendarEventParticipants,
-      });
-    }
-    if (workspaceMemberId) {
-      await this.calendarEventParticipantRepository.update(
-        {
-          id: Any(calendarEventParticipantIdsToUpdate),
-        },
-        {
-          workspaceMember: {
-            id: workspaceMemberId,
-          },
-        },
-      );
-    }
-  }
-
-  public async unmatchCalendarEventParticipants(
-    workspaceId: string,
-    handle: string,
-    personId?: string,
-    workspaceMemberId?: string,
-  ) {
-    if (personId) {
-      await this.calendarEventParticipantRepository.update(
-        {
-          handle,
-        },
-        {
-          person: null,
-        },
-      );
-    }
-    if (workspaceMemberId) {
-      await this.calendarEventParticipantRepository.update(
-        {
-          handle,
-        },
-        {
-          workspaceMember: null,
-        },
-      );
-    }
+    await this.matchParticipantService.matchParticipants(
+      savedParticipants,
+      'messageParticipant',
+      transactionManager,
+    );
   }
 }

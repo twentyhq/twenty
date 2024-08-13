@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  RequestTimeoutException,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import isEmpty from 'lodash.isempty';
@@ -30,7 +25,7 @@ import {
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { WorkspaceQueryBuilderFactory } from 'src/engine/api/graphql/workspace-query-builder/workspace-query-builder.factory';
-import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
+import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import {
   CallWebhookJobsJob,
@@ -40,8 +35,11 @@ import {
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { parseResult } from 'src/engine/api/graphql/workspace-query-runner/utils/parse-result.util';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
+import {
+  WorkspaceQueryRunnerException,
+  WorkspaceQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { DuplicateService } from 'src/engine/core-modules/duplicate/duplicate.service';
-import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
@@ -50,10 +48,10 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 import {
   PGGraphQLMutation,
@@ -70,6 +68,7 @@ export class WorkspaceQueryRunnerService {
   private readonly logger = new Logger(WorkspaceQueryRunnerService.name);
 
   constructor(
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
@@ -90,11 +89,19 @@ export class WorkspaceQueryRunnerService {
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<Record> | undefined> {
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
     const start = performance.now();
 
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'findMany',
+        args,
+      );
+
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      args,
+      hookedArgs,
       options,
       ResolverArgsType.FindMany,
     )) as FindManyResolverArgs<Filter, OrderBy>;
@@ -104,15 +111,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
-      objectMetadataItem.nameSingular,
-      'findMany',
-      args,
-    );
-
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
     const end = performance.now();
 
     this.logger.log(
@@ -125,6 +124,7 @@ export class WorkspaceQueryRunnerService {
       result,
       objectMetadataItem,
       '',
+      authContext.workspace.id,
     );
   }
 
@@ -136,12 +136,23 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     if (!args.filter || Object.keys(args.filter).length === 0) {
-      throw new BadRequestException('Missing filter argument');
+      throw new WorkspaceQueryRunnerException(
+        'Missing filter argument',
+        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      );
     }
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
+
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'findOne',
+        args,
+      );
 
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      args,
+      hookedArgs,
       options,
       ResolverArgsType.FindOne,
     )) as FindOneResolverArgs<Filter>;
@@ -151,19 +162,12 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
-      objectMetadataItem.nameSingular,
-      'findOne',
-      args,
-    );
-
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
     const parsedResult = await this.parseResult<IConnection<Record>>(
       result,
       objectMetadataItem,
       '',
+      authContext.workspace.id,
     );
 
     return parsedResult?.edges?.[0]?.node;
@@ -174,21 +178,31 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<TRecord> | undefined> {
     if (!args.data && !args.ids) {
-      throw new BadRequestException(
+      throw new WorkspaceQueryRunnerException(
         'You have to provide either "data" or "id" argument',
+        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
 
     if (!args.ids && isEmpty(args.data)) {
-      throw new BadRequestException(
+      throw new WorkspaceQueryRunnerException(
         'The "data" condition can not be empty when ID input not provided',
+        WorkspaceQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       );
     }
 
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
+
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'findDuplicates',
+        args,
+      );
 
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      args,
+      hookedArgs,
       options,
       ResolverArgsType.FindDuplicates,
     )) as FindDuplicatesResolverArgs<TRecord>;
@@ -199,11 +213,14 @@ export class WorkspaceQueryRunnerService {
       existingRecords = await this.duplicateService.findExistingRecords(
         computedArgs.ids,
         objectMetadataItem,
-        workspaceId,
+        authContext.workspace.id,
       );
 
       if (!existingRecords || existingRecords.length === 0) {
-        throw new NotFoundError(`Object with id ${args.ids} not found`);
+        throw new WorkspaceQueryRunnerException(
+          `Object with id ${args.ids} not found`,
+          WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND,
+        );
       }
     }
 
@@ -213,20 +230,13 @@ export class WorkspaceQueryRunnerService {
       existingRecords,
     );
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
-      objectMetadataItem.nameSingular,
-      'findDuplicates',
-      computedArgs,
-    );
-
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
 
     return this.parseResult<IConnection<TRecord>>(
       result,
       objectMetadataItem,
       '',
+      authContext.workspace.id,
       true,
     );
   }
@@ -235,7 +245,7 @@ export class WorkspaceQueryRunnerService {
     args: CreateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
@@ -249,32 +259,33 @@ export class WorkspaceQueryRunnerService {
       }
     });
 
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'createMany',
+        args,
+      );
+
     const computedArgs = (await this.queryRunnerArgsFactory.create(
-      args,
+      hookedArgs,
       options,
       ResolverArgsType.CreateMany,
     )) as CreateManyResolverArgs<Record>;
-
-    await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
-      objectMetadataItem.nameSingular,
-      'createMany',
-      args,
-    );
 
     const query = await this.workspaceQueryBuilderFactory.createMany(
       computedArgs,
       options,
     );
 
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
         result,
         objectMetadataItem,
         'insertInto',
+        authContext.workspace.id,
       )
     )?.records;
 
@@ -287,8 +298,8 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
         name: `${objectMetadataItem.nameSingular}.created`,
-        workspaceId,
-        userId,
+        workspaceId: authContext.workspace.id,
+        userId: authContext.user?.id,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         properties: {
@@ -313,7 +324,7 @@ export class WorkspaceQueryRunnerService {
         ? await this.duplicateService.findExistingRecords(
             ids as string[],
             options.objectMetadataItem,
-            options.workspaceId,
+            options.authContext.workspace.id,
           )
         : [];
 
@@ -369,36 +380,48 @@ export class WorkspaceQueryRunnerService {
     args: UpdateOneResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        authContext.workspace.id,
+        objectMetadataItem.nameSingular,
+      );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
 
-    const existingRecord = await this.findOne(
-      { filter: { id: { eq: args.id } } } as FindOneResolverArgs,
-      options,
-    );
+    const existingRecord = await repository.findOne({
+      where: { id: args.id },
+    });
+
+    if (!existingRecord) {
+      throw new WorkspaceQueryRunnerException(
+        `Object with id ${args.id} not found`,
+        WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND,
+      );
+    }
+
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'updateOne',
+        args,
+      );
 
     const query = await this.workspaceQueryBuilderFactory.updateOne(
-      args,
+      hookedArgs,
       options,
     );
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
-      objectMetadataItem.nameSingular,
-      'updateOne',
-      args,
-    );
-
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
         result,
         objectMetadataItem,
         'update',
+        authContext.workspace.id,
       )
     )?.records;
 
@@ -410,11 +433,12 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
       name: `${objectMetadataItem.nameSingular}.updated`,
-      workspaceId,
-      userId,
-      recordId: (existingRecord as Record).id,
+      workspaceId: authContext.workspace.id,
+      userId: authContext.user?.id,
+      recordId: existingRecord.id,
       objectMetadata: objectMetadataItem,
       properties: {
+        updatedFields: Object.keys(args.data),
         before: this.removeNestedProperties(existingRecord as Record),
         after: this.removeNestedProperties(parsedResults?.[0]),
       },
@@ -427,34 +451,50 @@ export class WorkspaceQueryRunnerService {
     args: UpdateManyResolverArgs<Partial<Record>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { userId, workspaceId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        authContext.workspace.id,
+        objectMetadataItem.nameSingular,
+      );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
 
+    const existingRecords = await repository.find({
+      where: { id: { in: args.filter?.id?.in } },
+    });
+    const mappedRecords = new Map(
+      existingRecords.map((record) => [record.id, record]),
+    );
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_AFFECTED_RECORDS',
     );
-    const query = await this.workspaceQueryBuilderFactory.updateMany(args, {
-      ...options,
-      atMost: maximumRecordAffected,
-    });
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
-      objectMetadataItem.nameSingular,
-      'updateMany',
-      args,
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'updateMany',
+        args,
+      );
+
+    const query = await this.workspaceQueryBuilderFactory.updateMany(
+      hookedArgs,
+      {
+        ...options,
+        atMost: maximumRecordAffected,
+      },
     );
 
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
         result,
         objectMetadataItem,
         'update',
+        authContext.workspace.id,
       )
     )?.records;
 
@@ -464,11 +504,30 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    // TODO: check - NO EVENT SENT?
-    // OK I spent 2 hours trying to implement before/after diff and
-    // figured out why it hasn't been implement
-    // Doing a findMany in that context is very hard as long as we don't
-    // have a proper ORM. Let's come back to this once we do (target end of April 24?)
+    parsedResults.forEach((record) => {
+      const existingRecord = mappedRecords.get(record.id);
+
+      if (!existingRecord) {
+        this.logger.warn(
+          `Record with id ${record.id} not found in the database`,
+        );
+
+        return;
+      }
+
+      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
+        name: `${objectMetadataItem.nameSingular}.updated`,
+        workspaceId: authContext.workspace.id,
+        userId: authContext.user?.id,
+        recordId: existingRecord.id,
+        objectMetadata: objectMetadataItem,
+        properties: {
+          updatedFields: Object.keys(args.data),
+          before: this.removeNestedProperties(existingRecord as Record),
+          after: this.removeNestedProperties(record),
+        },
+      } satisfies ObjectRecordUpdateEvent<any>);
+    });
 
     return parsedResults;
   }
@@ -480,33 +539,38 @@ export class WorkspaceQueryRunnerService {
     args: DeleteManyResolverArgs<Filter>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_AFFECTED_RECORDS',
     );
-    const query = await this.workspaceQueryBuilderFactory.deleteMany(args, {
-      ...options,
-      atMost: maximumRecordAffected,
-    });
 
-    await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
-      objectMetadataItem.nameSingular,
-      'deleteMany',
-      args,
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'deleteMany',
+        args,
+      );
+
+    const query = await this.workspaceQueryBuilderFactory.deleteMany(
+      hookedArgs,
+      {
+        ...options,
+        atMost: maximumRecordAffected,
+      },
     );
 
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
         result,
         objectMetadataItem,
         'deleteFrom',
+        authContext.workspace.id,
       )
     )?.records;
 
@@ -519,12 +583,12 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
         name: `${objectMetadataItem.nameSingular}.deleted`,
-        workspaceId,
-        userId,
+        workspaceId: authContext.workspace.id,
+        userId: authContext.user?.id,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         properties: {
-          before: [this.removeNestedProperties(record)],
+          before: this.removeNestedProperties(record),
         },
       } satisfies ObjectRecordDeleteEvent<any>);
     });
@@ -536,45 +600,41 @@ export class WorkspaceQueryRunnerService {
     args: DeleteOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    const { workspaceId, userId, objectMetadataItem } = options;
+    const { authContext, objectMetadataItem } = options;
+    const repository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        authContext.workspace.id,
+        objectMetadataItem.nameSingular,
+      );
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
 
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'deleteOne',
+        args,
+      );
+
     const query = await this.workspaceQueryBuilderFactory.deleteOne(
-      args,
+      hookedArgs,
       options,
     );
 
-    // TODO START: remove this awful patch and use our upcoming custom ORM is developed
-    const deletedWorkspaceMember = await this.handleDeleteWorkspaceMember(
-      args.id,
-      workspaceId,
-      objectMetadataItem,
-    );
+    const existingRecord = await repository.findOne({
+      where: { id: args.id },
+    });
 
-    const deletedBlocklistItem = await this.handleDeleteBlocklistItem(
-      args.id,
-      workspaceId,
-      objectMetadataItem,
-    );
-    // TODO END
-
-    await this.workspaceQueryHookService.executePreQueryHooks(
-      userId,
-      workspaceId,
-      objectMetadataItem.nameSingular,
-      'deleteOne',
-      args,
-    );
-
-    const result = await this.execute(query, workspaceId);
+    const result = await this.execute(query, authContext.workspace.id);
 
     const parsedResults = (
       await this.parseResult<PGGraphQLMutation<Record>>(
         result,
         objectMetadataItem,
         'deleteFrom',
+        authContext.workspace.id,
       )
     )?.records;
 
@@ -586,14 +646,13 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
       name: `${objectMetadataItem.nameSingular}.deleted`,
-      workspaceId,
-      userId,
+      workspaceId: authContext.workspace.id,
+      userId: authContext.user?.id,
       recordId: args.id,
       objectMetadata: objectMetadataItem,
       properties: {
         before: {
-          ...(deletedWorkspaceMember ?? {}),
-          ...(deletedBlocklistItem ?? {}),
+          ...(existingRecord ?? {}),
           ...this.removeNestedProperties(parsedResults?.[0]),
         },
       },
@@ -608,10 +667,15 @@ export class WorkspaceQueryRunnerService {
     if (!record) {
       return;
     }
+
     const sanitizedRecord = {};
 
     for (const [key, value] of Object.entries(record)) {
       if (value && typeof value === 'object' && value['edges']) {
+        continue;
+      }
+
+      if (key === '__typename') {
         continue;
       }
 
@@ -631,7 +695,7 @@ export class WorkspaceQueryRunnerService {
       return await workspaceDataSource?.transaction(
         async (transactionManager) => {
           await transactionManager.query(`
-          SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
+          SET LOCAL search_path TO ${this.workspaceDataSourceService.getSchemaName(
             workspaceId,
           )};
         `);
@@ -643,7 +707,10 @@ export class WorkspaceQueryRunnerService {
       );
     } catch (error) {
       if (isQueryTimeoutError(error)) {
-        throw new RequestTimeoutException(error.message);
+        throw new WorkspaceQueryRunnerException(
+          'The SQL request took too long to process, resulting in a query read timeout. To resolve this issue, consider modifying your query by reducing the depth of relationships or limiting the number of records being fetched.',
+          WorkspaceQueryRunnerExceptionCode.QUERY_TIMEOUT,
+        );
       }
 
       throw error;
@@ -671,6 +738,7 @@ export class WorkspaceQueryRunnerService {
     graphqlResult: PGGraphQLResult | undefined,
     objectMetadataItem: ObjectMetadataInterface,
     command: string,
+    workspaceId: string,
     isMultiQuery = false,
   ): Promise<Result> {
     const entityKey = `${command}${computeObjectTargetTable(
@@ -693,7 +761,10 @@ export class WorkspaceQueryRunnerService {
       ['update', 'deleteFrom'].includes(command) &&
       !result.affectedCount
     ) {
-      throw new BadRequestException('No rows were affected.');
+      throw new WorkspaceQueryRunnerException(
+        'No rows were affected.',
+        WorkspaceQueryRunnerExceptionCode.NO_ROWS_AFFECTED,
+      );
     }
 
     if (errors && errors.length > 0) {
@@ -714,6 +785,7 @@ export class WorkspaceQueryRunnerService {
     const resultWithGetters = await this.queryResultGettersFactory.create(
       result,
       objectMetadataItem,
+      workspaceId,
     );
 
     return parseResult(resultWithGetters);
@@ -727,7 +799,7 @@ export class WorkspaceQueryRunnerService {
   ): Promise<Result> {
     const result = await this.execute(query, workspaceId);
 
-    return this.parseResult(result, objectMetadataItem, command);
+    return this.parseResult(result, objectMetadataItem, command, workspaceId);
   }
 
   async triggerWebhooks<Record>(
@@ -743,73 +815,12 @@ export class WorkspaceQueryRunnerService {
         CallWebhookJobsJob.name,
         {
           record: jobData,
-          workspaceId: options.workspaceId,
+          workspaceId: options.authContext.workspace.id,
           operation,
           objectMetadataItem: options.objectMetadataItem,
         },
         { retryLimit: 3 },
       );
     });
-  }
-
-  async handleDeleteWorkspaceMember(
-    id: string,
-    workspaceId: string,
-    objectMetadataItem: ObjectMetadataInterface,
-  ) {
-    if (objectMetadataItem.nameSingular !== 'workspaceMember') {
-      return;
-    }
-
-    const workspaceMemberResult = await this.executeAndParse<IRecord>(
-      `
-      query {
-        workspaceMemberCollection(filter: {id: {eq: "${id}"}}) {
-          edges {
-            node {
-              userId: userId
-            }
-          }
-        }
-      }
-      `,
-      objectMetadataItem,
-      '',
-      workspaceId,
-    );
-
-    return workspaceMemberResult.edges?.[0]?.node;
-  }
-
-  async handleDeleteBlocklistItem(
-    id: string,
-    workspaceId: string,
-    objectMetadataItem: ObjectMetadataInterface,
-  ) {
-    if (objectMetadataItem.standardId !== STANDARD_OBJECT_IDS.blocklist) {
-      return;
-    }
-
-    const blocklistItemResult = await this.executeAndParse<IRecord>(
-      `
-      query {
-        blocklistCollection(filter: {id: {eq: "${id}"}}) {
-          edges {
-            node {
-              handle
-              workspaceMember {
-                id
-              }
-            }
-          }
-        }
-      }
-      `,
-      objectMetadataItem,
-      '',
-      workspaceId,
-    );
-
-    return blocklistItemResult.edges?.[0]?.node;
   }
 }

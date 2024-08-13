@@ -1,115 +1,43 @@
 import { Injectable } from '@nestjs/common';
 
-import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
+import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { isDefined } from 'src/utils/is-defined';
-import { BillingWorkspaceService } from 'src/engine/core-modules/billing/billing.workspace-service';
+import { WorkspaceActivationStatus } from 'src/engine/core-modules/workspace/workspace.entity';
 
-enum OnboardingStepValues {
-  SKIPPED = 'SKIPPED',
+export enum OnboardingStepKeys {
+  ONBOARDING_CONNECT_ACCOUNT_PENDING = 'ONBOARDING_CONNECT_ACCOUNT_PENDING',
+  ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
+  ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
 }
 
-enum OnboardingStepKeys {
-  SYNC_EMAIL_ONBOARDING_STEP = 'SYNC_EMAIL_ONBOARDING_STEP',
-  INVITE_TEAM_ONBOARDING_STEP = 'INVITE_TEAM_ONBOARDING_STEP',
-}
-
-type OnboardingKeyValueType = {
-  [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStepValues;
-  [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepValues;
+export type OnboardingKeyValueTypeMap = {
+  [OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
 };
 
 @Injectable()
 export class OnboardingService {
   constructor(
-    private readonly billingWorkspaceService: BillingWorkspaceService,
-    private readonly workspaceManagerService: WorkspaceManagerService,
-    private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly keyValuePairService: KeyValuePairService<OnboardingKeyValueType>,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectWorkspaceRepository(WorkspaceMemberWorkspaceEntity)
-    private readonly workspaceMemberRepository: WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
+    private readonly billingService: BillingService,
+    private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
   ) {}
 
   private async isSubscriptionIncompleteOnboardingStatus(user: User) {
-    const isBillingEnabledForWorkspace =
-      await this.billingWorkspaceService.isBillingEnabledForWorkspace(
+    const hasSubscription =
+      await this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccess(
         user.defaultWorkspaceId,
       );
 
-    if (!isBillingEnabledForWorkspace) {
-      return false;
-    }
+    return !hasSubscription;
+  }
 
-    const currentBillingSubscription =
-      await this.billingWorkspaceService.getCurrentBillingSubscription({
-        workspaceId: user.defaultWorkspaceId,
-      });
-
+  private isWorkspaceActivationPending(user: User) {
     return (
-      !isDefined(currentBillingSubscription) ||
-      currentBillingSubscription?.status === SubscriptionStatus.Incomplete
-    );
-  }
-
-  private async isWorkspaceActivationOnboardingStatus(user: User) {
-    return !(await this.workspaceManagerService.doesDataSourceExist(
-      user.defaultWorkspaceId,
-    ));
-  }
-
-  private async isProfileCreationOnboardingStatus(user: User) {
-    const workspaceMember = await this.workspaceMemberRepository.findOneBy({
-      userId: user.id,
-    });
-
-    return (
-      workspaceMember &&
-      (!workspaceMember.name.firstName || !workspaceMember.name.lastName)
-    );
-  }
-
-  private async isSyncEmailOnboardingStatus(user: User) {
-    const syncEmailValue = await this.keyValuePairService.get({
-      userId: user.id,
-      workspaceId: user.defaultWorkspaceId,
-      key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
-    });
-    const isSyncEmailSkipped = syncEmailValue === OnboardingStepValues.SKIPPED;
-    const connectedAccounts =
-      await this.connectedAccountRepository.getAllByUserId(
-        user.id,
-        user.defaultWorkspaceId,
-      );
-
-    return !isSyncEmailSkipped && !connectedAccounts?.length;
-  }
-
-  private async isInviteTeamOnboardingStatus(workspace: Workspace) {
-    const inviteTeamValue = await this.keyValuePairService.get({
-      workspaceId: workspace.id,
-      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
-    });
-    const isInviteTeamSkipped =
-      inviteTeamValue === OnboardingStepValues.SKIPPED;
-    const workspaceMemberCount =
-      await this.userWorkspaceService.getWorkspaceMemberCount();
-
-    return (
-      !isInviteTeamSkipped &&
-      (!workspaceMemberCount || workspaceMemberCount <= 1)
+      user.defaultWorkspace.activationStatus ===
+      WorkspaceActivationStatus.PENDING_CREATION
     );
   }
 
@@ -118,39 +46,115 @@ export class OnboardingService {
       return OnboardingStatus.PLAN_REQUIRED;
     }
 
-    if (await this.isWorkspaceActivationOnboardingStatus(user)) {
+    if (this.isWorkspaceActivationPending(user)) {
       return OnboardingStatus.WORKSPACE_ACTIVATION;
     }
 
-    if (await this.isProfileCreationOnboardingStatus(user)) {
+    const userVars = await this.userVarsService.getAll({
+      userId: user.id,
+      workspaceId: user.defaultWorkspaceId,
+    });
+
+    const isProfileCreationPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING) ===
+      true;
+
+    const isConnectAccountPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING) ===
+      true;
+
+    const isInviteTeamPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
+
+    if (isProfileCreationPending) {
       return OnboardingStatus.PROFILE_CREATION;
     }
 
-    if (await this.isSyncEmailOnboardingStatus(user)) {
+    if (isConnectAccountPending) {
       return OnboardingStatus.SYNC_EMAIL;
     }
 
-    if (await this.isInviteTeamOnboardingStatus(user.defaultWorkspace)) {
+    if (isInviteTeamPending) {
       return OnboardingStatus.INVITE_TEAM;
     }
 
     return OnboardingStatus.COMPLETED;
   }
 
-  async skipInviteTeamOnboardingStep(workspaceId: string) {
-    await this.keyValuePairService.set({
-      workspaceId,
-      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
-      value: OnboardingStepValues.SKIPPED,
+  async setOnboardingConnectAccountPending({
+    userId,
+    workspaceId,
+    value,
+  }: {
+    userId: string;
+    workspaceId: string;
+    value: boolean;
+  }) {
+    if (!value) {
+      await this.userVarsService.delete({
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+      });
+
+      return;
+    }
+
+    await this.userVarsService.set({
+      userId,
+      workspaceId: workspaceId,
+      key: OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+      value: true,
     });
   }
 
-  async skipSyncEmailOnboardingStep(userId: string, workspaceId: string) {
-    await this.keyValuePairService.set({
+  async setOnboardingInviteTeamPending({
+    workspaceId,
+    value,
+  }: {
+    workspaceId: string;
+    value: boolean;
+  }) {
+    if (!value) {
+      await this.userVarsService.delete({
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+      });
+
+      return;
+    }
+
+    await this.userVarsService.set({
+      workspaceId,
+      key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
+      value: true,
+    });
+  }
+
+  async setOnboardingCreateProfilePending({
+    userId,
+    workspaceId,
+    value,
+  }: {
+    userId: string;
+    workspaceId: string;
+    value: boolean;
+  }) {
+    if (!value) {
+      await this.userVarsService.delete({
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
+      });
+
+      return;
+    }
+
+    await this.userVarsService.set({
       userId,
       workspaceId,
-      key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
-      value: OnboardingStepValues.SKIPPED,
+      key: OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING,
+      value: true,
     });
   }
 }

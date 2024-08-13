@@ -1,12 +1,11 @@
-import { Handle, Position } from 'reactflow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Handle, Position } from 'reactflow';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { capitalize } from '~/utils/string/capitalize';
 
 type ObjectFieldRowProps = {
   field: FieldMetadataItem;
@@ -41,9 +40,7 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
   return (
     <StyledRow>
       {Icon && <Icon size={theme.icon.size.md} />}
-      <StyledFieldName>
-        {capitalize(relatedObject?.namePlural ?? '')}
-      </StyledFieldName>
+      <StyledFieldName>{relatedObject?.labelPlural ?? ''}</StyledFieldName>
       <Handle
         type={field.toRelationMetadata ? 'source' : 'target'}
         position={Position.Right}

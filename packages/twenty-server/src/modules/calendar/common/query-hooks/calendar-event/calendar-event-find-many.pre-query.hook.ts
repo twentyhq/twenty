@@ -1,13 +1,13 @@
 import { BadRequestException, NotFoundException, Scope } from '@nestjs/common';
 
-import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
+import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CanAccessCalendarEventService } from 'src/modules/calendar/common/query-hooks/calendar-event/services/can-access-calendar-event.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @WorkspaceQueryHook({
   key: `calendarEvent.findMany`,
@@ -17,22 +17,30 @@ export class CalendarEventFindManyPreQueryHook
   implements WorkspaceQueryHookInstance
 {
   constructor(
-    @InjectWorkspaceRepository(CalendarChannelEventAssociationWorkspaceEntity)
-    private readonly calendarChannelEventAssociationRepository: WorkspaceRepository<CalendarChannelEventAssociationWorkspaceEntity>,
+    private readonly twentyORMManager: TwentyORMManager,
     private readonly canAccessCalendarEventService: CanAccessCalendarEventService,
   ) {}
 
   async execute(
-    userId: string,
-    workspaceId: string,
+    authContext: AuthContext,
+    objectName: string,
     payload: FindManyResolverArgs,
-  ): Promise<void> {
+  ): Promise<FindManyResolverArgs> {
     if (!payload?.filter?.id?.eq) {
       throw new BadRequestException('id filter is required');
     }
 
+    if (!authContext.user?.id) {
+      throw new BadRequestException('User id is required');
+    }
+
+    const calendarChannelEventAssociationRepository =
+      await this.twentyORMManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        'calendarChannelEventAssociation',
+      );
+
     const calendarChannelCalendarEventAssociations =
-      await this.calendarChannelEventAssociationRepository.find({
+      await calendarChannelEventAssociationRepository.find({
         where: {
           calendarEventId: payload?.filter?.id?.eq,
         },
@@ -44,9 +52,11 @@ export class CalendarEventFindManyPreQueryHook
     }
 
     await this.canAccessCalendarEventService.canAccessCalendarEvent(
-      userId,
-      workspaceId,
+      authContext.user.id,
+      authContext.workspace.id,
       calendarChannelCalendarEventAssociations,
     );
+
+    return payload;
   }
 }

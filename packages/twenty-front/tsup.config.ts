@@ -1,6 +1,6 @@
-import { defineConfig } from 'tsup';
-import svgr from 'esbuild-plugin-svgr';
 import { Config } from '@svgr/core';
+import svgr from 'esbuild-plugin-svgr';
+import { defineConfig } from 'tsup';
 
 const template: Config['template'] = (variables, { tpl }) => {
   return tpl`

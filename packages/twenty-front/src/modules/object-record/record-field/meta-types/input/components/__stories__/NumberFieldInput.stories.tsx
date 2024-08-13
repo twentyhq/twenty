@@ -22,11 +22,11 @@ const NumberFieldValueSetterEffect = ({ value }: { value: number }) => {
 
 type NumberFieldInputWithContextProps = NumberFieldInputProps & {
   value: number;
-  entityId?: string;
+  recordId?: string;
 };
 
 const NumberFieldInputWithContext = ({
-  entityId,
+  recordId,
   value,
   onEnter,
   onEscape,
@@ -54,7 +54,7 @@ const NumberFieldInputWithContext = ({
             objectMetadataNameSingular: 'person',
           },
         }}
-        entityId={entityId}
+        recordId={recordId}
       >
         <NumberFieldValueSetterEffect value={value} />
         <NumberFieldInput

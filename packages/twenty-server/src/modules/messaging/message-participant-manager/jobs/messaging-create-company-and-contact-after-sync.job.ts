@@ -1,12 +1,9 @@
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
-
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -35,8 +32,6 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
     private readonly messageChannelService: MessageChannelRepository,
     @InjectObjectMetadataRepository(MessageParticipantWorkspaceEntity)
     private readonly messageParticipantRepository: MessageParticipantRepository,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
@@ -90,6 +85,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
       connectedAccount,
       contactsToCreate,
       workspaceId,
+      FieldActorSource.EMAIL,
     );
 
     this.logger.log(
