@@ -93,7 +93,6 @@ export class WorkspaceDatasourceFactory {
         const workspaceDataSource = new WorkspaceDataSource(
           {
             workspaceId,
-            workspaceCacheStorage: this.workspaceCacheStorageService,
             objectMetadataCollection: cachedObjectMetadataCollection,
           },
           {

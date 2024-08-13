@@ -63,21 +63,6 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  async getObjectMetadata(
-    workspaceId: string,
-    predicate: (objectMetadata: ObjectMetadataEntity) => boolean,
-  ): Promise<ObjectMetadataEntity | undefined> {
-    const objectMetadataCollection = await this.workspaceSchemaCache.get<
-      ObjectMetadataEntity[]
-    >(`objectMetadataCollection:${workspaceId}`);
-
-    if (!objectMetadataCollection) {
-      return;
-    }
-
-    return objectMetadataCollection.find(predicate);
-  }
-
   setTypeDefs(workspaceId: string, typeDefs: string): Promise<void> {
     return this.workspaceSchemaCache.set<string>(
       `typeDefs:${workspaceId}`,
