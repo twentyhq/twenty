@@ -69,7 +69,6 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findBy(this.target, computedOptions.where);
-
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -82,7 +81,6 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findAndCount(this.target, computedOptions);
-
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -98,7 +96,6 @@ export class WorkspaceRepository<
       this.target,
       computedOptions.where,
     );
-
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -111,7 +108,6 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findOne(this.target, computedOptions);
-
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -124,7 +120,6 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findOneBy(this.target, computedOptions.where);
-
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -137,7 +132,6 @@ export class WorkspaceRepository<
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findOneOrFail(this.target, computedOptions);
-
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -153,7 +147,6 @@ export class WorkspaceRepository<
       this.target,
       computedOptions.where,
     );
-
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
