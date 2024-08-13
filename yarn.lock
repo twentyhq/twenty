@@ -9761,6 +9761,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@playwright/test@npm:^1.46.0":
+  version: 1.46.0
+  resolution: "@playwright/test@npm:1.46.0"
+  dependencies:
+    playwright: "npm:1.46.0"
+  bin:
+    playwright: cli.js
+  checksum: 10c0/dced91081efc8b063267626059b37923f44f98132edba906f30281277d919de27c6acf6de082d390ad263112a983f856e7f4bf37722a33cc42f62c5be308bf87
+  languageName: node
+  linkType: hard
+
 "@pnpm/config.env-replace@npm:^1.1.0":
   version: 1.1.0
   resolution: "@pnpm/config.env-replace@npm:1.1.0"
@@ -40191,7 +40202,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.14.0, playwright@npm:^1.40.1":
+"playwright@npm:1.46.0, playwright@npm:^1.14.0, playwright@npm:^1.40.1":
   version: 1.46.0
   resolution: "playwright@npm:1.46.0"
   dependencies:
@@ -47236,6 +47247,7 @@ __metadata:
     "@nx/vite": "npm:18.3.3"
     "@nx/web": "npm:18.3.3"
     "@octokit/graphql": "npm:^7.0.2"
+    "@playwright/test": "npm:^1.46.0"
     "@ptc-org/nestjs-query-core": "npm:^4.2.0"
     "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
     "@react-email/components": "npm:0.0.12"

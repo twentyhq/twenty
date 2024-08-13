@@ -28,3 +28,8 @@ storybook-static
 .eslintcache
 .cache
 .nyc_output
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/packages/twenty-e2e-testing/run_results/
