@@ -1,63 +1,43 @@
-import { useCallback, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 import {
   H1Title,
   H2Title,
-  IconArrowDown,
-  IconArrowUp,
   IconChevronRight,
   IconPlus,
   IconSettings,
 } from 'twenty-ui';
 
-import { tableSortFamilyState } from '@/activities/states/tableSortFamilyState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
+import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  SettingsObjectItemTableRow,
+  SettingsObjectMetadataItemTableRow,
   StyledObjectTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/SettingsObjectCoverImage';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/SettingsObjectInactiveMenuDropDown';
-import {
-  getObjectTypeLabel,
-  ObjectTypeLabel,
-} from '@/settings/data-model/utils/getObjectTypeLabel';
+import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
+import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
+import { isNonEmptyArray } from '@sniptt/guards';
+import { useMemo } from 'react';
 import { useSortedArray } from '~/hooks/useSortedArray';
-export enum SortKeys {
-  labelPlural = 'labelPlural',
-  objectTypeLabelText = 'objectTypeLabelText',
-  fieldsCount = 'fieldsCount',
-  instancesCount = 'instancesCount',
-}
-type InstanceCountStateType = { [key: string]: number };
-type TableHeading = {
-  label: string;
-  sortKey: SortKeys;
-  align?: 'left' | 'right';
-  type?: string;
-}[];
-export type MetadataFieldRowType = ObjectMetadataItem & {
-  objectTypeLabelText: ObjectTypeLabel['labelText'];
-  fieldsCount: number;
-  instancesCount: number;
-};
+import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
+
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
@@ -66,92 +46,103 @@ const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
 
-const tableHeadings: TableHeading = [
-  { label: 'Name', sortKey: SortKeys.labelPlural },
-  { label: 'Type', sortKey: SortKeys.objectTypeLabelText },
-  {
-    label: 'Fields',
-    sortKey: SortKeys.fieldsCount,
-    align: 'right',
-    type: 'number',
-  },
-  {
-    label: 'Instances',
-    sortKey: SortKeys.instancesCount,
-    align: 'right',
-    type: 'number',
-  },
-];
-
-const settingsObjectKey = {
+const SETTINGS_OBJECT_TABLE_METADATA: TableMetadata<SettingsObjectTableItem> = {
   tableId: 'settingsObject',
-  initialFieldName: SortKeys.labelPlural,
+  fields: [
+    {
+      fieldLabel: 'Name',
+      fieldName: 'labelPlural',
+      fieldType: 'string',
+      align: 'left',
+    },
+    {
+      fieldLabel: 'Type',
+      fieldName: 'objectTypeLabel',
+      fieldType: 'string',
+      align: 'left',
+    },
+    {
+      fieldLabel: 'Fields',
+      fieldName: 'fieldsCount',
+      fieldType: 'number',
+      align: 'right',
+    },
+    {
+      fieldLabel: 'Instances',
+      fieldName: 'totalObjectCount',
+      fieldType: 'number',
+      align: 'right',
+    },
+  ],
 };
 
 export const SettingsObjects = () => {
-  const [instanceCountObj, setInstanceCount] = useState<InstanceCountStateType>(
-    {},
-  );
   const theme = useTheme();
+
+  const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const { activeObjectMetadataItems, inactiveObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
-  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
-  const getRowData = (objectMetaDataItems: ObjectMetadataItem[]) =>
-    objectMetaDataItems.map((objectItem) => ({
-      ...objectItem,
-      [SortKeys.objectTypeLabelText]: getObjectTypeLabel(objectItem).labelText,
-      [SortKeys.fieldsCount]: objectItem.fields.filter(
-        (field) => !field.isSystem,
-      ).length,
-      [SortKeys.instancesCount]: instanceCountObj[objectItem.id],
-    }));
 
-  const activeRowData: MetadataFieldRowType[] = getRowData(
-    activeObjectMetadataItems,
+  const { totalCountByObjectMetadataItemNamePlural } = useCombinedGetTotalCount(
+    {
+      objectMetadataItems: [
+        ...activeObjectMetadataItems,
+        ...inactiveObjectMetadataItems,
+      ],
+    },
   );
 
-  const inActiveRowData: MetadataFieldRowType[] = getRowData(
-    inactiveObjectMetadataItems,
+  const activeObjectSettingsArray = useMemo(
+    () =>
+      activeObjectMetadataItems.map(
+        (objectMetadataItem) =>
+          ({
+            objectMetadataItem,
+            labelPlural: objectMetadataItem.labelPlural,
+            objectTypeLabel: getObjectTypeLabel(objectMetadataItem).labelText,
+            fieldsCount: objectMetadataItem.fields.filter(
+              (field) => !field.isSystem,
+            ).length,
+            totalObjectCount:
+              totalCountByObjectMetadataItemNamePlural[
+                objectMetadataItem.namePlural
+              ] ?? 0,
+          }) satisfies SettingsObjectTableItem,
+      ),
+    [activeObjectMetadataItems, totalCountByObjectMetadataItemNamePlural],
   );
 
-  const [sortConfig, setSortConfig] = useRecoilState(
-    tableSortFamilyState(settingsObjectKey),
+  const inactiveObjectSettingsArray = useMemo(
+    () =>
+      inactiveObjectMetadataItems.map(
+        (objectMetadataItem) =>
+          ({
+            objectMetadataItem,
+            labelPlural: objectMetadataItem.labelPlural,
+            objectTypeLabel: getObjectTypeLabel(objectMetadataItem).labelText,
+            fieldsCount: objectMetadataItem.fields.filter(
+              (field) => !field.isSystem,
+            ).length,
+            totalObjectCount:
+              totalCountByObjectMetadataItemNamePlural[
+                objectMetadataItem.namePlural
+              ] ?? 0,
+          }) satisfies SettingsObjectTableItem,
+      ),
+    [inactiveObjectMetadataItems, totalCountByObjectMetadataItemNamePlural],
   );
-  const sortedActiveObjectMetadataItems = useSortedArray<MetadataFieldRowType>(
-    activeRowData,
-    settingsObjectKey,
+
+  const sortedActiveObjectSettingsItems = useSortedArray(
+    activeObjectSettingsArray,
+    SETTINGS_OBJECT_TABLE_METADATA,
   );
-  const sortedInActiveObjectMetadataItems =
-    useSortedArray<MetadataFieldRowType>(inActiveRowData, settingsObjectKey);
-  const handleSort = (key: keyof MetadataFieldRowType) => {
-    setSortConfig((preVal) => {
-      if (preVal.fieldName === key) {
-        const orderBy =
-          preVal.orderBy === 'AscNullsLast' ? 'DescNullsLast' : 'AscNullsLast';
 
-        return { orderBy, fieldName: key };
-      } else {
-        return { orderBy: 'AscNullsLast', fieldName: key };
-      }
-    });
-  };
-
-  const updateInstanceCount = useCallback((id: string, val: number) => {
-    setInstanceCount((prevState: InstanceCountStateType) => ({
-      ...prevState,
-      [id]: val,
-    }));
-  }, []);
-  const SortIcon = ({ sortKey }: { sortKey: SortKeys }) => {
-    if (sortKey !== sortConfig.fieldName) return null;
-    return sortConfig.orderBy === 'AscNullsLast' ? (
-      <IconArrowUp size="14" />
-    ) : (
-      <IconArrowDown size="14" />
-    );
-  };
+  const sortedInactiveObjectSettingsItems = useSortedArray(
+    inactiveObjectSettingsArray,
+    SETTINGS_OBJECT_TABLE_METADATA,
+  );
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -173,68 +164,66 @@ export const SettingsObjects = () => {
             <H2Title title="Existing objects" />
             <Table>
               <StyledObjectTableRow>
-                {tableHeadings.map((item) => (
-                  <TableHeader
-                    key={item.label}
-                    align={item?.align}
-                    onClick={() => handleSort(item.sortKey)}
-                  >
-                    {sortConfig.fieldName === item.sortKey &&
-                      item.type === 'number' && (
-                        <SortIcon sortKey={item.sortKey} />
-                      )}
-                    {item.label}
-                    {sortConfig.fieldName === item.sortKey &&
-                      item.type !== 'number' && (
-                        <SortIcon sortKey={item.sortKey} />
-                      )}
-                  </TableHeader>
-                ))}
+                {SETTINGS_OBJECT_TABLE_METADATA.fields.map(
+                  (settingsObjectsTableMetadataField) => (
+                    <SortableTableHeader
+                      fieldName={settingsObjectsTableMetadataField.fieldName}
+                      label={settingsObjectsTableMetadataField.fieldLabel}
+                      tableId={SETTINGS_OBJECT_TABLE_METADATA.tableId}
+                      align={settingsObjectsTableMetadataField.align}
+                    />
+                  ),
+                )}
                 <TableHeader></TableHeader>
               </StyledObjectTableRow>
-              {!!sortedActiveObjectMetadataItems.length && (
+              {isNonEmptyArray(sortedActiveObjectSettingsItems) && (
                 <TableSection title="Active">
-                  {sortedActiveObjectMetadataItems.map(
-                    (activeObjectMetadataItem) => (
-                      <SettingsObjectItemTableRow
-                        key={activeObjectMetadataItem.namePlural}
-                        updateInstanceCount={updateInstanceCount}
-                        objectItem={activeObjectMetadataItem}
-                        action={
-                          <StyledIconChevronRight
-                            size={theme.icon.size.md}
-                            stroke={theme.icon.stroke.sm}
-                          />
-                        }
-                        to={`/settings/objects/${getObjectSlug(
-                          activeObjectMetadataItem,
-                        )}`}
-                      />
-                    ),
-                  )}
+                  {sortedActiveObjectSettingsItems.map((objectSettingsItem) => (
+                    <SettingsObjectMetadataItemTableRow
+                      key={objectSettingsItem.objectMetadataItem.namePlural}
+                      objectMetadataItem={objectSettingsItem.objectMetadataItem}
+                      totalObjectCount={objectSettingsItem.totalObjectCount}
+                      action={
+                        <StyledIconChevronRight
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                        />
+                      }
+                      link={`/settings/objects/${getObjectSlug(
+                        objectSettingsItem.objectMetadataItem,
+                      )}`}
+                    />
+                  ))}
                 </TableSection>
               )}
-              {!!inactiveObjectMetadataItems.length && (
+              {isNonEmptyArray(inactiveObjectMetadataItems) && (
                 <TableSection title="Inactive">
-                  {sortedInActiveObjectMetadataItems.map(
-                    (inactiveObjectMetadataItem) => (
-                      <SettingsObjectItemTableRow
-                        key={inactiveObjectMetadataItem.namePlural}
-                        updateInstanceCount={updateInstanceCount}
-                        objectItem={inactiveObjectMetadataItem}
+                  {sortedInactiveObjectSettingsItems.map(
+                    (objectSettingsItem) => (
+                      <SettingsObjectMetadataItemTableRow
+                        key={objectSettingsItem.objectMetadataItem.namePlural}
+                        objectMetadataItem={
+                          objectSettingsItem.objectMetadataItem
+                        }
+                        totalObjectCount={objectSettingsItem.totalObjectCount}
                         action={
                           <SettingsObjectInactiveMenuDropDown
-                            isCustomObject={inactiveObjectMetadataItem.isCustom}
-                            scopeKey={inactiveObjectMetadataItem.namePlural}
+                            isCustomObject={
+                              objectSettingsItem.objectMetadataItem.isCustom
+                            }
+                            scopeKey={
+                              objectSettingsItem.objectMetadataItem.namePlural
+                            }
                             onActivate={() =>
                               updateOneObjectMetadataItem({
-                                idToUpdate: inactiveObjectMetadataItem.id,
+                                idToUpdate:
+                                  objectSettingsItem.objectMetadataItem.id,
                                 updatePayload: { isActive: true },
                               })
                             }
                             onDelete={() =>
                               deleteOneObjectMetadataItem(
-                                inactiveObjectMetadataItem.id,
+                                objectSettingsItem.objectMetadataItem.id,
                               )
                             }
                           />

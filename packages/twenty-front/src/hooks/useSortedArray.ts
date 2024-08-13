@@ -1,41 +1,46 @@
+import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
+import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
-
-import { tableSortFamilyState } from '@/activities/states/tableSortFamilyState';
-import { OrderBy } from '@/object-metadata/types/OrderBy';
+import { isDefined } from 'twenty-ui';
 
 export const useSortedArray = <T>(
   arrayToSort: T[],
-  { tableId, initialFieldName }: { tableId: string; initialFieldName: string },
+  tableMetadata: TableMetadata<T>,
 ): T[] => {
-  const sortConfig = useRecoilValue(
-    tableSortFamilyState({ tableId, initialFieldName }),
+  const sortedFieldByTable = useRecoilValue(
+    sortedFieldByTableFamilyState({ tableId: tableMetadata.tableId }),
   );
 
-  const sortTableData = (
-    arrayToSort: T[],
-    columnKey: keyof T,
-    order: OrderBy | null,
-  ): T[] => {
+  const sortedArray = useMemo(() => {
+    if (!isDefined(sortedFieldByTable)) {
+      return arrayToSort;
+    }
+
+    const sortFieldName = sortedFieldByTable.fieldName as keyof T;
+    const sortFieldType = tableMetadata.fields.find(
+      (field) => field.fieldName === sortFieldName,
+    )?.fieldType;
+    const sortOrder = sortedFieldByTable.orderBy;
+
     return arrayToSort.toSorted((a: T, b: T) => {
-      if (typeof a[columnKey] === 'string') {
-        return order === 'AscNullsLast'
-          ? (a[columnKey] as string).localeCompare(b[columnKey] as string)
-          : (b[columnKey] as string).localeCompare(a[columnKey] as string);
-      } else if (typeof a[columnKey] === 'number') {
-        return order === 'AscNullsLast'
-          ? (a[columnKey] as number) - (b[columnKey] as number)
-          : (b[columnKey] as number) - (a[columnKey] as number);
+      if (sortFieldType === 'string') {
+        return sortOrder === 'AscNullsLast'
+          ? (a[sortFieldName] as string)?.localeCompare(
+              b[sortFieldName] as string,
+            )
+          : (b[sortFieldName] as string)?.localeCompare(
+              a[sortFieldName] as string,
+            );
+      } else if (sortFieldType === 'number') {
+        return sortOrder === 'AscNullsLast'
+          ? (a[sortFieldName] as number) - (b[sortFieldName] as number)
+          : (b[sortFieldName] as number) - (a[sortFieldName] as number);
       } else {
         return 0;
       }
     });
-  };
+  }, [sortedFieldByTable, arrayToSort, tableMetadata]);
 
-  const sortedTableData = sortTableData(
-    [...arrayToSort],
-    sortConfig.fieldName as keyof T,
-    sortConfig.orderBy,
-  );
-
-  return sortedTableData;
+  return sortedArray;
 };

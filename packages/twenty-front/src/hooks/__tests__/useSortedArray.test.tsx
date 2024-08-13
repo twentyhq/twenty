@@ -1,15 +1,15 @@
-import React, { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
+import React, { ReactNode } from 'react';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 
-import { tableSortFamilyState } from '@/activities/states/tableSortFamilyState';
+import { sortedFieldByTableFamilyState } from '@/activities/states/tableSortFamilyState';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import {
-  mockedTableData as tableData,
-  tableDataSortedByFieldsCountInAscendingOrder,
-  tableDataSortedByFieldsCountInDescendingOrder,
-  tableDataSortedBylabelInAscendingOrder,
-  tableDataSortedBylabelInDescendingOrder,
+    mockedTableData as tableData,
+    tableDataSortedByFieldsCountInAscendingOrder,
+    tableDataSortedByFieldsCountInDescendingOrder,
+    tableDataSortedBylabelInAscendingOrder,
+    tableDataSortedBylabelInDescendingOrder,
 } from '~/testing/mock-data/tableData';
 
 import { useSortedArray } from '../useSortedArray';
@@ -28,7 +28,7 @@ describe('useSortedArray hook', () => {
     (fieldName: string, orderBy: OrderBy) =>
     ({ set }: MutableSnapshot) => {
       set(
-        tableSortFamilyState({
+        sortedFieldByTableFamilyState({
           tableId: 'SettingsObjectDetail',
           initialFieldName: 'labelPlural',
         }),

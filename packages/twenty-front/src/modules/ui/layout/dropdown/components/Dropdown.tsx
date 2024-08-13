@@ -6,7 +6,7 @@ import {
   Placement,
   useFloating,
 } from '@floating-ui/react';
-import { useRef } from 'react';
+import { MouseEvent, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -93,6 +93,14 @@ export const Dropdown = ({
     toggleDropdown();
   };
 
+  const handleClickableComponentClick = (event: MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+
+    toggleDropdown();
+    onClickOutside?.();
+  };
+
   useListenClickOutside({
     refs: [refs.floating],
     callback: () => {
@@ -126,10 +134,7 @@ export const Dropdown = ({
         {clickableComponent && (
           <div
             ref={refs.setReference}
-            onClick={() => {
-              toggleDropdown();
-              onClickOutside?.();
-            }}
+            onClick={handleClickableComponentClick}
             className={className}
           >
             {clickableComponent}
