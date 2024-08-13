@@ -9761,14 +9761,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.45.3":
-  version: 1.45.3
-  resolution: "@playwright/test@npm:1.45.3"
+"@playwright/test@npm:^1.46.0":
+  version: 1.46.0
+  resolution: "@playwright/test@npm:1.46.0"
   dependencies:
-    playwright: "npm:1.45.3"
+    playwright: "npm:1.46.0"
   bin:
     playwright: cli.js
-  checksum: 10c0/d6c2179601093ae0e4feaf6a73841c62045102739d6607e38ea6ab820301f4659ee767c629479b3ce929d72a5f448819a6ee96b0c501fb39b90fceee83fafcde
+  checksum: 10c0/dced91081efc8b063267626059b37923f44f98132edba906f30281277d919de27c6acf6de082d390ad263112a983f856e7f4bf37722a33cc42f62c5be308bf87
   languageName: node
   linkType: hard
 
@@ -40202,31 +40202,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.45.3":
-  version: 1.45.3
-  resolution: "playwright-core@npm:1.45.3"
-  bin:
-    playwright-core: cli.js
-  checksum: 10c0/39cc5920b27c42300e13a0646ca723578085d85940fc1f03e858fa348b5ac06f2eadf34cf15a0c0f4443e63ae188097d3ddbeb4389e7bbf5ae3438d8f6ed23e1
-  languageName: node
-  linkType: hard
-
-"playwright@npm:1.45.3":
-  version: 1.45.3
-  resolution: "playwright@npm:1.45.3"
-  dependencies:
-    fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.45.3"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    playwright: cli.js
-  checksum: 10c0/3516ca49deb589171ac6525c0367f2ff948514d791d197f3cc0a135154c2df08a4d7cd11a810e187f35ae9ca490b37ca3a92fb3eb51560f03aefcaca0613efdb
-  languageName: node
-  linkType: hard
-
-"playwright@npm:^1.14.0, playwright@npm:^1.40.1":
+"playwright@npm:1.46.0, playwright@npm:^1.14.0, playwright@npm:^1.46.0":
   version: 1.46.0
   resolution: "playwright@npm:1.46.0"
   dependencies:
@@ -47110,7 +47086,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-e2e-testing@workspace:packages/twenty-e2e-testing"
   dependencies:
-    "@playwright/test": "npm:^1.45.3"
+    "@playwright/test": "npm:^1.46.0"
   languageName: unknown
   linkType: soft
 
@@ -47483,7 +47459,7 @@ __metadata:
     pg: "npm:^8.11.3"
     pg-boss: "npm:^9.0.3"
     planer: "npm:^1.2.0"
-    playwright: "npm:^1.40.1"
+    playwright: "npm:^1.46.0"
     pluralize: "npm:^8.0.0"
     prettier: "npm:^3.1.1"
     prism-react-renderer: "npm:^2.1.0"

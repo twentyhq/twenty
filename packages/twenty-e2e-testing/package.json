@@ -1,7 +1,7 @@
 {
   "name": "twenty-e2e-testing",
   "devDependencies": {
-    "@playwright/test": "^1.45.3"
+    "@playwright/test": "^1.46.0"
   },
   "scripts": {
     "test:e2e:setup": "yarn playwright install",
