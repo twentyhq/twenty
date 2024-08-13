@@ -230,7 +230,7 @@ export const RecordDetailRelationRecordsListItem = ({
               <FieldContext.Provider
                 key={fieldMetadataItem.id}
                 value={{
-                  entityId: relationRecord.id,
+                  recordId: relationRecord.id,
                   maxWidth: 200,
                   recoilScopeId: `${relationRecord.id}-${fieldMetadataItem.id}`,
                   isLabelIdentifier: false,

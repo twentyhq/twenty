@@ -1,5 +1,4 @@
-import React from 'react';
-
+import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined, useIcons } from 'twenty-ui';
@@ -17,6 +16,28 @@ import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/compo
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
+import { Theme, useTheme } from '@emotion/react';
+
+const ORDERED_STANDARD_OBJECTS = [
+  'person',
+  'company',
+  'opportunity',
+  'task',
+  'note',
+];
+
+const navItemsAnimationVariants = (theme: Theme) => ({
+  hidden: {
+    height: 0,
+    opacity: 0,
+    marginTop: 0,
+  },
+  visible: {
+    height: 'auto',
+    opacity: 1,
+    marginTop: theme.spacing(1),
+  },
+});
 
 export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
   const currentUser = useRecoilValue(currentUserState);
@@ -36,6 +57,8 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const loading = useIsPrefetchLoading();
 
+  const theme = useTheme();
+
   if (loading && isDefined(currentUser)) {
     return <ObjectMetadataNavItemsSkeletonLoader />;
   }
@@ -52,14 +75,15 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
           [
             ...filteredActiveObjectMetadataItems
               .filter((item) =>
-                ['person', 'company', 'opportunity'].includes(
-                  item.nameSingular,
-                ),
+                ORDERED_STANDARD_OBJECTS.includes(item.nameSingular),
               )
               .sort((objectMetadataItemA, objectMetadataItemB) => {
-                const order = ['person', 'company', 'opportunity'];
-                const indexA = order.indexOf(objectMetadataItemA.nameSingular);
-                const indexB = order.indexOf(objectMetadataItemB.nameSingular);
+                const indexA = ORDERED_STANDARD_OBJECTS.indexOf(
+                  objectMetadataItemA.nameSingular,
+                );
+                const indexB = ORDERED_STANDARD_OBJECTS.indexOf(
+                  objectMetadataItemB.nameSingular,
+                );
                 if (indexA === -1 || indexB === -1) {
                   return objectMetadataItemA.nameSingular.localeCompare(
                     objectMetadataItemB.nameSingular,
@@ -69,10 +93,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
               }),
             ...filteredActiveObjectMetadataItems
               .filter(
-                (item) =>
-                  !['person', 'company', 'opportunity'].includes(
-                    item.nameSingular,
-                  ),
+                (item) => !ORDERED_STANDARD_OBJECTS.includes(item.nameSingular),
               )
               .sort((objectMetadataItemA, objectMetadataItemB) => {
                 return new Date(objectMetadataItemA.createdAt) <
@@ -96,7 +117,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
               objectMetadataViews.length > 1;
 
             return (
-              <React.Fragment key={objectMetadataItem.id}>
+              <div key={objectMetadataItem.id}>
                 <NavigationDrawerItem
                   key={objectMetadataItem.id}
                   label={objectMetadataItem.labelPlural}
@@ -106,26 +127,37 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
                     currentPath === `/objects/${objectMetadataItem.namePlural}`
                   }
                 />
-                {shouldSubItemsBeDisplayed &&
-                  objectMetadataViews
-                    .sort((viewA, viewB) =>
-                      viewA.key === 'INDEX'
-                        ? -1
-                        : viewA.position - viewB.position,
-                    )
-                    .map((view) => (
-                      <NavigationDrawerSubItem
-                        key={view.id}
-                        label={view.name}
-                        to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
-                        active={
-                          currentPathWithSearch ===
-                          `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
-                        }
-                        Icon={getIcon(view.icon)}
-                      />
-                    ))}
-              </React.Fragment>
+                <AnimatePresence>
+                  {shouldSubItemsBeDisplayed && (
+                    <motion.div
+                      initial="hidden"
+                      animate="visible"
+                      exit="hidden"
+                      variants={navItemsAnimationVariants(theme)}
+                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    >
+                      {objectMetadataViews
+                        .sort((viewA, viewB) =>
+                          viewA.key === 'INDEX'
+                            ? -1
+                            : viewA.position - viewB.position,
+                        )
+                        .map((view) => (
+                          <NavigationDrawerSubItem
+                            label={view.name}
+                            to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
+                            active={
+                              currentPathWithSearch ===
+                              `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
+                            }
+                            Icon={getIcon(view.icon)}
+                            key={view.id}
+                          />
+                        ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             );
           })}
       </NavigationDrawerSection>

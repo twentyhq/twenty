@@ -5,11 +5,11 @@ import { useRecordFieldValue } from '@/object-record/record-store/contexts/Recor
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const usePhoneFieldDisplay = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { recordId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<string>(entityId, fieldName);
+  const fieldValue = useRecordFieldValue<string>(recordId, fieldName);
 
   return {
     fieldDefinition,

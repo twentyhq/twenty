@@ -1,13 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { gmail_v1 } from 'googleapis';
+import { Any } from 'typeorm';
 
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -29,14 +30,11 @@ export class MessagingPartialMessageListFetchService {
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
-    @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationWorkspaceEntity,
-    )
-    private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
     private readonly gmailGetHistoryService: MessagingGmailHistoryService,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly gmailFetchMessageIdsToExcludeService: MessagingGmailFetchMessageIdsToExcludeService,
+    private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
   public async processMessageListFetch(
@@ -135,11 +133,15 @@ export class MessagingPartialMessageListFetchService {
       `Added ${messagesAddedFiltered.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
-    await this.messageChannelMessageAssociationRepository.deleteByMessageExternalIdsAndMessageChannelId(
-      messagesDeleted,
-      messageChannel.id,
-      workspaceId,
-    );
+    const messageChannelMessageAssociationRepository =
+      await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        'messageChannelMessageAssociation',
+      );
+
+    await messageChannelMessageAssociationRepository.delete({
+      messageChannelId: messageChannel.id,
+      messageExternalId: Any(messagesDeleted),
+    });
 
     this.logger.log(
       `Deleted ${messagesDeleted.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,

@@ -3,15 +3,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { join } from 'path';
 
+import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FileUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { v4 } from 'uuid';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { ServerlessExecuteResult } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
+import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
+import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
+import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
 import { ServerlessService } from 'src/engine/integrations/serverless/serverless.service';
+import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function-from-file.input';
+import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
   ServerlessFunctionEntity,
   ServerlessFunctionSyncStatus,
@@ -20,12 +25,7 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
-import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
-import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
-import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function-from-file.input';
-import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -119,8 +119,8 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
 
     if (codeHasChanged) {
       const fileFolder = join(
+        'workspace-' + workspaceId,
         FileFolder.ServerlessFunction,
-        workspaceId,
         existingServerlessFunction.id,
       );
 
@@ -164,13 +164,18 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
 
     const serverlessFunctionId = v4();
 
-    const fileFolder = join(
+    const fileFolderWithoutWorkspace = join(
       FileFolder.ServerlessFunction,
-      workspaceId,
       serverlessFunctionId,
     );
 
-    const sourceCodeFullPath = fileFolder + '/' + SOURCE_FILE_NAME;
+    const fileFolder = join(
+      'workspace-' + workspaceId,
+      fileFolderWithoutWorkspace,
+    );
+
+    const sourceCodeFullPath =
+      fileFolderWithoutWorkspace + '/' + SOURCE_FILE_NAME;
 
     const serverlessFunction = await super.createOne({
       ...serverlessFunctionInput,

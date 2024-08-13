@@ -30,7 +30,7 @@ export const EventFieldDiffValue = ({
     <StyledEventFieldDiffValue>
       <FieldContext.Provider
         value={{
-          entityId: diffArtificialRecordStoreId,
+          recordId: diffArtificialRecordStoreId,
           isLabelIdentifier: isLabelIdentifierField({
             fieldMetadataItem,
             objectMetadataItem: mainObjectMetadataItem,

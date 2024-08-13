@@ -2,7 +2,6 @@ import { EntityManager } from 'typeorm';
 
 import { DEV_SEED_MESSAGE_CHANNEL_IDS } from 'src/database/typeorm-seeds/workspace/message-channels';
 import { DEV_SEED_MESSAGE_IDS } from 'src/database/typeorm-seeds/workspace/messages';
-import { DEV_SEED_MESSAGE_THREAD_IDS } from 'src/database/typeorm-seeds/workspace/message-threads';
 
 const tableName = 'messageChannelMessageAssociation';
 
@@ -25,7 +24,6 @@ export const seedMessageChannelMessageAssociation = async (
       'updatedAt',
       'deletedAt',
       'messageThreadExternalId',
-      'messageThreadId',
       'messageExternalId',
       'messageId',
       'messageChannelId',
@@ -38,7 +36,6 @@ export const seedMessageChannelMessageAssociation = async (
         updatedAt: new Date(),
         deletedAt: null,
         messageThreadExternalId: null,
-        messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_1,
         messageExternalId: null,
         messageId: DEV_SEED_MESSAGE_IDS.MESSAGE_1,
         messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM,
@@ -49,7 +46,6 @@ export const seedMessageChannelMessageAssociation = async (
         updatedAt: new Date(),
         deletedAt: null,
         messageThreadExternalId: null,
-        messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_2,
         messageExternalId: null,
         messageId: DEV_SEED_MESSAGE_IDS.MESSAGE_2,
         messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM,
@@ -60,7 +56,6 @@ export const seedMessageChannelMessageAssociation = async (
         updatedAt: new Date(),
         deletedAt: null,
         messageThreadExternalId: null,
-        messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_1,
         messageExternalId: null,
         messageId: DEV_SEED_MESSAGE_IDS.MESSAGE_3,
         messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM,

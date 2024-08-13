@@ -47,11 +47,11 @@ const RelationWorkspaceSetterEffect = () => {
 
 type RelationToOneFieldInputWithContextProps = RelationToOneFieldInputProps & {
   value: number;
-  entityId?: string;
+  recordId?: string;
 };
 
 const RelationToOneFieldInputWithContext = ({
-  entityId,
+  recordId,
   onSubmit,
   onCancel,
 }: RelationToOneFieldInputWithContextProps) => {
@@ -78,7 +78,7 @@ const RelationToOneFieldInputWithContext = ({
             relationFieldMetadataId: '20202020-8c37-4163-ba06-1dada334ce3e',
           },
         }}
-        entityId={entityId}
+        recordId={recordId}
       >
         <RelationPickerScope
           relationPickerScopeId={'relation-to-one-field-input'}

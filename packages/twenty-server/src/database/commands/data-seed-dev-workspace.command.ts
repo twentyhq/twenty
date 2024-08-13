@@ -1,13 +1,18 @@
 import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command, CommandRunner } from 'nest-commander';
-import { EntityManager } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_TWENTY_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
+import {
+  getDevSeedCompanyCustomFields,
+  getDevSeedPeopleCustomFields,
+} from 'src/database/typeorm-seeds/metadata/fieldsMetadata';
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
 import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
 import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
@@ -31,10 +36,13 @@ import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
 // TODO: implement dry-run
@@ -52,6 +60,9 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     private readonly typeORMService: TypeORMService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly fieldMetadataService: FieldMetadataService,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     @InjectCacheStorage(CacheStorageNamespace.WorkspaceSchema)
     private readonly workspaceSchemaCache: CacheStorageService,
@@ -127,6 +138,15 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
           workspaceDataSource.getRepository<FeatureFlagEntity>('featureFlag');
 
         const featureFlags = await featureFlagRepository.find({});
+
+        await this.seedCompanyCustomFields(
+          objectMetadataMap[STANDARD_OBJECT_IDS.company],
+          workspaceId,
+        );
+        await this.seedPeopleCustomFields(
+          objectMetadataMap[STANDARD_OBJECT_IDS.person],
+          workspaceId,
+        );
 
         await workspaceDataSource.transaction(
           async (entityManager: EntityManager) => {
@@ -204,6 +224,57 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       }
 
       await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
+    }
+  }
+
+  async seedCompanyCustomFields(
+    companyObjectMetadata: ObjectMetadataEntity,
+    workspaceId: string,
+  ) {
+    const companyObjectMetadataId = companyObjectMetadata?.id;
+
+    if (!companyObjectMetadataId) {
+      throw new Error(
+        `Company object metadata not found for workspace ${workspaceId}, can't seed custom fields`,
+      );
+    }
+
+    const DEV_SEED_COMPANY_CUSTOM_FIELDS = getDevSeedCompanyCustomFields(
+      companyObjectMetadataId,
+      workspaceId,
+    );
+
+    for (const customField of DEV_SEED_COMPANY_CUSTOM_FIELDS) {
+      // TODO: Use createMany once implemented for better performances
+      await this.fieldMetadataService.createOne({
+        ...customField,
+        isCustom: true,
+      });
+    }
+  }
+
+  async seedPeopleCustomFields(
+    personObjectMetadata: ObjectMetadataEntity,
+    workspaceId: string,
+  ) {
+    const personObjectMetadataId = personObjectMetadata?.id;
+
+    if (!personObjectMetadataId) {
+      throw new Error(
+        `Person object metadata not found for workspace ${workspaceId}, can't seed custom fields`,
+      );
+    }
+
+    const DEV_SEED_PERSON_CUSTOM_FIELDS = getDevSeedPeopleCustomFields(
+      personObjectMetadataId,
+      workspaceId,
+    );
+
+    for (const customField of DEV_SEED_PERSON_CUSTOM_FIELDS) {
+      await this.fieldMetadataService.createOne({
+        ...customField,
+        isCustom: true,
+      });
     }
   }
 }

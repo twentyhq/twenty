@@ -1,4 +1,4 @@
-import { GraphQLString, GraphQLInt, GraphQLID, GraphQLBoolean } from 'graphql';
+import { GraphQLBoolean, GraphQLID, GraphQLInt, GraphQLString } from 'graphql';
 
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { ArgMetadata } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/param-metadata.interface';
@@ -99,13 +99,6 @@ export const getResolverArgs = (
         },
       };
     case 'deleteOne':
-      return {
-        id: {
-          type: GraphQLID,
-          isNullable: false,
-        },
-      };
-    case 'executeQuickActionOnOne':
       return {
         id: {
           type: GraphQLID,

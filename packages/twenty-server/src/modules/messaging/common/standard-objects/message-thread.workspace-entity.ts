@@ -14,7 +14,6 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MESSAGE_THREAD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageThreadSubscriberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-subscriber.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
@@ -54,19 +53,4 @@ export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
     featureFlag: FeatureFlagKey.IsMessageThreadSubscriberEnabled,
   })
   subscribers: Relation<MessageThreadSubscriberWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId:
-      MESSAGE_THREAD_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Channel Association',
-    description: 'Messages from the channel',
-    icon: 'IconMessage',
-    inverseSideTarget: () => MessageChannelMessageAssociationWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.RESTRICT,
-  })
-  @WorkspaceIsNullable()
-  messageChannelMessageAssociations: Relation<
-    MessageChannelMessageAssociationWorkspaceEntity[]
-  >;
 }

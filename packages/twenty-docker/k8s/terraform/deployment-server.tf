@@ -1,17 +1,17 @@
 resource "kubernetes_deployment" "twentycrm_server" {
   metadata {
-    name      = "${local.twentycrm_app_name}-server"
+    name      = "${var.twentycrm_app_name}-server"
     namespace = kubernetes_namespace.twentycrm.metadata.0.name
     labels = {
-      app = "${local.twentycrm_app_name}-server"
+      app = "${var.twentycrm_app_name}-server"
     }
   }
 
   spec {
-    replicas = 1
+    replicas = var.twentycrm_server_replicas
     selector {
       match_labels = {
-        app = "${local.twentycrm_app_name}-server"
+        app = "${var.twentycrm_app_name}-server"
       }
     }
 
@@ -26,14 +26,14 @@ resource "kubernetes_deployment" "twentycrm_server" {
     template {
       metadata {
         labels = {
-          app = "${local.twentycrm_app_name}-server"
+          app = "${var.twentycrm_app_name}-server"
         }
       }
 
       spec {
         container {
-          image = local.twentycrm_server_image
-          name  = local.twentycrm_app_name
+          image = var.twentycrm_server_image
+          name  = var.twentycrm_app_name
           stdin = true
           tty   = true
 
@@ -54,22 +54,17 @@ resource "kubernetes_deployment" "twentycrm_server" {
 
           env {
             name  = "SERVER_URL"
-            value = "https://crm.example.com:443"
+            value = var.twentycrm_app_hostname
           }
 
           env {
             name  = "FRONT_BASE_URL"
-            value = "https://crm.example.com:443"
-          }
-
-          env {
-            name  = "BACKEND_SERVER_URL"
-            value = "https://crm.example.com:443"
+            value = var.twentycrm_app_hostname
           }
 
           env {
             name  = "PG_DATABASE_URL"
-            value = "postgres://twenty:twenty@twentycrm-db.twentycrm.svc.cluster.local/default"
+            value = "postgres://twenty:${var.twentycrm_pgdb_admin_password}@${var.twentycrm_app_name}-db.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local/default"
           }
 
           env {
@@ -86,7 +81,10 @@ resource "kubernetes_deployment" "twentycrm_server" {
             name  = "STORAGE_TYPE"
             value = "local"
           }
-
+          env {
+            name  = "MESSAGE_QUEUE_TYPE"
+            value = "pg-boss"
+          }
           env {
             name = "ACCESS_TOKEN_SECRET"
             value_from {
@@ -144,16 +142,16 @@ resource "kubernetes_deployment" "twentycrm_server" {
           }
 
           volume_mount {
-            name       = "nfs-twentycrm-server-data"
-            mount_path = "/app/.local-storage"
+            name       = "server-data"
+            mount_path = var.twentycrm_server_data_mount_path
           }
         }
 
         volume {
-          name = "nfs-twentycrm-server-data"
+          name = "server-data"
 
           persistent_volume_claim {
-            claim_name = "nfs-twentycrm-server-data-pvc"
+            claim_name = kubernetes_persistent_volume_claim.server.metadata.0.name
           }
         }
 

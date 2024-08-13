@@ -36,7 +36,7 @@ export type OpenTableCellArgs = {
   objectNameSingular: string;
   customCellHotkeyScope: HotkeyScope | null;
   fieldDefinition: FieldDefinition<FieldMetadata>;
-  entityId: string;
+  recordId: string;
   isActionButtonClick: boolean;
 };
 
@@ -70,7 +70,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         objectNameSingular,
         customCellHotkeyScope,
         fieldDefinition,
-        entityId,
+        recordId,
         isActionButtonClick,
       }: OpenTableCellArgs) => {
         if (isReadOnly) {
@@ -82,7 +82,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         const fieldValue = getSnapshotValue(
           snapshot,
           recordStoreFamilySelector({
-            recordId: entityId,
+            recordId,
             fieldName: fieldDefinition.metadata.fieldName,
           }),
         );
@@ -95,14 +95,14 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         if (isFirstColumnCell && !isEmpty && !isActionButtonClick) {
           leaveTableFocus();
 
-          onIndexIdentifierClick(entityId);
+          onIndexIdentifierClick(recordId);
 
           return;
         }
 
         if (isFirstColumnCell && !isEmpty && isActionButtonClick) {
           leaveTableFocus();
-          setViewableRecordId(entityId);
+          setViewableRecordId(recordId);
           setViewableRecordNameSingular(objectNameSingular);
           openRightDrawer(RightDrawerPages.ViewRecord);
 
@@ -115,7 +115,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
         initDraftValue({
           value: initialValue,
-          entityId,
+          recordId,
           fieldDefinition,
         });
 

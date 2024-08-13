@@ -1,5 +1,4 @@
-import { Profiler } from 'react';
-import { Interaction } from 'scheduler/tracing';
+import { Profiler, ProfilerOnRenderCallback } from 'react';
 
 import { logDebug } from '~/utils/logDebug';
 
@@ -9,14 +8,13 @@ type TimingProfilerProps = {
 };
 
 export const TimingProfiler = ({ id, children }: TimingProfilerProps) => {
-  const handleRender = (
+  const handleRender: ProfilerOnRenderCallback = (
     id: string,
     phase: 'mount' | 'update' | 'nested-update',
     actualDuration: number,
     baseDuration: number,
     startTime: number,
     commitTime: number,
-    interactions: Set<Interaction>,
   ) => {
     logDebug(
       'TimingProfiler',
@@ -28,7 +26,6 @@ export const TimingProfiler = ({ id, children }: TimingProfilerProps) => {
           baseDuration,
           startTime,
           commitTime,
-          interactions,
         },
         null,
         2,

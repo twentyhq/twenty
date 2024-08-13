@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -10,12 +6,15 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { assert } from 'src/utils/assert';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 
 export type JwtPayload = { sub: string; workspaceId: string; jti?: string };
@@ -46,8 +45,12 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     let apiKey: ApiKeyWorkspaceEntity | null = null;
 
     if (!workspace) {
-      throw new UnauthorizedException();
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
     }
+
     if (payload.jti) {
       // TODO: Check why it's not working
       // const apiKeyRepository =
@@ -71,11 +74,12 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
       apiKey = res?.[0];
 
-      assert(
-        apiKey && !apiKey.revokedAt,
-        'This API Key is revoked',
-        ForbiddenException,
-      );
+      if (!apiKey || apiKey.revokedAt) {
+        throw new AuthException(
+          'This API Key is revoked',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
     }
 
     if (payload.workspaceId) {
@@ -84,7 +88,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
         relations: ['defaultWorkspace'],
       });
       if (!user) {
-        throw new UnauthorizedException();
+        throw new AuthException(
+          'User not found',
+          AuthExceptionCode.INVALID_INPUT,
+        );
       }
     }
 

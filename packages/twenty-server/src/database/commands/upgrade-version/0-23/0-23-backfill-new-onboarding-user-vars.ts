@@ -73,7 +73,7 @@ export class BackfillNewOnboardingUserVarsCommand extends CommandRunner {
       });
 
       for (const user of workspace.users) {
-        await this.onboardingService.setOnboardingCreateProfileCompletion({
+        await this.onboardingService.setOnboardingCreateProfilePending({
           userId: user.id,
           workspaceId: workspace.id,
           value: true,

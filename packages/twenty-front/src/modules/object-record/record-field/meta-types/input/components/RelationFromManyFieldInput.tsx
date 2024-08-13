@@ -12,14 +12,14 @@ import { MultiRecordSelect } from '@/object-record/relation-picker/components/Mu
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 
-export type RelationFromManyFieldInputProps = {
+type RelationFromManyFieldInputProps = {
   onSubmit?: FieldInputEvent;
 };
 
 export const RelationFromManyFieldInput = ({
   onSubmit,
 }: RelationFromManyFieldInputProps) => {
-  const { fieldDefinition, entityId } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
   const relationPickerScopeId = `relation-picker-${fieldDefinition.fieldMetadataId}`;
   const { updateRelation } = useUpdateRelationFromManyFieldInput({
     scopeId: relationPickerScopeId,
@@ -48,7 +48,7 @@ export const RelationFromManyFieldInput = ({
         relationFieldDefinition.metadata.relationObjectMetadataNameSingular,
       relationObjectMetadataItem,
       relationFieldMetadataItem,
-      entityId,
+      recordId,
     });
 
   return (

@@ -18,7 +18,10 @@ export const getFirstNonEmptyLineOfRichText = (
             return content.link;
           }
           if ('text' in content) {
-            return content.text.trim();
+            const value = content.text.trim();
+            if (value !== '') {
+              return value;
+            }
           }
         }
       }

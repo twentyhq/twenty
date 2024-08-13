@@ -11,7 +11,7 @@ import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFiel
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 
-const entityId = 'entityId';
+const recordId = 'recordId';
 
 const getWrapper =
   (fieldDefinition: FieldDefinition<FieldMetadata>) =>
@@ -19,7 +19,7 @@ const getWrapper =
     <FieldContext.Provider
       value={{
         fieldDefinition,
-        entityId,
+        recordId,
         hotkeyScope: 'hotkeyScope',
         isLabelIdentifier: false,
       }}

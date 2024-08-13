@@ -20,5 +20,5 @@ spec:
         backend:
           service:
             name: twentycrm-server
-            port: 
+            port:
               name: http-tcp

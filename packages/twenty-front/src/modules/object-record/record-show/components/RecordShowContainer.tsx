@@ -155,6 +155,7 @@ export const RecordShowContainer = ({
 
   const summaryCard = isDefined(recordFromStore) ? (
     <ShowPageSummaryCard
+      isMobile={isMobile}
       id={objectRecordId}
       logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
       avatarPlaceholder={recordIdentifier?.name ?? ''}
@@ -163,7 +164,7 @@ export const RecordShowContainer = ({
       title={
         <FieldContext.Provider
           value={{
-            entityId: objectRecordId,
+            recordId: objectRecordId,
             recoilScopeId:
               objectRecordId + labelIdentifierFieldMetadataItem?.id,
             isLabelIdentifier: false,
@@ -211,7 +212,7 @@ export const RecordShowContainer = ({
                     <FieldContext.Provider
                       key={objectRecordId + fieldMetadataItem.id}
                       value={{
-                        entityId: objectRecordId,
+                        recordId: objectRecordId,
                         maxWidth: 200,
                         recoilScopeId: objectRecordId + fieldMetadataItem.id,
                         isLabelIdentifier: false,
@@ -244,7 +245,7 @@ export const RecordShowContainer = ({
                   <FieldContext.Provider
                     key={objectRecordId + fieldMetadataItem.id}
                     value={{
-                      entityId: objectRecordId,
+                      recordId: objectRecordId,
                       maxWidth: 200,
                       recoilScopeId: objectRecordId + fieldMetadataItem.id,
                       isLabelIdentifier: false,
@@ -277,7 +278,7 @@ export const RecordShowContainer = ({
             <FieldContext.Provider
               key={objectRecordId + fieldMetadataItem.id}
               value={{
-                entityId: objectRecordId,
+                recordId: objectRecordId,
                 recoilScopeId: objectRecordId + fieldMetadataItem.id,
                 isLabelIdentifier: false,
                 fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
@@ -301,7 +302,7 @@ export const RecordShowContainer = ({
 
   return (
     <ShowPageContainer>
-      <ShowPageLeftContainer forceMobile={isInRightDrawer}>
+      <ShowPageLeftContainer forceMobile={isMobile}>
         {!isMobile && summaryCard}
         {!isMobile && fieldsBox}
       </ShowPageLeftContainer>

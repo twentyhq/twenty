@@ -13,7 +13,7 @@ import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
 export const useInlineCell = () => {
   const {
     recoilScopeId = '',
-    entityId,
+    recordId,
     fieldDefinition,
   } = useContext(FieldContext);
 
@@ -36,7 +36,7 @@ export const useInlineCell = () => {
 
   const openInlineCell = (customEditHotkeyScopeForField?: HotkeyScope) => {
     setIsInlineCellInEditMode(true);
-    initFieldInputDraftValue({ entityId, fieldDefinition });
+    initFieldInputDraftValue({ recordId, fieldDefinition });
 
     if (isDefined(customEditHotkeyScopeForField)) {
       setHotkeyScopeAndMemorizePreviousScope(

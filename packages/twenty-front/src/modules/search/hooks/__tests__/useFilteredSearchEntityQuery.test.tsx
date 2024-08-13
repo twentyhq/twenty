@@ -87,7 +87,7 @@ describe('useFilteredSearchEntityQuery', () => {
           sortOrder: 'AscNullsLast',
           selectedIds: ['1'],
           limit: 10,
-          excludeEntityIds: ['2'],
+          excludeRecordIds: ['2'],
           objectNameSingular: 'person',
         });
       },

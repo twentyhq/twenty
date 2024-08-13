@@ -405,9 +405,9 @@ export class TimelineMessagingService {
         messageThreadIdsForWhichWorkspaceMemberIsNotInParticipants.includes(
           messageThreadId,
         )
-          ? threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotInParticipants?.[
+          ? (threadVisibilityByThreadIdForWhichWorkspaceMemberIsNotInParticipants?.[
               messageThreadId
-            ] ?? MessageChannelVisibility.METADATA
+            ] ?? MessageChannelVisibility.METADATA)
           : MessageChannelVisibility.SHARE_EVERYTHING;
 
       return threadVisibilityAcc;

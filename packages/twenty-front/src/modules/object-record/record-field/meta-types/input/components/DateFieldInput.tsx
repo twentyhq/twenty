@@ -6,9 +6,9 @@ import { isDefined } from '~/utils/isDefined';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 
-export type FieldInputEvent = (persist: () => void) => void;
+type FieldInputEvent = (persist: () => void) => void;
 
-export type DateFieldInputProps = {
+type DateFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

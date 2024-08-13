@@ -1,5 +1,5 @@
-import { ChangeEvent, useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { ChangeEvent, useRef, useState } from 'react';
 import { IconPlus } from 'twenty-ui';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
@@ -33,7 +33,6 @@ const StyledFileInput = styled.input`
 
 const StyledDropZoneContainer = styled.div`
   height: 100%;
-  padding: ${({ theme }) => theme.spacing(6)};
 `;
 
 export const Attachments = ({

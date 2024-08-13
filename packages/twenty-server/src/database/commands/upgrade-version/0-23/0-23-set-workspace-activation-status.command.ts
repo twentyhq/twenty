@@ -83,26 +83,16 @@ export class SetWorkspaceActivationStatusCommand extends CommandRunner {
             await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
           if (workspaceDataSource) {
-            const queryRunner = workspaceDataSource.createQueryRunner();
-
-            await queryRunner.connect();
-            await queryRunner.startTransaction();
-
             try {
               await this.workspaceRepository.update(
                 { id: workspaceId },
                 { activationStatus: WorkspaceActivationStatus.ACTIVE },
               );
-
-              await queryRunner.commitTransaction();
             } catch (error) {
-              await queryRunner.rollbackTransaction();
               this.logger.log(
                 chalk.red(`Running command on workspace ${workspaceId} failed`),
               );
               throw error;
-            } finally {
-              await queryRunner.release();
             }
           }
         }
