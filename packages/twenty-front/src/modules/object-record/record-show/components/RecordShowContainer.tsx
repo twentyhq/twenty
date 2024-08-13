@@ -126,7 +126,11 @@ export const RecordShowContainer = ({
     );
 
   const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
-    availableFieldMetadataItems,
+    availableFieldMetadataItems.filter(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.name !== 'createdAt' &&
+        fieldMetadataItem.name !== 'deletedAt',
+    ),
     (fieldMetadataItem) =>
       fieldMetadataItem.type === FieldMetadataType.Relation
         ? 'relationFieldMetadataItems'
