@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Any, IsNull, Not, Or } from 'typeorm';
+import { Any, Not } from 'typeorm';
 
 import { TimelineThread } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -176,23 +176,18 @@ export class TimelineMessagingService {
       select: {
         id: true,
       },
-      where:
-        // Today, if the participant handle is not equal to the workspace member's handle, the participant is not linked to the workspace member
-        {
-          id: Any(messageThreadIds),
-          messages: {
-            messageParticipants: {
-              workspaceMemberId: Or(Not(workspaceMemberId), IsNull()),
-            },
-            messageChannelMessageAssociations: {
-              messageChannel: {
-                connectedAccount: {
-                  accountOwnerId: Not(workspaceMemberId),
-                },
+      where: {
+        id: Any(messageThreadIds),
+        messages: {
+          messageChannelMessageAssociations: {
+            messageChannel: {
+              connectedAccount: {
+                accountOwnerId: Not(workspaceMemberId),
               },
             },
           },
         },
+      },
     });
 
     const threadIdsWithoutWorkspaceMember = threadsWithoutWorkspaceMember.map(
