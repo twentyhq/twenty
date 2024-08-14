@@ -287,8 +287,7 @@ export class ChartService {
         return;
       })
       .filter(
-        (commonTableExpressionDefinition) =>
-          commonTableExpressionDefinition !== undefined,
+        (cted): cted is CommonTableExpressionDefinition => cted !== undefined,
       );
   }
 
