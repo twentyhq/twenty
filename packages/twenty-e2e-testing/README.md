@@ -1,5 +1,13 @@
 # Twenty e2e Testing
 
+## Install
+
+Don't forget to install the browsers before launching the tests  :
+
+```
+yarn playwright install 
+```
+
 ### Run end-to-end tests
 
 ```
