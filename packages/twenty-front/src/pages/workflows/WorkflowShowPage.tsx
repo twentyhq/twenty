@@ -1,10 +1,17 @@
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import {
+  Workflow,
+  WorkflowAction,
+  WorkflowTrigger,
+} from '@/workflow/types/workflow';
 import Dagre from '@dagrejs/dagre';
 import {
   Background,
@@ -18,7 +25,7 @@ import {
   useNodesState,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { GRAY_SCALE, IconPlus, IconSettingsAutomation } from 'twenty-ui';
 import { WorkflowShowPageHeader } from '~/pages/workflows/WorkflowShowPageHeader';
 
@@ -57,8 +64,6 @@ const addCreateStepNodes = (
     edges.every((e) => e.source !== n.id),
   );
 
-  console.log({ nodesWithoutTargets });
-
   const updatedNodes: typeof nodes = nodes.slice();
   const updatedEdges: typeof edges = edges.slice();
 
@@ -81,8 +86,6 @@ const addCreateStepNodes = (
       },
     });
   }
-
-  console.log({ updatedNodes, updatedEdges });
 
   return {
     nodes: updatedNodes,
@@ -122,82 +125,138 @@ const getLayoutedElements = (
   };
 };
 
-const initialNodes: Array<Node<WorkflowNodeData>> = [
-  {
-    id: '1',
+const workflowTriggerToFlow = (trigger: WorkflowTrigger) => {
+  const nodes: Array<Node<WorkflowNodeData>> = [];
+  const edges: Array<Edge> = [];
+
+  // Helper function to generate nodes and edges recursively
+  const generateFlow = (
+    action: WorkflowAction,
+    parentNodeId: string,
+    xPos: number,
+    yPos: number,
+  ) => {
+    const nodeId = generateId();
+    nodes.push({
+      id: nodeId,
+      data: {
+        nodeType: 'action',
+        label: action.name,
+      },
+      position: {
+        x: xPos,
+        y: yPos,
+      },
+    });
+
+    // Create an edge from the parent node to this node
+    edges.push({
+      id: generateId(),
+      source: parentNodeId,
+      target: nodeId,
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+      },
+    });
+
+    // Recursively generate flow for the next action if it exists
+    if (action.nextAction !== undefined) {
+      generateFlow(action.nextAction, nodeId, xPos + 150, yPos + 100);
+    }
+  };
+
+  // Start with the trigger node
+  const triggerNodeId = generateId();
+  nodes.push({
+    id: triggerNodeId,
     data: {
       nodeType: 'trigger',
-      label: 'Person is Created',
+      label: trigger.settings.triggerName,
     },
-    position: { x: 0, y: 0 },
-  },
-  {
-    id: '2',
-    data: {
-      nodeType: 'action',
-      label: 'Find Stripe Customer',
+    position: {
+      x: 0,
+      y: 0,
     },
-    position: { x: 0, y: 0 },
-  },
-  {
-    id: '3',
-    data: {
-      nodeType: 'action',
-      label: 'Update People',
-    },
-    position: { x: 0, y: 0 },
-  },
-  {
-    id: '4',
-    data: {
-      nodeType: 'action',
-      label: 'Split First & Last Name',
-    },
-    position: { x: 0, y: 0 },
-  },
-];
-const initialEdges: Array<Edge> = [
-  {
-    id: 'edge-1',
-    source: '1',
-    target: '2',
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-    },
-  },
-  {
-    id: 'edge-2',
-    source: '2',
-    target: '3',
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-    },
-  },
-  {
-    id: 'edge-3',
-    source: '2',
-    target: '4',
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-    },
-  },
-];
+  });
 
-export const WorkflowShowPage = () => {
-  const { nodes: n, edges: e } = useMemo(
-    () => addCreateStepNodes(initialNodes, initialEdges),
-    [initialNodes, initialEdges],
+  // If there's a next action, start the recursive generation
+  if (trigger.nextAction !== undefined) {
+    generateFlow(trigger.nextAction, triggerNodeId, 150, 100);
+  }
+
+  return {
+    nodes,
+    edges,
+  };
+};
+
+const LoadedWorkflow = ({ workflow }: { workflow: Workflow }) => {
+  const { nodes: baseNodes, edges: baseEdges } = useMemo(() => {
+    const lastVersion = workflow.versions[0];
+    if (lastVersion === undefined || lastVersion.trigger === undefined) {
+      return {
+        nodes: [],
+        edges: [],
+      };
+    }
+
+    return workflowTriggerToFlow(lastVersion.trigger);
+  }, [workflow]);
+
+  const { nodes: nodesWithStepNodes, edges: edgesWithStepNodes } = useMemo(
+    () => addCreateStepNodes(baseNodes, baseEdges),
+    [baseNodes, baseEdges],
   );
 
-  const [rawNodes, setRawNodes, onRawNodesChange] = useNodesState(n);
-  const [rawEdges, setRawEdges, onRawEdgesChange] = useEdgesState(e);
+  const [rawNodes, setRawNodes, onRawNodesChange] =
+    useNodesState(nodesWithStepNodes);
+  const [rawEdges, setRawEdges, onRawEdgesChange] =
+    useEdgesState(edgesWithStepNodes);
+
+  useEffect(() => {
+    setRawNodes(nodesWithStepNodes);
+    setRawEdges(edgesWithStepNodes);
+  }, [nodesWithStepNodes, edgesWithStepNodes, setRawNodes, setRawEdges]);
 
   const { nodes, edges } = getLayoutedElements(rawNodes, rawEdges);
 
+  return (
+    <ReactFlow
+      nodeTypes={{
+        default: StepNode,
+        'create-step': CreateStepNode,
+      }}
+      fitView
+      nodes={nodes.map((n) => ({ ...n, draggable: false }))}
+      edges={edges}
+      onNodesChange={onRawNodesChange}
+      onEdgesChange={onRawEdgesChange}
+    >
+      <Background color={GRAY_SCALE.gray25} size={2} />
+    </ReactFlow>
+  );
+};
+
+export const WorkflowShowPage = () => {
   const parameters = useParams<{
     workflowId: string;
   }>();
   const workflowName = 'Test Workflow';
+
+  const {
+    record: workflow,
+    loading,
+    error,
+  } = useFindOneRecord<Workflow>({
+    objectNameSingular: CoreObjectNameSingular.Workflow,
+    objectRecordId: parameters.workflowId,
+    recordGqlFields: {
+      id: true,
+      name: true,
+      versions: true,
+      publishedVersionId: true,
+    },
+  });
 
   return (
     <PageContainer>
@@ -208,19 +267,9 @@ export const WorkflowShowPage = () => {
       ></WorkflowShowPageHeader>
       <PageBody>
         <StyledFlowContainer>
-          <ReactFlow
-            nodeTypes={{
-              default: StepNode,
-              'create-step': CreateStepNode,
-            }}
-            fitView
-            nodes={nodes.map((n) => ({ ...n, draggable: false }))}
-            edges={edges}
-            onNodesChange={onRawNodesChange}
-            onEdgesChange={onRawEdgesChange}
-          >
-            <Background color={GRAY_SCALE.gray25} size={2} />
-          </ReactFlow>
+          {workflow === undefined ? null : (
+            <LoadedWorkflow workflow={workflow} />
+          )}
         </StyledFlowContainer>
       </PageBody>
     </PageContainer>
@@ -240,7 +289,7 @@ const StyledStepNodeType = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm}
     ${({ theme }) => theme.border.radius.sm} 0 0;
 
-  color: #b3b3b3;
+  color: ${({ theme }) => theme.color.gray50};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 
@@ -248,6 +297,13 @@ const StyledStepNodeType = styled.div`
   position: absolute;
   top: 0;
   transform: translateY(-100%);
+
+  .selectable.selected &,
+  .selectable:focus &,
+  .selectable:focus-visible & {
+    background-color: ${({ theme }) => theme.color.blue};
+    color: ${({ theme }) => theme.font.color.inverted};
+  }
 `;
 
 const StyledStepNodeInnerContainer = styled.div`
@@ -264,7 +320,8 @@ const StyledStepNodeInnerContainer = styled.div`
   .selectable.selected &,
   .selectable:focus &,
   .selectable:focus-visible & {
-    box-shadow: ${({ theme }) => theme.boxShadow.strong};
+    background-color: ${({ theme }) => theme.color.blue10};
+    border-color: ${({ theme }) => theme.color.blue};
   }
 `;
 
@@ -278,7 +335,7 @@ const StyledTargetHandle = styled(Handle)`
 `;
 
 const StyledSourceHandle = styled(Handle)`
-  background-color: #b3b3b3;
+  background-color: ${({ theme }) => theme.color.gray50};
 `;
 
 const StepNode = ({ data }: { data: WorkflowNodeData }) => {
