@@ -109,11 +109,13 @@ export class MatchParticipantService<
       transactionManager,
     );
 
-    this.eventEmitter.emit(`${objectMetadataName}.matched`, {
-      workspaceId,
-      workspaceMemberId: null,
-      participants: matchedParticipants,
-    });
+    this.eventEmitter.emit(`${objectMetadataName}.matched`, [
+      {
+        workspaceId,
+        workspaceMemberId: null,
+        participants: matchedParticipants,
+      },
+    ]);
   }
 
   public async matchParticipantsAfterPersonOrWorkspaceMemberCreation(
@@ -155,12 +157,14 @@ export class MatchParticipantService<
         },
       });
 
-      this.eventEmitter.emit(`${objectMetadataName}.matched`, {
-        workspaceId,
-        name: `${objectMetadataName}.matched`,
-        workspaceMemberId: null,
-        participants: updatedParticipants,
-      });
+      this.eventEmitter.emit(`${objectMetadataName}.matched`, [
+        {
+          workspaceId,
+          name: `${objectMetadataName}.matched`,
+          workspaceMemberId: null,
+          participants: updatedParticipants,
+        },
+      ]);
     }
 
     if (workspaceMemberId) {

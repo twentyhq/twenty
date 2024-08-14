@@ -191,18 +191,22 @@ export class CreateCompanyAndContactService {
         source,
       );
 
-      for (const createdPerson of createdPeople) {
-        this.eventEmitter.emit('person.created', {
-          name: 'person.created',
-          workspaceId,
-          // FixMe: TypeORM typing issue... id is always returned when using save
-          recordId: createdPerson.id as string,
-          objectMetadata,
-          properties: {
-            after: createdPerson,
-          },
-        } satisfies ObjectRecordCreateEvent<any>);
-      }
+      this.eventEmitter.emit(
+        'person.created',
+        createdPeople.map(
+          (createdPerson) =>
+            ({
+              name: 'person.created',
+              workspaceId,
+              // FixMe: TypeORM typing issue... id is always returned when using save
+              recordId: createdPerson.id as string,
+              objectMetadata,
+              properties: {
+                after: createdPerson,
+              },
+            }) satisfies ObjectRecordCreateEvent<any>,
+        ),
+      );
     }
   }
 }

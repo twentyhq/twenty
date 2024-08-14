@@ -6,6 +6,7 @@ import { Any } from 'typeorm';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
@@ -19,7 +20,6 @@ import {
   CreateCompanyAndContactJob,
   CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 @Injectable()
 export class CalendarSaveEventsService {
@@ -140,12 +140,14 @@ export class CalendarSaveEventsService {
       );
     });
 
-    this.eventEmitter.emit(`calendarEventParticipant.matched`, {
-      workspaceId,
-      name: 'calendarEventParticipant.matched',
-      workspaceMemberId: connectedAccount.accountOwnerId,
-      calendarEventParticipants: savedCalendarEventParticipantsToEmit,
-    });
+    this.eventEmitter.emit(`calendarEventParticipant.matched`, [
+      {
+        workspaceId,
+        name: 'calendarEventParticipant.matched',
+        workspaceMemberId: connectedAccount.accountOwnerId,
+        calendarEventParticipants: savedCalendarEventParticipantsToEmit,
+      },
+    ]);
 
     if (calendarChannel.isContactAutoCreationEnabled) {
       await this.messageQueueService.add<CreateCompanyAndContactJobData>(
