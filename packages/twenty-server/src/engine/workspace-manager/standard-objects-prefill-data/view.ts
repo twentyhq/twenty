@@ -20,7 +20,7 @@ export const viewPrefillData = async (
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
   featureFlags?: FeatureFlagEntity[],
 ) => {
-  const IsWorkflowEnabled =
+  const isWorkflowEnabled =
     featureFlags?.find(
       (featureFlag) => featureFlag.key === FeatureFlagKey.IsWorkflowEnabled,
     )?.value ?? false;
@@ -34,7 +34,7 @@ export const viewPrefillData = async (
     await notesAllView(objectMetadataMap),
     await tasksAllView(objectMetadataMap),
     await tasksByStatusView(objectMetadataMap),
-    ...(IsWorkflowEnabled ? [await workflowsAllView(objectMetadataMap)] : []),
+    ...(isWorkflowEnabled ? [await workflowsAllView(objectMetadataMap)] : []),
   ];
 
   const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({
