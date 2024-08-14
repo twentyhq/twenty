@@ -1,3 +1,28 @@
+import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+
+export type MockedTableType = {
+  labelPlural: string;
+  fieldsCount: number;
+};
+
+export const mockedTableMetadata: TableMetadata<MockedTableType> = {
+  tableId: 'SettingsObjectDetail',
+  fields: [
+    {
+      fieldName: 'labelPlural',
+      fieldType: 'string',
+      align: 'left',
+      fieldLabel: 'Name',
+    },
+    {
+      fieldName: 'fieldsCount',
+      fieldType: 'number',
+      align: 'right',
+      fieldLabel: 'Fields Count',
+    },
+  ],
+};
+
 export const mockedTableData = [
   {
     labelPlural: 'Opportunities',

@@ -3,6 +3,8 @@ import React, { ReactNode } from 'react';
 import { MutableSnapshot, RecoilRoot } from 'recoil';
 
 import {
+  mockedTableMetadata,
+  MockedTableType,
   mockedTableData as tableData,
   tableDataSortedByFieldsCountInAscendingOrder,
   tableDataSortedByFieldsCountInDescendingOrder,
@@ -12,7 +14,8 @@ import {
 
 import { OrderBy } from '@/types/OrderBy';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
-import { useSortedArray } from '../useSortedArray';
+
+import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 
 interface WrapperProps {
   children: ReactNode;
@@ -25,11 +28,11 @@ const Wrapper: React.FC<WrapperProps> = ({ children, initializeState }) => (
 
 describe('useSortedArray hook', () => {
   const initializeState =
-    (fieldName: string, orderBy: OrderBy) =>
+    (fieldName: keyof MockedTableType, orderBy: OrderBy) =>
     ({ set }: MutableSnapshot) => {
       set(
         sortedFieldByTableFamilyState({
-          tableId: 'SettingsObjectDetail',
+          tableId: mockedTableMetadata.tableId,
         }),
         {
           fieldName,
@@ -40,11 +43,7 @@ describe('useSortedArray hook', () => {
 
   test('initial sorting behavior for string fields - Ascending', () => {
     const { result } = renderHook(
-      () =>
-        useSortedArray(tableData, {
-          tableId: 'SettingsObjectDetail',
-          fields: [],
-        }),
+      () => useSortedArray(tableData, mockedTableMetadata),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
           <Wrapper
@@ -63,11 +62,7 @@ describe('useSortedArray hook', () => {
 
   test('initial sorting behavior for string fields - Descending', () => {
     const { result } = renderHook(
-      () =>
-        useSortedArray(tableData, {
-          tableId: 'SettingsObjectDetail',
-          fields: [],
-        }),
+      () => useSortedArray(tableData, mockedTableMetadata),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
           <Wrapper
@@ -86,11 +81,7 @@ describe('useSortedArray hook', () => {
 
   test('initial sorting behavior for number fields - Ascending', () => {
     const { result } = renderHook(
-      () =>
-        useSortedArray(tableData, {
-          tableId: 'SettingsObjectDetail',
-          fields: [],
-        }),
+      () => useSortedArray(tableData, mockedTableMetadata),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
           <Wrapper
@@ -109,11 +100,7 @@ describe('useSortedArray hook', () => {
 
   test('initial sorting behavior for number fields - Descending', () => {
     const { result } = renderHook(
-      () =>
-        useSortedArray(tableData, {
-          tableId: 'SettingsObjectDetail',
-          fields: [],
-        }),
+      () => useSortedArray(tableData, mockedTableMetadata),
       {
         wrapper: ({ children }: { children: ReactNode }) => (
           <Wrapper
