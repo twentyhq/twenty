@@ -15,19 +15,17 @@ export type WorkflowRunOutput = {
 };
 
 @Injectable()
-export class WorkflowRunnerService {
+export class WorkflowRunnerWorkspaceService {
   constructor(
     private readonly workflowActionRunnerFactory: WorkflowActionRunnerFactory,
   ) {}
 
   async run({
     action,
-    workspaceId,
     payload,
     attemptCount = 1,
   }: {
     action?: WorkflowAction;
-    workspaceId: string;
     payload?: object;
     attemptCount?: number;
   }): Promise<WorkflowRunOutput> {
@@ -43,14 +41,12 @@ export class WorkflowRunnerService {
 
     const result = await workflowActionRunner.execute({
       action,
-      workspaceId,
       payload,
     });
 
     if (result.data) {
       return await this.run({
         action: action.nextAction,
-        workspaceId,
         payload: result.data,
       });
     }
@@ -65,7 +61,6 @@ export class WorkflowRunnerService {
     if (action.settings.errorHandlingOptions.continueOnFailure.value) {
       return await this.run({
         action: action.nextAction,
-        workspaceId,
         payload,
       });
     }
@@ -76,7 +71,6 @@ export class WorkflowRunnerService {
     ) {
       return await this.run({
         action,
-        workspaceId,
         payload,
         attemptCount: attemptCount + 1,
       });
