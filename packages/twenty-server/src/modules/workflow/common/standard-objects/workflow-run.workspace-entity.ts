@@ -60,7 +60,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.status,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Workflow run status',
     description: 'Workflow run status',
     icon: 'IconHistory',

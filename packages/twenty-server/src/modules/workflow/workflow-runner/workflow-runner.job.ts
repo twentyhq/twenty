@@ -37,15 +37,24 @@ export class WorkflowRunnerJob {
       workflowVersionId,
     );
 
-    const output = await this.workflowRunnerService.run({
-      action: workflowVersion.trigger.nextAction,
-      workspaceId,
-      payload,
-    });
+    try {
+      await this.workflowRunnerService.run({
+        action: workflowVersion.trigger.nextAction,
+        workspaceId,
+        payload,
+      });
 
-    await this.workflowStatusWorkspaceService.endWorkflowRun(
-      workflowRunId,
-      output.error ? WorkflowRunStatus.FAILED : WorkflowRunStatus.COMPLETED,
-    );
+      await this.workflowStatusWorkspaceService.endWorkflowRun(
+        workflowRunId,
+        WorkflowRunStatus.COMPLETED,
+      );
+    } catch (error) {
+      await this.workflowStatusWorkspaceService.endWorkflowRun(
+        workflowRunId,
+        WorkflowRunStatus.FAILED,
+      );
+
+      throw error;
+    }
   }
 }

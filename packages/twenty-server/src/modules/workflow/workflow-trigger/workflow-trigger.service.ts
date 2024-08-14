@@ -32,11 +32,18 @@ export class WorkflowTriggerService {
       workflowVersionId,
     );
 
-    return await this.workflowRunnerService.run({
-      action: workflowVersion.trigger.nextAction,
-      workspaceId,
-      payload,
-    });
+    try {
+      return await this.workflowRunnerService.run({
+        action: workflowVersion.trigger.nextAction,
+        workspaceId,
+        payload,
+      });
+    } catch (error) {
+      throw new WorkflowTriggerException(
+        `Error running workflow version ${error}`,
+        WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+      );
+    }
   }
 
   async enableWorkflowTrigger(workspaceId: string, workflowVersionId: string) {
