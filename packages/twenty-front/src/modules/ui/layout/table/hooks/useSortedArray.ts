@@ -29,7 +29,7 @@ export const useSortedArray = <T>(
     )?.fieldType;
     const sortOrder = sortValueToUse.orderBy;
 
-    return arrayToSort.toSorted((a: T, b: T) => {
+    return [...arrayToSort].sort((a: T, b: T) => {
       if (sortFieldType === 'string') {
         return sortOrder === 'AscNullsLast' || sortOrder === 'AscNullsFirst'
           ? (a[sortFieldName] as string)?.localeCompare(
