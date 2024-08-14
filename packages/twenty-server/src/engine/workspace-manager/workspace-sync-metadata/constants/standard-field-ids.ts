@@ -411,10 +411,19 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   noteTargets: '20202020-40aa-4839-965e-972a2f72e08d',
 };
 
+export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
+  workflowVersion: '20202020-2f52-4ba8-8dc4-d0d6adb9578d',
+  startedAt: '20202020-a234-4e2d-bd15-85bcea6bb183',
+  endedAt: '20202020-e1c1-4b6b-bbbd-b2beaf2e159e',
+  status: '20202020-6b3e-4f9c-8c2b-2e5b8e6d6f3b',
+  createdBy: '20202020-6007-401a-8aa5-e6f38581a6f3',
+};
+
 export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
   name: '20202020-a12f-4cca-9937-a2e40cc65509',
   workflow: '20202020-afa3-46c3-91b0-0631ca6aa1c8',
   trigger: '20202020-4eae-43e7-86e0-212b41a30b48',
+  runs: '20202020-1d08-46df-901a-85045f18099a',
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
