@@ -4,6 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
+import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -305,25 +306,30 @@ export const RecordShowContainer = ({
   );
 
   return (
-    <ShowPageContainer>
-      <ShowPageLeftContainer forceMobile={isMobile}>
-        {!isMobile && summaryCard}
-        {!isMobile && fieldsBox}
-      </ShowPageLeftContainer>
-      <ShowPageRightContainer
-        targetableObject={{
-          id: objectRecordId,
-          targetObjectNameSingular: objectMetadataItem?.nameSingular,
-        }}
-        timeline
-        tasks
-        notes
-        emails
-        isInRightDrawer={isInRightDrawer}
-        summaryCard={isMobile ? summaryCard : <></>}
-        fieldsBox={fieldsBox}
-        loading={isPrefetchLoading || loading || recordLoading}
-      />
-    </ShowPageContainer>
+    <>
+      {recordFromStore && recordFromStore.deletedAt && (
+        <InformationBannerDeletedRecord recordId={objectRecordId} />
+      )}
+      <ShowPageContainer>
+        <ShowPageLeftContainer forceMobile={isMobile}>
+          {!isMobile && summaryCard}
+          {!isMobile && fieldsBox}
+        </ShowPageLeftContainer>
+        <ShowPageRightContainer
+          targetableObject={{
+            id: objectRecordId,
+            targetObjectNameSingular: objectMetadataItem?.nameSingular,
+          }}
+          timeline
+          tasks
+          notes
+          emails
+          isInRightDrawer={isInRightDrawer}
+          summaryCard={isMobile ? summaryCard : <></>}
+          fieldsBox={fieldsBox}
+          loading={isPrefetchLoading || loading || recordLoading}
+        />
+      </ShowPageContainer>
+    </>
   );
 };

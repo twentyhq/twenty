@@ -1,18 +1,11 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  H1Title,
-  H2Title,
-  IconChevronRight,
-  IconPlus,
-  IconSettings,
-} from 'twenty-ui';
+import { H2Title, IconChevronRight, IconHierarchy2, IconPlus } from 'twenty-ui';
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsObjectItemTableRow,
@@ -34,10 +27,6 @@ const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const StyledH1Title = styled(H1Title)`
-  margin-bottom: 0;
-`;
-
 export const SettingsObjects = () => {
   const theme = useTheme();
 
@@ -47,82 +36,82 @@ export const SettingsObjects = () => {
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer
+      Icon={IconHierarchy2}
+      title="Data model"
+      actionButton={
+        <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
+          <Button
+            Icon={IconPlus}
+            title="Add object"
+            accent="blue"
+            size="small"
+          />
+        </UndecoratedLink>
+      }
+    >
       <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <StyledH1Title title="Objects" />
-          <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
-            <Button
-              Icon={IconPlus}
-              title="Add object"
-              accent="blue"
-              size="small"
-            />
-          </UndecoratedLink>
-        </SettingsHeaderContainer>
-        <>
-          <SettingsObjectCoverImage />
-          <Section>
-            <H2Title title="Existing objects" />
-            <Table>
-              <StyledObjectTableRow>
-                <TableHeader>Name</TableHeader>
-                <TableHeader>Type</TableHeader>
-                <TableHeader align="right">Fields</TableHeader>
-                <TableHeader align="right">Instances</TableHeader>
-                <TableHeader></TableHeader>
-              </StyledObjectTableRow>
-              {!!activeObjectMetadataItems.length && (
-                <TableSection title="Active">
-                  {activeObjectMetadataItems.map((activeObjectMetadataItem) => (
+        <SettingsObjectCoverImage />
+        <Section>
+          <H2Title title="Existing objects" />
+          <Table>
+            <StyledObjectTableRow>
+              <TableHeader>Name</TableHeader>
+              <TableHeader>Type</TableHeader>
+              <TableHeader align="right">Fields</TableHeader>
+              <TableHeader align="right">Instances</TableHeader>
+              <TableHeader></TableHeader>
+            </StyledObjectTableRow>
+            {!!activeObjectMetadataItems.length && (
+              <TableSection title="Active">
+                {activeObjectMetadataItems.map((activeObjectMetadataItem) => (
+                  <SettingsObjectItemTableRow
+                    key={activeObjectMetadataItem.namePlural}
+                    objectItem={activeObjectMetadataItem}
+                    action={
+                      <StyledIconChevronRight
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                      />
+                    }
+                    to={`/settings/objects/${getObjectSlug(
+                      activeObjectMetadataItem,
+                    )}`}
+                  />
+                ))}
+              </TableSection>
+            )}
+            {!!inactiveObjectMetadataItems.length && (
+              <TableSection title="Inactive">
+                {inactiveObjectMetadataItems.map(
+                  (inactiveObjectMetadataItem) => (
                     <SettingsObjectItemTableRow
-                      key={activeObjectMetadataItem.namePlural}
-                      objectItem={activeObjectMetadataItem}
+                      key={inactiveObjectMetadataItem.namePlural}
+                      objectItem={inactiveObjectMetadataItem}
                       action={
-                        <StyledIconChevronRight
-                          size={theme.icon.size.md}
-                          stroke={theme.icon.stroke.sm}
+                        <SettingsObjectInactiveMenuDropDown
+                          isCustomObject={inactiveObjectMetadataItem.isCustom}
+                          scopeKey={inactiveObjectMetadataItem.namePlural}
+                          onActivate={() =>
+                            updateOneObjectMetadataItem({
+                              idToUpdate: inactiveObjectMetadataItem.id,
+                              updatePayload: { isActive: true },
+                            })
+                          }
+                          onDelete={() =>
+                            deleteOneObjectMetadataItem(
+                              inactiveObjectMetadataItem.id,
+                            )
+                          }
                         />
                       }
-                      to={`/settings/objects/${getObjectSlug(
-                        activeObjectMetadataItem,
-                      )}`}
                     />
-                  ))}
-                </TableSection>
-              )}
-              {!!inactiveObjectMetadataItems.length && (
-                <TableSection title="Inactive">
-                  {inactiveObjectMetadataItems.map(
-                    (inactiveObjectMetadataItem) => (
-                      <SettingsObjectItemTableRow
-                        key={inactiveObjectMetadataItem.namePlural}
-                        objectItem={inactiveObjectMetadataItem}
-                        action={
-                          <SettingsObjectInactiveMenuDropDown
-                            isCustomObject={inactiveObjectMetadataItem.isCustom}
-                            scopeKey={inactiveObjectMetadataItem.namePlural}
-                            onActivate={() =>
-                              updateOneObjectMetadataItem({
-                                idToUpdate: inactiveObjectMetadataItem.id,
-                                updatePayload: { isActive: true },
-                              })
-                            }
-                            onDelete={() =>
-                              deleteOneObjectMetadataItem(
-                                inactiveObjectMetadataItem.id,
-                              )
-                            }
-                          />
-                        }
-                      />
-                    ),
-                  )}
-                </TableSection>
-              )}
-            </Table>
-          </Section>
-        </>
+                  ),
+                )}
+              </TableSection>
+            )}
+          </Table>
+        </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

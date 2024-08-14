@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
+import { H2Title, IconHierarchy2, IconPlus } from 'twenty-ui';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -94,14 +94,18 @@ export const SettingsObjectDetail = () => {
   const shouldDisplayAddFieldButton = !activeObjectMetadataItem.isRemote;
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
+    <SubMenuTopBarContainer
+      Icon={IconHierarchy2}
+      title={
         <Breadcrumb
           links={[
             { children: 'Objects', href: '/settings/objects' },
             { children: activeObjectMetadataItem.labelPlural },
           ]}
         />
+      }
+    >
+      <SettingsPageContainer>
         <Section>
           <H2Title title="About" description="Manage your object" />
           <SettingsObjectSummaryCard

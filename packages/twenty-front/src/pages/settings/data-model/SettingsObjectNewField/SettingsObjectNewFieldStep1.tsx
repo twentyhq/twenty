@@ -1,13 +1,12 @@
+import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import styled from '@emotion/styled';
 import { H2Title, IconMinus, IconPlus, IconSettings } from 'twenty-ui';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsObjectFieldItemTableRow,
@@ -100,27 +99,31 @@ export const SettingsObjectNewFieldStep1 = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              { children: 'Objects', href: '/settings/objects' },
-              {
-                children: activeObjectMetadataItem.labelPlural,
-                href: `/settings/objects/${objectSlug}`,
-              },
-              { children: 'New Field' },
-            ]}
+    <SubMenuTopBarContainer
+      Icon={IconSettings}
+      title={
+        <Breadcrumb
+          links={[
+            { children: 'Objects', href: '/settings/objects' },
+            {
+              children: activeObjectMetadataItem.labelPlural,
+              href: `/settings/objects/${objectSlug}`,
+            },
+            { children: 'New Field' },
+          ]}
+        />
+      }
+      actionButton={
+        !activeObjectMetadataItem.isRemote && (
+          <SaveAndCancelButtons
+            isSaveDisabled={!canSave}
+            onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+            onSave={handleSave}
           />
-          {!activeObjectMetadataItem.isRemote && (
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-              onSave={handleSave}
-            />
-          )}
-        </SettingsHeaderContainer>
+        )
+      }
+    >
+      <SettingsPageContainer>
         <StyledSection>
           <H2Title
             title="Check deactivated fields"
