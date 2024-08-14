@@ -12,20 +12,26 @@ export const useSortedArray = <T>(
     sortedFieldByTableFamilyState({ tableId: tableMetadata.tableId }),
   );
 
+  const initialSort = tableMetadata.initialSort;
+
   const sortedArray = useMemo(() => {
-    if (!isDefined(sortedFieldByTable)) {
+    const sortValueToUse = isDefined(sortedFieldByTable)
+      ? sortedFieldByTable
+      : initialSort;
+
+    if (!isDefined(sortValueToUse)) {
       return arrayToSort;
     }
 
-    const sortFieldName = sortedFieldByTable.fieldName as keyof T;
+    const sortFieldName = sortValueToUse.fieldName as keyof T;
     const sortFieldType = tableMetadata.fields.find(
       (field) => field.fieldName === sortFieldName,
     )?.fieldType;
-    const sortOrder = sortedFieldByTable.orderBy;
+    const sortOrder = sortValueToUse.orderBy;
 
     return arrayToSort.toSorted((a: T, b: T) => {
       if (sortFieldType === 'string') {
-        return sortOrder === 'AscNullsLast'
+        return sortOrder === 'AscNullsLast' || sortOrder === 'AscNullsFirst'
           ? (a[sortFieldName] as string)?.localeCompare(
               b[sortFieldName] as string,
             )
@@ -33,14 +39,14 @@ export const useSortedArray = <T>(
               a[sortFieldName] as string,
             );
       } else if (sortFieldType === 'number') {
-        return sortOrder === 'AscNullsLast'
+        return sortOrder === 'AscNullsLast' || sortOrder === 'AscNullsFirst'
           ? (a[sortFieldName] as number) - (b[sortFieldName] as number)
           : (b[sortFieldName] as number) - (a[sortFieldName] as number);
       } else {
         return 0;
       }
     });
-  }, [sortedFieldByTable, arrayToSort, tableMetadata]);
+  }, [arrayToSort, tableMetadata, initialSort, sortedFieldByTable]);
 
   return sortedArray;
 };

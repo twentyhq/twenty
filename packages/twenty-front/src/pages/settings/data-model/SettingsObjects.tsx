@@ -31,11 +31,11 @@ import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableH
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
-import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo } from 'react';
-import { useSortedArray } from '~/hooks/useSortedArray';
+import { SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
@@ -45,36 +45,6 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
-
-const SETTINGS_OBJECT_TABLE_METADATA: TableMetadata<SettingsObjectTableItem> = {
-  tableId: 'settingsObject',
-  fields: [
-    {
-      fieldLabel: 'Name',
-      fieldName: 'labelPlural',
-      fieldType: 'string',
-      align: 'left',
-    },
-    {
-      fieldLabel: 'Type',
-      fieldName: 'objectTypeLabel',
-      fieldType: 'string',
-      align: 'left',
-    },
-    {
-      fieldLabel: 'Fields',
-      fieldName: 'fieldsCount',
-      fieldType: 'number',
-      align: 'right',
-    },
-    {
-      fieldLabel: 'Instances',
-      fieldName: 'totalObjectCount',
-      fieldType: 'number',
-      align: 'right',
-    },
-  ],
-};
 
 export const SettingsObjects = () => {
   const theme = useTheme();
