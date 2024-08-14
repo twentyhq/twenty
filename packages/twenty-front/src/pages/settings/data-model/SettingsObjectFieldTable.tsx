@@ -54,7 +54,7 @@ const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM: TableMetadata<SettingsObject
       },
       {
         fieldLabel: 'Identifier',
-        fieldName: 'identifier',
+        fieldName: 'identifierType',
         fieldType: 'string',
         align: 'left',
       },

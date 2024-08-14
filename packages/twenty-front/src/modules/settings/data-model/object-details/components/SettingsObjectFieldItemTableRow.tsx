@@ -52,7 +52,7 @@ export const SettingsObjectFieldItemTableRow = ({
   mode,
   status,
 }: SettingsObjectFieldItemTableRowProps) => {
-  const { fieldMetadataItem, identifier, objectMetadataItem } =
+  const { fieldMetadataItem, identifierType, objectMetadataItem } =
     settingsObjectDetailTableItem;
 
   const isRemoteObjectField = objectMetadataItem.isRemote;
@@ -136,6 +136,21 @@ export const SettingsObjectFieldItemTableRow = ({
     });
   };
 
+  const typeLabel =
+    variant === 'field-type'
+      ? isRemoteObjectField
+        ? 'Remote'
+        : fieldMetadataItem.isCustom
+          ? 'Custom'
+          : 'Standard'
+      : variant === 'identifier'
+        ? isDefined(identifierType)
+          ? identifierType === 'label'
+            ? 'Record text'
+            : 'Record image'
+          : ''
+        : '';
+
   if (!isFieldTypeSupported) return null;
 
   return (
@@ -148,17 +163,7 @@ export const SettingsObjectFieldItemTableRow = ({
         )}
         {fieldMetadataItem.label}
       </StyledNameTableCell>
-      <TableCell>
-        {variant === 'field-type' &&
-          (isRemoteObjectField
-            ? 'Remote'
-            : fieldMetadataItem.isCustom
-              ? 'Custom'
-              : 'Standard')}
-        {variant === 'identifier' &&
-          !!identifier &&
-          (identifier === 'label' ? 'Record text' : 'Record image')}
-      </TableCell>
+      <TableCell>{typeLabel}</TableCell>
       <TableCell>
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
