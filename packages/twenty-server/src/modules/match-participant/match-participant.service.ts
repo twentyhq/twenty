@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Any } from 'typeorm';
 
+import { TwentyEventEmitter } from 'src/engine/twenty-event-emitter/twenty-event-emitter';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -17,7 +17,7 @@ export class MatchParticipantService<
     | MessageParticipantWorkspaceEntity,
 > {
   constructor(
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: TwentyEventEmitter,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
@@ -45,6 +45,10 @@ export class MatchParticipantService<
       await this.getParticipantRepository(objectMetadataName);
 
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new Error('Workspace ID is required');
+    }
 
     const participantIds = participants.map((participant) => participant.id);
     const uniqueParticipantsHandles = [
@@ -109,13 +113,18 @@ export class MatchParticipantService<
       transactionManager,
     );
 
-    this.eventEmitter.emit(`${objectMetadataName}.matched`, [
+    this.eventEmitter.emit(
+      `${objectMetadataName}.matched`,
+      [
+        {
+          workspaceMemberId: null,
+          participants: matchedParticipants,
+        },
+      ],
       {
         workspaceId,
-        workspaceMemberId: null,
-        participants: matchedParticipants,
       },
-    ]);
+    );
   }
 
   public async matchParticipantsAfterPersonOrWorkspaceMemberCreation(
@@ -128,6 +137,10 @@ export class MatchParticipantService<
       await this.getParticipantRepository(objectMetadataName);
 
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new Error('Workspace ID is required');
+    }
 
     const participantsToUpdate = await participantRepository.find({
       where: {
@@ -157,14 +170,20 @@ export class MatchParticipantService<
         },
       });
 
-      this.eventEmitter.emit(`${objectMetadataName}.matched`, [
+      this.eventEmitter.emit(
+        `${objectMetadataName}.matched`,
+        [
+          {
+            workspaceId,
+            name: `${objectMetadataName}.matched`,
+            workspaceMemberId: null,
+            participants: updatedParticipants,
+          },
+        ],
         {
           workspaceId,
-          name: `${objectMetadataName}.matched`,
-          workspaceMemberId: null,
-          participants: updatedParticipants,
         },
-      ]);
+      );
     }
 
     if (workspaceMemberId) {

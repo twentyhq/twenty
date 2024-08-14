@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
@@ -10,6 +9,7 @@ import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/t
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { TwentyEventEmitter } from 'src/engine/twenty-event-emitter/twenty-event-emitter';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -32,7 +32,7 @@ export class CreateCompanyAndContactService {
     private readonly createCompaniesService: CreateCompanyService,
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberRepository: WorkspaceMemberRepository,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: TwentyEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -196,8 +196,6 @@ export class CreateCompanyAndContactService {
         createdPeople.map(
           (createdPerson) =>
             ({
-              name: 'person.created',
-              workspaceId,
               // FixMe: TypeORM typing issue... id is always returned when using save
               recordId: createdPerson.id as string,
               objectMetadata,
@@ -206,6 +204,9 @@ export class CreateCompanyAndContactService {
               },
             }) satisfies ObjectRecordCreateEvent<any>,
         ),
+        {
+          workspaceId,
+        },
       );
     }
   }

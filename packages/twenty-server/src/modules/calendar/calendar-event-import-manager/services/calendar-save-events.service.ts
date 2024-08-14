@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Any } from 'typeorm';
 
@@ -7,6 +6,7 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { TwentyEventEmitter } from 'src/engine/twenty-event-emitter/twenty-event-emitter';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
@@ -28,7 +28,7 @@ export class CalendarSaveEventsService {
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: TwentyEventEmitter,
   ) {}
 
   public async saveCalendarEventsAndEnqueueContactCreationJob(
@@ -140,14 +140,18 @@ export class CalendarSaveEventsService {
       );
     });
 
-    this.eventEmitter.emit(`calendarEventParticipant.matched`, [
+    this.eventEmitter.emit(
+      `calendarEventParticipant.matched`,
+      [
+        {
+          workspaceMemberId: connectedAccount.accountOwnerId,
+          calendarEventParticipants: savedCalendarEventParticipantsToEmit,
+        },
+      ],
       {
         workspaceId,
-        name: 'calendarEventParticipant.matched',
-        workspaceMemberId: connectedAccount.accountOwnerId,
-        calendarEventParticipants: savedCalendarEventParticipantsToEmit,
       },
-    ]);
+    );
 
     if (calendarChannel.isContactAutoCreationEnabled) {
       await this.messageQueueService.add<CreateCompanyAndContactJobData>(

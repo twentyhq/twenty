@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import isEmpty from 'lodash.isempty';
 import { DataSource } from 'typeorm';
@@ -48,6 +47,7 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { TwentyEventEmitter } from 'src/engine/twenty-event-emitter/twenty-event-emitter';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
@@ -76,7 +76,7 @@ export class WorkspaceQueryRunnerService {
     private readonly queryResultGettersFactory: QueryResultGettersFactory,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly eventEmitter: TwentyEventEmitter,
     private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly environmentService: EnvironmentService,
     private readonly duplicateService: DuplicateService,
@@ -301,8 +301,6 @@ export class WorkspaceQueryRunnerService {
       parsedResults.map(
         (record) =>
           ({
-            name: `${objectMetadataItem.nameSingular}.created`,
-            workspaceId: authContext.workspace.id,
             userId: authContext.user?.id,
             recordId: record.id,
             objectMetadata: objectMetadataItem,
@@ -311,6 +309,9 @@ export class WorkspaceQueryRunnerService {
             },
           }) satisfies ObjectRecordCreateEvent<any>,
       ),
+      {
+        workspaceId: authContext.workspace.id,
+      },
     );
 
     return parsedResults;
@@ -436,20 +437,24 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, [
+    this.eventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.updated`,
+      [
+        {
+          userId: authContext.user?.id,
+          recordId: existingRecord.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            updatedFields: Object.keys(args.data),
+            before: this.removeNestedProperties(existingRecord as Record),
+            after: this.removeNestedProperties(parsedResults?.[0]),
+          },
+        } satisfies ObjectRecordUpdateEvent<any>,
+      ],
       {
-        name: `${objectMetadataItem.nameSingular}.updated`,
         workspaceId: authContext.workspace.id,
-        userId: authContext.user?.id,
-        recordId: existingRecord.id,
-        objectMetadata: objectMetadataItem,
-        properties: {
-          updatedFields: Object.keys(args.data),
-          before: this.removeNestedProperties(existingRecord as Record),
-          after: this.removeNestedProperties(parsedResults?.[0]),
-        },
-      } satisfies ObjectRecordUpdateEvent<any>,
-    ]);
+      },
+    );
 
     return parsedResults?.[0];
   }
@@ -524,8 +529,6 @@ export class WorkspaceQueryRunnerService {
         }
 
         return {
-          name: `${objectMetadataItem.nameSingular}.updated`,
-          workspaceId: authContext.workspace.id,
           userId: authContext.user?.id,
           recordId: existingRecord.id,
           objectMetadata: objectMetadataItem,
@@ -541,6 +544,9 @@ export class WorkspaceQueryRunnerService {
     this.eventEmitter.emit(
       `${objectMetadataItem.nameSingular}.updated`,
       eventsToEmit,
+      {
+        workspaceId: authContext.workspace.id,
+      },
     );
 
     return parsedResults;
@@ -599,8 +605,6 @@ export class WorkspaceQueryRunnerService {
       parsedResults.map(
         (record) =>
           ({
-            name: `${objectMetadataItem.nameSingular}.deleted`,
-            workspaceId: authContext.workspace.id,
             userId: authContext.user?.id,
             recordId: record.id,
             objectMetadata: objectMetadataItem,
@@ -609,6 +613,9 @@ export class WorkspaceQueryRunnerService {
             },
           }) satisfies ObjectRecordDeleteEvent<any>,
       ),
+      {
+        workspaceId: authContext.workspace.id,
+      },
     );
 
     return parsedResults;
@@ -662,21 +669,25 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, [
-      {
-        name: `${objectMetadataItem.nameSingular}.deleted`,
-        workspaceId: authContext.workspace.id,
-        userId: authContext.user?.id,
-        recordId: args.id,
-        objectMetadata: objectMetadataItem,
-        properties: {
-          before: {
-            ...(existingRecord ?? {}),
-            ...this.removeNestedProperties(parsedResults?.[0]),
+    this.eventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.deleted`,
+      [
+        {
+          userId: authContext.user?.id,
+          recordId: args.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: {
+              ...(existingRecord ?? {}),
+              ...this.removeNestedProperties(parsedResults?.[0]),
+            },
           },
-        },
-      } satisfies ObjectRecordDeleteEvent<any>,
-    ]);
+        } satisfies ObjectRecordDeleteEvent<any>,
+      ],
+      {
+        workspaceId: authContext.workspace.id,
+      },
+    );
 
     return parsedResults?.[0];
   }

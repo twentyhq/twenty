@@ -9,6 +9,7 @@ export class TwentyEventEmitter extends EventEmitter2 {
     eventName: string,
     events: any[],
     properties: {
+      workspaceId: string;
       [key: string]: any;
     },
   ) {
