@@ -52,10 +52,6 @@ export const SettingsObjectNewFieldStep1 = () => {
       field.isActive !== activeObjectMetadataItem?.fields[index].isActive,
   );
 
-  console.log({
-    activeSettingsObjectFields: settingsObjectFields,
-  });
-
   const handleSave = async () => {
     if (!activeObjectMetadataItem || !settingsObjectFields) {
       return;
