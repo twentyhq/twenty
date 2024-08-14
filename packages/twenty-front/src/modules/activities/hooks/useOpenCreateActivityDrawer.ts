@@ -42,6 +42,7 @@ export const useOpenCreateActivityDrawer = ({
       activityObjectNameSingular === CoreObjectNameSingular.Task
         ? CoreObjectNameSingular.TaskTarget
         : CoreObjectNameSingular.NoteTarget,
+    shouldMatchRootQueryFilter: true,
   });
 
   const setActivityTargetableEntityArray = useSetRecoilState(
