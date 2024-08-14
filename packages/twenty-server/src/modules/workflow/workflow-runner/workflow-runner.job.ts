@@ -45,7 +45,7 @@ export class WorkflowRunnerJob {
     await this.workflowStatusService.endWorkflowRun(
       workspaceId,
       workflowVersionId,
-      output.error ? WorkflowRunStatus.FAILED : WorkflowRunStatus.SUCCEEDED,
+      output.error ? WorkflowRunStatus.FAILED : WorkflowRunStatus.COMPLETED,
     );
   }
 }

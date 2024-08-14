@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowRunStatus,
@@ -8,6 +10,7 @@ import {
   WorkflowStatusExceptionCode,
 } from 'src/modules/workflow/workflow-status/workflow-status.exception';
 
+@Injectable()
 export class WorkflowStatusService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,

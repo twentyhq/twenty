@@ -18,7 +18,7 @@ import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/stan
 export enum WorkflowRunStatus {
   NOT_STARTED = 'NOT_STARTED',
   RUNNING = 'RUNNING',
-  SUCCEEDED = 'SUCCEEDED',
+  COMPLETED = 'COMPLETED',
   FAILED = 'FAILED',
 }
 
