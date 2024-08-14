@@ -145,6 +145,7 @@ export const SettingsObjectFieldTable = ({
             fieldName={item.fieldName}
             label={item.fieldLabel}
             tableId={tableMetadata.tableId}
+            initialSort={tableMetadata.initialSort}
           />
         ))}
         <TableHeader></TableHeader>

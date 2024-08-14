@@ -141,6 +141,7 @@ export const SettingsObjects = () => {
                       label={settingsObjectsTableMetadataField.fieldLabel}
                       tableId={SETTINGS_OBJECT_TABLE_METADATA.tableId}
                       align={settingsObjectsTableMetadataField.align}
+                      initialSort={SETTINGS_OBJECT_TABLE_METADATA.initialSort}
                     />
                   ),
                 )}

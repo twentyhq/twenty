@@ -1,5 +1,6 @@
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
+import { TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useRecoilState } from 'recoil';
 import { IconArrowDown, IconArrowUp } from 'twenty-ui';
 
@@ -8,19 +9,23 @@ export const SortableTableHeader = ({
   fieldName,
   label,
   align = 'left',
+  initialSort,
 }: {
   tableId: string;
   fieldName: string;
   label: string;
   align?: 'left' | 'center' | 'right';
+  initialSort?: TableSortValue;
 }) => {
   const [sortedFieldByTable, setSortedFieldByTable] = useRecoilState(
     sortedFieldByTableFamilyState({ tableId }),
   );
 
-  const isSortOnThisField = sortedFieldByTable?.fieldName === fieldName;
+  const sortValue = sortedFieldByTable ?? initialSort;
 
-  const sortDirection = isSortOnThisField ? sortedFieldByTable.orderBy : null;
+  const isSortOnThisField = sortValue?.fieldName === fieldName;
+
+  const sortDirection = isSortOnThisField ? sortValue.orderBy : null;
 
   const isAsc =
     sortDirection === 'AscNullsLast' || sortDirection === 'AscNullsFirst';
@@ -33,7 +38,7 @@ export const SortableTableHeader = ({
     setSortedFieldByTable({
       fieldName,
       orderBy: isSortOnThisField
-        ? sortedFieldByTable.orderBy === 'AscNullsLast'
+        ? sortValue.orderBy === 'AscNullsLast'
           ? 'DescNullsLast'
           : 'AscNullsLast'
         : 'DescNullsLast',
