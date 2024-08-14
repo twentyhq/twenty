@@ -23,39 +23,47 @@ export class WorkspaceWorkspaceMemberListener {
 
   @OnEvent('workspaceMember.updated')
   async handleUpdateEvent(
-    payload: ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>,
+    payload: ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>[],
   ) {
-    const { firstName: firstNameAfter, lastName: lastNameAfter } =
-      payload.properties.after.name;
+    await Promise.all(
+      payload.map((eventPayload) => {
+        const { firstName: firstNameAfter, lastName: lastNameAfter } =
+          eventPayload.properties.after.name;
 
-    if (firstNameAfter === '' && lastNameAfter === '') {
-      return;
-    }
+        if (firstNameAfter === '' && lastNameAfter === '') {
+          return;
+        }
 
-    if (!payload.userId) {
-      return;
-    }
+        if (!eventPayload.userId) {
+          return;
+        }
 
-    await this.onboardingService.setOnboardingCreateProfilePending({
-      userId: payload.userId,
-      workspaceId: payload.workspaceId,
-      value: false,
-    });
+        return this.onboardingService.setOnboardingCreateProfilePending({
+          userId: eventPayload.userId,
+          workspaceId: eventPayload.workspaceId,
+          value: false,
+        });
+      }),
+    );
   }
 
   @OnEvent('workspaceMember.deleted')
   async handleDeleteEvent(
-    payload: ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>,
+    payload: ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>[],
   ) {
-    const userId = payload.properties.before.userId;
+    await Promise.all(
+      payload.map((eventPayload) => {
+        const userId = eventPayload.properties.before.userId;
 
-    if (!userId) {
-      return;
-    }
+        if (!userId) {
+          return;
+        }
 
-    await this.messageQueueService.add<HandleWorkspaceMemberDeletedJobData>(
-      HandleWorkspaceMemberDeletedJob.name,
-      { workspaceId: payload.workspaceId, userId },
+        return this.messageQueueService.add<HandleWorkspaceMemberDeletedJobData>(
+          HandleWorkspaceMemberDeletedJob.name,
+          { workspaceId: eventPayload.workspaceId, userId },
+        );
+      }),
     );
   }
 }

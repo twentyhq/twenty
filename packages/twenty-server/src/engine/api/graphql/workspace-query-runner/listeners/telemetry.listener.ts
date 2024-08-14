@@ -13,36 +13,44 @@ export class TelemetryListener {
   ) {}
 
   @OnEvent('*.created')
-  async handleAllCreate(payload: ObjectRecordCreateEvent<any>) {
-    await this.analyticsService.create(
-      {
-        type: 'track',
-        data: {
-          eventName: payload.name,
-        },
-      },
-      payload.userId,
-      payload.workspaceId,
-      '', // voluntarely not retrieving this
-      '', // to avoid slowing down
-      this.environmentService.get('SERVER_URL'),
+  async handleAllCreate(payload: ObjectRecordCreateEvent<any>[]) {
+    await Promise.all(
+      payload.map((eventPayload) =>
+        this.analyticsService.create(
+          {
+            type: 'track',
+            data: {
+              eventName: eventPayload.name,
+            },
+          },
+          eventPayload.userId,
+          eventPayload.workspaceId,
+          '', // voluntarily not retrieving this
+          '', // to avoid slowing down
+          this.environmentService.get('SERVER_URL'),
+        ),
+      ),
     );
   }
 
   @OnEvent('user.signup')
-  async handleUserSignup(payload: ObjectRecordCreateEvent<any>) {
-    await this.analyticsService.create(
-      {
-        type: 'track',
-        data: {
-          eventName: 'user.signup',
-        },
-      },
-      payload.userId,
-      payload.workspaceId,
-      '',
-      '',
-      this.environmentService.get('SERVER_URL'),
+  async handleUserSignup(payload: ObjectRecordCreateEvent<any>[]) {
+    await Promise.all(
+      payload.map(async (eventPayload) =>
+        this.analyticsService.create(
+          {
+            type: 'track',
+            data: {
+              eventName: 'user.signup',
+            },
+          },
+          eventPayload.userId,
+          eventPayload.workspaceId,
+          '',
+          '',
+          this.environmentService.get('SERVER_URL'),
+        ),
+      ),
     );
   }
 }

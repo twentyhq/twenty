@@ -19,18 +19,20 @@ export class EntityEventsToDbListener {
   ) {}
 
   @OnEvent('*.created')
-  async handleCreate(payload: ObjectRecordCreateEvent<any>) {
+  async handleCreate(payload: ObjectRecordCreateEvent<any>[]) {
     return this.handle(payload);
   }
 
   @OnEvent('*.updated')
-  async handleUpdate(payload: ObjectRecordUpdateEvent<any>) {
-    payload.properties.diff = objectRecordChangedValues(
-      payload.properties.before,
-      payload.properties.after,
-      payload.properties.updatedFields,
-      payload.objectMetadata,
-    );
+  async handleUpdate(payload: ObjectRecordUpdateEvent<any>[]) {
+    for (const eventPayload of payload) {
+      eventPayload.properties.diff = objectRecordChangedValues(
+        eventPayload.properties.before,
+        eventPayload.properties.after,
+        eventPayload.properties.updatedFields,
+        eventPayload.objectMetadata,
+      );
+    }
 
     return this.handle(payload);
   }
@@ -41,19 +43,21 @@ export class EntityEventsToDbListener {
   // @OnEvent('*.restored') - TODO: implement when we soft delete has been implemented
   // ....
 
-  private async handle(payload: ObjectRecordBaseEvent) {
-    if (!payload.objectMetadata?.isAuditLogged) {
-      return;
+  private async handle(payload: ObjectRecordBaseEvent[]) {
+    for (const eventPayload of payload) {
+      if (!eventPayload.objectMetadata?.isAuditLogged) {
+        return;
+      }
+
+      await this.messageQueueService.add<ObjectRecordBaseEvent>(
+        CreateAuditLogFromInternalEvent.name,
+        eventPayload,
+      );
+
+      await this.messageQueueService.add<ObjectRecordBaseEvent>(
+        UpsertTimelineActivityFromInternalEvent.name,
+        eventPayload,
+      );
     }
-
-    this.messageQueueService.add<ObjectRecordBaseEvent>(
-      CreateAuditLogFromInternalEvent.name,
-      payload,
-    );
-
-    this.messageQueueService.add<ObjectRecordBaseEvent>(
-      UpsertTimelineActivityFromInternalEvent.name,
-      payload,
-    );
   }
 }

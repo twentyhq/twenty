@@ -23,15 +23,19 @@ export class BillingWorkspaceMemberListener {
   @OnEvent('workspaceMember.created')
   @OnEvent('workspaceMember.deleted')
   async handleCreateOrDeleteEvent(
-    payload: ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>,
+    payload: ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>[],
   ) {
     if (!this.environmentService.get('IS_BILLING_ENABLED')) {
       return;
     }
 
-    await this.messageQueueService.add<UpdateSubscriptionJobData>(
-      UpdateSubscriptionJob.name,
-      { workspaceId: payload.workspaceId },
+    await Promise.all(
+      payload.map((eventPayload) =>
+        this.messageQueueService.add<UpdateSubscriptionJobData>(
+          UpdateSubscriptionJob.name,
+          { workspaceId: eventPayload.workspaceId },
+        ),
+      ),
     );
   }
 }

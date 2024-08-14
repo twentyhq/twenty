@@ -26,48 +26,65 @@ export class CalendarBlocklistListener {
 
   @OnEvent('blocklist.created')
   async handleCreatedEvent(
-    payload: ObjectRecordCreateEvent<BlocklistWorkspaceEntity>,
+    payload: ObjectRecordCreateEvent<BlocklistWorkspaceEntity>[],
   ) {
-    await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
-      BlocklistItemDeleteCalendarEventsJob.name,
-      {
-        workspaceId: payload.workspaceId,
-        blocklistItemId: payload.recordId,
-      },
+    await Promise.all(
+      payload.map((eventPayload) =>
+        this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
+          BlocklistReimportCalendarEventsJob.name,
+          {
+            workspaceId: eventPayload.workspaceId,
+            workspaceMemberId: eventPayload.properties.after.workspaceMember.id,
+          },
+        ),
+      ),
     );
   }
 
   @OnEvent('blocklist.deleted')
   async handleDeletedEvent(
-    payload: ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>,
+    payload: ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>[],
   ) {
-    await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
-      BlocklistReimportCalendarEventsJob.name,
-      {
-        workspaceId: payload.workspaceId,
-        workspaceMemberId: payload.properties.before.workspaceMember.id,
-      },
+    await Promise.all(
+      payload.map((eventPayload) =>
+        this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
+          BlocklistReimportCalendarEventsJob.name,
+          {
+            workspaceId: eventPayload.workspaceId,
+            workspaceMemberId:
+              eventPayload.properties.before.workspaceMember.id,
+          },
+        ),
+      ),
     );
   }
 
   @OnEvent('blocklist.updated')
   async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>,
+    payload: ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>[],
   ) {
-    await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
-      BlocklistItemDeleteCalendarEventsJob.name,
-      {
-        workspaceId: payload.workspaceId,
-        blocklistItemId: payload.recordId,
-      },
+    await Promise.all(
+      payload.map((eventPayload) =>
+        this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
+          BlocklistItemDeleteCalendarEventsJob.name,
+          {
+            workspaceId: eventPayload.workspaceId,
+            blocklistItemId: eventPayload.recordId,
+          },
+        ),
+      ),
     );
 
-    await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
-      BlocklistReimportCalendarEventsJob.name,
-      {
-        workspaceId: payload.workspaceId,
-        workspaceMemberId: payload.properties.after.workspaceMember.id,
-      },
+    await Promise.all(
+      payload.map((eventPayload) =>
+        this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
+          BlocklistReimportCalendarEventsJob.name,
+          {
+            workspaceId: eventPayload.workspaceId,
+            workspaceMemberId: eventPayload.properties.after.workspaceMember.id,
+          },
+        ),
+      ),
     );
   }
 }
