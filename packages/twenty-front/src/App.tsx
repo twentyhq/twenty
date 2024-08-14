@@ -59,7 +59,7 @@ import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccoun
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 import { SettingsCRMMigration } from '~/pages/settings/crm-migration/SettingsCRMMigration';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
-import { SettingsObjectDetailPage } from '~/pages/settings/data-model/SettingsObjectDetailPageContainer';
+import { SettingsObjectDetailPage } from '~/pages/settings/data-model/SettingsObjectDetailPage';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
 import { SettingsObjectFieldEdit } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 import { SettingsObjectNewFieldStep1 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
