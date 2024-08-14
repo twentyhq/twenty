@@ -1,4 +1,4 @@
-import { Logger, Scope } from '@nestjs/common';
+import { Scope } from '@nestjs/common';
 
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
@@ -6,7 +6,7 @@ import { Processor } from 'src/engine/integrations/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   RunWorkflowJobData,
@@ -22,20 +22,17 @@ export type WorkflowEventTriggerJobData = {
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowEventTriggerJob {
-  private readonly logger = new Logger(WorkflowEventTriggerJob.name);
-
   constructor(
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly twentyORMManager: TwentyORMManager,
     private readonly workflowStatusWorkspaceService: WorkflowStatusWorkspaceService,
   ) {}
 
   @Process(WorkflowEventTriggerJob.name)
   async handle(data: WorkflowEventTriggerJobData): Promise<void> {
     const workflowRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
-        data.workspaceId,
+      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
       );
 
