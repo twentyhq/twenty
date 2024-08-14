@@ -4,8 +4,8 @@ import { Process } from 'src/engine/integrations/message-queue/decorators/proces
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { WorkflowCommonService } from 'src/modules/workflow/common/workflow-common.services';
-import { WorkflowRunnerService } from 'src/modules/workflow/workflow-runner/workflow-runner.service';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workflow-common.workspace-service';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-runner.workspace-service';
 import { WorkflowStatusWorkspaceService } from 'src/modules/workflow/workflow-status/workflow-status.workspace-service';
 
 export type RunWorkflowJobData = {
@@ -18,29 +18,27 @@ export type RunWorkflowJobData = {
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowRunnerJob {
   constructor(
-    private readonly workflowCommonService: WorkflowCommonService,
-    private readonly workflowRunnerService: WorkflowRunnerService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly workflowStatusWorkspaceService: WorkflowStatusWorkspaceService,
   ) {}
 
   @Process(WorkflowRunnerJob.name)
   async handle({
-    workspaceId,
     workflowVersionId,
     workflowRunId,
     payload,
   }: RunWorkflowJobData): Promise<void> {
     await this.workflowStatusWorkspaceService.startWorkflowRun(workflowRunId);
 
-    const workflowVersion = await this.workflowCommonService.getWorkflowVersion(
-      workspaceId,
-      workflowVersionId,
-    );
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersion(
+        workflowVersionId,
+      );
 
     try {
-      await this.workflowRunnerService.run({
+      await this.workflowRunnerWorkspaceService.run({
         action: workflowVersion.trigger.nextAction,
-        workspaceId,
         payload,
       });
 

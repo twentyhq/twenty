@@ -1,41 +1,36 @@
 import { Injectable } from '@nestjs/common';
 
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   WorkflowDatabaseEventTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/common/types/workflow-trigger.type';
-import { WorkflowCommonService } from 'src/modules/workflow/common/workflow-common.services';
-import { WorkflowRunnerService } from 'src/modules/workflow/workflow-runner/workflow-runner.service';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workflow-common.workspace-service';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-runner.workspace-service';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
 
 @Injectable()
-export class WorkflowTriggerService {
+export class WorkflowTriggerWorkspaceService {
   constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workflowCommonService: WorkflowCommonService,
-    private readonly workflowRunnerService: WorkflowRunnerService,
+    private readonly twentyORMManager: TwentyORMManager,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
   ) {}
 
-  async runWorkflowVersion(
-    workspaceId: string,
-    workflowVersionId: string,
-    payload: object,
-  ) {
-    const workflowVersion = await this.workflowCommonService.getWorkflowVersion(
-      workspaceId,
-      workflowVersionId,
-    );
+  async runWorkflowVersion(workflowVersionId: string, payload: object) {
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersion(
+        workflowVersionId,
+      );
 
     try {
-      return await this.workflowRunnerService.run({
+      return await this.workflowRunnerWorkspaceService.run({
         action: workflowVersion.trigger.nextAction,
-        workspaceId,
         payload,
       });
     } catch (error) {
@@ -46,16 +41,15 @@ export class WorkflowTriggerService {
     }
   }
 
-  async enableWorkflowTrigger(workspaceId: string, workflowVersionId: string) {
-    const workflowVersion = await this.workflowCommonService.getWorkflowVersion(
-      workspaceId,
-      workflowVersionId,
-    );
+  async enableWorkflowTrigger(workflowVersionId: string) {
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersion(
+        workflowVersionId,
+      );
 
     switch (workflowVersion.trigger.type) {
       case WorkflowTriggerType.DATABASE_EVENT:
         await this.upsertEventListenerAndPublishVersion(
-          workspaceId,
           workflowVersion.workflowId,
           workflowVersionId,
           workflowVersion.trigger,
@@ -69,7 +63,6 @@ export class WorkflowTriggerService {
   }
 
   private async upsertEventListenerAndPublishVersion(
-    workspaceId: string,
     workflowId: string,
     workflowVersionId: string,
     trigger: WorkflowDatabaseEventTrigger,
@@ -84,8 +77,7 @@ export class WorkflowTriggerService {
     }
 
     const workflowEventListenerRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowEventListenerWorkspaceEntity>(
-        workspaceId,
+      await this.twentyORMManager.getRepository<WorkflowEventListenerWorkspaceEntity>(
         'workflowEventListener',
       );
 
@@ -94,12 +86,10 @@ export class WorkflowTriggerService {
       eventName,
     });
 
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
+    const workspaceDataSource = await this.twentyORMManager.getDatasource();
 
     const workflowRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
-        workspaceId,
+      await this.twentyORMManager.getRepository<WorkflowWorkspaceEntity>(
         'workflow',
       );
 
