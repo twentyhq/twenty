@@ -1,6 +1,8 @@
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { activitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/activities-all.view';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
@@ -10,12 +12,19 @@ import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
+import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 
 export const viewPrefillData = async (
   entityManager: EntityManager,
   schemaName: string,
   objectMetadataMap: Record<string, ObjectMetadataEntity>,
+  featureFlags?: FeatureFlagEntity[],
 ) => {
+  const isWorkflowEnabled =
+    featureFlags?.find(
+      (featureFlag) => featureFlag.key === FeatureFlagKey.IsWorkflowEnabled,
+    )?.value ?? false;
+
   const viewDefinitions = [
     await companiesAllView(objectMetadataMap),
     await peopleAllView(objectMetadataMap),
@@ -25,6 +34,7 @@ export const viewPrefillData = async (
     await notesAllView(objectMetadataMap),
     await tasksAllView(objectMetadataMap),
     await tasksByStatusView(objectMetadataMap),
+    ...(isWorkflowEnabled ? [await workflowsAllView(objectMetadataMap)] : []),
   ];
 
   const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({

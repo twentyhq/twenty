@@ -216,6 +216,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
               entityManager,
               dataSourceMetadata.schema,
               objectMetadataMap,
+              featureFlags,
             );
           },
         );

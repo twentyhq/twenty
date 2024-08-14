@@ -1,6 +1,6 @@
-// @ts-expect-error // Todo: remove usage of react-data-grid
-import DataGrid, { DataGridProps } from 'react-data-grid';
 import styled from '@emotion/styled';
+// @ts-expect-error  // Todo: remove usage of react-data-grid
+import DataGrid, { DataGridProps } from 'react-data-grid';
 import { RGBA } from 'twenty-ui';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -107,12 +107,12 @@ const StyledDataGrid = styled(DataGrid)`
   }
 ` as typeof DataGrid;
 
-type TableProps<Data> = DataGridProps<Data> & {
+type SpreadsheetImportTableProps<Data> = DataGridProps<Data> & {
   rowHeight?: number;
   hiddenHeader?: boolean;
 };
 
-export const Table = <Data,>({
+export const SpreadsheetImportTable = <Data,>({
   className,
   columns,
   components,
@@ -123,7 +123,7 @@ export const Table = <Data,>({
   onRowsChange,
   onSelectedRowsChange,
   selectedRows,
-}: TableProps<Data>) => {
+}: SpreadsheetImportTableProps<Data>) => {
   const { rtl } = useSpreadsheetImportInternal();
 
   if (!rows?.length || !columns?.length) return null;
