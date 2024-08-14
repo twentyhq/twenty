@@ -22,24 +22,30 @@ export class CalendarEventParticipantListener {
   ) {}
 
   @OnEvent('calendarEventParticipant.matched')
-  public async handleCalendarEventParticipantMatchedEvent(payload: {
-    workspaceId: string;
-    workspaceMemberId: string;
-    participants: CalendarEventParticipantWorkspaceEntity[];
-  }): Promise<void> {
-    const calendarEventParticipants = payload.participants ?? [];
+  public async handleCalendarEventParticipantMatchedEvent(
+    payload: {
+      workspaceId: string;
+      workspaceMemberId: string;
+      participants: CalendarEventParticipantWorkspaceEntity[];
+    }[],
+  ): Promise<void> {
+    const calendarEventParticipants = payload.flatMap(
+      (eventPayload) => eventPayload.participants,
+    );
+
+    const workspaceId = payload[0].workspaceId;
+    const workspaceMemberId = payload[0].workspaceMemberId;
 
     // TODO: move to a job?
 
-    const dataSourceSchema = this.workspaceDataSourceService.getSchemaName(
-      payload.workspaceId,
-    );
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     const calendarEventObjectMetadata =
       await this.objectMetadataRepository.findOneOrFail({
         where: {
           nameSingular: 'calendarEvent',
-          workspaceId: payload.workspaceId,
+          workspaceId,
         },
       });
 
@@ -58,13 +64,13 @@ export class CalendarEventParticipantListener {
         properties: null,
         objectName: 'calendarEvent',
         recordId: participant.personId,
-        workspaceMemberId: payload.workspaceMemberId,
-        workspaceId: payload.workspaceId,
+        workspaceMemberId,
+        workspaceId,
         linkedObjectMetadataId: calendarEventObjectMetadata.id,
         linkedRecordId: participant.calendarEventId,
         linkedRecordCachedName: '',
       })),
-      payload.workspaceId,
+      workspaceId,
     );
   }
 }

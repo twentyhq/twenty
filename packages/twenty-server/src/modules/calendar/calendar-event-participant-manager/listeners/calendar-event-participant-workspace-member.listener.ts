@@ -12,8 +12,8 @@ import {
   CalendarEventParticipantMatchParticipantJobData,
 } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-match-participant.job';
 import {
-  CalendarEventParticipantUnmatchParticipantJobData,
   CalendarEventParticipantUnmatchParticipantJob,
+  CalendarEventParticipantUnmatchParticipantJobData,
 } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-unmatch-participant.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -26,49 +26,53 @@ export class CalendarEventParticipantWorkspaceMemberListener {
 
   @OnEvent('workspaceMember.created')
   async handleCreatedEvent(
-    payload: ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>,
+    payload: ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>[],
   ) {
-    if (payload.properties.after.userEmail === null) {
-      return;
-    }
-
-    await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
-      CalendarEventParticipantMatchParticipantJob.name,
-      {
-        workspaceId: payload.workspaceId,
-        email: payload.properties.after.userEmail,
-        workspaceMemberId: payload.properties.after.id,
-      },
-    );
-  }
-
-  @OnEvent('workspaceMember.updated')
-  async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>,
-  ) {
-    if (
-      objectRecordUpdateEventChangedProperties<WorkspaceMemberWorkspaceEntity>(
-        payload.properties.before,
-        payload.properties.after,
-      ).includes('userEmail')
-    ) {
-      await this.messageQueueService.add<CalendarEventParticipantUnmatchParticipantJobData>(
-        CalendarEventParticipantUnmatchParticipantJob.name,
-        {
-          workspaceId: payload.workspaceId,
-          email: payload.properties.before.userEmail,
-          personId: payload.recordId,
-        },
-      );
+    for (const eventPayload of payload) {
+      if (eventPayload.properties.after.userEmail === null) {
+        return;
+      }
 
       await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
         CalendarEventParticipantMatchParticipantJob.name,
         {
-          workspaceId: payload.workspaceId,
-          email: payload.properties.after.userEmail,
-          workspaceMemberId: payload.recordId,
+          workspaceId: eventPayload.workspaceId,
+          email: eventPayload.properties.after.userEmail,
+          workspaceMemberId: eventPayload.recordId,
         },
       );
+    }
+  }
+
+  @OnEvent('workspaceMember.updated')
+  async handleUpdatedEvent(
+    payload: ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>[],
+  ) {
+    for (const eventPayload of payload) {
+      if (
+        objectRecordUpdateEventChangedProperties<WorkspaceMemberWorkspaceEntity>(
+          eventPayload.properties.before,
+          eventPayload.properties.after,
+        ).includes('userEmail')
+      ) {
+        await this.messageQueueService.add<CalendarEventParticipantUnmatchParticipantJobData>(
+          CalendarEventParticipantUnmatchParticipantJob.name,
+          {
+            workspaceId: eventPayload.workspaceId,
+            email: eventPayload.properties.before.userEmail,
+            personId: eventPayload.recordId,
+          },
+        );
+
+        await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
+          CalendarEventParticipantMatchParticipantJob.name,
+          {
+            workspaceId: eventPayload.workspaceId,
+            email: eventPayload.properties.after.userEmail,
+            workspaceMemberId: eventPayload.recordId,
+          },
+        );
+      }
     }
   }
 }
