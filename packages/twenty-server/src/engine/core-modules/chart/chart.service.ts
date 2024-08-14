@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { ChartResult } from 'src/engine/core-modules/chart/dtos/chart-result.dto';
 import { AliasPrefix } from 'src/engine/core-modules/chart/types/alias-prefix.type';
 import { CommonTableExpressionDefinition } from 'src/engine/core-modules/chart/types/common-table-expression-definition.type';
-import { JoinOperation } from 'src/engine/core-modules/chart/types/join-operation.type';
+import { QueryRelation } from 'src/engine/core-modules/chart/types/query-relation.type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -85,14 +85,16 @@ export class ChartService {
     return `table_${aliasPrefix}_${i}`;
   }
 
-  private getJoinOperation(
+  private async getQueryRelation(
+    dataSourceSchemaName: string,
     objectMetadata: ObjectMetadataEntity,
     index: number,
     sourceTableName: string,
     aliasPrefix: AliasPrefix,
     oppositeObjectMetadata: ObjectMetadataEntity,
     relationMetadata: RelationMetadataEntity,
-  ): JoinOperation | undefined {
+    fieldMetadataId: string,
+  ): Promise<QueryRelation | undefined> {
     const fromIsExistingTable =
       relationMetadata?.fromObjectMetadataId === objectMetadata.id;
     const toJoinFieldName = computeColumnName(
@@ -103,21 +105,40 @@ export class ChartService {
     );
     const fromJoinFieldName = 'id';
 
+    const fieldMetadata =
+      relationMetadata.toFieldMetadataId === fieldMetadataId
+        ? relationMetadata.toFieldMetadata
+        : relationMetadata.fromFieldMetadata;
+
+    const originalTableName = computeObjectTargetTable(oppositeObjectMetadata);
+
+    const commonTableExpressionDefinition =
+      await this.getCommonTableExpressionDefinition(
+        dataSourceSchemaName,
+        originalTableName,
+        fieldMetadata.type,
+        fieldMetadata.name,
+      );
+
+    const rightTableName =
+      commonTableExpressionDefinition?.resultSetName ?? originalTableName;
+
     switch (relationMetadata?.relationType) {
       case RelationMetadataType.ONE_TO_MANY: {
         return {
-          joinTableName: computeObjectTargetTable(oppositeObjectMetadata),
-          joinTableAlias: this.computeJoinTableAlias(aliasPrefix, index),
-          joinFieldName: fromIsExistingTable
-            ? toJoinFieldName
-            : fromJoinFieldName,
-          existingTableAlias:
-            index === 0
-              ? sourceTableName
-              : this.computeJoinTableAlias(aliasPrefix, index - 1),
-          existingFieldName: fromIsExistingTable
-            ? fromJoinFieldName
-            : toJoinFieldName,
+          tableName: rightTableName,
+          tableAlias: this.computeJoinTableAlias(aliasPrefix, index),
+          fieldName: fromIsExistingTable ? toJoinFieldName : fromJoinFieldName,
+          joinTarget: {
+            tableAlias:
+              index === 0
+                ? sourceTableName
+                : this.computeJoinTableAlias(aliasPrefix, index - 1),
+            fieldName: fromIsExistingTable
+              ? fromJoinFieldName
+              : toJoinFieldName,
+          },
+          withQuery: commonTableExpressionDefinition?.withQuery,
         };
       }
       default:
@@ -127,7 +148,8 @@ export class ChartService {
     }
   }
 
-  private async getJoinOperations(
+  private async getQueryRelations(
+    dataSourceSchemaName: string,
     workspaceId: string,
     sourceObjectNameSingular: string,
     aliasPrefix: AliasPrefix,
@@ -142,7 +164,7 @@ export class ChartService {
         },
       );
     const sourceTableName = computeObjectTargetTable(objectMetadata);
-    const tables: JoinOperation[] = [];
+    const joinOperations: QueryRelation[] = [];
 
     for (let i = 0; i < fieldPath.length; i++) {
       const fieldMetadataId = fieldPath[i];
@@ -159,31 +181,37 @@ export class ChartService {
         objectMetadata,
       );
 
-      const joinOperation = this.getJoinOperation(
+      const joinOperation = await this.getQueryRelation(
+        dataSourceSchemaName,
         objectMetadata,
         i,
         sourceTableName,
         aliasPrefix,
         oppositeObjectMetadata,
         relationMetadata,
+        fieldMetadataId,
       );
 
       if (!joinOperation) break;
 
-      tables.push(joinOperation);
+      joinOperations.push(joinOperation);
       objectMetadata = oppositeObjectMetadata;
     }
 
-    return tables;
+    return joinOperations;
   }
 
   private getJoinClauses(
     dataSourceSchema: string,
-    joinOperations: JoinOperation[],
+    chartQueryRelations: QueryRelation[],
   ): string[] {
-    return joinOperations.map((joinOperation, i) => {
-      return `JOIN "${dataSourceSchema}"."${joinOperation.joinTableName}" "${joinOperation.joinTableAlias}" ON "${joinOperation.existingTableAlias}"."${joinOperation.existingFieldName}" = "${joinOperation.joinTableAlias}"."${
-        joinOperation.joinFieldName
+    return chartQueryRelations.map((joinOperation, i) => {
+      if (!joinOperation.joinTarget) {
+        throw new Error('Missing join target');
+      }
+
+      return `JOIN "${dataSourceSchema}"."${joinOperation.tableName}" "${joinOperation.tableAlias}" ON "${joinOperation.joinTarget.tableAlias}"."${joinOperation.joinTarget.fieldName}" = "${joinOperation.tableAlias}"."${
+        joinOperation.fieldName
       }"`;
     });
   }
@@ -196,10 +224,9 @@ export class ChartService {
    */
   private getMeasureSelectColumn(
     chartMeasure: ChartMeasure,
-    targetTableAlias: string,
-    targetColumnName?: string,
+    targetQualifiedColumn: string,
   ) {
-    if (!targetColumnName && chartMeasure !== ChartMeasure.COUNT) {
+    if (!targetQualifiedColumn && chartMeasure !== ChartMeasure.COUNT) {
       throw new Error(
         'Chart measure must be count when target column is undefined',
       );
@@ -209,96 +236,81 @@ export class ChartService {
       case ChartMeasure.COUNT:
         return 'COUNT(*) as measure';
       case ChartMeasure.AVERAGE:
-        return `AVG("${targetTableAlias}"."${targetColumnName}") as measure`;
+        return `AVG(${targetQualifiedColumn}) as measure`;
       case ChartMeasure.MIN:
-        return `MIN("${targetTableAlias}"."${targetColumnName}") as measure`;
+        return `MIN(${targetQualifiedColumn}) as measure`;
       case ChartMeasure.MAX:
-        return `MAX("${targetTableAlias}"."${targetColumnName}") as measure`;
+        return `MAX(${targetQualifiedColumn}) as measure`;
       case ChartMeasure.SUM:
-        return `SUM("${targetTableAlias}"."${targetColumnName}") as measure`;
+        return `SUM(${targetQualifiedColumn}) as measure`;
     }
   }
 
-  // Returns wrong column name if last field is not a relationship / count field
-  private async getTableAliasAndColumn(
+  private async getFieldMetadata(workspaceId, fieldMetadataId) {
+    return await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+      where: {
+        id: fieldMetadataId,
+      },
+    });
+  }
+
+  private async getQualifiedColumn(
     workspaceId: string,
-    joinOperations: JoinOperation[],
+    targetQueryRelations: QueryRelation[],
     sourceTableName: string,
     fieldPath?: string[],
   ) {
     const lastFieldMetadataId = fieldPath?.[fieldPath?.length - 1];
 
     const columnName = (
-      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: {
-          id: lastFieldMetadataId,
-        },
-      })
+      await this.getFieldMetadata(workspaceId, lastFieldMetadataId)
     )?.name;
 
-    if (joinOperations.length > 0) {
-      const lastJoinOperation = joinOperations[joinOperations.length - 1];
+    const lastQueryRelation: QueryRelation | undefined =
+      targetQueryRelations[targetQueryRelations.length - 1];
+    const tableAlias = lastQueryRelation?.tableAlias ?? sourceTableName;
 
-      const tableAlias = lastJoinOperation.joinTableAlias;
+    return `"${tableAlias}"."${columnName}"`;
+  }
 
-      return [tableAlias, columnName] as const;
+  // When are CTEs needed?
+  // For last target table and last group by table if last field metadatatype requires post processing (composite, rating, etc)
+  private async getCommonTableExpressionDefinition(
+    dataSourceSchemaName: string,
+    baseTableName: string,
+    fieldMetadataType?: FieldMetadataType,
+    fieldName?: string,
+  ): Promise<CommonTableExpressionDefinition | undefined> {
+    const resultSetName = `${baseTableName}_cte`; // TODO: Unique identifier
+
+    switch (fieldMetadataType) {
+      case FieldMetadataType.CURRENCY:
+        return {
+          resultSetName,
+          withQuery: `
+            WITH "${resultSetName}" AS (
+              SELECT
+                "${fieldName}AmountMicros" / 1000000.0 *
+                CASE "${fieldName}CurrencyCode"
+                  WHEN 'EUR' THEN 1.10
+                  WHEN 'GBP' THEN 1.29
+                  WHEN 'USD' THEN 1.00
+                  -- More
+                  ELSE 1.0
+                END AS "${fieldName}"
+              FROM
+                "${dataSourceSchemaName}"."${baseTableName}"
+            )
+          `,
+        };
     }
-
-    const tableAlias = sourceTableName;
-
-    return [tableAlias, columnName] as const;
   }
 
-  private async getCommonTableExpressionDefinitions(
-    selectFields: {
-      tableName: string;
-      fieldMetadataType: FieldMetadataType;
-      fieldName: string;
-    }[],
-  ): Promise<CommonTableExpressionDefinition[]> {
-    return selectFields
-      .map(({ tableName, fieldMetadataType, fieldName }, i) => {
-        const newTableName = `${tableName}_cte_${i}`;
-        const replacesTableName = tableName;
-
-        switch (fieldMetadataType) {
-          case FieldMetadataType.CURRENCY:
-            return {
-              newTableName,
-              replacesTableName,
-              withQuery: `
-              WITH ${newTableName} AS (
-                SELECT
-                  ${fieldName}AmountMicros / 1000000.0 *
-                  CASE ${fieldName}CurrencyCode
-                    WHEN 'EUR' THEN 1.10
-                    WHEN 'GBP' THEN 1.29
-                    WHEN 'USD' THEN 1.00
-                    -- More
-                    ELSE 1.0
-                  END AS ${fieldName}
-                FROM
-                  ${replacesTableName}
-              )
-            `,
-            };
-        }
-
-        return;
-      })
-      .filter(
-        (cted): cted is CommonTableExpressionDefinition => cted !== undefined,
-      );
-  }
-
-  async run(workspaceId: string, chartId: string): Promise<ChartResult> {
-    const repository =
-      await this.twentyORMManager.getRepository(ChartWorkspaceEntity);
-    const chart = await repository.findOneByOrFail({ id: chartId });
-
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
-
+  private async getSourceQueryRelation(
+    dataSourceSchemaName: string,
+    workspaceId: string,
+    chart: ChartWorkspaceEntity,
+  ): Promise<QueryRelation> {
     const sourceObjectMetadata =
       await this.objectMetadataService.findOneOrFailWithinWorkspace(
         workspaceId,
@@ -307,29 +319,78 @@ export class ChartService {
         },
       );
 
-    const sourceTableName = computeObjectTargetTable(sourceObjectMetadata);
+    const baseTableName = computeObjectTargetTable(sourceObjectMetadata);
 
-    const targetJoinOperations = await this.getJoinOperations(
+    const fieldMetadataId = chart.target?.[0];
+
+    const fieldMetadata = await this.getFieldMetadata(
+      workspaceId,
+      fieldMetadataId,
+    );
+
+    const commonTableExpressionDefinition =
+      await this.getCommonTableExpressionDefinition(
+        dataSourceSchemaName,
+        baseTableName,
+        fieldMetadata?.type,
+        fieldMetadata?.name,
+      );
+
+    const tableName =
+      commonTableExpressionDefinition?.resultSetName ?? baseTableName;
+
+    return {
+      tableName: tableName,
+      tableAlias: tableName,
+      fieldName: fieldMetadata?.name,
+      withQuery: commonTableExpressionDefinition?.withQuery,
+    };
+  }
+
+  private async getChart(workspaceId: string, chartId: string) {
+    // TODO: Enforce workspaceId
+
+    const repository =
+      await this.twentyORMManager.getRepository(ChartWorkspaceEntity);
+
+    return await repository.findOneByOrFail({ id: chartId });
+  }
+
+  async run(workspaceId: string, chartId: string): Promise<ChartResult> {
+    const chart = await this.getChart(workspaceId, chartId);
+
+    const dataSourceSchemaName =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const sourceQueryRelation = await this.getSourceQueryRelation(
+      dataSourceSchemaName,
+      workspaceId,
+      chart,
+    );
+
+    const targetQueryRelations = await this.getQueryRelations(
+      dataSourceSchemaName,
       workspaceId,
       chart.sourceObjectNameSingular,
       'target',
       chart.target,
     );
 
+    console.log('targetQueryRelations', targetQueryRelations);
+
     const targetJoinClauses = this.getJoinClauses(
-      dataSourceSchema,
-      targetJoinOperations,
+      dataSourceSchemaName,
+      targetQueryRelations,
     );
 
-    const [targetTableAlias, targetColumnName] =
-      await this.getTableAliasAndColumn(
-        workspaceId,
-        targetJoinOperations,
-        sourceTableName,
-        chart.target,
-      );
+    const targetQualifiedColumn = await this.getQualifiedColumn(
+      workspaceId,
+      targetQueryRelations,
+      sourceQueryRelation.tableName,
+      chart.target,
+    );
 
-    const groupByJoinOperations = await this.getJoinOperations(
+    /*const groupByJoinOperations = await this.getJoinOperations(
       workspaceId,
       chart.sourceObjectNameSingular,
       'group_by',
@@ -357,42 +418,40 @@ export class ChartService {
     const groupByClause =
       chart.groupBy && chart.groupBy.length > 0
         ? `GROUP BY "${groupByTableAlias}"."${groupByColumnName}"`
-        : '';
+        : '';*/
 
-    const commonTableExpressionDefinitions =
-      await this.getCommonTableExpressionDefinitions([
-        {
-          tableName: targetTableAlias,
-          fieldMetadataType: FieldMetadataType.CURRENCY,
-          fieldName: 'annualRecurringRevenue',
-        },
-      ]);
+    const allQueryRelations = [
+      sourceQueryRelation,
+      targetQueryRelations,
+      // groupByQueryRelations,
+    ].flat();
 
-    const commonTableExpressions = commonTableExpressionDefinitions
-      .map(({ withQuery }) => withQuery)
+    const commonTableExpressions = allQueryRelations
+      .map((joinOperation) => joinOperation.withQuery)
       .join('\n');
+
+    console.log('commonTableExpressions', commonTableExpressions);
 
     const measureSelectColumn = this.getMeasureSelectColumn(
       chart.measure,
-      targetTableAlias,
-      targetColumnName,
+      targetQualifiedColumn,
     );
 
-    const selectColumns = [measureSelectColumn, groupBySelectColumn].filter(
-      (col) => !!col,
-    );
+    const selectColumns = [
+      measureSelectColumn /* , groupBySelectColumn */,
+    ].filter((col) => !!col);
 
-    const joinClausesString = [targetJoinClauses, groupByJoinClauses]
+    const joinClausesString = [targetJoinClauses /* , groupByJoinClauses */]
       .flat()
       .filter((col) => col)
       .join('\n');
 
     const sqlQuery = `
-      ${'' /* commonTableExpressions */}
+      ${commonTableExpressions}
       SELECT ${selectColumns.join(', ')}
-      FROM "${dataSourceSchema}"."${sourceTableName}"
+      FROM ${sourceQueryRelation.withQuery ? '' : `"${dataSourceSchemaName}".`}"${sourceQueryRelation.tableName}"
       ${joinClausesString}
-      ${groupByClause};
+      ${'' /* groupByClause */};
     `;
 
     console.log('sqlQuery\n', sqlQuery);

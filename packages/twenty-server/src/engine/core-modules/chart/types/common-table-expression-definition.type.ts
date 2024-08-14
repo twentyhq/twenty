@@ -1,5 +1,4 @@
 export interface CommonTableExpressionDefinition {
-  replacesTableName: string;
-  newTableName: string;
+  resultSetName: string;
   withQuery: string;
 }
