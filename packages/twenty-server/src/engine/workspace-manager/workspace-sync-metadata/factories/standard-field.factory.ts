@@ -164,6 +164,7 @@ export class StandardFieldFactory {
         isNullable: workspaceFieldMetadataArgs.isNullable,
         isCustom: workspaceFieldMetadataArgs.isDeprecated ? true : false,
         isSystem: workspaceFieldMetadataArgs.isSystem ?? false,
+        isActive: !workspaceFieldMetadataArgs.isInactive,
       },
     ];
   }
@@ -214,6 +215,7 @@ export class StandardFieldFactory {
         isCustom: false,
         isSystem: true,
         isNullable: workspaceRelationMetadataArgs.isNullable,
+        isActive: !workspaceRelationMetadataArgs.isInactive,
       });
     }
 
@@ -231,6 +233,7 @@ export class StandardFieldFactory {
         workspaceEntityMetadataArgs?.isSystem ||
         workspaceRelationMetadataArgs.isSystem,
       isNullable: true,
+      isActive: !workspaceRelationMetadataArgs.isInactive,
     });
 
     return fieldMetadataCollection;
