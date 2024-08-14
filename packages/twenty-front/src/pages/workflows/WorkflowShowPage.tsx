@@ -6,6 +6,8 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import {
   Workflow,
@@ -357,11 +359,17 @@ const StepNode = ({ data }: { data: WorkflowNodeData }) => {
 };
 
 const CreateStepNode = () => {
+  const { openRightDrawer } = useRightDrawer();
+
+  function handleCreateStepNodeButtonClick() {
+    openRightDrawer(RightDrawerPages.Workflow);
+  }
+
   return (
     <div>
       <StyledTargetHandle type="target" position={Position.Top} />
 
-      <IconButton Icon={IconPlus} />
+      <IconButton Icon={IconPlus} onClick={handleCreateStepNodeButtonClick} />
     </div>
   );
 };
