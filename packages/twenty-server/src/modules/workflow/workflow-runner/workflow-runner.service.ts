@@ -2,8 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkflowAction } from 'src/modules/workflow/common/types/workflow-action.type';
 import { WorkflowActionRunnerFactory } from 'src/modules/workflow/workflow-action-runner/workflow-action-runner.factory';
+import {
+  WorkflowRunnerException,
+  WorkflowRunnerExceptionCode,
+} from 'src/modules/workflow/workflow-runner/workflow-runner.exception';
 
 const MAX_RETRIES_ON_FAILURE = 3;
+
+export type WorkflowRunOutput = {
+  data?: object;
+  error?: object;
+};
 
 @Injectable()
 export class WorkflowRunnerService {
@@ -21,9 +30,11 @@ export class WorkflowRunnerService {
     workspaceId: string;
     payload?: object;
     attemptCount?: number;
-  }) {
+  }): Promise<WorkflowRunOutput> {
     if (!action) {
-      return payload;
+      return {
+        data: payload,
+      };
     }
 
     const workflowActionRunner = this.workflowActionRunnerFactory.get(
@@ -45,7 +56,10 @@ export class WorkflowRunnerService {
     }
 
     if (!result.error) {
-      throw new Error('Execution result error, no data or error');
+      throw new WorkflowRunnerException(
+        'Execution result error, no data or error',
+        WorkflowRunnerExceptionCode.WORKFLOW_FAILED,
+      );
     }
 
     if (action.settings.errorHandlingOptions.continueOnFailure.value) {
@@ -68,6 +82,9 @@ export class WorkflowRunnerService {
       });
     }
 
-    return result.error;
+    throw new WorkflowRunnerException(
+      `Workflow failed: ${result.error}`,
+      WorkflowRunnerExceptionCode.WORKFLOW_FAILED,
+    );
   }
 }

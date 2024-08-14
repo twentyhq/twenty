@@ -283,6 +283,7 @@ export const NOTE_TARGET_STANDARD_FIELD_IDS = {
   company: 'c500fbc0-d6f2-4982-a959-5a755431696c',
   opportunity: '20202020-4e42-417a-a705-76581c9ade79',
   custom: '20202020-3d12-4579-94ee-7117c1bad492',
+  workflow: '20202020-eb46-47c5-8f3f-f3f93e7aec20',
 };
 
 export const OPPORTUNITY_STANDARD_FIELD_IDS = {
@@ -346,6 +347,7 @@ export const TASK_TARGET_STANDARD_FIELD_IDS = {
   company: '20202020-4703-4a4e-948c-487b0c60a92c',
   opportunity: '20202020-6cb2-4c01-a9a5-aca3dbc11d41',
   custom: '20202020-41c1-4c9a-8c75-be0971ef89af',
+  workflow: '20202020-a16c-47a3-b21c-c41c9bcac659',
 };
 
 export const VIEW_FIELD_STANDARD_FIELD_IDS = {
@@ -405,12 +407,23 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   activityTargets: '20202020-9d65-445a-899d-1c6f1cf3a9ab',
   attachments: '20202020-ea95-4d4d-81cd-9921740316b8',
   timelineActivities: '20202020-dd79-492a-9d11-58333ed0f71a',
+  taskTargets: '20202020-0094-4e79-b934-03eaa8ab949c',
+  noteTargets: '20202020-40aa-4839-965e-972a2f72e08d',
+};
+
+export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
+  workflowVersion: '20202020-2f52-4ba8-8dc4-d0d6adb9578d',
+  startedAt: '20202020-a234-4e2d-bd15-85bcea6bb183',
+  endedAt: '20202020-e1c1-4b6b-bbbd-b2beaf2e159e',
+  status: '20202020-6b3e-4f9c-8c2b-2e5b8e6d6f3b',
+  createdBy: '20202020-6007-401a-8aa5-e6f38581a6f3',
 };
 
 export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
   name: '20202020-a12f-4cca-9937-a2e40cc65509',
   workflow: '20202020-afa3-46c3-91b0-0631ca6aa1c8',
   trigger: '20202020-4eae-43e7-86e0-212b41a30b48',
+  runs: '20202020-1d08-46df-901a-85045f18099a',
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
