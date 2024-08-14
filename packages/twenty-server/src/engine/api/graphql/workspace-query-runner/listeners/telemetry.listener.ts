@@ -4,6 +4,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 
 @Injectable()
 export class TelemetryListener {
@@ -13,18 +14,20 @@ export class TelemetryListener {
   ) {}
 
   @OnEvent('*.created')
-  async handleAllCreate(payload: ObjectRecordCreateEvent<any>) {
+  async handleAllCreate(
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
+  ) {
     await Promise.all(
-      payload.map((eventPayload) =>
+      payload.events.map((eventPayload) =>
         this.analyticsService.create(
           {
             type: 'track',
             data: {
-              eventName: eventPayload.name,
+              eventName: payload.name,
             },
           },
           eventPayload.userId,
-          eventPayload.workspaceId,
+          payload.workspaceId,
           '', // voluntarily not retrieving this
           '', // to avoid slowing down
           this.environmentService.get('SERVER_URL'),
@@ -34,9 +37,11 @@ export class TelemetryListener {
   }
 
   @OnEvent('user.signup')
-  async handleUserSignup(payload: ObjectRecordCreateEvent<any>[]) {
+  async handleUserSignup(
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
+  ) {
     await Promise.all(
-      payload.map(async (eventPayload) =>
+      payload.events.map(async (eventPayload) =>
         this.analyticsService.create(
           {
             type: 'track',
@@ -45,7 +50,7 @@ export class TelemetryListener {
             },
           },
           eventPayload.userId,
-          eventPayload.workspaceId,
+          payload.workspaceId,
           '',
           '',
           this.environmentService.get('SERVER_URL'),

@@ -10,6 +10,7 @@ import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/t
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -23,19 +24,17 @@ export class BillingWorkspaceMemberListener {
   @OnEvent('workspaceMember.created')
   @OnEvent('workspaceMember.deleted')
   async handleCreateOrDeleteEvent(
-    payload: ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>[],
+    payload: WorkspaceEventBatch<
+      ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>
+    >,
   ) {
     if (!this.environmentService.get('IS_BILLING_ENABLED')) {
       return;
     }
 
-    await Promise.all(
-      payload.map((eventPayload) =>
-        this.messageQueueService.add<UpdateSubscriptionJobData>(
-          UpdateSubscriptionJob.name,
-          { workspaceId: eventPayload.workspaceId },
-        ),
-      ),
+    await this.messageQueueService.add<UpdateSubscriptionJobData>(
+      UpdateSubscriptionJob.name,
+      { workspaceId: payload.workspaceId },
     );
   }
 }

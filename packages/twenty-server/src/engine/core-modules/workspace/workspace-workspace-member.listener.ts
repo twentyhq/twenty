@@ -11,6 +11,7 @@ import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/t
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -23,10 +24,12 @@ export class WorkspaceWorkspaceMemberListener {
 
   @OnEvent('workspaceMember.updated')
   async handleUpdateEvent(
-    payload: ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>[],
+    payload: WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>
+    >,
   ) {
     await Promise.all(
-      payload.map((eventPayload) => {
+      payload.events.map((eventPayload) => {
         const { firstName: firstNameAfter, lastName: lastNameAfter } =
           eventPayload.properties.after.name;
 
@@ -40,7 +43,7 @@ export class WorkspaceWorkspaceMemberListener {
 
         return this.onboardingService.setOnboardingCreateProfilePending({
           userId: eventPayload.userId,
-          workspaceId: eventPayload.workspaceId,
+          workspaceId: payload.workspaceId,
           value: false,
         });
       }),
@@ -49,10 +52,12 @@ export class WorkspaceWorkspaceMemberListener {
 
   @OnEvent('workspaceMember.deleted')
   async handleDeleteEvent(
-    payload: ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>[],
+    payload: WorkspaceEventBatch<
+      ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>
+    >,
   ) {
     await Promise.all(
-      payload.map((eventPayload) => {
+      payload.events.map((eventPayload) => {
         const userId = eventPayload.properties.before.userId;
 
         if (!userId) {
@@ -61,7 +66,7 @@ export class WorkspaceWorkspaceMemberListener {
 
         return this.messageQueueService.add<HandleWorkspaceMemberDeletedJobData>(
           HandleWorkspaceMemberDeletedJob.name,
-          { workspaceId: eventPayload.workspaceId, userId },
+          { workspaceId: payload.workspaceId, userId },
         );
       }),
     );

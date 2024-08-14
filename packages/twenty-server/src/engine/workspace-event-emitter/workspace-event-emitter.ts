@@ -1,5 +1,7 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+
 export class WorkspaceEventEmitter extends EventEmitter2 {
   constructor() {
     super();
@@ -10,6 +12,6 @@ export class WorkspaceEventEmitter extends EventEmitter2 {
       name: eventName,
       workspaceId,
       events,
-    });
+    } satisfies WorkspaceEventBatch<any>);
   }
 }

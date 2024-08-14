@@ -7,6 +7,7 @@ import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/t
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import {
   BlocklistItemDeleteCalendarEventsJob,
@@ -26,14 +27,16 @@ export class CalendarBlocklistListener {
 
   @OnEvent('blocklist.created')
   async handleCreatedEvent(
-    payload: ObjectRecordCreateEvent<BlocklistWorkspaceEntity>[],
+    payload: WorkspaceEventBatch<
+      ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
+    >,
   ) {
     await Promise.all(
-      payload.map((eventPayload) =>
+      payload.events.map((eventPayload) =>
         this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
           BlocklistReimportCalendarEventsJob.name,
           {
-            workspaceId: eventPayload.workspaceId,
+            workspaceId: payload.workspaceId,
             workspaceMemberId: eventPayload.properties.after.workspaceMember.id,
           },
         ),
@@ -43,14 +46,16 @@ export class CalendarBlocklistListener {
 
   @OnEvent('blocklist.deleted')
   async handleDeletedEvent(
-    payload: ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>[],
+    payload: WorkspaceEventBatch<
+      ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
+    >,
   ) {
     await Promise.all(
-      payload.map((eventPayload) =>
+      payload.events.map((eventPayload) =>
         this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
           BlocklistReimportCalendarEventsJob.name,
           {
-            workspaceId: eventPayload.workspaceId,
+            workspaceId: payload.workspaceId,
             workspaceMemberId:
               eventPayload.properties.before.workspaceMember.id,
           },
@@ -61,14 +66,16 @@ export class CalendarBlocklistListener {
 
   @OnEvent('blocklist.updated')
   async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>[],
+    payload: WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>
+    >,
   ) {
     await Promise.all(
-      payload.map((eventPayload) =>
+      payload.events.map((eventPayload) =>
         this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
           BlocklistItemDeleteCalendarEventsJob.name,
           {
-            workspaceId: eventPayload.workspaceId,
+            workspaceId: payload.workspaceId,
             blocklistItemId: eventPayload.recordId,
           },
         ),
@@ -76,11 +83,11 @@ export class CalendarBlocklistListener {
     );
 
     await Promise.all(
-      payload.map((eventPayload) =>
+      payload.events.map((eventPayload) =>
         this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
           BlocklistReimportCalendarEventsJob.name,
           {
-            workspaceId: eventPayload.workspaceId,
+            workspaceId: payload.workspaceId,
             workspaceMemberId: eventPayload.properties.after.workspaceMember.id,
           },
         ),

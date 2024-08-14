@@ -8,6 +8,7 @@ import { objectRecordChangedValues } from 'src/engine/integrations/event-emitter
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 
@@ -19,13 +20,17 @@ export class EntityEventsToDbListener {
   ) {}
 
   @OnEvent('*.created')
-  async handleCreate(payload: ObjectRecordCreateEvent<any>[]) {
+  async handleCreate(
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
+  ) {
     return this.handle(payload);
   }
 
   @OnEvent('*.updated')
-  async handleUpdate(payload: ObjectRecordUpdateEvent<any>[]) {
-    for (const eventPayload of payload) {
+  async handleUpdate(
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
+  ) {
+    for (const eventPayload of payload.events) {
       eventPayload.properties.diff = objectRecordChangedValues(
         eventPayload.properties.before,
         eventPayload.properties.after,
@@ -43,8 +48,8 @@ export class EntityEventsToDbListener {
   // @OnEvent('*.restored') - TODO: implement when we soft delete has been implemented
   // ....
 
-  private async handle(payload: ObjectRecordBaseEvent[]) {
-    for (const eventPayload of payload) {
+  private async handle(payload: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
+    for (const eventPayload of payload.events) {
       if (!eventPayload.objectMetadata?.isAuditLogged) {
         return;
       }
