@@ -32,15 +32,10 @@ export class TimelineMessagingService {
         'messageThread',
       );
 
-    const [messageThreads, totalNumberOfThreads] =
+    const [messageThreadIds, totalNumberOfThreads] =
       await messageThreadRepository.findAndCount({
         select: {
           id: true,
-          messages: {
-            receivedAt: true,
-            subject: true,
-            text: true,
-          },
         },
         where: {
           messages: {
@@ -49,15 +44,24 @@ export class TimelineMessagingService {
             },
           },
         },
-        relations: ['messages'],
-        order: {
-          messages: {
-            receivedAt: 'DESC',
-          },
-        },
         skip: offset,
         take: pageSize,
       });
+
+    const messageThreads = await messageThreadRepository.find({
+      select: {
+        id: true,
+      },
+      where: {
+        id: Any(messageThreadIds.map((thread) => thread.id)),
+      },
+      order: {
+        messages: {
+          receivedAt: 'DESC',
+        },
+      },
+      relations: ['messages'],
+    });
 
     return {
       messageThreads: messageThreads.map((messageThread) => {
