@@ -40,6 +40,10 @@ const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_STANDARD: TableMetadata<SettingsObje
         align: 'left',
       },
     ],
+    initialSort: {
+      fieldName: 'label',
+      orderBy: 'AscNullsLast',
+    },
   };
 
 const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM: TableMetadata<SettingsObjectDetailTableItem> =
@@ -65,6 +69,10 @@ const SETTINGS_OBJECT_DETAIL_TABLE_METADATA_CUSTOM: TableMetadata<SettingsObject
         align: 'left',
       },
     ],
+    initialSort: {
+      fieldName: 'label',
+      orderBy: 'AscNullsLast',
+    },
   };
 
 export type SettingsObjectFieldTableProps = {
