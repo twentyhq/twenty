@@ -9,5 +9,5 @@ export class WorkflowStatusException extends CustomException {
 
 export enum WorkflowStatusExceptionCode {
   WORKFLOW_RUN_NOT_FOUND = 'WORKFLOW_RUN_NOT_FOUND',
-  WORKFLOW_RUN_ALREADY_STARTED = 'WORKFLOW_RUN_ALREADY_STARTED',
+  INVALID_OPERATION = 'INVALID_OPERATION',
 }

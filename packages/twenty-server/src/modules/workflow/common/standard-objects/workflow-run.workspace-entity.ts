@@ -1,6 +1,10 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import {
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -61,8 +65,20 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Workflow run status',
     icon: 'IconHistory',
   })
-  @WorkspaceIsNullable()
   status: WorkflowRunStatus;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.createdBy,
+    type: FieldMetadataType.ACTOR,
+    label: 'Created by',
+    icon: 'IconCreativeCommonsSa',
+    description: 'The creator of the record',
+    defaultValue: {
+      source: `'${FieldActorSource.MANUAL}'`,
+      name: "''",
+    },
+  })
+  createdBy: ActorMetadata;
 
   // Relations
   @WorkspaceRelation({
@@ -74,7 +90,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     inverseSideFieldKey: 'runs',
   })
-  @WorkspaceIsNullable()
   workflowVersion: Relation<WorkflowVersionWorkspaceEntity>;
 
   @WorkspaceJoinColumn('workflowVersion')

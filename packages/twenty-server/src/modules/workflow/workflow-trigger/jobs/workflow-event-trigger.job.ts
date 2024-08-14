@@ -1,17 +1,18 @@
-import { Logger } from '@nestjs/common';
+import { Logger, Scope } from '@nestjs/common';
 
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   RunWorkflowJobData,
   WorkflowRunnerJob,
 } from 'src/modules/workflow/workflow-runner/workflow-runner.job';
-import { WorkflowStatusService } from 'src/modules/workflow/workflow-status/workflow-status.service';
+import { WorkflowStatusWorkspaceService } from 'src/modules/workflow/workflow-status/workflow-status.workspace-service';
 
 export type WorkflowEventTriggerJobData = {
   workspaceId: string;
@@ -19,7 +20,7 @@ export type WorkflowEventTriggerJobData = {
   payload: object;
 };
 
-@Processor(MessageQueue.workflowQueue)
+@Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowEventTriggerJob {
   private readonly logger = new Logger(WorkflowEventTriggerJob.name);
 
@@ -27,7 +28,7 @@ export class WorkflowEventTriggerJob {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly workflowStatusService: WorkflowStatusService,
+    private readonly workflowStatusWorkspaceService: WorkflowStatusWorkspaceService,
   ) {}
 
   @Process(WorkflowEventTriggerJob.name)
@@ -46,15 +47,20 @@ export class WorkflowEventTriggerJob {
       throw new Error('Workflow has no published version');
     }
 
-    await this.workflowStatusService.createWorkflowRun(
-      data.workspaceId,
-      workflow.publishedVersionId,
-    );
+    const workflowRunId =
+      await this.workflowStatusWorkspaceService.createWorkflowRun(
+        workflow.publishedVersionId,
+        {
+          source: FieldActorSource.WORKFLOW,
+          name: workflow.name,
+        },
+      );
 
     this.messageQueueService.add<RunWorkflowJobData>(WorkflowRunnerJob.name, {
       workspaceId: data.workspaceId,
       workflowVersionId: workflow.publishedVersionId,
       payload: data.payload,
+      workflowRunId,
     });
   }
 }

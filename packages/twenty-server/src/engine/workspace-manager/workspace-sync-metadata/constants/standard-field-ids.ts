@@ -416,6 +416,7 @@ export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {
   startedAt: '20202020-a234-4e2d-bd15-85bcea6bb183',
   endedAt: '20202020-e1c1-4b6b-bbbd-b2beaf2e159e',
   status: '20202020-6b3e-4f9c-8c2b-2e5b8e6d6f3b',
+  createdBy: '20202020-6007-401a-8aa5-e6f38581a6f3',
 };
 
 export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
