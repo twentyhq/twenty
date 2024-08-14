@@ -13,6 +13,7 @@ import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view';
+import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 
 export const viewPrefillData = async (
   entityManager: EntityManager,
@@ -25,6 +26,10 @@ export const viewPrefillData = async (
       featureFlag.key === FeatureFlagKey.IsChartsEnabled &&
       featureFlag.value === true,
   );
+  const isWorkflowEnabled =
+    featureFlags?.find(
+      (featureFlag) => featureFlag.key === FeatureFlagKey.IsWorkflowEnabled,
+    )?.value ?? false;
 
   const viewDefinitions = [
     await companiesAllView(objectMetadataMap),
@@ -36,6 +41,7 @@ export const viewPrefillData = async (
     await tasksAllView(objectMetadataMap),
     await tasksByStatusView(objectMetadataMap),
     ...(isChartsEnabled ? [await chartsAllView(objectMetadataMap)] : []),
+    ...(isWorkflowEnabled ? [await workflowsAllView(objectMetadataMap)] : []),
   ];
 
   const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({
