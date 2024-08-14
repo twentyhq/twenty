@@ -14,8 +14,8 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { TwentyEventEmitter } from 'src/engine/twenty-event-emitter/twenty-event-emitter';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -25,7 +25,7 @@ export class UserService extends TypeOrmQueryService<User> {
     private readonly userRepository: Repository<User>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
-    private readonly eventEmitter: TwentyEventEmitter,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workspaceService: WorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
@@ -115,9 +115,11 @@ export class UserService extends TypeOrmQueryService<User> {
     };
     payload.recordId = workspaceMember.id;
 
-    this.eventEmitter.emit('workspaceMember.deleted', [payload], {
+    this.workspaceEventEmitter.emit(
+      'workspaceMember.deleted',
+      [payload],
       workspaceId,
-    });
+    );
 
     return user;
   }

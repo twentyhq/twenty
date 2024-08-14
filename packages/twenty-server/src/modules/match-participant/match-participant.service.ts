@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { Any } from 'typeorm';
 
-import { TwentyEventEmitter } from 'src/engine/twenty-event-emitter/twenty-event-emitter';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -17,7 +17,7 @@ export class MatchParticipantService<
     | MessageParticipantWorkspaceEntity,
 > {
   constructor(
-    private readonly eventEmitter: TwentyEventEmitter,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
   ) {}
@@ -113,7 +113,7 @@ export class MatchParticipantService<
       transactionManager,
     );
 
-    this.eventEmitter.emit(
+    this.workspaceEventEmitter.emit(
       `${objectMetadataName}.matched`,
       [
         {
@@ -121,9 +121,7 @@ export class MatchParticipantService<
           participants: matchedParticipants,
         },
       ],
-      {
-        workspaceId,
-      },
+      workspaceId,
     );
   }
 
@@ -170,7 +168,7 @@ export class MatchParticipantService<
         },
       });
 
-      this.eventEmitter.emit(
+      this.workspaceEventEmitter.emit(
         `${objectMetadataName}.matched`,
         [
           {
@@ -180,9 +178,7 @@ export class MatchParticipantService<
             participants: updatedParticipants,
           },
         ],
-        {
-          workspaceId,
-        },
+        workspaceId,
       );
     }
 

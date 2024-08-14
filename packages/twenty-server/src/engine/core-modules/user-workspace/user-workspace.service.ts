@@ -10,7 +10,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { TwentyEventEmitter } from 'src/engine/twenty-event-emitter/twenty-event-emitter';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 
@@ -22,7 +22,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userRepository: Repository<User>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
-    private eventEmitter: TwentyEventEmitter,
+    private workspaceEventEmitter: WorkspaceEventEmitter,
   ) {
     super(userWorkspaceRepository);
   }
@@ -37,9 +37,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
 
     payload.userId = userId;
 
-    this.eventEmitter.emit('user.signup', [payload], {
-      workspaceId,
-    });
+    this.workspaceEventEmitter.emit('user.signup', [payload], workspaceId);
 
     return this.userWorkspaceRepository.save(userWorkspace);
   }
@@ -81,9 +79,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     };
     payload.recordId = workspaceMember[0].id;
 
-    this.eventEmitter.emit('workspaceMember.created', [payload], {
+    this.workspaceEventEmitter.emit(
+      'workspaceMember.created',
+      [payload],
       workspaceId,
-    });
+    );
   }
 
   async addUserToWorkspace(user: User, workspace: Workspace) {

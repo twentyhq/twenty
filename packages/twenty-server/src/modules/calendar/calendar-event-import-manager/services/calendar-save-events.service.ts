@@ -6,8 +6,8 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { TwentyEventEmitter } from 'src/engine/twenty-event-emitter/twenty-event-emitter';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
@@ -28,7 +28,7 @@ export class CalendarSaveEventsService {
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
     @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly eventEmitter: TwentyEventEmitter,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   public async saveCalendarEventsAndEnqueueContactCreationJob(
@@ -140,7 +140,7 @@ export class CalendarSaveEventsService {
       );
     });
 
-    this.eventEmitter.emit(
+    this.workspaceEventEmitter.emit(
       `calendarEventParticipant.matched`,
       [
         {
@@ -148,9 +148,7 @@ export class CalendarSaveEventsService {
           calendarEventParticipants: savedCalendarEventParticipantsToEmit,
         },
       ],
-      {
-        workspaceId,
-      },
+      workspaceId,
     );
 
     if (calendarChannel.isContactAutoCreationEnabled) {

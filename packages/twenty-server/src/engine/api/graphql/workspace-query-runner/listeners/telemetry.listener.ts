@@ -13,7 +13,7 @@ export class TelemetryListener {
   ) {}
 
   @OnEvent('*.created')
-  async handleAllCreate(payload: ObjectRecordCreateEvent<any>[]) {
+  async handleAllCreate(payload: ObjectRecordCreateEvent<any>) {
     await Promise.all(
       payload.map((eventPayload) =>
         this.analyticsService.create(

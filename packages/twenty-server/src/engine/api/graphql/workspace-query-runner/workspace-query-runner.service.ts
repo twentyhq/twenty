@@ -47,11 +47,11 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { TwentyEventEmitter } from 'src/engine/twenty-event-emitter/twenty-event-emitter';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { isDefined } from 'src/utils/is-defined';
 
 import {
@@ -76,7 +76,7 @@ export class WorkspaceQueryRunnerService {
     private readonly queryResultGettersFactory: QueryResultGettersFactory,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly eventEmitter: TwentyEventEmitter,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly environmentService: EnvironmentService,
     private readonly duplicateService: DuplicateService,
@@ -296,7 +296,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    this.eventEmitter.emit(
+    this.workspaceEventEmitter.emit(
       `${objectMetadataItem.nameSingular}.created`,
       parsedResults.map(
         (record) =>
@@ -309,9 +309,7 @@ export class WorkspaceQueryRunnerService {
             },
           }) satisfies ObjectRecordCreateEvent<any>,
       ),
-      {
-        workspaceId: authContext.workspace.id,
-      },
+      authContext.workspace.id,
     );
 
     return parsedResults;
@@ -437,7 +435,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    this.eventEmitter.emit(
+    this.workspaceEventEmitter.emit(
       `${objectMetadataItem.nameSingular}.updated`,
       [
         {
@@ -451,9 +449,7 @@ export class WorkspaceQueryRunnerService {
           },
         } satisfies ObjectRecordUpdateEvent<any>,
       ],
-      {
-        workspaceId: authContext.workspace.id,
-      },
+      authContext.workspace.id,
     );
 
     return parsedResults?.[0];
@@ -541,12 +537,10 @@ export class WorkspaceQueryRunnerService {
       })
       .filter(isDefined);
 
-    this.eventEmitter.emit(
+    this.workspaceEventEmitter.emit(
       `${objectMetadataItem.nameSingular}.updated`,
       eventsToEmit,
-      {
-        workspaceId: authContext.workspace.id,
-      },
+      authContext.workspace.id,
     );
 
     return parsedResults;
@@ -600,7 +594,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    this.eventEmitter.emit(
+    this.workspaceEventEmitter.emit(
       `${objectMetadataItem.nameSingular}.deleted`,
       parsedResults.map(
         (record) =>
@@ -613,9 +607,7 @@ export class WorkspaceQueryRunnerService {
             },
           }) satisfies ObjectRecordDeleteEvent<any>,
       ),
-      {
-        workspaceId: authContext.workspace.id,
-      },
+      authContext.workspace.id,
     );
 
     return parsedResults;
@@ -669,7 +661,7 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    this.eventEmitter.emit(
+    this.workspaceEventEmitter.emit(
       `${objectMetadataItem.nameSingular}.deleted`,
       [
         {
@@ -684,9 +676,7 @@ export class WorkspaceQueryRunnerService {
           },
         } satisfies ObjectRecordDeleteEvent<any>,
       ],
-      {
-        workspaceId: authContext.workspace.id,
-      },
+      authContext.workspace.id,
     );
 
     return parsedResults?.[0];
