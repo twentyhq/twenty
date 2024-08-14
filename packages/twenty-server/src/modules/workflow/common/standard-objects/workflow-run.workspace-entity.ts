@@ -64,6 +64,33 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Workflow run status',
     description: 'Workflow run status',
     icon: 'IconHistory',
+    options: [
+      {
+        value: WorkflowRunStatus.NOT_STARTED,
+        label: 'Not started',
+        position: 0,
+        color: 'grey',
+      },
+      {
+        value: WorkflowRunStatus.RUNNING,
+        label: 'Running',
+        position: 1,
+        color: 'yellow',
+      },
+      {
+        value: WorkflowRunStatus.COMPLETED,
+        label: 'Completed',
+        position: 2,
+        color: 'green',
+      },
+      {
+        value: WorkflowRunStatus.FAILED,
+        label: 'Failed',
+        position: 3,
+        color: 'red',
+      },
+    ],
+    defaultValue: "'NOT_STARTED'",
   })
   status: WorkflowRunStatus;
 
