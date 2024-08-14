@@ -1,0 +1,14 @@
+{
+  "name": "twenty-e2e-testing",
+  "devDependencies": {
+    "@playwright/test": "^1.46.0"
+  },
+  "scripts": {
+    "test:e2e:setup": "yarn playwright install",
+    "test:e2e": "yarn playwright test",
+    "test:e2e:ui": "yarn playwright test --ui",
+    "test:e2e:chrome": "yarn playwright test --project=chromium",
+    "test:e2e:debug": "yarn playwright test --debug",
+    "test:e2e:report": "yarn playwright show-report"
+  }
+}
