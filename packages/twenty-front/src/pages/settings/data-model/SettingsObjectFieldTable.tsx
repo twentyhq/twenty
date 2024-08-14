@@ -136,12 +136,6 @@ export const SettingsObjectFieldTable = ({
     tableMetadata,
   );
 
-  console.log({
-    sortedDisabledObjectSettingsDetailItems,
-    sortedActiveObjectSettingsDetailItems,
-    tableMetadata,
-  });
-
   return (
     <Table>
       <StyledObjectFieldTableRow>
@@ -170,7 +164,10 @@ export const SettingsObjectFieldTable = ({
         </TableSection>
       )}
       {isNonEmptyArray(sortedDisabledObjectSettingsDetailItems) && (
-        <TableSection isInitiallyExpanded={false} title="Inactive">
+        <TableSection
+          isInitiallyExpanded={mode === 'new-field' ? true : false}
+          title="Inactive"
+        >
           {sortedDisabledObjectSettingsDetailItems.map(
             (objectSettingsDetailItem) => (
               <SettingsObjectFieldItemTableRow
