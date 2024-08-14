@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Any } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { injectIdsInCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/inject-ids-in-calendar-events.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
@@ -19,7 +21,6 @@ import {
   CreateCompanyAndContactJob,
   CreateCompanyAndContactJobData,
 } from 'src/modules/contact-creation-manager/jobs/create-company-and-contact.job';
-import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 @Injectable()
 export class CalendarSaveEventsService {
@@ -37,6 +38,10 @@ export class CalendarSaveEventsService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
+    const logId = v4();
+
+    console.time(`saveCalendarEventsAndEnqueueContactCreationJob-${logId}`);
+
     const calendarEventRepository =
       await this.twentyORMManager.getRepository<CalendarEventWorkspaceEntity>(
         'calendarEvent',
@@ -158,5 +163,7 @@ export class CalendarSaveEventsService {
         },
       );
     }
+
+    console.timeEnd(`saveCalendarEventsAndEnqueueContactCreationJob-${logId}`);
   }
 }

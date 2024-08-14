@@ -21,6 +21,7 @@ import {
 import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
+import { v4 } from 'uuid';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -54,10 +55,15 @@ export class WorkspaceRepository<
     options?: FindManyOptions<Entity>,
     entityManager?: EntityManager,
   ): Promise<Entity[]> {
+    const logId = 'log-' + v4();
+
+    console.time(`find:${logId}${this.target.toString()}`);
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.find(this.target, computedOptions);
     const formattedResult = await this.formatResult(result);
+
+    console.timeEnd(`find:${logId}${this.target.toString()}`);
 
     return formattedResult;
   }
@@ -66,10 +72,15 @@ export class WorkspaceRepository<
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     entityManager?: EntityManager,
   ): Promise<Entity[]> {
+    const logId = 'log-' + v4();
+
+    console.time(`findBy:${logId}${this.target.toString()}`);
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findBy(this.target, computedOptions.where);
     const formattedResult = await this.formatResult(result);
+
+    console.timeEnd(`findBy:${logId}${this.target.toString()}`);
 
     return formattedResult;
   }
@@ -78,10 +89,15 @@ export class WorkspaceRepository<
     options?: FindManyOptions<Entity>,
     entityManager?: EntityManager,
   ): Promise<[Entity[], number]> {
+    const logId = 'log-' + v4();
+
+    console.time(`findAndCount:${logId}${this.target.toString()}`);
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findAndCount(this.target, computedOptions);
     const formattedResult = await this.formatResult(result);
+
+    console.timeEnd(`findAndCount:${logId}${this.target.toString()}`);
 
     return formattedResult;
   }
@@ -90,6 +106,9 @@ export class WorkspaceRepository<
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     entityManager?: EntityManager,
   ): Promise<[Entity[], number]> {
+    const logId = 'log-' + v4();
+
+    console.time(`findAndCountBy:${logId}${this.target.toString()}`);
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findAndCountBy(
@@ -98,6 +117,8 @@ export class WorkspaceRepository<
     );
     const formattedResult = await this.formatResult(result);
 
+    console.timeEnd(`findAndCountBy:${logId}${this.target.toString()}`);
+
     return formattedResult;
   }
 
@@ -105,10 +126,15 @@ export class WorkspaceRepository<
     options: FindOneOptions<Entity>,
     entityManager?: EntityManager,
   ): Promise<Entity | null> {
+    const logId = 'log-' + v4();
+
+    console.time(`findOne:${logId}${this.target.toString()}`);
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findOne(this.target, computedOptions);
     const formattedResult = await this.formatResult(result);
+
+    console.timeEnd(`findOne:${logId}${this.target.toString()}`);
 
     return formattedResult;
   }
@@ -117,10 +143,16 @@ export class WorkspaceRepository<
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     entityManager?: EntityManager,
   ): Promise<Entity | null> {
+    const logId = 'log-' + v4();
+
+    console.time(`findOneBy:${logId}${this.target.toString()}`);
+
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findOneBy(this.target, computedOptions.where);
     const formattedResult = await this.formatResult(result);
+
+    console.timeEnd(`findOneBy:${logId}${this.target.toString()}`);
 
     return formattedResult;
   }
@@ -129,10 +161,15 @@ export class WorkspaceRepository<
     options: FindOneOptions<Entity>,
     entityManager?: EntityManager,
   ): Promise<Entity> {
+    const logId = 'log-' + v4();
+
+    console.time(`findOneOrFail:${logId}${this.target.toString()}`);
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions(options);
     const result = await manager.findOneOrFail(this.target, computedOptions);
     const formattedResult = await this.formatResult(result);
+
+    console.timeEnd(`findOneOrFail:${logId}${this.target.toString()}`);
 
     return formattedResult;
   }
@@ -141,6 +178,10 @@ export class WorkspaceRepository<
     where: FindOptionsWhere<Entity> | FindOptionsWhere<Entity>[],
     entityManager?: EntityManager,
   ): Promise<Entity> {
+    const logId = 'log-' + v4();
+
+    console.time(`findOneByOrFail:${logId}${this.target.toString()}`);
+
     const manager = entityManager || this.manager;
     const computedOptions = await this.transformOptions({ where });
     const result = await manager.findOneByOrFail(
@@ -148,6 +189,8 @@ export class WorkspaceRepository<
       computedOptions.where,
     );
     const formattedResult = await this.formatResult(result);
+
+    console.timeEnd(`findOneByOrFail:${logId}${this.target.toString()}`);
 
     return formattedResult;
   }
@@ -184,6 +227,10 @@ export class WorkspaceRepository<
     options?: SaveOptions,
     entityManager?: EntityManager,
   ): Promise<T | T[]> {
+    const logId = 'log-' + v4();
+
+    console.time(`save:${logId}${this.target.toString()}`);
+
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
     let result: T | T[];
@@ -204,6 +251,8 @@ export class WorkspaceRepository<
     }
 
     const formattedResult = await this.formatResult(result);
+
+    console.timeEnd(`save:${logId}${this.target.toString()}`);
 
     return formattedResult;
   }
@@ -228,6 +277,10 @@ export class WorkspaceRepository<
     options?: RemoveOptions,
     entityManager?: EntityManager,
   ): Promise<Entity | Entity[]> {
+    const logId = 'log-' + v4();
+
+    console.time(`remove:${logId}${this.target.toString()}`);
+
     const manager = entityManager || this.manager;
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
     const result = await manager.remove(
@@ -237,6 +290,8 @@ export class WorkspaceRepository<
     );
 
     const formattedResult = await this.formatResult(result);
+
+    console.timeEnd(`remove:${logId}${this.target.toString()}`);
 
     return formattedResult;
   }
@@ -423,11 +478,17 @@ export class WorkspaceRepository<
     entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[],
     entityManager?: EntityManager,
   ): Promise<InsertResult> {
+    const logId = 'log-' + v4();
+
+    console.time(`insert:${logId}${this.target.toString()}`);
+
     const manager = entityManager || this.manager;
 
     const formatedEntity = await this.formatData(entity);
     const result = await manager.insert(this.target, formatedEntity);
     const formattedResult = await this.formatResult(result);
+
+    console.timeEnd(`insert:${logId}${this.target.toString()}`);
 
     return formattedResult;
   }
@@ -449,13 +510,21 @@ export class WorkspaceRepository<
     partialEntity: QueryDeepPartialEntity<Entity>,
     entityManager?: EntityManager,
   ): Promise<UpdateResult> {
+    const logId = 'log-' + v4();
+
+    console.time(`update:${logId}${this.target.toString()}`);
+
     const manager = entityManager || this.manager;
 
     if (typeof criteria === 'object' && 'where' in criteria) {
       criteria = await this.transformOptions(criteria);
     }
 
-    return manager.update(this.target, criteria, partialEntity);
+    const returnValue = manager.update(this.target, criteria, partialEntity);
+
+    console.timeEnd(`update:${logId}${this.target.toString()}`);
+
+    return returnValue;
   }
 
   override async upsert(
@@ -465,15 +534,22 @@ export class WorkspaceRepository<
     conflictPathsOrOptions: string[] | UpsertOptions<Entity>,
     entityManager?: EntityManager,
   ): Promise<InsertResult> {
+    const logId = 'log-' + v4();
+
+    console.time(`upsert:${logId}${this.target.toString()}`);
     const manager = entityManager || this.manager;
 
     const formattedEntityOrEntities = await this.formatData(entityOrEntities);
 
-    return manager.upsert(
+    const returnValue = manager.upsert(
       this.target,
       formattedEntityOrEntities,
       conflictPathsOrOptions,
     );
+
+    console.timeEnd(`upsert:${logId}${this.target.toString()}`);
+
+    return returnValue;
   }
 
   /**

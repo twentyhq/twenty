@@ -105,7 +105,7 @@ export class CreateCompanyAndContactService {
       filteredContactsToCreateWithCompanyDomainNames
         .filter((participant) => participant.companyDomainName)
         .map((participant) => ({
-          domainName: participant.companyDomainName,
+          domainName: participant.companyDomainName ?? '',
           createdBySource: source,
           createdByWorkspaceMember: connectedAccount.accountOwner,
         })),

@@ -96,11 +96,11 @@ export class CreateContactService {
     personRepository: WorkspaceRepository<PersonWorkspaceEntity>,
     transactionManager?: EntityManager,
   ): Promise<number> {
-    const lastPersonPosition = await personRepository.maximum(
-      'position',
-      undefined,
-      transactionManager,
-    );
+    const lastPersonPosition = await (
+      personRepository as WorkspaceRepository<
+        PersonWorkspaceEntity & { position: number }
+      >
+    ).maximum('position', undefined, transactionManager);
 
     return lastPersonPosition ?? 0;
   }
