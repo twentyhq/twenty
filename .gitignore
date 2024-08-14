@@ -28,3 +28,5 @@ storybook-static
 .eslintcache
 .nyc_output
 test-results/
+
+graphql.config.yml

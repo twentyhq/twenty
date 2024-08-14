@@ -1,7 +1,10 @@
 import styled from '@emotion/styled';
 import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui';
 
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import {
+  WorkspaceMember,
+  WorkspaceInvitation,
+} from '@/workspace-member/types/WorkspaceMember';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -28,30 +31,50 @@ const StyledEmailText = styled.span`
 `;
 
 type WorkspaceMemberCardProps = {
-  workspaceMember: WorkspaceMember;
+  workspaceMember: WorkspaceMember | WorkspaceInvitation;
   accessory?: React.ReactNode;
 };
+
+const isWorkspaceInvitationGuard = (
+  workspaceMember: WorkspaceMemberCardProps['workspaceMember'],
+): workspaceMember is WorkspaceInvitation => 'expiresAt' in workspaceMember;
 
 export const WorkspaceMemberCard = ({
   workspaceMember,
   accessory,
-}: WorkspaceMemberCardProps) => (
-  <StyledContainer>
-    <Avatar
-      avatarUrl={workspaceMember.avatarUrl}
-      placeholderColorSeed={workspaceMember.id}
-      placeholder={workspaceMember.name.firstName || ''}
-      type="squared"
-      size="xl"
-    />
-    <StyledContent>
-      <OverflowingTextWithTooltip
-        text={
-          workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName
+}: WorkspaceMemberCardProps) => {
+  const isWorkspaceInvitation = isWorkspaceInvitationGuard(workspaceMember);
+
+  return (
+    <StyledContainer>
+      <Avatar
+        avatarUrl={isWorkspaceInvitation ? null : workspaceMember.avatarUrl}
+        placeholderColorSeed={workspaceMember.id}
+        placeholder={
+          isWorkspaceInvitation
+            ? workspaceMember.email[0]
+            : (workspaceMember.name.firstName ?? '')
         }
+        type="squared"
+        size="xl"
       />
-      <StyledEmailText>{workspaceMember.userEmail}</StyledEmailText>
-    </StyledContent>
-    {accessory}
-  </StyledContainer>
-);
+      <StyledContent>
+        {!isWorkspaceInvitation && (
+          <OverflowingTextWithTooltip
+            text={
+              workspaceMember.name.firstName +
+              ' ' +
+              workspaceMember.name.lastName
+            }
+          />
+        )}
+        <StyledEmailText>
+          {isWorkspaceInvitation
+            ? workspaceMember.email
+            : workspaceMember.userEmail}
+        </StyledEmailText>
+      </StyledContent>
+      {accessory}
+    </StyledContainer>
+  );
+};

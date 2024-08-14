@@ -32,6 +32,8 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
+import { WorkspaceInvitation } from 'src/engine/core-modules/invitation/dtos/workspace-invitation.dto';
+import { InvitationService } from 'src/engine/core-modules/invitation/services/invitation.service';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Workspace)
@@ -42,6 +44,7 @@ export class WorkspaceResolver {
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly invitationService: InvitationService,
   ) {}
 
   @Query(() => Workspace)
@@ -119,6 +122,15 @@ export class WorkspaceResolver {
     @Parent() workspace: Workspace,
   ): Promise<number | undefined> {
     return await this.userWorkspaceService.getUserCount(workspace.id);
+  }
+
+  @ResolveField(() => [WorkspaceInvitation], { nullable: true })
+  async workspaceInvitations(
+    @Parent() workspace: Workspace,
+  ): Promise<Array<WorkspaceInvitation>> {
+    const t = await this.invitationService.loadWorkspaceInvitations(workspace);
+    console.log('>>>>>>>>>>>>>>', t);
+    return t;
   }
 
   @ResolveField(() => String)
