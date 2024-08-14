@@ -16,5 +16,11 @@ export const ExampleTable = <T extends string>({
   const data = useMemo(() => generateExampleRow(fields), [fields]);
   const columns = useMemo(() => generateColumns(fields), [fields]);
 
-  return <SpreadsheetImportTable rows={data} columns={columns} className={'rdg-example'} />;
+  return (
+    <SpreadsheetImportTable
+      rows={data}
+      columns={columns}
+      className={'rdg-example'}
+    />
+  );
 };
