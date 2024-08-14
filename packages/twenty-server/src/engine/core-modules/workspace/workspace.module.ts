@@ -44,6 +44,7 @@ import { WorkspaceService } from './services/workspace.service';
         OnboardingModule,
         InvitationModule,
         TypeORMModule,
+        InvitationModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

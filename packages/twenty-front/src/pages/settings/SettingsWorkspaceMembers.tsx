@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { H2Title, IconTrash, IconUsers } from 'twenty-ui';
+import { H2Title, IconTrash, IconUsers, IconReload } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -13,7 +13,10 @@ import { IconButton } from '@/ui/input/button/components/IconButton';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import {
+  WorkspaceInvitation,
+  WorkspaceMember,
+} from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
@@ -37,6 +40,7 @@ export const SettingsWorkspaceMembers = () => {
   const { deleteOneRecord: deleteOneWorkspaceMember } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
+
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -44,6 +48,16 @@ export const SettingsWorkspaceMembers = () => {
     await deleteOneWorkspaceMember?.(workspaceMemberId);
     setIsConfirmationModalOpen(false);
   };
+
+  const handleRemoveWorkspaceInvitation = async (invitationId: string) => {
+    console.log('>>>>>>>>>>>>>>', 'Remove invitation ', invitationId);
+  };
+
+  const handleResendWorkspaceInvitation = async (invitationId: string) => {
+    console.log('>>>>>>>>>>>>>>', 'Resend invitation ', invitationId);
+  };
+
+  const workspaceInvitations = currentWorkspace?.workspaceInvitations ?? [];
 
   return (
     <SubMenuTopBarContainer Icon={IconUsers} title="Members">
@@ -69,7 +83,7 @@ export const SettingsWorkspaceMembers = () => {
         <Section>
           <H2Title
             title="Members"
-            description="Manage the members of your space here"
+            description="Manage users who haven't accepted your invite"
           />
           {workspaceMembers?.map((member) => (
             <WorkspaceMemberCard
@@ -93,6 +107,46 @@ export const SettingsWorkspaceMembers = () => {
             />
           ))}
         </Section>
+        {workspaceInvitations.length > 0 && (
+          <Section>
+            <H2Title
+              title="Invitations"
+              description="Manage the invitation of your space here"
+            />
+            {currentWorkspace.workspaceInvitations?.map(
+              (workspaceInvitation) => (
+                <WorkspaceMemberCard
+                  key={workspaceInvitation.id}
+                  workspaceMember={workspaceInvitation as WorkspaceInvitation}
+                  accessory={
+                    <StyledButtonContainer>
+                      <IconButton
+                        onClick={() => {
+                          handleResendWorkspaceInvitation(
+                            workspaceInvitation.id,
+                          );
+                        }}
+                        variant="tertiary"
+                        size="medium"
+                        Icon={IconReload}
+                      />
+                      <IconButton
+                        onClick={() => {
+                          handleRemoveWorkspaceInvitation(
+                            workspaceInvitation.id,
+                          );
+                        }}
+                        variant="tertiary"
+                        size="medium"
+                        Icon={IconTrash}
+                      />
+                    </StyledButtonContainer>
+                  }
+                />
+              ),
+            )}
+          </Section>
+        )}
       </SettingsPageContainer>
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
