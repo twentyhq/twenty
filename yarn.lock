@@ -40202,7 +40202,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:1.46.0, playwright@npm:^1.14.0, playwright@npm:^1.40.1":
+"playwright@npm:1.46.0, playwright@npm:^1.14.0, playwright@npm:^1.46.0":
   version: 1.46.0
   resolution: "playwright@npm:1.46.0"
   dependencies:
@@ -47082,6 +47082,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-e2e-testing@workspace:packages/twenty-e2e-testing":
+  version: 0.0.0-use.local
+  resolution: "twenty-e2e-testing@workspace:packages/twenty-e2e-testing"
+  dependencies:
+    "@playwright/test": "npm:^1.46.0"
+  languageName: unknown
+  linkType: soft
+
 "twenty-emails@workspace:packages/twenty-emails":
   version: 0.0.0-use.local
   resolution: "twenty-emails@workspace:packages/twenty-emails"
@@ -47452,7 +47460,7 @@ __metadata:
     pg: "npm:^8.11.3"
     pg-boss: "npm:^9.0.3"
     planer: "npm:^1.2.0"
-    playwright: "npm:^1.40.1"
+    playwright: "npm:^1.46.0"
     pluralize: "npm:^8.0.0"
     prettier: "npm:^3.1.1"
     prism-react-renderer: "npm:^2.1.0"

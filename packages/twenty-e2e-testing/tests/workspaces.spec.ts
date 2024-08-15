@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { sh } from './src/drivers/shell_driver';
+import { sh } from '../drivers/shell_driver';
 
 const date = new Date();
 
@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(async ({ page, browserName }) => {
   await page.screenshot({
-    path: `./packages/twenty-e2e-testing/__screenshots__/${browserName}/${date.toISOString()}.png`,
+    path: `./packages/twenty-e2e-testing/results/screenshots/${browserName}/${date.toISOString()}.png`,
   });
 });
 
@@ -44,8 +44,8 @@ test('Creating new workspace', async ({ page, browserName }) => {
 });
 
 test('Syncing all workspaces', async () => {
-  await sh('yarn command:prod workspace:sync-metadata -f');
-  await sh('yarn command:prod workspace:sync-metadata -f');
+  await sh('npx nx run twenty-server:command workspace:sync-metadata -f');
+  await sh('npx nx run twenty-server:command workspace:sync-metadata -f');
 });
 
 test('Resetting database', async ({ page, browserName }) => {
