@@ -69,7 +69,7 @@ export const RecordDetailRelationSection = ({
   const relationRecords: ObjectRecord[] =
     fieldValue && isToOneObject
       ? [fieldValue as ObjectRecord]
-      : ((fieldValue as ObjectRecord[]) ?? []);
+      : (fieldValue as ObjectRecord[]) ?? [];
 
   const relationRecordIds = relationRecords.map(({ id }) => id);
 
