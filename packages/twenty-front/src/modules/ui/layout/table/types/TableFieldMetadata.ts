@@ -1,0 +1,6 @@
+export type TableFieldMetadata<ItemType> = {
+  fieldLabel: string;
+  fieldName: keyof ItemType;
+  fieldType: 'string' | 'number';
+  align: 'left' | 'right';
+};
