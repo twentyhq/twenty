@@ -308,7 +308,10 @@ export const RecordShowContainer = ({
   return (
     <>
       {recordFromStore && recordFromStore.deletedAt && (
-        <InformationBannerDeletedRecord recordId={objectRecordId} />
+        <InformationBannerDeletedRecord
+          recordId={objectRecordId}
+          objectNameSingular={objectNameSingular}
+        />
       )}
       <ShowPageContainer>
         <ShowPageLeftContainer forceMobile={isMobile}>

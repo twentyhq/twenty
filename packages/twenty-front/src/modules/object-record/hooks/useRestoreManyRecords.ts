@@ -6,26 +6,26 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
-import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
-import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
+import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreManyRecordsMutation';
+import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 import { sleep } from '~/utils/sleep';
 import { capitalize } from '~/utils/string/capitalize';
 
-type useDeleteManyRecordProps = {
+type useRestoreManyRecordProps = {
   objectNameSingular: string;
   refetchFindManyQuery?: boolean;
 };
 
-type DeleteManyRecordsOptions = {
+type RestoreManyRecordsOptions = {
   skipOptimisticEffect?: boolean;
   delayInMsBetweenRequests?: number;
 };
 
-export const useDeleteManyRecords = ({
+export const useRestoreManyRecords = ({
   objectNameSingular,
-}: useDeleteManyRecordProps) => {
+}: useRestoreManyRecordProps) => {
   const apiConfig = useRecoilValue(apiConfigState);
 
   const mutationPageSize =
@@ -41,41 +41,41 @@ export const useDeleteManyRecords = ({
     objectNameSingular,
   });
 
-  const { deleteManyRecordsMutation } = useDeleteManyRecordsMutation({
+  const { restoreManyRecordsMutation } = useRestoreManyRecordsMutation({
     objectNameSingular,
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const mutationResponseField = getDeleteManyRecordsMutationResponseField(
+  const mutationResponseField = getRestoreManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
   );
 
-  const deleteManyRecords = async (
-    idsToDelete: string[],
-    options?: DeleteManyRecordsOptions,
+  const restoreManyRecords = async (
+    idsToRestore: string[],
+    options?: RestoreManyRecordsOptions,
   ) => {
-    const numberOfBatches = Math.ceil(idsToDelete.length / mutationPageSize);
+    const numberOfBatches = Math.ceil(idsToRestore.length / mutationPageSize);
 
-    const deletedRecords = [];
+    const restoredRecords = [];
 
     for (let batchIndex = 0; batchIndex < numberOfBatches; batchIndex++) {
-      const batchIds = idsToDelete.slice(
+      const batchIds = idsToRestore.slice(
         batchIndex * mutationPageSize,
         (batchIndex + 1) * mutationPageSize,
       );
 
-      const deletedRecordsResponse = await apolloClient.mutate({
-        mutation: deleteManyRecordsMutation,
+      const restoredRecordsResponse = await apolloClient.mutate({
+        mutation: restoreManyRecordsMutation,
         variables: {
           filter: { id: { in: batchIds } },
         },
         optimisticResponse: options?.skipOptimisticEffect
           ? undefined
           : {
-              [mutationResponseField]: batchIds.map((idToDelete) => ({
+              [mutationResponseField]: batchIds.map((idToRestore) => ({
                 __typename: capitalize(objectNameSingular),
-                id: idToDelete,
+                id: idToRestore,
               })),
             },
         update: options?.skipOptimisticEffect
@@ -98,18 +98,18 @@ export const useDeleteManyRecords = ({
             },
       });
 
-      const deletedRecordsForThisBatch =
-        deletedRecordsResponse.data?.[mutationResponseField] ?? [];
+      const restoredRecordsForThisBatch =
+        restoredRecordsResponse.data?.[mutationResponseField] ?? [];
 
-      deletedRecords.push(...deletedRecordsForThisBatch);
+      restoredRecords.push(...restoredRecordsForThisBatch);
 
       if (isDefined(options?.delayInMsBetweenRequests)) {
         await sleep(options.delayInMsBetweenRequests);
       }
     }
 
-    return deletedRecords;
+    return restoredRecords;
   };
 
-  return { deleteManyRecords };
+  return { restoreManyRecords };
 };
