@@ -1,54 +1,58 @@
+import { Scope } from '@nestjs/common';
+
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowCommonService } from 'src/modules/workflow/common/workflow-common.services';
-import { WorkflowRunnerService } from 'src/modules/workflow/workflow-runner/workflow-runner.service';
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workflow-common.workspace-service';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-runner.workspace-service';
+import { WorkflowStatusWorkspaceService } from 'src/modules/workflow/workflow-status/workflow-status.workspace-service';
 
 export type RunWorkflowJobData = {
   workspaceId: string;
-  workflowId: string;
+  workflowVersionId: string;
+  workflowRunId: string;
   payload: object;
 };
 
-@Processor(MessageQueue.workflowQueue)
+@Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowRunnerJob {
   constructor(
-    private readonly workflowCommonService: WorkflowCommonService,
-    private readonly workflowRunnerService: WorkflowRunnerService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
+    private readonly workflowStatusWorkspaceService: WorkflowStatusWorkspaceService,
   ) {}
 
   @Process(WorkflowRunnerJob.name)
   async handle({
-    workspaceId,
-    workflowId,
+    workflowVersionId,
+    workflowRunId,
     payload,
   }: RunWorkflowJobData): Promise<void> {
-    const workflowRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowWorkspaceEntity>(
-        workspaceId,
-        'workflow',
+    await this.workflowStatusWorkspaceService.startWorkflowRun(workflowRunId);
+
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersion(
+        workflowVersionId,
       );
 
-    const workflow = await workflowRepository.findOneByOrFail({
-      id: workflowId,
-    });
+    try {
+      await this.workflowRunnerWorkspaceService.run({
+        action: workflowVersion.trigger.nextAction,
+        payload,
+      });
 
-    if (!workflow.publishedVersionId) {
-      throw new Error('Workflow has no published version');
+      await this.workflowStatusWorkspaceService.endWorkflowRun(
+        workflowRunId,
+        WorkflowRunStatus.COMPLETED,
+      );
+    } catch (error) {
+      await this.workflowStatusWorkspaceService.endWorkflowRun(
+        workflowRunId,
+        WorkflowRunStatus.FAILED,
+      );
+
+      throw error;
     }
-
-    const workflowVersion = await this.workflowCommonService.getWorkflowVersion(
-      workspaceId,
-      workflow.publishedVersionId,
-    );
-
-    await this.workflowRunnerService.run({
-      action: workflowVersion.trigger.nextAction,
-      workspaceId,
-      payload,
-    });
   }
 }
