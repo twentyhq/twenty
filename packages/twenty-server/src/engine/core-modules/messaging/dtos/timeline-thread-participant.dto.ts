@@ -1,14 +1,14 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('TimelineThreadParticipant')
 export class TimelineThreadParticipant {
   @Field(() => UUIDScalarType, { nullable: true })
-  personId: string;
+  personId: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  workspaceMemberId: string;
+  workspaceMemberId: string | null;
 
   @Field()
   firstName: string;
