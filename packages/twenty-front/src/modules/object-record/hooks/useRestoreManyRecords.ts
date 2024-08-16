@@ -1,10 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 
-import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useRestoreManyRecordsMutation } from '@/object-record/hooks/useRestoreManyRecordsMutation';
 import { getRestoreManyRecordsMutationResponseField } from '@/object-record/utils/getRestoreManyRecordsMutationResponseField';
@@ -37,15 +34,9 @@ export const useRestoreManyRecords = ({
     objectNameSingular,
   });
 
-  const getRecordFromCache = useGetRecordFromCache({
-    objectNameSingular,
-  });
-
   const { restoreManyRecordsMutation } = useRestoreManyRecordsMutation({
     objectNameSingular,
   });
-
-  const { objectMetadataItems } = useObjectMetadataItems();
 
   const mutationResponseField = getRestoreManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
@@ -65,8 +56,13 @@ export const useRestoreManyRecords = ({
         (batchIndex + 1) * mutationPageSize,
       );
 
+      // TODO: fix optimistic effect
+      const findOneQueryName = `FindOne${capitalize(objectNameSingular)}`;
+      const findManyQueryName = `FindMany${capitalize(objectMetadataItem.namePlural)}`;
+
       const restoredRecordsResponse = await apolloClient.mutate({
         mutation: restoreManyRecordsMutation,
+        refetchQueries: [findOneQueryName, findManyQueryName],
         variables: {
           filter: { id: { in: batchIds } },
         },
@@ -76,25 +72,8 @@ export const useRestoreManyRecords = ({
               [mutationResponseField]: batchIds.map((idToRestore) => ({
                 __typename: capitalize(objectNameSingular),
                 id: idToRestore,
+                deletedAt: null,
               })),
-            },
-        update: options?.skipOptimisticEffect
-          ? undefined
-          : (cache, { data }) => {
-              const records = data?.[mutationResponseField];
-
-              if (!records?.length) return;
-
-              const cachedRecords = records
-                .map((record) => getRecordFromCache(record.id, cache))
-                .filter(isDefined);
-
-              triggerDeleteRecordsOptimisticEffect({
-                cache,
-                objectMetadataItem,
-                recordsToDelete: cachedRecords,
-                objectMetadataItems,
-              });
             },
       });
 
