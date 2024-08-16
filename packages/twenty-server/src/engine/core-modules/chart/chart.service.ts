@@ -1,13 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import console from 'console';
+
 import { Repository } from 'typeorm';
 
 import { ChartResult } from 'src/engine/core-modules/chart/dtos/chart-result.dto';
 import { AliasPrefix } from 'src/engine/core-modules/chart/types/alias-prefix.type';
 import { CommonTableExpressionDefinition } from 'src/engine/core-modules/chart/types/common-table-expression-definition.type';
 import { QueryRelation } from 'src/engine/core-modules/chart/types/query-relation.type';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -86,6 +91,7 @@ export class ChartService {
   }
 
   private async getQueryRelation(
+    workspaceId: string,
     dataSourceSchemaName: string,
     objectMetadata: ObjectMetadataEntity,
     index: number,
@@ -94,6 +100,8 @@ export class ChartService {
     oppositeObjectMetadata: ObjectMetadataEntity,
     relationMetadata: RelationMetadataEntity,
     fieldMetadataId: string,
+    isLastRelationField?: boolean,
+    measureFieldMetadata?: FieldMetadataEntity,
   ): Promise<QueryRelation | undefined> {
     const fromIsExistingTable =
       relationMetadata?.fromObjectMetadataId === objectMetadata.id;
@@ -105,23 +113,19 @@ export class ChartService {
     );
     const fromJoinFieldName = 'id';
 
-    const fieldMetadata =
-      relationMetadata.toFieldMetadataId === fieldMetadataId
-        ? relationMetadata.toFieldMetadata
-        : relationMetadata.fromFieldMetadata;
+    const baseTableName = computeObjectTargetTable(oppositeObjectMetadata);
 
-    const originalTableName = computeObjectTargetTable(oppositeObjectMetadata);
-
-    const commonTableExpressionDefinition =
-      await this.getCommonTableExpressionDefinition(
-        dataSourceSchemaName,
-        originalTableName,
-        fieldMetadata.type,
-        fieldMetadata.name,
-      );
+    const commonTableExpressionDefinition = isLastRelationField
+      ? await this.getCommonTableExpressionDefinition(
+          workspaceId,
+          dataSourceSchemaName,
+          baseTableName,
+          measureFieldMetadata,
+        )
+      : undefined;
 
     const rightTableName =
-      commonTableExpressionDefinition?.resultSetName ?? originalTableName;
+      commonTableExpressionDefinition?.resultSetName ?? baseTableName;
 
     switch (relationMetadata?.relationType) {
       case RelationMetadataType.ONE_TO_MANY: {
@@ -151,23 +155,19 @@ export class ChartService {
   private async getQueryRelations(
     dataSourceSchemaName: string,
     workspaceId: string,
-    sourceObjectNameSingular: string,
+    sourceObjectMetadata: ObjectMetadataEntity,
     aliasPrefix: AliasPrefix,
-    fieldPath?: string[],
+    relationFieldMetadataIds?: string[],
+    measureFieldMetadata?: FieldMetadataEntity,
   ) {
-    if (!fieldPath || fieldPath.length === 0) return [];
-    let objectMetadata =
-      await this.objectMetadataService.findOneOrFailWithinWorkspace(
-        workspaceId,
-        {
-          where: { nameSingular: sourceObjectNameSingular },
-        },
-      );
+    if (!relationFieldMetadataIds || relationFieldMetadataIds.length === 0)
+      return [];
+    let objectMetadata = sourceObjectMetadata;
     const sourceTableName = computeObjectTargetTable(objectMetadata);
-    const joinOperations: QueryRelation[] = [];
+    const queryRelations: QueryRelation[] = [];
 
-    for (let i = 0; i < fieldPath.length; i++) {
-      const fieldMetadataId = fieldPath[i];
+    for (let i = 0; i < relationFieldMetadataIds.length; i++) {
+      const fieldMetadataId = relationFieldMetadataIds[i];
 
       const relationMetadata = await this.getRelationMetadata(
         workspaceId,
@@ -181,7 +181,10 @@ export class ChartService {
         objectMetadata,
       );
 
-      const joinOperation = await this.getQueryRelation(
+      const isLastRelationField = i === relationFieldMetadataIds.length - 1;
+
+      const queryRelation = await this.getQueryRelation(
+        workspaceId,
         dataSourceSchemaName,
         objectMetadata,
         i,
@@ -190,38 +193,34 @@ export class ChartService {
         oppositeObjectMetadata,
         relationMetadata,
         fieldMetadataId,
+        isLastRelationField,
+        measureFieldMetadata,
       );
 
-      if (!joinOperation) break;
+      if (!queryRelation) break;
 
-      joinOperations.push(joinOperation);
+      queryRelations.push(queryRelation);
       objectMetadata = oppositeObjectMetadata;
     }
 
-    return joinOperations;
+    return queryRelations;
   }
 
   private getJoinClauses(
     dataSourceSchema: string,
     chartQueryRelations: QueryRelation[],
   ): string[] {
-    return chartQueryRelations.map((joinOperation, i) => {
-      if (!joinOperation.joinTarget) {
+    return chartQueryRelations.map((queryRelation, i) => {
+      if (!queryRelation.joinTarget) {
         throw new Error('Missing join target');
       }
 
-      return `JOIN "${dataSourceSchema}"."${joinOperation.tableName}" "${joinOperation.tableAlias}" ON "${joinOperation.joinTarget.tableAlias}"."${joinOperation.joinTarget.fieldName}" = "${joinOperation.tableAlias}"."${
-        joinOperation.fieldName
+      return `JOIN ${queryRelation.withQuery ? '' : `"${dataSourceSchema}".`}"${queryRelation.tableName}" "${queryRelation.tableAlias}" ON "${queryRelation.joinTarget.tableAlias}"."${queryRelation.joinTarget.fieldName}" = "${queryRelation.tableAlias}"."${
+        queryRelation.fieldName
       }"`;
     });
   }
 
-  /**
-   *
-   * @param chartMeasure
-   * @param targetColumnName e.g. 'table_1.employees'
-   * @returns
-   */
   private getMeasureSelectColumn(
     chartMeasure: ChartMeasure,
     targetQualifiedColumn: string,
@@ -258,13 +257,19 @@ export class ChartService {
     workspaceId: string,
     targetQueryRelations: QueryRelation[],
     sourceTableName: string,
-    fieldPath?: string[],
+    targetRelationFieldMetadataIds: string[],
+    targetMeasureFieldMetadata?: FieldMetadataEntity,
   ) {
-    const lastFieldMetadataId = fieldPath?.[fieldPath?.length - 1];
+    const lastTargetRelationFieldMetadataId =
+      targetRelationFieldMetadataIds[targetRelationFieldMetadataIds.length - 1];
 
-    const columnName = (
-      await this.getFieldMetadata(workspaceId, lastFieldMetadataId)
-    )?.name;
+    const lastTargetRelationFieldMetadata = await this.getFieldMetadata(
+      workspaceId,
+      lastTargetRelationFieldMetadataId,
+    );
+
+    const columnName =
+      targetMeasureFieldMetadata?.name ?? lastTargetRelationFieldMetadata?.name;
 
     const lastQueryRelation: QueryRelation | undefined =
       targetQueryRelations[targetQueryRelations.length - 1];
@@ -273,31 +278,32 @@ export class ChartService {
     return `"${tableAlias}"."${columnName}"`;
   }
 
-  // When are CTEs needed?
-  // For last target table and last group by table if last field metadatatype requires post processing (composite, rating, etc)
   private async getCommonTableExpressionDefinition(
+    workspaceId: string,
     dataSourceSchemaName: string,
     baseTableName: string,
-    fieldMetadataType?: FieldMetadataType,
-    fieldName?: string,
+    measureFieldMetadata?: FieldMetadataEntity,
   ): Promise<CommonTableExpressionDefinition | undefined> {
+    if (!measureFieldMetadata) return;
+
     const resultSetName = `${baseTableName}_cte`; // TODO: Unique identifier
 
-    switch (fieldMetadataType) {
+    switch (measureFieldMetadata.type) {
       case FieldMetadataType.CURRENCY:
         return {
           resultSetName,
           withQuery: `
             WITH "${resultSetName}" AS (
               SELECT
-                "${fieldName}AmountMicros" / 1000000.0 *
-                CASE "${fieldName}CurrencyCode"
+                *,
+                "${measureFieldMetadata.name}AmountMicros" / 1000000.0 *
+                CASE "${measureFieldMetadata.name}CurrencyCode"
                   WHEN 'EUR' THEN 1.10
                   WHEN 'GBP' THEN 1.29
                   WHEN 'USD' THEN 1.00
                   -- More
                   ELSE 1.0
-                END AS "${fieldName}"
+                END AS "${measureFieldMetadata.name}"
               FROM
                 "${dataSourceSchemaName}"."${baseTableName}"
             )
@@ -309,8 +315,38 @@ export class ChartService {
   private async getSourceQueryRelation(
     dataSourceSchemaName: string,
     workspaceId: string,
-    chart: ChartWorkspaceEntity,
+    sourceObjectMetadata: ObjectMetadataEntity,
+    relationFieldPath?: string[],
+    measureFieldMetadata?: FieldMetadataEntity,
   ): Promise<QueryRelation> {
+    const baseTableName = computeObjectTargetTable(sourceObjectMetadata);
+
+    const commonTableExpressionDefinition =
+      !relationFieldPath || relationFieldPath.length === 0
+        ? await this.getCommonTableExpressionDefinition(
+            workspaceId,
+            dataSourceSchemaName,
+            baseTableName,
+            measureFieldMetadata,
+          )
+        : undefined;
+
+    const tableName =
+      commonTableExpressionDefinition?.resultSetName ?? baseTableName;
+
+    return {
+      tableName: tableName,
+      tableAlias: tableName,
+      withQuery: commonTableExpressionDefinition?.withQuery,
+    };
+  }
+
+  private async getChartQuery(workspaceId: string, chartId: string) {
+    const repository =
+      await this.twentyORMManager.getRepository(ChartWorkspaceEntity);
+
+    const chart = await repository.findOneByOrFail({ id: chartId });
+
     const sourceObjectMetadata =
       await this.objectMetadataService.findOneOrFailWithinWorkspace(
         workspaceId,
@@ -319,61 +355,64 @@ export class ChartService {
         },
       );
 
-    const baseTableName = computeObjectTargetTable(sourceObjectMetadata);
+    const lastFieldMetadataId = chart.target?.[chart.target?.length - 1];
 
-    const fieldMetadataId = chart.target?.[0];
-
-    const fieldMetadata = await this.getFieldMetadata(
+    const lastFieldMetadata = await this.getFieldMetadata(
       workspaceId,
-      fieldMetadataId,
+      lastFieldMetadataId,
     );
 
-    const commonTableExpressionDefinition =
-      await this.getCommonTableExpressionDefinition(
-        dataSourceSchemaName,
-        baseTableName,
-        fieldMetadata?.type,
-        fieldMetadata?.name,
-      );
-
-    const tableName =
-      commonTableExpressionDefinition?.resultSetName ?? baseTableName;
+    const measureFieldMetadata =
+      (lastFieldMetadata?.type !== FieldMetadataType.RELATION &&
+        lastFieldMetadata) ||
+      undefined;
 
     return {
-      tableName: tableName,
-      tableAlias: tableName,
-      fieldName: fieldMetadata?.name,
-      withQuery: commonTableExpressionDefinition?.withQuery,
+      sourceObjectMetadataId: sourceObjectMetadata.id,
+      targetRelationFieldMetadataIds: measureFieldMetadata
+        ? chart.target.slice(0, -1)
+        : [],
+      targetMeasureFieldMetadataId: measureFieldMetadata?.id,
+      targetMeasure: chart.measure,
+      // TODO: groupByRelationMetadataIds, groupByMeasureFieldMetadataId, groupByMeasure, groupByGroups
     };
   }
 
-  private async getChart(workspaceId: string, chartId: string) {
-    // TODO: Enforce workspaceId
-
-    const repository =
-      await this.twentyORMManager.getRepository(ChartWorkspaceEntity);
-
-    return await repository.findOneByOrFail({ id: chartId });
-  }
-
   async run(workspaceId: string, chartId: string): Promise<ChartResult> {
-    const chart = await this.getChart(workspaceId, chartId);
+    const chartQuery = await this.getChartQuery(workspaceId, chartId);
 
     const dataSourceSchemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
+    const sourceObjectMetadata =
+      await this.objectMetadataService.findOneOrFailWithinWorkspace(
+        workspaceId,
+        {
+          where: { id: chartQuery.sourceObjectMetadataId },
+        },
+      );
+
+    const targetMeasureFieldMetadata =
+      (await this.getFieldMetadata(
+        workspaceId,
+        chartQuery.targetMeasureFieldMetadataId,
+      )) ?? undefined;
+
     const sourceQueryRelation = await this.getSourceQueryRelation(
       dataSourceSchemaName,
       workspaceId,
-      chart,
+      sourceObjectMetadata,
+      chartQuery.targetRelationFieldMetadataIds,
+      targetMeasureFieldMetadata,
     );
 
     const targetQueryRelations = await this.getQueryRelations(
       dataSourceSchemaName,
       workspaceId,
-      chart.sourceObjectNameSingular,
+      sourceObjectMetadata,
       'target',
-      chart.target,
+      chartQuery.targetRelationFieldMetadataIds,
+      targetMeasureFieldMetadata,
     );
 
     console.log('targetQueryRelations', targetQueryRelations);
@@ -387,7 +426,8 @@ export class ChartService {
       workspaceId,
       targetQueryRelations,
       sourceQueryRelation.tableName,
-      chart.target,
+      chartQuery.targetRelationFieldMetadataIds,
+      targetMeasureFieldMetadata,
     );
 
     /*const groupByJoinOperations = await this.getJoinOperations(
@@ -433,7 +473,7 @@ export class ChartService {
     console.log('commonTableExpressions', commonTableExpressions);
 
     const measureSelectColumn = this.getMeasureSelectColumn(
-      chart.measure,
+      chartQuery.targetMeasure,
       targetQualifiedColumn,
     );
 
