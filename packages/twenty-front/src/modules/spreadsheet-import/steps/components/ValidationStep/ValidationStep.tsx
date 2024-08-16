@@ -11,8 +11,8 @@ import { RowsChangeData } from 'react-data-grid';
 import { IconTrash } from 'twenty-ui';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
+import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
-import { Table } from '@/spreadsheet-import/components/Table';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import {
   Columns,
@@ -289,7 +289,7 @@ export const ValidationStep = <T extends string>({
           />
         </StyledToolbar>
         <StyledScrollContainer>
-          <Table
+          <SpreadsheetImportTable
             rowKeyGetter={rowKeyGetter}
             rows={tableData}
             onRowsChange={updateRow}

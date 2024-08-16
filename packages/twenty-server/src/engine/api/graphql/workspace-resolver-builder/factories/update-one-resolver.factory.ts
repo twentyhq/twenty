@@ -25,9 +25,9 @@ export class UpdateOneResolverFactory
   ): Resolver<UpdateOneResolverArgs> {
     const internalContext = context;
 
-    return (_source, args, context, info) => {
+    return async (_source, args, context, info) => {
       try {
-        return this.workspaceQueryRunnerService.updateOne(args, {
+        return await this.workspaceQueryRunnerService.updateOne(args, {
           authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
           info,

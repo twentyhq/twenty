@@ -23,7 +23,7 @@ const StyledRelationPickerContainer = styled.div`
   top: -1px;
 `;
 
-export type MultiSelectFieldInputProps = {
+type MultiSelectFieldInputProps = {
   onCancel?: () => void;
 };
 
@@ -42,8 +42,8 @@ export const MultiSelectFieldInput = ({
   const [searchFilter, setSearchFilter] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const selectedOptions = fieldDefinition.metadata.options.filter((option) =>
-    fieldValues?.includes(option.value),
+  const selectedOptions = fieldDefinition.metadata.options.filter(
+    (option) => fieldValues?.includes(option.value),
   );
 
   const optionsInDropDown = fieldDefinition.metadata.options;

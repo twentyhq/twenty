@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-ui';
 
-export type SelectFieldInputProps = {
+type SelectFieldInputProps = {
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
 };

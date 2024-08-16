@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Table } from '@/spreadsheet-import/components/Table';
+import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { ImportedRow } from '@/spreadsheet-import/types';
 
 import { generateSelectionColumns } from './SelectColumn';
@@ -22,7 +22,7 @@ export const SelectHeaderTable = ({
   );
 
   return (
-    <Table
+    <SpreadsheetImportTable
       // Todo: remove usage of react-data-grid
       rowKeyGetter={(row: any) => importedRows.indexOf(row)}
       rows={importedRows}
