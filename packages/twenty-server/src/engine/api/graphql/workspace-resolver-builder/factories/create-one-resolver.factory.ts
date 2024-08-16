@@ -25,9 +25,9 @@ export class CreateOneResolverFactory
   ): Resolver<CreateOneResolverArgs> {
     const internalContext = context;
 
-    return (_source, args, context, info) => {
+    return async (_source, args, context, info) => {
       try {
-        return this.workspaceQueryRunnerService.createOne(args, {
+        return await this.workspaceQueryRunnerService.createOne(args, {
           authContext: internalContext.authContext,
           objectMetadataItem: internalContext.objectMetadataItem,
           info,

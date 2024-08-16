@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { WorkflowCommonService } from 'src/modules/workflow/common/workflow-common.services';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workflow-common.workspace-service';
 
 @Module({
-  providers: [WorkflowCommonService],
-  exports: [WorkflowCommonService],
+  providers: [WorkflowCommonWorkspaceService],
+  exports: [WorkflowCommonWorkspaceService],
 })
 export class WorkflowCommonModule {}

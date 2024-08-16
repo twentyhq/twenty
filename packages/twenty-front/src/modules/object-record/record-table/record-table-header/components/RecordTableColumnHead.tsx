@@ -33,6 +33,7 @@ const StyledTitle = styled.div<{ hideTitle?: boolean }>`
 
 const StyledIcon = styled.div`
   display: flex;
+  flex-shrink: 0;
 
   & > svg {
     height: ${({ theme }) => theme.icon.size.md}px;

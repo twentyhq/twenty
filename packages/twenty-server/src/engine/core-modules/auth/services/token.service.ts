@@ -564,12 +564,12 @@ export class TokenService {
       if (error instanceof TokenExpiredError) {
         throw new AuthException(
           'Token has expired.',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          AuthExceptionCode.UNAUTHENTICATED,
         );
       } else if (error instanceof JsonWebTokenError) {
         throw new AuthException(
           'Token invalid.',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          AuthExceptionCode.UNAUTHENTICATED,
         );
       } else {
         throw new AuthException(
