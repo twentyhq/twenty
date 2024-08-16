@@ -1,5 +1,5 @@
 import { useRecoilValue } from 'recoil';
-import { H2Title, IconSettings } from 'twenty-ui';
+import { H2Title, IconAt } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -14,7 +14,6 @@ import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
-import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsAccounts = () => {
@@ -37,10 +36,8 @@ export const SettingsAccounts = () => {
   const isBlocklistEnabled = useIsFeatureEnabled('IS_BLOCKLIST_ENABLED');
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconAt} title="Account">
       <SettingsPageContainer>
-        <Breadcrumb links={[{ children: 'Accounts' }]} />
-
         {loading ? (
           <SettingsAccountLoader />
         ) : (

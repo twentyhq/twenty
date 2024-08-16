@@ -50,6 +50,12 @@ describe('getResolverArgs', () => {
     deleteOne: {
       id: { type: GraphQLID, isNullable: false },
     },
+    restoreMany: {
+      filter: { kind: InputTypeDefinitionKind.Filter, isNullable: false },
+    },
+    destroyMany: {
+      filter: { kind: InputTypeDefinitionKind.Filter, isNullable: false },
+    },
   };
 
   // Test each resolver type

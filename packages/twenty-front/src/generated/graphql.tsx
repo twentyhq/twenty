@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -249,9 +249,9 @@ export type FieldConnection = {
 
 /** Type of the field */
 export enum FieldMetadataType {
+  Actor = 'ACTOR',
   Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
-  Actor = 'ACTOR',
   Currency = 'CURRENCY',
   Date = 'DATE',
   DateTime = 'DATE_TIME',
@@ -344,11 +344,11 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
+  runWorkflowVersion: WorkflowTriggerResult;
   sendInviteLink: SendInviteLink;
   signUp: LoginToken;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   track: Analytics;
-  triggerWorkflow: WorkflowTriggerResult;
   updateBillingSubscription: UpdateBillingEntity;
   updateOneObject: Object;
   updateOneServerlessFunction: ServerlessFunction;
@@ -457,6 +457,11 @@ export type MutationRenewTokenArgs = {
 };
 
 
+export type MutationRunWorkflowVersionArgs = {
+  input: RunWorkflowVersionInput;
+};
+
+
 export type MutationSendInviteLinkArgs = {
   emails: Array<Scalars['String']>;
 };
@@ -473,11 +478,6 @@ export type MutationSignUpArgs = {
 export type MutationTrackArgs = {
   data: Scalars['JSON'];
   type: Scalars['String'];
-};
-
-
-export type MutationTriggerWorkflowArgs = {
-  workflowVersionId: Scalars['String'];
 };
 
 
@@ -742,6 +742,13 @@ export enum RemoteTableStatus {
   NotSynced = 'NOT_SYNCED',
   Synced = 'SYNCED'
 }
+
+export type RunWorkflowVersionInput = {
+  /** Execution result in JSON format */
+  payload?: InputMaybe<Scalars['JSON']>;
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String'];
+};
 
 export type SendInviteLink = {
   __typename?: 'SendInviteLink';
@@ -1087,6 +1094,7 @@ export type WorkspaceFeatureFlagsArgs = {
 export enum WorkspaceActivationStatus {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE',
+  OngoingCreation = 'ONGOING_CREATION',
   PendingCreation = 'PENDING_CREATION'
 }
 

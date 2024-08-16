@@ -7,13 +7,13 @@ import {
   IconColorSwatch,
   IconCurrencyDollar,
   IconDoorEnter,
+  IconFunction,
   IconHierarchy2,
   IconMail,
   IconRocket,
   IconSettings,
   IconUserCircle,
   IconUsers,
-  IconFunction,
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -49,7 +49,6 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.Appearance}
           Icon={IconColorSwatch}
         />
-
         <NavigationDrawerItemGroup>
           <SettingsNavigationDrawerItem
             label="Accounts"
