@@ -20,6 +20,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     headless: true,
+    testIdAttribute: 'data-testid',
     viewport: { width: 1920, height: 1080 }, // most laptops use this resolution
     launchOptions: {
       slowMo: 50,

@@ -16,7 +16,10 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(async ({ page, browserName }, workerInfo) => {
   await page.screenshot({
-    path: `./packages/twenty-e2e-testing/results/screenshots/${browserName}/`+workerInfo.project.name+`${date.toISOString()}.png`,
+    path:
+      `./packages/twenty-e2e-testing/results/screenshots/${browserName}/` +
+      workerInfo.project.name +
+      `${date.toISOString()}.png`,
   });
 });
 
@@ -26,5 +29,5 @@ test.describe('Basic check', () => {
     expect(page.url()).toContain('/companies');
     await expect(page.locator('table')).toBeVisible();
     await expect(page.locator('tbody > tr')).toHaveCount(13);
-  })
+  });
 });
