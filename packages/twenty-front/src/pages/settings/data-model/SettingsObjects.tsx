@@ -1,12 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  H1Title,
-  H2Title,
-  IconChevronRight,
-  IconHierarchy2,
-  IconPlus,
-} from 'twenty-ui';
+import { H2Title, IconChevronRight, IconHierarchy2, IconPlus } from 'twenty-ui';
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -39,10 +33,6 @@ import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/Setti
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
-const StyledH1Title = styled(H1Title)`
-  margin-bottom: 0;
 `;
 
 export const SettingsObjects = () => {
