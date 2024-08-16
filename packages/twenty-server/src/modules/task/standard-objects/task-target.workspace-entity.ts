@@ -26,6 +26,7 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
   labelPlural: 'Task Targets',
   description: 'An task target',
   icon: 'IconCheckbox',
+  softDelete: true,
 })
 @WorkspaceIsSystem()
 export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {

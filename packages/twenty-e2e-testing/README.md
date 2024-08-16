@@ -1,8 +1,8 @@
 # Twenty e2e Testing
 
-## Install
+## Prerequisition
 
-Don't forget to install the browsers before launching the tests  :
+Installing the browsers:
 
 ```
 yarn playwright install 

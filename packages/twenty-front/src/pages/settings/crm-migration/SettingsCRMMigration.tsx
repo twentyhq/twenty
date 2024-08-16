@@ -16,12 +16,13 @@ const REVERT_PUBLIC_KEY = 'pk_live_a87fee8c-28c7-494f-99a3-996ff89f9918';
 export const SettingsCRMMigration = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer
+      Icon={IconSettings}
+      title={<Breadcrumb links={[{ children: 'Migrate' }]} />}
+      actionButton={<SettingsReadDocumentationButton />}
+    >
       <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb links={[{ children: 'Migrate' }]} />
-          <SettingsReadDocumentationButton />
-        </SettingsHeaderContainer>
+        <SettingsHeaderContainer></SettingsHeaderContainer>
         <Section>
           <RevertConnect
             config={{
