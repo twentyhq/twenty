@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ComponentProps, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   IconChevronDown,
@@ -18,7 +18,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
-const StyledTopBarContainer = styled.div`
+const StyledTopBarContainer = styled.div<{ width?: number }>`
   align-items: center;
   background: ${({ theme }) => theme.background.noisy};
   color: ${({ theme }) => theme.font.color.primary};
@@ -31,6 +31,7 @@ const StyledTopBarContainer = styled.div`
   padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
   z-index: 20;
+  width: ${({ width }) => width + 'px' || '100%'};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${({ theme }) => theme.spacing(3)};
@@ -76,8 +77,8 @@ const StyledTopBarButtonContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-type PageHeaderProps = ComponentProps<'div'> & {
-  title: string;
+type PageHeaderProps = {
+  title: ReactNode;
   hasClosePageButton?: boolean;
   onClosePage?: () => void;
   hasPaginationButtons?: boolean;
@@ -87,6 +88,7 @@ type PageHeaderProps = ComponentProps<'div'> & {
   navigateToNextRecord?: () => void;
   Icon: IconComponent;
   children?: ReactNode;
+  width?: number;
 };
 
 export const PageHeader = ({
@@ -100,13 +102,14 @@ export const PageHeader = ({
   navigateToNextRecord,
   Icon,
   children,
+  width,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const theme = useTheme();
   const isNavigationDrawerOpen = useRecoilValue(isNavigationDrawerOpenState);
 
   return (
-    <StyledTopBarContainer>
+    <StyledTopBarContainer width={width}>
       <StyledLeftContainer>
         {!isMobile && !isNavigationDrawerOpen && (
           <StyledTopBarButtonContainer>
@@ -143,7 +146,11 @@ export const PageHeader = ({
           )}
           {Icon && <Icon size={theme.icon.size.md} />}
           <StyledTitleContainer data-testid="top-bar-title">
-            <OverflowingTextWithTooltip text={title} />
+            {typeof title === 'string' ? (
+              <OverflowingTextWithTooltip text={title} />
+            ) : (
+              title
+            )}
           </StyledTitleContainer>
         </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>

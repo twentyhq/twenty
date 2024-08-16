@@ -1,3 +1,4 @@
+import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
@@ -19,12 +20,11 @@ export type FloatingButtonProps = {
   to?: string;
 };
 
-const shouldForwardProp = (prop: string) =>
-  !['applyBlur', 'applyShadow', 'focus', 'position', 'size', 'to'].includes(
-    prop,
-  );
-
-const StyledButton = styled('button', { shouldForwardProp })<
+const StyledButton = styled('button', {
+  shouldForwardProp: (prop) =>
+    !['applyBlur', 'applyShadow', 'focus', 'position', 'size'].includes(prop) &&
+    isPropValid(prop),
+})<
   Pick<
     FloatingButtonProps,
     | 'size'

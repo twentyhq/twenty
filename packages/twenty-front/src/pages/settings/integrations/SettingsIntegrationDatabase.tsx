@@ -42,8 +42,9 @@ export const SettingsIntegrationDatabase = () => {
   if (!isIntegrationAvailable) return null;
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
+    <SubMenuTopBarContainer
+      Icon={IconSettings}
+      title={
         <Breadcrumb
           links={[
             {
@@ -53,6 +54,9 @@ export const SettingsIntegrationDatabase = () => {
             { children: integration.text },
           ]}
         />
+      }
+    >
+      <SettingsPageContainer>
         <SettingsIntegrationPreview
           integrationLogoUrl={integration.from.image}
         />

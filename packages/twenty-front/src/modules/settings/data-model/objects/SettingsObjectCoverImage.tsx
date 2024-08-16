@@ -4,6 +4,7 @@ import { IconEye } from 'twenty-ui';
 import { FloatingButton } from '@/ui/input/button/components/FloatingButton';
 import { Card } from '@/ui/layout/card/components/Card';
 
+import { SettingsPath } from '@/types/SettingsPath';
 import DarkCoverImage from '../assets/cover-dark.png';
 import LightCoverImage from '../assets/cover-light.png';
 
@@ -34,7 +35,7 @@ export const SettingsObjectCoverImage = () => {
           Icon={IconEye}
           title="Visualize"
           size="small"
-          to="/settings/objects/overview"
+          to={'/settings/' + SettingsPath.ObjectOverview}
         />
       </StyledButtonContainer>
     </StyledCoverImageContainer>

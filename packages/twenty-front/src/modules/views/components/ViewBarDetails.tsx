@@ -1,9 +1,10 @@
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { ReactNode, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
@@ -14,6 +15,7 @@ import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { VariantFilterChip } from './VariantFilterChip';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -118,6 +120,29 @@ export const ViewBarDetails = ({
   const { resetCurrentView } = useResetCurrentView();
   const canResetView = canPersistView && !hasFiltersQueryParams;
 
+  const { otherViewFilters, defaultViewFilters } = useMemo(() => {
+    if (!currentViewWithCombinedFiltersAndSorts) {
+      return {
+        otherViewFilters: [],
+        defaultViewFilters: [],
+      };
+    }
+
+    const otherViewFilters =
+      currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
+        (viewFilter) => viewFilter.variant && viewFilter.variant !== 'default',
+      );
+    const defaultViewFilters =
+      currentViewWithCombinedFiltersAndSorts.viewFilters.filter(
+        (viewFilter) => !viewFilter.variant || viewFilter.variant === 'default',
+      );
+
+    return {
+      otherViewFilters,
+      defaultViewFilters,
+    };
+  }, [currentViewWithCombinedFiltersAndSorts]);
+
   const handleCancelClick = () => {
     resetCurrentView();
   };
@@ -136,6 +161,22 @@ export const ViewBarDetails = ({
     <StyledBar>
       <StyledFilterContainer>
         <StyledChipcontainer>
+          {otherViewFilters.map((viewFilter) => (
+            <VariantFilterChip
+              key={viewFilter.fieldMetadataId}
+              // Why do we have two types, Filter and ViewFilter?
+              // Why key defition is already present in the Filter type and added on the fly here with mapViewFiltersToFilters ?
+              // Also as filter is spread into viewFilter, definition is present
+              // FixMe: Ugly hack to make it work
+              viewFilter={viewFilter as unknown as Filter}
+            />
+          ))}
+          {!!otherViewFilters.length &&
+            !!currentViewWithCombinedFiltersAndSorts?.viewSorts?.length && (
+              <StyledSeperatorContainer>
+                <StyledSeperator />
+              </StyledSeperatorContainer>
+            )}
           {mapViewSortsToSorts(
             currentViewWithCombinedFiltersAndSorts?.viewSorts ?? [],
             availableSortDefinitions,
@@ -143,13 +184,13 @@ export const ViewBarDetails = ({
             <EditableSortChip key={sort.fieldMetadataId} viewSort={sort} />
           ))}
           {!!currentViewWithCombinedFiltersAndSorts?.viewSorts?.length &&
-            !!currentViewWithCombinedFiltersAndSorts?.viewFilters?.length && (
+            !!defaultViewFilters.length && (
               <StyledSeperatorContainer>
                 <StyledSeperator />
               </StyledSeperatorContainer>
             )}
           {mapViewFiltersToFilters(
-            currentViewWithCombinedFiltersAndSorts?.viewFilters ?? [],
+            defaultViewFilters,
             availableFilterDefinitions,
           ).map((viewFilter) => (
             <ObjectFilterDropdownScope

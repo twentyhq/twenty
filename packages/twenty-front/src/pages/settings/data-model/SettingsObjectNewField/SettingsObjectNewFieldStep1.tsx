@@ -5,7 +5,6 @@ import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -85,27 +84,31 @@ export const SettingsObjectNewFieldStep1 = () => {
   if (!activeObjectMetadataItem) return null;
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              { children: 'Objects', href: '/settings/objects' },
-              {
-                children: activeObjectMetadataItem.labelPlural,
-                href: `/settings/objects/${objectSlug}`,
-              },
-              { children: 'New Field' },
-            ]}
+    <SubMenuTopBarContainer
+      Icon={IconSettings}
+      title={
+        <Breadcrumb
+          links={[
+            { children: 'Objects', href: '/settings/objects' },
+            {
+              children: activeObjectMetadataItem.labelPlural,
+              href: `/settings/objects/${objectSlug}`,
+            },
+            { children: 'New Field' },
+          ]}
+        />
+      }
+      actionButton={
+        !activeObjectMetadataItem.isRemote && (
+          <SaveAndCancelButtons
+            isSaveDisabled={!canSave}
+            onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+            onSave={handleSave}
           />
-          {!activeObjectMetadataItem.isRemote && (
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-              onSave={handleSave}
-            />
-          )}
-        </SettingsHeaderContainer>
+        )
+      }
+    >
+      <SettingsPageContainer>
         <StyledSection>
           <H2Title
             title="Check deactivated fields"
