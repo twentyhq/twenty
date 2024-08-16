@@ -8,9 +8,9 @@ config();
  */
 export default defineConfig({
   testDir: '.',
-  outputDir: 'run_results/', //
-  snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
-  fullyParallel: true, //
+  outputDir: 'run_results/', // directory for screenshots and videos
+  snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}', // just in case, do not delete it
+  fullyParallel: true, // false only for specific tests, overwritten in specific projects or global setups of projects
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
@@ -39,10 +39,10 @@ export default defineConfig({
       use: { ...devices['Desktop Firefox'] },
     },
 
-    /*{
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },*/
+    //{
+    //  name: 'webkit',
+    //  use: { ...devices['Desktop Safari'] },
+    //},
 
     /* Test against mobile viewports. */
     // {
@@ -55,19 +55,19 @@ export default defineConfig({
     // },
 
     /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
+    //{
+    //  name: 'Microsoft Edge',
+    //  use: { ...devices['Desktop Edge'], channel: 'msedge' },
+    //},
+    //{
+    //  name: 'Google Chrome',
+    //  use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+    //},
   ],
   /* Run your local dev server before starting the tests */
   //webServer: {
   //  command: 'npx nx start',
-  //  url: 'http://127.0.0.1:3000',
+  //  url: 'http://localhost:3000', // somehow `localhost` is not mapped to 127.0.0.1
   //  reuseExistingServer: !process.env.CI,
   //},
 });

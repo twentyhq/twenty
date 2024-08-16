@@ -3,4 +3,5 @@ playwright-report/
 blob-report/
 playwright/.cache/
 run_results/
+playwright-report/.last-run.json
 results/
