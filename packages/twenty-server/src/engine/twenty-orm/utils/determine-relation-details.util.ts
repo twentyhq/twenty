@@ -4,7 +4,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 interface RelationDetails {
   relationType: RelationType;
@@ -14,10 +13,9 @@ interface RelationDetails {
 }
 
 export async function determineRelationDetails(
-  workspaceId: string,
   fieldMetadata: FieldMetadataEntity,
   relationMetadata: RelationMetadataEntity,
-  workspaceCacheStorageService: WorkspaceCacheStorageService,
+  objectMetadataCollection: ObjectMetadataEntity[],
 ): Promise<RelationDetails> {
   const relationType = computeRelationType(fieldMetadata, relationMetadata);
   let fromObjectMetadata: ObjectMetadataEntity | undefined =
@@ -28,8 +26,8 @@ export async function determineRelationDetails(
   // RelationMetadata always store the relation from the perspective of the `from` object, MANY_TO_ONE relations are not stored yet
   if (relationType === 'many-to-one') {
     fromObjectMetadata = fieldMetadata.object;
-    toObjectMetadata = await workspaceCacheStorageService.getObjectMetadata(
-      workspaceId,
+
+    toObjectMetadata = objectMetadataCollection.find(
       (objectMetadata) =>
         objectMetadata.id === relationMetadata.fromObjectMetadataId,
     );

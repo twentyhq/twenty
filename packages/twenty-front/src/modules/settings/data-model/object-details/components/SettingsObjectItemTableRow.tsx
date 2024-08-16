@@ -1,19 +1,19 @@
-import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 import { useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
-type SettingsObjectItemTableRowProps = {
+export type SettingsObjectMetadataItemTableRowProps = {
   action: ReactNode;
-  objectItem: ObjectMetadataItem;
-  to?: string;
+  objectMetadataItem: ObjectMetadataItem;
+  link?: string;
+  totalObjectCount: number;
 };
 
 export const StyledObjectTableRow = styled(TableRow)`
@@ -30,35 +30,33 @@ const StyledActionTableCell = styled(TableCell)`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const SettingsObjectItemTableRow = ({
+export const SettingsObjectMetadataItemTableRow = ({
   action,
-  objectItem,
-  to,
-}: SettingsObjectItemTableRowProps) => {
+  objectMetadataItem,
+  link,
+  totalObjectCount,
+}: SettingsObjectMetadataItemTableRowProps) => {
   const theme = useTheme();
 
-  const { totalCount } = useFindManyRecords({
-    objectNameSingular: objectItem.nameSingular,
-  });
   const { getIcon } = useIcons();
-  const Icon = getIcon(objectItem.icon);
-  const objectTypeLabel = getObjectTypeLabel(objectItem);
+  const Icon = getIcon(objectMetadataItem.icon);
+  const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
 
   return (
-    <StyledObjectTableRow key={objectItem.namePlural} to={to}>
+    <StyledObjectTableRow key={objectMetadataItem.namePlural} to={link}>
       <StyledNameTableCell>
         {!!Icon && (
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         )}
-        {objectItem.labelPlural}
+        {objectMetadataItem.labelPlural}
       </StyledNameTableCell>
       <TableCell>
         <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
       </TableCell>
       <TableCell align="right">
-        {objectItem.fields.filter((field) => !field.isSystem).length}
+        {objectMetadataItem.fields.filter((field) => !field.isSystem).length}
       </TableCell>
-      <TableCell align="right">{totalCount}</TableCell>
+      <TableCell align="right">{totalObjectCount}</TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledObjectTableRow>
   );

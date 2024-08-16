@@ -128,7 +128,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  position: number | null;
+  position: number;
 
   @WorkspaceField({
     standardId: PERSON_STANDARD_FIELD_IDS.createdBy,

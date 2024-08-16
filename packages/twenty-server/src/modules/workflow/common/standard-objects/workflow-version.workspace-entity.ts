@@ -2,7 +2,10 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataType,
+  RelationOnDeleteAction,
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -11,8 +14,12 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { WORKFLOW_VERSION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import {
+  WORKFLOW_RUN_STANDARD_FIELD_IDS,
+  WORKFLOW_VERSION_STANDARD_FIELD_IDS,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
 
@@ -64,4 +71,16 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('workflow')
   workflowId: string;
+
+  @WorkspaceRelation({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.workflowVersion,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Runs',
+    description: 'Workflow runs linked to the version.',
+    icon: 'IconVersions',
+    inverseSideTarget: () => WorkflowRunWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  runs: Relation<WorkflowRunWorkspaceEntity>;
 }

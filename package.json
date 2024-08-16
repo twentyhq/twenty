@@ -320,7 +320,7 @@
     "msw": "^2.0.11",
     "msw-storybook-addon": "2.0.0--canary.122.b3ed3b1.0",
     "nx": "18.3.3",
-    "playwright": "^1.40.1",
+    "playwright": "^1.46.0",
     "prettier": "^3.1.1",
     "raw-loader": "^4.0.2",
     "rimraf": "^5.0.5",
@@ -369,6 +369,7 @@
       "packages/twenty-utils",
       "packages/twenty-zapier",
       "packages/twenty-website",
+      "packages/twenty-e2e-testing",
       "tools/eslint-rules"
     ]
   }
