@@ -1,25 +1,24 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { H2Title, IconSettings } from 'twenty-ui';
+import { H2Title, IconCode } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
+import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { useSetRecoilState } from 'recoil';
+import { Key } from 'ts-key-enum';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { Key } from 'ts-key-enum';
-import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
-import { useSetRecoilState } from 'recoil';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
@@ -64,23 +63,27 @@ export const SettingsDevelopersApiKeysNew = () => {
   };
   const canSave = !!formValues.name && createOneApiKey;
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer
+      Icon={IconCode}
+      title={
+        <Breadcrumb
+          links={[
+            { children: 'Developers', href: '/settings/developers' },
+            { children: 'New API Key' },
+          ]}
+        />
+      }
+      actionButton={
+        <SaveAndCancelButtons
+          isSaveDisabled={!canSave}
+          onCancel={() => {
+            navigate('/settings/developers');
+          }}
+          onSave={handleSave}
+        />
+      }
+    >
       <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              { children: 'Developers', href: '/settings/developers' },
-              { children: 'New API Key' },
-            ]}
-          />
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            onCancel={() => {
-              navigate('/settings/developers');
-            }}
-            onSave={handleSave}
-          />
-        </SettingsHeaderContainer>
         <Section>
           <H2Title title="Name" description="Name of your API key" />
           <TextInput

@@ -28,3 +28,4 @@ storybook-static
 .eslintcache
 .cache
 .nyc_output
+test-results/
