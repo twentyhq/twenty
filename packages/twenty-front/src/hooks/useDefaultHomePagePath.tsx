@@ -1,7 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useLastVisitedPage } from '@/navigation/hooks/useLastVisitedPage';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -15,10 +14,7 @@ export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const { records } = usePrefetchedData(PrefetchKey.AllViews);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const { lastVisitedObjectMetadataId } = useLastVisitedPage(
-    currentWorkspace?.id ?? '',
-  );
+  const { lastVisitedObjectMetadataId } = useLastVisitedPage();
   let objectMetadata: {
     view?: ObjectRecord;
     metadata: ObjectMetadataItem;
@@ -28,7 +24,7 @@ export const useDefaultHomePagePath = () => {
     return { defaultHomePagePath: AppPath.SignInUp };
   }
 
-  const getObjectMetadataMatchingId = (objectMetadataId: string) => {
+  const getActiveObjectMetadataMatchingId = (objectMetadataId: string) => {
     return activeObjectMetadataItems.find(
       (item) => item.id === objectMetadataId,
     );
@@ -54,7 +50,7 @@ export const useDefaultHomePagePath = () => {
 
   // last visited page exist in localstorage
   if (lastVisitedObjectMetadataId !== null) {
-    const lastVisitedMetadata = getObjectMetadataMatchingId(
+    const lastVisitedMetadata = getActiveObjectMetadataMatchingId(
       lastVisitedObjectMetadataId,
     );
 

@@ -12,11 +12,13 @@ export const lastVisitedPageOrViewStateSelector =
       ({ scopeId }: { scopeId: string }) =>
       ({ set, get }, newValue) => {
         const currentState = get(lastVisitedPageOrViewState({ scopeId }));
-        set(
-          lastVisitedPageOrViewState({
-            scopeId,
-          }),
-          { ...currentState, ...newValue },
-        );
+        if (currentState === null) {
+          set(lastVisitedPageOrViewState({ scopeId }), newValue);
+        } else {
+          set(lastVisitedPageOrViewState({ scopeId }), {
+            ...currentState,
+            ...newValue,
+          });
+        }
       },
   });

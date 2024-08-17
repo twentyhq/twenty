@@ -1,3 +1,7 @@
+import { useLastVisitedPage } from '@/navigation/hooks/useLastVisitedPage';
+import { getObjectAndViewIdFromPath } from '@/object-metadata/utils/getObjectMetadataAndViewIdFromPath';
+import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -5,9 +9,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconComponent, MOBILE_VIEWPORT, Pill } from 'twenty-ui';
-
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
 export type NavigationDrawerItemProps = {
@@ -136,6 +137,7 @@ export const NavigationDrawerItem = ({
   const setIsNavigationDrawerOpen = useSetRecoilState(
     isNavigationDrawerOpenState,
   );
+  const { setLastVisitedObjectOrView } = useLastVisitedPage();
 
   const handleItemClick = () => {
     if (isMobile) {
@@ -147,7 +149,15 @@ export const NavigationDrawerItem = ({
       return;
     }
 
-    if (isNonEmptyString(to)) navigate(to);
+    if (isNonEmptyString(to)) {
+      const { objectMetadataId, viewId } = getObjectAndViewIdFromPath(to);
+      setLastVisitedObjectOrView({
+        objectMetadataId,
+        viewId,
+        isSlug: true,
+      });
+      navigate(to);
+    }
   };
 
   return (
