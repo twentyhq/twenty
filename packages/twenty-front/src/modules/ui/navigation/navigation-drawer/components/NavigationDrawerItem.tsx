@@ -1,4 +1,4 @@
-import { useLastVisitedPage } from '@/navigation/hooks/useLastVisitedPage';
+import { useLastVisitedPageOrView } from '@/navigation/hooks/useLastVisitedPageOrView';
 import { getObjectAndViewIdFromPath } from '@/object-metadata/utils/getObjectMetadataAndViewIdFromPath';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -138,7 +138,7 @@ export const NavigationDrawerItem = ({
   const setIsNavigationDrawerOpen = useSetRecoilState(
     isNavigationDrawerOpenState,
   );
-  const { setLastVisitedObjectOrView } = useLastVisitedPage();
+  const { setLastVisitedObjectOrView } = useLastVisitedPageOrView();
 
   const handleItemClick = () => {
     if (isMobile) {

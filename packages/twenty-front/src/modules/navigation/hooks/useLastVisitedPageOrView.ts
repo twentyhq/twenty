@@ -4,7 +4,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-export const useLastVisitedPage = () => {
+export const useLastVisitedPageOrView = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const scopeId = currentWorkspace?.id ?? '';
   const currentPagesState = extractComponentState(

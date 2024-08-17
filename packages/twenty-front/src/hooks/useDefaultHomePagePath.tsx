@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useLastVisitedPage } from '@/navigation/hooks/useLastVisitedPage';
+import { useLastVisitedPageOrView } from '@/navigation/hooks/useLastVisitedPageOrView';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -15,7 +15,7 @@ export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const { records } = usePrefetchedData(PrefetchKey.AllViews);
-  const { lastVisitedObjectMetadataId } = useLastVisitedPage();
+  const { lastVisitedObjectMetadataId } = useLastVisitedPageOrView();
   let objectMetadata: {
     view?: ObjectRecord;
     metadata: ObjectMetadataItem;

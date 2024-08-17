@@ -4,7 +4,7 @@ import { MouseEvent, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { IconLock, IconPencil, IconPlus, useIcons } from 'twenty-ui';
 
-import { useLastVisitedPage } from '@/navigation/hooks/useLastVisitedPage';
+import { useLastVisitedPageOrView } from '@/navigation/hooks/useLastVisitedPageOrView';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -41,7 +41,7 @@ export const ViewPickerListContent = () => {
 
   const { closeDropdown } = useDropdown(VIEW_PICKER_DROPDOWN_ID);
   const { updateView } = useHandleViews();
-  const { setLastVisitedObjectOrView } = useLastVisitedPage();
+  const { setLastVisitedObjectOrView } = useLastVisitedPageOrView();
 
   const handleViewSelect = (viewId: string) => {
     setLastVisitedObjectOrView(

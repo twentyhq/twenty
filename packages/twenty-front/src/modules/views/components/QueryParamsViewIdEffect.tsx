@@ -1,4 +1,4 @@
-import { useLastVisitedPage } from '@/navigation/hooks/useLastVisitedPage';
+import { useLastVisitedPageOrView } from '@/navigation/hooks/useLastVisitedPageOrView';
 import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -14,7 +14,7 @@ export const QueryParamsViewIdEffect = () => {
 
   const [currentViewId, setCurrentViewId] = useRecoilState(currentViewIdState);
   const { viewsOnCurrentObject } = useGetCurrentView();
-  const { getLastVisitedViewId } = useLastVisitedPage();
+  const { getLastVisitedViewId } = useLastVisitedPageOrView();
   const lastVisitedViewId = getLastVisitedViewId(componentId);
   useEffect(() => {
     const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');

@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { isDefined, useIcons } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useLastVisitedPage } from '@/navigation/hooks/useLastVisitedPage';
+import { useLastVisitedPageOrView } from '@/navigation/hooks/useLastVisitedPageOrView';
 import { ObjectMetadataNavItemsSkeletonLoader } from '@/object-metadata/components/ObjectMetadataNavItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
@@ -58,7 +58,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
   const loading = useIsPrefetchLoading();
 
   const theme = useTheme();
-  const { getLastVisitedViewIdFromObjectId } = useLastVisitedPage();
+  const { getLastVisitedViewIdFromObjectId } = useLastVisitedPageOrView();
 
   if (loading && isDefined(currentUser)) {
     return <ObjectMetadataNavItemsSkeletonLoader />;
