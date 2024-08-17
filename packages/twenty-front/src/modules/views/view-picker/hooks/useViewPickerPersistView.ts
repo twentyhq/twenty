@@ -1,6 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useLastVisitedPage } from '@/navigation/hooks/useLastVisitedPage';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useHandleViews } from '@/views/hooks/useHandleViews';
@@ -20,9 +21,10 @@ export const useViewPickerPersistView = () => {
 
   const { createView, selectView, removeView, updateView } = useHandleViews();
 
-  const { viewsOnCurrentObject } = useGetCurrentView();
+  const { viewsOnCurrentObject, componentId } = useGetCurrentView();
 
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
+  const { setLastVisitedObjectOrView } = useLastVisitedPage();
 
   const handleCreate = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -46,11 +48,20 @@ export const useViewPickerPersistView = () => {
         });
         closeAndResetViewPicker();
         selectView(id);
+        setLastVisitedObjectOrView(
+          {
+            objectMetadataId: componentId,
+            viewId: id,
+          },
+          true,
+        );
       },
     [
       closeAndResetViewPicker,
+      componentId,
       createView,
       selectView,
+      setLastVisitedObjectOrView,
       viewPickerInputNameState,
       viewPickerIsDirtyState,
       viewPickerIsPersistingState,
