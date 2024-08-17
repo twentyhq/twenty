@@ -152,6 +152,7 @@ export {
   IconReload,
   IconRepeat,
   IconReportAnalytics,
+  IconRestore,
   IconRocket,
   IconRotate,
   IconRulerMeasure,
@@ -183,5 +184,5 @@ export {
   IconWorld,
   IconX
 } from '@tabler/icons-react';
-export type { TablerIconsProps } from '@tabler/icons-react';
 
+export type { TablerIconsProps } from '@tabler/icons-react';

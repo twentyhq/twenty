@@ -301,7 +301,7 @@ export class ChartService {
                   WHEN 'EUR' THEN 1.10
                   WHEN 'GBP' THEN 1.29
                   WHEN 'USD' THEN 1.00
-                  -- More
+                  -- TODO: Get rates from external API and cache them
                   ELSE 1.0
                 END AS "${measureFieldMetadata.name}"
               FROM

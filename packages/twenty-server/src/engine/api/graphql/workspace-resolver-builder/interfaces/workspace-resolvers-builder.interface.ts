@@ -20,6 +20,8 @@ export enum ResolverArgsType {
   UpdateMany = 'UpdateMany',
   DeleteOne = 'DeleteOne',
   DeleteMany = 'DeleteMany',
+  RestoreMany = 'RestoreMany',
+  DestroyMany = 'DestroyMany',
 }
 
 export interface FindManyResolverArgs<
@@ -82,6 +84,14 @@ export interface DeleteManyResolverArgs<Filter = any> {
   filter: Filter;
 }
 
+export interface RestoreManyResolverArgs<Filter = any> {
+  filter: Filter;
+}
+
+export interface DestroyManyResolverArgs<Filter = any> {
+  filter: Filter;
+}
+
 export type WorkspaceResolverBuilderQueryMethodNames =
   (typeof workspaceResolverBuilderMethodNames.queries)[number];
 
@@ -106,4 +116,6 @@ export type ResolverArgs =
   | FindOneResolverArgs
   | FindDuplicatesResolverArgs
   | UpdateManyResolverArgs
-  | UpdateOneResolverArgs;
+  | UpdateOneResolverArgs
+  | DestroyManyResolverArgs
+  | RestoreManyResolverArgs;

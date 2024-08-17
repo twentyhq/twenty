@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -536,11 +536,6 @@ export type MutationSignUpArgs = {
 export type MutationTrackArgs = {
   data: Scalars['JSON'];
   type: Scalars['String'];
-};
-
-
-export type MutationUpdateOneFieldArgs = {
-  input: UpdateOneFieldMetadataInput;
 };
 
 

@@ -349,9 +349,9 @@ export type FieldConnection = {
 
 /** Type of the field */
 export enum FieldMetadataType {
+  Actor = 'ACTOR',
   Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
-  Actor = 'ACTOR',
   Currency = 'CURRENCY',
   Date = 'DATE',
   DateTime = 'DATE_TIME',
@@ -458,13 +458,13 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
+  runWorkflowVersion: WorkflowTriggerResult;
   sendInviteLink: SendInviteLink;
   signUp: LoginToken;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   track: Analytics;
-  triggerWorkflow: WorkflowTriggerResult;
   unsyncRemoteTable: RemoteTable;
   updateBillingSubscription: UpdateBillingEntity;
   updateOneField: Field;
@@ -616,6 +616,11 @@ export type MutationRenewTokenArgs = {
 };
 
 
+export type MutationRunWorkflowVersionArgs = {
+  input: RunWorkflowVersionInput;
+};
+
+
 export type MutationSendInviteLinkArgs = {
   emails: Array<Scalars['String']['input']>;
 };
@@ -642,11 +647,6 @@ export type MutationSyncRemoteTableSchemaChangesArgs = {
 export type MutationTrackArgs = {
   data: Scalars['JSON']['input'];
   type: Scalars['String']['input'];
-};
-
-
-export type MutationTriggerWorkflowArgs = {
-  workflowVersionId: Scalars['String']['input'];
 };
 
 
@@ -1012,6 +1012,13 @@ export enum RemoteTableStatus {
   NotSynced = 'NOT_SYNCED',
   Synced = 'SYNCED'
 }
+
+export type RunWorkflowVersionInput = {
+  /** Execution result in JSON format */
+  payload?: InputMaybe<Scalars['JSON']['input']>;
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String']['input'];
+};
 
 export type SendInviteLink = {
   __typename?: 'SendInviteLink';
@@ -1412,6 +1419,7 @@ export type WorkspaceFeatureFlagsArgs = {
 export enum WorkspaceActivationStatus {
   Active = 'ACTIVE',
   Inactive = 'INACTIVE',
+  OngoingCreation = 'ONGOING_CREATION',
   PendingCreation = 'PENDING_CREATION'
 }
 

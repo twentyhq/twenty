@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { H2Title, IconSettings } from 'twenty-ui';
+import { H2Title, IconCode } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -35,23 +34,27 @@ export const SettingsDevelopersWebhooksNew = () => {
   };
   const canSave = !!formValues.targetUrl && createOneWebhook;
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer
+      Icon={IconCode}
+      title={
+        <Breadcrumb
+          links={[
+            { children: 'Developers', href: '/settings/developers' },
+            { children: 'New webhook' },
+          ]}
+        />
+      }
+      actionButton={
+        <SaveAndCancelButtons
+          isSaveDisabled={!canSave}
+          onCancel={() => {
+            navigate('/settings/developers');
+          }}
+          onSave={handleSave}
+        />
+      }
+    >
       <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              { children: 'Developers', href: '/settings/developers' },
-              { children: 'New webhook' },
-            ]}
-          />
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            onCancel={() => {
-              navigate('/settings/developers');
-            }}
-            onSave={handleSave}
-          />
-        </SettingsHeaderContainer>
         <Section>
           <H2Title
             title="Endpoint URL"
