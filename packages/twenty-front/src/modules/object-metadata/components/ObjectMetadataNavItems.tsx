@@ -53,7 +53,6 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
   );
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
-  const currentPathWithSearch = currentPath + useLocation().search;
 
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const loading = useIsPrefetchLoading();
@@ -151,10 +150,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
                           <NavigationDrawerSubItem
                             label={view.name}
                             to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
-                            active={
-                              currentPathWithSearch ===
-                              `/objects/${objectMetadataItem.namePlural}?view=${view.id}`
-                            }
+                            active={viewId === view.id}
                             Icon={getIcon(view.icon)}
                             key={view.id}
                           />
