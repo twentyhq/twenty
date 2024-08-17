@@ -88,11 +88,25 @@ export const useViewPickerPersistView = () => {
           )[0].id,
         );
         await removeView(viewPickerReferenceViewId);
+        const [indexOrFirstView] = viewsOnCurrentObject
+          .sort((viewA, viewB) =>
+            viewA.key === 'INDEX' ? -1 : viewA.position - viewB.position,
+          )
+          .filter((view) => view.id !== viewPickerReferenceViewId);
+        setLastVisitedObjectOrView(
+          {
+            objectMetadataId: componentId,
+            viewId: indexOrFirstView.id,
+          },
+          true,
+        );
       },
     [
       closeAndResetViewPicker,
+      componentId,
       removeView,
       selectView,
+      setLastVisitedObjectOrView,
       viewPickerIsDirtyState,
       viewPickerIsPersistingState,
       viewPickerReferenceViewIdState,
