@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconComponent, MOBILE_VIEWPORT, Pill } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
+import { isEmptyObject } from '~/utils/isEmptyObject';
 
 export type NavigationDrawerItemProps = {
   className?: string;
@@ -150,12 +151,17 @@ export const NavigationDrawerItem = ({
     }
 
     if (isNonEmptyString(to)) {
-      const { objectMetadataId, viewId } = getObjectAndViewIdFromPath(to);
-      setLastVisitedObjectOrView({
-        objectMetadataId,
-        viewId,
-        isSlug: true,
-      });
+      const objectAndViewId = getObjectAndViewIdFromPath(to);
+      if (!isEmptyObject(objectAndViewId)) {
+        const { objectMetadataId, viewId } = objectAndViewId;
+        setLastVisitedObjectOrView(
+          {
+            objectMetadataId,
+            viewId,
+          },
+          true,
+        );
+      }
       navigate(to);
     }
   };

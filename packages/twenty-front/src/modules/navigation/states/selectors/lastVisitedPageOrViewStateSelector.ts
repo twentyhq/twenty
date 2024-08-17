@@ -1,5 +1,6 @@
 import { lastVisitedPageOrViewState } from '@/navigation/states/lastVisitedPageOrViewState';
 import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
+import { isNull } from '@sniptt/guards';
 
 export const lastVisitedPageOrViewStateSelector =
   createComponentSelector<Record<string, string> | null>({
@@ -12,7 +13,7 @@ export const lastVisitedPageOrViewStateSelector =
       ({ scopeId }: { scopeId: string }) =>
       ({ set, get }, newValue) => {
         const currentState = get(lastVisitedPageOrViewState({ scopeId }));
-        if (currentState === null) {
+        if (isNull(currentState)) {
           set(lastVisitedPageOrViewState({ scopeId }), newValue);
         } else {
           set(lastVisitedPageOrViewState({ scopeId }), {

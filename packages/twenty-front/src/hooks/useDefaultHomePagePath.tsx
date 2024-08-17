@@ -8,6 +8,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { AppPath } from '@/types/AppPath';
+import { isNull, isUndefined } from '@sniptt/guards';
 import { isDefined } from '~/utils/isDefined';
 
 export const useDefaultHomePagePath = () => {
@@ -49,13 +50,13 @@ export const useDefaultHomePagePath = () => {
     records.find((view: any) => view?.objectMetadataId === objectMetadataId);
 
   // last visited page exist in localstorage
-  if (lastVisitedObjectMetadataId !== null) {
+  if (!isNull(lastVisitedObjectMetadataId)) {
     const lastVisitedMetadata = getActiveObjectMetadataMatchingId(
       lastVisitedObjectMetadataId,
     );
 
     // and last visited page is still active
-    if (lastVisitedMetadata !== undefined) {
+    if (!isUndefined(lastVisitedMetadata)) {
       objectMetadata = {
         view: getViewMatchingObjectId(lastVisitedObjectMetadataId),
         metadata: lastVisitedMetadata,

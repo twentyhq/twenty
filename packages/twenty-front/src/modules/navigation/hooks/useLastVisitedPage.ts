@@ -17,15 +17,16 @@ export const useLastVisitedPage = () => {
 
   const lastVisitedObjectMetadataId = currentPages?.['DEFAULT'] ?? null;
 
-  const setLastVisitedObjectOrView = ({
-    objectMetadataId,
-    viewId,
+  const setLastVisitedObjectOrView = (
+    {
+      objectMetadataId,
+      viewId,
+    }: {
+      objectMetadataId: string;
+      viewId: string;
+    },
     isSlug = false,
-  }: {
-    objectMetadataId: string;
-    viewId: string;
-    isSlug?: boolean;
-  }) => {
+  ) => {
     const fallbackObjectMetadataId = isSlug
       ? (findActiveObjectMetadataItemBySlug(objectMetadataId)?.id ?? '')
       : objectMetadataId;
