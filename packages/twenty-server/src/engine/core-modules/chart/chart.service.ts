@@ -29,9 +29,6 @@ import {
   ChartWorkspaceEntity,
 } from 'src/modules/charts/standard-objects/chart.workspace-entity';
 
-// TODO:
-// 1. Composite type support (most importantly for currencies)
-
 @Injectable()
 export class ChartService {
   constructor(
@@ -341,6 +338,7 @@ export class ChartService {
     };
   }
 
+  // getChartQuery will be removed after FIELD_PATH is transformed into CHART_QUERY
   private async getChartQuery(workspaceId: string, chartId: string) {
     const repository =
       await this.twentyORMManager.getRepository(ChartWorkspaceEntity);
@@ -355,26 +353,48 @@ export class ChartService {
         },
       );
 
-    const lastFieldMetadataId = chart.target?.[chart.target?.length - 1];
+    const lastTargetFieldMetadataId = chart.target?.[chart.target?.length - 1];
 
-    const lastFieldMetadata = await this.getFieldMetadata(
+    const lastTargetFieldMetadata = await this.getFieldMetadata(
       workspaceId,
-      lastFieldMetadataId,
+      lastTargetFieldMetadataId,
     );
 
-    const measureFieldMetadata =
-      (lastFieldMetadata?.type !== FieldMetadataType.RELATION &&
-        lastFieldMetadata) ||
+    const targetMeasureFieldMetadata =
+      (lastTargetFieldMetadata?.type !== FieldMetadataType.RELATION &&
+        lastTargetFieldMetadata) ||
+      undefined;
+
+    const lastGroupByFieldMetadataId =
+      chart.groupBy?.[chart.groupBy?.length - 1];
+    const lastGroupByFieldMetadata = await this.getFieldMetadata(
+      workspaceId,
+      lastGroupByFieldMetadataId,
+    );
+    const groupByMeasureFieldMetadata =
+      (lastGroupByFieldMetadata?.type !== FieldMetadataType.RELATION &&
+        lastGroupByFieldMetadata) ||
       undefined;
 
     return {
       sourceObjectMetadataId: sourceObjectMetadata.id,
-      targetRelationFieldMetadataIds: measureFieldMetadata
-        ? chart.target.slice(0, -1)
-        : [],
-      targetMeasureFieldMetadataId: measureFieldMetadata?.id,
-      targetMeasure: chart.measure,
-      // TODO: groupByRelationMetadataIds, groupByMeasureFieldMetadataId, groupByMeasure, groupByGroups
+      target: {
+        relationFieldMetadataIds: targetMeasureFieldMetadata
+          ? chart.target.slice(0, -1)
+          : [],
+        measureFieldMetadataId: targetMeasureFieldMetadata?.id,
+        measure: chart.measure,
+      },
+      groupBy: {
+        relationFieldMetadataIds: groupByMeasureFieldMetadata
+          ? chart.groupBy.slice(0, -1)
+          : [],
+        measureFieldMetadataId: groupByMeasureFieldMetadata?.id,
+        measure: undefined as ChartMeasure | undefined,
+        // Think through groups implementation (for numeric values).
+        // excludeEmptyValues?: boolean;
+      },
+      // Later: Filters should be included in the CHART_QUERY UI => better to also store them in CHART_QUERY JSON?
     };
   }
 
@@ -395,14 +415,14 @@ export class ChartService {
     const targetMeasureFieldMetadata =
       (await this.getFieldMetadata(
         workspaceId,
-        chartQuery.targetMeasureFieldMetadataId,
+        chartQuery.target.measureFieldMetadataId,
       )) ?? undefined;
 
     const sourceQueryRelation = await this.getSourceQueryRelation(
       dataSourceSchemaName,
       workspaceId,
       sourceObjectMetadata,
-      chartQuery.targetRelationFieldMetadataIds,
+      chartQuery.target.relationFieldMetadataIds,
       targetMeasureFieldMetadata,
     );
 
@@ -411,7 +431,7 @@ export class ChartService {
       workspaceId,
       sourceObjectMetadata,
       'target',
-      chartQuery.targetRelationFieldMetadataIds,
+      chartQuery.target.relationFieldMetadataIds,
       targetMeasureFieldMetadata,
     );
 
@@ -426,7 +446,7 @@ export class ChartService {
       workspaceId,
       targetQueryRelations,
       sourceQueryRelation.tableName,
-      chartQuery.targetRelationFieldMetadataIds,
+      chartQuery.target.relationFieldMetadataIds,
       targetMeasureFieldMetadata,
     );
 
@@ -473,7 +493,7 @@ export class ChartService {
     console.log('commonTableExpressions', commonTableExpressions);
 
     const measureSelectColumn = this.getMeasureSelectColumn(
-      chartQuery.targetMeasure,
+      chartQuery.target.measure,
       targetQualifiedColumn,
     );
 
