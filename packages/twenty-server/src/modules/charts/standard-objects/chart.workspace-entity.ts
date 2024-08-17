@@ -25,6 +25,7 @@ export enum ChartMeasure {
   description: 'A chart for data visualization',
   icon: 'IconChartBar',
   labelIdentifierStandardId: CHART_STANDARD_FIELD_IDS.name,
+  softDelete: true,
 })
 @WorkspaceGate({
   featureFlag: FeatureFlagKey.IsChartsEnabled,
