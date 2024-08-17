@@ -3,6 +3,8 @@ import { config } from 'dotenv';
 
 config();
 
+/* === Run your local dev server before starting the tests === */
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -13,17 +15,20 @@ export default defineConfig({
   fullyParallel: true, // false only for specific tests, overwritten in specific projects or global setups of projects
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  timeout: 30 * 1000,
+  workers: process.env.CI ? 1 : undefined, // undefined = amount of projects
+  timeout: 30 * 1000, // timeout can be changed
   use: {
-    baseURL: process.env.FRONTEND_BASE_URL ?? 'http://localhost:3001',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    headless: true,
-    testIdAttribute: 'data-testid',
+    baseURL:
+      process.env.CI ??
+      process.env.FRONTEND_BASE_URL ??
+      'http://localhost:3001',
+    trace: 'retain-on-failure', // trace takes EVERYTHING from page source, records every single step, should be used only when normal debugging won't work
+    screenshot: 'on', // either 'on' here or in different method in modules, if 'on' all screenshots are overwritten each time the test is run
+    headless: true, // instead of changing it to false, run 'yarn test:e2e:debug' or 'yarn test:e2e:ui'
+    testIdAttribute: 'data-testid', // taken from Twenty source
     viewport: { width: 1920, height: 1080 }, // most laptops use this resolution
     launchOptions: {
-      slowMo: 50,
+      slowMo: 500, // time in milliseconds between each step, better to use it than explicitly define timeout in tests
     },
   },
   expect: {
@@ -65,10 +70,4 @@ export default defineConfig({
     //  use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     //},
   ],
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'npx nx start',
-    url: 'http://localhost:3000', // somehow `localhost` is not mapped to 127.0.0.1
-    reuseExistingServer: !process.env.CI,
-  },
 });
