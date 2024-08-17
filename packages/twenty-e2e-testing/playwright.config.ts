@@ -66,9 +66,9 @@ export default defineConfig({
     //},
   ],
   /* Run your local dev server before starting the tests */
-  //webServer: {
-  //  command: 'npx nx start',
-  //  url: 'http://localhost:3000', // somehow `localhost` is not mapped to 127.0.0.1
-  //  reuseExistingServer: !process.env.CI,
-  //},
+  webServer: {
+    command: 'npx nx start',
+    url: 'http://localhost:3000', // somehow `localhost` is not mapped to 127.0.0.1
+    reuseExistingServer: !process.env.CI,
+  },
 });
