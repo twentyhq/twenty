@@ -9,7 +9,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { CHART_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export enum ChartMeasure {
+export enum ChartQueryMeasure {
   AVERAGE = 'AVERAGE',
   SUM = 'SUM',
   MIN = 'MIN',
@@ -58,39 +58,39 @@ export class ChartWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconRulerMeasure',
     options: [
       {
-        value: ChartMeasure.AVERAGE,
+        value: ChartQueryMeasure.AVERAGE,
         label: 'Average',
         position: 0,
         color: 'blue',
       },
       {
-        value: ChartMeasure.SUM,
+        value: ChartQueryMeasure.SUM,
         label: 'Sum',
         position: 1,
         color: 'green',
       },
       {
-        value: ChartMeasure.MIN,
+        value: ChartQueryMeasure.MIN,
         label: 'Minimum',
         position: 2,
         color: 'orange',
       },
       {
-        value: ChartMeasure.MAX,
+        value: ChartQueryMeasure.MAX,
         label: 'Maximum',
         position: 3,
         color: 'red',
       },
       {
-        value: ChartMeasure.COUNT,
+        value: ChartQueryMeasure.COUNT,
         label: 'Count',
         position: 4,
         color: 'purple',
       },
     ],
-    defaultValue: `'${ChartMeasure.COUNT}'`,
+    defaultValue: `'${ChartQueryMeasure.COUNT}'`,
   })
-  measure: ChartMeasure;
+  measure: ChartQueryMeasure;
 
   @WorkspaceField({
     standardId: CHART_STANDARD_FIELD_IDS.sourceObjectNameSingular,
