@@ -45,7 +45,7 @@ export const useAddNewOpportunity = () => {
     ],
   );
 
-  const handleNewClick = useCallback(() => {
+  const handleAddNewOpportunityClick = useCallback(() => {
     setIsCreatingCard(true);
     setHotkeyScopeAndMemorizePreviousScope(
       RelationPickerHotkeyScope.RelationPicker,
@@ -61,7 +61,7 @@ export const useAddNewOpportunity = () => {
   return {
     isCreatingCard,
     handleEntitySelect,
-    handleNewClick,
+    handleAddNewOpportunityClick,
     handleCancel,
   };
 };

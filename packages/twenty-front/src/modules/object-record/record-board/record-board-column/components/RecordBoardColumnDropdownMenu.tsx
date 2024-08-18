@@ -2,7 +2,9 @@ import styled from '@emotion/styled';
 import { useCallback, useContext, useRef } from 'react';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { useAddNewOpportunity } from '@/object-record/record-board/record-board-column/hooks/useAddNewOpportunity';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -28,7 +30,7 @@ export const RecordBoardColumnDropdownMenu = ({
   onClose,
 }: RecordBoardColumnDropdownMenuProps) => {
   const boardColumnMenuRef = useRef<HTMLDivElement>(null);
-
+  const { objectMetadataItem } = useContext(RecordBoardContext);
   const closeMenu = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -40,8 +42,23 @@ export const RecordBoardColumnDropdownMenu = ({
 
   const { columnDefinition } = useContext(RecordBoardColumnContext);
 
-  const { isCreatingCard, handleNewClick, handleCancel, handleEntitySelect } =
-    useAddNewOpportunity();
+  const {
+    isCreatingCard,
+    handleAddNewOpportunityClick,
+    handleCancel,
+    handleEntitySelect,
+  } = useAddNewOpportunity();
+  const { handleAddNewCardClick } = useAddNewCard();
+
+  const isOpportunity =
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity;
+
+  const handleClick = isOpportunity
+    ? handleAddNewOpportunityClick
+    : () => {
+        handleAddNewCardClick();
+        closeMenu();
+      };
 
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>
@@ -72,7 +89,7 @@ export const RecordBoardColumnDropdownMenu = ({
               />
             ))}
             <MenuItem
-              onClick={handleNewClick}
+              onClick={handleClick}
               LeftIcon={IconPlus}
               text="Add Record"
             />

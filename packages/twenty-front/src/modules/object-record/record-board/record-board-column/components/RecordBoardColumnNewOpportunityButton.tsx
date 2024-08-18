@@ -25,8 +25,12 @@ const StyledButton = styled.button`
 
 export const RecordBoardColumnNewOpportunityButton = () => {
   const theme = useTheme();
-  const { isCreatingCard, handleNewClick, handleCancel, handleEntitySelect } =
-    useAddNewOpportunity();
+  const {
+    isCreatingCard,
+    handleAddNewOpportunityClick,
+    handleCancel,
+    handleEntitySelect,
+  } = useAddNewOpportunity();
   return (
     <>
       {isCreatingCard ? (
@@ -39,7 +43,7 @@ export const RecordBoardColumnNewOpportunityButton = () => {
           selectedRelationRecordIds={[]}
         />
       ) : (
-        <StyledButton onClick={handleNewClick}>
+        <StyledButton onClick={handleAddNewOpportunityClick}>
           <IconPlus size={theme.icon.size.md} />
           New
         </StyledButton>

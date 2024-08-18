@@ -1,10 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui';
 
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 
 const StyledButton = styled.button`
   align-items: center;
@@ -25,21 +23,11 @@ const StyledButton = styled.button`
 
 export const RecordBoardColumnNewButton = () => {
   const theme = useTheme();
-  const { columnDefinition } = useContext(RecordBoardColumnContext);
-  const { createOneRecord, selectFieldMetadataItem } =
-    useContext(RecordBoardContext);
-
-  const onNewClick = () => {
-    createOneRecord({
-      [selectFieldMetadataItem.name]: columnDefinition.value,
-      position: 'last',
-    });
-  };
-
+  const { handleAddNewCardClick } = useAddNewCard();
   return (
-    <StyledButton onClick={onNewClick}>
+    <StyledButton onClick={handleAddNewCardClick}>
       <IconPlus size={theme.icon.size.md} />
-      New agaga
+      New
     </StyledButton>
   );
 };
