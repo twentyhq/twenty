@@ -1,6 +1,6 @@
-import { useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useContext } from 'react';
 import { IconPlus } from 'twenty-ui';
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -39,7 +39,7 @@ export const RecordBoardColumnNewButton = () => {
   return (
     <StyledButton onClick={onNewClick}>
       <IconPlus size={theme.icon.size.md} />
-      New
+      New agaga
     </StyledButton>
   );
 };

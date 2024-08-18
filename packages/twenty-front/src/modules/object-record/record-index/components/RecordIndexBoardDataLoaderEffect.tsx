@@ -61,6 +61,7 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const navigate = useNavigate();
   const navigateToSelectSettings = useCallback(() => {
+    console.log('hehe');
     navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
   }, [navigate, objectMetadataItem]);
 
@@ -80,6 +81,7 @@ export const RecordIndexBoardDataLoaderEffect = ({
     );
   }, [
     navigateToSelectSettings,
+
     objectMetadataItem,
     objectNameSingular,
     recordIndexKanbanFieldMetadataId,
