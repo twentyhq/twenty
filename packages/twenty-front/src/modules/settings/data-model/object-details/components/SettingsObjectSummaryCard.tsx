@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconArchive, IconDotsVertical, IconPencil, useIcons } from 'twenty-ui';
 
+import { useLastVisitedPageOrView } from '@/navigation/hooks/useLastVisitedPageOrView';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
@@ -38,8 +39,10 @@ export const SettingsObjectSummaryCard = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(iconKey);
+  const objectMetadataId = objectMetadataItem.id;
 
   const { closeDropdown } = useDropdown(dropdownId);
+  const { removeMatchingIdInCaseLastVisited } = useLastVisitedPageOrView();
 
   const handleEdit = () => {
     onEdit();
@@ -47,6 +50,7 @@ export const SettingsObjectSummaryCard = ({
   };
 
   const handleDeactivate = () => {
+    removeMatchingIdInCaseLastVisited({ objectMetadataId });
     onDeactivate();
     closeDropdown();
   };

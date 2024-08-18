@@ -1,8 +1,10 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { lastVisitedPageOrViewStateSelector } from '@/navigation/states/selectors/lastVisitedPageOrViewStateSelector';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLastVisitedPageOrView = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -12,10 +14,43 @@ export const useLastVisitedPageOrView = () => {
     scopeId,
   );
   const [currentPages, setCurrentPages] = useRecoilState(currentPagesState);
-  const { findActiveObjectMetadataItemBySlug } =
-    useFilteredObjectMetadataItems();
+  const {
+    findActiveObjectMetadataItemBySlug,
+    alphaSortedActiveObjectMetadataItems,
+  } = useFilteredObjectMetadataItems();
+
+  const resetNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
 
   const lastVisitedObjectMetadataId = currentPages?.['DEFAULT'] ?? null;
+
+  const removeMatchingIdInCaseLastVisited = ({
+    objectMetadataId,
+  }: {
+    objectMetadataId: string;
+  }) => {
+    const isDeactivateDefault = isDeeplyEqual(
+      lastVisitedObjectMetadataId,
+      objectMetadataId,
+    );
+
+    const [newFallbackObjectMetadataItem] =
+      alphaSortedActiveObjectMetadataItems.filter(
+        (item) => item.id !== objectMetadataId,
+      );
+
+    setCurrentPages({
+      ...(isDeactivateDefault && { DEFAULT: newFallbackObjectMetadataItem.id }),
+      [objectMetadataId]: undefined,
+    });
+
+    if (isDeactivateDefault) {
+      resetNavigationMemorizedUrl(
+        `/objects/${newFallbackObjectMetadataItem.namePlural}`,
+      );
+    }
+  };
 
   const setLastVisitedObjectOrView = (
     {
@@ -55,5 +90,6 @@ export const useLastVisitedPageOrView = () => {
     setLastVisitedObjectOrView,
     getLastVisitedViewId,
     getLastVisitedViewIdFromObjectId,
+    removeMatchingIdInCaseLastVisited,
   };
 };

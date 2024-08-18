@@ -13,7 +13,8 @@ import { isDefined } from '~/utils/isDefined';
 
 export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { activeObjectMetadataItems, alphaSortedActiveObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
   const { records } = usePrefetchedData(PrefetchKey.AllViews);
   const { lastVisitedObjectMetadataId } = useLastVisitedPageOrView();
   let objectMetadata: {
@@ -32,15 +33,7 @@ export const useDefaultHomePagePath = () => {
   };
 
   const getFirstObjectInfo = () => {
-    const [metadata] = activeObjectMetadataItems.sort((a, b) => {
-      if (a.nameSingular < b.nameSingular) {
-        return -1;
-      }
-      if (a.nameSingular > b.nameSingular) {
-        return 1;
-      }
-      return 0;
-    });
+    const [metadata] = alphaSortedActiveObjectMetadataItems;
 
     const view = getViewMatchingObjectId(metadata.id);
     return { metadata, view };
