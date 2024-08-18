@@ -1,10 +1,10 @@
-import { useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import {
   DropResult,
   OnDragEndResponder,
   ResponderProvided,
 } from '@hello-pangea/dnd';
+import { useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   AppTooltip,
   IconEye,
@@ -107,9 +107,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
             isTooltipOpen={openToolTipIndex === fieldIndex}
             text={field.label}
             className={`${title}-fixed-item-tooltip-anchor-${fieldIndex}`}
-            accent={'placeholder'}
             isHoverDisabled={field.isVisible}
-            showGrip
             isDragDisabled
           />
         ))}
