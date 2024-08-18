@@ -140,7 +140,9 @@ export class ChartService {
               ? fromJoinFieldName
               : toJoinFieldName,
           },
-          withQuery: commonTableExpressionDefinition?.withQuery,
+          withQueries: commonTableExpressionDefinition
+            ? [commonTableExpressionDefinition.withQuery]
+            : undefined,
         };
       }
       default:
@@ -213,37 +215,40 @@ export class ChartService {
         throw new Error('Missing join target');
       }
 
-      return `JOIN ${queryRelation.withQuery ? '' : `"${dataSourceSchema}".`}"${queryRelation.tableName}" "${queryRelation.tableAlias}" ON "${queryRelation.joinTarget.tableAlias}"."${queryRelation.joinTarget.fieldName}" = "${queryRelation.tableAlias}"."${
+      return `JOIN ${queryRelation.withQueries && queryRelation.withQueries.length > 0 ? '' : `"${dataSourceSchema}".`}"${queryRelation.tableName}" "${queryRelation.tableAlias}" ON "${queryRelation.joinTarget.tableAlias}"."${queryRelation.joinTarget.fieldName}" = "${queryRelation.tableAlias}"."${
         queryRelation.fieldName
       }"`;
     });
   }
 
-  private getMeasureSelectColumn(
-    chartMeasure: ChartQueryMeasure,
-    targetQualifiedColumn: string,
+  private getTargetSelectColumn(
+    chartQueryMeasure?: ChartQueryMeasure,
+    qualifiedColumn?: string,
   ) {
-    if (!targetQualifiedColumn && chartMeasure !== ChartQueryMeasure.COUNT) {
-      throw new Error(
-        'Chart measure must be count when target column is undefined',
-      );
+    if (
+      !chartQueryMeasure ||
+      (!qualifiedColumn && chartQueryMeasure !== ChartQueryMeasure.COUNT)
+    ) {
+      return;
     }
 
-    switch (chartMeasure) {
+    switch (chartQueryMeasure) {
       case ChartQueryMeasure.COUNT:
         return 'COUNT(*) as measure';
       case ChartQueryMeasure.AVERAGE:
-        return `AVG(${targetQualifiedColumn}) as measure`;
+        return `AVG(${qualifiedColumn}) as measure`;
       case ChartQueryMeasure.MIN:
-        return `MIN(${targetQualifiedColumn}) as measure`;
+        return `MIN(${qualifiedColumn}) as measure`;
       case ChartQueryMeasure.MAX:
-        return `MAX(${targetQualifiedColumn}) as measure`;
+        return `MAX(${qualifiedColumn}) as measure`;
       case ChartQueryMeasure.SUM:
-        return `SUM(${targetQualifiedColumn}) as measure`;
+        return `SUM(${qualifiedColumn}) as measure`;
     }
   }
 
   private async getFieldMetadata(workspaceId, fieldMetadataId) {
+    if (!fieldMetadataId) return;
+
     return (
       (await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
         where: {
@@ -316,28 +321,50 @@ export class ChartService {
     dataSourceSchemaName: string,
     workspaceId: string,
     sourceObjectMetadata: ObjectMetadataEntity,
-    relationFieldPath?: string[],
-    measureFieldMetadata?: FieldMetadataEntity,
+    targetRelationFieldMetadataIds?: string[],
+    targetMeasureFieldMetadata?: FieldMetadataEntity,
+    groupByRelationFieldMetadataIds?: string[],
+    groupByMeasureFieldMetadata?: FieldMetadataEntity,
   ): Promise<QueryRelation> {
     const baseTableName = computeObjectTargetTable(sourceObjectMetadata);
 
-    const commonTableExpressionDefinition =
-      !relationFieldPath || relationFieldPath.length === 0
+    const targetCommonTableExpressionDefinition =
+      !targetRelationFieldMetadataIds ||
+      targetRelationFieldMetadataIds?.length === 0
         ? await this.getCommonTableExpressionDefinition(
             workspaceId,
             dataSourceSchemaName,
             baseTableName,
-            measureFieldMetadata,
+            targetMeasureFieldMetadata,
+          )
+        : undefined;
+
+    const groupByCommonTableExpressionDefinition =
+      !groupByRelationFieldMetadataIds ||
+      groupByRelationFieldMetadataIds?.length === 0
+        ? await this.getCommonTableExpressionDefinition(
+            workspaceId,
+            dataSourceSchemaName,
+            targetCommonTableExpressionDefinition?.resultSetName ??
+              baseTableName,
+            groupByMeasureFieldMetadata,
           )
         : undefined;
 
     const tableName =
-      commonTableExpressionDefinition?.resultSetName ?? baseTableName;
+      groupByCommonTableExpressionDefinition?.resultSetName ??
+      targetCommonTableExpressionDefinition?.resultSetName ??
+      baseTableName;
+
+    const withQueries = [
+      targetCommonTableExpressionDefinition?.withQuery,
+      groupByCommonTableExpressionDefinition?.withQuery,
+    ].filter((withQuery) => withQuery !== undefined);
 
     return {
-      tableName: tableName,
+      tableName,
       tableAlias: tableName,
-      withQuery: commonTableExpressionDefinition?.withQuery,
+      withQueries,
     };
   }
 
@@ -374,6 +401,7 @@ export class ChartService {
       workspaceId,
       lastGroupByFieldMetadataId,
     );
+
     const groupByMeasureFieldMetadata =
       (lastGroupByFieldMetadata?.type !== FieldMetadataType.RELATION &&
         lastGroupByFieldMetadata) ||
@@ -405,6 +433,17 @@ export class ChartService {
   async run(workspaceId: string, chartId: string): Promise<ChartResult> {
     const chartQuery = await this.getChartQuery(workspaceId, chartId);
 
+    console.log('chartQuery', chartQuery);
+
+    if (
+      !chartQuery.target?.measureFieldMetadataId &&
+      chartQuery.target?.measure !== ChartQueryMeasure.COUNT
+    ) {
+      throw new Error(
+        "Field 'measure' must be count when field 'measureFieldMetadataId' is undefined",
+      );
+    }
+
     const dataSourceSchemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -421,12 +460,19 @@ export class ChartService {
       chartQuery.target?.measureFieldMetadataId,
     );
 
+    const groupByMeasureFieldMetadata = await this.getFieldMetadata(
+      workspaceId,
+      chartQuery.groupBy?.measureFieldMetadataId,
+    );
+
     const sourceQueryRelation = await this.getSourceQueryRelation(
       dataSourceSchemaName,
       workspaceId,
       sourceObjectMetadata,
       chartQuery.target?.relationFieldMetadataIds,
       targetMeasureFieldMetadata,
+      chartQuery.groupBy?.relationFieldMetadataIds,
+      groupByMeasureFieldMetadata,
     );
 
     const targetQueryRelations = await this.getQueryRelations(
@@ -437,8 +483,6 @@ export class ChartService {
       chartQuery.target?.relationFieldMetadataIds,
       targetMeasureFieldMetadata,
     );
-
-    console.log('targetQueryRelations', targetQueryRelations);
 
     const targetJoinClauses = this.getJoinClauses(
       dataSourceSchemaName,
@@ -453,12 +497,7 @@ export class ChartService {
       targetMeasureFieldMetadata,
     );
 
-    const groupByMeasureFieldMetadata = await this.getFieldMetadata(
-      workspaceId,
-      chartQuery.groupBy?.measureFieldMetadataId,
-    );
-
-    const groupByJoinOperations = await this.getQueryRelations(
+    const groupByQueryRelations = await this.getQueryRelations(
       dataSourceSchemaName,
       workspaceId,
       sourceObjectMetadata,
@@ -467,42 +506,40 @@ export class ChartService {
       groupByMeasureFieldMetadata,
     );
 
-    const groupByQueryRelations = await this.getQueryRelations(
-      dataSourceSchemaName,
-      workspaceId,
-      sourceObjectMetadata,
-      'target',
-      chartQuery.target?.relationFieldMetadataIds,
-      targetMeasureFieldMetadata,
-    );
-
     const groupByJoinClauses = this.getJoinClauses(
       dataSourceSchemaName,
       groupByQueryRelations,
     );
 
-    const groupByQualifiedColumn = await this.getQualifiedColumn(
-      workspaceId,
-      groupByQueryRelations,
-      sourceQueryRelation.tableName,
-      chartQuery.groupBy?.relationFieldMetadataIds,
-      groupByMeasureFieldMetadata,
-    );
-
-    const groupByClause =
+    // TODO: Refactor conditions
+    const groupByQualifiedColumn =
       chartQuery.groupBy?.measureFieldMetadataId ||
-      chartQuery.groupBy?.relationFieldMetadataIds
-        ? `GROUP BY "${groupByQualifiedColumn}"`
+      (chartQuery.groupBy?.relationFieldMetadataIds &&
+        chartQuery.groupBy?.relationFieldMetadataIds?.length > 0)
+        ? await this.getQualifiedColumn(
+            workspaceId,
+            groupByQueryRelations,
+            sourceQueryRelation.tableName,
+            chartQuery.groupBy?.relationFieldMetadataIds,
+            groupByMeasureFieldMetadata,
+          )
+        : undefined;
+
+    const groupByClauseString =
+      chartQuery.groupBy?.measureFieldMetadataId ||
+      (chartQuery.groupBy?.relationFieldMetadataIds &&
+        chartQuery.groupBy?.relationFieldMetadataIds?.length > 0)
+        ? `GROUP BY ${groupByQualifiedColumn}`
         : '';
 
     const allQueryRelations = [
       sourceQueryRelation,
       targetQueryRelations,
-      // groupByQueryRelations,
+      groupByQueryRelations,
     ].flat();
 
     const commonTableExpressions = allQueryRelations
-      .map((joinOperation) => joinOperation.withQuery)
+      .flatMap((queryRelation) => queryRelation.withQueries)
       .join('\n');
 
     console.log('commonTableExpressions', commonTableExpressions);
@@ -511,26 +548,42 @@ export class ChartService {
       throw new Error('Measure is currently required');
     }
 
-    const measureSelectColumn = this.getMeasureSelectColumn(
+    const targetSelectColumn = this.getTargetSelectColumn(
       chartQuery.target?.measure,
       targetQualifiedColumn,
     );
 
-    const selectColumns = [
-      measureSelectColumn /* , groupBySelectColumn */,
-    ].filter((col) => !!col);
+    const selectColumns = [targetSelectColumn, groupByQualifiedColumn].filter(
+      (col) => !!col,
+    );
 
-    const joinClausesString = [targetJoinClauses /* , groupByJoinClauses */]
+    const joinClausesString = [targetJoinClauses, groupByJoinClauses]
       .flat()
       .filter((col) => col)
       .join('\n');
 
+    const groupByExcludeNullsWhereClause =
+      (chartQuery.groupBy?.measureFieldMetadataId ||
+        (chartQuery.groupBy?.relationFieldMetadataIds &&
+          chartQuery.groupBy?.relationFieldMetadataIds.length > 0)) &&
+      !chartQuery.groupBy?.includeNulls
+        ? `${groupByQualifiedColumn} IS NOT NULL`
+        : undefined;
+
+    const whereClauses = [groupByExcludeNullsWhereClause].filter(
+      (whereClause) => whereClause !== undefined,
+    );
+
+    const whereClausesString =
+      whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
+
     const sqlQuery = `
       ${commonTableExpressions}
       SELECT ${selectColumns.join(', ')}
-      FROM ${sourceQueryRelation.withQuery ? '' : `"${dataSourceSchemaName}".`}"${sourceQueryRelation.tableName}"
+      FROM ${sourceQueryRelation.withQueries && sourceQueryRelation.withQueries.length > 0 ? '' : `"${dataSourceSchemaName}".`}"${sourceQueryRelation.tableName}"
       ${joinClausesString}
-      ${'' /* groupByClause */};
+      ${whereClausesString}
+      ${groupByClauseString};
     `;
 
     console.log('sqlQuery\n', sqlQuery);
@@ -546,3 +599,5 @@ export class ChartService {
     return { chartResult: JSON.stringify(result) };
   }
 }
+
+// TODO: only allow counting source object records?

@@ -7,5 +7,5 @@ export interface QueryRelation {
 
   joinTarget?: JoinTarget;
 
-  withQuery?: string;
+  withQueries?: string[];
 }
