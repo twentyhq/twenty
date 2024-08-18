@@ -1,19 +1,29 @@
 import { createContext, RefObject } from 'react';
 
-// Define the new interface for the context value
-interface ScrollWrapperContextValue {
+type ScrollWrapperContextValue = {
   ref: RefObject<HTMLDivElement>;
   id: string;
-}
+};
 
-// Helper function to create a context with a unique ID
+export type ContextProviderName =
+  | 'eventList'
+  | 'commandMenu'
+  | 'recordBoard'
+  | 'recordTableWithWrappers'
+  | 'settingsPageContainer'
+  | 'dropdownMenuItemsContainer'
+  | 'showPageContainer'
+  | 'showPageLeftContainer'
+  | 'tabList'
+  | 'releases'
+  | 'test';
+
 const createScrollWrapperContext = (id: string) =>
   createContext<ScrollWrapperContextValue>({
     ref: { current: null },
     id,
   });
 
-// Define all context providers
 export const EventListScrollWrapperContext =
   createScrollWrapperContext('eventList');
 export const CommandMenuScrollWrapperContext =
@@ -34,9 +44,11 @@ export const TabListScrollWrapperContext =
   createScrollWrapperContext('tabList');
 export const ReleasesScrollWrapperContext =
   createScrollWrapperContext('releases');
+export const TestScrollWrapperContext = createScrollWrapperContext('test');
 
-// Function to get the context based on provider name
-export const getContextByProviderName = (contextProviderName: string) => {
+export const getContextByProviderName = (
+  contextProviderName: ContextProviderName,
+) => {
   switch (contextProviderName) {
     case 'eventList':
       return EventListScrollWrapperContext;
@@ -58,7 +70,9 @@ export const getContextByProviderName = (contextProviderName: string) => {
       return TabListScrollWrapperContext;
     case 'releases':
       return ReleasesScrollWrapperContext;
+    case 'test':
+      return TestScrollWrapperContext;
     default:
-      return createScrollWrapperContext('awdawdawd');
+      throw new Error('Context Provider not available');
   }
 };

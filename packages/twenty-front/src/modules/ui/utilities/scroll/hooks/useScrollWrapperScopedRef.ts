@@ -2,9 +2,14 @@ import { useContext } from 'react';
 
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-import { getContextByProviderName } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import {
+  ContextProviderName,
+  getContextByProviderName,
+} from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 
-export const useScrollWrapperScopedRef = (contextProviderName: string) => {
+export const useScrollWrapperScopedRef = (
+  contextProviderName: ContextProviderName,
+) => {
   const Context = getContextByProviderName(contextProviderName);
   const scrollWrapperRef = useContext(Context);
 

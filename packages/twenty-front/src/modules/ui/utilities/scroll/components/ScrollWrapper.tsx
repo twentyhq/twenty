@@ -4,7 +4,10 @@ import { useOverlayScrollbars } from 'overlayscrollbars-react';
 import { useEffect, useRef } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { getContextByProviderName } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import {
+  ContextProviderName,
+  getContextByProviderName,
+} from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useScrollStates } from '@/ui/utilities/scroll/hooks/internal/useScrollStates';
 import { overlayScrollbarsState } from '@/ui/utilities/scroll/states/overlayScrollbarsState';
 
@@ -25,7 +28,7 @@ export type ScrollWrapperProps = {
   className?: string;
   hideY?: boolean;
   hideX?: boolean;
-  contextProviderName: string;
+  contextProviderName: ContextProviderName;
 };
 
 export const ScrollWrapper = ({

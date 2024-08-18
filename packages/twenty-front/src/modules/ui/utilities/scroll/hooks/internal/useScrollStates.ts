@@ -1,4 +1,7 @@
-import { getContextByProviderName } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import {
+  ContextProviderName,
+  getContextByProviderName,
+} from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { scrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollLeftComponentState';
 import { scrollTopComponentState } from '@/ui/utilities/scroll/states/scrollTopComponentState';
 
@@ -6,7 +9,7 @@ import { extractComponentState } from '@/ui/utilities/state/component-state/util
 
 import { useContext } from 'react';
 
-export const useScrollStates = (contextProviderName: string) => {
+export const useScrollStates = (contextProviderName: ContextProviderName) => {
   const Context = getContextByProviderName(contextProviderName);
   const context = useContext(Context);
 
