@@ -59,6 +59,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     TimelineCalendarEventModule,
     UserModule,
     WorkspaceModule,
+    InvitationModule,
     AISQLQueryModule,
     PostgresCredentialsModule,
     WorkflowTriggerApiModule,
@@ -114,6 +115,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     TimelineCalendarEventModule,
     UserModule,
     WorkspaceModule,
+    InvitationModule,
   ],
 })
 export class CoreEngineModule {}
