@@ -5,12 +5,11 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconComponent, MOBILE_VIEWPORT, Pill } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-import { isEmptyObject } from '~/utils/isEmptyObject';
 
 export type NavigationDrawerItemProps = {
   className?: string;
@@ -152,7 +151,7 @@ export const NavigationDrawerItem = ({
 
     if (isNonEmptyString(to)) {
       const objectAndViewId = getObjectAndViewIdFromPath(to);
-      if (!isEmptyObject(objectAndViewId)) {
+      if (!isNull(objectAndViewId)) {
         const { componentId, viewId } = objectAndViewId;
         setLastVisitedObjectOrView({
           componentId,

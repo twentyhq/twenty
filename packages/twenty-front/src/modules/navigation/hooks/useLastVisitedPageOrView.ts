@@ -23,7 +23,8 @@ export const useLastVisitedPageOrView = () => {
     navigationMemorizedUrlState,
   );
 
-  const lastVisitedObjectMetadataId = currentPages?.['DEFAULT'] ?? null;
+  const lastVisitedObjectMetadataId =
+    currentPages?.['last_visited_object'] ?? null;
 
   const removeMatchingIdInCaseLastVisited = ({
     objectMetadataId,
@@ -41,7 +42,9 @@ export const useLastVisitedPageOrView = () => {
       );
 
     setCurrentPages({
-      ...(isDeactivateDefault && { DEFAULT: newFallbackObjectMetadataItem.id }),
+      ...(isDeactivateDefault && {
+        last_visited_object: newFallbackObjectMetadataItem.id,
+      }),
       [objectMetadataId]: undefined,
     });
 
@@ -61,14 +64,16 @@ export const useLastVisitedPageOrView = () => {
   }) => {
     const fallbackObjectMetadataId =
       findActiveObjectMetadataItemBySlug(componentId)?.id ?? '';
-
+    /* when both are equal meaning there was change in view else 
+      there was a object page change from nav
+    */
     const fallbackViewId =
       lastVisitedObjectMetadataId === fallbackObjectMetadataId
         ? viewId
         : (currentPages?.[fallbackObjectMetadataId] ?? viewId);
 
     setCurrentPages({
-      DEFAULT: fallbackObjectMetadataId,
+      last_visited_object: fallbackObjectMetadataId,
       [fallbackObjectMetadataId]: fallbackViewId,
     });
   };
