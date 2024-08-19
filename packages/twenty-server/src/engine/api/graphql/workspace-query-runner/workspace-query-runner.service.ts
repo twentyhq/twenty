@@ -761,18 +761,21 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    parsedResults.forEach((record) => {
-      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
-        name: `${objectMetadataItem.nameSingular}.created`,
-        workspaceId: authContext.workspace.id,
-        userId: authContext.user?.id,
-        recordId: record.id,
-        objectMetadata: objectMetadataItem,
-        properties: {
-          after: this.removeNestedProperties(record),
-        },
-      } satisfies ObjectRecordCreateEvent<any>);
-    });
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.created`,
+      parsedResults.map(
+        (record) =>
+          ({
+            userId: authContext.user?.id,
+            recordId: record.id,
+            objectMetadata: objectMetadataItem,
+            properties: {
+              after: this.removeNestedProperties(record),
+            },
+          }) satisfies ObjectRecordCreateEvent<any>,
+      ),
+      authContext.workspace.id,
+    );
 
     return parsedResults;
   }

@@ -43,7 +43,9 @@ export class EntityEventsToDbListener {
   }
 
   @OnEvent('*.deleted')
-  async handleDelete(payload: ObjectRecordUpdateEvent<any>) {
+  async handleDelete(
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
+  ) {
     return this.handle(payload);
   }
 
