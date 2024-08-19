@@ -58,7 +58,9 @@ export const useRestoreManyRecords = ({
 
       // TODO: fix optimistic effect
       const findOneQueryName = `FindOne${capitalize(objectNameSingular)}`;
-      const findManyQueryName = `FindMany${capitalize(objectMetadataItem.namePlural)}`;
+      const findManyQueryName = `FindMany${capitalize(
+        objectMetadataItem.namePlural,
+      )}`;
 
       const restoredRecordsResponse = await apolloClient.mutate({
         mutation: restoreManyRecordsMutation,

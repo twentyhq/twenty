@@ -6,10 +6,11 @@ export const findUnmatchedRequiredFields = <T extends string>(
   columns: Columns<T>,
 ) =>
   fields
-    .filter((field) =>
-      field.fieldValidationDefinitions?.some(
-        (validation) => validation.rule === 'required',
-      ),
+    .filter(
+      (field) =>
+        field.fieldValidationDefinitions?.some(
+          (validation) => validation.rule === 'required',
+        ),
     )
     .filter(
       (field) =>
