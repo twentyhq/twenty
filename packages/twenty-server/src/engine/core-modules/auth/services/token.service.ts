@@ -175,6 +175,37 @@ export class TokenService {
     };
   }
 
+  async generateInvitationToken(
+    workspaceId: string,
+    email: string,
+    invitationId: string,
+  ) {
+    const expiresIn = this.environmentService.get(
+      'INVITATION_TOKEN_EXPIRES_IN',
+    );
+
+    if (!expiresIn) {
+      throw new AuthException(
+        'Expiration time for invitation token is not set',
+        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
+
+    const invitationToken = this.appTokenRepository.create({
+      workspaceId,
+      expiresAt,
+      type: AppTokenType.InvitationToken,
+      invitationId: invitationId,
+      context: {
+        email,
+      },
+    });
+
+    return this.appTokenRepository.save(invitationToken);
+  }
+
   async generateLoginToken(email: string): Promise<AuthToken> {
     const secret = this.environmentService.get('LOGIN_TOKEN_SECRET');
     const expiresIn = this.environmentService.get('LOGIN_TOKEN_EXPIRES_IN');
@@ -416,7 +447,7 @@ export class TokenService {
         },
       });
 
-      if (!codeChallengeAppToken) {
+      if (!codeChallengeAppToken || !codeChallengeAppToken.userId) {
         throw new AuthException(
           'code verifier doesnt match the challenge',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -750,7 +781,7 @@ export class TokenService {
       },
     });
 
-    if (!token) {
+    if (!token || !token.userId) {
       throw new AuthException(
         'Token is invalid',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
