@@ -1,19 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  H1Title,
-  H2Title,
-  IconChevronRight,
-  IconPlus,
-  IconSettings,
-} from 'twenty-ui';
+import { H2Title, IconChevronRight, IconHierarchy2, IconPlus } from 'twenty-ui';
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsObjectMetadataItemTableRow,
@@ -40,10 +33,6 @@ import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/Setti
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
-`;
-
-const StyledH1Title = styled(H1Title)`
-  margin-bottom: 0;
 `;
 
 export const SettingsObjects = () => {
@@ -115,19 +104,21 @@ export const SettingsObjects = () => {
   );
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer
+      Icon={IconHierarchy2}
+      title="Data model"
+      actionButton={
+        <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
+          <Button
+            Icon={IconPlus}
+            title="Add object"
+            accent="blue"
+            size="small"
+          />
+        </UndecoratedLink>
+      }
+    >
       <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <StyledH1Title title="Objects" />
-          <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
-            <Button
-              Icon={IconPlus}
-              title="Add object"
-              accent="blue"
-              size="small"
-            />
-          </UndecoratedLink>
-        </SettingsHeaderContainer>
         <>
           <SettingsObjectCoverImage />
           <Section>

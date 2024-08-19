@@ -1,7 +1,7 @@
-import { useResetRecoilState } from 'recoil';
+import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
 import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
 import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
-import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
+import { useResetRecoilState } from 'recoil';
 
 export const ResetServerlessFunctionStatesEffect = () => {
   const resetSettingsServerlessFunctionInput = useResetRecoilState(

@@ -45,6 +45,17 @@ export const EventRowMainObject = ({
         />
       );
     }
+    case 'deleted': {
+      return (
+        <StyledMainContainer>
+          <StyledEventRowItemColumn>
+            {labelIdentifierValue}
+          </StyledEventRowItemColumn>
+          <StyledEventRowItemAction>was deleted by</StyledEventRowItemAction>
+          <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
+        </StyledMainContainer>
+      );
+    }
     default:
       return null;
   }

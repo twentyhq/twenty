@@ -50,6 +50,7 @@ export const useRecordShowPage = (
     objectRecordId,
     objectNameSingular,
     recordGqlFields: FIND_ONE_RECORD_FOR_SHOW_PAGE_OPERATION_SIGNATURE.fields,
+    withSoftDeleted: true,
   });
 
   useEffect(() => {

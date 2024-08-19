@@ -6,7 +6,7 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconArchive, IconSettings } from 'twenty-ui';
+import { H2Title, IconArchive, IconHierarchy2 } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -172,19 +172,23 @@ export const SettingsObjectFieldEdit = () => {
     <RecordFieldValueSelectorContextProvider>
       {/* eslint-disable-next-line react/jsx-props-no-spreading */}
       <FormProvider {...formConfig}>
-        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SubMenuTopBarContainer
+          Icon={IconHierarchy2}
+          title={
+            <Breadcrumb
+              links={[
+                { children: 'Objects', href: '/settings/objects' },
+                {
+                  children: activeObjectMetadataItem.labelPlural,
+                  href: `/settings/objects/${objectSlug}`,
+                },
+                { children: activeMetadataField.label },
+              ]}
+            />
+          }
+        >
           <SettingsPageContainer>
             <SettingsHeaderContainer>
-              <Breadcrumb
-                links={[
-                  { children: 'Objects', href: '/settings/objects' },
-                  {
-                    children: activeObjectMetadataItem.labelPlural,
-                    href: `/settings/objects/${objectSlug}`,
-                  },
-                  { children: activeMetadataField.label },
-                ]}
-              />
               {shouldDisplaySaveAndCancel && (
                 <SaveAndCancelButtons
                   isSaveDisabled={!canSave}
