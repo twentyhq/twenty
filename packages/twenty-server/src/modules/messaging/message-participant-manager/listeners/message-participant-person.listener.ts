@@ -33,7 +33,7 @@ export class MessageParticipantPersonListener {
   ) {
     for (const eventPayload of payload.events) {
       if (eventPayload.properties.after.email === null) {
-        return;
+        continue;
       }
 
       await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(

@@ -53,7 +53,7 @@ export class MessageParticipantWorkspaceMemberListener {
 
     for (const eventPayload of payload.events) {
       if (eventPayload.properties.after.userEmail === null) {
-        return;
+        continue;
       }
 
       await this.messageQueueService.add<MessageParticipantMatchParticipantJobData>(

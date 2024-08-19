@@ -53,7 +53,7 @@ export class CalendarEventParticipantListener {
         calendarEventParticipants.filter((participant) => participant.personId);
 
       if (calendarEventParticipantsWithPersonId.length === 0) {
-        return;
+        continue;
       }
 
       await this.timelineActivityRepository.insertTimelineActivitiesForObject(

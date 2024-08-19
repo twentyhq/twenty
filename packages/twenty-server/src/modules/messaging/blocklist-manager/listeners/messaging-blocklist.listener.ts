@@ -118,7 +118,7 @@ export class MessagingBlocklistListener {
         );
 
       if (!connectedAccount || connectedAccount.length === 0) {
-        return;
+        continue;
       }
 
       const messageChannelRepository =

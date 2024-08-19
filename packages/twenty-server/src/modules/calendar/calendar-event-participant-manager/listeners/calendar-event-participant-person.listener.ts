@@ -33,7 +33,7 @@ export class CalendarEventParticipantPersonListener {
   ) {
     for (const eventPayload of payload.events) {
       if (eventPayload.properties.after.email === null) {
-        return;
+        continue;
       }
 
       // TODO: modify this job to take an array of participants to match

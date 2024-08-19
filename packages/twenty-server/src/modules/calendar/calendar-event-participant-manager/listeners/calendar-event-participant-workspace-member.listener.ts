@@ -33,7 +33,7 @@ export class CalendarEventParticipantWorkspaceMemberListener {
   ) {
     for (const eventPayload of payload.events) {
       if (eventPayload.properties.after.userEmail === null) {
-        return;
+        continue;
       }
 
       await this.messageQueueService.add<CalendarEventParticipantMatchParticipantJobData>(
