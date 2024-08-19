@@ -14,7 +14,7 @@ export class ConnectedAccountDeleteOnePreQueryHook
 {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async execute(
