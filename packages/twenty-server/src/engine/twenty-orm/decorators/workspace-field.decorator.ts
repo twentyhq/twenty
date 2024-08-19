@@ -19,6 +19,7 @@ export interface WorkspaceFieldOptions<
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
   settings?: FieldMetadataSettings<T>;
+  isActive?: boolean;
 }
 
 export function WorkspaceField<T extends FieldMetadataType>(
@@ -55,13 +56,6 @@ export function WorkspaceField<T extends FieldMetadataType>(
         propertyKey.toString(),
       ) ?? false;
 
-    const isInactive =
-      TypedReflect.getMetadata(
-        'workspace:is-inactive-field-metadata-args',
-        object,
-        propertyKey.toString(),
-      ) ?? false;
-
     const defaultValue = (options.defaultValue ??
       generateDefaultValue(
         options.type,
@@ -82,7 +76,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       isSystem,
       gate,
       isDeprecated,
-      isInactive,
+      isActive: options.isActive,
     });
   };
 }
