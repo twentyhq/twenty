@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { EntitySchemaOptions } from 'typeorm';
+
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
@@ -43,6 +45,24 @@ export class WorkspaceCacheStorageService {
         latestVersion,
       );
     }
+  }
+
+  setEntitySchemaOptions(
+    workspaceId: string,
+    entitySchemas: EntitySchemaOptions<any>[],
+  ) {
+    return this.workspaceSchemaCache.set<EntitySchemaOptions<any>[]>(
+      `entitySchemas:${workspaceId}`,
+      entitySchemas,
+    );
+  }
+
+  getEntitySchemaOptions(
+    workspaceId: string,
+  ): Promise<EntitySchemaOptions<any>[] | undefined> {
+    return this.workspaceSchemaCache.get<EntitySchemaOptions<any>[]>(
+      `entitySchemas:${workspaceId}`,
+    );
   }
 
   setObjectMetadataCollection(

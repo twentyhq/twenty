@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { EntitySchema, Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -78,18 +78,43 @@ export class WorkspaceDatasourceFactory {
           );
 
         if (!dataSourceMetadata) {
-          throw new Error('Data source metadata not found');
+          throw new Error(
+            `Data source metadata not found for workspace ${workspaceId}`,
+          );
         }
 
         if (!cachedObjectMetadataCollection) {
-          throw new Error('Object metadata collection not found');
+          throw new Error(
+            `Object metadata collection not found for workspace ${workspaceId}`,
+          );
         }
 
-        const entities = await Promise.all(
-          cachedObjectMetadataCollection.map((objectMetadata) =>
-            this.entitySchemaFactory.create(workspaceId, objectMetadata),
-          ),
-        );
+        const cachedEntitySchemaOptions =
+          await this.workspaceCacheStorageService.getEntitySchemaOptions(
+            workspaceId,
+          );
+
+        let cachedEntitySchemas: EntitySchema[];
+
+        if (cachedEntitySchemaOptions) {
+          cachedEntitySchemas = cachedEntitySchemaOptions.map(
+            (option) => new EntitySchema(option),
+          );
+        } else {
+          const entitySchemas = await Promise.all(
+            cachedObjectMetadataCollection.map((objectMetadata) =>
+              this.entitySchemaFactory.create(workspaceId, objectMetadata),
+            ),
+          );
+
+          await this.workspaceCacheStorageService.setEntitySchemaOptions(
+            workspaceId,
+            entitySchemas.map((entitySchema) => entitySchema.options),
+          );
+
+          cachedEntitySchemas = entitySchemas;
+        }
+
         const workspaceDataSource = new WorkspaceDataSource(
           {
             workspaceId,
@@ -104,7 +129,7 @@ export class WorkspaceDatasourceFactory {
               ? ['query', 'error']
               : ['error'],
             schema: dataSourceMetadata.schema,
-            entities,
+            entities: cachedEntitySchemas,
             ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
               ? {
                   rejectUnauthorized: false,
