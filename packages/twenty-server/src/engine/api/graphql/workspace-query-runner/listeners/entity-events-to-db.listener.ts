@@ -51,18 +51,19 @@ export class EntityEventsToDbListener {
   private async handle(payload: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
     for (const eventPayload of payload.events) {
       if (!eventPayload.objectMetadata?.isAuditLogged) {
-        return;
+        continue;
       }
 
-      await this.messageQueueService.add<ObjectRecordBaseEvent>(
-        CreateAuditLogFromInternalEvent.name,
-        eventPayload,
-      );
-
-      await this.messageQueueService.add<ObjectRecordBaseEvent>(
-        UpsertTimelineActivityFromInternalEvent.name,
-        eventPayload,
-      );
+      await Promise.all([
+        this.messageQueueService.add<ObjectRecordBaseEvent>(
+          CreateAuditLogFromInternalEvent.name,
+          eventPayload,
+        ),
+        this.messageQueueService.add<ObjectRecordBaseEvent>(
+          UpsertTimelineActivityFromInternalEvent.name,
+          eventPayload,
+        ),
+      ]);
     }
   }
 }
