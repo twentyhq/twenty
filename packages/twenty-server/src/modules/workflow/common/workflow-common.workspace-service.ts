@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
 import {
@@ -9,22 +9,16 @@ import {
 } from 'src/modules/workflow/workflow-trigger/workflow-trigger.exception';
 
 @Injectable()
-export class WorkflowCommonService {
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+export class WorkflowCommonWorkspaceService {
+  constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
-  async getWorkflowVersion(
-    workspaceId: string,
-    workflowVersionId: string,
-  ): Promise<
+  async getWorkflowVersion(workflowVersionId: string): Promise<
     Omit<WorkflowVersionWorkspaceEntity, 'trigger'> & {
       trigger: WorkflowTrigger;
     }
   > {
     const workflowVersionRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
       );
 

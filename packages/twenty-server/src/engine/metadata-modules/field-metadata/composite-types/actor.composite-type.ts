@@ -8,6 +8,7 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 export enum FieldActorSource {
   EMAIL = 'EMAIL',
   CALENDAR = 'CALENDAR',
+  WORKFLOW = 'WORKFLOW',
   API = 'API',
   IMPORT = 'IMPORT',
   MANUAL = 'MANUAL',

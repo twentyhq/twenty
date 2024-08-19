@@ -26,10 +26,12 @@ export class FindOneQueryFactory {
       options.info,
       options.fieldMetadataCollection,
       options.objectMetadataCollection,
+      options.withSoftDeleted,
     );
     const argsString = this.argsStringFactory.create(
       args,
       options.fieldMetadataCollection,
+      !options.withSoftDeleted && !!options.objectMetadataItem.isSoftDeletable,
     );
 
     return `

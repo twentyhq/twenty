@@ -1,5 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { OrderBy } from '@/object-metadata/types/OrderBy';
+
 import { hasPositionField } from '@/object-metadata/utils/hasPositionField';
 import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
@@ -8,6 +8,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getOrderByForFieldMetadataType } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
+import { OrderBy } from '@/types/OrderBy';
 import { Sort } from '../types/Sort';
 
 export const turnSortsIntoOrderBy = (

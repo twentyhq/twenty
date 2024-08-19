@@ -1,7 +1,10 @@
 import { ModalHotkeyScope } from '@/ui/layout/modal/components/types/ModalHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
+import {
+  ClickOutsideMode,
+  useListenClickOutsideV2,
+} from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -205,6 +208,7 @@ export const Modal = ({
         onClose();
       }
     },
+    mode: ClickOutsideMode.comparePixels,
   });
 
   const stopEventPropagation = (e: React.MouseEvent) => {

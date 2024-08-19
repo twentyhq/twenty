@@ -15,10 +15,12 @@ import {
   CreateOneResolverArgs,
   DeleteManyResolverArgs,
   DeleteOneResolverArgs,
+  DestroyManyResolverArgs,
   FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
   ResolverArgsType,
+  RestoreManyResolverArgs,
   UpdateManyResolverArgs,
   UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -34,6 +36,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { parseResult } from 'src/engine/api/graphql/workspace-query-runner/utils/parse-result.util';
+import { withSoftDeleted } from 'src/engine/api/graphql/workspace-query-runner/utils/with-soft-deleted.util';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import {
   WorkspaceQueryRunnerException,
@@ -108,7 +111,10 @@ export class WorkspaceQueryRunnerService {
 
     const query = await this.workspaceQueryBuilderFactory.findMany(
       computedArgs,
-      options,
+      {
+        ...options,
+        withSoftDeleted: withSoftDeleted(args.filter),
+      },
     );
 
     const result = await this.execute(query, authContext.workspace.id);
@@ -159,7 +165,10 @@ export class WorkspaceQueryRunnerService {
 
     const query = await this.workspaceQueryBuilderFactory.findOne(
       computedArgs,
-      options,
+      {
+        ...options,
+        withSoftDeleted: withSoftDeleted(args.filter),
+      },
     );
 
     const result = await this.execute(query, authContext.workspace.id);
@@ -540,6 +549,7 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { authContext, objectMetadataItem } = options;
+    let query: string;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
@@ -555,13 +565,25 @@ export class WorkspaceQueryRunnerService {
         args,
       );
 
-    const query = await this.workspaceQueryBuilderFactory.deleteMany(
-      hookedArgs,
-      {
+    if (objectMetadataItem.isSoftDeletable) {
+      query = await this.workspaceQueryBuilderFactory.updateMany(
+        {
+          filter: hookedArgs.filter,
+          data: {
+            deletedAt: new Date().toISOString(),
+          },
+        },
+        {
+          ...options,
+          atMost: maximumRecordAffected,
+        },
+      );
+    } else {
+      query = await this.workspaceQueryBuilderFactory.deleteMany(hookedArgs, {
         ...options,
         atMost: maximumRecordAffected,
-      },
-    );
+      });
+    }
 
     const result = await this.execute(query, authContext.workspace.id);
 
@@ -569,7 +591,7 @@ export class WorkspaceQueryRunnerService {
       await this.parseResult<PGGraphQLMutation<Record>>(
         result,
         objectMetadataItem,
-        'deleteFrom',
+        objectMetadataItem.isSoftDeletable ? 'update' : 'deleteFrom',
         authContext.workspace.id,
       )
     )?.records;
@@ -596,6 +618,148 @@ export class WorkspaceQueryRunnerService {
     return parsedResults;
   }
 
+  async destroyMany<
+    Record extends IRecord = IRecord,
+    Filter extends RecordFilter = RecordFilter,
+  >(
+    args: DestroyManyResolverArgs<Filter>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<Record[] | undefined> {
+    const { authContext, objectMetadataItem } = options;
+
+    assertMutationNotOnRemoteObject(objectMetadataItem);
+
+    if (!objectMetadataItem.isSoftDeletable) {
+      throw new WorkspaceQueryRunnerException(
+        'This method is reserved to objects that can be soft-deleted, use delete instead',
+        WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND,
+      );
+    }
+
+    const maximumRecordAffected = this.environmentService.get(
+      'MUTATION_MAXIMUM_AFFECTED_RECORDS',
+    );
+
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'destroyMany',
+        args,
+      );
+
+    const query = await this.workspaceQueryBuilderFactory.deleteMany(
+      {
+        filter: {
+          ...hookedArgs.filter,
+          deletedAt: { is: 'NOT_NULL' },
+        },
+      },
+      {
+        ...options,
+        atMost: maximumRecordAffected,
+      },
+    );
+
+    const result = await this.execute(query, authContext.workspace.id);
+
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'deleteFrom',
+        authContext.workspace.id,
+      )
+    )?.records;
+
+    await this.triggerWebhooks<Record>(
+      parsedResults,
+      CallWebhookJobsJobOperation.delete,
+      options,
+    );
+
+    return parsedResults;
+  }
+
+  async restoreMany<
+    Record extends IRecord = IRecord,
+    Filter extends RecordFilter = RecordFilter,
+  >(
+    args: RestoreManyResolverArgs<Filter>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<Record[] | undefined> {
+    const { authContext, objectMetadataItem } = options;
+
+    assertMutationNotOnRemoteObject(objectMetadataItem);
+
+    if (!objectMetadataItem.isSoftDeletable) {
+      throw new WorkspaceQueryRunnerException(
+        'This method is reserved to objects that can be soft-deleted',
+        WorkspaceQueryRunnerExceptionCode.DATA_NOT_FOUND,
+      );
+    }
+
+    const maximumRecordAffected = this.environmentService.get(
+      'MUTATION_MAXIMUM_AFFECTED_RECORDS',
+    );
+
+    const hookedArgs =
+      await this.workspaceQueryHookService.executePreQueryHooks(
+        authContext,
+        objectMetadataItem.nameSingular,
+        'restoreMany',
+        args,
+      );
+
+    const query = await this.workspaceQueryBuilderFactory.updateMany(
+      {
+        filter: {
+          ...hookedArgs.filter,
+          deletedAt: { is: 'NOT_NULL' },
+        },
+        data: {
+          deletedAt: null,
+        },
+      },
+      {
+        ...options,
+        atMost: maximumRecordAffected,
+      },
+    );
+
+    const result = await this.execute(query, authContext.workspace.id);
+
+    const parsedResults = (
+      await this.parseResult<PGGraphQLMutation<Record>>(
+        result,
+        objectMetadataItem,
+        'update',
+        authContext.workspace.id,
+      )
+    )?.records;
+
+    await this.triggerWebhooks<Record>(
+      parsedResults,
+      CallWebhookJobsJobOperation.delete,
+      options,
+    );
+
+    parsedResults.forEach((record) => {
+      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
+        name: `${objectMetadataItem.nameSingular}.created`,
+        workspaceId: authContext.workspace.id,
+        userId: authContext.user?.id,
+        recordId: record.id,
+        objectMetadata: objectMetadataItem,
+        properties: {
+          after: this.removeNestedProperties(record),
+        },
+      } satisfies ObjectRecordCreateEvent<any>);
+    });
+
+    return parsedResults;
+  }
+
   async deleteOne<Record extends IRecord = IRecord>(
     args: DeleteOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
@@ -606,6 +770,7 @@ export class WorkspaceQueryRunnerService {
         authContext.workspace.id,
         objectMetadataItem.nameSingular,
       );
+    let query: string;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.id);
@@ -618,10 +783,22 @@ export class WorkspaceQueryRunnerService {
         args,
       );
 
-    const query = await this.workspaceQueryBuilderFactory.deleteOne(
-      hookedArgs,
-      options,
-    );
+    if (objectMetadataItem.isSoftDeletable) {
+      query = await this.workspaceQueryBuilderFactory.updateOne(
+        {
+          id: hookedArgs.id,
+          data: {
+            deletedAt: new Date().toISOString(),
+          },
+        },
+        options,
+      );
+    } else {
+      query = await this.workspaceQueryBuilderFactory.deleteOne(
+        hookedArgs,
+        options,
+      );
+    }
 
     const existingRecord = await repository.findOne({
       where: { id: args.id },
@@ -633,7 +810,7 @@ export class WorkspaceQueryRunnerService {
       await this.parseResult<PGGraphQLMutation<Record>>(
         result,
         objectMetadataItem,
-        'deleteFrom',
+        objectMetadataItem.isSoftDeletable ? 'update' : 'deleteFrom',
         authContext.workspace.id,
       )
     )?.records;
