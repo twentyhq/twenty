@@ -153,14 +153,11 @@ export const NavigationDrawerItem = ({
     if (isNonEmptyString(to)) {
       const objectAndViewId = getObjectAndViewIdFromPath(to);
       if (!isEmptyObject(objectAndViewId)) {
-        const { objectMetadataId, viewId } = objectAndViewId;
-        setLastVisitedObjectOrView(
-          {
-            objectMetadataId,
-            viewId,
-          },
-          true,
-        );
+        const { componentId, viewId } = objectAndViewId;
+        setLastVisitedObjectOrView({
+          componentId,
+          viewId,
+        });
       }
       navigate(to);
     }

@@ -48,13 +48,10 @@ export const useViewPickerPersistView = () => {
         });
         closeAndResetViewPicker();
         selectView(id);
-        setLastVisitedObjectOrView(
-          {
-            objectMetadataId: componentId,
-            viewId: id,
-          },
-          true,
-        );
+        setLastVisitedObjectOrView({
+          componentId,
+          viewId: id,
+        });
       },
     [
       closeAndResetViewPicker,
@@ -93,13 +90,10 @@ export const useViewPickerPersistView = () => {
             viewA.key === 'INDEX' ? -1 : viewA.position - viewB.position,
           )
           .filter((view) => view.id !== viewPickerReferenceViewId);
-        setLastVisitedObjectOrView(
-          {
-            objectMetadataId: componentId,
-            viewId: indexOrFirstView.id,
-          },
-          true,
-        );
+        setLastVisitedObjectOrView({
+          componentId,
+          viewId: indexOrFirstView.id,
+        });
       },
     [
       closeAndResetViewPicker,

@@ -52,19 +52,16 @@ export const useLastVisitedPageOrView = () => {
     }
   };
 
-  const setLastVisitedObjectOrView = (
-    {
-      objectMetadataId,
-      viewId,
-    }: {
-      objectMetadataId: string;
-      viewId: string;
-    },
-    isSlug = false,
-  ) => {
-    const fallbackObjectMetadataId = isSlug
-      ? (findActiveObjectMetadataItemBySlug(objectMetadataId)?.id ?? '')
-      : objectMetadataId;
+  const setLastVisitedObjectOrView = ({
+    componentId,
+    viewId,
+  }: {
+    componentId: string;
+    viewId: string;
+  }) => {
+    const fallbackObjectMetadataId =
+      findActiveObjectMetadataItemBySlug(componentId)?.id ?? '';
+
     const fallbackViewId =
       lastVisitedObjectMetadataId === fallbackObjectMetadataId
         ? viewId

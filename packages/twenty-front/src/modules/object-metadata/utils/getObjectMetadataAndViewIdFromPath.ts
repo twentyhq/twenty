@@ -8,7 +8,7 @@ export const getObjectAndViewIdFromPath = (path: string) => {
   }
 
   return {
-    objectMetadataId: result[1],
+    componentId: result[1],
     viewId: result[2],
   };
 };

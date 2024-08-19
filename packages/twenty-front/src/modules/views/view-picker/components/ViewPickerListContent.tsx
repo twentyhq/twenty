@@ -44,13 +44,10 @@ export const ViewPickerListContent = () => {
   const { setLastVisitedObjectOrView } = useLastVisitedPageOrView();
 
   const handleViewSelect = (viewId: string) => {
-    setLastVisitedObjectOrView(
-      {
-        objectMetadataId: componentId,
-        viewId,
-      },
-      true,
-    );
+    setLastVisitedObjectOrView({
+      componentId,
+      viewId,
+    });
     selectView(viewId);
     closeDropdown();
   };
