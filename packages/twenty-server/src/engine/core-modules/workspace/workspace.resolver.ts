@@ -129,9 +129,7 @@ export class WorkspaceResolver {
   async workspaceInvitations(
     @Parent() workspace: Workspace,
   ): Promise<Array<WorkspaceInvitation>> {
-    const t = await this.invitationService.loadWorkspaceInvitations(workspace);
-    console.log('>>>>>>>>>>>>>>', t);
-    return t;
+    return await this.invitationService.loadWorkspaceInvitations(workspace);
   }
 
   @ResolveField(() => String)

@@ -20,6 +20,8 @@ export class InvitationService extends TypeOrmQueryService<Invitation> {
   constructor(
     @InjectRepository(Invitation, 'core')
     private readonly invitationRepository: Repository<Invitation>,
+    @InjectRepository(AppToken, 'core')
+    private readonly appTokenRepository: Repository<AppToken>,
     private moduleRef: ModuleRef,
   ) {
     super(invitationRepository);
@@ -61,5 +63,33 @@ export class InvitationService extends TypeOrmQueryService<Invitation> {
         '"appToken"."expiresAt" AS "expiresAt"',
       ])
       .getRawMany()) as unknown as Array<WorkspaceInvitation>;
+  }
+
+  async deleteInvitation(invitationId: string, workspaceId: string) {
+    const invitation = await this.invitationRepository
+      .createQueryBuilder('invitation')
+      .leftJoinAndSelect(
+        AppToken,
+        'appToken',
+        'invitation.id = "appToken"."invitationId"',
+      )
+      .where('invitation.id = :invitationId', { invitationId })
+      .andWhere('"appToken"."workspaceId" = :workspaceId', {
+        workspaceId,
+      })
+      .andWhere('"appToken".type = :type', {
+        type: AppTokenType.InvitationToken,
+      })
+      .select(['"appToken".id as "appTokenId"'])
+      .getRawOne();
+
+    if (!invitation) {
+      // TODO what's the best practice for error management?
+      return 'fail';
+    }
+
+    await this.appTokenRepository.delete(invitation.appTokenId);
+
+    return 'success';
   }
 }
