@@ -46,9 +46,7 @@ export class MessagingMessageListFetchCronJob {
           'messageChannel',
         );
 
-      const messageChannels = await messageChannelRepository.find({
-        select: ['id'],
-      });
+      const messageChannels = await messageChannelRepository.find();
 
       for (const messageChannel of messageChannels) {
         if (
