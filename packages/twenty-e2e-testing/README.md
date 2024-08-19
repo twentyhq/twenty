@@ -1,6 +1,6 @@
 # Twenty e2e Testing
 
-## Prerequisition
+## Prerequisite
 
 Installing the browsers:
 
