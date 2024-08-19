@@ -93,11 +93,10 @@ export class ChartService {
     dataSourceSchemaName: string,
     objectMetadata: ObjectMetadataEntity,
     index: number,
-    sourceTableName: string,
     aliasPrefix: AliasPrefix,
     oppositeObjectMetadata: ObjectMetadataEntity,
     relationMetadata: RelationMetadataEntity,
-    fieldMetadataId: string,
+    joinTargetQueryRelation: QueryRelation,
     isLastRelationField?: boolean,
     measureFieldMetadata?: FieldMetadataEntity,
   ): Promise<QueryRelation | undefined> {
@@ -134,7 +133,7 @@ export class ChartService {
           joinTarget: {
             tableAlias:
               index === 0
-                ? sourceTableName
+                ? joinTargetQueryRelation.tableAlias
                 : this.computeJoinTableAlias(aliasPrefix, index - 1),
             fieldName: fromIsExistingTable
               ? fromJoinFieldName
@@ -157,13 +156,13 @@ export class ChartService {
     workspaceId: string,
     sourceObjectMetadata: ObjectMetadataEntity,
     aliasPrefix: AliasPrefix,
+    sourceQueryRelation: QueryRelation,
     relationFieldMetadataIds?: string[],
     measureFieldMetadata?: FieldMetadataEntity,
   ) {
     if (!relationFieldMetadataIds || relationFieldMetadataIds.length === 0)
       return [];
     let objectMetadata = sourceObjectMetadata;
-    const sourceTableName = computeObjectTargetTable(objectMetadata);
     const queryRelations: QueryRelation[] = [];
 
     for (let i = 0; i < relationFieldMetadataIds.length; i++) {
@@ -181,6 +180,9 @@ export class ChartService {
         objectMetadata,
       );
 
+      const joinTargetQueryRelation =
+        queryRelations[i - 1] ?? sourceQueryRelation;
+
       const isLastRelationField = i === relationFieldMetadataIds.length - 1;
 
       const queryRelation = await this.getQueryRelation(
@@ -188,11 +190,10 @@ export class ChartService {
         dataSourceSchemaName,
         objectMetadata,
         i,
-        sourceTableName,
         aliasPrefix,
         oppositeObjectMetadata,
         relationMetadata,
-        fieldMetadataId,
+        joinTargetQueryRelation,
         isLastRelationField,
         measureFieldMetadata,
       );
@@ -359,12 +360,12 @@ export class ChartService {
     const withQueries = [
       targetCommonTableExpressionDefinition?.withQuery,
       groupByCommonTableExpressionDefinition?.withQuery,
-    ].filter((withQuery) => withQuery !== undefined);
+    ].filter((withQuery): withQuery is string => withQuery !== undefined);
 
     return {
       tableName,
       tableAlias: tableName,
-      withQueries,
+      withQueries: withQueries,
     };
   }
 
@@ -412,14 +413,14 @@ export class ChartService {
       target: {
         relationFieldMetadataIds: targetMeasureFieldMetadata
           ? chart.target.slice(0, -1)
-          : [],
+          : (chart.target ?? []),
         measureFieldMetadataId: targetMeasureFieldMetadata?.id,
         measure: chart.measure,
       },
       groupBy: {
         relationFieldMetadataIds: groupByMeasureFieldMetadata
           ? chart.groupBy.slice(0, -1)
-          : [],
+          : (chart.groupBy ?? []),
         measureFieldMetadataId: groupByMeasureFieldMetadata?.id,
         measure: undefined,
         groups: undefined,
@@ -480,6 +481,7 @@ export class ChartService {
       workspaceId,
       sourceObjectMetadata,
       'target',
+      sourceQueryRelation,
       chartQuery.target?.relationFieldMetadataIds,
       targetMeasureFieldMetadata,
     );
@@ -502,6 +504,7 @@ export class ChartService {
       workspaceId,
       sourceObjectMetadata,
       'group_by',
+      sourceQueryRelation,
       chartQuery.groupBy?.relationFieldMetadataIds,
       groupByMeasureFieldMetadata,
     );
