@@ -20,4 +20,5 @@ export interface ObjectMetadataInterface {
   isAuditLogged: boolean;
   labelIdentifierFieldMetadataId?: string | null;
   imageIdentifierFieldMetadataId?: string | null;
+  isSoftDeletable?: boolean | null;
 }

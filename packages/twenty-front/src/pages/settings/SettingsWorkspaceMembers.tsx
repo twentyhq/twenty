@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { H1Title, H2Title, IconSettings, IconTrash } from 'twenty-ui';
+import { H2Title, IconTrash, IconUsers } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -17,10 +17,6 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
-
-const StyledH1Title = styled(H1Title)`
-  margin-bottom: 0;
-`;
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -50,9 +46,8 @@ export const SettingsWorkspaceMembers = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconUsers} title="Members">
       <SettingsPageContainer>
-        <StyledH1Title title="Members" />
         <Section>
           <H2Title
             title="Invite by email"
