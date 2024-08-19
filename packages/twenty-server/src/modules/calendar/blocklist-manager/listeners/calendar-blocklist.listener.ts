@@ -33,11 +33,11 @@ export class CalendarBlocklistListener {
   ) {
     await Promise.all(
       payload.events.map((eventPayload) =>
-        this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
-          BlocklistReimportCalendarEventsJob.name,
+        this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
+          BlocklistItemDeleteCalendarEventsJob.name,
           {
             workspaceId: payload.workspaceId,
-            workspaceMemberId: eventPayload.properties.after.workspaceMember.id,
+            blocklistItemId: eventPayload.recordId,
           },
         ),
       ),
@@ -71,27 +71,30 @@ export class CalendarBlocklistListener {
     >,
   ) {
     await Promise.all(
-      payload.events.map((eventPayload) =>
-        this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
-          BlocklistItemDeleteCalendarEventsJob.name,
-          {
-            workspaceId: payload.workspaceId,
-            blocklistItemId: eventPayload.recordId,
-          },
-        ),
-      ),
-    );
+      payload.events.reduce((acc: Promise<void>[], eventPayload) => {
+        acc.push(
+          this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
+            BlocklistItemDeleteCalendarEventsJob.name,
+            {
+              workspaceId: payload.workspaceId,
+              blocklistItemId: eventPayload.recordId,
+            },
+          ),
+        );
 
-    await Promise.all(
-      payload.events.map((eventPayload) =>
-        this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
-          BlocklistReimportCalendarEventsJob.name,
-          {
-            workspaceId: payload.workspaceId,
-            workspaceMemberId: eventPayload.properties.after.workspaceMember.id,
-          },
-        ),
-      ),
+        acc.push(
+          this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
+            BlocklistReimportCalendarEventsJob.name,
+            {
+              workspaceId: payload.workspaceId,
+              workspaceMemberId:
+                eventPayload.properties.after.workspaceMember.id,
+            },
+          ),
+        );
+
+        return acc;
+      }, []),
     );
   }
 }
