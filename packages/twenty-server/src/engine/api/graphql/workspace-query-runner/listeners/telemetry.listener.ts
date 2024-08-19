@@ -41,7 +41,7 @@ export class TelemetryListener {
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
   ) {
     await Promise.all(
-      payload.events.map(async (eventPayload) =>
+      payload.events.map((eventPayload) =>
         this.analyticsService.create(
           {
             type: 'track',
