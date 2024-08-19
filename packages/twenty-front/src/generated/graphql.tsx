@@ -348,6 +348,7 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createOneServerlessFunctionFromFile: ServerlessFunction;
   deleteCurrentWorkspace: Workspace;
+  deleteCustomInvitation: Scalars['String'];
   deleteOneObject: Object;
   deleteOneServerlessFunction: ServerlessFunction;
   deleteUser: User;
@@ -420,6 +421,11 @@ export type MutationCreateOneServerlessFunctionArgs = {
 export type MutationCreateOneServerlessFunctionFromFileArgs = {
   file: Scalars['Upload'];
   input: CreateServerlessFunctionFromFileInput;
+};
+
+
+export type MutationDeleteCustomInvitationArgs = {
+  invitationId: Scalars['String'];
 };
 
 
@@ -1521,6 +1527,13 @@ export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null, workspaceInvitations?: Array<{ __typename?: 'WorkspaceInvitation', id: any, email: string, expiresAt: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> } };
+
+export type DeleteCustomInvitationMutationVariables = Exact<{
+  invitationId: Scalars['String'];
+}>;
+
+
+export type DeleteCustomInvitationMutation = { __typename?: 'Mutation', deleteCustomInvitation: string };
 
 export type WorkspaceMemberQueryFragmentFragment = { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } };
 
@@ -2841,6 +2854,37 @@ export function useGetCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetCurrentUserQueryHookResult = ReturnType<typeof useGetCurrentUserQuery>;
 export type GetCurrentUserLazyQueryHookResult = ReturnType<typeof useGetCurrentUserLazyQuery>;
 export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
+export const DeleteCustomInvitationDocument = gql`
+    mutation DeleteCustomInvitation($invitationId: String!) {
+  deleteCustomInvitation(invitationId: $invitationId)
+}
+    `;
+export type DeleteCustomInvitationMutationFn = Apollo.MutationFunction<DeleteCustomInvitationMutation, DeleteCustomInvitationMutationVariables>;
+
+/**
+ * __useDeleteCustomInvitationMutation__
+ *
+ * To run a mutation, you first call `useDeleteCustomInvitationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCustomInvitationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCustomInvitationMutation, { data, loading, error }] = useDeleteCustomInvitationMutation({
+ *   variables: {
+ *      invitationId: // value for 'invitationId'
+ *   },
+ * });
+ */
+export function useDeleteCustomInvitationMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCustomInvitationMutation, DeleteCustomInvitationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCustomInvitationMutation, DeleteCustomInvitationMutationVariables>(DeleteCustomInvitationDocument, options);
+      }
+export type DeleteCustomInvitationMutationHookResult = ReturnType<typeof useDeleteCustomInvitationMutation>;
+export type DeleteCustomInvitationMutationResult = Apollo.MutationResult<DeleteCustomInvitationMutation>;
+export type DeleteCustomInvitationMutationOptions = Apollo.BaseMutationOptions<DeleteCustomInvitationMutation, DeleteCustomInvitationMutationVariables>;
 export const AddUserToWorkspaceDocument = gql`
     mutation AddUserToWorkspace($inviteHash: String!) {
   addUserToWorkspace(inviteHash: $inviteHash) {

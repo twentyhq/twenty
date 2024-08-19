@@ -20,6 +20,10 @@ import {
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
+import { useDeleteCustomInvitationMutation } from '~/generated/graphql';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -29,6 +33,7 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const SettingsWorkspaceMembers = () => {
+  const { enqueueSnackBar } = useSnackBar();
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
     string | undefined
@@ -41,6 +46,8 @@ export const SettingsWorkspaceMembers = () => {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
+  const [deleteCustomInvitationMutation] = useDeleteCustomInvitationMutation();
+
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -50,7 +57,28 @@ export const SettingsWorkspaceMembers = () => {
   };
 
   const handleRemoveWorkspaceInvitation = async (invitationId: string) => {
-    console.log('>>>>>>>>>>>>>>', 'Remove invitation ', invitationId);
+    const deletionInvitationResponse = await deleteCustomInvitationMutation({
+      variables: {
+        invitationId,
+      },
+    });
+    // TODO: What the best practice to refresh the UI here?
+    if (
+      isDefined(deletionInvitationResponse.errors) ||
+      deletionInvitationResponse.data?.deleteCustomInvitation === 'error'
+    ) {
+      enqueueSnackBar('Error deleting invitation', {
+        variant: SnackBarVariant.Error,
+        duration: 2000,
+      });
+    } else if (
+      deletionInvitationResponse.data?.deleteCustomInvitation === 'success'
+    ) {
+      enqueueSnackBar('Invitation successfully deleted', {
+        variant: SnackBarVariant.Success,
+        duration: 2000,
+      });
+    }
   };
 
   const handleResendWorkspaceInvitation = async (invitationId: string) => {
@@ -113,38 +141,32 @@ export const SettingsWorkspaceMembers = () => {
               title="Invitations"
               description="Manage the invitation of your space here"
             />
-            {currentWorkspace.workspaceInvitations?.map(
-              (workspaceInvitation) => (
-                <WorkspaceMemberCard
-                  key={workspaceInvitation.id}
-                  workspaceMember={workspaceInvitation as WorkspaceInvitation}
-                  accessory={
-                    <StyledButtonContainer>
-                      <IconButton
-                        onClick={() => {
-                          handleResendWorkspaceInvitation(
-                            workspaceInvitation.id,
-                          );
-                        }}
-                        variant="tertiary"
-                        size="medium"
-                        Icon={IconReload}
-                      />
-                      <IconButton
-                        onClick={() => {
-                          handleRemoveWorkspaceInvitation(
-                            workspaceInvitation.id,
-                          );
-                        }}
-                        variant="tertiary"
-                        size="medium"
-                        Icon={IconTrash}
-                      />
-                    </StyledButtonContainer>
-                  }
-                />
-              ),
-            )}
+            {workspaceInvitations.map((workspaceInvitation) => (
+              <WorkspaceMemberCard
+                key={workspaceInvitation.id}
+                workspaceMember={workspaceInvitation as WorkspaceInvitation}
+                accessory={
+                  <StyledButtonContainer>
+                    <IconButton
+                      onClick={() => {
+                        handleResendWorkspaceInvitation(workspaceInvitation.id);
+                      }}
+                      variant="tertiary"
+                      size="medium"
+                      Icon={IconReload}
+                    />
+                    <IconButton
+                      onClick={() => {
+                        handleRemoveWorkspaceInvitation(workspaceInvitation.id);
+                      }}
+                      variant="tertiary"
+                      size="medium"
+                      Icon={IconTrash}
+                    />
+                  </StyledButtonContainer>
+                }
+              />
+            ))}
           </Section>
         )}
       </SettingsPageContainer>

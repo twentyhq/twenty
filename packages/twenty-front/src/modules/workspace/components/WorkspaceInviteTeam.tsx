@@ -89,6 +89,7 @@ export const WorkspaceInviteTeam = () => {
       variant: SnackBarVariant.Success,
       duration: 2000,
     });
+    // TODO: What the best practice to refresh the UI here?
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
