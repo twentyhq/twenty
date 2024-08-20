@@ -1,14 +1,15 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { RunWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-workflow-version-input.dto';
 import { WorkflowRunDTO } from 'src/engine/core-modules/workflow/dtos/workflow-run.dto';
-import { workflowTriggerGraphqlApiExceptionHandler } from 'src/engine/core-modules/workflow/utils/workflow-trigger-graphql-api-exception-handler.util';
+import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/services/workflow-trigger.workspace-service';
 
-@UseGuards(JwtAuthGuard)
 @Resolver()
+@UseGuards(JwtAuthGuard)
+@UseFilters(WorkflowTriggerGraphqlApiExceptionFilter)
 export class WorkflowTriggerResolver {
   constructor(
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
@@ -18,26 +19,18 @@ export class WorkflowTriggerResolver {
   async enableWorkflowTrigger(
     @Args('workflowVersionId') workflowVersionId: string,
   ) {
-    try {
-      return await this.workflowTriggerWorkspaceService.enableWorkflowTrigger(
-        workflowVersionId,
-      );
-    } catch (error) {
-      workflowTriggerGraphqlApiExceptionHandler(error);
-    }
+    return await this.workflowTriggerWorkspaceService.enableWorkflowTrigger(
+      workflowVersionId,
+    );
   }
 
   @Mutation(() => WorkflowRunDTO)
   async runWorkflowVersion(
     @Args('input') { workflowVersionId, payload }: RunWorkflowVersionInput,
   ) {
-    try {
-      return await this.workflowTriggerWorkspaceService.runWorkflowVersion(
-        workflowVersionId,
-        payload ?? {},
-      );
-    } catch (error) {
-      workflowTriggerGraphqlApiExceptionHandler(error);
-    }
+    return await this.workflowTriggerWorkspaceService.runWorkflowVersion(
+      workflowVersionId,
+      payload ?? {},
+    );
   }
 }
