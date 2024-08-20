@@ -21,7 +21,6 @@ import { TokenService } from 'src/engine/core-modules/auth/services/token.servic
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 
 @Controller('auth/google-apis')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -31,7 +30,6 @@ export class GoogleAPIsAuthController {
     private readonly tokenService: TokenService,
     private readonly environmentService: EnvironmentService,
     private readonly onboardingService: OnboardingService,
-    private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
   ) {}
 
   @Get()
@@ -80,13 +78,7 @@ export class GoogleAPIsAuthController {
 
     const handle = emails[0].value;
 
-    const googleAPIsServiceInstance =
-      await this.loadServiceWithWorkspaceContext.load(
-        this.googleAPIsService,
-        workspaceId,
-      );
-
-    await googleAPIsServiceInstance.refreshGoogleRefreshToken({
+    await this.googleAPIsService.refreshGoogleRefreshToken({
       handle,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
@@ -97,13 +89,7 @@ export class GoogleAPIsAuthController {
     });
 
     if (userId) {
-      const onboardingServiceInstance =
-        await this.loadServiceWithWorkspaceContext.load(
-          this.onboardingService,
-          workspaceId,
-        );
-
-      await onboardingServiceInstance.setOnboardingConnectAccountPending({
+      await this.onboardingService.setOnboardingConnectAccountPending({
         userId,
         workspaceId,
         value: false,

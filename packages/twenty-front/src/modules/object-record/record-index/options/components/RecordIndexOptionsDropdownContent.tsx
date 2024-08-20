@@ -8,6 +8,7 @@ import {
   IconFileImport,
   IconSettings,
   IconTag,
+  IconTrash,
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -37,6 +38,7 @@ import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 
 type RecordIndexOptionsMenu = 'fields' | 'hiddenFields';
 
@@ -87,6 +89,11 @@ export const RecordIndexOptionsDropdownContent = ({
     visibleTableColumns,
     hiddenTableColumns,
   } = useRecordIndexOptionsForTable(recordIndexId);
+
+  const handleToggleTrashColumnFilter = useHandleToggleTrashColumnFilter({
+    objectNameSingular,
+    viewBarId: recordIndexId,
+  });
 
   const {
     visibleBoardFields,
@@ -152,6 +159,14 @@ export const RecordIndexOptionsDropdownContent = ({
             onClick={download}
             LeftIcon={IconFileExport}
             text={displayedExportProgress(progress)}
+          />
+          <MenuItem
+            onClick={() => {
+              handleToggleTrashColumnFilter();
+              closeDropdown();
+            }}
+            LeftIcon={IconTrash}
+            text="Trash"
           />
         </DropdownMenuItemsContainer>
       )}

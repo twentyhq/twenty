@@ -32,7 +32,7 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(3.5)};
   height: 100%;
   min-width: ${DESKTOP_NAV_DRAWER_WIDTHS.menu}px;
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};

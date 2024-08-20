@@ -36,6 +36,7 @@ export class MessagingMessagesImportCronJob {
 
   @Process(MessagingMessagesImportCronJob.name)
   async handle(): Promise<void> {
+    console.time('MessagingMessagesImportCronJob time');
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -69,5 +70,7 @@ export class MessagingMessagesImportCronJob {
         }
       }
     }
+
+    console.timeEnd('MessagingMessagesImportCronJob time');
   }
 }
