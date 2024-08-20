@@ -31,7 +31,7 @@ export class MessagingMessagesImportService {
 
   constructor(
     private readonly fetchMessagesByBatchesService: MessagingGmailFetchMessagesByBatchesService,
-    @InjectCacheStorage(CacheStorageNamespace.Messaging)
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,

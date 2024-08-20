@@ -35,6 +35,8 @@ export class MessagingMessagesImportJob {
 
   @Process(MessagingMessagesImportJob.name)
   async handle(data: MessagingMessagesImportJobData): Promise<void> {
+    console.time('MessagingMessagesImportJob time');
+
     const { messageChannelId, workspaceId } = data;
 
     await this.messagingTelemetryService.track({
@@ -95,5 +97,7 @@ export class MessagingMessagesImportJob {
       connectedAccount,
       workspaceId,
     );
+
+    console.timeEnd('MessagingMessagesImportJob time');
   }
 }
