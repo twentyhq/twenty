@@ -32,7 +32,7 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
              ...options,
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
-+                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
@@ -79,7 +79,7 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
              ...options,
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
-+                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
@@ -146,7 +146,7 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
              ...options,
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
-+                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
@@ -193,7 +193,7 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
              ...options,
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
-+                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceCacheVersion = request.req.workspaceMetadataVersion ?? '0'
 +                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
@@ -387,7 +387,7 @@ index ce142f61ede52499485b19d8af057f4cb828d0f7..5888d31cae1b7aca57ed0819209812ac
        ...options,
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
-+        const workspaceCacheVersion = request.req.cacheVersion
++        const workspaceCacheVersion = request.req.workspaceMetadataVersion
 +        const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +        const url = request.req.baseUrl
 +
@@ -448,7 +448,7 @@ index ce142f61ede52499485b19d8af057f4cb828d0f7..5888d31cae1b7aca57ed0819209812ac
        ...options,
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
-+        const workspaceCacheVersion = request.req.cacheVersion
++        const workspaceCacheVersion = request.req.workspaceMetadataVersion
 +        const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +        const url = request.req.baseUrl
 +

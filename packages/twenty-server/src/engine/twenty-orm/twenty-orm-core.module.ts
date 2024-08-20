@@ -14,8 +14,7 @@ import {
 
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
-import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
@@ -33,21 +32,15 @@ export const workspaceDataSourceCacheInstance =
   imports: [
     TypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
     DataSourceModule,
-    WorkspaceCacheVersionModule,
     WorkspaceCacheStorageModule,
+    WorkspaceMetadataVersionModule,
   ],
   providers: [
     ...entitySchemaFactories,
     TwentyORMManager,
     TwentyORMGlobalManager,
-    LoadServiceWithWorkspaceContext,
   ],
-  exports: [
-    EntitySchemaFactory,
-    TwentyORMManager,
-    LoadServiceWithWorkspaceContext,
-    TwentyORMGlobalManager,
-  ],
+  exports: [EntitySchemaFactory, TwentyORMManager, TwentyORMGlobalManager],
 })
 export class TwentyORMCoreModule
   extends ConfigurableModuleClass

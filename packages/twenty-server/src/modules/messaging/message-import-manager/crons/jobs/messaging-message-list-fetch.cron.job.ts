@@ -33,6 +33,8 @@ export class MessagingMessageListFetchCronJob {
 
   @Process(MessagingMessageListFetchCronJob.name)
   async handle(): Promise<void> {
+    console.time('MessagingMessageListFetchCronJob time');
+
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -66,5 +68,7 @@ export class MessagingMessageListFetchCronJob {
         }
       }
     }
+
+    console.timeEnd('MessagingMessageListFetchCronJob time');
   }
 }

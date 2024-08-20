@@ -32,6 +32,8 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
   async handle(): Promise<void> {
     this.logger.log('Starting message channel sync status monitoring...');
 
+    console.time('MessagingMessageChannelSyncStatusMonitoringCronJob time');
+
     await this.messagingTelemetryService.track({
       eventName: 'message_channel.monitoring.sync_status.start',
       message: 'Starting message channel sync status monitoring',
@@ -68,5 +70,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
         });
       }
     }
+
+    console.timeEnd('MessagingMessageChannelSyncStatusMonitoringCronJob time');
   }
 }
