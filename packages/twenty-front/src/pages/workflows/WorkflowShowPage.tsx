@@ -1,44 +1,29 @@
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
-import {
-  Workflow,
-  WorkflowAction,
-  WorkflowTrigger,
-} from '@/workflow/types/workflow';
+import { currentWorkflowState } from '@/workflow/states/currentWorkflowState';
+import { FlowData } from '@/workflow/types/workflow';
 import Dagre from '@dagrejs/dagre';
 import {
   Background,
   Edge,
-  Handle,
-  MarkerType,
   Node,
-  Position,
   ReactFlow,
   useEdgesState,
   useNodesState,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useEffect, useMemo } from 'react';
-import { GRAY_SCALE, IconPlus, IconSettingsAutomation } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
+import { GRAY_SCALE, IconSettingsAutomation } from 'twenty-ui';
+import { WorkflowShowPageEffect } from '~/pages/workflows/WorkflowShowPageEffect';
 import { WorkflowShowPageHeader } from '~/pages/workflows/WorkflowShowPageHeader';
-
-type WorkflowNodeData = {
-  nodeType: 'trigger' | 'condition' | 'action';
-  label: string;
-};
-
-const generateId = () => {
-  return Math.random().toString(16).slice(2);
-};
+import { CreateStepNode } from '~/pages/workflows/nodes/CreateStepNode';
+import { StepNode } from '~/pages/workflows/nodes/StepNode';
+import { WorkflowNodeData } from '~/pages/workflows/nodes/base';
 
 const StyledFlowContainer = styled.div`
   height: 100%;
@@ -57,43 +42,6 @@ const StyledFlowContainer = styled.div`
   --xy-node-boxshadow-hover: none;
   --xy-node-boxshadow-selected: none;
 `;
-
-const addCreateStepNodes = (
-  nodes: Array<Node<WorkflowNodeData>>,
-  edges: Array<Edge>,
-) => {
-  const nodesWithoutTargets = nodes.filter((n) =>
-    edges.every((e) => e.source !== n.id),
-  );
-
-  const updatedNodes: typeof nodes = nodes.slice();
-  const updatedEdges: typeof edges = edges.slice();
-
-  for (const n of nodesWithoutTargets) {
-    const newCreateStepNode: Node<WorkflowNodeData> = {
-      id: generateId(),
-      type: 'create-step',
-      data: {},
-      position: { x: 0, y: 0 },
-    };
-
-    updatedNodes.push(newCreateStepNode);
-
-    updatedEdges.push({
-      id: generateId(),
-      source: n.id,
-      target: newCreateStepNode.id,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-      },
-    });
-  }
-
-  return {
-    nodes: updatedNodes,
-    edges: updatedEdges,
-  };
-};
 
 const getLayoutedElements = (
   nodes: Array<Node<WorkflowNodeData>>,
@@ -127,100 +75,23 @@ const getLayoutedElements = (
   };
 };
 
-const workflowTriggerToFlow = (trigger: WorkflowTrigger) => {
-  const nodes: Array<Node<WorkflowNodeData>> = [];
-  const edges: Array<Edge> = [];
-
-  // Helper function to generate nodes and edges recursively
-  const generateFlow = (
-    action: WorkflowAction,
-    parentNodeId: string,
-    xPos: number,
-    yPos: number,
-  ) => {
-    const nodeId = generateId();
-    nodes.push({
-      id: nodeId,
-      data: {
-        nodeType: 'action',
-        label: action.name,
-      },
-      position: {
-        x: xPos,
-        y: yPos,
-      },
-    });
-
-    // Create an edge from the parent node to this node
-    edges.push({
-      id: generateId(),
-      source: parentNodeId,
-      target: nodeId,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-      },
-    });
-
-    // Recursively generate flow for the next action if it exists
-    if (action.nextAction !== undefined) {
-      generateFlow(action.nextAction, nodeId, xPos + 150, yPos + 100);
-    }
-  };
-
-  // Start with the trigger node
-  const triggerNodeId = generateId();
-  nodes.push({
-    id: triggerNodeId,
-    data: {
-      nodeType: 'trigger',
-      label: trigger.settings.triggerName,
-    },
-    position: {
-      x: 0,
-      y: 0,
-    },
-  });
-
-  // If there's a next action, start the recursive generation
-  if (trigger.nextAction !== undefined) {
-    generateFlow(trigger.nextAction, triggerNodeId, 150, 100);
-  }
-
-  return {
-    nodes,
-    edges,
-  };
-};
-
-const LoadedWorkflow = ({ workflow }: { workflow: Workflow }) => {
-  const { nodes: baseNodes, edges: baseEdges } = useMemo(() => {
-    const lastVersion = workflow.versions[0];
-    if (lastVersion === undefined || lastVersion.trigger === undefined) {
-      return {
-        nodes: [],
-        edges: [],
-      };
-    }
-
-    return workflowTriggerToFlow(lastVersion.trigger);
-  }, [workflow]);
-
-  const { nodes: nodesWithStepNodes, edges: edgesWithStepNodes } = useMemo(
-    () => addCreateStepNodes(baseNodes, baseEdges),
-    [baseNodes, baseEdges],
+const LoadedWorkflow = ({ flowData }: { flowData: FlowData }) => {
+  const [rawNodes, setRawNodes, onRawNodesChange] = useNodesState(
+    flowData.nodes,
+  );
+  const [rawEdges, setRawEdges, onRawEdgesChange] = useEdgesState(
+    flowData.edges,
   );
 
-  const [rawNodes, setRawNodes, onRawNodesChange] =
-    useNodesState(nodesWithStepNodes);
-  const [rawEdges, setRawEdges, onRawEdgesChange] =
-    useEdgesState(edgesWithStepNodes);
-
   useEffect(() => {
-    setRawNodes(nodesWithStepNodes);
-    setRawEdges(edgesWithStepNodes);
-  }, [nodesWithStepNodes, edgesWithStepNodes, setRawNodes, setRawEdges]);
+    setRawNodes(flowData.nodes);
+    setRawEdges(flowData.edges);
+  }, [setRawNodes, setRawEdges, flowData.nodes, flowData.edges]);
 
-  const { nodes, edges } = getLayoutedElements(rawNodes, rawEdges);
+  const { nodes, edges } = useMemo(
+    () => getLayoutedElements(rawNodes, rawEdges),
+    [rawNodes, rawEdges],
+  );
 
   return (
     <ReactFlow
@@ -243,25 +114,19 @@ export const WorkflowShowPage = () => {
   const parameters = useParams<{
     workflowId: string;
   }>();
+
   const workflowName = 'Test Workflow';
 
-  const {
-    record: workflow,
-    loading,
-    error,
-  } = useFindOneRecord<Workflow>({
-    objectNameSingular: CoreObjectNameSingular.Workflow,
-    objectRecordId: parameters.workflowId,
-    recordGqlFields: {
-      id: true,
-      name: true,
-      versions: true,
-      publishedVersionId: true,
-    },
-  });
+  const currentWorkflow = useRecoilValue(currentWorkflowState);
+
+  if (parameters.workflowId === undefined) {
+    return null;
+  }
 
   return (
     <PageContainer>
+      <WorkflowShowPageEffect workflowId={parameters.workflowId} />
+
       <PageTitle title={workflowName} />
       <WorkflowShowPageHeader
         workflowName={workflowName}
@@ -269,107 +134,11 @@ export const WorkflowShowPage = () => {
       ></WorkflowShowPageHeader>
       <PageBody>
         <StyledFlowContainer>
-          {workflow === undefined ? null : (
-            <LoadedWorkflow workflow={workflow} />
+          {currentWorkflow.data === undefined ? null : (
+            <LoadedWorkflow flowData={currentWorkflow.data} />
           )}
         </StyledFlowContainer>
       </PageBody>
     </PageContainer>
-  );
-};
-
-const StyledStepNodeContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  padding-bottom: 12px;
-  padding-top: 6px;
-`;
-
-const StyledStepNodeType = styled.div`
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm}
-    ${({ theme }) => theme.border.radius.sm} 0 0;
-
-  color: ${({ theme }) => theme.color.gray50};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-
-  padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  top: 0;
-  transform: translateY(-100%);
-
-  .selectable.selected &,
-  .selectable:focus &,
-  .selectable:focus-visible & {
-    background-color: ${({ theme }) => theme.color.blue};
-    color: ${({ theme }) => theme.font.color.inverted};
-  }
-`;
-
-const StyledStepNodeInnerContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-
-  position: relative;
-  box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
-
-  .selectable.selected &,
-  .selectable:focus &,
-  .selectable:focus-visible & {
-    background-color: ${({ theme }) => theme.color.blue10};
-    border-color: ${({ theme }) => theme.color.blue};
-  }
-`;
-
-const StyledStepNodeLabel = styled.div`
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
-const StyledTargetHandle = styled(Handle)`
-  visibility: hidden;
-`;
-
-const StyledSourceHandle = styled(Handle)`
-  background-color: ${({ theme }) => theme.color.gray50};
-`;
-
-const StepNode = ({ data }: { data: WorkflowNodeData }) => {
-  return (
-    <StyledStepNodeContainer>
-      {data.nodeType !== 'trigger' ? (
-        <StyledTargetHandle type="target" position={Position.Top} />
-      ) : null}
-
-      <StyledStepNodeInnerContainer>
-        <StyledStepNodeType>{data.nodeType}</StyledStepNodeType>
-
-        <StyledStepNodeLabel>{data.label}</StyledStepNodeLabel>
-      </StyledStepNodeInnerContainer>
-
-      <StyledSourceHandle type="source" position={Position.Bottom} />
-    </StyledStepNodeContainer>
-  );
-};
-
-const CreateStepNode = () => {
-  const { openRightDrawer } = useRightDrawer();
-
-  function handleCreateStepNodeButtonClick() {
-    openRightDrawer(RightDrawerPages.Workflow);
-  }
-
-  return (
-    <div>
-      <StyledTargetHandle type="target" position={Position.Top} />
-
-      <IconButton Icon={IconPlus} onClick={handleCreateStepNodeButtonClick} />
-    </div>
   );
 };

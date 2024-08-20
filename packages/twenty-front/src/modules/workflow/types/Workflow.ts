@@ -1,3 +1,6 @@
+import { Edge, Node } from '@xyflow/react';
+import { WorkflowNodeData } from '~/pages/workflows/nodes/base';
+
 type WorkflowBaseSettingsType = {
   errorHandlingOptions: {
     retryOnFailure: {
@@ -69,3 +72,8 @@ export type Workflow = {
   versions: Array<WorkflowVersion>;
   publishedVersionId: string;
 };
+
+export interface FlowData {
+  nodes: Array<Node<WorkflowNodeData>>;
+  edges: Array<Edge>;
+}
