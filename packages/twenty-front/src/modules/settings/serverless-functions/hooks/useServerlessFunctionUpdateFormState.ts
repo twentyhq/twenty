@@ -19,6 +19,7 @@ type SetServerlessFunctionFormValues = Dispatch<
 export const useServerlessFunctionUpdateFormState = (
   serverlessFunctionId: string,
 ): [ServerlessFunctionFormValues, SetServerlessFunctionFormValues] => {
+  const [isInitialized, setIsInitialized] = useState(false);
   const [formValues, setFormValues] = useState<ServerlessFunctionFormValues>({
     name: '',
     description: '',
@@ -46,12 +47,13 @@ export const useServerlessFunctionUpdateFormState = (
           ...prevState,
           ...newState,
         }));
+        setIsInitialized(true);
       }
     };
-    if (isDefined(serverlessFunction?.sourceCodeFullPath)) {
+    if (isDefined(serverlessFunction?.sourceCodeFullPath) && !isInitialized) {
       getFileContent();
     }
-  }, [serverlessFunction, setFormValues]);
+  }, [serverlessFunction, setFormValues, isInitialized, setIsInitialized]);
 
   return [formValues, setFormValues];
 };
