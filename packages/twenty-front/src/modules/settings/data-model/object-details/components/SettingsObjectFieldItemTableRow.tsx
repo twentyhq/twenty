@@ -15,12 +15,17 @@ import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { RelationMetadataType } from '~/generated-metadata/graphql';
@@ -61,6 +66,10 @@ export const SettingsObjectFieldItemTableRow = ({
 
   const navigate = useNavigate();
 
+  const [navigationMemorizedUrl, setNavigationMemorizedUrl] = useRecoilState(
+    navigationMemorizedUrlState,
+  );
+
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(fieldMetadataItem.icon);
@@ -100,8 +109,41 @@ export const SettingsObjectFieldItemTableRow = ({
     deleteMetadataField,
   } = useFieldMetadataItem();
 
-  const handleDisableField = (activeFieldMetadatItem: FieldMetadataItem) => {
-    deactivateMetadataField(activeFieldMetadatItem);
+  const { records: allViews } = usePrefetchedData(PrefetchKey.AllViews);
+
+  const deleteRecordFromCache = useDeleteRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.View,
+  });
+
+  const handleDisableField = async (
+    activeFieldMetadatItem: FieldMetadataItem,
+  ) => {
+    await deactivateMetadataField(activeFieldMetadatItem);
+
+    const deletedViewIds = allViews
+      .map((view) => {
+        if (view.kanbanFieldMetadataId === activeFieldMetadatItem.id) {
+          deleteRecordFromCache(view);
+          return view.id;
+        }
+
+        return null;
+      })
+      .filter(isDefined);
+
+    const [baseUrl, queryParams] = navigationMemorizedUrl.includes('?')
+      ? navigationMemorizedUrl.split('?')
+      : [navigationMemorizedUrl, ''];
+    const params = new URLSearchParams(queryParams);
+    const currentViewId = params.get('view');
+
+    if (isDefined(currentViewId) && deletedViewIds.includes(currentViewId)) {
+      params.delete('view');
+      const updatedUrl = params.toString()
+        ? `${baseUrl}?${params.toString()}`
+        : baseUrl;
+      setNavigationMemorizedUrl(updatedUrl);
+    }
   };
 
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
