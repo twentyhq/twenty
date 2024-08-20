@@ -1,6 +1,8 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { currentWorkflowState } from '@/workflow/states/currentWorkflowState';
+import { currentWorkflowDataState } from '@/workflow/states/currentWorkflowDataState';
+import { currentWorkflowErrorState } from '@/workflow/states/currentWorkflowErrorState';
+import { currentWorkflowLoadingState } from '@/workflow/states/currentWorkflowLoadingState';
 import {
   FlowData,
   Workflow,
@@ -168,15 +170,25 @@ export const WorkflowShowPageEffect = ({
     [flowLastVersion],
   );
 
-  const setCurrentWorkflow = useSetRecoilState(currentWorkflowState);
+  const setCurrentWorkflowData = useSetRecoilState(currentWorkflowDataState);
+  const setCurrentWorkflowLoading = useSetRecoilState(
+    currentWorkflowLoadingState,
+  );
+  const setCurrentWorkflowError = useSetRecoilState(currentWorkflowErrorState);
 
   useEffect(() => {
-    setCurrentWorkflow({
-      data: workflow === undefined ? undefined : flowWithCreateStepNodes,
-      loading,
-      error,
-    });
-  }, [error, flowWithCreateStepNodes, loading, setCurrentWorkflow, workflow]);
+    setCurrentWorkflowData(
+      workflow === undefined ? undefined : flowWithCreateStepNodes,
+    );
+  }, [flowWithCreateStepNodes, setCurrentWorkflowData, workflow]);
+
+  useEffect(() => {
+    setCurrentWorkflowLoading(loading);
+  }, [loading, setCurrentWorkflowLoading]);
+
+  useEffect(() => {
+    setCurrentWorkflowError(error);
+  }, [error, setCurrentWorkflowError]);
 
   return null;
 };

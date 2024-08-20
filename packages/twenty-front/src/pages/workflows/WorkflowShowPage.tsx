@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
-import { currentWorkflowState } from '@/workflow/states/currentWorkflowState';
+import { currentWorkflowDataState } from '@/workflow/states/currentWorkflowDataState';
 import { FlowData } from '@/workflow/types/Workflow';
 import Dagre from '@dagrejs/dagre';
 import {
@@ -117,7 +117,7 @@ export const WorkflowShowPage = () => {
 
   const workflowName = 'Test Workflow';
 
-  const currentWorkflow = useRecoilValue(currentWorkflowState);
+  const currentWorkflowData = useRecoilValue(currentWorkflowDataState);
 
   if (parameters.workflowId === undefined) {
     return null;
@@ -134,8 +134,8 @@ export const WorkflowShowPage = () => {
       ></WorkflowShowPageHeader>
       <PageBody>
         <StyledFlowContainer>
-          {currentWorkflow.data === undefined ? null : (
-            <LoadedWorkflow flowData={currentWorkflow.data} />
+          {currentWorkflowData === undefined ? null : (
+            <LoadedWorkflow flowData={currentWorkflowData} />
           )}
         </StyledFlowContainer>
       </PageBody>
