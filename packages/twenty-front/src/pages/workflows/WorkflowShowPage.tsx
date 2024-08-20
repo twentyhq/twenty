@@ -6,6 +6,7 @@ import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { currentWorkflowDataState } from '@/workflow/states/currentWorkflowDataState';
 import { WorkflowDiagram } from '@/workflow/types/Workflow';
+import { WorkflowDiagramNodeData } from '@/workflow/types/WorkflowDiagram';
 import Dagre from '@dagrejs/dagre';
 import {
   Background,
@@ -23,7 +24,6 @@ import { WorkflowShowPageEffect } from '~/pages/workflows/WorkflowShowPageEffect
 import { WorkflowShowPageHeader } from '~/pages/workflows/WorkflowShowPageHeader';
 import { CreateStepNode } from '~/pages/workflows/nodes/CreateStepNode';
 import { StepNode } from '~/pages/workflows/nodes/StepNode';
-import { WorkflowDiagramNodeData } from '~/pages/workflows/nodes/base';
 
 const StyledFlowContainer = styled.div`
   height: 100%;

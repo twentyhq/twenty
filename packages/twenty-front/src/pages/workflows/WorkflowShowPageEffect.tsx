@@ -9,10 +9,10 @@ import {
   WorkflowDiagram,
   WorkflowTrigger,
 } from '@/workflow/types/Workflow';
+import { WorkflowDiagramNodeData } from '@/workflow/types/WorkflowDiagram';
 import { Edge, MarkerType, Node } from '@xyflow/react';
 import { useEffect, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { WorkflowDiagramNodeData } from '~/pages/workflows/nodes/base';
 
 type WorkflowShowPageEffectProps = {
   workflowId: string;

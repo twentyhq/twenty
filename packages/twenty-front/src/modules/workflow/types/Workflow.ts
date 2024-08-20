@@ -1,5 +1,5 @@
+import { WorkflowDiagramNodeData } from '@/workflow/types/WorkflowDiagram';
 import { Edge, Node } from '@xyflow/react';
-import { WorkflowDiagramNodeData } from '~/pages/workflows/nodes/base';
 
 type WorkflowBaseSettingsType = {
   errorHandlingOptions: {
