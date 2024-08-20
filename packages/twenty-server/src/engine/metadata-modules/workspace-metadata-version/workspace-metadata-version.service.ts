@@ -51,6 +51,8 @@ export class WorkspaceMetadataVersionService {
       { metadataVersion: newMetadataVersion },
     );
 
+    await this.workspaceCacheStorageService.flush(workspaceId);
+
     await this.workspaceCacheStorageService.setMetadataVersion(
       workspaceId,
       newMetadataVersion,
