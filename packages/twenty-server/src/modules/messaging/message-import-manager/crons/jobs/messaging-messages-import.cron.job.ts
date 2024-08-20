@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -24,8 +23,6 @@ import {
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessagesImportCronJob {
-  private readonly logger = new Logger(MessagingMessagesImportCronJob.name);
-
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
