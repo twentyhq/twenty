@@ -6,15 +6,15 @@ import {
   Workflow,
   WorkflowAction,
   WorkflowTrigger,
-} from '@/workflow/types/workflow';
+} from '@/workflow/types/Workflow';
 import { Edge, MarkerType, Node } from '@xyflow/react';
 import { useEffect, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { WorkflowNodeData } from '~/pages/workflows/nodes/base';
 
-interface WorkflowShowPageEffectProps {
+type WorkflowShowPageEffectProps = {
   workflowId: string;
-}
+};
 
 const EMPTY_FLOW_DATA: FlowData = {
   nodes: [],
@@ -107,14 +107,14 @@ const addCreateStepNodes = (
   nodes: Array<Node<WorkflowNodeData>>,
   edges: Array<Edge>,
 ) => {
-  const nodesWithoutTargets = nodes.filter((n) =>
-    edges.every((e) => e.source !== n.id),
+  const nodesWithoutTargets = nodes.filter((node) =>
+    edges.every((edge) => edge.source !== node.id),
   );
 
   const updatedNodes: typeof nodes = nodes.slice();
   const updatedEdges: typeof edges = edges.slice();
 
-  for (const n of nodesWithoutTargets) {
+  for (const node of nodesWithoutTargets) {
     const newCreateStepNode: Node<WorkflowNodeData> = {
       id: generateId(),
       type: 'create-step',
@@ -126,7 +126,7 @@ const addCreateStepNodes = (
 
     updatedEdges.push({
       id: generateId(),
-      source: n.id,
+      source: node.id,
       target: newCreateStepNode.id,
       markerEnd: {
         type: MarkerType.ArrowClosed,

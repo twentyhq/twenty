@@ -5,7 +5,7 @@ import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { currentWorkflowState } from '@/workflow/states/currentWorkflowState';
-import { FlowData } from '@/workflow/types/workflow';
+import { FlowData } from '@/workflow/types/Workflow';
 import Dagre from '@dagrejs/dagre';
 import {
   Background,
@@ -47,23 +47,23 @@ const getLayoutedElements = (
   nodes: Array<Node<WorkflowNodeData>>,
   edges: Array<Edge>,
 ) => {
-  const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  g.setGraph({ rankdir: 'TB' });
+  const graph = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+  graph.setGraph({ rankdir: 'TB' });
 
-  edges.forEach((edge) => g.setEdge(edge.source, edge.target));
+  edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
   nodes.forEach((node) =>
-    g.setNode(node.id, {
+    graph.setNode(node.id, {
       ...node,
       width: node.measured?.width ?? 0,
       height: node.measured?.height ?? 0,
     }),
   );
 
-  Dagre.layout(g);
+  Dagre.layout(graph);
 
   return {
     nodes: nodes.map((node) => {
-      const position = g.node(node.id);
+      const position = graph.node(node.id);
       // We are shifting the dagre node position (anchor=center center) to the top left
       // so it matches the React Flow node anchor point (top left).
       const x = position.x - (node.measured?.width ?? 0) / 2;
@@ -100,7 +100,7 @@ const LoadedWorkflow = ({ flowData }: { flowData: FlowData }) => {
         'create-step': CreateStepNode,
       }}
       fitView
-      nodes={nodes.map((n) => ({ ...n, draggable: false }))}
+      nodes={nodes.map((node) => ({ ...node, draggable: false }))}
       edges={edges}
       onNodesChange={onRawNodesChange}
       onEdgesChange={onRawEdgesChange}

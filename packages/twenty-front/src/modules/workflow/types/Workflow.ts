@@ -73,7 +73,7 @@ export type Workflow = {
   publishedVersionId: string;
 };
 
-export interface FlowData {
+export type FlowData = {
   nodes: Array<Node<WorkflowNodeData>>;
   edges: Array<Edge>;
-}
+};

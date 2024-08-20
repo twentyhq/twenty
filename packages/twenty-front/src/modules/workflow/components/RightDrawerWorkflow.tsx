@@ -27,7 +27,7 @@ const StyledNewMessageArea = styled.div`
 `;
 
 export const RightDrawerWorkflow = () => {
-  function handleCreateCodeBlock() {}
+  const handleCreateCodeBlock = () => {};
 
   return (
     <StyledContainer>
