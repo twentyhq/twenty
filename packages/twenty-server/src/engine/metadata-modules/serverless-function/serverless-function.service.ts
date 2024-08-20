@@ -60,10 +60,10 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     if (
       functionToExecute.syncStatus === ServerlessFunctionSyncStatus.NOT_READY
     ) {
-      throw new ServerlessFunctionException(
-        `Function is not ready to be executed`,
-        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-      );
+      await this.serverlessService.build(functionToExecute);
+      await super.updateOne(functionToExecute.id, {
+        syncStatus: ServerlessFunctionSyncStatus.READY,
+      });
     }
 
     return this.serverlessService.execute(functionToExecute, payload);
@@ -112,6 +112,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     await super.updateOne(existingServerlessFunction.id, {
       name: serverlessFunctionInput.name,
       description: serverlessFunctionInput.description,
+      syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
       sourceCodeHash: serverlessFunctionCreateHash(
         serverlessFunctionInput.code,
       ),
@@ -130,8 +131,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
         mimeType: undefined,
         folder: fileFolder,
       });
-
-      await this.serverlessService.build(existingServerlessFunction);
     }
 
     return await this.findById(existingServerlessFunction.id);
@@ -177,7 +176,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     const sourceCodeFullPath =
       fileFolderWithoutWorkspace + '/' + SOURCE_FILE_NAME;
 
-    const serverlessFunction = await super.createOne({
+    await super.createOne({
       ...serverlessFunctionInput,
       id: serverlessFunctionId,
       workspaceId,
@@ -190,11 +189,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       name: SOURCE_FILE_NAME,
       mimeType: undefined,
       folder: fileFolder,
-    });
-
-    await this.serverlessService.build(serverlessFunction);
-    await super.updateOne(serverlessFunctionId, {
-      syncStatus: ServerlessFunctionSyncStatus.READY,
     });
 
     return await this.findById(serverlessFunctionId);

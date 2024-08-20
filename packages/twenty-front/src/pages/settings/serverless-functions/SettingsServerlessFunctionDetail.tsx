@@ -71,7 +71,6 @@ export const SettingsServerlessFunctionDetail = () => {
   };
 
   const handleExecute = async () => {
-    await handleSave();
     try {
       const result = await executeOneServerlessFunction(
         serverlessFunctionId,

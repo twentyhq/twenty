@@ -9,6 +9,7 @@ import {
   UpdateFunctionCodeCommand,
   DeleteFunctionCommand,
   ResourceNotFoundException,
+  waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
 import { CreateFunctionCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/CreateFunctionCommand';
 import { UpdateFunctionCodeCommandInput } from '@aws-sdk/client-lambda/dist-types/commands/UpdateFunctionCodeCommand';
@@ -130,6 +131,12 @@ export class LambdaDriver
       const command = new UpdateFunctionCodeCommand(params);
 
       await this.lambdaClient.send(command);
+      const waitParams = { FunctionName: serverlessFunction.id };
+
+      await waitUntilFunctionUpdatedV2(
+        { client: this.lambdaClient, maxWaitTime: 2 },
+        waitParams,
+      );
     }
 
     await this.buildDirectoryManagerService.clean();
