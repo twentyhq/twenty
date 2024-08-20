@@ -145,7 +145,7 @@ export class CalendarSaveEventsService {
       [
         {
           workspaceMemberId: connectedAccount.accountOwnerId,
-          calendarEventParticipants: savedCalendarEventParticipantsToEmit,
+          participants: savedCalendarEventParticipantsToEmit,
         },
       ],
       workspaceId,

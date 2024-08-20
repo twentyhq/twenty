@@ -8,6 +8,10 @@ export class WorkspaceEventEmitter {
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
   public emit(eventName: string, events: any[], workspaceId: string) {
+    if (!events.length) {
+      return;
+    }
+
     return this.eventEmitter.emit(eventName, {
       name: eventName,
       workspaceId,
