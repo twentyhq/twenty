@@ -4,13 +4,11 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 
 @Injectable()
-export class WorkspaceEventEmitter extends EventEmitter2 {
-  constructor() {
-    super();
-  }
+export class WorkspaceEventEmitter {
+  constructor(private readonly eventEmitter: EventEmitter2) {}
 
-  emit(eventName: string, events: any[], workspaceId: string) {
-    return super.emit(eventName, {
+  public emit(eventName: string, events: any[], workspaceId: string) {
+    return this.eventEmitter.emit(eventName, {
       name: eventName,
       workspaceId,
       events,
