@@ -6,7 +6,7 @@ import { EntitySchema, Repository } from 'typeorm';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { workspaceDataSourceCacheInstance } from 'src/engine/twenty-orm/twenty-orm-core.module';
@@ -18,7 +18,7 @@ export class WorkspaceDatasourceFactory {
     private readonly dataSourceService: DataSourceService,
     private readonly environmentService: EnvironmentService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly entitySchemaFactory: EntitySchemaFactory,
@@ -30,14 +30,18 @@ export class WorkspaceDatasourceFactory {
   ): Promise<WorkspaceDataSource> {
     const desiredWorkspaceSchemaVersion =
       workspaceSchemaVersion ??
-      (await this.workspaceCacheVersionService.getVersion(workspaceId));
+      (await this.workspaceMetadataVersionService.getMetadataVersion(
+        workspaceId,
+      ));
 
     if (!desiredWorkspaceSchemaVersion) {
       throw new Error('Cache version not found');
     }
 
     const latestWorkspaceSchemaVersion =
-      await this.workspaceCacheVersionService.getVersion(workspaceId);
+      await this.workspaceMetadataVersionService.getMetadataVersion(
+        workspaceId,
+      );
 
     if (latestWorkspaceSchemaVersion !== desiredWorkspaceSchemaVersion) {
       throw new Error('Cache version mismatch');
@@ -90,7 +94,7 @@ export class WorkspaceDatasourceFactory {
         }
 
         const cachedEntitySchemaOptions =
-          await this.workspaceCacheStorageService.getEntitySchemaOptions(
+          await this.workspaceCacheStorageService.getORMEntitySchema(
             workspaceId,
           );
 
@@ -107,7 +111,7 @@ export class WorkspaceDatasourceFactory {
             ),
           );
 
-          await this.workspaceCacheStorageService.setEntitySchemaOptions(
+          await this.workspaceCacheStorageService.setORMEntitySchema(
             workspaceId,
             entitySchemas.map((entitySchema) => entitySchema.options),
           );

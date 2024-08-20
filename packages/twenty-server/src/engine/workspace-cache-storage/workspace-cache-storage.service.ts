@@ -6,62 +6,53 @@ import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+
+enum WorkspaceCacheKeys {
+  GraphQLTypeDefs = 'graphql:type-defs',
+  GraphQLUsedScalarNames = 'graphql:used-scalar-names',
+  GraphQLOperations = 'graphql:operations',
+  ORMEntitySchemas = 'orm:entity-schemas',
+  MetadataObjectMetadataCollection = 'metadata:object-metadata-collection',
+  MetadataVersion = 'metadata:workspace-metadata-version',
+}
 
 @Injectable()
 export class WorkspaceCacheStorageService {
   private readonly logger = new Logger(WorkspaceCacheStorageService.name);
 
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.WorkspaceSchema)
-    private readonly workspaceSchemaCache: CacheStorageService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  async validateCacheVersion(workspaceId: string): Promise<void> {
-    const currentVersion =
-      (await this.workspaceSchemaCache.get<string>(
-        `cacheVersion:${workspaceId}`,
-      )) ?? '0';
-
-    let latestVersion =
-      await this.workspaceCacheVersionService.getVersion(workspaceId);
-
-    if (!latestVersion || currentVersion !== latestVersion) {
-      // Invalidate cache if version mismatch is detected"
-      this.logger.log(
-        `Cache version mismatch detected for workspace ${workspaceId}. Current version: ${currentVersion}. Latest version: ${latestVersion}. Invalidating cache...`,
-      );
-
-      await this.invalidateCache(workspaceId);
-
-      // If the latest version is not found, increment the version
-      latestVersion ??=
-        await this.workspaceCacheVersionService.incrementVersion(workspaceId);
-
-      // Update the cache version after invalidation
-      await this.workspaceSchemaCache.set<string>(
-        `cacheVersion:${workspaceId}`,
-        latestVersion,
-      );
-    }
-  }
-
-  setEntitySchemaOptions(
+  setORMEntitySchema(
     workspaceId: string,
     entitySchemas: EntitySchemaOptions<any>[],
   ) {
-    return this.workspaceSchemaCache.set<EntitySchemaOptions<any>[]>(
-      `entitySchemas:${workspaceId}`,
+    return this.cacheStorageService.set<EntitySchemaOptions<any>[]>(
+      `${WorkspaceCacheKeys.ORMEntitySchemas}:${workspaceId}`,
       entitySchemas,
     );
   }
 
-  getEntitySchemaOptions(
+  getORMEntitySchema(
     workspaceId: string,
   ): Promise<EntitySchemaOptions<any>[] | undefined> {
-    return this.workspaceSchemaCache.get<EntitySchemaOptions<any>[]>(
-      `entitySchemas:${workspaceId}`,
+    return this.cacheStorageService.get<EntitySchemaOptions<any>[]>(
+      `${WorkspaceCacheKeys.ORMEntitySchemas}:${workspaceId}`,
+    );
+  }
+
+  setMetadataVersion(workspaceId: string, version: number): Promise<void> {
+    return this.cacheStorageService.set<number>(
+      `${WorkspaceCacheKeys.MetadataVersion}:${workspaceId}`,
+      version,
+    );
+  }
+
+  getMetadataVersion(workspaceId: string): Promise<number | undefined> {
+    return this.cacheStorageService.get<number>(
+      `${WorkspaceCacheKeys.MetadataVersion}:${workspaceId}`,
     );
   }
 
@@ -69,8 +60,8 @@ export class WorkspaceCacheStorageService {
     workspaceId: string,
     objectMetadataCollection: ObjectMetadataEntity[],
   ) {
-    return this.workspaceSchemaCache.set<ObjectMetadataEntity[]>(
-      `objectMetadataCollection:${workspaceId}`,
+    return this.cacheStorageService.set<ObjectMetadataEntity[]>(
+      `${WorkspaceCacheKeys.MetadataObjectMetadataCollection}:${workspaceId}`,
       objectMetadataCollection,
     );
   }
@@ -78,43 +69,57 @@ export class WorkspaceCacheStorageService {
   getObjectMetadataCollection(
     workspaceId: string,
   ): Promise<ObjectMetadataEntity[] | undefined> {
-    return this.workspaceSchemaCache.get<ObjectMetadataEntity[]>(
-      `objectMetadataCollection:${workspaceId}`,
+    return this.cacheStorageService.get<ObjectMetadataEntity[]>(
+      `${WorkspaceCacheKeys.MetadataObjectMetadataCollection}:${workspaceId}`,
     );
   }
 
-  setTypeDefs(workspaceId: string, typeDefs: string): Promise<void> {
-    return this.workspaceSchemaCache.set<string>(
-      `typeDefs:${workspaceId}`,
+  setGraphQLTypeDefs(workspaceId: string, typeDefs: string): Promise<void> {
+    return this.cacheStorageService.set<string>(
+      `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}`,
       typeDefs,
     );
   }
 
-  getTypeDefs(workspaceId: string): Promise<string | undefined> {
-    return this.workspaceSchemaCache.get<string>(`typeDefs:${workspaceId}`);
+  getGraphQLTypeDefs(workspaceId: string): Promise<string | undefined> {
+    return this.cacheStorageService.get<string>(
+      `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}`,
+    );
   }
 
-  setUsedScalarNames(
+  setGraphQLUsedScalarNames(
     workspaceId: string,
-    scalarsUsed: string[],
+    usedScalarNames: string[],
   ): Promise<void> {
-    return this.workspaceSchemaCache.set<string[]>(
-      `usedScalarNames:${workspaceId}`,
-      scalarsUsed,
+    return this.cacheStorageService.set<string[]>(
+      `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}`,
+      usedScalarNames,
     );
   }
 
-  getUsedScalarNames(workspaceId: string): Promise<string[] | undefined> {
-    return this.workspaceSchemaCache.get<string[]>(
-      `usedScalarNames:${workspaceId}`,
+  getGraphQLUsedScalarNames(
+    workspaceId: string,
+  ): Promise<string[] | undefined> {
+    return this.cacheStorageService.get<string[]>(
+      `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}`,
     );
   }
 
-  async invalidateCache(workspaceId: string): Promise<void> {
-    await this.workspaceSchemaCache.del(
-      `objectMetadataCollection:${workspaceId}`,
+  async flush(workspaceId: string): Promise<void> {
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataObjectMetadataCollection}:${workspaceId}`,
     );
-    await this.workspaceSchemaCache.del(`typeDefs:${workspaceId}`);
-    await this.workspaceSchemaCache.del(`usedScalarNames:${workspaceId}`);
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.MetadataVersion}:${workspaceId}`,
+    );
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}`,
+    );
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}`,
+    );
+    await this.cacheStorageService.del(
+      `${WorkspaceCacheKeys.ORMEntitySchemas}:${workspaceId}`,
+    );
   }
 }
