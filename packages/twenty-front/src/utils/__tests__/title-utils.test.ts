@@ -9,9 +9,6 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/invite/:workspaceInviteHash')).toBe('Invite');
     expect(getPageTitleFromPath('/create/workspace')).toBe('Create Workspace');
     expect(getPageTitleFromPath('/create/profile')).toBe('Create Profile');
-    expect(getPageTitleFromPath('/objects/opportunities')).toBe(
-      'Opportunities',
-    );
     expect(getPageTitleFromPath('/settings/objects/opportunities')).toBe(
       SettingsPageTitles.Objects,
     );
