@@ -10,6 +10,7 @@ import {
   ServerlessExecuteError,
   ServerlessExecuteResult,
 } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
+import { FileStorageExceptionCode } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
@@ -17,6 +18,10 @@ import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless
 import { BUILD_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/build-file-name';
 import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import {
+  ServerlessFunctionException,
+  ServerlessFunctionExceptionCode,
+} from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -53,20 +58,43 @@ export class LocalDriver
     });
   }
 
+  async publish(serverlessFunction: ServerlessFunctionEntity) {
+    await this.build(serverlessFunction);
+
+    const newVersion = serverlessFunction.latestVersion
+      ? `${parseInt(serverlessFunction.latestVersion, 10) + 1}`
+      : '1';
+
+    const draftFolderPath = this.getFolderPath(serverlessFunction);
+    const newFolderPath = this.getFolderPath(serverlessFunction, newVersion);
+
+    await this.fileStorageService.copy({
+      from: { folderPath: draftFolderPath },
+      to: { folderPath: newFolderPath },
+    });
+
+    return {
+      newVersion,
+    };
+  }
+
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object | undefined = undefined,
+    version: string,
   ): Promise<ServerlessExecuteResult> {
-    const startTime = Date.now();
-    const fileStream = await this.fileStorageService.read({
-      folderPath: this.getFolderPath(serverlessFunction),
-      filename: BUILD_FILE_NAME,
-    });
-    const fileContent = await readFileContent(fileStream);
+    try {
+      const startTime = Date.now();
+      const fileStream = await this.fileStorageService.read({
+        folderPath: this.getFolderPath(serverlessFunction, version),
+        filename: BUILD_FILE_NAME,
+      });
 
-    const tmpFilePath = join(tmpdir(), `${v4()}.js`);
+      const fileContent = await readFileContent(fileStream);
 
-    const modifiedContent = `
+      const tmpFilePath = join(tmpdir(), `${v4()}.js`);
+
+      const modifiedContent = `
     process.on('message', async (message) => {
       const { event, context } = message;
       try {
@@ -84,78 +112,87 @@ export class LocalDriver
     ${fileContent}
     `;
 
-    await fs.writeFile(tmpFilePath, modifiedContent);
+      await fs.writeFile(tmpFilePath, modifiedContent);
 
-    return await new Promise((resolve, reject) => {
-      const child = fork(tmpFilePath, { silent: true });
+      return await new Promise((resolve, reject) => {
+        const child = fork(tmpFilePath, { silent: true });
 
-      child.on('message', (message: object | ServerlessExecuteError) => {
-        const duration = Date.now() - startTime;
+        child.on('message', (message: object | ServerlessExecuteError) => {
+          const duration = Date.now() - startTime;
 
-        if ('errorType' in message) {
+          if ('errorType' in message) {
+            resolve({
+              data: null,
+              duration,
+              error: message,
+              status: ServerlessFunctionExecutionStatus.ERROR,
+            });
+          } else {
+            resolve({
+              data: message,
+              duration,
+              status: ServerlessFunctionExecutionStatus.SUCCESS,
+            });
+          }
+          child.kill();
+          fs.unlink(tmpFilePath);
+        });
+
+        child.stderr?.on('data', (data) => {
+          const stackTrace = data
+            .toString()
+            .split('\n')
+            .filter((line: string) => line.trim() !== '');
+          const errorTrace = stackTrace.filter((line: string) =>
+            line.includes('Error: '),
+          )?.[0];
+
+          let errorType = 'Unknown';
+          let errorMessage = '';
+
+          if (errorTrace) {
+            errorType = errorTrace.split(':')[0];
+            errorMessage = errorTrace.split(': ')[1];
+          }
+          const duration = Date.now() - startTime;
+
           resolve({
             data: null,
             duration,
-            error: message,
             status: ServerlessFunctionExecutionStatus.ERROR,
+            error: {
+              errorType,
+              errorMessage,
+              stackTrace: stackTrace,
+            },
           });
-        } else {
-          resolve({
-            data: message,
-            duration,
-            status: ServerlessFunctionExecutionStatus.SUCCESS,
-          });
-        }
-        child.kill();
-        fs.unlink(tmpFilePath);
-      });
-
-      child.stderr?.on('data', (data) => {
-        const stackTrace = data
-          .toString()
-          .split('\n')
-          .filter((line: string) => line.trim() !== '');
-        const errorTrace = stackTrace.filter((line: string) =>
-          line.includes('Error: '),
-        )?.[0];
-
-        let errorType = 'Unknown';
-        let errorMessage = '';
-
-        if (errorTrace) {
-          errorType = errorTrace.split(':')[0];
-          errorMessage = errorTrace.split(': ')[1];
-        }
-        const duration = Date.now() - startTime;
-
-        resolve({
-          data: null,
-          duration,
-          status: ServerlessFunctionExecutionStatus.ERROR,
-          error: {
-            errorType,
-            errorMessage,
-            stackTrace: stackTrace,
-          },
-        });
-        child.kill();
-        fs.unlink(tmpFilePath);
-      });
-
-      child.on('error', (error) => {
-        reject(error);
-        child.kill();
-        fs.unlink(tmpFilePath);
-      });
-
-      child.on('exit', (code) => {
-        if (code && code !== 0) {
-          reject(new Error(`Child process exited with code ${code}`));
+          child.kill();
           fs.unlink(tmpFilePath);
-        }
-      });
+        });
 
-      child.send({ event: payload });
-    });
+        child.on('error', (error) => {
+          reject(error);
+          child.kill();
+          fs.unlink(tmpFilePath);
+        });
+
+        child.on('exit', (code) => {
+          if (code && code !== 0) {
+            reject(new Error(`Child process exited with code ${code}`));
+            fs.unlink(tmpFilePath);
+          }
+        });
+
+        child.send({ event: payload });
+      });
+    } catch (error) {
+      if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
+        throw new ServerlessFunctionException(
+          `Function Version '${version}' does not exist`,
+          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        );
+      }
+      throw error;
+    }
   }
 }

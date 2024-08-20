@@ -18,11 +18,13 @@ export const useExecuteOneServerlessFunction = () => {
   const executeOneServerlessFunction = async (
     id: string,
     payload: object = {},
+    version: string,
   ) => {
     return await mutate({
       variables: {
         id,
         payload,
+        version,
       },
     });
   };

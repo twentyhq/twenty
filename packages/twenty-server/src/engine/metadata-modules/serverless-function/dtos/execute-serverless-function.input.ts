@@ -21,4 +21,11 @@ export class ExecuteServerlessFunctionInput {
   @IsObject()
   @IsOptional()
   payload?: JSON;
+
+  @Field(() => String, {
+    nullable: false,
+    description: 'Version of the serverless function to execute',
+    defaultValue: 'latest',
+  })
+  version: string;
 }

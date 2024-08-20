@@ -13,9 +13,9 @@ import {
 import {
   IsDateString,
   IsEnum,
-  IsNotEmpty,
+  IsNotEmpty, IsNumber, IsOptional,
   IsString,
-  IsUUID,
+  IsUUID
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -59,12 +59,11 @@ export class ServerlessFunctionDTO {
   @IsString()
   @IsNotEmpty()
   @Field()
-  sourceCodeFullPath: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Field()
   runtime: string;
+
+  @IsNumber()
+  @Field({ nullable: true })
+  latestVersion: string;
 
   @IsEnum(ServerlessFunctionSyncStatus)
   @IsNotEmpty()

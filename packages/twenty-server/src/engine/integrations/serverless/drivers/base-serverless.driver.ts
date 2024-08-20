@@ -9,19 +9,24 @@ import { compileTypescript } from 'src/engine/integrations/serverless/drivers/ut
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export class BaseServerlessDriver {
-  getFolderPath(serverlessFunction: ServerlessFunctionEntity) {
+  getFolderPath(
+    serverlessFunction: ServerlessFunctionEntity,
+    version = 'draft',
+  ) {
     return join(
       'workspace-' + serverlessFunction.workspaceId,
       FileFolder.ServerlessFunction,
       serverlessFunction.id,
+      `${version}`,
     );
   }
 
   async getCompiledCode(
     serverlessFunction: ServerlessFunctionEntity,
     fileStorageService: FileStorageService,
+    version='draft',
   ) {
-    const folderPath = this.getFolderPath(serverlessFunction);
+    const folderPath = this.getFolderPath(serverlessFunction, version);
     const fileStream = await fileStorageService.read({
       folderPath,
       filename: SOURCE_FILE_NAME,

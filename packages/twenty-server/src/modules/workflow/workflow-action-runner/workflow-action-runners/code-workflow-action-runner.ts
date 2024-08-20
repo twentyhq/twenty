@@ -33,7 +33,7 @@ export class CodeWorkflowActionRunner implements WorkflowActionRunner {
       );
     }
 
-    const result = await this.serverlessFunctionService.executeOne(
+    const result = await this.serverlessFunctionService.executeOneServerlessFunction(
       action.settings.serverlessFunctionId,
       workspaceId,
       payload,

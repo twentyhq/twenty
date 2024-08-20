@@ -13,4 +13,8 @@ export interface StorageDriver {
     from: { folderPath: string; filename: string };
     to: { folderPath: string; filename: string };
   }): Promise<void>;
+  copy(params: {
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
+  }): Promise<void>;
 }

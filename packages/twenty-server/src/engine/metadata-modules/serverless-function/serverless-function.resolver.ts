@@ -1,5 +1,5 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
@@ -24,6 +24,8 @@ import {
 import { ServerlessFunctionInterceptor } from 'src/engine/metadata-modules/serverless-function/serverless-function.interceptor';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { serverlessFunctionGraphQLApiExceptionHandler } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-graphql-api-exception-handler.utils';
+import { GetServerlessFunctionSourceCodeInput } from 'src/engine/metadata-modules/serverless-function/dtos/get-serverless-function-source-code.input';
+import { PublishServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/publish-serverless-function.input';
 
 @UseGuards(JwtAuthGuard)
 @Resolver()
@@ -47,6 +49,24 @@ export class ServerlessFunctionResolver {
         `IS_FUNCTION_SETTINGS_ENABLED feature flag is not set to true for this workspace`,
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
       );
+    }
+  }
+
+  @Query(() => String)
+  async getServerlessFunctionSourceCode(
+    @Args('input') input: GetServerlessFunctionSourceCodeInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    try {
+      await this.checkFeatureFlag(workspaceId);
+
+      return await this.serverlessFunctionService.getServerlessFunctionSourceCode(
+        workspaceId,
+        input.id,
+        input.version,
+      );
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
     }
   }
 
@@ -138,12 +158,31 @@ export class ServerlessFunctionResolver {
   ) {
     try {
       await this.checkFeatureFlag(workspaceId);
-      const { id, payload } = executeServerlessFunctionInput;
+      const { id, payload, version } = executeServerlessFunctionInput;
 
-      return await this.serverlessFunctionService.executeOne(
+      return await this.serverlessFunctionService.executeOneServerlessFunction(
         id,
         workspaceId,
         payload,
+        version,
+      );
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
+  @Mutation(() => ServerlessFunctionDTO)
+  async publishServerlessFunction(
+    @Args() publishServerlessFunctionInput: PublishServerlessFunctionInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    try {
+      await this.checkFeatureFlag(workspaceId);
+      const { id } = publishServerlessFunctionInput;
+
+      return await this.serverlessFunctionService.publishOneServerlessFunction(
+        id,
+        workspaceId,
       );
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);

@@ -75,6 +75,7 @@ export const SettingsServerlessFunctionDetail = () => {
       const result = await executeOneServerlessFunction(
         serverlessFunctionId,
         JSON.parse(settingsServerlessFunctionInput),
+        'draft',
       );
       setSettingsServerlessFunctionOutput({
         data: result?.data?.executeOneServerlessFunction?.data
