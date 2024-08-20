@@ -140,17 +140,6 @@ export class CalendarSaveEventsService {
       );
     });
 
-    this.workspaceEventEmitter.emit(
-      `calendarEventParticipant.matched`,
-      [
-        {
-          workspaceMemberId: connectedAccount.accountOwnerId,
-          participants: savedCalendarEventParticipantsToEmit,
-        },
-      ],
-      workspaceId,
-    );
-
     if (calendarChannel.isContactAutoCreationEnabled) {
       await this.messageQueueService.add<CreateCompanyAndContactJobData>(
         CreateCompanyAndContactJob.name,
