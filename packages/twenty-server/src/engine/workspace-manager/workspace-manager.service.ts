@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { demoObjectsPrefillData } from 'src/engine/workspace-manager/demo-objects-prefill-data/demo-objects-prefill-data';
@@ -17,6 +18,7 @@ export class WorkspaceManagerService {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {}
 
   /**
@@ -181,6 +183,7 @@ export class WorkspaceManagerService {
     await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
     await this.workspaceMigrationService.deleteAllWithinWorkspace(workspaceId);
     await this.dataSourceService.delete(workspaceId);
+    await this.workspaceCacheVersionService.deleteVersion(workspaceId);
     // Delete schema
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);
   }
