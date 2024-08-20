@@ -136,6 +136,7 @@ const createRouter = (
   isBillingEnabled?: boolean,
   isCRMMigrationEnabled?: boolean,
   isServerlessFunctionSettingsEnabled?: boolean,
+  isWorkflowEnabled?: boolean,
 ) =>
   createBrowserRouter(
     createRoutesFromElements(
@@ -163,10 +164,13 @@ const createRouter = (
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />
-          <Route
-            path={AppPath.WorkflowShowPage}
-            element={<WorkflowShowPage />}
-          />
+
+          {isWorkflowEnabled === true ? (
+            <Route
+              path={AppPath.WorkflowShowPage}
+              element={<WorkflowShowPage />}
+            />
+          ) : null}
 
           <Route
             path={AppPath.SettingsCatchAll}
@@ -331,6 +335,7 @@ export const App = () => {
   const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
     'IS_FUNCTION_SETTINGS_ENABLED',
   );
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
@@ -341,6 +346,7 @@ export const App = () => {
         isBillingPageEnabled,
         isCRMMigrationEnabled,
         isServerlessFunctionSettingsEnabled,
+        isWorkflowEnabled,
       )}
     />
   );
