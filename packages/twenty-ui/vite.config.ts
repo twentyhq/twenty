@@ -13,7 +13,7 @@ import { UserPluginConfig } from 'vite-plugin-checker/dist/esm/types';
 // eslint-disable-next-line @nx/enforce-module-boundaries, import/no-relative-packages
 import packageJson from '../../package.json';
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ command }) => {
   const isBuildCommand = command === 'build';
 
   const tsConfigPath = isBuildCommand
