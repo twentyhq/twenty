@@ -26,7 +26,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -39,7 +39,7 @@ import { WorkspaceService } from './services/workspace.service';
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
@@ -107,13 +107,6 @@ export class WorkspaceResolver {
     return this.workspaceService.deleteWorkspace(id);
   }
 
-  @ResolveField(() => String, { nullable: true })
-  async currentCacheVersion(
-    @Parent() workspace: Workspace,
-  ): Promise<string | null> {
-    return this.workspaceCacheVersionService.getVersion(workspace.id);
-  }
-
   @ResolveField(() => BillingSubscription, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
@@ -133,11 +126,15 @@ export class WorkspaceResolver {
   @ResolveField(() => String)
   async logo(@Parent() workspace: Workspace): Promise<string> {
     if (workspace.logo) {
-      const workspaceLogoToken = await this.fileService.encodeFileToken({
-        workspace_id: workspace.id,
-      });
+      try {
+        const workspaceLogoToken = await this.fileService.encodeFileToken({
+          workspace_id: workspace.id,
+        });
 
-      return `${workspace.logo}?token=${workspaceLogoToken}`;
+        return `${workspace.logo}?token=${workspaceLogoToken}`;
+      } catch (e) {
+        return workspace.logo;
+      }
     }
 
     return workspace.logo ?? '';

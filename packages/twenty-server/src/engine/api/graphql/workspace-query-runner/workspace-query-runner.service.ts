@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import isEmpty from 'lodash.isempty';
 import { DataSource } from 'typeorm';
@@ -55,6 +54,8 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { isDefined } from 'src/utils/is-defined';
 
 import {
   PGGraphQLMutation,
@@ -78,7 +79,7 @@ export class WorkspaceQueryRunnerService {
     private readonly queryResultGettersFactory: QueryResultGettersFactory,
     @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly environmentService: EnvironmentService,
     private readonly duplicateService: DuplicateService,
@@ -304,18 +305,21 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    parsedResults.forEach((record) => {
-      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
-        name: `${objectMetadataItem.nameSingular}.created`,
-        workspaceId: authContext.workspace.id,
-        userId: authContext.user?.id,
-        recordId: record.id,
-        objectMetadata: objectMetadataItem,
-        properties: {
-          after: record,
-        },
-      } satisfies ObjectRecordCreateEvent<any>);
-    });
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.created`,
+      parsedResults.map(
+        (record) =>
+          ({
+            userId: authContext.user?.id,
+            recordId: record.id,
+            objectMetadata: objectMetadataItem,
+            properties: {
+              after: record,
+            },
+          }) satisfies ObjectRecordCreateEvent<any>,
+      ),
+      authContext.workspace.id,
+    );
 
     return parsedResults;
   }
@@ -440,18 +444,22 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
-      name: `${objectMetadataItem.nameSingular}.updated`,
-      workspaceId: authContext.workspace.id,
-      userId: authContext.user?.id,
-      recordId: existingRecord.id,
-      objectMetadata: objectMetadataItem,
-      properties: {
-        updatedFields: Object.keys(args.data),
-        before: this.removeNestedProperties(existingRecord as Record),
-        after: this.removeNestedProperties(parsedResults?.[0]),
-      },
-    } satisfies ObjectRecordUpdateEvent<any>);
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.updated`,
+      [
+        {
+          userId: authContext.user?.id,
+          recordId: existingRecord.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            updatedFields: Object.keys(args.data),
+            before: this.removeNestedProperties(existingRecord as Record),
+            after: this.removeNestedProperties(parsedResults?.[0]),
+          },
+        } satisfies ObjectRecordUpdateEvent<any>,
+      ],
+      authContext.workspace.id,
+    );
 
     return parsedResults?.[0];
   }
@@ -513,30 +521,36 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    parsedResults.forEach((record) => {
-      const existingRecord = mappedRecords.get(record.id);
+    const eventsToEmit: ObjectRecordUpdateEvent<any>[] = parsedResults
+      .map((record) => {
+        const existingRecord = mappedRecords.get(record.id);
 
-      if (!existingRecord) {
-        this.logger.warn(
-          `Record with id ${record.id} not found in the database`,
-        );
+        if (!existingRecord) {
+          this.logger.warn(
+            `Record with id ${record.id} not found in the database`,
+          );
 
-        return;
-      }
+          return;
+        }
 
-      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
-        name: `${objectMetadataItem.nameSingular}.updated`,
-        workspaceId: authContext.workspace.id,
-        userId: authContext.user?.id,
-        recordId: existingRecord.id,
-        objectMetadata: objectMetadataItem,
-        properties: {
-          updatedFields: Object.keys(args.data),
-          before: this.removeNestedProperties(existingRecord as Record),
-          after: this.removeNestedProperties(record),
-        },
-      } satisfies ObjectRecordUpdateEvent<any>);
-    });
+        return {
+          userId: authContext.user?.id,
+          recordId: existingRecord.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            updatedFields: Object.keys(args.data),
+            before: this.removeNestedProperties(existingRecord as Record),
+            after: this.removeNestedProperties(record),
+          },
+        };
+      })
+      .filter(isDefined);
+
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.updated`,
+      eventsToEmit,
+      authContext.workspace.id,
+    );
 
     return parsedResults;
   }
@@ -602,18 +616,21 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    parsedResults.forEach((record) => {
-      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
-        name: `${objectMetadataItem.nameSingular}.deleted`,
-        workspaceId: authContext.workspace.id,
-        userId: authContext.user?.id,
-        recordId: record.id,
-        objectMetadata: objectMetadataItem,
-        properties: {
-          before: this.removeNestedProperties(record),
-        },
-      } satisfies ObjectRecordDeleteEvent<any>);
-    });
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.deleted`,
+      parsedResults.map(
+        (record) =>
+          ({
+            userId: authContext.user?.id,
+            recordId: record.id,
+            objectMetadata: objectMetadataItem,
+            properties: {
+              before: this.removeNestedProperties(record),
+            },
+          }) satisfies ObjectRecordDeleteEvent<any>,
+      ),
+      authContext.workspace.id,
+    );
 
     return parsedResults;
   }
@@ -744,18 +761,21 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    parsedResults.forEach((record) => {
-      this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
-        name: `${objectMetadataItem.nameSingular}.created`,
-        workspaceId: authContext.workspace.id,
-        userId: authContext.user?.id,
-        recordId: record.id,
-        objectMetadata: objectMetadataItem,
-        properties: {
-          after: this.removeNestedProperties(record),
-        },
-      } satisfies ObjectRecordCreateEvent<any>);
-    });
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.created`,
+      parsedResults.map(
+        (record) =>
+          ({
+            userId: authContext.user?.id,
+            recordId: record.id,
+            objectMetadata: objectMetadataItem,
+            properties: {
+              after: this.removeNestedProperties(record),
+            },
+          }) satisfies ObjectRecordCreateEvent<any>,
+      ),
+      authContext.workspace.id,
+    );
 
     return parsedResults;
   }
@@ -821,19 +841,23 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
-    this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
-      name: `${objectMetadataItem.nameSingular}.deleted`,
-      workspaceId: authContext.workspace.id,
-      userId: authContext.user?.id,
-      recordId: args.id,
-      objectMetadata: objectMetadataItem,
-      properties: {
-        before: {
-          ...(existingRecord ?? {}),
-          ...this.removeNestedProperties(parsedResults?.[0]),
-        },
-      },
-    } satisfies ObjectRecordDeleteEvent<any>);
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.deleted`,
+      [
+        {
+          userId: authContext.user?.id,
+          recordId: args.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: {
+              ...(existingRecord ?? {}),
+              ...this.removeNestedProperties(parsedResults?.[0]),
+            },
+          },
+        } satisfies ObjectRecordDeleteEvent<any>,
+      ],
+      authContext.workspace.id,
+    );
 
     return parsedResults?.[0];
   }

@@ -13,6 +13,7 @@ import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-cred
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkflowTriggerCoreModule } from 'src/engine/core-modules/workflow/core-workflow-trigger.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ClientConfigModule } from './client-config/client-config.module';
@@ -36,6 +37,7 @@ import { FileModule } from './file/file.module';
     AISQLQueryModule,
     PostgresCredentialsModule,
     WorkflowTriggerCoreModule,
+    WorkspaceEventEmitterModule,
   ],
   exports: [
     AnalyticsModule,

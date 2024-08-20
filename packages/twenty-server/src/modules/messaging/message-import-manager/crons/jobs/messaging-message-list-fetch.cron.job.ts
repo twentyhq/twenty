@@ -33,6 +33,8 @@ export class MessagingMessageListFetchCronJob {
 
   @Process(MessagingMessageListFetchCronJob.name)
   async handle(): Promise<void> {
+    console.time('MessagingMessageListFetchCronJob time');
+
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -46,9 +48,7 @@ export class MessagingMessageListFetchCronJob {
           'messageChannel',
         );
 
-      const messageChannels = await messageChannelRepository.find({
-        select: ['id'],
-      });
+      const messageChannels = await messageChannelRepository.find();
 
       for (const messageChannel of messageChannels) {
         if (
@@ -68,5 +68,7 @@ export class MessagingMessageListFetchCronJob {
         }
       }
     }
+
+    console.timeEnd('MessagingMessageListFetchCronJob time');
   }
 }

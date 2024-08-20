@@ -15,7 +15,7 @@ import {
 @Injectable()
 export class MessagingChannelSyncStatusService {
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.Messaging)
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly accountsToReconnectService: AccountsToReconnectService,
