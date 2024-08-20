@@ -26,7 +26,6 @@ export enum AppPath {
   Developers = `developers`,
   DevelopersCatchAll = `/${Developers}/*`,
 
-  WorkflowIndexPage = `/workflows`,
   WorkflowShowPage = `/workflow/:workflowId`,
 
   // Impersonate
