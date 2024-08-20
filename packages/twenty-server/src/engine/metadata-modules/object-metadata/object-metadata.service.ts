@@ -5,7 +5,7 @@ import console from 'console';
 
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, In, Repository } from 'typeorm';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -368,6 +368,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     validateObjectMetadataInputOrThrow(input.update);
 
     const updatedObject = await super.updateOne(input.id, input.update);
+
+    await this.updateObjectRelationships(input);
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,
@@ -1237,5 +1239,32 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
       ],
     );
+  }
+
+  private async updateObjectRelationships(input: UpdateOneObjectInput) {
+    if (input.update.isActive !== undefined) {
+      const affectedRelations = await this.relationMetadataRepository.find({
+        where: [
+          { fromObjectMetadataId: input.id },
+          { toObjectMetadataId: input.id },
+        ],
+      });
+
+      const affectedFieldIds = affectedRelations.reduce(
+        (acc, { fromFieldMetadataId, toFieldMetadataId }) => {
+          acc.push(fromFieldMetadataId, toFieldMetadataId);
+
+          return acc;
+        },
+        [] as string[],
+      );
+
+      if (affectedFieldIds.length > 0) {
+        await this.fieldMetadataRepository.update(
+          { id: In(affectedFieldIds) },
+          { isActive: input.update.isActive },
+        );
+      }
+    }
   }
 }
