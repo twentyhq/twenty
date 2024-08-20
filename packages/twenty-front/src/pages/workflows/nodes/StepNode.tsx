@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import {
   StyledTargetHandle,
-  WorkflowNodeData,
+  WorkflowDiagramNodeData,
 } from '~/pages/workflows/nodes/base';
 
 const StyledStepNodeContainer = styled.div`
@@ -64,7 +64,7 @@ const StyledSourceHandle = styled(Handle)`
   background-color: ${({ theme }) => theme.color.gray50};
 `;
 
-export const StepNode = ({ data }: { data: WorkflowNodeData }) => {
+export const StepNode = ({ data }: { data: WorkflowDiagramNodeData }) => {
   return (
     <StyledStepNodeContainer>
       {data.nodeType !== 'trigger' ? (

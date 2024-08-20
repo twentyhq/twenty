@@ -2,16 +2,16 @@ import styled from '@emotion/styled';
 
 import { Handle } from '@xyflow/react';
 
-export type WorkflowStepNodeData = {
+export type WorkflowDiagramStepNodeData = {
   nodeType: 'trigger' | 'condition' | 'action';
   label: string;
 };
 
-export type WorkflowCreateStepNodeData = Record<string, never>;
+export type WorkflowDiagramCreateStepNodeData = Record<string, never>;
 
-export type WorkflowNodeData =
-  | WorkflowStepNodeData
-  | WorkflowCreateStepNodeData;
+export type WorkflowDiagramNodeData =
+  | WorkflowDiagramStepNodeData
+  | WorkflowDiagramCreateStepNodeData;
 
 export const StyledTargetHandle = styled(Handle)`
   visibility: hidden;

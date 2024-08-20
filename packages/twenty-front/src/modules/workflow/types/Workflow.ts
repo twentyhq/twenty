@@ -1,5 +1,5 @@
 import { Edge, Node } from '@xyflow/react';
-import { WorkflowNodeData } from '~/pages/workflows/nodes/base';
+import { WorkflowDiagramNodeData } from '~/pages/workflows/nodes/base';
 
 type WorkflowBaseSettingsType = {
   errorHandlingOptions: {
@@ -73,7 +73,7 @@ export type Workflow = {
   publishedVersionId: string;
 };
 
-export type FlowData = {
-  nodes: Array<Node<WorkflowNodeData>>;
+export type WorkflowDiagram = {
+  nodes: Array<Node<WorkflowDiagramNodeData>>;
   edges: Array<Edge>;
 };

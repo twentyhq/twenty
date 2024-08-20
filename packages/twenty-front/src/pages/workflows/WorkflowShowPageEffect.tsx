@@ -4,21 +4,21 @@ import { currentWorkflowDataState } from '@/workflow/states/currentWorkflowDataS
 import { currentWorkflowErrorState } from '@/workflow/states/currentWorkflowErrorState';
 import { currentWorkflowLoadingState } from '@/workflow/states/currentWorkflowLoadingState';
 import {
-  FlowData,
   Workflow,
   WorkflowAction,
+  WorkflowDiagram,
   WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { Edge, MarkerType, Node } from '@xyflow/react';
 import { useEffect, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { WorkflowNodeData } from '~/pages/workflows/nodes/base';
+import { WorkflowDiagramNodeData } from '~/pages/workflows/nodes/base';
 
 type WorkflowShowPageEffectProps = {
   workflowId: string;
 };
 
-const EMPTY_FLOW_DATA: FlowData = {
+const EMPTY_FLOW_DATA: WorkflowDiagram = {
   nodes: [],
   edges: [],
 };
@@ -27,8 +27,8 @@ const generateId = () => {
   return Math.random().toString(16).slice(2);
 };
 
-const workflowTriggerToFlow = (trigger: WorkflowTrigger): FlowData => {
-  const nodes: Array<Node<WorkflowNodeData>> = [];
+const workflowTriggerToFlow = (trigger: WorkflowTrigger): WorkflowDiagram => {
+  const nodes: Array<Node<WorkflowDiagramNodeData>> = [];
   const edges: Array<Edge> = [];
 
   // Helper function to generate nodes and edges recursively
@@ -92,7 +92,9 @@ const workflowTriggerToFlow = (trigger: WorkflowTrigger): FlowData => {
   };
 };
 
-const getFlowLastVersion = (workflow: Workflow | undefined): FlowData => {
+const getFlowLastVersion = (
+  workflow: Workflow | undefined,
+): WorkflowDiagram => {
   if (workflow === undefined) {
     return EMPTY_FLOW_DATA;
   }
@@ -106,7 +108,7 @@ const getFlowLastVersion = (workflow: Workflow | undefined): FlowData => {
 };
 
 const addCreateStepNodes = (
-  nodes: Array<Node<WorkflowNodeData>>,
+  nodes: Array<Node<WorkflowDiagramNodeData>>,
   edges: Array<Edge>,
 ) => {
   const nodesWithoutTargets = nodes.filter((node) =>
@@ -117,7 +119,7 @@ const addCreateStepNodes = (
   const updatedEdges: typeof edges = edges.slice();
 
   for (const node of nodesWithoutTargets) {
-    const newCreateStepNode: Node<WorkflowNodeData> = {
+    const newCreateStepNode: Node<WorkflowDiagramNodeData> = {
       id: generateId(),
       type: 'create-step',
       data: {},

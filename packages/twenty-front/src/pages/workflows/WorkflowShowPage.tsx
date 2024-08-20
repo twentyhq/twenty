@@ -5,7 +5,7 @@ import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { currentWorkflowDataState } from '@/workflow/states/currentWorkflowDataState';
-import { FlowData } from '@/workflow/types/Workflow';
+import { WorkflowDiagram } from '@/workflow/types/Workflow';
 import Dagre from '@dagrejs/dagre';
 import {
   Background,
@@ -23,7 +23,7 @@ import { WorkflowShowPageEffect } from '~/pages/workflows/WorkflowShowPageEffect
 import { WorkflowShowPageHeader } from '~/pages/workflows/WorkflowShowPageHeader';
 import { CreateStepNode } from '~/pages/workflows/nodes/CreateStepNode';
 import { StepNode } from '~/pages/workflows/nodes/StepNode';
-import { WorkflowNodeData } from '~/pages/workflows/nodes/base';
+import { WorkflowDiagramNodeData } from '~/pages/workflows/nodes/base';
 
 const StyledFlowContainer = styled.div`
   height: 100%;
@@ -44,7 +44,7 @@ const StyledFlowContainer = styled.div`
 `;
 
 const getLayoutedElements = (
-  nodes: Array<Node<WorkflowNodeData>>,
+  nodes: Array<Node<WorkflowDiagramNodeData>>,
   edges: Array<Edge>,
 ) => {
   const graph = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
@@ -75,7 +75,7 @@ const getLayoutedElements = (
   };
 };
 
-const LoadedWorkflow = ({ flowData }: { flowData: FlowData }) => {
+const LoadedWorkflow = ({ flowData }: { flowData: WorkflowDiagram }) => {
   const [rawNodes, setRawNodes, onRawNodesChange] = useNodesState(
     flowData.nodes,
   );
