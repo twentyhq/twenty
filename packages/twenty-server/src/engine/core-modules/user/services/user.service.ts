@@ -1,4 +1,3 @@
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
@@ -16,6 +15,7 @@ import {
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -25,7 +25,7 @@ export class UserService extends TypeOrmQueryService<User> {
     private readonly userRepository: Repository<User>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workspaceService: WorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
@@ -110,15 +110,16 @@ export class UserService extends TypeOrmQueryService<User> {
     const payload =
       new ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>();
 
-    payload.workspaceId = workspaceId;
     payload.properties = {
       before: workspaceMember,
     };
-    payload.name = 'workspaceMember.deleted';
     payload.recordId = workspaceMember.id;
-    payload.name = 'workspaceMember.deleted';
 
-    this.eventEmitter.emit('workspaceMember.deleted', payload);
+    this.workspaceEventEmitter.emit(
+      'workspaceMember.deleted',
+      [payload],
+      workspaceId,
+    );
 
     return user;
   }

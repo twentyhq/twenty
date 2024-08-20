@@ -6,17 +6,17 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-  MessagingConnectedAccountDeletionCleanupJob,
-  MessagingConnectedAccountDeletionCleanupJobData,
-} from 'src/modules/messaging/message-cleaner/jobs/messaging-connected-account-deletion-cleanup.job';
+  DeleteConnectedAccountAssociatedCalendarDataJob,
+  DeleteConnectedAccountAssociatedCalendarDataJobData,
+} from 'src/modules/calendar/calendar-event-cleaner/jobs/delete-connected-account-associated-calendar-data.job';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
-export class MessagingMessageCleanerConnectedAccountListener {
+export class CalendarEventCleanerConnectedAccountListener {
   constructor(
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.calendarQueue)
+    private readonly calendarQueueService: MessageQueueService,
   ) {}
 
   @OnEvent('connectedAccount.deleted')
@@ -27,8 +27,8 @@ export class MessagingMessageCleanerConnectedAccountListener {
   ) {
     await Promise.all(
       payload.events.map((eventPayload) =>
-        this.messageQueueService.add<MessagingConnectedAccountDeletionCleanupJobData>(
-          MessagingConnectedAccountDeletionCleanupJob.name,
+        this.calendarQueueService.add<DeleteConnectedAccountAssociatedCalendarDataJobData>(
+          DeleteConnectedAccountAssociatedCalendarDataJob.name,
           {
             workspaceId: payload.workspaceId,
             connectedAccountId: eventPayload.recordId,
