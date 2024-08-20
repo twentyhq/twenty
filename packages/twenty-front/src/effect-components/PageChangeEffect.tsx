@@ -155,7 +155,7 @@ export const PageChangeEffect = () => {
         Icon: IconCheckbox,
         onCommandClick: () =>
           openCreateActivity({
-            targetableObjects: [{ id: '', targetObjectNameSingular: '' }],
+            targetableObjects: [],
           }),
       },
     ]);
