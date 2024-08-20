@@ -22,11 +22,11 @@ export class WorkspaceMetadataVersionService {
     const currentVersion =
       (await this.workspaceCacheStorageService.getMetadataVersion(
         workspaceId,
-      )) ?? 0;
+      )) ?? 1;
 
     let latestVersion = await this.getMetadataVersion(workspaceId);
 
-    if (!latestVersion || currentVersion !== latestVersion) {
+    if (latestVersion === undefined || currentVersion !== latestVersion) {
       this.logger.log(
         `Metadata version mismatch detected for workspace ${workspaceId}. Current version: ${currentVersion}. Latest version: ${latestVersion}. Invalidating cache...`,
       );
@@ -43,7 +43,7 @@ export class WorkspaceMetadataVersionService {
   }
 
   async incrementMetadataVersion(workspaceId: string): Promise<number> {
-    const metadataVersion = (await this.getMetadataVersion(workspaceId)) ?? '0';
+    const metadataVersion = (await this.getMetadataVersion(workspaceId)) ?? 0;
     const newMetadataVersion = metadataVersion + 1;
 
     await this.workspaceRepository.update(
@@ -51,25 +51,29 @@ export class WorkspaceMetadataVersionService {
       { metadataVersion: newMetadataVersion },
     );
 
-    await this.flushCacheIfMetadataVersionIsOutdated(workspaceId);
+    await this.workspaceCacheStorageService.setMetadataVersion(
+      workspaceId,
+      newMetadataVersion,
+    );
 
     return newMetadataVersion;
   }
 
-  async getMetadataVersion(workspaceId: string): Promise<number> {
+  async getMetadataVersion(workspaceId: string): Promise<number | undefined> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
 
-    return workspace?.metadataVersion ?? 0;
+    return workspace?.metadataVersion;
   }
 
   async resetMetadataVersion(workspaceId: string): Promise<void> {
     await this.workspaceRepository.update(
       { id: workspaceId },
-      { metadataVersion: 0 },
+      { metadataVersion: 1 },
     );
 
-    await this.flushCacheIfMetadataVersionIsOutdated(workspaceId);
+    await this.workspaceCacheStorageService.flush(workspaceId);
+    await this.workspaceCacheStorageService.setMetadataVersion(workspaceId, 1);
   }
 }

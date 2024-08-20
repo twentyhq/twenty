@@ -50,7 +50,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       }),
       headers: {
         ...(currentWorkspace?.metadataVersion && {
-          'X-Schema-Version': currentWorkspace.metadataVersion,
+          'X-Schema-Version': `${currentWorkspace.metadataVersion}`,
         }),
       },
       defaultOptions: {

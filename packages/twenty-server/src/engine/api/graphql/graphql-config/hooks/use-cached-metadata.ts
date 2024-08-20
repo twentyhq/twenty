@@ -13,7 +13,7 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       serverContext.req.workspaceMetadataVersion ?? '0';
     const operationName = getOperationName(serverContext);
 
-    return `cachedOperations:${operationName}:${workspaceId}:${workspaceMetadataVersion}`;
+    return `graphql:operations:${operationName}:${workspaceId}:${workspaceMetadataVersion}`;
   };
 
   const getOperationName = (serverContext: any) =>
