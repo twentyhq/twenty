@@ -1,4 +1,3 @@
-import { AppPath } from '@/types/AppPath';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { useNavigate } from 'react-router-dom';
 import { IconComponent } from 'twenty-ui';
@@ -19,7 +18,7 @@ export const WorkflowShowPageHeader = ({
       hasClosePageButton
       onClosePage={() => {
         navigate({
-          pathname: AppPath.WorkflowIndexPage,
+          pathname: '/objects/workflows',
         });
       }}
       title={workflowName}
