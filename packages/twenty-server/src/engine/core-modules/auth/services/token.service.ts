@@ -38,7 +38,10 @@ import {
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  Workspace,
+  WorkspaceActivationStatus,
+} from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -94,33 +97,39 @@ export class TokenService {
       );
     }
 
-    const workspaceIdNonNullable = workspaceId
-      ? workspaceId
-      : user.defaultWorkspace.id;
+    const tokenWorkspaceId = workspaceId ?? user.defaultWorkspace.id;
+    let tokenWorkspaceMemberId: string | undefined;
 
-    const workspaceMemberRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
-        workspaceIdNonNullable,
-        'workspaceMember',
-      );
+    if (
+      user.defaultWorkspace.activationStatus ===
+      WorkspaceActivationStatus.ACTIVE
+    ) {
+      const workspaceMemberRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+          tokenWorkspaceId,
+          'workspaceMember',
+        );
 
-    const workspaceMember = await workspaceMemberRepository.findOne({
-      where: {
-        userId: user.id,
-      },
-    });
+      const workspaceMember = await workspaceMemberRepository.findOne({
+        where: {
+          userId: user.id,
+        },
+      });
 
-    if (!workspaceMember) {
-      throw new AuthException(
-        'User is not a member of the workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+      if (!workspaceMember) {
+        throw new AuthException(
+          'User is not a member of the workspace',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      tokenWorkspaceMemberId = workspaceMember.id;
     }
 
     const jwtPayload: JwtPayload = {
       sub: user.id,
       workspaceId: workspaceId ? workspaceId : user.defaultWorkspace.id,
-      workspaceMemberId: workspaceMember.id,
+      workspaceMemberId: tokenWorkspaceMemberId,
     };
 
     return {

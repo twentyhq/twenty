@@ -20,7 +20,7 @@ import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-
 export type JwtPayload = {
   sub: string;
   workspaceId: string;
-  workspaceMemberId: string;
+  workspaceMemberId?: string;
   jti?: string;
 };
 
