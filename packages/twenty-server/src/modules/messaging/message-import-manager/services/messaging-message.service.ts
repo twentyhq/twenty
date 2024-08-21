@@ -8,14 +8,14 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
+import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 @Injectable()
 export class MessagingMessageService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   public async saveMessagesWithinTransaction(
-    messages: GmailMessage[],
+    messages: MessageWithParticipants[],
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'handle' | 'handleAliases'
@@ -114,7 +114,7 @@ export class MessagingMessageService {
           id: newMessageId,
           headerMessageId: message.headerMessageId,
           subject: message.subject,
-          receivedAt: new Date(parseInt(message.internalDate)),
+          receivedAt: message.receivedAt,
           direction: messageDirection,
           text: message.text,
           messageThreadId: newOrExistingMessageThreadId,

@@ -9,7 +9,15 @@ export type Message = Omit<
   | 'messageParticipants'
   | 'messageThread'
   | 'id'
->;
+> & {
+  attachments: {
+    filename: string;
+  }[];
+  externalId: string;
+  threadId: string;
+  messageThreadExternalId: string;
+  fromHandle: string;
+};
 
 export type MessageParticipant = Omit<
   MessageParticipantWorkspaceEntity,
@@ -25,7 +33,5 @@ export type MessageParticipant = Omit<
 >;
 
 export type MessageWithParticipants = Message & {
-  externalId: string;
   participants: MessageParticipant[];
-  status: string;
 };

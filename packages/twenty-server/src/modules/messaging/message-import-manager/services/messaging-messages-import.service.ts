@@ -19,8 +19,7 @@ import {
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
-import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-by-batches.service';
-import { MessagingErrorHandlingService } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
+import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
@@ -30,12 +29,10 @@ export class MessagingMessagesImportService {
   private readonly logger = new Logger(MessagingMessagesImportService.name);
 
   constructor(
-    private readonly fetchMessagesByBatchesService: MessagingGmailFetchMessagesByBatchesService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
-    private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
     private readonly refreshAccessTokenService: RefreshAccessTokenService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
@@ -45,6 +42,7 @@ export class MessagingMessagesImportService {
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly messagingGetMessagesService: MessagingGetMessagesService,
   ) {}
 
   async processMessageBatchImport(
@@ -110,22 +108,10 @@ export class MessagingMessagesImportService {
         workspaceId,
       )
     ) {
-      try {
-        await this.emailAliasManagerService.refreshHandleAliases(
-          connectedAccount,
-          workspaceId,
-        );
-      } catch (error) {
-        await this.gmailErrorHandlingService.handleGmailError(
-          {
-            code: error.code,
-            reason: error.message,
-          },
-          'messages-import',
-          messageChannel,
-          workspaceId,
-        );
-      }
+      await this.emailAliasManagerService.refreshHandleAliases(
+        connectedAccount,
+        workspaceId,
+      );
     }
 
     const messageIdsToFetch =
@@ -147,12 +133,7 @@ export class MessagingMessagesImportService {
 
     try {
       const allMessages =
-        await this.fetchMessagesByBatchesService.fetchAllMessages(
-          messageIdsToFetch,
-          accessToken,
-          connectedAccount.id,
-          workspaceId,
-        );
+        await this.messagingGetMessagesService.getMessages(connectedAccount);
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
         connectedAccount.accountOwnerId,
@@ -221,16 +202,6 @@ export class MessagingMessagesImportService {
         // This should never happen as all errors must be known
         throw error;
       }
-
-      await this.gmailErrorHandlingService.handleGmailError(
-        {
-          code: error.code,
-          reason: error.errors?.[0]?.reason,
-        },
-        'messages-import',
-        messageChannel,
-        workspaceId,
-      );
 
       return await this.trackMessageImportCompleted(
         messageChannel,
