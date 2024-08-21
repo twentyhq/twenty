@@ -1,13 +1,13 @@
-import { Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { Logger } from '@nestjs/common';
 
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 export type CallWebhookJobData = {
   targetUrl: string;
-  eventType: string;
+  eventName: string;
   objectMetadata: { id: string; nameSingular: string };
   workspaceId: string;
   webhookId: string;
