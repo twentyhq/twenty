@@ -369,7 +369,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const updatedObject = await super.updateOne(input.id, input.update);
 
-    await this.updateObjectRelationships(input);
+    if (input.update.isActive !== undefined) {
+      await this.updateObjectRelationships(input.id, input.update.isActive);
+    }
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,
@@ -1241,30 +1243,31 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
   }
 
-  private async updateObjectRelationships(input: UpdateOneObjectInput) {
-    if (input.update.isActive !== undefined) {
-      const affectedRelations = await this.relationMetadataRepository.find({
-        where: [
-          { fromObjectMetadataId: input.id },
-          { toObjectMetadataId: input.id },
-        ],
-      });
+  private async updateObjectRelationships(
+    objectMetadataId: string,
+    isActive: boolean,
+  ) {
+    const affectedRelations = await this.relationMetadataRepository.find({
+      where: [
+        { fromObjectMetadataId: objectMetadataId },
+        { toObjectMetadataId: objectMetadataId },
+      ],
+    });
 
-      const affectedFieldIds = affectedRelations.reduce(
-        (acc, { fromFieldMetadataId, toFieldMetadataId }) => {
-          acc.push(fromFieldMetadataId, toFieldMetadataId);
+    const affectedFieldIds = affectedRelations.reduce(
+      (acc, { fromFieldMetadataId, toFieldMetadataId }) => {
+        acc.push(fromFieldMetadataId, toFieldMetadataId);
 
-          return acc;
-        },
-        [] as string[],
+        return acc;
+      },
+      [] as string[],
+    );
+
+    if (affectedFieldIds.length > 0) {
+      await this.fieldMetadataRepository.update(
+        { id: In(affectedFieldIds) },
+        { isActive: isActive },
       );
-
-      if (affectedFieldIds.length > 0) {
-        await this.fieldMetadataRepository.update(
-          { id: In(affectedFieldIds) },
-          { isActive: input.update.isActive },
-        );
-      }
     }
   }
 }
