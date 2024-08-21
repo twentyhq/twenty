@@ -1,5 +1,3 @@
-import { v4 } from 'uuid';
-
 type CacheKey = `${string}-${string}`;
 
 type AsyncFactoryCallback<T> = () => Promise<T | null>;
@@ -12,8 +10,6 @@ export class CacheManager<T> {
     factory: AsyncFactoryCallback<T>,
     onDelete?: (value: T) => Promise<void> | void,
   ): Promise<T | null> {
-    const logId = v4();
-
     const [workspaceId] = cacheKey.split('-');
 
     if (this.cache.has(cacheKey)) {

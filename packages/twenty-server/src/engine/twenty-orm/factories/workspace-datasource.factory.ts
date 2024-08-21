@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntitySchema, Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -52,8 +51,6 @@ export class WorkspaceDatasourceFactory {
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${latestWorkspaceMetadataVersion}`,
       async () => {
-        const logId = v4();
-
         let cachedObjectMetadataCollection =
           await this.workspaceCacheStorageService.getObjectMetadataCollection(
             workspaceId,
