@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { buildManualCreatedBy } from 'src/engine/core-modules/actor/utils/build-created-by-from-auth-context.util';
+import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -57,7 +57,7 @@ export class WorkflowTriggerWorkspaceService {
       workspaceId,
       workflowVersionId,
       payload,
-      buildManualCreatedBy(workspaceMemberId, user),
+      buildCreatedByFromWorkspaceMember(workspaceMemberId, user),
     );
   }
 
