@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { gmail_v1 } from 'googleapis';
 import { Any } from 'typeorm';
 
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
@@ -11,10 +10,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
-import { MessagingGmailFetchMessageIdsToExcludeService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-ids-to-exclude.service';
-import { MessagingGmailHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-history.service';
-import { MessagingErrorHandlingService } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
+import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 
 @Injectable()
 export class MessagingPartialMessageListFetchService {
@@ -23,13 +19,10 @@ export class MessagingPartialMessageListFetchService {
   );
 
   constructor(
-    private readonly gmailClientProvider: GmailClientProvider,
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
-    private readonly gmailGetHistoryService: MessagingGmailHistoryService,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
-    private readonly gmailFetchMessageIdsToExcludeService: MessagingGmailFetchMessageIdsToExcludeService,
+    private readonly messagingGetMessageListService: MessagingGetMessageListService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -41,28 +34,6 @@ export class MessagingPartialMessageListFetchService {
     await this.messagingChannelSyncStatusService.markAsMessagesListFetchOngoing(
       messageChannel.id,
     );
-
-    const lastSyncHistoryId = messageChannel.syncCursor;
-
-    const gmailClient: gmail_v1.Gmail =
-      await this.gmailClientProvider.getGmailClient(connectedAccount);
-
-    const { history, historyId, error } =
-      await this.gmailGetHistoryService.getHistory(
-        gmailClient,
-        lastSyncHistoryId,
-      );
-
-    if (error) {
-      await this.gmailErrorHandlingService.handleGmailError(
-        error,
-        'partial-message-list-fetch',
-        messageChannel,
-        workspaceId,
-      );
-
-      return;
-    }
 
     const messageChannelRepository =
       await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
@@ -79,15 +50,17 @@ export class MessagingPartialMessageListFetchService {
       },
     );
 
-    if (!historyId) {
-      throw new Error(
-        `No historyId found for ${connectedAccount.id} in workspace ${workspaceId} in gmail history response.`,
-      );
-    }
+    const syncCursor = messageChannel.syncCursor;
 
-    if (historyId === lastSyncHistoryId || !history?.length) {
+    const { messageExternalIds, messageExternalIdsToDelete, nextSyncCursor } =
+      await this.messagingGetMessageListService.getPartialMessageList(
+        connectedAccount,
+        syncCursor,
+      );
+
+    if (syncCursor === nextSyncCursor) {
       this.logger.log(
-        `Partial message list import done with history ${historyId} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
+        `Partial message list import done with history ${syncCursor} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
       );
 
       await this.messagingChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
@@ -97,39 +70,13 @@ export class MessagingPartialMessageListFetchService {
       return;
     }
 
-    const { messagesAdded, messagesDeleted } =
-      await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
-
-    let messageIdsToFilter: string[] = [];
-
-    try {
-      messageIdsToFilter =
-        await this.gmailFetchMessageIdsToExcludeService.fetchEmailIdsToExcludeOrThrow(
-          gmailClient,
-          lastSyncHistoryId,
-        );
-    } catch (error) {
-      await this.gmailErrorHandlingService.handleGmailError(
-        error,
-        'partial-message-list-fetch',
-        messageChannel,
-        workspaceId,
-      );
-
-      return;
-    }
-
-    const messagesAddedFiltered = messagesAdded.filter(
-      (messageId) => !messageIdsToFilter.includes(messageId),
-    );
-
     await this.cacheStorage.setAdd(
       `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
-      messagesAddedFiltered,
+      messageExternalIds,
     );
 
     this.logger.log(
-      `Added ${messagesAddedFiltered.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
+      `Added ${messageExternalIds.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
     const messageChannelMessageAssociationRepository =
@@ -139,22 +86,20 @@ export class MessagingPartialMessageListFetchService {
 
     await messageChannelMessageAssociationRepository.delete({
       messageChannelId: messageChannel.id,
-      messageExternalId: Any(messagesDeleted),
+      messageExternalId: Any(messageExternalIdsToDelete),
     });
 
     this.logger.log(
-      `Deleted ${messagesDeleted.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
+      `Deleted ${messageExternalIdsToDelete.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
-    const currentSyncCursor = messageChannel.syncCursor;
-
-    if (!currentSyncCursor || historyId > currentSyncCursor) {
+    if (!syncCursor || nextSyncCursor > syncCursor) {
       await messageChannelRepository.update(
         {
           id: messageChannel.id,
         },
         {
-          syncCursor: historyId,
+          syncCursor: nextSyncCursor,
         },
       );
     }

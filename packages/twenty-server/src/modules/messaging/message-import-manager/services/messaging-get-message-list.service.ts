@@ -3,26 +3,51 @@ import { Injectable } from '@nestjs/common';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
 
-export type GetMessageListResponse = {
-  messageIds: string[];
+export type GetFullMessageListResponse = {
+  messageExternalIds: string[];
+  nextSyncCursor: string;
+};
+
+export type GetPartialMessageListResponse = {
+  messageExternalIds: string[];
+  messageExternalIdsToDelete: string[];
+  nextSyncCursor: string;
 };
 
 @Injectable()
-export class CalendarGetMessageListService {
+export class MessagingGetMessageListService {
   constructor(
     private readonly gmailGetMessageListService: GmailGetMessageListService,
   ) {}
 
-  public async getMessageList(
+  public async getFullMessageList(
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id'
     >,
-    syncCursor?: string,
-  ): Promise<GetMessageListResponse> {
+  ): Promise<GetFullMessageListResponse> {
     switch (connectedAccount.provider) {
       case 'google':
-        return this.gmailGetMessageListService.getMessageList(
+        return this.gmailGetMessageListService.getFullMessageList(
+          connectedAccount,
+        );
+      default:
+        throw new Error(
+          `Provider ${connectedAccount.provider} is not supported.`,
+        );
+    }
+  }
+
+  public async getPartialMessageList(
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'provider' | 'refreshToken' | 'id'
+    >,
+    syncCursor: string,
+  ): Promise<GetPartialMessageListResponse> {
+    switch (connectedAccount.provider) {
+      case 'google':
+        return this.gmailGetMessageListService.getPartialMessageList(
           connectedAccount,
           syncCursor,
         );
