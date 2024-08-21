@@ -20,7 +20,6 @@ export type MenuItemIconButton = {
 };
 
 export type MenuItemProps = {
-  hovered?:boolean;
   accent?: MenuItemAccent;
   className?: string;
   iconButtons?: MenuItemIconButton[];
@@ -37,7 +36,6 @@ export type MenuItemProps = {
 
 export const MenuItem = ({
   accent = 'default',
-  hovered,
   className,
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
@@ -62,7 +60,6 @@ export const MenuItem = ({
 
   return (
     <StyledHoverableMenuItemBase
-      hovered={hovered}
       data-testid={testId ?? undefined}
       onClick={handleMenuItemClick}
       className={className}
