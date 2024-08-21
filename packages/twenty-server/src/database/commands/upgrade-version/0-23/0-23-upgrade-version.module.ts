@@ -21,7 +21,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
-import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
 import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
@@ -35,7 +35,7 @@ import { ViewModule } from 'src/modules/view/view.module';
     OnboardingModule,
     TypeORMModule,
     DataSourceModule,
-    WorkspaceCacheVersionModule,
+    WorkspaceMetadataVersionModule,
     FieldMetadataModule,
     DataSourceModule,
     WorkspaceStatusModule,

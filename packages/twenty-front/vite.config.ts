@@ -19,9 +19,13 @@ export default defineConfig(({ command, mode }) => {
 
   const isBuildCommand = command === 'build';
 
+  const tsConfigPath = isBuildCommand
+    ? path.resolve(__dirname, './tsconfig.build.json')
+    : path.resolve(__dirname, './tsconfig.dev.json');
+
   const checkers: Checkers = {
     typescript: {
-      tsconfigPath: path.resolve(__dirname, './tsconfig.app.json'),
+      tsconfigPath: tsConfigPath,
     },
     overlay: false,
   };

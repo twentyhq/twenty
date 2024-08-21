@@ -9,7 +9,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
@@ -44,7 +44,7 @@ export class UpdateActivitiesCommand extends CommandRunner {
     private readonly workspaceStatusService: WorkspaceStatusService,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
@@ -400,7 +400,9 @@ export class UpdateActivitiesCommand extends CommandRunner {
           .execute();
       }
 
-      await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
+      );
     }
   }
 
