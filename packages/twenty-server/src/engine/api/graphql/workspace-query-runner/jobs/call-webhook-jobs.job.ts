@@ -81,7 +81,7 @@ export class CallWebhookJobsJob {
 
     if (webhooks.length) {
       this.logger.log(
-        `CallWebhookJobsJob on eventName '${event}' called on webhooks ids [\n"${webhooks
+        `CallWebhookJobsJob on eventName '${eventName}' called on webhooks ids [\n"${webhooks
           .map((webhook) => webhook.id)
           .join('",\n"')}"\n]`,
       );
