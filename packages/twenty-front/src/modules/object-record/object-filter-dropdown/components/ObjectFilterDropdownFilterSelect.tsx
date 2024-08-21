@@ -60,11 +60,13 @@ export const ObjectFilterDropdownFilterSelect = () => {
   const isListSelectedItem = useIsListSelectedItem({
     selectableListId: OBJECT_FILTER_DROPDOWN_ID,
   });
+
   const sortedAvailableFilterDefinitions = [...availableFilterDefinitions]
     .sort((a, b) => a.label.localeCompare(b.label))
     .filter((item) =>
       item.label.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
     );
+
   return (
     <>
       <StyledInput
