@@ -55,39 +55,39 @@ export class WorkspaceDatasourceFactory {
       );
     }
 
-    console.time(`fetch in cached metadata ${logId}`);
-    let cachedObjectMetadataCollection =
-      await this.workspaceCacheStorageService.getObjectMetadataCollection(
-        workspaceId,
-      );
-
-    if (!cachedObjectMetadataCollection) {
-      console.log('Fetching fresh object metadata collection...');
-      const freshObjectMetadataCollection =
-        await this.objectMetadataRepository.find({
-          where: { workspaceId },
-          relations: [
-            'fields.object',
-            'fields',
-            'fields.fromRelationMetadata',
-            'fields.toRelationMetadata',
-            'fields.fromRelationMetadata.toObjectMetadata',
-          ],
-        });
-
-      await this.workspaceCacheStorageService.setObjectMetadataCollection(
-        workspaceId,
-        freshObjectMetadataCollection,
-      );
-
-      cachedObjectMetadataCollection = freshObjectMetadataCollection;
-    }
-    console.timeEnd(`fetch in cached metadata ${logId}`);
-
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${latestWorkspaceMetadataVersion}`,
       async () => {
         const logId = v4();
+
+        console.time(`fetch in cached metadata ${logId}`);
+        let cachedObjectMetadataCollection =
+          await this.workspaceCacheStorageService.getObjectMetadataCollection(
+            workspaceId,
+          );
+
+        if (!cachedObjectMetadataCollection) {
+          console.log('Fetching fresh object metadata collection...');
+          const freshObjectMetadataCollection =
+            await this.objectMetadataRepository.find({
+              where: { workspaceId },
+              relations: [
+                'fields.object',
+                'fields',
+                'fields.fromRelationMetadata',
+                'fields.toRelationMetadata',
+                'fields.fromRelationMetadata.toObjectMetadata',
+              ],
+            });
+
+          await this.workspaceCacheStorageService.setObjectMetadataCollection(
+            workspaceId,
+            freshObjectMetadataCollection,
+          );
+
+          cachedObjectMetadataCollection = freshObjectMetadataCollection;
+        }
+        console.timeEnd(`fetch in cached metadata ${logId}`);
 
         console.log('Creating workspace fresh data source...' + logId);
         const dataSourceMetadata =
