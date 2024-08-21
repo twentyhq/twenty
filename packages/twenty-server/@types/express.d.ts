@@ -8,6 +8,7 @@ declare module 'express-serve-static-core' {
     apiKey?: ApiKeyWorkspaceEntity | null;
     workspace?: Workspace;
     workspaceId?: string;
-    cacheVersion?: string | null;
+    workspaceMetadataVersion?: number;
+    workspaceMemberId?: string;
   }
 }

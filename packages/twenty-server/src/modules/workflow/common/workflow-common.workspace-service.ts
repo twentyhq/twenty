@@ -35,7 +35,7 @@ export class WorkflowCommonWorkspaceService {
       );
     }
 
-    if (!workflowVersion.trigger || !workflowVersion.trigger?.type) {
+    if (!workflowVersion.trigger) {
       throw new WorkflowTriggerException(
         'Workflow version does not contains trigger',
         WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,

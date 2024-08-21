@@ -12,7 +12,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 
 export type MicrosoftRequest = Omit<
   Request,
-  'user' | 'workspace' | 'cacheVersion'
+  'user' | 'workspace' | 'workspaceMetadataVersion'
 > & {
   user: {
     firstName?: string | null;

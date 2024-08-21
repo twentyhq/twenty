@@ -12,7 +12,7 @@ import {
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 
 interface SetWorkspaceActivationStatusCommandOptions {
   workspaceId?: string;
@@ -31,7 +31,7 @@ export class SetWorkspaceActivationStatusCommand extends CommandRunner {
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {
     super();
@@ -97,7 +97,9 @@ export class SetWorkspaceActivationStatusCommand extends CommandRunner {
           }
         }
 
-        await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
 
         this.logger.log(
           chalk.green(`Running command on workspace ${workspaceId} done`),

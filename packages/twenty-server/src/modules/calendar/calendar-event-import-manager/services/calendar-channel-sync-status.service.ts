@@ -16,7 +16,7 @@ import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/acc
 export class CalendarChannelSyncStatusService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    @InjectCacheStorage(CacheStorageNamespace.Calendar)
+    @InjectCacheStorage(CacheStorageNamespace.ModuleCalendar)
     private readonly cacheStorage: CacheStorageService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}

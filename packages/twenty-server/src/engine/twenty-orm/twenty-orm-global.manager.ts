@@ -41,7 +41,9 @@ export class TwentyORMGlobalManager {
       null,
     );
 
-    return workspaceDataSource.getRepository<T>(objectMetadataName);
+    const repository = workspaceDataSource.getRepository<T>(objectMetadataName);
+
+    return repository;
   }
 
   async getDataSourceForWorkspace(workspaceId: string) {

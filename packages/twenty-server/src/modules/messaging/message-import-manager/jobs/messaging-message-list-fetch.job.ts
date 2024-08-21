@@ -39,6 +39,8 @@ export class MessagingMessageListFetchJob {
 
   @Process(MessagingMessageListFetchJob.name)
   async handle(data: MessagingMessageListFetchJobData): Promise<void> {
+    console.time('MessagingMessageListFetchJob time');
+
     const { messageChannelId, workspaceId } = data;
 
     await this.messagingTelemetryService.track({
@@ -145,5 +147,7 @@ export class MessagingMessageListFetchJob {
       default:
         break;
     }
+
+    console.timeEnd('MessagingMessageListFetchJob time');
   }
 }

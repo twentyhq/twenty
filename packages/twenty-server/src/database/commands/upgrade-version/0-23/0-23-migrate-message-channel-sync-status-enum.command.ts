@@ -10,7 +10,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { WorkspaceStatusService } from 'src/engine/workspace-manager/workspace-status/services/workspace-status.service';
 import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
@@ -34,7 +34,7 @@ export class MigrateMessageChannelSyncStatusEnumCommand extends CommandRunner {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super();
   }
@@ -212,7 +212,9 @@ export class MigrateMessageChannelSyncStatusEnumCommand extends CommandRunner {
           options: newOptions,
         });
 
-        await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
 
         this.logger.log(
           chalk.green(`Running command on workspace ${workspaceId} done`),

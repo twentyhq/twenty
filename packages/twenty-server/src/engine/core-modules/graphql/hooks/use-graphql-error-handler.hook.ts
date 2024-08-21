@@ -119,13 +119,13 @@ export const useGraphQLErrorHandlerHook = <
 
       if (Array.isArray(errors) && errors.length > 0) {
         const headers = context.req.headers;
-        const currentSchemaVersion = context.req.cacheVersion;
+        const currentMetadataVersion = context.req.workspaceMetadataVersion;
 
-        const requestSchemaVersion = headers['x-schema-version'];
+        const requestMetadataVersion = headers['x-schema-version'];
 
         if (
-          requestSchemaVersion &&
-          requestSchemaVersion !== currentSchemaVersion
+          requestMetadataVersion &&
+          requestMetadataVersion !== `${currentMetadataVersion}`
         ) {
           throw new GraphQLError(
             `Schema version mismatch, please refresh the page.`,
