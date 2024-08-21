@@ -40,6 +40,10 @@ import {
   NameTooLongException,
   validateMetadataNameOrThrow,
 } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import {
+  NameNotAvailableException,
+  validateNameAvailabilityOrThrow,
+} from 'src/engine/metadata-modules/utils/validate-name-availability.utils';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -140,7 +144,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      this.validateFieldMetadataInput<CreateFieldInput>(fieldMetadataInput);
+      this.validateFieldMetadataInput<CreateFieldInput>(
+        fieldMetadataInput,
+        objectMetadata.standardId,
+      );
 
       const fieldAlreadyExists = await fieldMetadataRepository.findOne({
         where: {
@@ -355,7 +362,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         }
       }
 
-      this.validateFieldMetadataInput<UpdateFieldInput>(fieldMetadataInput);
+      this.validateFieldMetadataInput<UpdateFieldInput>(
+        fieldMetadataInput,
+        objectMetadata.standardId,
+      );
 
       const updatableFieldInput =
         existingFieldMetadata.isCustom === false
@@ -673,10 +683,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   private validateFieldMetadataInput<
     T extends UpdateFieldInput | CreateFieldInput,
-  >(fieldMetadataInput: T): T {
+  >(fieldMetadataInput: T, objectMetadataStandardId: string | null): T {
     if (fieldMetadataInput.name) {
       try {
         validateMetadataNameOrThrow(fieldMetadataInput.name);
+        validateNameAvailabilityOrThrow(
+          fieldMetadataInput.name,
+          objectMetadataStandardId,
+        );
       } catch (error) {
         if (error instanceof InvalidStringException) {
           throw new FieldMetadataException(
@@ -686,6 +700,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         } else if (error instanceof NameTooLongException) {
           throw new FieldMetadataException(
             `Name "${fieldMetadataInput.name}" exceeds 63 characters`,
+            FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          );
+        } else if (error instanceof NameNotAvailableException) {
+          throw new FieldMetadataException(
+            `Name "${fieldMetadataInput.name}" is not available`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
         } else {
