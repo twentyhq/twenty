@@ -1,7 +1,7 @@
 import { WorkflowAction } from 'src/modules/workflow/common/types/workflow-action.type';
 import { WorkflowResult } from 'src/modules/workflow/common/types/workflow-result.type';
 
-export interface WorkflowActionRunner {
+export interface WorkflowActionExecutor {
   execute({
     action,
     payload,

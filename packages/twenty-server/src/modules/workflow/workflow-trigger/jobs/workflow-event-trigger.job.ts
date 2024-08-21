@@ -6,7 +6,7 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/services/workflow-trigger.workspace-service';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-runner.workspace-service';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
@@ -22,7 +22,7 @@ export type WorkflowEventTriggerJobData = {
 export class WorkflowEventTriggerJob {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
+    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
   ) {}
 
   @Process(WorkflowEventTriggerJob.name)
@@ -43,7 +43,7 @@ export class WorkflowEventTriggerJob {
       );
     }
 
-    await this.workflowTriggerWorkspaceService.startWorkflowRun(
+    await this.workflowRunnerWorkspaceService.run(
       data.workspaceId,
       workflow.publishedVersionId,
       data.payload,

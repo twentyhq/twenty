@@ -5,13 +5,13 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { WorkflowAction } from 'src/modules/workflow/common/types/workflow-action.type';
 import { WorkflowResult } from 'src/modules/workflow/common/types/workflow-result.type';
 import {
-  WorkflowActionRunnerException,
-  WorkflowActionRunnerExceptionCode,
-} from 'src/modules/workflow/workflow-action-runner/workflow-action-runner.exception';
-import { WorkflowActionRunner } from 'src/modules/workflow/workflow-action-runner/workflow-action-runner.interface';
+  WorkflowActionExecutorException,
+  WorkflowActionExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-action-executor/workflow-action-executor.exception';
+import { WorkflowActionExecutor } from 'src/modules/workflow/workflow-action-executor/workflow-action-executor.interface';
 
 @Injectable()
-export class CodeWorkflowActionRunner implements WorkflowActionRunner {
+export class CodeWorkflowActionExecutor implements WorkflowActionExecutor {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
@@ -27,9 +27,9 @@ export class CodeWorkflowActionRunner implements WorkflowActionRunner {
     const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
-      throw new WorkflowActionRunnerException(
+      throw new WorkflowActionExecutorException(
         'Scoped workspace not found',
-        WorkflowActionRunnerExceptionCode.SCOPED_WORKSPACE_NOT_FOUND,
+        WorkflowActionExecutorExceptionCode.SCOPED_WORKSPACE_NOT_FOUND,
       );
     }
 

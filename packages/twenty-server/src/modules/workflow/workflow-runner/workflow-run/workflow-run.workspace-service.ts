@@ -7,12 +7,12 @@ import {
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
-  WorkflowStatusException,
-  WorkflowStatusExceptionCode,
-} from 'src/modules/workflow/workflow-status/workflow-status.exception';
+  WorkflowRunException,
+  WorkflowRunExceptionCode,
+} from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.exception';
 
 @Injectable()
-export class WorkflowStatusWorkspaceService {
+export class WorkflowRunWorkspaceService {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   async createWorkflowRun(workflowVersionId: string, createdBy: ActorMetadata) {
@@ -41,16 +41,16 @@ export class WorkflowStatusWorkspaceService {
     });
 
     if (!workflowRunToUpdate) {
-      throw new WorkflowStatusException(
+      throw new WorkflowRunException(
         'No workflow run to start',
-        WorkflowStatusExceptionCode.WORKFLOW_RUN_NOT_FOUND,
+        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
       );
     }
 
     if (workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED) {
-      throw new WorkflowStatusException(
+      throw new WorkflowRunException(
         'Workflow run already started',
-        WorkflowStatusExceptionCode.INVALID_OPERATION,
+        WorkflowRunExceptionCode.INVALID_OPERATION,
       );
     }
 
@@ -71,16 +71,16 @@ export class WorkflowStatusWorkspaceService {
     });
 
     if (!workflowRunToUpdate) {
-      throw new WorkflowStatusException(
+      throw new WorkflowRunException(
         'No workflow run to end',
-        WorkflowStatusExceptionCode.WORKFLOW_RUN_NOT_FOUND,
+        WorkflowRunExceptionCode.WORKFLOW_RUN_NOT_FOUND,
       );
     }
 
     if (workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING) {
-      throw new WorkflowStatusException(
+      throw new WorkflowRunException(
         'Workflow cannot be ended as it is not running',
-        WorkflowStatusExceptionCode.INVALID_OPERATION,
+        WorkflowRunExceptionCode.INVALID_OPERATION,
       );
     }
 
