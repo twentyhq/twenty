@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntitySchema, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -28,22 +29,25 @@ export class WorkspaceDatasourceFactory {
     workspaceId: string,
     workspaceMetadataVersion: string | null,
   ): Promise<WorkspaceDataSource> {
-    const desiredWorkspaceMetadataVersion =
-      workspaceMetadataVersion ??
-      (await this.workspaceMetadataVersionService.getMetadataVersion(
+    const logId = v4();
+
+    console.time(`fetch in datasource factory ${logId}`);
+
+    const latestWorkspaceMetadataVersion =
+      await this.workspaceMetadataVersionService.getMetadataVersion(
         workspaceId,
-      ));
+      );
+
+    console.timeEnd(`fetch in datasource factory ${logId}`);
+
+    const desiredWorkspaceMetadataVersion =
+      workspaceMetadataVersion ?? latestWorkspaceMetadataVersion;
 
     if (!desiredWorkspaceMetadataVersion) {
       throw new Error(
         `Desired workspace metadata version not found while creating workspace data source for workspace ${workspaceId}`,
       );
     }
-
-    const latestWorkspaceMetadataVersion =
-      await this.workspaceMetadataVersionService.getMetadataVersion(
-        workspaceId,
-      );
 
     if (latestWorkspaceMetadataVersion !== desiredWorkspaceMetadataVersion) {
       throw new Error(
@@ -80,6 +84,9 @@ export class WorkspaceDatasourceFactory {
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${latestWorkspaceMetadataVersion}`,
       async () => {
+        const logId = v4();
+
+        console.log('Creating workspace fresh data source...' + logId);
         const dataSourceMetadata =
           await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
             workspaceId,
@@ -97,6 +104,7 @@ export class WorkspaceDatasourceFactory {
           );
         }
 
+        console.time('create entity schema' + logId);
         const cachedEntitySchemaOptions =
           await this.workspaceCacheStorageService.getORMEntitySchema(
             workspaceId,
@@ -122,7 +130,9 @@ export class WorkspaceDatasourceFactory {
 
           cachedEntitySchemas = entitySchemas;
         }
+        console.timeEnd('create entity schema' + logId);
 
+        console.time('create workspace data source' + logId);
         const workspaceDataSource = new WorkspaceDataSource(
           {
             workspaceId,
@@ -146,7 +156,11 @@ export class WorkspaceDatasourceFactory {
           },
         );
 
+        console.timeEnd('create workspace data source' + logId);
+
+        console.time('initialize workspace data source' + logId);
         await workspaceDataSource.initialize();
+        console.timeEnd('initialize workspace data source' + logId);
 
         return workspaceDataSource;
       },
