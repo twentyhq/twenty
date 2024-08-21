@@ -55,12 +55,14 @@ export class WorkspaceDatasourceFactory {
       );
     }
 
+    console.time(`fetch in cached metadata ${logId}`);
     let cachedObjectMetadataCollection =
       await this.workspaceCacheStorageService.getObjectMetadataCollection(
         workspaceId,
       );
 
     if (!cachedObjectMetadataCollection) {
+      console.log('Fetching fresh object metadata collection...');
       const freshObjectMetadataCollection =
         await this.objectMetadataRepository.find({
           where: { workspaceId },
@@ -80,6 +82,7 @@ export class WorkspaceDatasourceFactory {
 
       cachedObjectMetadataCollection = freshObjectMetadataCollection;
     }
+    console.timeEnd(`fetch in cached metadata ${logId}`);
 
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${latestWorkspaceMetadataVersion}`,

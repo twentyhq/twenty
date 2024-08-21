@@ -1,3 +1,5 @@
+import { v4 } from 'uuid';
+
 type CacheKey = `${string}-${string}`;
 
 type AsyncFactoryCallback<T> = () => Promise<T | null>;
@@ -10,11 +12,20 @@ export class CacheManager<T> {
     factory: AsyncFactoryCallback<T>,
     onDelete?: (value: T) => Promise<void> | void,
   ): Promise<T | null> {
+    const logId = v4();
+
+    console.time(`cacheManager find ${cacheKey} ${logId}`);
     const [workspaceId] = cacheKey.split('-');
 
     if (this.cache.has(cacheKey)) {
-      return this.cache.get(cacheKey)!;
+      const cachedValue = this.cache.get(cacheKey)!;
+
+      console.timeEnd(`cacheManager find ${cacheKey} ${logId}`);
+
+      return cachedValue;
     }
+
+    console.log(`cacheManager miss for ${cacheKey} ${logId}`);
 
     // Remove old entries with the same workspaceId
     for (const key of this.cache.keys()) {
@@ -32,6 +43,8 @@ export class CacheManager<T> {
     }
 
     this.cache.set(cacheKey, value);
+
+    console.timeEnd(`cacheManager find ${cacheKey} ${logId}`);
 
     return value;
   }
