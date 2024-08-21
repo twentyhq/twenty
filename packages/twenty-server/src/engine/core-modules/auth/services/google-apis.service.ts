@@ -8,7 +8,7 @@ import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decora
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   CalendarEventListFetchJob,
   CalendarEventsImportJobData,
@@ -23,8 +23,8 @@ import {
   ConnectedAccountProvider,
   ConnectedAccountWorkspaceEntity,
 } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import {
+  MessageChannelSyncStage,
   MessageChannelSyncStatus,
   MessageChannelType,
   MessageChannelVisibility,
@@ -39,7 +39,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @Injectable()
 export class GoogleAPIsService {
   constructor(
-    private readonly twentyORMManager: TwentyORMManager,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
@@ -47,8 +47,6 @@ export class GoogleAPIsService {
     private readonly environmentService: EnvironmentService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
     private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
@@ -84,11 +82,19 @@ export class GoogleAPIsService {
     const newOrExistingConnectedAccountId = existingAccountId ?? v4();
 
     const calendarChannelRepository =
-      await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<CalendarChannelWorkspaceEntity>(
+        workspaceId,
         'calendarChannel',
       );
 
-    const workspaceDataSource = await this.twentyORMManager.getDatasource();
+    const messageChannelRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+        workspaceId,
+        'messageChannel',
+      );
+
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
 
     await workspaceDataSource.transaction(async (manager: EntityManager) => {
       if (!existingAccountId) {
@@ -105,7 +111,7 @@ export class GoogleAPIsService {
           manager,
         );
 
-        await this.messageChannelRepository.create(
+        await messageChannelRepository.save(
           {
             id: v4(),
             connectedAccountId: newOrExistingConnectedAccountId,
@@ -115,7 +121,7 @@ export class GoogleAPIsService {
               messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
             syncStatus: MessageChannelSyncStatus.ONGOING,
           },
-          workspaceId,
+          {},
           manager,
         );
 
@@ -143,7 +149,8 @@ export class GoogleAPIsService {
         );
 
         const workspaceMemberRepository =
-          await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+            workspaceId,
             'workspaceMember',
           );
 
@@ -159,20 +166,27 @@ export class GoogleAPIsService {
           newOrExistingConnectedAccountId,
         );
 
-        await this.messageChannelRepository.resetSync(
-          newOrExistingConnectedAccountId,
-          workspaceId,
+        await messageChannelRepository.update(
+          {
+            connectedAccountId: newOrExistingConnectedAccountId,
+          },
+          {
+            syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+            syncStatus: null,
+            syncCursor: '',
+            syncStageStartedAt: null,
+          },
           manager,
         );
       }
     });
 
     if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
-      const messageChannels =
-        await this.messageChannelRepository.getByConnectedAccountId(
-          newOrExistingConnectedAccountId,
-          workspaceId,
-        );
+      const messageChannels = await messageChannelRepository.find({
+        where: {
+          connectedAccountId: newOrExistingConnectedAccountId,
+        },
+      });
 
       for (const messageChannel of messageChannels) {
         await this.messageQueueService.add<MessagingMessageListFetchJobData>(

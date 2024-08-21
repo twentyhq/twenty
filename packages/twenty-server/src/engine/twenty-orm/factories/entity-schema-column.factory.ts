@@ -22,11 +22,17 @@ type EntitySchemaColumnMap = {
 export class EntitySchemaColumnFactory {
   create(
     fieldMetadataCollection: FieldMetadataEntity[],
+    softDelete: boolean,
   ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
     for (const fieldMetadata of fieldMetadataCollection) {
       const key = fieldMetadata.name;
+
+      // Skip deletedAt column if soft delete is not enabled
+      if (!softDelete && key === 'deletedAt') {
+        continue;
+      }
 
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
         const relationMetadata =

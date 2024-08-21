@@ -11,8 +11,7 @@ import {
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
@@ -25,14 +24,15 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
     private readonly messagingTelemetryService: MessagingTelemetryService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   @Process(MessagingMessageChannelSyncStatusMonitoringCronJob.name)
   async handle(): Promise<void> {
     this.logger.log('Starting message channel sync status monitoring...');
+
+    console.time('MessagingMessageChannelSyncStatusMonitoringCronJob time');
 
     await this.messagingTelemetryService.track({
       eventName: 'message_channel.monitoring.sync_status.start',
@@ -46,9 +46,14 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
     });
 
     for (const activeWorkspace of activeWorkspaces) {
-      const messageChannels = await this.messageChannelRepository.getAll(
-        activeWorkspace.id,
-      );
+      const messageChannelRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+          activeWorkspace.id,
+          'messageChannel',
+        );
+      const messageChannels = await messageChannelRepository.find({
+        select: ['id', 'syncStatus', 'connectedAccountId'],
+      });
 
       for (const messageChannel of messageChannels) {
         if (!messageChannel.syncStatus) {
@@ -65,5 +70,7 @@ export class MessagingMessageChannelSyncStatusMonitoringCronJob {
         });
       }
     }
+
+    console.timeEnd('MessagingMessageChannelSyncStatusMonitoringCronJob time');
   }
 }

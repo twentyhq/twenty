@@ -10,9 +10,11 @@ import { capitalize } from '~/utils/string/capitalize';
 export const useFindOneRecordQuery = ({
   objectNameSingular,
   recordGqlFields,
+  withSoftDeleted = false,
 }: {
   objectNameSingular: string;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  withSoftDeleted?: boolean;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -25,6 +27,16 @@ export const useFindOneRecordQuery = ({
         objectMetadataItem.nameSingular,
       )}($objectRecordId: ID!) {
         ${objectMetadataItem.nameSingular}(filter: {
+        ${
+          withSoftDeleted
+            ? `
+          or: [
+            { deletedAt: { is: NULL } },
+            { deletedAt: { is: NOT_NULL } }
+          ],
+        `
+            : ''
+        }
           id: {
             eq: $objectRecordId
           }

@@ -18,9 +18,9 @@ import {
   SaveOptions,
   UpdateResult,
 } from 'typeorm';
+import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
-import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
@@ -235,6 +235,7 @@ export class WorkspaceRepository<
       formattedEntityOrEntities,
       options,
     );
+
     const formattedResult = await this.formatResult(result);
 
     return formattedResult;
@@ -423,6 +424,7 @@ export class WorkspaceRepository<
     entityManager?: EntityManager,
   ): Promise<InsertResult> {
     const manager = entityManager || this.manager;
+
     const formatedEntity = await this.formatData(entity);
     const result = await manager.insert(this.target, formatedEntity);
     const formattedResult = await this.formatResult(result);
@@ -621,22 +623,15 @@ export class WorkspaceRepository<
       throw new Error('Object metadata name is missing');
     }
 
-    const objectMetadata =
-      await this.internalContext.workspaceCacheStorage.getObjectMetadata(
-        this.internalContext.workspaceId,
-        (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
-      );
+    const objectMetadata = this.internalContext.objectMetadataCollection.find(
+      (objectMetadata) => objectMetadata.nameSingular === objectMetadataName,
+    );
 
     if (!objectMetadata) {
-      const objectMetadataCollection =
-        await this.internalContext.workspaceCacheStorage.getObjectMetadataCollection(
-          this.internalContext.workspaceId,
-        );
-
       throw new Error(
         `Object metadata for object "${objectMetadataName}" is missing ` +
           `in workspace "${this.internalContext.workspaceId}" ` +
-          `with object metadata collection length: ${objectMetadataCollection?.length}`,
+          `with object metadata collection length: ${this.internalContext.objectMetadataCollection.length}`,
       );
     }
 
@@ -806,15 +801,13 @@ export class WorkspaceRepository<
 
       if (relationMetadata) {
         const toObjectMetadata =
-          await this.internalContext.workspaceCacheStorage.getObjectMetadata(
-            relationMetadata.workspaceId,
+          this.internalContext.objectMetadataCollection.find(
             (objectMetadata) =>
               objectMetadata.id === relationMetadata.toObjectMetadataId,
           );
 
         const fromObjectMetadata =
-          await this.internalContext.workspaceCacheStorage.getObjectMetadata(
-            relationMetadata.workspaceId,
+          this.internalContext.objectMetadataCollection.find(
             (objectMetadata) =>
               objectMetadata.id === relationMetadata.fromObjectMetadataId,
           );
@@ -833,6 +826,7 @@ export class WorkspaceRepository<
 
         newData[key] = await this.formatResult(
           value,
+
           relationType === 'one-to-many'
             ? toObjectMetadata
             : fromObjectMetadata,

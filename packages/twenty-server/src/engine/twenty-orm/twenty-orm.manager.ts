@@ -25,7 +25,7 @@ export class TwentyORMManager {
   async getRepository<T extends ObjectLiteral>(
     workspaceEntityOrobjectMetadataName: Type<T> | string,
   ): Promise<WorkspaceRepository<T>> {
-    const { workspaceId, cacheVersion } =
+    const { workspaceId, workspaceMetadataVersion } =
       this.scopedWorkspaceContextFactory.create();
 
     let objectMetadataName: string;
@@ -44,20 +44,23 @@ export class TwentyORMManager {
 
     const workspaceDataSource = await this.workspaceDataSourceFactory.create(
       workspaceId,
-      cacheVersion,
+      workspaceMetadataVersion,
     );
 
     return workspaceDataSource.getRepository<T>(objectMetadataName);
   }
 
   async getDatasource() {
-    const { workspaceId, cacheVersion } =
+    const { workspaceId, workspaceMetadataVersion } =
       this.scopedWorkspaceContextFactory.create();
 
     if (!workspaceId) {
       throw new Error('Workspace not found');
     }
 
-    return this.workspaceDataSourceFactory.create(workspaceId, cacheVersion);
+    return this.workspaceDataSourceFactory.create(
+      workspaceId,
+      workspaceMetadataVersion,
+    );
   }
 }

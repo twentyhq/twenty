@@ -6506,14 +6506,14 @@ __metadata:
 
 "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
   version: 2.1.0
-  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch::version=2.1.0&hash=194cbb&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch::version=2.1.0&hash=96a960&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
   peerDependencies:
     "@nestjs/common": ^10.0.0
     "@nestjs/core": ^10.0.0
     "@nestjs/graphql": ^12.0.0
     graphql: ^15.0.0 || ^16.0.0
     graphql-yoga: ^4.0.4
-  checksum: 10c0/f0529bfae125d22569dd5dbd7d06ac8e70315d720df5a315a644d9acf2d81d7d0d845967336b358dd11b29bab9920f38eff4c9ee774dd838aefc78dba6c91546
+  checksum: 10c0/d7a9f1ff65642cf64e942ef1caf2596b0b2866118bd95200fc2112902e71d4aeb00fe436d5d253f2415f51cf79c48417f3859fae8ed4beaf2ac7e52d49eef3a1
   languageName: node
   linkType: hard
 
@@ -9758,6 +9758,17 @@ __metadata:
   version: 0.1.1
   resolution: "@pkgr/core@npm:0.1.1"
   checksum: 10c0/3f7536bc7f57320ab2cf96f8973664bef624710c403357429fbf680a5c3b4843c1dbd389bb43daa6b1f6f1f007bb082f5abcb76bb2b5dc9f421647743b71d3d8
+  languageName: node
+  linkType: hard
+
+"@playwright/test@npm:^1.46.0":
+  version: 1.46.0
+  resolution: "@playwright/test@npm:1.46.0"
+  dependencies:
+    playwright: "npm:1.46.0"
+  bin:
+    playwright: cli.js
+  checksum: 10c0/dced91081efc8b063267626059b37923f44f98132edba906f30281277d919de27c6acf6de082d390ad263112a983f856e7f4bf37722a33cc42f62c5be308bf87
   languageName: node
   linkType: hard
 
@@ -40191,7 +40202,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.14.0, playwright@npm:^1.40.1":
+"playwright@npm:1.46.0, playwright@npm:^1.14.0, playwright@npm:^1.46.0":
   version: 1.46.0
   resolution: "playwright@npm:1.46.0"
   dependencies:
@@ -47071,6 +47082,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-e2e-testing@workspace:packages/twenty-e2e-testing":
+  version: 0.0.0-use.local
+  resolution: "twenty-e2e-testing@workspace:packages/twenty-e2e-testing"
+  dependencies:
+    "@playwright/test": "npm:^1.46.0"
+  languageName: unknown
+  linkType: soft
+
 "twenty-emails@workspace:packages/twenty-emails":
   version: 0.0.0-use.local
   resolution: "twenty-emails@workspace:packages/twenty-emails"
@@ -47440,7 +47459,7 @@ __metadata:
     pg: "npm:^8.11.3"
     pg-boss: "npm:^9.0.3"
     planer: "npm:^1.2.0"
-    playwright: "npm:^1.40.1"
+    playwright: "npm:^1.46.0"
     pluralize: "npm:^8.0.0"
     prettier: "npm:^3.1.1"
     prism-react-renderer: "npm:^2.1.0"

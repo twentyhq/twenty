@@ -30,7 +30,6 @@ import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-m
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -51,7 +50,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ),
     ObjectMetadataRepositoryModule.forFeature([
       ConnectedAccountWorkspaceEntity,
-      MessageChannelWorkspaceEntity,
     ]),
     HttpModule,
     UserWorkspaceModule,
