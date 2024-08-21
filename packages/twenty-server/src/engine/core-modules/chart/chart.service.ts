@@ -1,13 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import console from 'console';
-
 import { Repository } from 'typeorm';
 
 import { ChartResult } from 'src/engine/core-modules/chart/dtos/chart-result.dto';
 import { AliasPrefix } from 'src/engine/core-modules/chart/types/alias-prefix.type';
-import { ChartQuery } from 'src/engine/core-modules/chart/types/chart-query';
 import { CommonTableExpressionDefinition } from 'src/engine/core-modules/chart/types/common-table-expression-definition.type';
 import { QueryRelation } from 'src/engine/core-modules/chart/types/query-relation.type';
 import {
@@ -25,10 +22,7 @@ import {
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import {
-  ChartQueryMeasure,
-  ChartWorkspaceEntity,
-} from 'src/modules/charts/standard-objects/chart.workspace-entity';
+import { ChartWorkspaceEntity } from 'src/modules/charts/standard-objects/chart.workspace-entity';
 
 @Injectable()
 export class ChartService {
@@ -222,7 +216,7 @@ export class ChartService {
     });
   }
 
-  private getTargetSelectColumn(
+  /* private getTargetSelectColumn(
     chartQueryMeasure?: ChartQueryMeasure,
     qualifiedColumn?: string,
   ) {
@@ -245,7 +239,7 @@ export class ChartService {
       case ChartQueryMeasure.SUM:
         return `SUM(${qualifiedColumn}) as measure`;
     }
-  }
+  } */
 
   private async getFieldMetadata(workspaceId, fieldMetadataId) {
     if (!fieldMetadataId) return;
@@ -369,14 +363,13 @@ export class ChartService {
     };
   }
 
-  // getChartQuery will be removed after FIELD_PATH is transformed into CHART_QUERY
-  private async getChartQuery(workspaceId: string, chartId: string) {
+  private async getQuery(workspaceId: string, chartId: string) {
     const repository =
       await this.twentyORMManager.getRepository(ChartWorkspaceEntity);
 
     const chart = await repository.findOneByOrFail({ id: chartId });
 
-    const sourceObjectMetadata =
+    /* const sourceObjectMetadata =
       await this.objectMetadataService.findOneOrFailWithinWorkspace(
         workspaceId,
         {
@@ -406,45 +399,18 @@ export class ChartService {
     const groupByMeasureFieldMetadata =
       (lastGroupByFieldMetadata?.type !== FieldMetadataType.RELATION &&
         lastGroupByFieldMetadata) ||
-      undefined;
+      undefined; */
 
-    const chartQuery: ChartQuery = {
-      sourceObjectMetadataId: sourceObjectMetadata.id,
-      target: {
-        relationFieldMetadataIds: targetMeasureFieldMetadata
-          ? chart.target.slice(0, -1)
-          : (chart.target ?? []),
-        measureFieldMetadataId: targetMeasureFieldMetadata?.id,
-        measure: chart.measure,
-      },
-      groupBy: {
-        relationFieldMetadataIds: groupByMeasureFieldMetadata
-          ? chart.groupBy.slice(0, -1)
-          : (chart.groupBy ?? []),
-        measureFieldMetadataId: groupByMeasureFieldMetadata?.id,
-        measure: undefined,
-        groups: undefined,
-        includeNulls: undefined,
-      },
-    };
-
-    return chartQuery;
+    return chart.query;
   }
 
   async run(workspaceId: string, chartId: string): Promise<ChartResult> {
-    const chartQuery = await this.getChartQuery(workspaceId, chartId);
+    const query = await this.getQuery(workspaceId, chartId);
 
-    console.log('chartQuery', chartQuery);
+    console.log('query', query);
 
-    if (
-      !chartQuery.target?.measureFieldMetadataId &&
-      chartQuery.target?.measure !== ChartQueryMeasure.COUNT
-    ) {
-      throw new Error(
-        "Field 'measure' must be count when field 'measureFieldMetadataId' is undefined",
-      );
-    }
-
+    return { chartResult: JSON.stringify([{ measure: 3 }]) };
+    /* 
     const dataSourceSchemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -599,7 +565,7 @@ export class ChartService {
 
     console.log('result', JSON.stringify(result, undefined, 2));
 
-    return { chartResult: JSON.stringify(result) };
+    return { chartResult: JSON.stringify(result) }; */
   }
 }
 

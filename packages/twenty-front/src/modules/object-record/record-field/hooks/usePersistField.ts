@@ -22,8 +22,8 @@ import { isFieldSelectValue } from '@/object-record/record-field/types/guards/is
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 
-import { isFieldFieldPath } from '@/object-record/record-field/types/guards/isFieldFieldPath';
-import { isFieldFieldPathValue } from '@/object-record/record-field/types/guards/isFieldFieldPathValue';
+import { isFieldDataExplorerQuery } from '@/object-record/record-field/types/guards/isFieldDataExplorerQuery';
+import { isFieldDataExplorerQueryValue } from '@/object-record/record-field/types/guards/isFieldDataExplorerQueryValue';
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
@@ -116,9 +116,9 @@ export const usePersistField = () => {
           isFieldRawJson(fieldDefinition) &&
           isFieldRawJsonValue(valueToPersist);
 
-        const fieldIsFieldPath =
-          isFieldFieldPath(fieldDefinition) &&
-          isFieldFieldPathValue(valueToPersist);
+        const fieldIsDataExplorerQuery =
+          isFieldDataExplorerQuery(fieldDefinition) &&
+          isFieldDataExplorerQueryValue(valueToPersist);
 
         const isValuePersistable =
           fieldIsRelationToOneObject ||
@@ -138,7 +138,7 @@ export const usePersistField = () => {
           fieldIsMultiSelect ||
           fieldIsAddress ||
           fieldIsRawJson ||
-          fieldIsFieldPath;
+          fieldIsDataExplorerQuery;
 
         if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;

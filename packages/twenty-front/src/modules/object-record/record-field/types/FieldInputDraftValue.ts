@@ -1,12 +1,13 @@
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
+  DataExplorerQuery,
   FieldActorValue,
   FieldAddressValue,
   FieldBooleanValue,
   FieldCurrencyValue,
+  FieldDataExplorerQueryValue,
   FieldDateTimeValue,
   FieldEmailValue,
-  FieldFieldPathValue,
   FieldFullNameValue,
   FieldJsonValue,
   FieldLinksValue,
@@ -53,7 +54,7 @@ export type FieldAddressDraftValue = {
   addressLng: number | null;
 };
 export type FieldJsonDraftValue = string;
-export type FieldFieldPathDraftValue = string[];
+export type FieldDataExplorerQueryDraftValue = DataExplorerQuery;
 export type FieldActorDraftValue = {
   source: string;
   workspaceMemberId?: string;
@@ -96,8 +97,8 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                                   ? FieldAddressDraftValue
                                   : FieldValue extends FieldJsonValue
                                     ? FieldJsonDraftValue
-                                    : FieldValue extends FieldFieldPathValue
-                                      ? FieldFieldPathDraftValue
+                                    : FieldValue extends FieldDataExplorerQueryValue
+                                      ? FieldDataExplorerQueryDraftValue
                                       : FieldValue extends FieldActorValue
                                         ? FieldActorDraftValue
                                         : never;

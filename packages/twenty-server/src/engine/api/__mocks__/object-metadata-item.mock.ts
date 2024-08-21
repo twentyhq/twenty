@@ -190,9 +190,9 @@ const fieldRawJsonMock = {
   defaultValue: null,
 };
 
-const fieldfieldPathMock = {
-  name: 'fieldPath',
-  type: FieldMetadataType.FIELD_PATH,
+const fieldDataExplorerQueryMock = {
+  name: 'fieldDataExplorerQuery',
+  type: FieldMetadataType.DATA_EXPLORER_QUERY,
   isNullable: true,
   defaultValue: null,
 };
@@ -235,7 +235,7 @@ export const fields = [
   fieldPositionMock,
   fieldAddressMock,
   fieldRawJsonMock,
-  fieldfieldPathMock,
+  fieldDataExplorerQueryMock,
   fieldRichTextMock,
   fieldActorMock,
 ];

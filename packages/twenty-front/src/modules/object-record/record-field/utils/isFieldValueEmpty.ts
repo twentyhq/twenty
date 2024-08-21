@@ -9,10 +9,10 @@ import { isFieldAddressValue } from '@/object-record/record-field/types/guards/i
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
+import { isFieldDataExplorerQuery } from '@/object-record/record-field/types/guards/isFieldDataExplorerQuery';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
 import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldEmail';
-import { isFieldFieldPath } from '@/object-record/record-field/types/guards/isFieldFieldPath';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldLink } from '@/object-record/record-field/types/guards/isFieldLink';
@@ -59,7 +59,7 @@ export const isFieldValueEmpty = ({
     isFieldBoolean(fieldDefinition) ||
     isFieldRelation(fieldDefinition) ||
     isFieldRawJson(fieldDefinition) ||
-    isFieldFieldPath(fieldDefinition) ||
+    isFieldDataExplorerQuery(fieldDefinition) ||
     isFieldRichText(fieldDefinition) ||
     isFieldPhone(fieldDefinition) ||
     isFieldPosition(fieldDefinition)

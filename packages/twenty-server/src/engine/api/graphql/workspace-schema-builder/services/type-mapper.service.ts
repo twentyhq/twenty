@@ -25,13 +25,11 @@ import {
   RawJsonFilterType,
   StringFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
-import { FieldPathFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/field-path-filter.input-type';
 import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
 import {
   BigFloatScalarType,
   UUIDScalarType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { FieldPathScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/field-path.scalar';
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
 import { RawJSONScalar } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/raw-json.scalar';
 import { getNumberFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-filter-type.util';
@@ -76,7 +74,7 @@ export class TypeMapperService {
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
       [FieldMetadataType.POSITION, PositionScalarType],
       [FieldMetadataType.RAW_JSON, RawJSONScalar],
-      [FieldMetadataType.FIELD_PATH, FieldPathScalarType],
+      [FieldMetadataType.DATA_EXPLORER_QUERY, RawJSONScalar],
       [FieldMetadataType.RICH_TEXT, GraphQLString],
     ]);
 
@@ -113,7 +111,7 @@ export class TypeMapperService {
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
       [FieldMetadataType.POSITION, FloatFilterType],
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
-      [FieldMetadataType.FIELD_PATH, FieldPathFilterType],
+      [FieldMetadataType.DATA_EXPLORER_QUERY, RawJsonFilterType],
       [FieldMetadataType.RICH_TEXT, StringFilterType],
     ]);
 
@@ -138,7 +136,7 @@ export class TypeMapperService {
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
       [FieldMetadataType.POSITION, OrderByDirectionType],
       [FieldMetadataType.RAW_JSON, OrderByDirectionType],
-      [FieldMetadataType.FIELD_PATH, OrderByDirectionType],
+      [FieldMetadataType.DATA_EXPLORER_QUERY, OrderByDirectionType],
       [FieldMetadataType.RICH_TEXT, OrderByDirectionType],
     ]);
 

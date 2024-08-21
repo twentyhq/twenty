@@ -5,22 +5,22 @@ import { useRecordFieldValue } from '@/object-record/record-store/contexts/Recor
 
 import { FieldContext } from '../../contexts/FieldContext';
 import {
-  FieldFieldPathMetadata,
-  FieldFieldPathValue,
+  FieldDataExplorerQueryMetadata,
+  FieldDataExplorerQueryValue,
 } from '../../types/FieldMetadata';
 
-export const useFieldPathFieldDisplay = () => {
+export const useDataExplorerQueryFieldDisplay = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const fieldValue = useRecordFieldValue<FieldFieldPathValue | undefined>(
-    recordId,
-    fieldName,
-  );
+  const fieldValue = useRecordFieldValue<
+    FieldDataExplorerQueryValue | undefined
+  >(recordId, fieldName);
 
   return {
-    fieldDefinition: fieldDefinition as FieldDefinition<FieldFieldPathMetadata>,
+    fieldDefinition:
+      fieldDefinition as FieldDefinition<FieldDataExplorerQueryMetadata>,
     fieldValue,
   };
 };

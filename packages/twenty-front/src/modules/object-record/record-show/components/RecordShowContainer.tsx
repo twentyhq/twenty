@@ -19,6 +19,7 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { RecordDetailDataExplorerQuerySection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDataExplorerQuerySection';
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
@@ -126,7 +127,11 @@ export const RecordShowContainer = ({
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
     );
 
-  const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
+  const {
+    inlineFieldMetadataItems,
+    relationFieldMetadataItems,
+    dataExplorerQueryFieldMetadataItems,
+  } = groupBy(
     availableFieldMetadataItems.filter(
       (fieldMetadataItem) =>
         fieldMetadataItem.name !== 'createdAt' &&
@@ -135,7 +140,9 @@ export const RecordShowContainer = ({
     (fieldMetadataItem) =>
       fieldMetadataItem.type === FieldMetadataType.Relation
         ? 'relationFieldMetadataItems'
-        : 'inlineFieldMetadataItems',
+        : fieldMetadataItem.type === FieldMetadataType.DataExplorerQuery
+          ? 'dataExplorerQueryFieldMetadataItems'
+          : 'inlineFieldMetadataItems',
   );
 
   const inlineRelationFieldMetadataItems = relationFieldMetadataItems?.filter(
@@ -300,6 +307,29 @@ export const RecordShowContainer = ({
               />
             </FieldContext.Provider>
           ))}
+          {dataExplorerQueryFieldMetadataItems.map(
+            (fieldMetadataItem, index) => (
+              <FieldContext.Provider
+                key={objectRecordId + fieldMetadataItem.id}
+                value={{
+                  recordId: objectRecordId,
+                  recoilScopeId: objectRecordId + fieldMetadataItem.id,
+                  isLabelIdentifier: false,
+                  fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                    field: fieldMetadataItem,
+                    position: index,
+                    objectMetadataItem,
+                  }),
+                  useUpdateRecord: useUpdateOneObjectRecordMutation,
+                  hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                }}
+              >
+                <RecordDetailDataExplorerQuerySection
+                  loading={isPrefetchLoading || loading || recordLoading}
+                />
+              </FieldContext.Provider>
+            ),
+          )}
         </>
       )}
     </>

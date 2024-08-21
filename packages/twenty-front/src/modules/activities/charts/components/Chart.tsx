@@ -44,9 +44,9 @@ export const Chart = (props: ChartProps) => {
 
   if (!chart) throw new Error('Could not load chart');
 
-  if (!chart?.groupBy) {
+  /* if (!chart?.groupBy) {
     return <div>{chartResult?.[0].measure}</div>;
-  }
+  } */
 
   if (!chartResult) return;
 

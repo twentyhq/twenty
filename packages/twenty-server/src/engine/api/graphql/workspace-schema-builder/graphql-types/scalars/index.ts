@@ -1,5 +1,3 @@
-import { FieldPathScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/field-path.scalar';
-
 import { BigFloatScalarType } from './big-float.scalar';
 import { BigIntScalarType } from './big-int.scalar';
 import { CursorScalarType } from './cursor.scalar';
@@ -28,5 +26,4 @@ export const scalars = [
   CursorScalarType,
   PositionScalarType,
   RawJSONScalar,
-  FieldPathScalarType,
 ];

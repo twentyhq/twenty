@@ -43,8 +43,8 @@ const getFieldProperties = (type: FieldMetadataType): Property => {
       return { type: 'boolean' };
     case FieldMetadataType.RAW_JSON:
       return { type: 'object' };
-    case FieldMetadataType.FIELD_PATH:
-      return { type: 'array', items: { type: 'string' } };
+    case FieldMetadataType.DATA_EXPLORER_QUERY:
+      return { type: 'object' };
     default:
       return { type: 'string' };
   }

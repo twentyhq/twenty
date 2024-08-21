@@ -356,7 +356,7 @@ export enum FieldMetadataType {
   Date = 'DATE',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
-  FieldPath = 'FIELD_PATH',
+  DataExplorerQuery = 'DATA_EXPLORER_QUERY',
   FullName = 'FULL_NAME',
   Link = 'LINK',
   Links = 'LINKS',

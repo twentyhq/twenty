@@ -1,17 +1,36 @@
-import { ChartQueryMeasure } from 'src/modules/charts/standard-objects/chart.workspace-entity';
+interface DataExplorerQueryChildJoin {
+  type: 'join';
+  children: DataExplorerQueryChild;
+  fieldMetadataId?: string;
+  measure?: 'COUNT';
+}
 
-export interface ChartQuery {
+interface DataExplorerQueryChildSelect {
+  type: 'select';
+  children: DataExplorerQueryChild;
+  fieldMetadataId?: string;
+  measure?: 'AVG' | 'MAX' | 'MIN' | 'SUM';
+}
+
+interface DataExplorerQueryGroupBy {
+  type: 'groupBy';
+  groupBy?: boolean;
+  groups?: { upperLimit: number; lowerLimit: number }[];
+  includeNulls?: boolean;
+}
+
+interface DataExplorerQuerySort {
+  type: 'sort';
+  sortBy?: 'ASC' | 'DESC';
+}
+
+type DataExplorerQueryChild =
+  | DataExplorerQueryChildJoin
+  | DataExplorerQueryChildSelect
+  | DataExplorerQueryGroupBy
+  | DataExplorerQuerySort;
+
+export interface DataExplorerQuery {
   sourceObjectMetadataId?: string;
-  target?: {
-    relationFieldMetadataIds?: string[];
-    measureFieldMetadataId?: string;
-    measure?: ChartQueryMeasure;
-  };
-  groupBy?: {
-    relationFieldMetadataIds?: string[];
-    measureFieldMetadataId?: string;
-    measure?: ChartQueryMeasure;
-    groups?: { upperLimit: number; lowerLimit: number }[];
-    includeNulls?: boolean;
-  };
+  children: DataExplorerQueryChild[];
 }

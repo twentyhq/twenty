@@ -95,7 +95,7 @@ export type FieldRawJsonMetadata = {
   placeHolder: string;
 };
 
-export type FieldFieldPathMetadata = {
+export type FieldDataExplorerQueryMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
@@ -175,7 +175,7 @@ export type FieldMetadata =
   | FieldTextMetadata
   | FieldUuidMetadata
   | FieldAddressMetadata
-  | FieldFieldPathMetadata
+  | FieldDataExplorerQueryMetadata
   | FieldActorMetadata;
 
 export type FieldTextValue = string;
@@ -223,7 +223,44 @@ export type FieldRelationValue<
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
 
-export type FieldFieldPathValue = string[] | null;
+interface DataExplorerQueryChildJoin {
+  type: 'join';
+  children: DataExplorerQueryChild;
+  fieldMetadataId?: string;
+  measure?: 'COUNT';
+}
+
+interface DataExplorerQueryChildSelect {
+  type: 'select';
+  children: DataExplorerQueryChild;
+  fieldMetadataId?: string;
+  measure?: 'AVG' | 'MAX' | 'MIN' | 'SUM';
+}
+
+interface DataExplorerQueryGroupBy {
+  type: 'groupBy';
+  groupBy?: boolean;
+  groups?: { upperLimit: number; lowerLimit: number }[];
+  includeNulls?: boolean;
+}
+
+interface DataExplorerQuerySort {
+  type: 'sort';
+  sortBy?: 'ASC' | 'DESC';
+}
+
+type DataExplorerQueryChild =
+  | DataExplorerQueryChildJoin
+  | DataExplorerQueryChildSelect
+  | DataExplorerQueryGroupBy
+  | DataExplorerQuerySort;
+
+export interface DataExplorerQuery {
+  sourceObjectMetadataId?: string;
+  children?: DataExplorerQueryChild[];
+}
+
+export type FieldDataExplorerQueryValue = DataExplorerQuery | null;
 
 export type FieldActorValue = {
   source: string;

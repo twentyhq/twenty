@@ -1,9 +1,10 @@
-import { FieldPathPicker } from '@/object-record/field-path-picker/components/FieldPathPicker';
+import { DataExplorerQueryBuilder } from '@/object-record/data-explorer-query-builder/components/DataExplorerQueryBuilder';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
-import { useFieldPathField } from '@/object-record/record-field/meta-types/hooks/useFieldPathField';
+import { useDataExplorerQueryField } from '@/object-record/record-field/meta-types/hooks/useDataExplorerQueryField';
+import { FieldDataExplorerQueryValue } from '@/object-record/record-field/types/FieldMetadata';
 import { FieldInputEvent } from './DateTimeFieldInput';
 
-export type FieldPathFieldInputProps = {
+export type FieldDataExplorerQueryInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -11,13 +12,13 @@ export type FieldPathFieldInputProps = {
   onShiftTab?: FieldInputEvent;
 };
 
-export const FieldPathFieldInput = ({
+export const FieldDataExplorerQueryInput = ({
   onEnter,
   onEscape,
   onClickOutside,
   onTab,
   onShiftTab,
-}: FieldPathFieldInputProps) => {
+}: FieldDataExplorerQueryInputProps) => {
   const {
     draftValue,
     setDraftValue,
@@ -26,49 +27,47 @@ export const FieldPathFieldInput = ({
     setFieldValue, */
     hotkeyScope,
     sourceObjectNameSingular,
-  } = useFieldPathField();
+  } = useDataExplorerQueryField();
 
   const persistField = usePersistField();
 
-  const handleEnter = (newFieldPath: string[]) => {
-    onEnter?.(() => persistField(newFieldPath));
+  const handleEnter = (newValue: FieldDataExplorerQueryValue) => {
+    onEnter?.(() => persistField(newValue));
   };
 
-  const handleEscape = (newFieldPath: string[]) => {
-    onEscape?.(() => persistField(newFieldPath));
+  const handleEscape = (newValue: FieldDataExplorerQueryValue) => {
+    onEscape?.(() => persistField(newValue));
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
-    newFieldPath: string[],
+    newValue: FieldDataExplorerQueryValue,
   ) => {
-    onClickOutside?.(() => persistField(newFieldPath)); // TODO: Implement string array saving in persistField
+    onClickOutside?.(() => persistField(newValue)); // TODO: Implement string array saving in persistField
   };
 
-  const handleTab = (newFieldPath: string[]) => {
-    onTab?.(() => persistField(newFieldPath));
+  const handleTab = (newValue?: FieldDataExplorerQueryValue) => {
+    onTab?.(() => persistField(newValue));
   };
 
-  const handleShiftTab = (newFieldPath: string[]) => {
-    onShiftTab?.(() => persistField(newFieldPath));
+  const handleShiftTab = (newValue: FieldDataExplorerQueryValue) => {
+    onShiftTab?.(() => persistField(newValue));
   };
 
-  const handleChange = (newFieldPath: string[]) => {
-    setDraftValue(newFieldPath);
+  const handleChange = (newValue: FieldDataExplorerQueryValue) => {
+    setDraftValue(newValue ?? undefined);
   };
 
   return (
-    <FieldPathPicker
+    <DataExplorerQueryBuilder
       value={draftValue}
       hotkeyScope={hotkeyScope}
-      sourceObjectNameSingular={sourceObjectNameSingular}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}
       onShiftTab={handleShiftTab}
       onTab={handleTab}
       onChange={handleChange}
-      maxDepth={3}
     />
   );
 };

@@ -6,10 +6,10 @@ import {
   FieldAddressMetadata,
   FieldBooleanMetadata,
   FieldCurrencyMetadata,
+  FieldDataExplorerQueryMetadata,
   FieldDateMetadata,
   FieldDateTimeMetadata,
   FieldEmailMetadata,
-  FieldFieldPathMetadata,
   FieldFullNameMetadata,
   FieldLinkMetadata,
   FieldLinksMetadata,
@@ -63,8 +63,8 @@ type AssertFieldMetadataFunction = <
                                     ? FieldAddressMetadata
                                     : E extends 'RAW_JSON'
                                       ? FieldRawJsonMetadata
-                                      : E extends 'FIELD_PATH'
-                                        ? FieldFieldPathMetadata
+                                      : E extends 'DATA_EXPLORER_QUERY'
+                                        ? FieldDataExplorerQueryMetadata
                                         : E extends 'RICH_TEXT'
                                           ? FieldTextMetadata
                                           : E extends 'ACTOR'

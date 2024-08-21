@@ -52,7 +52,7 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.RICH_TEXT]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
   [FieldMetadataType.LINKS]: [FieldMetadataDefaultValueLinks],
-  [FieldMetadataType.FIELD_PATH]: [FieldMetadataDefaultValueStringArray],
+  [FieldMetadataType.DATA_EXPLORER_QUERY]: [FieldMetadataDefaultValueRawJson],
   [FieldMetadataType.ACTOR]: [FieldMetadataDefaultActor],
 };
 

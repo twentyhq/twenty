@@ -12,7 +12,6 @@ import {
   FieldMetadataDefaultValueRawJson,
   FieldMetadataDefaultValueRichText,
   FieldMetadataDefaultValueString,
-  FieldMetadataDefaultValueStringArray,
   FieldMetadataDefaultValueUuidFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -47,7 +46,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
-  [FieldMetadataType.FIELD_PATH]: FieldMetadataDefaultValueStringArray;
+  [FieldMetadataType.DATA_EXPLORER_QUERY]: FieldMetadataDefaultValueRawJson;
   [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
   [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
 };

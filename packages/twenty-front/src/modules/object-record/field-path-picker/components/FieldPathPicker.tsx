@@ -1,4 +1,4 @@
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+/* import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CountRecordsItem } from '@/object-record/field-path-picker/components/CountRecordsItem';
 import { FieldSelectItem } from '@/object-record/field-path-picker/components/FieldSelectItem';
 import { COUNT_RECORDS_ITEM_KEY } from '@/object-record/field-path-picker/constants/CountRecordsItemKey';
@@ -6,7 +6,7 @@ import { FIELD_PATH_PICKER_SELECTABLE_LIST_ID } from '@/object-record/field-path
 import { getViewObjectMetadata } from '@/object-record/field-path-picker/utils/getViewObjectMetadata';
 import { isSelectableFieldPathPart } from '@/object-record/field-path-picker/utils/isSelectableFieldPathPart';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { FieldFieldPathValue } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldDataExplorerQueryValue } from '@/object-record/record-field/types/FieldMetadata';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -14,10 +14,10 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useRef } from 'react';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql'; */
 
-interface FieldPathPickerProps {
-  value?: FieldFieldPathValue | undefined;
+interface FieldPathPickerEffectProps {
+  value?: any /* FieldDataExplorerQueryValue */ | undefined;
   hotkeyScope: string;
   sourceObjectNameSingular?: string;
   onClickOutside: (
@@ -32,8 +32,9 @@ interface FieldPathPickerProps {
   maxDepth: number;
 }
 
-export const FieldPathPicker = (props: FieldPathPickerProps) => {
-  const { objectMetadataItems } = useFilteredObjectMetadataItems();
+export const FieldPathPickerEffect = (props: FieldPathPickerEffectProps) => {
+  return null;
+  /* const { objectMetadataItems } = useFilteredObjectMetadataItems();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -125,5 +126,5 @@ export const FieldPathPicker = (props: FieldPathPickerProps) => {
         </DropdownMenuItemsContainer>
       </DropdownMenu>
     </div>
-  );
+  ); */
 };

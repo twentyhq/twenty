@@ -20,9 +20,9 @@ import { isFieldRelationToOneObject } from '@/object-record/record-field/types/g
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
-import { FieldPathFieldInput } from '@/object-record/record-field/meta-types/input/components/FieldPathFieldInput';
+import { FieldDataExplorerQueryInput } from '@/object-record/record-field/meta-types/input/components/FieldPathFieldInput';
 import { RichTextFieldInput } from '@/object-record/record-field/meta-types/input/components/RichTextFieldInput';
-import { isFieldFieldPath } from '@/object-record/record-field/types/guards/isFieldFieldPath';
+import { isFieldDataExplorerQuery } from '@/object-record/record-field/types/guards/isFieldDataExplorerQuery';
 import { isFieldRichText } from '@/object-record/record-field/types/guards/isFieldRichText';
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
@@ -179,8 +179,8 @@ export const FieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
-      ) : isFieldFieldPath(fieldDefinition) ? (
-        <FieldPathFieldInput
+      ) : isFieldDataExplorerQuery(fieldDefinition) ? (
+        <FieldDataExplorerQueryInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}

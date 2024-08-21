@@ -73,7 +73,7 @@ export class WorkspaceMigrationFactory {
       [FieldMetadataType.POSITION, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.RAW_JSON, { factory: this.basicColumnActionFactory }],
       [
-        FieldMetadataType.FIELD_PATH,
+        FieldMetadataType.DATA_EXPLORER_QUERY,
         { factory: this.basicColumnActionFactory },
       ],
       [FieldMetadataType.RICH_TEXT, { factory: this.basicColumnActionFactory }],
