@@ -1,40 +1,18 @@
-import styled from '@emotion/styled';
-
-const StyledContainer = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: flex-start;
-  overflow-y: auto;
-  position: relative;
-`;
-
-const StyledChatArea = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
-  padding: ${({ theme }) => theme.spacing(6)};
-  padding-bottom: 0px;
-`;
-
-const StyledNewMessageArea = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(6)};
-  padding-top: 0px;
-`;
+import { RightDrawerSelectAction } from '@/workflow/components/RightDrawerSelectAction';
+import { rightDrawerWorkflowState } from '@/workflow/states/rightDrawerWorkflowState';
+import { useRecoilValue } from 'recoil';
 
 export const RightDrawerWorkflow = () => {
-  const handleCreateCodeBlock = () => {};
+  const rightDrawerWorkflow = useRecoilValue(rightDrawerWorkflowState);
 
-  return (
-    <StyledContainer>
-      <StyledChatArea>{/* TODO */}</StyledChatArea>
-      <StyledNewMessageArea>
-        <button onClick={handleCreateCodeBlock}>Create code block</button>
-      </StyledNewMessageArea>
-    </StyledContainer>
-  );
+  if (rightDrawerWorkflow === undefined) {
+    return null;
+  }
+
+  // FIXME: find a better way to return null at the end of the component without ESLint telling us that it should be an Effect component.
+  if (rightDrawerWorkflow.type !== 'select-action') {
+    return null;
+  }
+
+  return <RightDrawerSelectAction />;
 };

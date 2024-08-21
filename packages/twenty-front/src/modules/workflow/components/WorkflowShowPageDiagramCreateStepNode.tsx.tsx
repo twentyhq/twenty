@@ -1,6 +1,5 @@
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import { useStartNodeCreation } from '@/workflow/hooks/useStartNodeCreation';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import { IconPlus } from 'twenty-ui';
@@ -10,17 +9,13 @@ export const StyledTargetHandle = styled(Handle)`
 `;
 
 export const WorkflowShowPageDiagramCreateStepNode = () => {
-  const { openRightDrawer } = useRightDrawer();
-
-  const handleCreateStepNodeButtonClick = () => {
-    openRightDrawer(RightDrawerPages.Workflow);
-  };
+  const { startNodeCreation } = useStartNodeCreation();
 
   return (
     <div>
       <StyledTargetHandle type="target" position={Position.Top} />
 
-      <IconButton Icon={IconPlus} onClick={handleCreateStepNodeButtonClick} />
+      <IconButton Icon={IconPlus} onClick={startNodeCreation} />
     </div>
   );
 };
