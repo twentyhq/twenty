@@ -16,7 +16,6 @@ import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MESSAGING_MESSAGES_IMPORT_MESSAGE_CHANNEL_LIMIT } from 'src/modules/messaging/message-import-manager/constants/messaging-messages-import-message-channel-limit.constant';
 import {
   MessagingMessagesImportJob,
   MessagingMessagesImportJobData,
@@ -52,7 +51,6 @@ export class MessagingMessagesImportCronJob {
           isSyncEnabled: true,
           syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
         },
-        take: MESSAGING_MESSAGES_IMPORT_MESSAGE_CHANNEL_LIMIT,
       });
 
       for (const messageChannel of messageChannels) {
