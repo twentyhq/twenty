@@ -6,14 +6,14 @@ import { useIcons } from 'twenty-ui';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
+import { useIsListSelectedItem } from '@/ui/layout/selectable-list/hooks/useIsListSelectedItem';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -57,15 +57,16 @@ export const ObjectFilterDropdownFilterSelect = () => {
   const { getIcon } = useIcons();
 
   const setHotkeyScope = useSetHotkeyScope();
-  const {isSelectedItemIdSelector} = useSelectableList(OBJECT_FILTER_DROPDOWN_ID)
-  const isSelectedItemId = (id:string)=> useRecoilValue(isSelectedItemIdSelector(id));
-  const refactoredAvailableFilterDefinitions = [...availableFilterDefinitions]
-  .sort((a, b) => a.label.localeCompare(b.label))
-  .filter((item) =>
-    item.label
-      .toLocaleLowerCase()
-      .includes(searchText.toLocaleLowerCase()),
-  )
+  const isListSelectedItem = useIsListSelectedItem({
+    selectableListId: OBJECT_FILTER_DROPDOWN_ID,
+  });
+
+  const sortedAvailableFilterDefinitions = [...availableFilterDefinitions]
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .filter((item) =>
+      item.label.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()),
+    );
+
   return (
     <>
       <StyledInput
@@ -76,37 +77,47 @@ export const ObjectFilterDropdownFilterSelect = () => {
           setSearchText(event.target.value)
         }
       />
-      <SelectableList hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}  selectableItemIdArray={refactoredAvailableFilterDefinitions.map((item)=>item.fieldMetadataId)} selectableListId={OBJECT_FILTER_DROPDOWN_ID}>
-      <DropdownMenuItemsContainer>
-        {refactoredAvailableFilterDefinitions
-          .map((availableFilterDefinition, index) => (
-            <MenuItem
-              key={`select-filter-${index}`}
-              testId={`select-filter-${index}`}
-              hovered={isSelectedItemId(availableFilterDefinition.fieldMetadataId)}
-              onClick={() => {
-                setFilterDefinitionUsedInDropdown(availableFilterDefinition);
+      <SelectableList
+        hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
+        selectableItemIdArray={sortedAvailableFilterDefinitions.map(
+          (item) => item.fieldMetadataId,
+        )}
+        selectableListId={OBJECT_FILTER_DROPDOWN_ID}
+      >
+        <DropdownMenuItemsContainer>
+          {sortedAvailableFilterDefinitions.map(
+            (availableFilterDefinition, index) => (
+              <MenuItemSelect
+                key={`select-filter-${index}`}
+                selected={false}
+                hovered={isListSelectedItem(
+                  availableFilterDefinition.fieldMetadataId,
+                )}
+                onClick={() => {
+                  setFilterDefinitionUsedInDropdown(availableFilterDefinition);
 
-                if (
-                  availableFilterDefinition.type === 'RELATION' ||
-                  availableFilterDefinition.type === 'SELECT'
-                ) {
-                  setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
-                }
+                  if (
+                    availableFilterDefinition.type === 'RELATION' ||
+                    availableFilterDefinition.type === 'SELECT'
+                  ) {
+                    setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
+                  }
 
-                setSelectedOperandInDropdown(
-                  getOperandsForFilterType(availableFilterDefinition.type)?.[0],
-                );
+                  setSelectedOperandInDropdown(
+                    getOperandsForFilterType(
+                      availableFilterDefinition.type,
+                    )?.[0],
+                  );
 
-                setObjectFilterDropdownSearchInput('');
-              }}
-              LeftIcon={getIcon(availableFilterDefinition.iconName)}
-              text={availableFilterDefinition.label}
-            />
-          ))}
-      </DropdownMenuItemsContainer>
+                  setObjectFilterDropdownSearchInput('');
+                }}
+                LeftIcon={getIcon(availableFilterDefinition.iconName)}
+                text={availableFilterDefinition.label}
+              />
+            ),
+          )}
+        </DropdownMenuItemsContainer>
       </SelectableList>
-      
     </>
   );
 };

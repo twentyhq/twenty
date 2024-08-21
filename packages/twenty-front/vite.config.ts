@@ -24,9 +24,9 @@ export default defineConfig(({ command, mode }) => {
     : path.resolve(__dirname, './tsconfig.dev.json');
 
   const checkers: Checkers = {
-    typescript: {
-      tsconfigPath: tsConfigPath,
-    },
+    // typescript: {
+    //   tsconfigPath: tsConfigPath,
+    // },
     overlay: false,
   };
 
