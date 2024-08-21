@@ -98,7 +98,6 @@ export class UserResolver {
     nullable: true,
   })
   async workspaceMember(@Parent() user: User): Promise<WorkspaceMember | null> {
-    console.time('resolver workspaceMember');
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
 
     if (workspaceMember && workspaceMember.avatarUrl) {
@@ -109,7 +108,6 @@ export class UserResolver {
 
       workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
     }
-    console.timeEnd('resolver workspaceMember');
 
     // TODO: Fix typing disrepency between Entity and DTO
     return workspaceMember as WorkspaceMember | null;
@@ -119,7 +117,6 @@ export class UserResolver {
     nullable: true,
   })
   async workspaceMembers(@Parent() user: User): Promise<WorkspaceMember[]> {
-    console.time('resolver workspaceMembers');
     const workspaceMembers = await this.userService.loadWorkspaceMembers(
       user.defaultWorkspace,
     );
@@ -134,8 +131,6 @@ export class UserResolver {
         workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
       }
     }
-
-    console.timeEnd('resolver workspaceMembers');
 
     // TODO: Fix typing disrepency between Entity and DTO
     return workspaceMembers as WorkspaceMember[];

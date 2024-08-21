@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntitySchema, Repository } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -29,16 +28,10 @@ export class WorkspaceDatasourceFactory {
     workspaceId: string,
     workspaceMetadataVersion: string | null,
   ): Promise<WorkspaceDataSource> {
-    const logId = v4();
-
-    console.time(`fetch in datasource factory ${logId}`);
-
     const latestWorkspaceMetadataVersion =
       await this.workspaceMetadataVersionService.getMetadataVersion(
         workspaceId,
       );
-
-    console.timeEnd(`fetch in datasource factory ${logId}`);
 
     const desiredWorkspaceMetadataVersion =
       workspaceMetadataVersion ?? latestWorkspaceMetadataVersion;
@@ -55,38 +48,35 @@ export class WorkspaceDatasourceFactory {
       );
     }
 
-    let cachedObjectMetadataCollection =
-      await this.workspaceCacheStorageService.getObjectMetadataCollection(
-        workspaceId,
-      );
-
-    if (!cachedObjectMetadataCollection) {
-      const freshObjectMetadataCollection =
-        await this.objectMetadataRepository.find({
-          where: { workspaceId },
-          relations: [
-            'fields.object',
-            'fields',
-            'fields.fromRelationMetadata',
-            'fields.toRelationMetadata',
-            'fields.fromRelationMetadata.toObjectMetadata',
-          ],
-        });
-
-      await this.workspaceCacheStorageService.setObjectMetadataCollection(
-        workspaceId,
-        freshObjectMetadataCollection,
-      );
-
-      cachedObjectMetadataCollection = freshObjectMetadataCollection;
-    }
-
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
       `${workspaceId}-${latestWorkspaceMetadataVersion}`,
       async () => {
-        const logId = v4();
+        let cachedObjectMetadataCollection =
+          await this.workspaceCacheStorageService.getObjectMetadataCollection(
+            workspaceId,
+          );
 
-        console.log('Creating workspace fresh data source...' + logId);
+        if (!cachedObjectMetadataCollection) {
+          const freshObjectMetadataCollection =
+            await this.objectMetadataRepository.find({
+              where: { workspaceId },
+              relations: [
+                'fields.object',
+                'fields',
+                'fields.fromRelationMetadata',
+                'fields.toRelationMetadata',
+                'fields.fromRelationMetadata.toObjectMetadata',
+              ],
+            });
+
+          await this.workspaceCacheStorageService.setObjectMetadataCollection(
+            workspaceId,
+            freshObjectMetadataCollection,
+          );
+
+          cachedObjectMetadataCollection = freshObjectMetadataCollection;
+        }
+
         const dataSourceMetadata =
           await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
             workspaceId,
@@ -104,7 +94,6 @@ export class WorkspaceDatasourceFactory {
           );
         }
 
-        console.time('create entity schema' + logId);
         const cachedEntitySchemaOptions =
           await this.workspaceCacheStorageService.getORMEntitySchema(
             workspaceId,
@@ -130,9 +119,7 @@ export class WorkspaceDatasourceFactory {
 
           cachedEntitySchemas = entitySchemas;
         }
-        console.timeEnd('create entity schema' + logId);
 
-        console.time('create workspace data source' + logId);
         const workspaceDataSource = new WorkspaceDataSource(
           {
             workspaceId,
@@ -156,11 +143,7 @@ export class WorkspaceDatasourceFactory {
           },
         );
 
-        console.timeEnd('create workspace data source' + logId);
-
-        console.time('initialize workspace data source' + logId);
         await workspaceDataSource.initialize();
-        console.timeEnd('initialize workspace data source' + logId);
 
         return workspaceDataSource;
       },
