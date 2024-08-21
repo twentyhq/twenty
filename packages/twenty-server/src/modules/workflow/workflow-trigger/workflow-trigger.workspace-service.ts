@@ -12,6 +12,7 @@ import {
 } from 'src/modules/workflow/common/types/workflow-trigger.type';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workflow-common.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-runner.workspace-service';
+import { assertWorkflowVersionIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-workflow-version-is-valid';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
@@ -67,6 +68,8 @@ export class WorkflowTriggerWorkspaceService {
         workflowVersionId,
       );
 
+    assertWorkflowVersionIsValid(workflowVersion);
+
     switch (workflowVersion.trigger.type) {
       case WorkflowTriggerType.DATABASE_EVENT:
         await this.upsertEventListenerAndPublishVersion(
@@ -87,14 +90,7 @@ export class WorkflowTriggerWorkspaceService {
     workflowVersionId: string,
     trigger: WorkflowDatabaseEventTrigger,
   ) {
-    const eventName = trigger?.settings?.eventName;
-
-    if (!eventName) {
-      throw new WorkflowTriggerException(
-        'No event name provided in database event trigger',
-        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
-      );
-    }
+    const eventName = trigger.settings.eventName;
 
     const workflowEventListenerRepository =
       await this.twentyORMManager.getRepository<WorkflowEventListenerWorkspaceEntity>(
