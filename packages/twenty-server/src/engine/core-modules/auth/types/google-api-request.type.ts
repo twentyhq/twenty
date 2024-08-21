@@ -5,7 +5,7 @@ import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-
 
 export type GoogleAPIsRequest = Omit<
   Request,
-  'user' | 'workspace' | 'cacheVersion'
+  'user' | 'workspace' | 'workspaceMetadataVersion'
 > & {
   user: {
     firstName?: string | null;
