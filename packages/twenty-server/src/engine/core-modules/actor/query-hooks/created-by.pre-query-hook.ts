@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common/services/logger.service';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -27,6 +28,8 @@ type CustomWorkspaceItem = Omit<
 
 @WorkspaceQueryHook(`*.createMany`)
 export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
+  private readonly logger = new Logger(CreatedByPreQueryHook.name);
+
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FieldMetadataEntity, 'metadata')
@@ -61,7 +64,9 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
         authContext.workspaceMemberId,
         authContext.user,
       );
+      // TODO: remove that code once we have the workspace member id in all tokens
     } else if (authContext.user) {
+      this.logger.warn("User doesn't have a workspace member id in the token");
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           authContext.workspace.id,
