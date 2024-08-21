@@ -41,6 +41,8 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class TokenService {
@@ -55,6 +57,7 @@ export class TokenService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly emailService: EmailService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async generateAccessToken(
@@ -91,9 +94,33 @@ export class TokenService {
       );
     }
 
+    const workspaceIdNonNullable = workspaceId
+      ? workspaceId
+      : user.defaultWorkspace.id;
+
+    const workspaceMemberRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
+        workspaceIdNonNullable,
+        'workspaceMember',
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOne({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    if (!workspaceMember) {
+      throw new AuthException(
+        'User is not a member of the workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const jwtPayload: JwtPayload = {
       sub: user.id,
       workspaceId: workspaceId ? workspaceId : user.defaultWorkspace.id,
+      workspaceMemberId: workspaceMember.id,
     };
 
     return {
@@ -247,11 +274,10 @@ export class TokenService {
       this.environmentService.get('ACCESS_TOKEN_SECRET'),
     );
 
-    const { user, apiKey, workspace } = await this.jwtStrategy.validate(
-      decoded as JwtPayload,
-    );
+    const { user, apiKey, workspace, workspaceMemberId } =
+      await this.jwtStrategy.validate(decoded as JwtPayload);
 
-    return { user, apiKey, workspace };
+    return { user, apiKey, workspace, workspaceMemberId };
   }
 
   async verifyLoginToken(loginToken: string): Promise<string> {

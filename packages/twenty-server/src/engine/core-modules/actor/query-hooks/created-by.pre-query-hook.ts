@@ -6,6 +6,7 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { buildManualCreatedBy } from 'src/engine/core-modules/actor/utils/build-created-by-from-auth-context.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   ActorMetadata,
@@ -39,6 +40,8 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
   ): Promise<CreateManyResolverArgs<CustomWorkspaceItem>> {
     let createdBy: ActorMetadata | null = null;
 
+    console.log('-------------- authContext', authContext);
+
     // TODO: Once all objects have it, we can remove this check
     const createdByFieldMetadata = await this.fieldMetadataRepository.findOne({
       where: {
@@ -55,7 +58,12 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
     }
 
     // If user is logged in, we use the workspace member
-    if (authContext.user) {
+    if (authContext.workspaceMemberId && authContext.user) {
+      createdBy = buildManualCreatedBy(
+        authContext.workspaceMemberId,
+        authContext.user,
+      );
+    } else if (authContext.user) {
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           authContext.workspace.id,

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AISQLQueryModule } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
@@ -38,6 +39,7 @@ import { FileModule } from './file/file.module';
     PostgresCredentialsModule,
     WorkflowTriggerCoreModule,
     WorkspaceEventEmitterModule,
+    ActorModule,
   ],
   exports: [
     AnalyticsModule,
