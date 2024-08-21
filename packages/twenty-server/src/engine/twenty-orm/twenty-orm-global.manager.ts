@@ -39,13 +39,10 @@ export class TwentyORMGlobalManager {
 
     const logId = v4();
 
-    console.time(`createDataSource in orm ${logId}`);
     const workspaceDataSource = await this.workspaceDataSourceFactory.create(
       workspaceId,
       null,
     );
-
-    console.timeEnd(`createDataSource in orm ${logId}`);
 
     const repository = workspaceDataSource.getRepository<T>(objectMetadataName);
 

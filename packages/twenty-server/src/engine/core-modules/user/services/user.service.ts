@@ -40,23 +40,17 @@ export class UserService extends TypeOrmQueryService<User> {
       return null;
     }
 
-    console.time('loadWorkspaceMember repo');
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         user.defaultWorkspaceId,
         'workspaceMember',
       );
 
-    console.timeEnd('loadWorkspaceMember repo');
-
-    console.time('loadWorkspaceMember find');
     const workspaceMember = await workspaceMemberRepository.findOne({
       where: {
         userId: user.id,
       },
     });
-
-    console.timeEnd('loadWorkspaceMember find');
 
     return workspaceMember;
   }
@@ -66,20 +60,13 @@ export class UserService extends TypeOrmQueryService<User> {
       return [];
     }
 
-    console.time('loadWorkspaceMembers repo');
     const workspaceMemberRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
         workspace.id,
         'workspaceMember',
       );
 
-    console.timeEnd('loadWorkspaceMembers repo');
-
-    console.time('loadWorkspaceMembers find');
-
     const workspaceMembers = workspaceMemberRepository.find();
-
-    console.timeEnd('loadWorkspaceMembers find');
 
     return workspaceMembers;
   }

@@ -29,16 +29,10 @@ export class WorkspaceDatasourceFactory {
     workspaceId: string,
     workspaceMetadataVersion: string | null,
   ): Promise<WorkspaceDataSource> {
-    const logId = v4();
-
-    console.time(`fetch in datasource factory ${logId}`);
-
     const latestWorkspaceMetadataVersion =
       await this.workspaceMetadataVersionService.getMetadataVersion(
         workspaceId,
       );
-
-    console.timeEnd(`fetch in datasource factory ${logId}`);
 
     const desiredWorkspaceMetadataVersion =
       workspaceMetadataVersion ?? latestWorkspaceMetadataVersion;
@@ -60,14 +54,12 @@ export class WorkspaceDatasourceFactory {
       async () => {
         const logId = v4();
 
-        console.time(`fetch in cached metadata ${logId}`);
         let cachedObjectMetadataCollection =
           await this.workspaceCacheStorageService.getObjectMetadataCollection(
             workspaceId,
           );
 
         if (!cachedObjectMetadataCollection) {
-          console.log('Fetching fresh object metadata collection...');
           const freshObjectMetadataCollection =
             await this.objectMetadataRepository.find({
               where: { workspaceId },
@@ -87,9 +79,7 @@ export class WorkspaceDatasourceFactory {
 
           cachedObjectMetadataCollection = freshObjectMetadataCollection;
         }
-        console.timeEnd(`fetch in cached metadata ${logId}`);
 
-        console.log('Creating workspace fresh data source...' + logId);
         const dataSourceMetadata =
           await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
             workspaceId,
@@ -107,7 +97,6 @@ export class WorkspaceDatasourceFactory {
           );
         }
 
-        console.time('create entity schema' + logId);
         const cachedEntitySchemaOptions =
           await this.workspaceCacheStorageService.getORMEntitySchema(
             workspaceId,
@@ -133,9 +122,7 @@ export class WorkspaceDatasourceFactory {
 
           cachedEntitySchemas = entitySchemas;
         }
-        console.timeEnd('create entity schema' + logId);
 
-        console.time('create workspace data source' + logId);
         const workspaceDataSource = new WorkspaceDataSource(
           {
             workspaceId,
@@ -159,11 +146,7 @@ export class WorkspaceDatasourceFactory {
           },
         );
 
-        console.timeEnd('create workspace data source' + logId);
-
-        console.time('initialize workspace data source' + logId);
         await workspaceDataSource.initialize();
-        console.timeEnd('initialize workspace data source' + logId);
 
         return workspaceDataSource;
       },

@@ -14,20 +14,12 @@ export class CacheManager<T> {
   ): Promise<T | null> {
     const logId = v4();
 
-    console.time(`cacheManager find ${cacheKey} ${logId}`);
     const [workspaceId] = cacheKey.split('-');
 
     if (this.cache.has(cacheKey)) {
-      const cachedValue = this.cache.get(cacheKey)!;
-
-      console.timeEnd(`cacheManager find ${cacheKey} ${logId}`);
-
-      return cachedValue;
+      return this.cache.get(cacheKey)!;
     }
 
-    console.log(`cacheManager miss for ${cacheKey} ${logId}`);
-
-    // Remove old entries with the same workspaceId
     for (const key of this.cache.keys()) {
       if (key.startsWith(`${workspaceId}-`)) {
         await onDelete?.(this.cache.get(key)!);
@@ -35,7 +27,6 @@ export class CacheManager<T> {
       }
     }
 
-    // Create a new value using the factory callback
     const value = await factory();
 
     if (!value) {
@@ -43,8 +34,6 @@ export class CacheManager<T> {
     }
 
     this.cache.set(cacheKey, value);
-
-    console.timeEnd(`cacheManager find ${cacheKey} ${logId}`);
 
     return value;
   }
