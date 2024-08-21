@@ -1,21 +1,21 @@
 import { FieldJsonValue } from '@/object-record/record-field/types/FieldMetadata';
 import { z } from 'zod';
 
-interface ChartQueryChildJoin {
+interface DataExplorerQueryChildJoin {
   type: 'join';
-  children: ChartQueryChild;
+  children: DataExplorerQueryChild[];
   fieldMetadataId?: string;
   measure?: 'COUNT';
 }
 
-interface ChartQueryChildSelect {
+interface DataExplorerQueryChildSelect {
   type: 'select';
-  children: ChartQueryChild;
+  children?: DataExplorerQueryChild[];
   fieldMetadataId?: string;
   measure?: 'AVG' | 'MAX' | 'MIN' | 'SUM';
 }
 
-const chartQueryGroupBySchema = z.object({
+const dataExplorerQueryGroupBySchema = z.object({
   type: z.literal('groupBy'),
   groupBy: z.boolean().optional(),
   groups: z
@@ -29,50 +29,51 @@ const chartQueryGroupBySchema = z.object({
   includeNulls: z.boolean().optional(),
 });
 
-const chartQuerySortSchema = z.object({
+const dataExplorerQuerySortSchema = z.object({
   type: z.literal('sort'),
   sortBy: z.enum(['ASC', 'DESC']).optional(),
 });
 
-type ChartQueryChild =
-  | ChartQueryChildJoin
-  | ChartQueryChildSelect
-  | z.infer<typeof chartQueryGroupBySchema>
-  | z.infer<typeof chartQuerySortSchema>;
+type DataExplorerQueryChild =
+  | DataExplorerQueryChildJoin
+  | DataExplorerQueryChildSelect
+  | z.infer<typeof dataExplorerQueryGroupBySchema>
+  | z.infer<typeof dataExplorerQuerySortSchema>;
 
-const chartQueryChildSchema: z.ZodType<ChartQueryChild> = z.lazy(() =>
-  z.union([
-    chartQueryChildJoinSchema,
-    chartQueryChildSelectSchema,
-    chartQueryGroupBySchema,
-    chartQuerySortSchema,
-  ]),
+const dataExplorerQueryChildSchema: z.ZodType<DataExplorerQueryChild> = z.lazy(
+  () =>
+    z.union([
+      dataExplorerQueryChildJoinSchema,
+      dataExplorerQueryChildSelectSchema,
+      dataExplorerQueryGroupBySchema,
+      dataExplorerQuerySortSchema,
+    ]),
 );
 
-const chartQueryChildJoinSchema: z.ZodType<ChartQueryChildJoin> = z.object({
-  type: z.literal('join'),
-  children: chartQueryChildSchema,
-  fieldMetadataId: z.string().optional(),
-  measure: z.literal('COUNT').optional(),
-});
+const dataExplorerQueryChildJoinSchema: z.ZodType<DataExplorerQueryChildJoin> =
+  z.object({
+    type: z.literal('join'),
+    children: z.array(dataExplorerQueryChildSchema),
+    fieldMetadataId: z.string().optional(),
+    measure: z.literal('COUNT').optional(),
+  });
 
-const chartQueryChildSelectSchema: z.ZodType<ChartQueryChildSelect> = z.object({
-  type: z.literal('select'),
-  children: chartQueryChildSchema,
-  fieldMetadataId: z.string().optional(),
-  measure: z.enum(['AVG', 'MAX', 'MIN', 'SUM']).optional(),
-});
+const dataExplorerQueryChildSelectSchema: z.ZodType<DataExplorerQueryChildSelect> =
+  z.object({
+    type: z.literal('select'),
+    children: z.array(dataExplorerQueryChildSchema).optional(),
+    fieldMetadataId: z.string().optional(),
+    measure: z.enum(['AVG', 'MAX', 'MIN', 'SUM']).optional(),
+  });
 
-export const chartQuerySchema = z.object({
+export const dataExplorerQuerySchema = z.object({
   sourceObjectMetadataId: z.string().optional(),
-  children: z.array(chartQueryChildSchema),
+  children: z.array(dataExplorerQueryChildSchema).optional(),
 });
 
-export type ChartQuery = z.infer<typeof chartQuerySchema>;
-
-const fieldPathSchema = z.array(z.string()).nullable();
+export type DataExplorerQuery = z.infer<typeof dataExplorerQuerySchema>;
 
 export const isFieldDataExplorerQueryValue = (
   fieldValue: unknown,
 ): fieldValue is FieldJsonValue =>
-  fieldPathSchema.safeParse(fieldValue).success;
+  dataExplorerQuerySchema.safeParse(fieldValue).success;

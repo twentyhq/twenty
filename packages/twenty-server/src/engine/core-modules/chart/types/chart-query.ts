@@ -1,13 +1,13 @@
 interface DataExplorerQueryChildJoin {
   type: 'join';
-  children: DataExplorerQueryChild;
+  children: DataExplorerQueryChild[];
   fieldMetadataId?: string;
   measure?: 'COUNT';
 }
 
 interface DataExplorerQueryChildSelect {
   type: 'select';
-  children: DataExplorerQueryChild;
+  children?: DataExplorerQueryChild[];
   fieldMetadataId?: string;
   measure?: 'AVG' | 'MAX' | 'MIN' | 'SUM';
 }
@@ -32,5 +32,5 @@ type DataExplorerQueryChild =
 
 export interface DataExplorerQuery {
   sourceObjectMetadataId?: string;
-  children: DataExplorerQueryChild[];
+  children?: DataExplorerQueryChild[];
 }
