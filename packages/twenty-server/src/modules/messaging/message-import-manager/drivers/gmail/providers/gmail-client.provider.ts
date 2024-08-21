@@ -6,7 +6,7 @@ import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
-export class MessagingGmailClientProvider {
+export class GmailClientProvider {
   constructor(
     private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
   ) {}

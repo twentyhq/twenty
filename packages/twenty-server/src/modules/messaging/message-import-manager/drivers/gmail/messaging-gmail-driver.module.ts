@@ -12,7 +12,7 @@ import { EmailAliasManagerModule } from 'src/modules/connected-account/email-ali
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
-import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
+import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { MessagingGmailFetchByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-by-batch.service';
 import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-by-batches.service';
 import { MessagingGmailFetchMessageIdsToExcludeService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-ids-to-exclude.service';
@@ -38,14 +38,14 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     MessageParticipantManagerModule,
   ],
   providers: [
-    MessagingGmailClientProvider,
+    GmailClientProvider,
     MessagingGmailHistoryService,
     MessagingGmailFetchByBatchesService,
     MessagingGmailFetchMessagesByBatchesService,
     MessagingGmailFetchMessageIdsToExcludeService,
   ],
   exports: [
-    MessagingGmailClientProvider,
+    GmailClientProvider,
     MessagingGmailHistoryService,
     MessagingGmailFetchByBatchesService,
     MessagingGmailFetchMessagesByBatchesService,
