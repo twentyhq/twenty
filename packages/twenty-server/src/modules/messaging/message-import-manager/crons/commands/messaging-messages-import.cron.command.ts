@@ -5,7 +5,7 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { MessagingMessagesImportCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-messages-import.cron.job';
 
-const MESSAGING_MESSAGE_IMPORT_CRON_PATTERN = '*/1 * * * *';
+const MESSAGING_MESSAGES_IMPORT_CRON_PATTERN = '*/1 * * * *';
 
 @Command({
   name: 'cron:messaging:messages-import',
@@ -25,7 +25,7 @@ export class MessagingMessagesImportCronCommand extends CommandRunner {
       undefined,
       {
         repeat: {
-          pattern: MESSAGING_MESSAGE_IMPORT_CRON_PATTERN,
+          pattern: MESSAGING_MESSAGES_IMPORT_CRON_PATTERN,
         },
       },
     );
