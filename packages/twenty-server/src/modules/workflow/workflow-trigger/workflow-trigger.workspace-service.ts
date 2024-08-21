@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -19,26 +22,43 @@ export class WorkflowTriggerWorkspaceService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
   ) {}
 
-  async runWorkflowVersion(workflowVersionId: string, payload: object) {
+  async runWorkflowVersion(
+    workflowVersionId: string,
+    payload: object,
+    workspaceMemberId: string,
+    user: User,
+  ) {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new WorkflowTriggerException(
+        'No workspace id found',
+        WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+      );
+    }
+
     const workflowVersion =
       await this.workflowCommonWorkspaceService.getWorkflowVersion(
         workflowVersionId,
       );
 
-    try {
-      return await this.workflowRunnerWorkspaceService.run({
-        action: workflowVersion.trigger.nextAction,
-        payload,
-      });
-    } catch (error) {
+    if (!workflowVersion) {
       throw new WorkflowTriggerException(
-        `Error running workflow version ${error}`,
-        WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+        'No workflow version found',
+        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
       );
     }
+
+    return await this.workflowRunnerWorkspaceService.run(
+      workspaceId,
+      workflowVersionId,
+      payload,
+      buildCreatedByFromWorkspaceMember(workspaceMemberId, user),
+    );
   }
 
   async enableWorkflowTrigger(workflowVersionId: string) {
