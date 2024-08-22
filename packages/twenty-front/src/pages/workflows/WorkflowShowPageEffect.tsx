@@ -15,6 +15,8 @@ import {
 import { Edge, MarkerType, Node } from '@xyflow/react';
 import { useEffect, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-ui';
+import { v4 } from 'uuid';
 
 type WorkflowShowPageEffectProps = {
   workflowId: string;
@@ -25,22 +27,18 @@ const EMPTY_FLOW_DATA: WorkflowDiagram = {
   edges: [],
 };
 
-const generateId = () => {
-  return Math.random().toString(16).slice(2);
-};
-
-const workflowTriggerToFlow = (trigger: WorkflowTrigger): WorkflowDiagram => {
+const generateWorklowDiagram = (trigger: WorkflowTrigger): WorkflowDiagram => {
   const nodes: Array<Node<WorkflowDiagramNodeData>> = [];
   const edges: Array<Edge> = [];
 
   // Helper function to generate nodes and edges recursively
-  const generateFlow = (
+  const processNode = (
     action: WorkflowAction,
     parentNodeId: string,
     xPos: number,
     yPos: number,
   ) => {
-    const nodeId = generateId();
+    const nodeId = v4();
     nodes.push({
       id: nodeId,
       data: {
@@ -55,7 +53,7 @@ const workflowTriggerToFlow = (trigger: WorkflowTrigger): WorkflowDiagram => {
 
     // Create an edge from the parent node to this node
     edges.push({
-      id: generateId(),
+      id: v4(),
       source: parentNodeId,
       target: nodeId,
       markerEnd: {
@@ -64,13 +62,13 @@ const workflowTriggerToFlow = (trigger: WorkflowTrigger): WorkflowDiagram => {
     });
 
     // Recursively generate flow for the next action if it exists
-    if (action.nextAction !== undefined) {
-      generateFlow(action.nextAction, nodeId, xPos + 150, yPos + 100);
+    if (isDefined(action.nextAction)) {
+      processNode(action.nextAction, nodeId, xPos + 150, yPos + 100);
     }
   };
 
   // Start with the trigger node
-  const triggerNodeId = generateId();
+  const triggerNodeId = v4();
   nodes.push({
     id: triggerNodeId,
     data: {
@@ -84,8 +82,8 @@ const workflowTriggerToFlow = (trigger: WorkflowTrigger): WorkflowDiagram => {
   });
 
   // If there's a next action, start the recursive generation
-  if (trigger.nextAction !== undefined) {
-    generateFlow(trigger.nextAction, triggerNodeId, 150, 100);
+  if (isDefined(trigger.nextAction)) {
+    processNode(trigger.nextAction, triggerNodeId, 150, 100);
   }
 
   return {
@@ -97,16 +95,16 @@ const workflowTriggerToFlow = (trigger: WorkflowTrigger): WorkflowDiagram => {
 const getFlowLastVersion = (
   workflow: Workflow | undefined,
 ): WorkflowDiagram => {
-  if (workflow === undefined) {
+  if (!isDefined(workflow)) {
     return EMPTY_FLOW_DATA;
   }
 
   const lastVersion = workflow.versions[0];
-  if (lastVersion === undefined || lastVersion.trigger === undefined) {
+  if (!isDefined(lastVersion) || !isDefined(lastVersion.trigger)) {
     return EMPTY_FLOW_DATA;
   }
 
-  return workflowTriggerToFlow(lastVersion.trigger);
+  return generateWorklowDiagram(lastVersion.trigger);
 };
 
 const addCreateStepNodes = (
@@ -122,7 +120,7 @@ const addCreateStepNodes = (
 
   for (const node of nodesWithoutTargets) {
     const newCreateStepNode: Node<WorkflowDiagramNodeData> = {
-      id: generateId(),
+      id: v4(),
       type: 'create-step',
       data: {},
       position: { x: 0, y: 0 },
@@ -131,7 +129,7 @@ const addCreateStepNodes = (
     updatedNodes.push(newCreateStepNode);
 
     updatedEdges.push({
-      id: generateId(),
+      id: v4(),
       source: node.id,
       target: newCreateStepNode.id,
       markerEnd: {
@@ -184,7 +182,7 @@ export const WorkflowShowPageEffect = ({
 
   useEffect(() => {
     setCurrentWorkflowData(
-      workflow === undefined ? undefined : flowWithCreateStepNodes,
+      isDefined(workflow) ? flowWithCreateStepNodes : undefined,
     );
   }, [flowWithCreateStepNodes, setCurrentWorkflowData, workflow]);
 
