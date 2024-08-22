@@ -56,14 +56,14 @@ export const useLastVisitedPageOrView = () => {
   };
 
   const setLastVisitedObjectOrView = ({
-    componentId,
+    objectNamePlural,
     viewId,
   }: {
-    componentId: string;
+    objectNamePlural: string;
     viewId: string;
   }) => {
     const fallbackObjectMetadataItemId =
-      findActiveObjectMetadataItemBySlug(componentId)?.id ?? '';
+      findActiveObjectMetadataItemBySlug(objectNamePlural)?.id ?? '';
     /* when both are equal meaning there was change in view else 
       there was a object page change from nav
     */

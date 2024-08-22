@@ -12,19 +12,20 @@ import { isDefined } from '~/utils/isDefined';
 export const QueryParamsViewIdEffect = () => {
   const { getFiltersFromQueryParams, viewIdQueryParam } =
     useViewFromQueryParams();
-  const { currentViewIdState, componentId } = useViewStates();
+  const { currentViewIdState, componentId: objectNamePlural } = useViewStates();
 
   const [currentViewId, setCurrentViewId] = useRecoilState(currentViewIdState);
   const { viewsOnCurrentObject } = useGetCurrentView();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
-  const objectMetadataItemId = findObjectMetadataItemByNamePlural(componentId);
+  const objectMetadataItemId =
+    findObjectMetadataItemByNamePlural(objectNamePlural);
   const {
     getLastVisitedViewId,
     setLastVisitedObjectOrView,
     lastVisitedObjectMetadataItemId,
   } = useLastVisitedPageOrView();
-  const lastVisitedViewId = getLastVisitedViewId(componentId);
+  const lastVisitedViewId = getLastVisitedViewId(objectNamePlural);
   const isLastVisitedObjectMetadataItemNotEqual = !isDeeplyEqual(
     objectMetadataItemId?.id,
     lastVisitedObjectMetadataItemId,
@@ -33,12 +34,9 @@ export const QueryParamsViewIdEffect = () => {
     const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
 
     if (isUndefined(viewIdQueryParam) && isDefined(lastVisitedViewId)) {
-      if (
-        !isDeeplyEqual(lastVisitedViewId, getLastVisitedViewId(componentId)) ||
-        isLastVisitedObjectMetadataItemNotEqual
-      ) {
+      if (isLastVisitedObjectMetadataItemNotEqual) {
         setLastVisitedObjectOrView({
-          componentId,
+          objectNamePlural,
           viewId: lastVisitedViewId,
         });
       }
@@ -48,11 +46,11 @@ export const QueryParamsViewIdEffect = () => {
 
     if (isDefined(viewIdQueryParam)) {
       if (
-        !isDeeplyEqual(viewIdQueryParam, getLastVisitedViewId(componentId)) ||
+        !isDeeplyEqual(viewIdQueryParam, lastVisitedViewId) ||
         isLastVisitedObjectMetadataItemNotEqual
       ) {
         setLastVisitedObjectOrView({
-          componentId,
+          objectNamePlural,
           viewId: viewIdQueryParam,
         });
       }
@@ -63,11 +61,11 @@ export const QueryParamsViewIdEffect = () => {
 
     if (isDefined(indexView)) {
       if (
-        !isDeeplyEqual(indexView.id, getLastVisitedViewId(componentId)) ||
+        !isDeeplyEqual(indexView.id, lastVisitedViewId) ||
         isLastVisitedObjectMetadataItemNotEqual
       ) {
         setLastVisitedObjectOrView({
-          componentId,
+          objectNamePlural,
           viewId: indexView.id,
         });
       }
@@ -75,13 +73,13 @@ export const QueryParamsViewIdEffect = () => {
       return;
     }
   }, [
-    componentId,
     currentViewId,
     getFiltersFromQueryParams,
     getLastVisitedViewId,
     isLastVisitedObjectMetadataItemNotEqual,
     lastVisitedViewId,
     objectMetadataItemId?.id,
+    objectNamePlural,
     setCurrentViewId,
     setLastVisitedObjectOrView,
     viewIdQueryParam,
