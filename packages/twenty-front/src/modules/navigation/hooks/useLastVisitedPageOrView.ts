@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { lastVisitedPageOrViewStateSelector } from '@/navigation/states/selectors/lastVisitedPageOrViewStateSelector';
+import { lastVisitedObjectMetadataItemStateSelector } from '@/navigation/states/selectors/lastVisitedObjectMetadataItemStateSelector';
+import { lastVisitedViewPerObjectMetadataItemStateSelector } from '@/navigation/states/selectors/lastVisitedViewPerObjectMetadataItemStateSelector';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -9,11 +10,25 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 export const useLastVisitedPageOrView = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const scopeId = currentWorkspace?.id ?? '';
-  const currentPagesState = extractComponentState(
-    lastVisitedPageOrViewStateSelector,
+
+  const lastVisitedObjectMetadataItemState = extractComponentState(
+    lastVisitedObjectMetadataItemStateSelector,
     scopeId,
   );
-  const [currentPages, setCurrentPages] = useRecoilState(currentPagesState);
+
+  const lastVisitedViewPerObjectMetadataItemState = extractComponentState(
+    lastVisitedViewPerObjectMetadataItemStateSelector,
+    scopeId,
+  );
+
+  const [lastVisitedObjectMetadataItem, setLastVisitedObjectMetadataItem] =
+    useRecoilState(lastVisitedObjectMetadataItemState);
+
+  const [
+    lastVisitedViewPerObjectMetadataItem,
+    setLastVisitedViewPerObjectMetadataItem,
+  ] = useRecoilState(lastVisitedViewPerObjectMetadataItemState);
+
   const {
     findActiveObjectMetadataItemBySlug,
     alphaSortedActiveObjectMetadataItems,
@@ -23,8 +38,7 @@ export const useLastVisitedPageOrView = () => {
     navigationMemorizedUrlState,
   );
 
-  const lastVisitedObjectMetadataItemId =
-    currentPages?.['last_visited_object'] ?? null;
+  const lastVisitedObjectMetadataItemId = lastVisitedObjectMetadataItem ?? null;
 
   const removeMatchingIdInCaseLastVisited = ({
     objectMetadataItemId,
@@ -41,18 +55,18 @@ export const useLastVisitedPageOrView = () => {
         (item) => item.id !== objectMetadataItemId,
       );
 
-    setCurrentPages({
-      ...(isDeactivateDefault && {
-        last_visited_object: newFallbackObjectMetadataItem.id,
-      }),
-      [objectMetadataItemId]: undefined,
-    });
-
     if (isDeactivateDefault) {
+      setLastVisitedObjectMetadataItem(newFallbackObjectMetadataItem.id);
       setNavigationMemorizedUrl(
         `/objects/${newFallbackObjectMetadataItem.namePlural}`,
       );
     }
+    /* ...{} allows us to pass value as undefined to remove that particular key
+     even though param type is of type Record<string,string> */
+    setLastVisitedViewPerObjectMetadataItem({
+      ...{},
+      [objectMetadataItemId]: undefined,
+    });
   };
 
   const setLastVisitedObjectOrView = ({
@@ -70,10 +84,12 @@ export const useLastVisitedPageOrView = () => {
     const fallbackViewId =
       lastVisitedObjectMetadataItemId === fallbackObjectMetadataItemId
         ? viewId
-        : (currentPages?.[fallbackObjectMetadataItemId] ?? viewId);
+        : (lastVisitedViewPerObjectMetadataItem?.[
+            fallbackObjectMetadataItemId
+          ] ?? viewId);
 
-    setCurrentPages({
-      last_visited_object: fallbackObjectMetadataItemId,
+    setLastVisitedObjectMetadataItem(fallbackObjectMetadataItemId);
+    setLastVisitedViewPerObjectMetadataItem({
       [fallbackObjectMetadataItemId]: fallbackViewId,
     });
   };
@@ -81,11 +97,13 @@ export const useLastVisitedPageOrView = () => {
   const getLastVisitedViewId = (pluralName: string) => {
     const objectMetadataId: string | undefined =
       findActiveObjectMetadataItemBySlug(pluralName)?.id;
-    return objectMetadataId ? currentPages?.[objectMetadataId] : undefined;
+    return objectMetadataId
+      ? lastVisitedViewPerObjectMetadataItem?.[objectMetadataId]
+      : undefined;
   };
 
   const getLastVisitedViewIdFromObjectId = (objectMetadataId: string) => {
-    return currentPages?.[objectMetadataId];
+    return lastVisitedViewPerObjectMetadataItem?.[objectMetadataId];
   };
   return {
     lastVisitedObjectMetadataItemId,
