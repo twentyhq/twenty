@@ -4,6 +4,7 @@ import { lastVisitedViewPerObjectMetadataItemStateSelector } from '@/navigation/
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-ui';
 
 export const useLastVisitedView = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -48,21 +49,24 @@ export const useLastVisitedView = () => {
     objectNamePlural: string;
     viewId: string;
   }) => {
-    const fallbackObjectMetadataItemId =
-      findActiveObjectMetadataItemBySlug(objectNamePlural)?.id ?? '';
-    /* when both are equal meaning there was change in view else 
+    const fallbackObjectMetadataItem =
+      findActiveObjectMetadataItemBySlug(objectNamePlural);
+
+    if (isDefined(fallbackObjectMetadataItem)) {
+      /* when both are equal meaning there was change in view else 
       there was a object page change from nav
     */
-    const fallbackViewId =
-      lastVisitedObjectMetadataItemId === fallbackObjectMetadataItemId
-        ? viewId
-        : (lastVisitedViewPerObjectMetadataItem?.[
-            fallbackObjectMetadataItemId
-          ] ?? viewId);
+      const fallbackViewId =
+        lastVisitedObjectMetadataItemId === fallbackObjectMetadataItem.id
+          ? viewId
+          : (lastVisitedViewPerObjectMetadataItem?.[
+              fallbackObjectMetadataItem.id
+            ] ?? viewId);
 
-    setLastVisitedViewPerObjectMetadataItem({
-      [fallbackObjectMetadataItemId]: fallbackViewId,
-    });
+      setLastVisitedViewPerObjectMetadataItem({
+        [fallbackObjectMetadataItem.id]: fallbackViewId,
+      });
+    }
   };
 
   const getLastVisitedViewIdFromPluralName = (objectNamePlural: string) => {

@@ -4,6 +4,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-ui';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useLastVisitedObjectMetadataItem = () => {
@@ -53,10 +54,11 @@ export const useLastVisitedObjectMetadataItem = () => {
   const setLastVisitedObjectMetadataItemForPluralName = (
     objectNamePlural: string,
   ) => {
-    const fallbackObjectMetadataItemId =
-      findActiveObjectMetadataItemBySlug(objectNamePlural)?.id ?? '';
+    const fallbackObjectMetadataItem =
+      findActiveObjectMetadataItemBySlug(objectNamePlural);
 
-    setLastVisitedObjectMetadataItem(fallbackObjectMetadataItemId);
+    if (isDefined(fallbackObjectMetadataItem))
+      setLastVisitedObjectMetadataItem(fallbackObjectMetadataItem.id);
   };
 
   return {
