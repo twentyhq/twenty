@@ -47,7 +47,8 @@ export class GmailGetMessageListService {
           ),
         })
         .catch((error) => {
-          // this.handleError(error);
+          console.error('Error fetching messages', error);
+
           return {
             data: {
               messages: [],
@@ -66,7 +67,7 @@ export class GmailGetMessageListService {
       }
 
       if (!firstMessageExternalId) {
-        firstMessageExternalId = messageExternalIds[0];
+        firstMessageExternalId = messageList.data.messages?.[0].id ?? undefined;
       }
 
       messageExternalIds.push(...messages.map((message) => message.id));
