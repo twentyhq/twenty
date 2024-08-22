@@ -21,7 +21,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
-import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
@@ -48,7 +48,7 @@ import { ViewModule } from 'src/modules/view/view.module';
     WorkspaceStatusModule,
     ObjectMetadataModule,
     DataSeedDemoWorkspaceModule,
-    WorkspaceCacheVersionModule,
+    WorkspaceMetadataVersionModule,
     FieldMetadataModule,
     ViewModule,
     BillingModule,

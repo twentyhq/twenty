@@ -9,6 +9,7 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -32,90 +33,109 @@ export class MessagingBlocklistListener {
 
   @OnEvent('blocklist.created')
   async handleCreatedEvent(
-    payload: ObjectRecordCreateEvent<BlocklistWorkspaceEntity>,
+    payload: WorkspaceEventBatch<
+      ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
+    >,
   ) {
-    await this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
-      BlocklistItemDeleteMessagesJob.name,
-      {
-        workspaceId: payload.workspaceId,
-        blocklistItemId: payload.recordId,
-      },
+    await Promise.all(
+      payload.events.map((eventPayload) =>
+        // TODO: modify to pass an array of blocklist items
+        this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
+          BlocklistItemDeleteMessagesJob.name,
+          {
+            workspaceId: payload.workspaceId,
+            blocklistItemId: eventPayload.recordId,
+          },
+        ),
+      ),
     );
   }
 
   @OnEvent('blocklist.deleted')
   async handleDeletedEvent(
-    payload: ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>,
+    payload: WorkspaceEventBatch<
+      ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
+    >,
   ) {
-    const workspaceMemberId = payload.properties.before.workspaceMember.id;
     const workspaceId = payload.workspaceId;
 
-    const connectedAccount =
-      await this.connectedAccountRepository.getAllByWorkspaceMemberId(
-        workspaceMemberId,
+    for (const eventPayload of payload.events) {
+      const workspaceMemberId =
+        eventPayload.properties.before.workspaceMember.id;
+
+      const connectedAccount =
+        await this.connectedAccountRepository.getAllByWorkspaceMemberId(
+          workspaceMemberId,
+          workspaceId,
+        );
+
+      if (!connectedAccount || connectedAccount.length === 0) {
+        return;
+      }
+
+      const messageChannelRepository =
+        await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+          'messageChannel',
+        );
+
+      const messageChannel = await messageChannelRepository.findOneOrFail({
+        where: {
+          connectedAccountId: connectedAccount[0].id,
+        },
+      });
+
+      await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+        messageChannel.id,
         workspaceId,
       );
-
-    if (!connectedAccount || connectedAccount.length === 0) {
-      return;
     }
-
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
-
-    const messageChannel = await messageChannelRepository.findOneOrFail({
-      where: {
-        connectedAccountId: connectedAccount[0].id,
-      },
-    });
-
-    await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
-      messageChannel.id,
-      workspaceId,
-    );
   }
 
   @OnEvent('blocklist.updated')
   async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>,
+    payload: WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>
+    >,
   ) {
-    const workspaceMemberId = payload.properties.before.workspaceMember.id;
     const workspaceId = payload.workspaceId;
 
-    await this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
-      BlocklistItemDeleteMessagesJob.name,
-      {
-        workspaceId,
-        blocklistItemId: payload.recordId,
-      },
-    );
+    for (const eventPayload of payload.events) {
+      const workspaceMemberId =
+        eventPayload.properties.before.workspaceMember.id;
 
-    const connectedAccount =
-      await this.connectedAccountRepository.getAllByWorkspaceMemberId(
-        workspaceMemberId,
-        workspaceId,
+      await this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
+        BlocklistItemDeleteMessagesJob.name,
+        {
+          workspaceId,
+          blocklistItemId: eventPayload.recordId,
+        },
       );
 
-    if (!connectedAccount || connectedAccount.length === 0) {
-      return;
+      const connectedAccount =
+        await this.connectedAccountRepository.getAllByWorkspaceMemberId(
+          workspaceMemberId,
+          workspaceId,
+        );
+
+      if (!connectedAccount || connectedAccount.length === 0) {
+        continue;
+      }
+
+      const messageChannelRepository =
+        await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+          'messageChannel',
+        );
+
+      const messageChannel = await messageChannelRepository.findOneOrFail({
+        where: {
+          connectedAccountId: connectedAccount[0].id,
+        },
+      });
+
+      await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+        messageChannel.id,
+        workspaceId,
+      );
     }
-
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
-
-    const messageChannel = await messageChannelRepository.findOneOrFail({
-      where: {
-        connectedAccountId: connectedAccount[0].id,
-      },
-    });
-
-    await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
-      messageChannel.id,
-      workspaceId,
-    );
   }
 }

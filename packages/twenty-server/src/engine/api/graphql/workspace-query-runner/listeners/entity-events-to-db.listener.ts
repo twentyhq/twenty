@@ -8,6 +8,7 @@ import { objectRecordChangedValues } from 'src/engine/integrations/event-emitter
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 
@@ -19,40 +20,46 @@ export class EntityEventsToDbListener {
   ) {}
 
   @OnEvent('*.created')
-  async handleCreate(payload: ObjectRecordCreateEvent<any>) {
+  async handleCreate(
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
+  ) {
     return this.handle(payload);
   }
 
   @OnEvent('*.updated')
-  async handleUpdate(payload: ObjectRecordUpdateEvent<any>) {
-    payload.properties.diff = objectRecordChangedValues(
-      payload.properties.before,
-      payload.properties.after,
-      payload.properties.updatedFields,
-      payload.objectMetadata,
-    );
+  async handleUpdate(
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
+  ) {
+    for (const eventPayload of payload.events) {
+      eventPayload.properties.diff = objectRecordChangedValues(
+        eventPayload.properties.before,
+        eventPayload.properties.after,
+        eventPayload.properties.updatedFields,
+        eventPayload.objectMetadata,
+      );
+    }
 
     return this.handle(payload);
   }
 
   @OnEvent('*.deleted')
-  async handleDelete(payload: ObjectRecordUpdateEvent<any>) {
+  async handleDelete(
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
+  ) {
     return this.handle(payload);
   }
 
-  private async handle(payload: ObjectRecordBaseEvent) {
-    if (!payload.objectMetadata?.isAuditLogged) {
-      return;
-    }
-
-    this.messageQueueService.add<ObjectRecordBaseEvent>(
-      CreateAuditLogFromInternalEvent.name,
-      payload,
+  private async handle(payload: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
+    payload.events = payload.events.filter(
+      (event) => event.objectMetadata?.isAuditLogged,
     );
 
-    this.messageQueueService.add<ObjectRecordBaseEvent>(
-      UpsertTimelineActivityFromInternalEvent.name,
-      payload,
-    );
+    await this.messageQueueService.add<
+      WorkspaceEventBatch<ObjectRecordBaseEvent>
+    >(CreateAuditLogFromInternalEvent.name, payload);
+
+    await this.messageQueueService.add<
+      WorkspaceEventBatch<ObjectRecordBaseEvent>
+    >(UpsertTimelineActivityFromInternalEvent.name, payload);
   }
 }

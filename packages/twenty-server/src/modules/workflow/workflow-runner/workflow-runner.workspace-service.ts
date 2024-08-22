@@ -1,84 +1,45 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowAction } from 'src/modules/workflow/common/types/workflow-action.type';
-import { WorkflowActionRunnerFactory } from 'src/modules/workflow/workflow-action-runner/workflow-action-runner.factory';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import {
-  WorkflowRunnerException,
-  WorkflowRunnerExceptionCode,
-} from 'src/modules/workflow/workflow-runner/workflow-runner.exception';
-
-const MAX_RETRIES_ON_FAILURE = 3;
-
-export type WorkflowRunOutput = {
-  data?: object;
-  error?: object;
-};
+  RunWorkflowJob,
+  RunWorkflowJobData,
+} from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
   constructor(
-    private readonly workflowActionRunnerFactory: WorkflowActionRunnerFactory,
+    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
+    @InjectMessageQueue(MessageQueue.workflowQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  async run({
-    action,
-    payload,
-    attemptCount = 1,
-  }: {
-    action?: WorkflowAction;
-    payload?: object;
-    attemptCount?: number;
-  }): Promise<WorkflowRunOutput> {
-    if (!action) {
-      return {
-        data: payload,
-      };
-    }
-
-    const workflowActionRunner = this.workflowActionRunnerFactory.get(
-      action.type,
-    );
-
-    const result = await workflowActionRunner.execute({
-      action,
-      payload,
-    });
-
-    if (result.data) {
-      return await this.run({
-        action: action.nextAction,
-        payload: result.data,
-      });
-    }
-
-    if (!result.error) {
-      throw new WorkflowRunnerException(
-        'Execution result error, no data or error',
-        WorkflowRunnerExceptionCode.WORKFLOW_FAILED,
+  async run(
+    workspaceId: string,
+    workflowVersionId: string,
+    payload: object,
+    source: ActorMetadata,
+  ) {
+    const workflowRunId =
+      await this.workflowRunWorkspaceService.createWorkflowRun(
+        workflowVersionId,
+        source,
       );
-    }
 
-    if (action.settings.errorHandlingOptions.continueOnFailure.value) {
-      return await this.run({
-        action: action.nextAction,
-        payload,
-      });
-    }
-
-    if (
-      action.settings.errorHandlingOptions.retryOnFailure.value &&
-      attemptCount < MAX_RETRIES_ON_FAILURE
-    ) {
-      return await this.run({
-        action,
-        payload,
-        attemptCount: attemptCount + 1,
-      });
-    }
-
-    throw new WorkflowRunnerException(
-      `Workflow failed: ${result.error}`,
-      WorkflowRunnerExceptionCode.WORKFLOW_FAILED,
+    await this.messageQueueService.add<RunWorkflowJobData>(
+      RunWorkflowJob.name,
+      {
+        workspaceId,
+        workflowVersionId,
+        payload: payload,
+        workflowRunId,
+      },
     );
+
+    return { workflowRunId };
   }
 }

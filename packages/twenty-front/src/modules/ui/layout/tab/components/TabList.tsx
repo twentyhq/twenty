@@ -1,5 +1,5 @@
-import * as React from 'react';
 import styled from '@emotion/styled';
+import * as React from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconComponent } from 'twenty-ui';
 
@@ -53,7 +53,7 @@ export const TabList = ({
 
   return (
     <TabListScope tabListScopeId={tabListId}>
-      <ScrollWrapper hideY>
+      <ScrollWrapper hideY contextProviderName="tabList">
         <StyledContainer className={className}>
           {tabs
             .filter((tab) => !tab.hide)

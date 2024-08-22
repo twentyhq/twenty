@@ -33,7 +33,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const getHMACKey = (email?: string, key?: string | null) => {
@@ -54,7 +53,6 @@ export class UserResolver {
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
-    private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
     private readonly userVarService: UserVarsService,
     private readonly fileService: FileService,
   ) {}
@@ -189,11 +187,6 @@ export class UserResolver {
 
   @ResolveField(() => OnboardingStatus)
   async onboardingStatus(@Parent() user: User): Promise<OnboardingStatus> {
-    const contextInstance = await this.loadServiceWithWorkspaceContext.load(
-      this.onboardingService,
-      user.defaultWorkspaceId,
-    );
-
-    return contextInstance.getOnboardingStatus(user);
+    return this.onboardingService.getOnboardingStatus(user);
   }
 }
