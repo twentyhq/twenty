@@ -7,7 +7,7 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
@@ -21,8 +21,8 @@ export class MessagingPartialMessageListFetchService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
@@ -31,7 +31,7 @@ export class MessagingPartialMessageListFetchService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
-    await this.messagingChannelSyncStatusService.markAsMessagesListFetchOngoing(
+    await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
       messageChannel.id,
     );
 
@@ -63,7 +63,7 @@ export class MessagingPartialMessageListFetchService {
         `Partial message list import done with history ${syncCursor} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
       );
 
-      await this.messagingChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+      await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
         messageChannel.id,
       );
 
@@ -104,7 +104,7 @@ export class MessagingPartialMessageListFetchService {
       );
     }
 
-    await this.messagingChannelSyncStatusService.scheduleMessagesImport(
+    await this.messageChannelSyncStatusService.scheduleMessagesImport(
       messageChannel.id,
     );
   }

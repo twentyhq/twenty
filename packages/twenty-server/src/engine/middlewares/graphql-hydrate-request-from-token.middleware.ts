@@ -82,6 +82,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
       req.workspace = data.workspace;
       req.workspaceId = data.workspace.id;
       req.workspaceMetadataVersion = metadataVersion;
+      req.workspaceMemberId = data.workspaceMemberId;
     } catch (error) {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.write(

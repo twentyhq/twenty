@@ -13,7 +13,7 @@ import { EmailAliasManagerService } from 'src/modules/connected-account/email-al
 import { RefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/services/refresh-access-token.service';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
@@ -31,7 +31,7 @@ export class MessagingMessagesImportService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
     private readonly refreshAccessTokenService: RefreshAccessTokenService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
@@ -68,7 +68,7 @@ export class MessagingMessagesImportService {
       `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} starting...`,
     );
 
-    await this.messagingChannelSyncStatusService.markAsMessagesImportOngoing(
+    await this.messageChannelSyncStatusService.markAsMessagesImportOngoing(
       messageChannel.id,
     );
 
@@ -87,7 +87,7 @@ export class MessagingMessagesImportService {
         message: `${error.code}: ${error.reason}`,
       });
 
-      await this.messagingChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
+      await this.messageChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
         messageChannel.id,
         workspaceId,
       );
@@ -119,7 +119,7 @@ export class MessagingMessagesImportService {
       )) ?? [];
 
     if (!messageIdsToFetch?.length) {
-      await this.messagingChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+      await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
         messageChannel.id,
       );
 
@@ -157,11 +157,11 @@ export class MessagingMessagesImportService {
       if (
         messageIdsToFetch.length < MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE
       ) {
-        await this.messagingChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
           messageChannel.id,
         );
       } else {
-        await this.messagingChannelSyncStatusService.scheduleMessagesImport(
+        await this.messageChannelSyncStatusService.scheduleMessagesImport(
           messageChannel.id,
         );
       }

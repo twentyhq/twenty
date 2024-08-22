@@ -13,7 +13,7 @@ import {
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
-export class MessagingChannelSyncStatusService {
+export class MessageChannelSyncStatusService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,

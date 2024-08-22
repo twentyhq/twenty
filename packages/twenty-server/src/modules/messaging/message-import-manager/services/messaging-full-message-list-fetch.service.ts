@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { Any } from 'typeorm';
 
@@ -7,21 +7,17 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 
 @Injectable()
 export class MessagingFullMessageListFetchService {
-  private readonly logger = new Logger(
-    MessagingFullMessageListFetchService.name,
-  );
-
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
   ) {}
@@ -31,7 +27,7 @@ export class MessagingFullMessageListFetchService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
-    await this.messagingChannelSyncStatusService.markAsMessagesListFetchOngoing(
+    await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
       messageChannel.id,
     );
 
@@ -93,7 +89,7 @@ export class MessagingFullMessageListFetchService {
       },
     );
 
-    await this.messagingChannelSyncStatusService.scheduleMessagesImport(
+    await this.messageChannelSyncStatusService.scheduleMessagesImport(
       messageChannel.id,
     );
   }
