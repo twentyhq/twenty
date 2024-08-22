@@ -38,7 +38,8 @@ export class RunWorkflowJob {
 
     try {
       await this.workflowExecutorWorkspaceService.execute({
-        action: workflowVersion.trigger.nextAction,
+        currentStepIndex: 0,
+        steps: workflowVersion.steps || [],
         payload,
       });
 

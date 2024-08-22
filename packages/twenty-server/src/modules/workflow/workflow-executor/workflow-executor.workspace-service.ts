@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkflowAction } from 'src/modules/workflow/common/types/workflow-action.type';
-import { WorkflowActionExecutorFactory } from 'src/modules/workflow/workflow-action-executor/workflow-action-executor.factory';
+import { WorkflowStep } from 'src/modules/workflow/common/types/workflow-step.type';
 import {
   WorkflowExecutorException,
   WorkflowExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-executor.exception';
+import { WorkflowStepExecutorFactory } from 'src/modules/workflow/workflow-step-executor/workflow-step-executor.factory';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -17,36 +17,41 @@ export type WorkflowExecutionOutput = {
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
   constructor(
-    private readonly workflowActionExecutorFactory: WorkflowActionExecutorFactory,
+    private readonly workflowStepExecutorFactory: WorkflowStepExecutorFactory,
   ) {}
 
   async execute({
-    action,
+    currentStepIndex,
+    steps,
     payload,
     attemptCount = 1,
   }: {
-    action?: WorkflowAction;
+    currentStepIndex: number;
+    steps: WorkflowStep[];
     payload?: object;
     attemptCount?: number;
   }): Promise<WorkflowExecutionOutput> {
-    if (!action) {
+    if (currentStepIndex >= steps.length) {
       return {
         data: payload,
       };
     }
 
-    const workflowActionExecutor = this.workflowActionExecutorFactory.get(
-      action.type,
+    const step = steps[currentStepIndex];
+
+    const workflowStepExecutor = this.workflowStepExecutorFactory.get(
+      step.type,
     );
 
-    const result = await workflowActionExecutor.execute({
-      action,
+    const result = await workflowStepExecutor.execute({
+      step,
       payload,
     });
 
     if (result.data) {
       return await this.execute({
-        action: action.nextAction,
+        currentStepIndex: currentStepIndex + 1,
+        steps,
         payload: result.data,
       });
     }
@@ -58,19 +63,21 @@ export class WorkflowExecutorWorkspaceService {
       );
     }
 
-    if (action.settings.errorHandlingOptions.continueOnFailure.value) {
+    if (step.settings.errorHandlingOptions.continueOnFailure.value) {
       return await this.execute({
-        action: action.nextAction,
+        currentStepIndex: currentStepIndex + 1,
+        steps,
         payload,
       });
     }
 
     if (
-      action.settings.errorHandlingOptions.retryOnFailure.value &&
+      step.settings.errorHandlingOptions.retryOnFailure.value &&
       attemptCount < MAX_RETRIES_ON_FAILURE
     ) {
       return await this.execute({
-        action,
+        currentStepIndex,
+        steps,
         payload,
         attemptCount: attemptCount + 1,
       });
