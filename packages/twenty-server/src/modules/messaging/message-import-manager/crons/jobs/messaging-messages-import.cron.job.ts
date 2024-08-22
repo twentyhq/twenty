@@ -52,23 +52,20 @@ export class MessagingMessagesImportCronJob {
           );
 
         const messageChannels = await messageChannelRepository.find({
-          select: ['id', 'isSyncEnabled', 'syncStage'],
+          where: {
+            isSyncEnabled: true,
+            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+          },
         });
 
         for (const messageChannel of messageChannels) {
-          if (
-            messageChannel.isSyncEnabled &&
-            messageChannel.syncStage ===
-              MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
-          ) {
-            await this.messageQueueService.add<MessagingMessagesImportJobData>(
-              MessagingMessagesImportJob.name,
-              {
-                workspaceId: activeWorkspace.id,
-                messageChannelId: messageChannel.id,
-              },
-            );
-          }
+          await this.messageQueueService.add<MessagingMessagesImportJobData>(
+            MessagingMessagesImportJob.name,
+            {
+              workspaceId: activeWorkspace.id,
+              messageChannelId: messageChannel.id,
+            },
+          );
         }
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {

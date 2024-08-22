@@ -8,12 +8,12 @@ import {
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
 import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
-import { CreatedByPreQueryHook } from 'src/engine/metadata-modules/field-metadata/query-hooks/created-by.pre-query-hook';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -42,12 +42,9 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         ObjectMetadataModule,
         DataSourceModule,
         TypeORMModule,
+        ActorModule,
       ],
-      services: [
-        IsFieldMetadataDefaultValue,
-        FieldMetadataService,
-        CreatedByPreQueryHook,
-      ],
+      services: [IsFieldMetadataDefaultValue, FieldMetadataService],
       resolvers: [
         {
           EntityClass: FieldMetadataEntity,
