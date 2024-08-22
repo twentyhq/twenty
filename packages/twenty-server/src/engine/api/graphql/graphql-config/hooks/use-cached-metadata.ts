@@ -9,10 +9,11 @@ export type CacheMetadataPluginConfig = {
 export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
   const computeCacheKey = (serverContext: any) => {
     const workspaceId = serverContext.req.workspace?.id ?? 'anonymous';
-    const cacheVersion = serverContext.req.cacheVersion ?? '0';
+    const workspaceMetadataVersion =
+      serverContext.req.workspaceMetadataVersion ?? '0';
     const operationName = getOperationName(serverContext);
 
-    return `cachedOperations:${operationName}:${workspaceId}:${cacheVersion}`;
+    return `graphql:operations:${operationName}:${workspaceId}:${workspaceMetadataVersion}`;
   };
 
   const getOperationName = (serverContext: any) =>

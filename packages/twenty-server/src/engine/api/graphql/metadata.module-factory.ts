@@ -15,7 +15,7 @@ export const metadataModuleFactory = async (
   environmentService: EnvironmentService,
   exceptionHandlerService: ExceptionHandlerService,
   dataloaderService: DataloaderService,
-  workspaceSchemaCacheStorage: CacheStorageService,
+  cacheStorageService: CacheStorageService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
@@ -36,12 +36,8 @@ export const metadataModuleFactory = async (
         exceptionHandlerService,
       }),
       useCachedMetadata({
-        cacheGetter: workspaceSchemaCacheStorage.get.bind(
-          workspaceSchemaCacheStorage,
-        ),
-        cacheSetter: workspaceSchemaCacheStorage.set.bind(
-          workspaceSchemaCacheStorage,
-        ),
+        cacheGetter: cacheStorageService.get.bind(cacheStorageService),
+        cacheSetter: cacheStorageService.set.bind(cacheStorageService),
         operationsToCache: ['ObjectMetadataItems'],
       }),
     ],

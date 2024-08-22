@@ -1,5 +1,4 @@
 /* eslint-disable @nx/workspace-inject-workspace-repository */
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
@@ -11,6 +10,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 
@@ -22,7 +22,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userRepository: Repository<User>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
-    private eventEmitter: EventEmitter2,
+    private workspaceEventEmitter: WorkspaceEventEmitter,
   ) {
     super(userWorkspaceRepository);
   }
@@ -35,11 +35,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
 
     const payload = new ObjectRecordCreateEvent<UserWorkspace>();
 
-    payload.workspaceId = workspaceId;
     payload.userId = userId;
-    payload.name = 'user.signup';
 
-    this.eventEmitter.emit('user.signup', payload);
+    this.workspaceEventEmitter.emit('user.signup', [payload], workspaceId);
 
     return this.userWorkspaceRepository.save(userWorkspace);
   }
@@ -76,14 +74,16 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     const payload =
       new ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>();
 
-    payload.workspaceId = workspaceId;
     payload.properties = {
       after: workspaceMember[0],
     };
     payload.recordId = workspaceMember[0].id;
-    payload.name = 'workspaceMember.created';
 
-    this.eventEmitter.emit('workspaceMember.created', payload);
+    this.workspaceEventEmitter.emit(
+      'workspaceMember.created',
+      [payload],
+      workspaceId,
+    );
   }
 
   async addUserToWorkspace(user: User, workspace: Workspace) {
