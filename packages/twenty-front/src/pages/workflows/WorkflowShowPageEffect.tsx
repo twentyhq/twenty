@@ -15,7 +15,7 @@ import {
 } from '@/workflow/types/WorkflowDiagram';
 import { addCreateStepNodes } from '@/workflow/utils/addCreateStepNodes';
 import { MarkerType } from '@xyflow/react';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
@@ -127,16 +127,6 @@ export const WorkflowShowPageEffect = ({
     },
   });
 
-  const flowLastVersion = useMemo(
-    () => getFlowLastVersion(workflow),
-    [workflow],
-  );
-
-  const flowWithCreateStepNodes = useMemo(
-    () => addCreateStepNodes(flowLastVersion),
-    [flowLastVersion],
-  );
-
   const setCurrentWorkflowData = useSetRecoilState(
     showPageWorkflowDiagramState,
   );
@@ -146,10 +136,13 @@ export const WorkflowShowPageEffect = ({
   const setCurrentWorkflowError = useSetRecoilState(showPageWorkflowErrorState);
 
   useEffect(() => {
+    const flowLastVersion = getFlowLastVersion(workflow);
+    const flowWithCreateStepNodes = addCreateStepNodes(flowLastVersion);
+
     setCurrentWorkflowData(
       isDefined(workflow) ? flowWithCreateStepNodes : undefined,
     );
-  }, [flowWithCreateStepNodes, setCurrentWorkflowData, workflow]);
+  }, [setCurrentWorkflowData, workflow]);
 
   useEffect(() => {
     setCurrentWorkflowLoading(loading);
