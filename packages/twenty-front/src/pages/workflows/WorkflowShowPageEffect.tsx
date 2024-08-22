@@ -10,9 +10,11 @@ import {
 } from '@/workflow/types/Workflow';
 import {
   WorkflowDiagram,
-  WorkflowDiagramNodeData,
+  WorkflowDiagramEdge,
+  WorkflowDiagramNode,
 } from '@/workflow/types/WorkflowDiagram';
-import { Edge, MarkerType, Node } from '@xyflow/react';
+import { addCreateStepNodes } from '@/workflow/utils/addCreateStepNodes';
+import { MarkerType } from '@xyflow/react';
 import { useEffect, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -28,8 +30,8 @@ const EMPTY_FLOW_DATA: WorkflowDiagram = {
 };
 
 const generateWorklowDiagram = (trigger: WorkflowTrigger): WorkflowDiagram => {
-  const nodes: Array<Node<WorkflowDiagramNodeData>> = [];
-  const edges: Array<Edge> = [];
+  const nodes: Array<WorkflowDiagramNode> = [];
+  const edges: Array<WorkflowDiagramEdge> = [];
 
   // Helper function to generate nodes and edges recursively
   const processNode = (
@@ -107,43 +109,6 @@ const getFlowLastVersion = (
   return generateWorklowDiagram(lastVersion.trigger);
 };
 
-const addCreateStepNodes = (
-  nodes: Array<Node<WorkflowDiagramNodeData>>,
-  edges: Array<Edge>,
-) => {
-  const nodesWithoutTargets = nodes.filter((node) =>
-    edges.every((edge) => edge.source !== node.id),
-  );
-
-  const updatedNodes: typeof nodes = nodes.slice();
-  const updatedEdges: typeof edges = edges.slice();
-
-  for (const node of nodesWithoutTargets) {
-    const newCreateStepNode: Node<WorkflowDiagramNodeData> = {
-      id: v4(),
-      type: 'create-step',
-      data: {},
-      position: { x: 0, y: 0 },
-    };
-
-    updatedNodes.push(newCreateStepNode);
-
-    updatedEdges.push({
-      id: v4(),
-      source: node.id,
-      target: newCreateStepNode.id,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-      },
-    });
-  }
-
-  return {
-    nodes: updatedNodes,
-    edges: updatedEdges,
-  };
-};
-
 export const WorkflowShowPageEffect = ({
   workflowId,
 }: WorkflowShowPageEffectProps) => {
@@ -168,7 +133,7 @@ export const WorkflowShowPageEffect = ({
   );
 
   const flowWithCreateStepNodes = useMemo(
-    () => addCreateStepNodes(flowLastVersion.nodes, flowLastVersion.edges),
+    () => addCreateStepNodes(flowLastVersion),
     [flowLastVersion],
   );
 

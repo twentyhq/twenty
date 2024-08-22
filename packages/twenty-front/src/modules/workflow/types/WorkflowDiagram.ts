@@ -1,8 +1,11 @@
 import { Edge, Node } from '@xyflow/react';
 
+export type WorkflowDiagramNode = Node<WorkflowDiagramNodeData>;
+export type WorkflowDiagramEdge = Edge;
+
 export type WorkflowDiagram = {
-  nodes: Array<Node<WorkflowDiagramNodeData>>;
-  edges: Array<Edge>;
+  nodes: Array<WorkflowDiagramNode>;
+  edges: Array<WorkflowDiagramEdge>;
 };
 
 export type WorkflowDiagramStepNodeData = {

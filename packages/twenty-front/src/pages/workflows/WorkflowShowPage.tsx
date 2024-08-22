@@ -7,7 +7,8 @@ import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
 import {
   WorkflowDiagram,
-  WorkflowDiagramNodeData,
+  WorkflowDiagramEdge,
+  WorkflowDiagramNode,
 } from '@/workflow/types/WorkflowDiagram';
 import { getOrganizedDiagram } from '@/workflow/utils/getOrganizedDiagram';
 import {
@@ -15,7 +16,6 @@ import {
   applyNodeChanges,
   Background,
   EdgeChange,
-  Node,
   NodeChange,
   ReactFlow,
 } from '@xyflow/react';
@@ -57,7 +57,7 @@ const LoadedWorkflow = ({ diagram }: { diagram: WorkflowDiagram }) => {
   );
 
   const handleNodesChange = (
-    nodeChanges: Array<NodeChange<Node<WorkflowDiagramNodeData>>>,
+    nodeChanges: Array<NodeChange<WorkflowDiagramNode>>,
   ) => {
     setShowPageWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
@@ -73,7 +73,9 @@ const LoadedWorkflow = ({ diagram }: { diagram: WorkflowDiagram }) => {
     });
   };
 
-  const handleEdgesChange = (edgeChanges: Array<EdgeChange>) => {
+  const handleEdgesChange = (
+    edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
+  ) => {
     setShowPageWorkflowDiagram((diagram) => {
       if (isDefined(diagram) === false) {
         throw new Error(
