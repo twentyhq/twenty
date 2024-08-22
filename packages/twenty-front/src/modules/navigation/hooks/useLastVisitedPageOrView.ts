@@ -19,37 +19,37 @@ export const useLastVisitedPageOrView = () => {
     alphaSortedActiveObjectMetadataItems,
   } = useFilteredObjectMetadataItems();
 
-  const resetNavigationMemorizedUrl = useSetRecoilState(
+  const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
   );
 
-  const lastVisitedObjectMetadataId =
+  const lastVisitedObjectMetadataItemId =
     currentPages?.['last_visited_object'] ?? null;
 
   const removeMatchingIdInCaseLastVisited = ({
-    objectMetadataId,
+    objectMetadataItemId,
   }: {
-    objectMetadataId: string;
+    objectMetadataItemId: string;
   }) => {
     const isDeactivateDefault = isDeeplyEqual(
-      lastVisitedObjectMetadataId,
-      objectMetadataId,
+      lastVisitedObjectMetadataItemId,
+      objectMetadataItemId,
     );
 
     const [newFallbackObjectMetadataItem] =
       alphaSortedActiveObjectMetadataItems.filter(
-        (item) => item.id !== objectMetadataId,
+        (item) => item.id !== objectMetadataItemId,
       );
 
     setCurrentPages({
       ...(isDeactivateDefault && {
         last_visited_object: newFallbackObjectMetadataItem.id,
       }),
-      [objectMetadataId]: undefined,
+      [objectMetadataItemId]: undefined,
     });
 
     if (isDeactivateDefault) {
-      resetNavigationMemorizedUrl(
+      setNavigationMemorizedUrl(
         `/objects/${newFallbackObjectMetadataItem.namePlural}`,
       );
     }
@@ -62,19 +62,19 @@ export const useLastVisitedPageOrView = () => {
     componentId: string;
     viewId: string;
   }) => {
-    const fallbackObjectMetadataId =
+    const fallbackObjectMetadataItemId =
       findActiveObjectMetadataItemBySlug(componentId)?.id ?? '';
     /* when both are equal meaning there was change in view else 
       there was a object page change from nav
     */
     const fallbackViewId =
-      lastVisitedObjectMetadataId === fallbackObjectMetadataId
+      lastVisitedObjectMetadataItemId === fallbackObjectMetadataItemId
         ? viewId
-        : (currentPages?.[fallbackObjectMetadataId] ?? viewId);
+        : (currentPages?.[fallbackObjectMetadataItemId] ?? viewId);
 
     setCurrentPages({
-      last_visited_object: fallbackObjectMetadataId,
-      [fallbackObjectMetadataId]: fallbackViewId,
+      last_visited_object: fallbackObjectMetadataItemId,
+      [fallbackObjectMetadataItemId]: fallbackViewId,
     });
   };
 
@@ -88,7 +88,7 @@ export const useLastVisitedPageOrView = () => {
     return currentPages?.[objectMetadataId];
   };
   return {
-    lastVisitedObjectMetadataId,
+    lastVisitedObjectMetadataItemId,
     setLastVisitedObjectOrView,
     getLastVisitedViewId,
     getLastVisitedViewIdFromObjectId,

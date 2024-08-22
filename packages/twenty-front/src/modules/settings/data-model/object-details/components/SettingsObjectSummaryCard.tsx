@@ -39,7 +39,7 @@ export const SettingsObjectSummaryCard = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(iconKey);
-  const objectMetadataId = objectMetadataItem.id;
+  const objectMetadataItemId = objectMetadataItem.id;
 
   const { closeDropdown } = useDropdown(dropdownId);
   const { removeMatchingIdInCaseLastVisited } = useLastVisitedPageOrView();
@@ -50,7 +50,9 @@ export const SettingsObjectSummaryCard = ({
   };
 
   const handleDeactivate = () => {
-    removeMatchingIdInCaseLastVisited({ objectMetadataId });
+    removeMatchingIdInCaseLastVisited({
+      objectMetadataItemId,
+    });
     onDeactivate();
     closeDropdown();
   };
