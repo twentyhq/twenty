@@ -24,7 +24,7 @@ export class BaseServerlessDriver {
   async getCompiledCode(
     serverlessFunction: ServerlessFunctionEntity,
     fileStorageService: FileStorageService,
-    version='draft',
+    version = 'draft',
   ) {
     const folderPath = this.getFolderPath(serverlessFunction, version);
     const fileStream = await fileStorageService.read({
