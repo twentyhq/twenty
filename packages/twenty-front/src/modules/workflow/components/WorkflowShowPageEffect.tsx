@@ -27,12 +27,15 @@ const getFlowLastVersion = (
     return EMPTY_FLOW_DATA;
   }
 
-  const lastVersion = workflow.versions[0];
+  const lastVersion = workflow.versions.at(-1);
   if (!isDefined(lastVersion) || !isDefined(lastVersion.trigger)) {
     return EMPTY_FLOW_DATA;
   }
 
-  return generateWorklowDiagram(lastVersion.trigger);
+  return generateWorklowDiagram({
+    trigger: lastVersion.trigger,
+    steps: lastVersion.steps,
+  });
 };
 
 export const WorkflowShowPageEffect = ({

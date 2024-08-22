@@ -13,7 +13,7 @@ export type WorkflowCodeSettingsType = WorkflowBaseSettingsType & {
   serverlessFunctionId: string;
 };
 
-export type WorkflowActionType = 'CODE';
+export type WorkflowActionType = 'CODE_ACTION';
 
 type CommonWorkflowAction = {
   name: string;
@@ -22,27 +22,25 @@ type CommonWorkflowAction = {
 };
 
 type WorkflowCodeAction = CommonWorkflowAction & {
-  type: 'CODE';
+  type: 'CODE_ACTION';
   settings: WorkflowCodeSettingsType;
 };
 
-export type WorkflowAction = WorkflowCodeAction & {
-  nextAction?: WorkflowAction;
-};
+export type WorkflowAction = WorkflowCodeAction;
+
+export type WorkflowStep = WorkflowAction;
 
 export type WorkflowTriggerType = 'DATABASE_EVENT';
 
 type BaseTrigger = {
   type: WorkflowTriggerType;
   input?: object;
-  nextAction?: WorkflowAction;
 };
 
 export type WorkflowDatabaseEventTrigger = BaseTrigger & {
   type: 'DATABASE_EVENT';
   settings: {
     eventName: string;
-    triggerName: string;
   };
 };
 
@@ -55,6 +53,7 @@ export type WorkflowVersion = {
   updatedAt: string;
   workflowId: string;
   trigger: WorkflowTrigger;
+  steps: Array<WorkflowStep>;
   __typename: 'WorkflowVersion';
 };
 
