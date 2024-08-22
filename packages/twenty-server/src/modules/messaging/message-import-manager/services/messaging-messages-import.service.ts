@@ -72,10 +72,8 @@ export class MessagingMessagesImportService {
       messageChannel.id,
     );
 
-    let accessToken: string;
-
     try {
-      accessToken =
+      connectedAccount.accessToken =
         await this.refreshAccessTokenService.refreshAndSaveAccessToken(
           connectedAccount,
           workspaceId,
@@ -132,8 +130,11 @@ export class MessagingMessagesImportService {
     }
 
     try {
-      const allMessages =
-        await this.messagingGetMessagesService.getMessages(connectedAccount);
+      const allMessages = await this.messagingGetMessagesService.getMessages(
+        messageIdsToFetch,
+        connectedAccount,
+        workspaceId,
+      );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
         connectedAccount.accountOwnerId,

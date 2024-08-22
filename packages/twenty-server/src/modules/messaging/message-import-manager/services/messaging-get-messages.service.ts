@@ -13,14 +13,20 @@ export class MessagingGetMessagesService {
   ) {}
 
   public async getMessages(
+    messageIds: string[],
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken' | 'id'
+      'provider' | 'accessToken' | 'refreshToken' | 'id'
     >,
+    workspaceId: string,
   ): Promise<GetMessagesResponse> {
     switch (connectedAccount.provider) {
       case 'google':
-        return this.gmailGetMessagesService.getMessages(connectedAccount);
+        return this.gmailGetMessagesService.getMessages(
+          messageIds,
+          connectedAccount,
+          workspaceId,
+        );
       default:
         throw new Error(
           `Provider ${connectedAccount.provider} is not supported.`,
