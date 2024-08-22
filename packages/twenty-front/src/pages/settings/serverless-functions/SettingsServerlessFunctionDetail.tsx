@@ -8,9 +8,6 @@ import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-func
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
 import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
 import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
-import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -18,12 +15,8 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -45,23 +38,6 @@ export const SettingsServerlessFunctionDetail = () => {
   );
   const settingsServerlessFunctionInput = useRecoilValue(
     settingsServerlessFunctionInputState,
-  );
-
-  const navigate = useNavigate();
-  const setHotkeyScope = useSetHotkeyScope();
-
-  useEffect(() => {
-    setHotkeyScope(
-      SettingsServerlessFunctionHotkeyScope.ServerlessFunctionDetail,
-    );
-  }, [setHotkeyScope]);
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      navigate(getSettingsPagePath(SettingsPath.ServerlessFunctions));
-    },
-    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionDetail,
   );
 
   const save = async () => {

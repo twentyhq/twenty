@@ -9,12 +9,11 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { ServerlessFunction } from '~/generated-metadata/graphql';
+import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 const StyledTableRow = styled(TableRow)`
   grid-template-columns: 312px 132px 68px;
@@ -27,11 +26,10 @@ const StyledTableBody = styled(TableBody)`
 export const SettingsServerlessFunctionsTable = () => {
   const { serverlessFunctions } = useGetManyServerlessFunctions();
   const navigate = useNavigate();
-  const setHotkeyScope = useSetHotkeyScope();
 
-  useEffect(() => {
-    setHotkeyScope(SettingsServerlessFunctionHotkeyScope.ServerlessFunction);
-  }, [setHotkeyScope]);
+  useHotkeyScopeOnMount(
+    SettingsServerlessFunctionHotkeyScope.ServerlessFunction,
+  );
 
   useScopedHotkeys(
     [Key.Enter],

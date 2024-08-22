@@ -12,10 +12,10 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconFunction } from 'twenty-ui';
+import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { isDefined } from '~/utils/isDefined';
 
 export const SettingsServerlessFunctionsNew = () => {
@@ -54,20 +54,11 @@ export const SettingsServerlessFunctionsNew = () => {
     };
   };
 
-  const setHotkeyScope = useSetHotkeyScope();
+  const canSave = !!formValues.name && createOneServerlessFunction;
 
-  useEffect(() => {
-    setHotkeyScope(SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew);
-  }, [setHotkeyScope]);
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      navigate(getSettingsPagePath(SettingsPath.ServerlessFunctions));
-    },
+  useHotkeyScopeOnMount(
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
   );
-  const canSave = !!formValues.name && createOneServerlessFunction;
 
   useScopedHotkeys(
     [Key.Enter],
@@ -78,6 +69,13 @@ export const SettingsServerlessFunctionsNew = () => {
     },
     SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
     [canSave],
+  );
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      navigate(getSettingsPagePath(SettingsPath.ServerlessFunctions));
+    },
+    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
   );
 
   return (
