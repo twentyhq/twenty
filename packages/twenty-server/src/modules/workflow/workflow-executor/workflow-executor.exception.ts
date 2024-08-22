@@ -1,11 +1,11 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class WorkflowRunnerException extends CustomException {
+export class WorkflowExecutorException extends CustomException {
   constructor(message: string, code: string) {
     super(message, code);
   }
 }
 
-export enum WorkflowRunnerExceptionCode {
+export enum WorkflowExecutorExceptionCode {
   WORKFLOW_FAILED = 'WORKFLOW_FAILED',
 }

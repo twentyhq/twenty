@@ -5,8 +5,8 @@ import { Processor } from 'src/engine/integrations/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workflow-common.workspace-service';
-import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-runner.workspace-service';
-import { WorkflowStatusWorkspaceService } from 'src/modules/workflow/workflow-status/workflow-status.workspace-service';
+import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-executor.workspace-service';
+import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 export type RunWorkflowJobData = {
   workspaceId: string;
@@ -16,20 +16,20 @@ export type RunWorkflowJobData = {
 };
 
 @Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
-export class WorkflowRunnerJob {
+export class RunWorkflowJob {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
-    private readonly workflowStatusWorkspaceService: WorkflowStatusWorkspaceService,
+    private readonly workflowExecutorWorkspaceService: WorkflowExecutorWorkspaceService,
+    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
   ) {}
 
-  @Process(WorkflowRunnerJob.name)
+  @Process(RunWorkflowJob.name)
   async handle({
     workflowVersionId,
     workflowRunId,
     payload,
   }: RunWorkflowJobData): Promise<void> {
-    await this.workflowStatusWorkspaceService.startWorkflowRun(workflowRunId);
+    await this.workflowRunWorkspaceService.startWorkflowRun(workflowRunId);
 
     const workflowVersion =
       await this.workflowCommonWorkspaceService.getWorkflowVersion(
@@ -37,17 +37,17 @@ export class WorkflowRunnerJob {
       );
 
     try {
-      await this.workflowRunnerWorkspaceService.run({
+      await this.workflowExecutorWorkspaceService.execute({
         action: workflowVersion.trigger.nextAction,
         payload,
       });
 
-      await this.workflowStatusWorkspaceService.endWorkflowRun(
+      await this.workflowRunWorkspaceService.endWorkflowRun(
         workflowRunId,
         WorkflowRunStatus.COMPLETED,
       );
     } catch (error) {
-      await this.workflowStatusWorkspaceService.endWorkflowRun(
+      await this.workflowRunWorkspaceService.endWorkflowRun(
         workflowRunId,
         WorkflowRunStatus.FAILED,
       );

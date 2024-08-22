@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common/services/logger.service';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -6,6 +7,7 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   ActorMetadata,
@@ -26,6 +28,8 @@ type CustomWorkspaceItem = Omit<
 
 @WorkspaceQueryHook(`*.createMany`)
 export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
+  private readonly logger = new Logger(CreatedByPreQueryHook.name);
+
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectRepository(FieldMetadataEntity, 'metadata')
@@ -55,7 +59,14 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
     }
 
     // If user is logged in, we use the workspace member
-    if (authContext.user) {
+    if (authContext.workspaceMemberId && authContext.user) {
+      createdBy = buildCreatedByFromWorkspaceMember(
+        authContext.workspaceMemberId,
+        authContext.user,
+      );
+      // TODO: remove that code once we have the workspace member id in all tokens
+    } else if (authContext.user) {
+      this.logger.warn("User doesn't have a workspace member id in the token");
       const workspaceMemberRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<WorkspaceMemberWorkspaceEntity>(
           authContext.workspace.id,
