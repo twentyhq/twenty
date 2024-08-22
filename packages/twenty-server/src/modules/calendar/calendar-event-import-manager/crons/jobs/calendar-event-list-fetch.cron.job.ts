@@ -32,6 +32,8 @@ export class CalendarEventListFetchCronJob {
 
   @Process(CalendarEventListFetchCronJob.name)
   async handle(): Promise<void> {
+    console.time('CalendarEventListFetchCronJob time');
+
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -65,5 +67,7 @@ export class CalendarEventListFetchCronJob {
         );
       }
     }
+
+    console.timeEnd('CalendarEventListFetchCronJob time');
   }
 }

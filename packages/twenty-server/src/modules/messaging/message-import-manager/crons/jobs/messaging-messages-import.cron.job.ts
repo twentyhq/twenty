@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -24,8 +23,6 @@ import {
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessagesImportCronJob {
-  private readonly logger = new Logger(MessagingMessagesImportCronJob.name);
-
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -36,6 +33,7 @@ export class MessagingMessagesImportCronJob {
 
   @Process(MessagingMessagesImportCronJob.name)
   async handle(): Promise<void> {
+    console.time('MessagingMessagesImportCronJob time');
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -50,24 +48,23 @@ export class MessagingMessagesImportCronJob {
         );
 
       const messageChannels = await messageChannelRepository.find({
-        select: ['id', 'isSyncEnabled', 'syncStage'],
+        where: {
+          isSyncEnabled: true,
+          syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+        },
       });
 
       for (const messageChannel of messageChannels) {
-        if (
-          messageChannel.isSyncEnabled &&
-          messageChannel.syncStage ===
-            MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
-        ) {
-          await this.messageQueueService.add<MessagingMessagesImportJobData>(
-            MessagingMessagesImportJob.name,
-            {
-              workspaceId: activeWorkspace.id,
-              messageChannelId: messageChannel.id,
-            },
-          );
-        }
+        await this.messageQueueService.add<MessagingMessagesImportJobData>(
+          MessagingMessagesImportJob.name,
+          {
+            workspaceId: activeWorkspace.id,
+            messageChannelId: messageChannel.id,
+          },
+        );
       }
     }
+
+    console.timeEnd('MessagingMessagesImportCronJob time');
   }
 }

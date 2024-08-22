@@ -68,24 +68,40 @@ export const useOpenCreateActivityDrawer = ({
       assigneeId: customAssignee?.id,
     });
 
-    const targetableObjectRelationIdName = `${targetableObjects[0].targetObjectNameSingular}Id`;
+    if (targetableObjects.length > 0) {
+      const targetableObjectRelationIdName = `${targetableObjects[0].targetObjectNameSingular}Id`;
 
-    await createOneActivityTarget({
-      taskId:
-        activityObjectNameSingular === CoreObjectNameSingular.Task
-          ? activity.id
-          : undefined,
-      noteId:
-        activityObjectNameSingular === CoreObjectNameSingular.Note
-          ? activity.id
-          : undefined,
-      [targetableObjectRelationIdName]: targetableObjects[0].id,
-    });
+      await createOneActivityTarget({
+        taskId:
+          activityObjectNameSingular === CoreObjectNameSingular.Task
+            ? activity.id
+            : undefined,
+        noteId:
+          activityObjectNameSingular === CoreObjectNameSingular.Note
+            ? activity.id
+            : undefined,
+        [targetableObjectRelationIdName]: targetableObjects[0].id,
+      });
+
+      setActivityTargetableEntityArray(targetableObjects);
+    } else {
+      await createOneActivityTarget({
+        taskId:
+          activityObjectNameSingular === CoreObjectNameSingular.Task
+            ? activity.id
+            : undefined,
+        noteId:
+          activityObjectNameSingular === CoreObjectNameSingular.Note
+            ? activity.id
+            : undefined,
+      });
+
+      setActivityTargetableEntityArray([]);
+    }
 
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     setViewableRecordId(activity.id);
     setViewableRecordNameSingular(activityObjectNameSingular);
-    setActivityTargetableEntityArray(targetableObjects ?? []);
 
     openRightDrawer(RightDrawerPages.ViewRecord);
     setIsUpsertingActivityInDB(false);

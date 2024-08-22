@@ -11,7 +11,7 @@ import {
 } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.exception';
 import { getForeignTableColumnName } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/utils/get-foreign-table-column-name.util';
 import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   ReferencedTable,
@@ -30,7 +30,7 @@ export class ForeignTableService {
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {}
 
   public async fetchForeignTableNamesWithinWorkspace(
@@ -127,7 +127,9 @@ export class ForeignTableService {
         workspaceId,
       );
 
-      await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+      await this.workspaceMetadataVersionService.incrementMetadataVersion(
+        workspaceId,
+      );
 
       return {
         name: foreignTableName,

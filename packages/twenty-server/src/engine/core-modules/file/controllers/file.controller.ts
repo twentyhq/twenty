@@ -44,6 +44,10 @@ export class FileController {
         workspaceId,
       );
 
+      fileStream.on('error', () => {
+        res.status(500).send({ error: 'Internal server error' });
+      });
+
       fileStream.pipe(res);
     } catch (error) {
       if (

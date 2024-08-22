@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
+import { ObjectRecordBaseEventWithNameAndWorkspaceId } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-type TransformedEvent = ObjectRecordBaseEvent & {
+type TransformedEvent = ObjectRecordBaseEventWithNameAndWorkspaceId & {
   objectName?: string;
   linkedRecordCachedName?: string;
   linkedRecordId?: string;
@@ -26,7 +26,7 @@ export class TimelineActivityService {
     task: 'taskTarget',
   };
 
-  async upsertEvent(event: ObjectRecordBaseEvent) {
+  async upsertEvent(event: ObjectRecordBaseEventWithNameAndWorkspaceId) {
     const events = await this.transformEvent(event);
 
     if (!events || events.length === 0) return;
@@ -47,7 +47,7 @@ export class TimelineActivityService {
   }
 
   private async transformEvent(
-    event: ObjectRecordBaseEvent,
+    event: ObjectRecordBaseEventWithNameAndWorkspaceId,
   ): Promise<TransformedEvent[]> {
     if (['note', 'task'].includes(event.objectMetadata.nameSingular)) {
       const linkedObjects = await this.handleLinkedObjects(event);
@@ -69,7 +69,9 @@ export class TimelineActivityService {
     return [event];
   }
 
-  private async handleLinkedObjects(event: ObjectRecordBaseEvent) {
+  private async handleLinkedObjects(
+    event: ObjectRecordBaseEventWithNameAndWorkspaceId,
+  ) {
     const dataSourceSchema = this.workspaceDataSourceService.getSchemaName(
       event.workspaceId,
     );
@@ -92,7 +94,7 @@ export class TimelineActivityService {
   }
 
   private async processActivity(
-    event: ObjectRecordBaseEvent,
+    event: ObjectRecordBaseEventWithNameAndWorkspaceId,
     dataSourceSchema: string,
     activityType: string,
   ) {
@@ -145,7 +147,7 @@ export class TimelineActivityService {
   }
 
   private async processActivityTarget(
-    event: ObjectRecordBaseEvent,
+    event: ObjectRecordBaseEventWithNameAndWorkspaceId,
     dataSourceSchema: string,
     activityType: string,
   ) {

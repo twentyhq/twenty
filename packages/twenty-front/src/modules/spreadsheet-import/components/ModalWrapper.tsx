@@ -10,6 +10,7 @@ const StyledModal = styled(Modal)`
   height: 61%;
   min-height: 600px;
   min-width: 800px;
+  padding: 0;
   position: relative;
   width: 63%;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -42,7 +43,7 @@ export const ModalWrapper = ({
   return (
     <>
       {isOpen && (
-        <StyledModal size="large" onClose={onClose} isClosable={true}>
+        <StyledModal size="large">
           <StyledRtlLtr dir={rtl ? 'rtl' : 'ltr'}>
             <ModalCloseButton onClose={onClose} />
             {children}
