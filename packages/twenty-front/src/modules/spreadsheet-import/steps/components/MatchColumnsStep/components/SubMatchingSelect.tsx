@@ -37,7 +37,6 @@ const StyledControlContainer = styled.div<{ cursor: string }>`
   justify-content: space-between;
   padding: 0 ${({ theme }) => theme.spacing(2)};
   width: 100%;
-  position: relative;
 `;
 
 const StyledLabel = styled.span`

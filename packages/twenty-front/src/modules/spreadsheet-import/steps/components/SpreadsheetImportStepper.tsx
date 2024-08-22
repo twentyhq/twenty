@@ -45,6 +45,7 @@ export const SpreadsheetImportStepper = ({
     );
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
   const { enqueueSnackBar } = useSnackBar();
 
   const errorToast = useCallback(
@@ -106,7 +107,9 @@ export const SpreadsheetImportStepper = ({
           setPreviousStepState={setPreviousStepState}
           currentStepState={currentStepState}
           nextStep={nextStep}
-          onBack={onBack}
+          onBack={() => {
+            onBack();
+          }}
           errorToast={errorToast}
         />
       );

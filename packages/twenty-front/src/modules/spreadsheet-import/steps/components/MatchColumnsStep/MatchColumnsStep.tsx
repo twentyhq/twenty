@@ -22,8 +22,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { UnmatchColumn } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn';
+import { initialComputedColumnsState } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/states/initialComputedColumnsState';
 import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
+import { useRecoilState } from 'recoil';
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
 import { UserTableColumn } from './components/UserTableColumn';
@@ -142,13 +144,8 @@ export const MatchColumnsStep = <T extends string>({
   const { fields, autoMapHeaders, autoMapDistance } =
     useSpreadsheetImportInternal<T>();
   const [isLoading, setIsLoading] = useState(false);
-  const [columns, setColumns] = useState<Columns<T>>(
-    // Do not remove spread, it indexes empty array elements, otherwise map() skips over them
-    ([...headerValues] as string[]).map((value, index) => ({
-      type: ColumnType.empty,
-      index,
-      header: value ?? '',
-    })),
+  const [columns, setColumns] = useRecoilState(
+    initialComputedColumnsState(headerValues),
   );
 
   const { matchColumnsStepHook } = useSpreadsheetImportInternal();
@@ -157,7 +154,7 @@ export const MatchColumnsStep = <T extends string>({
     (columnIndex: number) => {
       setColumns(
         columns.map((column, index) =>
-          columnIndex === index ? setIgnoreColumn<T>(column) : column,
+          columnIndex === index ? setIgnoreColumn<string>(column) : column,
         ),
       );
     },
@@ -191,7 +188,7 @@ export const MatchColumnsStep = <T extends string>({
           (column) => 'value' in column && column.value === field.key,
         );
         setColumns(
-          columns.map<Column<T>>((column, index) => {
+          columns.map<Column<string>>((column, index) => {
             if (columnIndex === index) {
               return setColumn(column, field, data);
             } else if (index === existingFieldIndex) {
@@ -207,7 +204,15 @@ export const MatchColumnsStep = <T extends string>({
         );
       }
     },
-    [columns, onRevertIgnore, onIgnore, fields, data, enqueueSnackBar],
+    [
+      columns,
+      onRevertIgnore,
+      onIgnore,
+      fields,
+      setColumns,
+      data,
+      enqueueSnackBar,
+    ],
   );
 
   const onContinue = useCallback(
@@ -306,7 +311,10 @@ export const MatchColumnsStep = <T extends string>({
   ]);
 
   useEffect(() => {
-    if (autoMapHeaders) {
+    const isInitialColumnsState = columns.every(
+      (column) => column.type === ColumnType.empty,
+    );
+    if (autoMapHeaders && isInitialColumnsState) {
       setColumns(getMatchedColumns(columns, fields, data, autoMapDistance));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -349,7 +357,10 @@ export const MatchColumnsStep = <T extends string>({
         onClick={handleOnContinue}
         isLoading={isLoading}
         title="Next Step"
-        onBack={onBack}
+        onBack={() => {
+          onBack?.();
+          setColumns([]);
+        }}
       />
     </>
   );

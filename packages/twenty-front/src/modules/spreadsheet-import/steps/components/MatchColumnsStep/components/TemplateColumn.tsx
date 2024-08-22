@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
 `;
 
 type TemplateColumnProps<T extends string> = {
-  columns: Columns<T>;
+  columns: Columns<string>;
   columnIndex: number;
   onChange: (val: T, index: number) => void;
 };
@@ -34,14 +34,13 @@ export const TemplateColumn = <T extends string>({
         if ('value' in column) {
           return column.value === key;
         }
-
         return false;
       }) !== -1;
 
     return {
-      icon,
+      icon: icon,
       value: key,
-      label,
+      label: label,
       disabled: isSelected,
     } as const;
   });
