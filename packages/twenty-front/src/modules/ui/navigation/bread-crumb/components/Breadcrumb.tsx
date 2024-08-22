@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import styled from '@emotion/styled';
 
 type BreadcrumbProps = {
   className?: string;
@@ -9,10 +9,10 @@ type BreadcrumbProps = {
 
 const StyledWrapper = styled.nav`
   align-items: center;
-  color: ${({ theme }) => theme.font.color.extraLight};
+  color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  font-size: ${({ theme }) => theme.font.size.md};
+  // font-weight: ${({ theme }) => theme.font.weight.semiBold};
   gap: ${({ theme }) => theme.spacing(2)};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
@@ -23,7 +23,7 @@ const StyledLink = styled(Link)`
 `;
 
 const StyledText = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 export const Breadcrumb = ({ className, links }: BreadcrumbProps) => (

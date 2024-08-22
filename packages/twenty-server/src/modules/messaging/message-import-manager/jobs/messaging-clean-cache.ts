@@ -1,11 +1,11 @@
 import { Logger } from '@nestjs/common';
 
-import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
-import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
 export type MessagingCleanCacheJobData = {
   workspaceId: string;
@@ -17,7 +17,7 @@ export class MessagingCleanCacheJob {
   private readonly logger = new Logger(MessagingCleanCacheJob.name);
 
   constructor(
-    @InjectCacheStorage(CacheStorageNamespace.Messaging)
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
   ) {}
 

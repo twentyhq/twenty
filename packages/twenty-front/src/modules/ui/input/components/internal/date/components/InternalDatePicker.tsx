@@ -21,7 +21,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
-export const months = [
+const months = [
   { label: 'January', value: 0 },
   { label: 'February', value: 1 },
   { label: 'March', value: 2 },
@@ -36,7 +36,7 @@ export const months = [
   { label: 'December', value: 11 },
 ];
 
-export const years = Array.from(
+const years = Array.from(
   { length: 200 },
   (_, i) => new Date().getFullYear() + 5 - i,
 ).map((year) => ({ label: year.toString(), value: year }));
@@ -299,7 +299,7 @@ const StyledCustomDatePickerHeader = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export type InternalDatePickerProps = {
+type InternalDatePickerProps = {
   date: Date | null;
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date | null) => void;

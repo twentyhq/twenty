@@ -5,8 +5,8 @@ import { RowsChangeData } from 'react-data-grid';
 import { IconTrash } from 'twenty-ui';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
+import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
-import { Table } from '@/spreadsheet-import/components/Table';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import {
   Columns,
@@ -20,9 +20,9 @@ import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Button } from '@/ui/input/button/components/Button';
 import { Toggle } from '@/ui/input/components/Toggle';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 import { isDefined } from '~/utils/isDefined';
 
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
 
@@ -277,7 +277,7 @@ export const ValidationStep = <T extends string>({
           />
         </StyledToolbar>
         <StyledScrollContainer>
-          <Table
+          <SpreadsheetImportTable
             rowKeyGetter={rowKeyGetter}
             rows={tableData}
             onRowsChange={updateRow}

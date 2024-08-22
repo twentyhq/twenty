@@ -2,35 +2,13 @@ import { renderHook } from '@testing-library/react';
 import { print } from 'graphql';
 import { RecoilRoot } from 'recoil';
 
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 
 const expectedQueryTemplate = `
 query FindOnePerson($objectRecordId: ID!) {
   person(filter: { id: { eq: $objectRecordId } }) {
-    __typename
-    xLink {
-      primaryLinkUrl
-      primaryLinkLabel
-      secondaryLinks
-    }
-    id
-    createdAt
-    city
-    email
-    jobTitle
-    name {
-      firstName
-      lastName
-    }
-    phone
-    linkedinLink {
-      primaryLinkUrl
-      primaryLinkLabel
-      secondaryLinks
-    }
-    updatedAt
-    avatarUrl
-    companyId
+      ${PERSON_FRAGMENT}
   }
 }
 `.replace(/\s/g, '');

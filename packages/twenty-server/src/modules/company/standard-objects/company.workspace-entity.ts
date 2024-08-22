@@ -1,11 +1,10 @@
-import { Address } from 'nodemailer/lib/mailer';
-
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import {
   ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { AddressMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -41,6 +40,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   description: 'A company',
   icon: 'IconBuildingSkyscraper',
   labelIdentifierStandardId: COMPANY_STANDARD_FIELD_IDS.name,
+  softDelete: true,
 })
 export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
@@ -60,7 +60,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
       'The company website URL. We use this url to fetch the company icon',
     icon: 'IconLink',
   })
-  domainName?: string;
+  domainName?: LinksMetadata;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.employees,
@@ -111,7 +111,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconMap',
   })
   @WorkspaceIsNullable()
-  address: Address;
+  address: AddressMetadata;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.idealCustomerProfile,
@@ -133,7 +133,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
-  position: number | null;
+  position: number;
 
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.createdBy,

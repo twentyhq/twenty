@@ -1,16 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import {
-  AccountsToReconnectKeyValueType,
-  AccountsToReconnectKeys,
-} from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import {
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
@@ -20,44 +15,57 @@ import {
 @Injectable()
 export class MessageChannelSyncStatusService {
   constructor(
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
-    @InjectCacheStorage(CacheStorageNamespace.Messaging)
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly userVarsService: UserVarsService<AccountsToReconnectKeyValueType>,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
-  public async scheduleFullMessageListFetch(
-    messageChannelId: string,
-    workspaceId: string,
-  ) {
-    await this.messageChannelRepository.updateSyncStage(
-      messageChannelId,
-      MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-      workspaceId,
+  public async scheduleFullMessageListFetch(messageChannelId: string) {
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(
+      {
+        id: messageChannelId,
+      },
+      {
+        syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+      },
     );
   }
 
-  public async schedulePartialMessageListFetch(
-    messageChannelId: string,
-    workspaceId: string,
-  ) {
-    await this.messageChannelRepository.updateSyncStage(
-      messageChannelId,
-      MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
-      workspaceId,
+  public async schedulePartialMessageListFetch(messageChannelId: string) {
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(
+      {
+        id: messageChannelId,
+      },
+      {
+        syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
+      },
     );
   }
 
-  public async scheduleMessagesImport(
-    messageChannelId: string,
-    workspaceId: string,
-  ) {
-    await this.messageChannelRepository.updateSyncStage(
-      messageChannelId,
-      MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
-      workspaceId,
+  public async scheduleMessagesImport(messageChannelId: string) {
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(
+      {
+        id: messageChannelId,
+      },
+      {
+        syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+      },
     );
   }
 
@@ -69,62 +77,75 @@ export class MessageChannelSyncStatusService {
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
     );
 
-    await this.messageChannelRepository.resetSyncCursor(
-      messageChannelId,
-      workspaceId,
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(
+      {
+        id: messageChannelId,
+      },
+      {
+        syncCursor: '',
+        syncStageStartedAt: null,
+        throttleFailureCount: 0,
+      },
     );
 
-    await this.messageChannelRepository.resetSyncStageStartedAt(
-      messageChannelId,
-      workspaceId,
-    );
-
-    await this.messageChannelRepository.resetThrottleFailureCount(
-      messageChannelId,
-      workspaceId,
-    );
-
-    await this.scheduleFullMessageListFetch(messageChannelId, workspaceId);
+    await this.scheduleFullMessageListFetch(messageChannelId);
   }
 
-  public async markAsMessagesListFetchOngoing(
-    messageChannelId: string,
-    workspaceId: string,
-  ) {
-    await this.messageChannelRepository.updateSyncStage(
-      messageChannelId,
-      MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
-      workspaceId,
-    );
+  public async markAsMessagesListFetchOngoing(messageChannelId: string) {
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
 
-    await this.messageChannelRepository.updateSyncStatus(
-      messageChannelId,
-      MessageChannelSyncStatus.ONGOING,
-      workspaceId,
+    await messageChannelRepository.update(
+      {
+        id: messageChannelId,
+      },
+      {
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
+        syncStatus: MessageChannelSyncStatus.ONGOING,
+      },
     );
   }
 
   public async markAsCompletedAndSchedulePartialMessageListFetch(
     messageChannelId: string,
-    workspaceId: string,
   ) {
-    await this.messageChannelRepository.updateSyncStatus(
-      messageChannelId,
-      MessageChannelSyncStatus.ACTIVE,
-      workspaceId,
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(
+      {
+        id: messageChannelId,
+      },
+      {
+        syncStatus: MessageChannelSyncStatus.ACTIVE,
+      },
     );
 
-    await this.schedulePartialMessageListFetch(messageChannelId, workspaceId);
+    await this.schedulePartialMessageListFetch(messageChannelId);
   }
 
-  public async markAsMessagesImportOngoing(
-    messageChannelId: string,
-    workspaceId: string,
-  ) {
-    await this.messageChannelRepository.updateSyncStage(
-      messageChannelId,
-      MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
-      workspaceId,
+  public async markAsMessagesImportOngoing(messageChannelId: string) {
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(
+      {
+        id: messageChannelId,
+      },
+      {
+        syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
+      },
     );
   }
 
@@ -136,16 +157,19 @@ export class MessageChannelSyncStatusService {
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
     );
 
-    await this.messageChannelRepository.updateSyncStage(
-      messageChannelId,
-      MessageChannelSyncStage.FAILED,
-      workspaceId,
-    );
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
 
-    await this.messageChannelRepository.updateSyncStatus(
-      messageChannelId,
-      MessageChannelSyncStatus.FAILED_UNKNOWN,
-      workspaceId,
+    await messageChannelRepository.update(
+      {
+        id: messageChannelId,
+      },
+      {
+        syncStage: MessageChannelSyncStage.FAILED,
+        syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
+      },
     );
   }
 
@@ -157,16 +181,19 @@ export class MessageChannelSyncStatusService {
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
     );
 
-    await this.messageChannelRepository.updateSyncStage(
-      messageChannelId,
-      MessageChannelSyncStage.FAILED,
-      workspaceId,
-    );
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
 
-    await this.messageChannelRepository.updateSyncStatus(
-      messageChannelId,
-      MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-      workspaceId,
+    await messageChannelRepository.update(
+      {
+        id: messageChannelId,
+      },
+      {
+        syncStage: MessageChannelSyncStage.FAILED,
+        syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+      },
     );
 
     await this.addToAccountsToReconnect(messageChannelId, workspaceId);
@@ -199,24 +226,11 @@ export class MessageChannelSyncStatusService {
     const userId = messageChannel.connectedAccount.accountOwner.userId;
     const connectedAccountId = messageChannel.connectedAccount.id;
 
-    const accountsToReconnect =
-      (await this.userVarsService.get({
-        userId,
-        workspaceId,
-        key: AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
-      })) ?? [];
-
-    if (accountsToReconnect.includes(connectedAccountId)) {
-      return;
-    }
-
-    accountsToReconnect.push(connectedAccountId);
-
-    await this.userVarsService.set({
+    await this.accountsToReconnectService.addAccountToReconnectByKey(
+      AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       userId,
       workspaceId,
-      key: AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
-      value: accountsToReconnect,
-    });
+      connectedAccountId,
+    );
   }
 }

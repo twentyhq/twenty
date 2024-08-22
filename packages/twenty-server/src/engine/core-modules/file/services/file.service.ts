@@ -5,11 +5,6 @@ import { Stream } from 'stream';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 
-import {
-  FileStorageException,
-  FileStorageExceptionCode,
-} from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
-
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
@@ -29,24 +24,10 @@ export class FileService {
   ): Promise<Stream> {
     const workspaceFolderPath = `workspace-${workspaceId}/${folderPath}`;
 
-    try {
-      return await this.fileStorageService.read({
-        folderPath: workspaceFolderPath,
-        filename,
-      });
-    } catch (error) {
-      // TODO: Remove this fallback when all files are moved to workspace folders
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
-        return await this.fileStorageService.read({
-          folderPath,
-          filename,
-        });
-      }
-      throw error;
-    }
+    return await this.fileStorageService.read({
+      folderPath: workspaceFolderPath,
+      filename,
+    });
   }
 
   async encodeFileToken(payloadToEncode: Record<string, any>) {

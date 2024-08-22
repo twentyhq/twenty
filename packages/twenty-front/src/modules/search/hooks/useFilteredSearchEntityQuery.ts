@@ -1,7 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
-import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -10,6 +9,7 @@ import { EntityForSelect } from '@/object-record/relation-picker/types/EntityFor
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
+import { OrderBy } from '@/types/OrderBy';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
@@ -24,7 +24,7 @@ export const useFilteredSearchEntityQuery = ({
   sortOrder = 'AscNullsLast',
   selectedIds,
   limit,
-  excludeEntityIds = [],
+  excludeRecordIds = [],
   objectNameSingular,
 }: {
   orderByField: string;
@@ -32,7 +32,7 @@ export const useFilteredSearchEntityQuery = ({
   sortOrder?: OrderBy;
   selectedIds: string[];
   limit?: number;
-  excludeEntityIds?: string[];
+  excludeRecordIds?: string[];
   objectNameSingular: string;
 }): EntitiesForMultipleEntitySelect<EntityForSelect> => {
   const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
@@ -97,7 +97,7 @@ export const useFilteredSearchEntityQuery = ({
     skip: !selectedIds.length,
   });
 
-  const notFilterIds = [...selectedIds, ...excludeEntityIds];
+  const notFilterIds = [...selectedIds, ...excludeRecordIds];
   const notFilter = notFilterIds.length
     ? { not: { id: { in: notFilterIds } } }
     : undefined;

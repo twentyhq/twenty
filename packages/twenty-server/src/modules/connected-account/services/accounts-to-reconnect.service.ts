@@ -64,4 +64,31 @@ export class AccountsToReconnectService {
       value: updatedAccountsToReconnect,
     });
   }
+
+  public async addAccountToReconnectByKey(
+    key: AccountsToReconnectKeys,
+    userId: string,
+    workspaceId: string,
+    connectedAccountId: string,
+  ) {
+    const accountsToReconnect =
+      (await this.userVarsService.get({
+        userId,
+        workspaceId,
+        key,
+      })) ?? [];
+
+    if (accountsToReconnect.includes(connectedAccountId)) {
+      return;
+    }
+
+    accountsToReconnect.push(connectedAccountId);
+
+    await this.userVarsService.set({
+      userId,
+      workspaceId,
+      key,
+      value: accountsToReconnect,
+    });
+  }
 }

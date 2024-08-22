@@ -23,20 +23,17 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        mutation CreateOneActivity($input: ActivityCreateInput!) {
-          createActivity(data: $input) {
+        mutation CreateOneTask($input: TaskCreateInput!) {
+          createTask(data: $input) {
             __typename
-            createdAt
-            reminderAt
-            authorId
-            title
             status
+            assigneeId
             updatedAt
             body
+            createdAt
             dueAt
-            type
             id
-            assigneeId
+            title
           }
         }
       `,
@@ -46,7 +43,7 @@ const mocks: MockedResponse[] = [
     },
     result: jest.fn(() => ({
       data: {
-        createActivity: {
+        createTask: {
           ...mockedActivity,
           __typename: 'Activity',
           assigneeId: '',

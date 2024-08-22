@@ -16,7 +16,6 @@ export class CacheManager<T> {
       return this.cache.get(cacheKey)!;
     }
 
-    // Remove old entries with the same workspaceId
     for (const key of this.cache.keys()) {
       if (key.startsWith(`${workspaceId}-`)) {
         await onDelete?.(this.cache.get(key)!);
@@ -24,7 +23,6 @@ export class CacheManager<T> {
       }
     }
 
-    // Create a new value using the factory callback
     const value = await factory();
 
     if (!value) {

@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { H2Title, IconSettings } from 'twenty-ui';
+import { H2Title, IconHierarchy2 } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
@@ -70,25 +70,30 @@ export const SettingsNewObject = () => {
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <SubMenuTopBarContainer
+        Icon={IconHierarchy2}
+        title={
+          <Breadcrumb
+            links={[
+              {
+                children: 'Objects',
+                href: settingsObjectsPagePath,
+              },
+              { children: 'New' },
+            ]}
+          />
+        }
+        actionButton={
+          <SaveAndCancelButtons
+            isSaveDisabled={!canSave}
+            isCancelDisabled={isSubmitting}
+            onCancel={() => navigate(settingsObjectsPagePath)}
+            onSave={formConfig.handleSubmit(handleSave)}
+          />
+        }
+      >
         <SettingsPageContainer>
-          <SettingsHeaderContainer>
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Objects',
-                  href: settingsObjectsPagePath,
-                },
-                { children: 'New' },
-              ]}
-            />
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              isCancelDisabled={isSubmitting}
-              onCancel={() => navigate(settingsObjectsPagePath)}
-              onSave={formConfig.handleSubmit(handleSave)}
-            />
-          </SettingsHeaderContainer>
+          <SettingsHeaderContainer></SettingsHeaderContainer>
           <Section>
             <H2Title
               title="About"

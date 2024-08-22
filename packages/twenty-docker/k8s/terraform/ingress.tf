@@ -1,7 +1,7 @@
 resource "kubernetes_ingress" "twentycrm" {
   wait_for_load_balancer = true
   metadata {
-    name      = "${local.twentycrm_app_name}-ingress"
+    name      = "${var.twentycrm_app_name}-ingress"
     namespace = kubernetes_namespace.twentycrm.metadata.0.name
     annotations = {
       "kubernetes.io/ingress.class"                       = "nginx"
@@ -15,7 +15,7 @@ resource "kubernetes_ingress" "twentycrm" {
   spec {
     ingress_class_name = "nginx"
     rule {
-      host = local.twentycrm_app_hostname
+      host = var.twentycrm_app_hostname
       http {
         path {
           path = "/*"

@@ -12,7 +12,7 @@ import {
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 
 interface SetWorkspaceActivationStatusCommandOptions {
   workspaceId?: string;
@@ -31,7 +31,7 @@ export class SetWorkspaceActivationStatusCommand extends CommandRunner {
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {
     super();
@@ -83,31 +83,23 @@ export class SetWorkspaceActivationStatusCommand extends CommandRunner {
             await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
           if (workspaceDataSource) {
-            const queryRunner = workspaceDataSource.createQueryRunner();
-
-            await queryRunner.connect();
-            await queryRunner.startTransaction();
-
             try {
               await this.workspaceRepository.update(
                 { id: workspaceId },
                 { activationStatus: WorkspaceActivationStatus.ACTIVE },
               );
-
-              await queryRunner.commitTransaction();
             } catch (error) {
-              await queryRunner.rollbackTransaction();
               this.logger.log(
                 chalk.red(`Running command on workspace ${workspaceId} failed`),
               );
               throw error;
-            } finally {
-              await queryRunner.release();
             }
           }
         }
 
-        await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
 
         this.logger.log(
           chalk.green(`Running command on workspace ${workspaceId} done`),

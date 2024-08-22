@@ -3,12 +3,17 @@ import {
   Get,
   Req,
   Res,
-  UnauthorizedException,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { Response } from 'express';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-exchange-code-for-token.guard';
 import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
@@ -16,16 +21,15 @@ import { TokenService } from 'src/engine/core-modules/auth/services/token.servic
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { LoadServiceWithWorkspaceContext } from 'src/engine/twenty-orm/context/load-service-with-workspace.context';
 
 @Controller('auth/google-apis')
+@UseFilters(AuthRestApiExceptionFilter)
 export class GoogleAPIsAuthController {
   constructor(
     private readonly googleAPIsService: GoogleAPIsService,
     private readonly tokenService: TokenService,
     private readonly environmentService: EnvironmentService,
     private readonly onboardingService: OnboardingService,
-    private readonly loadServiceWithWorkspaceContext: LoadServiceWithWorkspaceContext,
   ) {}
 
   @Get()
@@ -59,24 +63,22 @@ export class GoogleAPIsAuthController {
     const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
 
     if (demoWorkspaceIds.includes(workspaceId)) {
-      throw new UnauthorizedException(
+      throw new AuthException(
         'Cannot connect Google account to demo workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
     if (!workspaceId) {
-      throw new Error('Workspace not found');
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
     }
 
     const handle = emails[0].value;
 
-    const googleAPIsServiceInstance =
-      await this.loadServiceWithWorkspaceContext.load(
-        this.googleAPIsService,
-        workspaceId,
-      );
-
-    await googleAPIsServiceInstance.refreshGoogleRefreshToken({
+    await this.googleAPIsService.refreshGoogleRefreshToken({
       handle,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
@@ -87,13 +89,7 @@ export class GoogleAPIsAuthController {
     });
 
     if (userId) {
-      const onboardingServiceInstance =
-        await this.loadServiceWithWorkspaceContext.load(
-          this.onboardingService,
-          workspaceId,
-        );
-
-      await onboardingServiceInstance.setOnboardingConnectAccountPending({
+      await this.onboardingService.setOnboardingConnectAccountPending({
         userId,
         workspaceId,
         value: false,

@@ -19,7 +19,7 @@ import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadat
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
-import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
@@ -43,7 +43,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         DataSourceModule,
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
-        WorkspaceCacheVersionModule,
+        WorkspaceMetadataVersionModule,
         FeatureFlagModule,
         RemoteTableRelationsModule,
       ],

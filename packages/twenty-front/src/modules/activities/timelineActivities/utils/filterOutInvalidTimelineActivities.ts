@@ -43,7 +43,8 @@ export const filterOutInvalidTimelineActivities = (
 
     const validDiffEntries = Object.entries(diff).filter(([diffKey]) =>
       isNoteOrTask
-        ? noteFieldMetadataItemMap.has(diffKey)
+        ? // Note and Task objects have the same field metadata
+          noteFieldMetadataItemMap.has(diffKey)
         : fieldMetadataItemMap.has(diffKey),
     );
 

@@ -114,6 +114,16 @@ export const graphqlMocks = {
     graphql.query('CombinedFindManyRecords', () => {
       return HttpResponse.json({
         data: {
+          favorites: {
+            edges: [],
+            totalCount: 0,
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
           views: {
             edges: mockedViewsData.map((view) => ({
               node: {
@@ -148,16 +158,6 @@ export const graphqlMocks = {
               totalCount: mockedViewsData.length,
             },
             totalCount: mockedViewsData.length,
-          },
-        },
-        favorites: {
-          edges: [],
-          totalCount: 0,
-          pageInfo: {
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: null,
-            endCursor: null,
           },
         },
       });

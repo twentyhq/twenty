@@ -100,7 +100,7 @@ export const CalendarEventDetails = ({
     <StyledPropertyBox key={fieldName}>
       <FieldContext.Provider
         value={{
-          entityId: calendarEvent.id,
+          recordId: calendarEvent.id,
           hotkeyScope: 'calendar-event-details',
           recoilScopeId: `${calendarEvent.id}-${fieldName}`,
           isLabelIdentifier: false,

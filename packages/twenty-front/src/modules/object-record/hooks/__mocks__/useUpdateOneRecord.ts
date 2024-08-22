@@ -1,32 +1,10 @@
+import { PERSON_FRAGMENT } from '@/object-record/hooks/__mocks__/personFragment';
 import { gql } from '@apollo/client';
 
 export const query = gql`
   mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
     updatePerson(id: $idToUpdate, data: $input) {
-      __typename
-      xLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      id
-      createdAt
-      city
-      email
-      jobTitle
-      name {
-        firstName
-        lastName
-      }
-      phone
-      linkedinLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-      }
-      updatedAt
-      avatarUrl
-      companyId
+      ${PERSON_FRAGMENT}
     }
   }
 `;

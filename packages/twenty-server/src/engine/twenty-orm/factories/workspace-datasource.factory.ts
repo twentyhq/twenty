@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { EntitySchema, Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { workspaceDataSourceCacheInstance } from 'src/engine/twenty-orm/twenty-orm-core.module';
@@ -18,7 +18,7 @@ export class WorkspaceDatasourceFactory {
     private readonly dataSourceService: DataSourceService,
     private readonly environmentService: EnvironmentService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly entitySchemaFactory: EntitySchemaFactory,
@@ -26,74 +26,104 @@ export class WorkspaceDatasourceFactory {
 
   public async create(
     workspaceId: string,
-    workspaceSchemaVersion: string | null,
+    workspaceMetadataVersion: string | null,
   ): Promise<WorkspaceDataSource> {
-    const desiredWorkspaceSchemaVersion =
-      workspaceSchemaVersion ??
-      (await this.workspaceCacheVersionService.getVersion(workspaceId));
-
-    if (!desiredWorkspaceSchemaVersion) {
-      throw new Error('Cache version not found');
-    }
-
-    const latestWorkspaceSchemaVersion =
-      await this.workspaceCacheVersionService.getVersion(workspaceId);
-
-    if (latestWorkspaceSchemaVersion !== desiredWorkspaceSchemaVersion) {
-      throw new Error('Cache version mismatch');
-    }
-
-    let cachedObjectMetadataCollection =
-      await this.workspaceCacheStorageService.getObjectMetadataCollection(
+    const latestWorkspaceMetadataVersion =
+      await this.workspaceMetadataVersionService.getMetadataVersion(
         workspaceId,
       );
 
-    if (!cachedObjectMetadataCollection) {
-      const freshObjectMetadataCollection =
-        await this.objectMetadataRepository.find({
-          where: { workspaceId },
-          relations: [
-            'fields.object',
-            'fields',
-            'fields.fromRelationMetadata',
-            'fields.toRelationMetadata',
-            'fields.fromRelationMetadata.toObjectMetadata',
-          ],
-        });
+    const desiredWorkspaceMetadataVersion =
+      workspaceMetadataVersion ?? latestWorkspaceMetadataVersion;
 
-      await this.workspaceCacheStorageService.setObjectMetadataCollection(
-        workspaceId,
-        freshObjectMetadataCollection,
+    if (!desiredWorkspaceMetadataVersion) {
+      throw new Error(
+        `Desired workspace metadata version not found while creating workspace data source for workspace ${workspaceId}`,
       );
+    }
 
-      cachedObjectMetadataCollection = freshObjectMetadataCollection;
+    if (latestWorkspaceMetadataVersion !== desiredWorkspaceMetadataVersion) {
+      throw new Error(
+        `Workspace metadata version mismatch detected for workspace ${workspaceId}. Current version: ${latestWorkspaceMetadataVersion}. Desired version: ${desiredWorkspaceMetadataVersion}`,
+      );
     }
 
     const workspaceDataSource = await workspaceDataSourceCacheInstance.execute(
-      `${workspaceId}-${latestWorkspaceSchemaVersion}`,
+      `${workspaceId}-${latestWorkspaceMetadataVersion}`,
       async () => {
+        let cachedObjectMetadataCollection =
+          await this.workspaceCacheStorageService.getObjectMetadataCollection(
+            workspaceId,
+          );
+
+        if (!cachedObjectMetadataCollection) {
+          const freshObjectMetadataCollection =
+            await this.objectMetadataRepository.find({
+              where: { workspaceId },
+              relations: [
+                'fields.object',
+                'fields',
+                'fields.fromRelationMetadata',
+                'fields.toRelationMetadata',
+                'fields.fromRelationMetadata.toObjectMetadata',
+              ],
+            });
+
+          await this.workspaceCacheStorageService.setObjectMetadataCollection(
+            workspaceId,
+            freshObjectMetadataCollection,
+          );
+
+          cachedObjectMetadataCollection = freshObjectMetadataCollection;
+        }
+
         const dataSourceMetadata =
           await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
             workspaceId,
           );
 
         if (!dataSourceMetadata) {
-          throw new Error('Data source metadata not found');
+          throw new Error(
+            `Data source metadata not found for workspace ${workspaceId}`,
+          );
         }
 
         if (!cachedObjectMetadataCollection) {
-          throw new Error('Object metadata collection not found');
+          throw new Error(
+            `Object metadata collection not found for workspace ${workspaceId}`,
+          );
         }
 
-        const entities = await Promise.all(
-          cachedObjectMetadataCollection.map((objectMetadata) =>
-            this.entitySchemaFactory.create(workspaceId, objectMetadata),
-          ),
-        );
+        const cachedEntitySchemaOptions =
+          await this.workspaceCacheStorageService.getORMEntitySchema(
+            workspaceId,
+          );
+
+        let cachedEntitySchemas: EntitySchema[];
+
+        if (cachedEntitySchemaOptions) {
+          cachedEntitySchemas = cachedEntitySchemaOptions.map(
+            (option) => new EntitySchema(option),
+          );
+        } else {
+          const entitySchemas = await Promise.all(
+            cachedObjectMetadataCollection.map((objectMetadata) =>
+              this.entitySchemaFactory.create(workspaceId, objectMetadata),
+            ),
+          );
+
+          await this.workspaceCacheStorageService.setORMEntitySchema(
+            workspaceId,
+            entitySchemas.map((entitySchema) => entitySchema.options),
+          );
+
+          cachedEntitySchemas = entitySchemas;
+        }
+
         const workspaceDataSource = new WorkspaceDataSource(
           {
             workspaceId,
-            workspaceCacheStorage: this.workspaceCacheStorageService,
+            objectMetadataCollection: cachedObjectMetadataCollection,
           },
           {
             url:
@@ -104,7 +134,7 @@ export class WorkspaceDatasourceFactory {
               ? ['query', 'error']
               : ['error'],
             schema: dataSourceMetadata.schema,
-            entities,
+            entities: cachedEntitySchemas,
             ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
               ? {
                   rejectUnauthorized: false,

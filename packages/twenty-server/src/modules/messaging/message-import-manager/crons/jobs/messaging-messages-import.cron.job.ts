@@ -12,8 +12,7 @@ import { Process } from 'src/engine/integrations/message-queue/decorators/proces
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
@@ -32,12 +31,12 @@ export class MessagingMessagesImportCronJob {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   @Process(MessagingMessagesImportCronJob.name)
   async handle(): Promise<void> {
+    console.time('MessagingMessagesImportCronJob time');
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -45,9 +44,15 @@ export class MessagingMessagesImportCronJob {
     });
 
     for (const activeWorkspace of activeWorkspaces) {
-      const messageChannels = await this.messageChannelRepository.getAll(
-        activeWorkspace.id,
-      );
+      const messageChannelRepository =
+        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+          activeWorkspace.id,
+          'messageChannel',
+        );
+
+      const messageChannels = await messageChannelRepository.find({
+        select: ['id', 'isSyncEnabled', 'syncStage'],
+      });
 
       for (const messageChannel of messageChannels) {
         if (
@@ -65,5 +70,7 @@ export class MessagingMessagesImportCronJob {
         }
       }
     }
+
+    console.timeEnd('MessagingMessagesImportCronJob time');
   }
 }
