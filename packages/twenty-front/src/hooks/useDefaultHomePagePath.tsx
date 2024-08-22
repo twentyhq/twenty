@@ -16,7 +16,7 @@ export const useDefaultHomePagePath = () => {
   const { activeObjectMetadataItems, alphaSortedActiveObjectMetadataItems } =
     useFilteredObjectMetadataItems();
   const { records } = usePrefetchedData(PrefetchKey.AllViews);
-  const { lastVisitedObjectMetadataId } = useLastVisitedPageOrView();
+  const { lastVisitedObjectMetadataItemId } = useLastVisitedPageOrView();
   let objectMetadata: {
     view?: ObjectRecord;
     metadata: ObjectMetadataItem;
@@ -43,15 +43,15 @@ export const useDefaultHomePagePath = () => {
     records.find((view: any) => view?.objectMetadataId === objectMetadataId);
 
   // last visited page exist in localstorage
-  if (!isNull(lastVisitedObjectMetadataId)) {
+  if (!isNull(lastVisitedObjectMetadataItemId)) {
     const lastVisitedMetadata = getActiveObjectMetadataMatchingId(
-      lastVisitedObjectMetadataId,
+      lastVisitedObjectMetadataItemId,
     );
 
     // and last visited page is still active
     if (!isUndefined(lastVisitedMetadata)) {
       objectMetadata = {
-        view: getViewMatchingObjectId(lastVisitedObjectMetadataId),
+        view: getViewMatchingObjectId(lastVisitedObjectMetadataItemId),
         metadata: lastVisitedMetadata,
       };
     } else {

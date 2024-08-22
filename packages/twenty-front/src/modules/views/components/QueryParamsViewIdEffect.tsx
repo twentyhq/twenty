@@ -22,12 +22,12 @@ export const QueryParamsViewIdEffect = () => {
   const {
     getLastVisitedViewId,
     setLastVisitedObjectOrView,
-    lastVisitedObjectMetadataId,
+    lastVisitedObjectMetadataItemId,
   } = useLastVisitedPageOrView();
   const lastVisitedViewId = getLastVisitedViewId(componentId);
   const isLastVisitedObjectMetadataItemNotEqual = !isDeeplyEqual(
     objectMetadataItemId?.id,
-    lastVisitedObjectMetadataId,
+    lastVisitedObjectMetadataItemId,
   );
   useEffect(() => {
     const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
@@ -80,7 +80,6 @@ export const QueryParamsViewIdEffect = () => {
     getFiltersFromQueryParams,
     getLastVisitedViewId,
     isLastVisitedObjectMetadataItemNotEqual,
-    lastVisitedObjectMetadataId,
     lastVisitedViewId,
     objectMetadataItemId?.id,
     setCurrentViewId,
