@@ -13,7 +13,7 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CalendarChannelSyncStatus } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
@@ -34,7 +34,7 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
     SetUserVarsAccountsToReconnectCommand.name,
   );
   constructor(
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly accountsToReconnectService: AccountsToReconnectService,
     @InjectRepository(KeyValuePair, 'core')
@@ -149,7 +149,9 @@ export class SetUserVarsAccountsToReconnectCommand extends CommandRunner {
           throw error;
         }
 
-        await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
 
         this.logger.log(
           chalk.green(`Running command on workspace ${workspaceId} done`),

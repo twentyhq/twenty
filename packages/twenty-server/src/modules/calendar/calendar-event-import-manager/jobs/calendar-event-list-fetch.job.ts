@@ -33,6 +33,8 @@ export class CalendarEventListFetchJob {
 
   @Process(CalendarEventListFetchJob.name)
   async handle(data: CalendarEventsImportJobData): Promise<void> {
+    console.time('CalendarEventListFetchJob time');
+
     const { workspaceId, calendarChannelId } = data;
 
     const calendarChannelRepository =
@@ -91,5 +93,6 @@ export class CalendarEventListFetchJob {
       default:
         break;
     }
+    console.timeEnd('CalendarEventListFetchJob time');
   }
 }

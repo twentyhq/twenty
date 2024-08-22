@@ -11,16 +11,16 @@ export class ScopedWorkspaceContextFactory {
 
   public create(): {
     workspaceId: string | null;
-    cacheVersion: string | null;
+    workspaceMetadataVersion: string | null;
   } {
     const workspaceId: string | undefined =
       this.request?.['req']?.['workspaceId'];
-    const cacheVersion: string | undefined =
-      this.request?.['req']?.['cacheVersion'];
+    const workspaceMetadataVersion: string | undefined =
+      this.request?.['req']?.['workspaceMetadataVersion'];
 
     return {
       workspaceId: workspaceId ?? null,
-      cacheVersion: cacheVersion ?? null,
+      workspaceMetadataVersion: workspaceMetadataVersion ?? null,
     };
   }
 }

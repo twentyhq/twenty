@@ -32,7 +32,7 @@
     },
     "start": {
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^typecheck","^build"]
     },
     "lint": {
       "executor": "@nx/eslint:lint",
