@@ -17,7 +17,7 @@ const getReservedCompositeFieldsNames = (
         reservedCompositeFieldsNames.push(
           computeCompositeColumnName(base, property),
         ),
-      ) || [];
+      );
     }
   }
 
