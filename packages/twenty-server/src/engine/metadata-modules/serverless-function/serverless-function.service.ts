@@ -40,21 +40,19 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
 
   private getServerlessFunctionFolder({
     serverlessFunction,
-    workspaceId,
     version,
   }: {
     serverlessFunction: ServerlessFunctionEntity;
-    workspaceId: string;
-    version: string;
+    version?: string;
   }) {
     const computedVersion =
       version === 'latest' ? serverlessFunction.latestVersion : version;
 
     return join(
-      'workspace-' + workspaceId,
+      'workspace-' + serverlessFunction.workspaceId,
       FileFolder.ServerlessFunction,
       serverlessFunction.id,
-      computedVersion,
+      computedVersion || '',
     );
   }
 
@@ -79,7 +77,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
 
     const folderPath = this.getServerlessFunctionFolder({
       serverlessFunction,
-      workspaceId,
       version,
     });
 
@@ -158,9 +155,23 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       }
     }
 
-    const { newVersion } = await this.serverlessService.publish(
+    const newVersion = await this.serverlessService.publish(
       existingServerlessFunction,
     );
+
+    const draftFolderPath = this.getServerlessFunctionFolder({
+      serverlessFunction: existingServerlessFunction,
+      version: 'draft',
+    });
+    const newFolderPath = this.getServerlessFunctionFolder({
+      serverlessFunction: existingServerlessFunction,
+      version: newVersion,
+    });
+
+    await this.fileStorageService.copy({
+      from: { folderPath: draftFolderPath },
+      to: { folderPath: newFolderPath },
+    });
 
     await super.updateOne(existingServerlessFunction.id, {
       latestVersion: newVersion,
@@ -185,6 +196,12 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     await super.deleteOne(id);
 
     await this.serverlessService.delete(existingServerlessFunction);
+
+    await this.fileStorageService.delete({
+      folderPath: this.getServerlessFunctionFolder({
+        serverlessFunction: existingServerlessFunction,
+      }),
+    });
 
     return existingServerlessFunction;
   }
@@ -213,7 +230,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
 
     const fileFolder = this.getServerlessFunctionFolder({
       serverlessFunction: existingServerlessFunction,
-      workspaceId,
       version: 'draft',
     });
 
@@ -260,7 +276,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
 
     const draftFileFolder = this.getServerlessFunctionFolder({
       serverlessFunction: createdServerlessFunction,
-      workspaceId,
       version: 'draft',
     });
 

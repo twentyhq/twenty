@@ -38,11 +38,7 @@ export class LocalDriver
     this.fileStorageService = options.fileStorageService;
   }
 
-  async delete(serverlessFunction: ServerlessFunctionEntity) {
-    await this.fileStorageService.delete({
-      folderPath: this.getFolderPath(serverlessFunction),
-    });
-  }
+  async delete() {}
 
   async build(serverlessFunction: ServerlessFunctionEntity) {
     const javascriptCode = await this.getCompiledCode(
@@ -61,21 +57,9 @@ export class LocalDriver
   async publish(serverlessFunction: ServerlessFunctionEntity) {
     await this.build(serverlessFunction);
 
-    const newVersion = serverlessFunction.latestVersion
+    return serverlessFunction.latestVersion
       ? `${parseInt(serverlessFunction.latestVersion, 10) + 1}`
       : '1';
-
-    const draftFolderPath = this.getFolderPath(serverlessFunction);
-    const newFolderPath = this.getFolderPath(serverlessFunction, newVersion);
-
-    await this.fileStorageService.copy({
-      from: { folderPath: draftFolderPath },
-      to: { folderPath: newFolderPath },
-    });
-
-    return {
-      newVersion,
-    };
   }
 
   async execute(

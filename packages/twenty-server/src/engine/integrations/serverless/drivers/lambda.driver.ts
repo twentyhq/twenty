@@ -162,17 +162,7 @@ export class LambdaDriver
       throw new Error('New published version is undefined');
     }
 
-    const draftFolderPath = this.getFolderPath(serverlessFunction);
-    const newFolderPath = this.getFolderPath(serverlessFunction, newVersion);
-
-    await this.fileStorageService.copy({
-      from: { folderPath: draftFolderPath },
-      to: { folderPath: newFolderPath },
-    });
-
-    return {
-      newVersion,
-    };
+    return newVersion;
   }
 
   async execute(
