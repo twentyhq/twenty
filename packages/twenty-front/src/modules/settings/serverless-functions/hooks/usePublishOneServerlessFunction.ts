@@ -1,6 +1,6 @@
 import { ApolloClient, useMutation } from '@apollo/client';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
-import { PUBLISH_ONE_SERVERLESS_FUNCTION } from 'packages/twenty-front/src/modules/settings/serverless-functions/graphql/mutations/publishOneServerlessFunction';
+import { PUBLISH_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/publishOneServerlessFunction';
 import {
   PublishServerlessFunctionInput,
   PublishOneServerlessFunctionMutation,

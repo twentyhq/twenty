@@ -14,7 +14,8 @@ const StyledTabList = styled(TabList)`
 export const SettingsServerlessFunctionCodeEditorTab = ({
   formValues,
   handleExecute,
-  handlePublish,handleReset,
+  handlePublish,
+  handleReset,
   onChange,
 }: {
   formValues: ServerlessFunctionFormValues;
