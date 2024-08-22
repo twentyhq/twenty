@@ -18,10 +18,8 @@ import {
   RelationMetadataException,
   RelationMetadataExceptionCode,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
-import {
-  InvalidStringException,
-  validateMetadataNameOrThrow,
-} from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
+import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -63,8 +61,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     );
 
     try {
-      validateMetadataNameOrThrow(relationMetadataInput.fromName);
-      validateMetadataNameOrThrow(relationMetadataInput.toName);
+      validateMetadataNameValidityOrThrow(relationMetadataInput.fromName);
+      validateMetadataNameValidityOrThrow(relationMetadataInput.toName);
     } catch (error) {
       if (error instanceof InvalidStringException) {
         throw new RelationMetadataException(

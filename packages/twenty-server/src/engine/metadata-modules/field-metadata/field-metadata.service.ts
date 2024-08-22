@@ -35,16 +35,12 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
+import { NameNotAvailableException } from 'src/engine/metadata-modules/utils/exceptions/name-not-available.exception';
+import { NameTooLongException } from 'src/engine/metadata-modules/utils/exceptions/name-too-long.exception';
 import { exceedsDatabaseIdentifierMaximumLength } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
-import {
-  InvalidStringException,
-  NameTooLongException,
-  validateMetadataNameOrThrow,
-} from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
-import {
-  NameNotAvailableException,
-  validateNameAvailabilityOrThrow,
-} from 'src/engine/metadata-modules/utils/validate-name-availability.utils';
+import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
+import { validateMetadataNameValidityOrThrow as validateFieldNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -687,8 +683,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   >(fieldMetadataInput: T, objectMetadata: ObjectMetadataEntity): T {
     if (fieldMetadataInput.name) {
       try {
-        validateMetadataNameOrThrow(fieldMetadataInput.name);
-        validateNameAvailabilityOrThrow(
+        validateFieldNameValidityOrThrow(fieldMetadataInput.name);
+        validateFieldNameAvailabilityOrThrow(
           fieldMetadataInput.name,
           objectMetadata,
         );

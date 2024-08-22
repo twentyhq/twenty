@@ -2,8 +2,9 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { NameNotAvailableException } from 'src/engine/metadata-modules/utils/exceptions/name-not-available.exception';
 
-const getReservedCompositeFieldsNames = (
+const getReservedCompositeFieldNames = (
   objectMetadata: ObjectMetadataEntity,
 ) => {
   const reservedCompositeFieldsNames: string[] = [];
@@ -24,22 +25,14 @@ const getReservedCompositeFieldsNames = (
   return reservedCompositeFieldsNames;
 };
 
-export const validateNameAvailabilityOrThrow = (
+export const validateFieldNameAvailabilityOrThrow = (
   name: string,
   objectMetadata: ObjectMetadataEntity,
 ) => {
   const reservedCompositeFieldsNames =
-    getReservedCompositeFieldsNames(objectMetadata);
+    getReservedCompositeFieldNames(objectMetadata);
 
   if (reservedCompositeFieldsNames.includes(name)) {
     throw new NameNotAvailableException(name);
   }
 };
-
-export class NameNotAvailableException extends Error {
-  constructor(name: string) {
-    const message = `Name "${name}" is not available`;
-
-    super(message);
-  }
-}
