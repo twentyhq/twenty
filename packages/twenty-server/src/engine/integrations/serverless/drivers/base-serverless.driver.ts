@@ -1,32 +1,19 @@
-import { join } from 'path';
-
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
-
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
 import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
 import { compileTypescript } from 'src/engine/integrations/serverless/drivers/utils/compile-typescript';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { getServerlessFolder } from 'src/engine/integrations/serverless/utils/serverless-get-folder.utils';
 
 export class BaseServerlessDriver {
-  getFolderPath(
-    serverlessFunction: ServerlessFunctionEntity,
-    version = 'draft',
-  ) {
-    return join(
-      'workspace-' + serverlessFunction.workspaceId,
-      FileFolder.ServerlessFunction,
-      serverlessFunction.id,
-      `${version}`,
-    );
-  }
-
   async getCompiledCode(
     serverlessFunction: ServerlessFunctionEntity,
     fileStorageService: FileStorageService,
-    version = 'draft',
   ) {
-    const folderPath = this.getFolderPath(serverlessFunction, version);
+    const folderPath = getServerlessFolder({
+      serverlessFunction,
+      version: 'draft',
+    });
     const fileStream = await fileStorageService.read({
       folderPath,
       filename: SOURCE_FILE_NAME,

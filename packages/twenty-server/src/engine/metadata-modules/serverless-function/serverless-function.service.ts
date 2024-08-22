@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { join } from 'path';
-
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FileUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
-import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { ServerlessExecuteResult } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
@@ -26,6 +23,7 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { getServerlessFolder } from 'src/engine/integrations/serverless/utils/serverless-get-folder.utils';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -36,24 +34,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {
     super(serverlessFunctionRepository);
-  }
-
-  private getServerlessFunctionFolder({
-    serverlessFunction,
-    version,
-  }: {
-    serverlessFunction: ServerlessFunctionEntity;
-    version?: string;
-  }) {
-    const computedVersion =
-      version === 'latest' ? serverlessFunction.latestVersion : version;
-
-    return join(
-      'workspace-' + serverlessFunction.workspaceId,
-      FileFolder.ServerlessFunction,
-      serverlessFunction.id,
-      computedVersion || '',
-    );
   }
 
   async getServerlessFunctionSourceCode(
@@ -75,7 +55,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       );
     }
 
-    const folderPath = this.getServerlessFunctionFolder({
+    const folderPath = getServerlessFolder({
       serverlessFunction,
       version,
     });
@@ -159,11 +139,11 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       existingServerlessFunction,
     );
 
-    const draftFolderPath = this.getServerlessFunctionFolder({
+    const draftFolderPath = getServerlessFolder({
       serverlessFunction: existingServerlessFunction,
       version: 'draft',
     });
-    const newFolderPath = this.getServerlessFunctionFolder({
+    const newFolderPath = getServerlessFolder({
       serverlessFunction: existingServerlessFunction,
       version: newVersion,
     });
@@ -198,7 +178,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     await this.serverlessService.delete(existingServerlessFunction);
 
     await this.fileStorageService.delete({
-      folderPath: this.getServerlessFunctionFolder({
+      folderPath: getServerlessFolder({
         serverlessFunction: existingServerlessFunction,
       }),
     });
@@ -228,7 +208,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
     });
 
-    const fileFolder = this.getServerlessFunctionFolder({
+    const fileFolder = getServerlessFolder({
       serverlessFunction: existingServerlessFunction,
       version: 'draft',
     });
@@ -274,7 +254,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       sourceCodeHash: serverlessFunctionCreateHash(typescriptCode),
     });
 
-    const draftFileFolder = this.getServerlessFunctionFolder({
+    const draftFileFolder = getServerlessFolder({
       serverlessFunction: createdServerlessFunction,
       version: 'draft',
     });

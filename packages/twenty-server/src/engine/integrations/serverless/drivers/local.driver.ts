@@ -22,6 +22,7 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { getServerlessFolder } from 'src/engine/integrations/serverless/utils/serverless-get-folder.utils';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -50,7 +51,10 @@ export class LocalDriver
       file: javascriptCode,
       name: BUILD_FILE_NAME,
       mimeType: undefined,
-      folder: this.getFolderPath(serverlessFunction),
+      folder: getServerlessFolder({
+        serverlessFunction,
+        version: 'draft',
+      }),
     });
   }
 
@@ -70,7 +74,10 @@ export class LocalDriver
     try {
       const startTime = Date.now();
       const fileStream = await this.fileStorageService.read({
-        folderPath: this.getFolderPath(serverlessFunction, version),
+        folderPath: getServerlessFolder({
+          serverlessFunction,
+          version,
+        }),
         filename: BUILD_FILE_NAME,
       });
 
