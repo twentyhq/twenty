@@ -1,7 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useLastVisitedPageOrView } from '@/navigation/hooks/useLastVisitedPageOrView';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useHandleViews } from '@/views/hooks/useHandleViews';
@@ -21,10 +20,9 @@ export const useViewPickerPersistView = () => {
 
   const { createView, selectView, removeView, updateView } = useHandleViews();
 
-  const { viewsOnCurrentObject, componentId } = useGetCurrentView();
+  const { viewsOnCurrentObject } = useGetCurrentView();
 
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
-  const { setLastVisitedObjectOrView } = useLastVisitedPageOrView();
 
   const handleCreate = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -48,17 +46,11 @@ export const useViewPickerPersistView = () => {
         });
         closeAndResetViewPicker();
         selectView(id);
-        setLastVisitedObjectOrView({
-          componentId,
-          viewId: id,
-        });
       },
     [
       closeAndResetViewPicker,
-      componentId,
       createView,
       selectView,
-      setLastVisitedObjectOrView,
       viewPickerInputNameState,
       viewPickerIsDirtyState,
       viewPickerIsPersistingState,
@@ -85,22 +77,11 @@ export const useViewPickerPersistView = () => {
           )[0].id,
         );
         await removeView(viewPickerReferenceViewId);
-        const [indexOrFirstView] = viewsOnCurrentObject
-          .sort((viewA, viewB) =>
-            viewA.key === 'INDEX' ? -1 : viewA.position - viewB.position,
-          )
-          .filter((view) => view.id !== viewPickerReferenceViewId);
-        setLastVisitedObjectOrView({
-          componentId,
-          viewId: indexOrFirstView.id,
-        });
       },
     [
       closeAndResetViewPicker,
-      componentId,
       removeView,
       selectView,
-      setLastVisitedObjectOrView,
       viewPickerIsDirtyState,
       viewPickerIsPersistingState,
       viewPickerReferenceViewIdState,

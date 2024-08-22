@@ -1,11 +1,9 @@
-import { useLastVisitedPageOrView } from '@/navigation/hooks/useLastVisitedPageOrView';
-import { getObjectAndViewIdFromPath } from '@/object-metadata/utils/getObjectMetadataAndViewIdFromPath';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconComponent, MOBILE_VIEWPORT, Pill } from 'twenty-ui';
@@ -137,7 +135,6 @@ export const NavigationDrawerItem = ({
   const setIsNavigationDrawerOpen = useSetRecoilState(
     isNavigationDrawerOpenState,
   );
-  const { setLastVisitedObjectOrView } = useLastVisitedPageOrView();
 
   const handleItemClick = () => {
     if (isMobile) {
@@ -150,14 +147,6 @@ export const NavigationDrawerItem = ({
     }
 
     if (isNonEmptyString(to)) {
-      const objectAndViewId = getObjectAndViewIdFromPath(to);
-      if (!isNull(objectAndViewId)) {
-        const { componentId, viewId } = objectAndViewId;
-        setLastVisitedObjectOrView({
-          componentId,
-          viewId,
-        });
-      }
       navigate(to);
     }
   };

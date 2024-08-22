@@ -4,7 +4,6 @@ import { MouseEvent, useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { IconLock, IconPencil, IconPlus, useIcons } from 'twenty-ui';
 
-import { useLastVisitedPageOrView } from '@/navigation/hooks/useLastVisitedPageOrView';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -27,11 +26,8 @@ const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
 export const ViewPickerListContent = () => {
   const { selectView } = useHandleViews();
 
-  const {
-    currentViewWithCombinedFiltersAndSorts,
-    viewsOnCurrentObject,
-    componentId,
-  } = useGetCurrentView();
+  const { currentViewWithCombinedFiltersAndSorts, viewsOnCurrentObject } =
+    useGetCurrentView();
   const { viewPickerReferenceViewIdState } = useViewPickerStates();
   const setViewPickerReferenceViewId = useSetRecoilState(
     viewPickerReferenceViewIdState,
@@ -41,13 +37,8 @@ export const ViewPickerListContent = () => {
 
   const { closeDropdown } = useDropdown(VIEW_PICKER_DROPDOWN_ID);
   const { updateView } = useHandleViews();
-  const { setLastVisitedObjectOrView } = useLastVisitedPageOrView();
 
   const handleViewSelect = (viewId: string) => {
-    setLastVisitedObjectOrView({
-      componentId,
-      viewId,
-    });
     selectView(viewId);
     closeDropdown();
   };
