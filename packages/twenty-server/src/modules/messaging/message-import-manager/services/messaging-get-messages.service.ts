@@ -16,7 +16,12 @@ export class MessagingGetMessagesService {
     messageIds: string[],
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'provider' | 'accessToken' | 'refreshToken' | 'id'
+      | 'provider'
+      | 'accessToken'
+      | 'refreshToken'
+      | 'id'
+      | 'handle'
+      | 'handleAliases'
     >,
     workspaceId: string,
   ): Promise<GetMessagesResponse> {

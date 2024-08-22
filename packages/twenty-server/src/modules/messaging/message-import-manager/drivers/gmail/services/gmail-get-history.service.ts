@@ -7,7 +7,7 @@ import { MESSAGING_GMAIL_USERS_HISTORY_MAX_RESULT } from 'src/modules/messaging/
 import { GmailError } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
 
 @Injectable()
-export class MessagingGmailHistoryService {
+export class GmailGetHistoryService {
   constructor() {}
 
   public async getHistory(

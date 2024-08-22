@@ -4,11 +4,11 @@ import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 
 import { GmailMessageParsedResponse } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message-parsed-response';
+import { createQueriesFromMessageIds } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/create-queries-from-message-ids.util';
 import { BatchQueries } from 'src/modules/messaging/message-import-manager/types/batch-queries';
-import { createQueriesFromMessageIds } from 'src/modules/messaging/message-import-manager/utils/create-queries-from-message-ids.util';
 
 @Injectable()
-export class MessagingGmailFetchByBatchesService {
+export class GmailFetchByBatchService {
   constructor(private readonly httpService: HttpService) {}
 
   async fetchAllByBatches(

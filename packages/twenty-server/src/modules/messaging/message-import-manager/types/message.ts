@@ -8,15 +8,14 @@ export type Message = Omit<
   | 'messageChannelMessageAssociations'
   | 'messageParticipants'
   | 'messageThread'
+  | 'messageThreadId'
   | 'id'
 > & {
   attachments: {
     filename: string;
   }[];
   externalId: string;
-  threadId: string;
   messageThreadExternalId: string;
-  fromHandle: string;
 };
 
 export type MessageParticipant = Omit<

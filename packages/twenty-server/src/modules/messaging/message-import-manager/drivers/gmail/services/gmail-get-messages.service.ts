@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessagingGmailFetchByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-by-batch.service';
+import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { isDefined } from 'src/utils/is-defined';
@@ -13,14 +13,14 @@ export class GmailGetMessagesService {
   private readonly logger = new Logger(GmailGetMessagesService.name);
 
   constructor(
-    private readonly fetchByBatchesService: MessagingGmailFetchByBatchesService,
+    private readonly fetchByBatchesService: GmailFetchByBatchService,
   ) {}
 
   async getMessages(
     messageIds: string[],
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
-      'accessToken' | 'refreshToken' | 'id'
+      'accessToken' | 'refreshToken' | 'id' | 'handle' | 'handleAliases'
     >,
     workspaceId: string,
   ): Promise<MessageWithParticipants[]> {
@@ -46,6 +46,7 @@ export class GmailGetMessagesService {
       return this.formatBatchResponseAsMessage(
         messageIdsByBatch[index],
         response,
+        connectedAccount,
       );
     });
 
@@ -63,6 +64,10 @@ export class GmailGetMessagesService {
   private formatBatchResponseAsMessage(
     messageIds: string[],
     responseCollection: AxiosResponse<any, any>,
+    connectedAccount: Pick<
+      ConnectedAccountWorkspaceEntity,
+      'handle' | 'handleAliases'
+    >,
   ): MessageWithParticipants[] {
     const parsedResponses =
       this.fetchByBatchesService.parseBatch(responseCollection);
@@ -76,7 +81,7 @@ export class GmailGetMessagesService {
         throw { ...response.error, messageId: messageIds[index] };
       }
 
-      return parseAndFormatGmailMessage(response);
+      return parseAndFormatGmailMessage(response, connectedAccount);
     });
 
     return messages.filter(isDefined);
