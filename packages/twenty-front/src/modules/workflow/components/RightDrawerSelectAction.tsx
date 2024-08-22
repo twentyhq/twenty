@@ -7,6 +7,7 @@ import {
   IconPlaystationSquare,
   IconPlug,
   IconPlus,
+  IconSearch,
   IconSettingsAutomation,
 } from 'twenty-ui';
 
@@ -45,61 +46,43 @@ export const TAB_LIST_COMPONENT_ID = 'workflow-page-right-tab-list';
 export const RightDrawerSelectAction = () => {
   const tabListId = `${TAB_LIST_COMPONENT_ID}`;
 
+  const options: Array<{
+    name: string;
+    type: 'standard' | 'custom';
+    icon: any;
+  }> = [
+    {
+      name: 'Create Record',
+      type: 'standard',
+      icon: IconPlus,
+    },
+    {
+      name: 'Find Records',
+      type: 'standard',
+      icon: IconSearch,
+    },
+  ];
+
   const tabs = [
     {
       id: 'all',
       title: 'All',
       Icon: IconSettingsAutomation,
-      options: [
-        {
-          name: 'Test',
-        },
-        {
-          name: 'Test 2',
-        },
-        {
-          name: 'Test 3',
-        },
-      ],
     },
     {
       id: 'standard',
       title: 'Standard',
       Icon: IconPlaystationSquare,
-      options: [
-        {
-          name: 'Test 4',
-        },
-        {
-          name: 'Test 5',
-        },
-        {
-          name: 'Test 6',
-        },
-      ],
     },
     {
       id: 'custom',
       title: 'Custom',
       Icon: IconPlug,
-      options: [
-        {
-          name: 'Test 7',
-        },
-        {
-          name: 'Test 8',
-        },
-        {
-          name: 'Test 9',
-        },
-      ],
     },
   ];
 
   const { activeTabIdState } = useTabList(tabListId);
   const activeTabId = useRecoilValue(activeTabIdState);
-
-  const selectedTab = tabs.find((tab) => tab.id === activeTabId);
 
   return (
     <StyledShowPageRightContainer>
@@ -108,15 +91,17 @@ export const RightDrawerSelectAction = () => {
       </StyledTabListContainer>
 
       <StyledActionListContainer>
-        {selectedTab === undefined
-          ? null
-          : selectedTab.options.map((option, index) => (
-              <MenuItem
-                key={`${activeTabId}-${index}`}
-                LeftIcon={IconPlus}
-                text={option.name}
-              />
-            ))}
+        {options
+          .filter(
+            (option) => activeTabId === 'all' || option.type === activeTabId,
+          )
+          .map((option, index) => (
+            <MenuItem
+              key={`${activeTabId}-${index}`}
+              LeftIcon={option.icon}
+              text={option.name}
+            />
+          ))}
       </StyledActionListContainer>
     </StyledShowPageRightContainer>
   );
