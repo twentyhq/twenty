@@ -8,7 +8,7 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -28,6 +28,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import {
@@ -146,7 +147,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       this.validateFieldMetadataInput<CreateFieldInput>(
         fieldMetadataInput,
-        objectMetadata.standardId,
+        objectMetadata,
       );
 
       const fieldAlreadyExists = await fieldMetadataRepository.findOne({
@@ -364,7 +365,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       this.validateFieldMetadataInput<UpdateFieldInput>(
         fieldMetadataInput,
-        objectMetadata.standardId,
+        objectMetadata,
       );
 
       const updatableFieldInput =
@@ -495,7 +496,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await fieldMetadataRepository.delete(fieldMetadata.id);
 
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-        const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+        const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
         if (!compositeType) {
           throw new Error(
@@ -683,13 +684,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   private validateFieldMetadataInput<
     T extends UpdateFieldInput | CreateFieldInput,
-  >(fieldMetadataInput: T, objectMetadataStandardId: string | null): T {
+  >(fieldMetadataInput: T, objectMetadata: ObjectMetadataEntity): T {
     if (fieldMetadataInput.name) {
       try {
         validateMetadataNameOrThrow(fieldMetadataInput.name);
         validateNameAvailabilityOrThrow(
           fieldMetadataInput.name,
-          objectMetadataStandardId,
+          objectMetadata,
         );
       } catch (error) {
         if (error instanceof InvalidStringException) {
