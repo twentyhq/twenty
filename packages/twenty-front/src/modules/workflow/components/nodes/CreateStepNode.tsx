@@ -1,9 +1,9 @@
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import { StyledTargetHandle } from '@/workflow/components/nodes/common/StyledTargetHandle';
 import { Position } from '@xyflow/react';
 import { IconPlus } from 'twenty-ui';
-import { StyledTargetHandle } from '~/pages/workflows/nodes/base';
 
 export const CreateStepNode = () => {
   const { openRightDrawer } = useRightDrawer();

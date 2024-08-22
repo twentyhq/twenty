@@ -1,7 +1,7 @@
+import { StyledTargetHandle } from '@/workflow/components/nodes/common/StyledTargetHandle';
 import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
-import { StyledTargetHandle } from '~/pages/workflows/nodes/base';
 
 const StyledStepNodeContainer = styled.div`
   display: flex;

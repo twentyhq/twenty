@@ -1,37 +1,21 @@
-import styled from '@emotion/styled';
-import { useParams } from 'react-router-dom';
-
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { WorkflowShowPageDiagram } from '@/workflow/components/WorkflowShowPageDiagram';
+import { WorkflowShowPageEffect } from '@/workflow/components/WorkflowShowPageEffect';
+import { WorkflowShowPageHeader } from '@/workflow/components/WorkflowShowPageHeader';
 import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
-import {
-  WorkflowDiagram,
-  WorkflowDiagramEdge,
-  WorkflowDiagramNode,
-} from '@/workflow/types/WorkflowDiagram';
-import { getOrganizedDiagram } from '@/workflow/utils/getOrganizedDiagram';
-import {
-  applyEdgeChanges,
-  applyNodeChanges,
-  Background,
-  EdgeChange,
-  NodeChange,
-  ReactFlow,
-} from '@xyflow/react';
+import styled from '@emotion/styled';
 import '@xyflow/react/dist/style.css';
-import { useMemo } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { GRAY_SCALE, IconSettingsAutomation, isDefined } from 'twenty-ui';
-import { WorkflowShowPageEffect } from '~/pages/workflows/WorkflowShowPageEffect';
-import { WorkflowShowPageHeader } from '~/pages/workflows/WorkflowShowPageHeader';
-import { CreateStepNode } from '~/pages/workflows/nodes/CreateStepNode';
-import { StepNode } from '~/pages/workflows/nodes/StepNode';
+import { useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { IconSettingsAutomation } from 'twenty-ui';
 
 const StyledFlowContainer = styled.div`
   height: 100%;
   width: 100%;
 
+  /* Below we reset the default styling of Reactflow */
   .react-flow__node-input,
   .react-flow__node-default,
   .react-flow__node-output,
@@ -45,67 +29,6 @@ const StyledFlowContainer = styled.div`
   --xy-node-boxshadow-hover: none;
   --xy-node-boxshadow-selected: none;
 `;
-
-const LoadedWorkflow = ({ diagram }: { diagram: WorkflowDiagram }) => {
-  const { nodes, edges } = useMemo(
-    () => getOrganizedDiagram(diagram),
-    [diagram],
-  );
-
-  const setShowPageWorkflowDiagram = useSetRecoilState(
-    showPageWorkflowDiagramState,
-  );
-
-  const handleNodesChange = (
-    nodeChanges: Array<NodeChange<WorkflowDiagramNode>>,
-  ) => {
-    setShowPageWorkflowDiagram((diagram) => {
-      if (isDefined(diagram) === false) {
-        throw new Error(
-          'It must be impossible for the nodes to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
-        );
-      }
-
-      return {
-        ...diagram,
-        nodes: applyNodeChanges(nodeChanges, diagram.nodes),
-      };
-    });
-  };
-
-  const handleEdgesChange = (
-    edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
-  ) => {
-    setShowPageWorkflowDiagram((diagram) => {
-      if (isDefined(diagram) === false) {
-        throw new Error(
-          'It must be impossible for the edges to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
-        );
-      }
-
-      return {
-        ...diagram,
-        edges: applyEdgeChanges(edgeChanges, diagram.edges),
-      };
-    });
-  };
-
-  return (
-    <ReactFlow
-      nodeTypes={{
-        default: StepNode,
-        'create-step': CreateStepNode,
-      }}
-      fitView
-      nodes={nodes.map((node) => ({ ...node, draggable: false }))}
-      edges={edges}
-      onNodesChange={handleNodesChange}
-      onEdgesChange={handleEdgesChange}
-    >
-      <Background color={GRAY_SCALE.gray25} size={2} />
-    </ReactFlow>
-  );
-};
 
 export const WorkflowShowPage = () => {
   const parameters = useParams<{
@@ -128,11 +51,11 @@ export const WorkflowShowPage = () => {
       <WorkflowShowPageHeader
         workflowName={workflowName}
         headerIcon={IconSettingsAutomation}
-      ></WorkflowShowPageHeader>
+      />
       <PageBody>
         <StyledFlowContainer>
           {showPageWorkflowDiagram === undefined ? null : (
-            <LoadedWorkflow diagram={showPageWorkflowDiagram} />
+            <WorkflowShowPageDiagram diagram={showPageWorkflowDiagram} />
           )}
         </StyledFlowContainer>
       </PageBody>
