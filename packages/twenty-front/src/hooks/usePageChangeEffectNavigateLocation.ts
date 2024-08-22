@@ -107,12 +107,13 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.Completed &&
-    isMatchingOnboardingRoute
+    isMatchingOnboardingRoute &&
+    isLoggedIn
   ) {
     return defaultHomePagePath;
   }
 
-  if (isMatchingLocation(AppPath.Index)) {
+  if (isMatchingLocation(AppPath.Index) && isLoggedIn) {
     return defaultHomePagePath;
   }
 
