@@ -55,7 +55,7 @@ export const parseAndFormatGmailMessage = (
     headerMessageId,
     subject: subject || '',
     messageThreadExternalId: threadId,
-    receivedAt: new Date(internalDate),
+    receivedAt: new Date(parseInt(internalDate)),
     direction: computeMessageDirection(from[0].address || '', connectedAccount),
     participants,
     text: sanitizeString(textWithoutReplyQuotations),
