@@ -1,82 +1,35 @@
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-
-const createdByFieldsNames = [
-  'createdByName',
-  'createdByWorkspaceMemberId',
-  'createdBySource',
-];
-
-const linkedinLinkFieldsNames = [
-  'linkedinLinkPrimaryLinkLabel',
-  'linkedinLinkPrimaryLinkUrl',
-  'linkedinLinkPrimaryLinkLabel',
-];
-
-const xLinkFieldsNames = [
-  'xLinkPrimaryLinkLabel',
-  'xLinkPrimaryLinkUrl',
-  'xLinkSecondaryLinks',
-];
-
-const amountFieldsNames = [
-  'annualRecurringRevenueAmountMicros',
-  'annualRecurringRevenueCurrencyCode',
-];
-
-const reservedCompositeFieldsNamesForPerson = [
-  ...createdByFieldsNames,
-  ...linkedinLinkFieldsNames,
-  ...xLinkFieldsNames,
-  'nameFirstName',
-  'nameLastName',
-];
-const reservedCompositeFieldsNamesForCompany = [
-  ...createdByFieldsNames,
-  ...linkedinLinkFieldsNames,
-  ...xLinkFieldsNames,
-  ...amountFieldsNames,
-  'domainNamePrimaryLinkLabel',
-  'domainNamePrimaryLinkUrl',
-  'domainNameSecondaryLinks',
-  'addressAddressStreet1',
-  'addressAddressStreet2',
-  'addressAddressCity',
-  'addressAddressState',
-  'addressAddressPostcode',
-  'addressAddressCountry',
-  'addressAddressLat',
-  'addressAddressLng',
-  'introVideoPrimaryLinkLabel',
-  'introVideoPrimaryLinkUrl',
-  'introVideoSecondaryLinks',
-];
-const reservedCompositeFieldsNamesForOpportunity = [
-  ...createdByFieldsNames,
-  ...amountFieldsNames,
-];
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 const getReservedCompositeFieldsNames = (
-  objectMetadataStandardId: string | null,
+  objectMetadata: ObjectMetadataEntity,
 ) => {
-  switch (objectMetadataStandardId) {
-    case STANDARD_OBJECT_IDS.person:
-      return reservedCompositeFieldsNamesForPerson;
-    case STANDARD_OBJECT_IDS.company:
-      return reservedCompositeFieldsNamesForCompany;
-    case STANDARD_OBJECT_IDS.opportunity:
-      return reservedCompositeFieldsNamesForOpportunity;
-    default:
-      return createdByFieldsNames;
+  const reservedCompositeFieldsNames: string[] = [];
+
+  for (const field of objectMetadata.fields) {
+    if (isCompositeFieldMetadataType(field.type)) {
+      const base = field.name;
+      const compositeType = compositeTypeDefinitions.get(field.type);
+
+      compositeType?.properties.map((property) =>
+        reservedCompositeFieldsNames.push(
+          computeCompositeColumnName(base, property),
+        ),
+      ) || [];
+    }
   }
+
+  return reservedCompositeFieldsNames;
 };
 
 export const validateNameAvailabilityOrThrow = (
   name: string,
-  objectMetadataStandardId: string | null,
+  objectMetadata: ObjectMetadataEntity,
 ) => {
-  const reservedCompositeFieldsNames = getReservedCompositeFieldsNames(
-    objectMetadataStandardId,
-  );
+  const reservedCompositeFieldsNames =
+    getReservedCompositeFieldsNames(objectMetadata);
 
   if (reservedCompositeFieldsNames.includes(name)) {
     throw new NameNotAvailableException(name);

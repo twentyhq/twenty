@@ -1,79 +1,61 @@
 import {
+  FIELD_ACTOR_MOCK_NAME,
+  FIELD_ADDRESS_MOCK_NAME,
+  FIELD_CURRENCY_MOCK_NAME,
+  FIELD_FULL_NAME_MOCK_NAME,
+  FIELD_LINKS_MOCK_NAME,
+  objectMetadataItemMock,
+} from 'src/engine/api/__mocks__/object-metadata-item.mock';
+import {
   NameNotAvailableException,
   validateNameAvailabilityOrThrow,
 } from 'src/engine/metadata-modules/utils/validate-name-availability.utils';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 describe('validateNameAvailabilityOrThrow', () => {
-  describe('on person', () => {
-    const objectMetadataStandardId = STANDARD_OBJECT_IDS.person;
+  const objectMetadata = objectMetadataItemMock;
 
-    it('does not throw if name is not reserved', () => {
-      const name = 'testName';
+  it('does not throw if name is not reserved', () => {
+    const name = 'testName';
+
+    expect(() =>
+      validateNameAvailabilityOrThrow(name, objectMetadata),
+    ).not.toThrow();
+  });
+
+  describe('error cases', () => {
+    it('throws error with LINKS suffixes', () => {
+      const name = `${FIELD_LINKS_MOCK_NAME}PrimaryLinkLabel`;
 
       expect(() =>
-        validateNameAvailabilityOrThrow(name, objectMetadataStandardId),
-      ).not.toThrow();
-    });
-    it('throws error if name is reserved', () => {
-      const name = 'nameFirstName';
-
-      expect(() =>
-        validateNameAvailabilityOrThrow(name, objectMetadataStandardId),
+        validateNameAvailabilityOrThrow(name, objectMetadata),
       ).toThrow(NameNotAvailableException);
     });
-  });
-  describe('on company', () => {
-    const objectMetadataStandardId = STANDARD_OBJECT_IDS.company;
-
-    it('does not throw if name is not reserved', () => {
-      const name = 'nameFirstName';
+    it('throws error with CURRENCY suffixes', () => {
+      const name = `${FIELD_CURRENCY_MOCK_NAME}AmountMicros`;
 
       expect(() =>
-        validateNameAvailabilityOrThrow(name, objectMetadataStandardId),
-      ).not.toThrow();
-    });
-    it('throws error if name is reserved', () => {
-      const name = 'domainNamePrimaryLinkUrl';
-
-      expect(() =>
-        validateNameAvailabilityOrThrow(name, objectMetadataStandardId),
+        validateNameAvailabilityOrThrow(name, objectMetadata),
       ).toThrow(NameNotAvailableException);
     });
-  });
-  describe('on opportunity', () => {
-    const objectMetadataStandardId = STANDARD_OBJECT_IDS.opportunity;
-
-    it('does not throw if name is not reserved', () => {
-      const name = 'nameFirstName';
+    it('throws error with FULL_NAME suffixes', () => {
+      const name = `${FIELD_FULL_NAME_MOCK_NAME}FirstName`;
 
       expect(() =>
-        validateNameAvailabilityOrThrow(name, objectMetadataStandardId),
-      ).not.toThrow();
-    });
-    it('throws error if name is reserved', () => {
-      const name = 'annualRecurringRevenueAmountMicros';
-
-      expect(() =>
-        validateNameAvailabilityOrThrow(name, objectMetadataStandardId),
+        validateNameAvailabilityOrThrow(name, objectMetadata),
       ).toThrow(NameNotAvailableException);
     });
-  });
-  describe('on custom object', () => {
-    const objectMetadataStandardId = null;
-
-    it('does not throw if name is not reserved', () => {
-      const name = 'nameFirstName';
+    it('throws error with ACTOR suffixes', () => {
+      const name = `${FIELD_ACTOR_MOCK_NAME}Name`;
 
       expect(() =>
-        validateNameAvailabilityOrThrow(name, objectMetadataStandardId),
-      ).not.toThrow();
+        validateNameAvailabilityOrThrow(name, objectMetadata),
+      ).toThrow(NameNotAvailableException);
     });
-    it('throws error if name is reserved', () => {
-      const name = 'createdByName';
+    it('throws error with ADDRESS suffixes', () => {
+      const name = `${FIELD_ADDRESS_MOCK_NAME}AddressStreet1`;
 
       expect(() =>
-        validateNameAvailabilityOrThrow(name, objectMetadataStandardId),
+        validateNameAvailabilityOrThrow(name, objectMetadata),
       ).toThrow(NameNotAvailableException);
     });
   });
