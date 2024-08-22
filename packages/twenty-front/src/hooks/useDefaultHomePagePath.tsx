@@ -15,7 +15,7 @@ export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
   const { activeObjectMetadataItems, alphaSortedActiveObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const { records } = usePrefetchedData(PrefetchKey.AllViews);
+  const { records: views } = usePrefetchedData(PrefetchKey.AllViews);
   const { lastVisitedObjectMetadataItemId } =
     useLastVisitedObjectMetadataItem();
   let objectMetadata: {
@@ -27,7 +27,7 @@ export const useDefaultHomePagePath = () => {
     return { defaultHomePagePath: AppPath.SignInUp };
   }
 
-  const getActiveObjectMetadataMatchingId = (objectMetadataId: string) => {
+  const getActiveObjectMetadataItemMatchingId = (objectMetadataId: string) => {
     return activeObjectMetadataItems.find(
       (item) => item.id === objectMetadataId,
     );
@@ -36,24 +36,26 @@ export const useDefaultHomePagePath = () => {
   const getFirstObjectInfo = () => {
     const [metadata] = alphaSortedActiveObjectMetadataItems;
 
-    const view = getViewMatchingObjectId(metadata.id);
+    const view = getViewMatchingObjectMetdataItemId(metadata.id);
     return { metadata, view };
   };
 
-  const getViewMatchingObjectId = (objectMetadataId: string) =>
-    records.find((view: any) => view?.objectMetadataId === objectMetadataId);
+  const getViewMatchingObjectMetdataItemId = (objectMetadataId: string) =>
+    views.find((view: any) => view?.objectMetadataId === objectMetadataId);
 
   // last visited page exist in localstorage
   if (!isNull(lastVisitedObjectMetadataItemId)) {
-    const lastVisitedMetadata = getActiveObjectMetadataMatchingId(
+    const lastVisitedObjectMetadataItem = getActiveObjectMetadataItemMatchingId(
       lastVisitedObjectMetadataItemId,
     );
 
     // and last visited page is still active
-    if (!isUndefined(lastVisitedMetadata)) {
+    if (!isUndefined(lastVisitedObjectMetadataItem)) {
       objectMetadata = {
-        view: getViewMatchingObjectId(lastVisitedObjectMetadataItemId),
-        metadata: lastVisitedMetadata,
+        view: getViewMatchingObjectMetdataItemId(
+          lastVisitedObjectMetadataItemId,
+        ),
+        metadata: lastVisitedObjectMetadataItem,
       };
     } else {
       // if not fallback to alphabetically first
