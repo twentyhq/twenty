@@ -1,6 +1,3 @@
-import { WorkflowDiagramNodeData } from '@/workflow/types/WorkflowDiagram';
-import { Edge, Node } from '@xyflow/react';
-
 type WorkflowBaseSettingsType = {
   errorHandlingOptions: {
     retryOnFailure: {
@@ -16,9 +13,7 @@ export type WorkflowCodeSettingsType = WorkflowBaseSettingsType & {
   serverlessFunctionId: string;
 };
 
-export enum WorkflowActionType {
-  CODE = 'CODE',
-}
+export type WorkflowActionType = 'CODE';
 
 type CommonWorkflowAction = {
   name: string;
@@ -27,7 +22,7 @@ type CommonWorkflowAction = {
 };
 
 type WorkflowCodeAction = CommonWorkflowAction & {
-  type: WorkflowActionType.CODE;
+  type: 'CODE';
   settings: WorkflowCodeSettingsType;
 };
 
@@ -35,9 +30,7 @@ export type WorkflowAction = WorkflowCodeAction & {
   nextAction?: WorkflowAction;
 };
 
-export enum WorkflowTriggerType {
-  DATABASE_EVENT = 'DATABASE_EVENT',
-}
+export type WorkflowTriggerType = 'DATABASE_EVENT';
 
 type BaseTrigger = {
   type: WorkflowTriggerType;
@@ -46,7 +39,7 @@ type BaseTrigger = {
 };
 
 export type WorkflowDatabaseEventTrigger = BaseTrigger & {
-  type: WorkflowTriggerType.DATABASE_EVENT;
+  type: 'DATABASE_EVENT';
   settings: {
     eventName: string;
     triggerName: string;
@@ -71,9 +64,4 @@ export type Workflow = {
   name: string;
   versions: Array<WorkflowVersion>;
   publishedVersionId: string;
-};
-
-export type WorkflowDiagram = {
-  nodes: Array<Node<WorkflowDiagramNodeData>>;
-  edges: Array<Edge>;
 };

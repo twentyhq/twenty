@@ -4,22 +4,25 @@ import { useParams } from 'react-router-dom';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
-import { currentWorkflowDataState } from '@/workflow/states/currentWorkflowDataState';
-import { WorkflowDiagram } from '@/workflow/types/Workflow';
-import { WorkflowDiagramNodeData } from '@/workflow/types/WorkflowDiagram';
-import Dagre from '@dagrejs/dagre';
+import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
 import {
+  WorkflowDiagram,
+  WorkflowDiagramNodeData,
+} from '@/workflow/types/WorkflowDiagram';
+import { getOrganizedDiagram } from '@/workflow/utils/getOrganizedDiagram';
+import {
+  applyEdgeChanges,
+  applyNodeChanges,
   Background,
-  Edge,
+  EdgeChange,
   Node,
+  NodeChange,
   ReactFlow,
-  useEdgesState,
-  useNodesState,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useEffect, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
-import { GRAY_SCALE, IconSettingsAutomation } from 'twenty-ui';
+import { useMemo } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { GRAY_SCALE, IconSettingsAutomation, isDefined } from 'twenty-ui';
 import { WorkflowShowPageEffect } from '~/pages/workflows/WorkflowShowPageEffect';
 import { WorkflowShowPageHeader } from '~/pages/workflows/WorkflowShowPageHeader';
 import { CreateStepNode } from '~/pages/workflows/nodes/CreateStepNode';
@@ -43,55 +46,47 @@ const StyledFlowContainer = styled.div`
   --xy-node-boxshadow-selected: none;
 `;
 
-const getLayoutedElements = (
-  nodes: Array<Node<WorkflowDiagramNodeData>>,
-  edges: Array<Edge>,
-) => {
-  const graph = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  graph.setGraph({ rankdir: 'TB' });
-
-  edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
-  nodes.forEach((node) =>
-    graph.setNode(node.id, {
-      ...node,
-      width: node.measured?.width ?? 0,
-      height: node.measured?.height ?? 0,
-    }),
-  );
-
-  Dagre.layout(graph);
-
-  return {
-    nodes: nodes.map((node) => {
-      const position = graph.node(node.id);
-      // We are shifting the dagre node position (anchor=center center) to the top left
-      // so it matches the React Flow node anchor point (top left).
-      const x = position.x - (node.measured?.width ?? 0) / 2;
-      const y = position.y - (node.measured?.height ?? 0) / 2;
-
-      return { ...node, position: { x, y } };
-    }),
-    edges,
-  };
-};
-
-const LoadedWorkflow = ({ flowData }: { flowData: WorkflowDiagram }) => {
-  const [rawNodes, setRawNodes, onRawNodesChange] = useNodesState(
-    flowData.nodes,
-  );
-  const [rawEdges, setRawEdges, onRawEdgesChange] = useEdgesState(
-    flowData.edges,
-  );
-
-  useEffect(() => {
-    setRawNodes(flowData.nodes);
-    setRawEdges(flowData.edges);
-  }, [setRawNodes, setRawEdges, flowData.nodes, flowData.edges]);
-
+const LoadedWorkflow = ({ diagram }: { diagram: WorkflowDiagram }) => {
   const { nodes, edges } = useMemo(
-    () => getLayoutedElements(rawNodes, rawEdges),
-    [rawNodes, rawEdges],
+    () => getOrganizedDiagram(diagram),
+    [diagram],
   );
+
+  const setShowPageWorkflowDiagram = useSetRecoilState(
+    showPageWorkflowDiagramState,
+  );
+
+  const handleNodesChange = (
+    nodeChanges: Array<NodeChange<Node<WorkflowDiagramNodeData>>>,
+  ) => {
+    setShowPageWorkflowDiagram((diagram) => {
+      if (isDefined(diagram) === false) {
+        throw new Error(
+          'It must be impossible for the nodes to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
+        );
+      }
+
+      return {
+        ...diagram,
+        nodes: applyNodeChanges(nodeChanges, diagram.nodes),
+      };
+    });
+  };
+
+  const handleEdgesChange = (edgeChanges: Array<EdgeChange>) => {
+    setShowPageWorkflowDiagram((diagram) => {
+      if (isDefined(diagram) === false) {
+        throw new Error(
+          'It must be impossible for the edges to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',
+        );
+      }
+
+      return {
+        ...diagram,
+        edges: applyEdgeChanges(edgeChanges, diagram.edges),
+      };
+    });
+  };
 
   return (
     <ReactFlow
@@ -102,8 +97,8 @@ const LoadedWorkflow = ({ flowData }: { flowData: WorkflowDiagram }) => {
       fitView
       nodes={nodes.map((node) => ({ ...node, draggable: false }))}
       edges={edges}
-      onNodesChange={onRawNodesChange}
-      onEdgesChange={onRawEdgesChange}
+      onNodesChange={handleNodesChange}
+      onEdgesChange={handleEdgesChange}
     >
       <Background color={GRAY_SCALE.gray25} size={2} />
     </ReactFlow>
@@ -117,7 +112,7 @@ export const WorkflowShowPage = () => {
 
   const workflowName = 'Test Workflow';
 
-  const currentWorkflowData = useRecoilValue(currentWorkflowDataState);
+  const showPageWorkflowDiagram = useRecoilValue(showPageWorkflowDiagramState);
 
   if (parameters.workflowId === undefined) {
     return null;
@@ -134,8 +129,8 @@ export const WorkflowShowPage = () => {
       ></WorkflowShowPageHeader>
       <PageBody>
         <StyledFlowContainer>
-          {currentWorkflowData === undefined ? null : (
-            <LoadedWorkflow flowData={currentWorkflowData} />
+          {showPageWorkflowDiagram === undefined ? null : (
+            <LoadedWorkflow diagram={showPageWorkflowDiagram} />
           )}
         </StyledFlowContainer>
       </PageBody>

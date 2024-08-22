@@ -1,15 +1,17 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { currentWorkflowDataState } from '@/workflow/states/currentWorkflowDataState';
-import { currentWorkflowErrorState } from '@/workflow/states/currentWorkflowErrorState';
-import { currentWorkflowLoadingState } from '@/workflow/states/currentWorkflowLoadingState';
+import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflowDiagramState';
+import { showPageWorkflowErrorState } from '@/workflow/states/showPageWorkflowErrorState';
+import { showPageWorkflowLoadingState } from '@/workflow/states/showPageWorkflowLoadingState';
 import {
   Workflow,
   WorkflowAction,
-  WorkflowDiagram,
   WorkflowTrigger,
 } from '@/workflow/types/Workflow';
-import { WorkflowDiagramNodeData } from '@/workflow/types/WorkflowDiagram';
+import {
+  WorkflowDiagram,
+  WorkflowDiagramNodeData,
+} from '@/workflow/types/WorkflowDiagram';
 import { Edge, MarkerType, Node } from '@xyflow/react';
 import { useEffect, useMemo } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -172,11 +174,13 @@ export const WorkflowShowPageEffect = ({
     [flowLastVersion],
   );
 
-  const setCurrentWorkflowData = useSetRecoilState(currentWorkflowDataState);
-  const setCurrentWorkflowLoading = useSetRecoilState(
-    currentWorkflowLoadingState,
+  const setCurrentWorkflowData = useSetRecoilState(
+    showPageWorkflowDiagramState,
   );
-  const setCurrentWorkflowError = useSetRecoilState(currentWorkflowErrorState);
+  const setCurrentWorkflowLoading = useSetRecoilState(
+    showPageWorkflowLoadingState,
+  );
+  const setCurrentWorkflowError = useSetRecoilState(showPageWorkflowErrorState);
 
   useEffect(() => {
     setCurrentWorkflowData(
