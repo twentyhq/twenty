@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { isDefined, useIcons } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useLastVisitedPageOrView } from '@/navigation/hooks/useLastVisitedPageOrView';
+import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { ObjectMetadataNavItemsSkeletonLoader } from '@/object-metadata/components/ObjectMetadataNavItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
@@ -58,7 +58,7 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
   const loading = useIsPrefetchLoading();
 
   const theme = useTheme();
-  const { getLastVisitedViewIdFromObjectId } = useLastVisitedPageOrView();
+  const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
 
   if (loading && isDefined(currentUser)) {
     return <ObjectMetadataNavItemsSkeletonLoader />;
@@ -107,9 +107,10 @@ export const ObjectMetadataNavItems = ({ isRemote }: { isRemote: boolean }) => {
               objectMetadataItem.id,
               views,
             );
-            const lastVisitedViewId = getLastVisitedViewIdFromObjectId(
-              objectMetadataItem.id,
-            );
+            const lastVisitedViewId =
+              getLastVisitedViewIdFromObjectMetadataItemId(
+                objectMetadataItem.id,
+              );
             const viewId = lastVisitedViewId ?? objectMetadataViews[0]?.id;
 
             const navigationPath = `/objects/${objectMetadataItem.namePlural}${
