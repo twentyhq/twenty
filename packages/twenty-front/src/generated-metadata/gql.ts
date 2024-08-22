@@ -36,7 +36,8 @@ const documents = {
     "\n  fragment ServerlessFunctionFields on ServerlessFunction {\n    id\n    name\n    description\n    sourceCodeHash\n    runtime\n    syncStatus\n    latestVersion\n    createdAt\n    updatedAt\n  }\n": types.ServerlessFunctionFieldsFragmentDoc,
     "\n  \n  mutation CreateOneServerlessFunctionItem(\n    $input: CreateServerlessFunctionInput!\n  ) {\n    createOneServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.CreateOneServerlessFunctionItemDocument,
     "\n  \n  mutation DeleteOneServerlessFunction($input: DeleteServerlessFunctionInput!) {\n    deleteOneServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.DeleteOneServerlessFunctionDocument,
-    "\n  mutation ExecuteOneServerlessFunction(\n    $id: UUID!\n    $payload: JSON!\n    $version: String\n  ) {\n    executeOneServerlessFunction(\n      id: $id\n      payload: $payload\n      version: $version\n    ) {\n      data\n      duration\n      status\n      error\n    }\n  }\n": types.ExecuteOneServerlessFunctionDocument,
+    "\n  mutation ExecuteOneServerlessFunction(\n    $input: ExecuteServerlessFunctionInput!\n  ) {\n    executeOneServerlessFunction(input: $input) {\n      data\n      duration\n      status\n      error\n    }\n  }\n": types.ExecuteOneServerlessFunctionDocument,
+    "\n  \n  mutation PublishOneServerlessFunction(\n    $input: PublishServerlessFunctionInput!\n  ) {\n    publishServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.PublishOneServerlessFunctionDocument,
     "\n  \n  mutation UpdateOneServerlessFunction($input: UpdateServerlessFunctionInput!) {\n    updateOneServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.UpdateOneServerlessFunctionDocument,
     "\n  \n  query GetManyServerlessFunctions {\n    serverlessFunctions(paging: { first: 100 }) {\n      edges {\n        node {\n          ...ServerlessFunctionFields\n        }\n      }\n    }\n  }\n": types.GetManyServerlessFunctionsDocument,
     "\n  \n  query GetOneServerlessFunction($id: UUID!) {\n    serverlessFunction(id: $id) {\n      ...ServerlessFunctionFields\n    }\n  }\n": types.GetOneServerlessFunctionDocument,
@@ -152,7 +153,11 @@ export function graphql(source: "\n  \n  mutation DeleteOneServerlessFunction($i
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation ExecuteOneServerlessFunction(\n    $id: UUID!\n    $payload: JSON!\n    $version: String\n  ) {\n    executeOneServerlessFunction(\n      id: $id\n      payload: $payload\n      version: $version\n    ) {\n      data\n      duration\n      status\n      error\n    }\n  }\n"): (typeof documents)["\n  mutation ExecuteOneServerlessFunction(\n    $id: UUID!\n    $payload: JSON!\n    $version: String\n  ) {\n    executeOneServerlessFunction(\n      id: $id\n      payload: $payload\n      version: $version\n    ) {\n      data\n      duration\n      status\n      error\n    }\n  }\n"];
+export function graphql(source: "\n  mutation ExecuteOneServerlessFunction(\n    $input: ExecuteServerlessFunctionInput!\n  ) {\n    executeOneServerlessFunction(input: $input) {\n      data\n      duration\n      status\n      error\n    }\n  }\n"): (typeof documents)["\n  mutation ExecuteOneServerlessFunction(\n    $input: ExecuteServerlessFunctionInput!\n  ) {\n    executeOneServerlessFunction(input: $input) {\n      data\n      duration\n      status\n      error\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  \n  mutation PublishOneServerlessFunction(\n    $input: PublishServerlessFunctionInput!\n  ) {\n    publishServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n"): (typeof documents)["\n  \n  mutation PublishOneServerlessFunction(\n    $input: PublishServerlessFunctionInput!\n  ) {\n    publishServerlessFunction(input: $input) {\n      ...ServerlessFunctionFields\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

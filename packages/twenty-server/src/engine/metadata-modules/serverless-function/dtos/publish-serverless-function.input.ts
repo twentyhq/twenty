@@ -1,15 +1,9 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { ID, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-
-@ArgsType()
+@InputType()
 export class PublishServerlessFunctionInput {
-  @Field(() => UUIDScalarType, {
-    description: 'Id of the serverless function to publish',
-  })
-  @IsNotEmpty()
-  @IsUUID()
-  id: string;
+  @IDField(() => ID, { description: 'The id of the function.' })
+  id!: string;
 }

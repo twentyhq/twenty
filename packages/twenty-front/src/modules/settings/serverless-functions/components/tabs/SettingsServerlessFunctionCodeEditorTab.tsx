@@ -1,4 +1,4 @@
-import { H2Title, IconPlayerPlay } from 'twenty-ui';
+import { H2Title, IconPlayerPlay, IconGitCommit, IconRestore } from 'twenty-ui';
 import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import { Section } from '@/ui/layout/section/components/Section';
 import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
@@ -14,13 +14,16 @@ const StyledTabList = styled(TabList)`
 export const SettingsServerlessFunctionCodeEditorTab = ({
   formValues,
   handleExecute,
+  handlePublish,handleReset,
   onChange,
 }: {
   formValues: ServerlessFunctionFormValues;
   handleExecute: () => void;
+  handlePublish: () => void;
+  handleReset: () => void;
   onChange: (key: string) => (value: string) => void;
 }) => {
-  const HeaderButton = (
+  const TestButton = (
     <Button
       title="Test"
       variant="primary"
@@ -28,6 +31,24 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
       size="small"
       Icon={IconPlayerPlay}
       onClick={handleExecute}
+    />
+  );
+  const PublishButton = (
+    <Button
+      title="Publish"
+      variant="secondary"
+      size="small"
+      Icon={IconGitCommit}
+      onClick={handlePublish}
+    />
+  );
+  const ResetButton = (
+    <Button
+      title="Reset"
+      variant="secondary"
+      size="small"
+      Icon={IconRestore}
+      onClick={handleReset}
     />
   );
 
@@ -41,7 +62,10 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   );
 
   const Header = (
-    <CoreEditorHeader leftNodes={[HeaderTabList]} rightNodes={[HeaderButton]} />
+    <CoreEditorHeader
+      leftNodes={[HeaderTabList]}
+      rightNodes={[TestButton, PublishButton, ResetButton]}
+    />
   );
 
   return (

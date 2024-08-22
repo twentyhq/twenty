@@ -6,6 +6,7 @@ import { SettingsServerlessFunctionTestTabEffect } from '@/settings/serverless-f
 import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteOneServerlessFunction';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
+import { usePublishOneServerlessFunction } from '@/settings/serverless-functions/hooks/usePublishOneServerlessFunction';
 import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
 import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -19,6 +20,7 @@ import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -31,8 +33,13 @@ export const SettingsServerlessFunctionDetail = () => {
   const activeTabId = useRecoilValue(activeTabIdState);
   const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
+  const { publishOneServerlessFunction } = usePublishOneServerlessFunction();
   const [formValues, setFormValues] =
     useServerlessFunctionUpdateFormState(serverlessFunctionId);
+  const { code: latestVersionCode } = useGetOneServerlessFunctionSourceCode({
+    id: serverlessFunctionId,
+    version: 'latest',
+  });
   const setSettingsServerlessFunctionOutput = useSetRecoilState(
     settingsServerlessFunctionOutputState,
   );
@@ -70,13 +77,52 @@ export const SettingsServerlessFunctionDetail = () => {
     };
   };
 
+  const handleReset = async () => {
+    try {
+      const newState = {
+        code: latestVersionCode || '',
+      };
+      setFormValues((prevState) => ({
+        ...prevState,
+        ...newState,
+      }));
+      await handleSave();
+    } catch (err) {
+      enqueueSnackBar(
+        (err as Error)?.message || 'An error occurred while reset function',
+        {
+          variant: SnackBarVariant.Error,
+        },
+      );
+    }
+  };
+
+  const handlePublish = async () => {
+    try {
+      await publishOneServerlessFunction({
+        id: serverlessFunctionId,
+      });
+      enqueueSnackBar(`New function version has been published`, {
+        variant: SnackBarVariant.Success,
+      });
+    } catch (err) {
+      enqueueSnackBar(
+        (err as Error)?.message ||
+          'An error occurred while publishing new version',
+        {
+          variant: SnackBarVariant.Error,
+        },
+      );
+    }
+  };
+
   const handleExecute = async () => {
     try {
-      const result = await executeOneServerlessFunction(
-        serverlessFunctionId,
-        JSON.parse(settingsServerlessFunctionInput),
-        'draft',
-      );
+      const result = await executeOneServerlessFunction({
+        id: serverlessFunctionId,
+        payload: JSON.parse(settingsServerlessFunctionInput),
+        version: 'draft',
+      });
       setSettingsServerlessFunctionOutput({
         data: result?.data?.executeOneServerlessFunction?.data
           ? JSON.stringify(
@@ -119,6 +165,8 @@ export const SettingsServerlessFunctionDetail = () => {
           <SettingsServerlessFunctionCodeEditorTab
             formValues={formValues}
             handleExecute={handleExecute}
+            handlePublish={handlePublish}
+            handleReset={handleReset}
             onChange={onChange}
           />
         );

@@ -1,4 +1,4 @@
-import { UseGuards, UseInterceptors } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -149,12 +149,12 @@ export class ServerlessFunctionResolver {
 
   @Mutation(() => ServerlessFunctionExecutionResultDTO)
   async executeOneServerlessFunction(
-    @Args() executeServerlessFunctionInput: ExecuteServerlessFunctionInput,
+    @Args('input') input: ExecuteServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
       await this.checkFeatureFlag(workspaceId);
-      const { id, payload, version } = executeServerlessFunctionInput;
+      const { id, payload, version } = input;
 
       return await this.serverlessFunctionService.executeOneServerlessFunction(
         id,
@@ -169,12 +169,12 @@ export class ServerlessFunctionResolver {
 
   @Mutation(() => ServerlessFunctionDTO)
   async publishServerlessFunction(
-    @Args() publishServerlessFunctionInput: PublishServerlessFunctionInput,
+    @Args('input') input: PublishServerlessFunctionInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {
       await this.checkFeatureFlag(workspaceId);
-      const { id } = publishServerlessFunctionInput;
+      const { id } = input;
 
       return await this.serverlessFunctionService.publishOneServerlessFunction(
         id,

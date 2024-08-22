@@ -2,15 +2,9 @@ import { gql } from '@apollo/client';
 
 export const EXECUTE_ONE_SERVERLESS_FUNCTION = gql`
   mutation ExecuteOneServerlessFunction(
-    $id: UUID!
-    $payload: JSON!
-    $version: String!
+    $input: ExecuteServerlessFunctionInput!
   ) {
-    executeOneServerlessFunction(
-      id: $id
-      payload: $payload
-      version: $version
-    ) {
+    executeOneServerlessFunction(input: $input) {
       data
       duration
       status
