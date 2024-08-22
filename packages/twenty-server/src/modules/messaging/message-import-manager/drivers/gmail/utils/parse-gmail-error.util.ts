@@ -1,4 +1,4 @@
-import { GmailError } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
+import { GmailError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-error.type';
 import {
   MessagingError,
   MessagingErrorCode,

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { error } from 'console';
+
 import { gmail_v1 as gmailV1 } from 'googleapis';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -7,6 +9,7 @@ import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/messa
 import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
+import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter.util';
 import { computeGmailCategoryLabelId } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-label-id.util';
 import {
@@ -20,6 +23,7 @@ export class GmailGetMessageListService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly gmailGetHistoryService: GmailGetHistoryService,
+    private readonly gmailHandleErrorService: GmailHandleErrorService,
   ) {}
 
   public async getFullMessageList(
@@ -47,7 +51,7 @@ export class GmailGetMessageListService {
           ),
         })
         .catch((error) => {
-          console.error('Error fetching messages', error);
+          this.gmailHandleErrorService.handleError(error);
 
           return {
             data: {
@@ -132,7 +136,7 @@ export class GmailGetMessageListService {
     const emailIds: string[] = [];
 
     for (const category of MESSAGING_GMAIL_EXCLUDED_CATEGORIES) {
-      const { history, error } = await this.gmailGetHistoryService.getHistory(
+      const { history } = await this.gmailGetHistoryService.getHistory(
         gmailClient,
         lastSyncHistoryId,
         ['messageAdded'],

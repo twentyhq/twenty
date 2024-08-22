@@ -81,21 +81,18 @@ export class MessageImportErrorHandlerService {
       case MessageImportSyncStep.FULL_MESSAGE_LIST_FETCH:
         await this.messageChannelSyncStatusService.scheduleFullMessageListFetch(
           messageChannel.id,
-          workspaceId,
         );
         break;
 
       case MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH:
         await this.messageChannelSyncStatusService.schedulePartialMessageListFetch(
           messageChannel.id,
-          workspaceId,
         );
         break;
 
       case MessageImportSyncStep.MESSAGES_IMPORT:
         await this.messageChannelSyncStatusService.scheduleMessagesImport(
           messageChannel.id,
-          workspaceId,
         );
         break;
 

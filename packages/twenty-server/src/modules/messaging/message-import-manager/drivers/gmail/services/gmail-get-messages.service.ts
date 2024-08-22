@@ -4,6 +4,7 @@ import { AxiosResponse } from 'axios';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
+import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { isDefined } from 'src/utils/is-defined';
@@ -14,6 +15,7 @@ export class GmailGetMessagesService {
 
   constructor(
     private readonly fetchByBatchesService: GmailFetchByBatchService,
+    private readonly gmailHandleErrorService: GmailHandleErrorService,
   ) {}
 
   async getMessages(
@@ -78,7 +80,10 @@ export class GmailGetMessagesService {
           return null;
         }
 
-        throw { ...response.error, messageId: messageIds[index] };
+        this.gmailHandleErrorService.handleError(
+          response.error,
+          messageIds[index],
+        );
       }
 
       return parseAndFormatGmailMessage(response, connectedAccount);
