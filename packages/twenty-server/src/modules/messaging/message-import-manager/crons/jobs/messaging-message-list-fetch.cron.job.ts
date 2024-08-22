@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   Workspace,
@@ -51,24 +51,24 @@ export class MessagingMessageListFetchCronJob {
             'messageChannel',
           );
 
-        const messageChannels = await messageChannelRepository.find();
+        const messageChannels = await messageChannelRepository.find({
+          where: {
+            isSyncEnabled: true,
+            syncStage: In([
+              MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
+              MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
+            ]),
+          },
+        });
 
         for (const messageChannel of messageChannels) {
-          if (
-            (messageChannel.isSyncEnabled &&
-              messageChannel.syncStage ===
-                MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING) ||
-            messageChannel.syncStage ===
-              MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING
-          ) {
-            await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-              MessagingMessageListFetchJob.name,
-              {
-                workspaceId: activeWorkspace.id,
-                messageChannelId: messageChannel.id,
-              },
-            );
-          }
+          await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+            MessagingMessageListFetchJob.name,
+            {
+              workspaceId: activeWorkspace.id,
+              messageChannelId: messageChannel.id,
+            },
+          );
         }
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {
