@@ -10,7 +10,7 @@ export class WorkflowStepExecutorFactory {
 
   get(stepType: WorkflowStepType): WorkflowStepExecutor {
     switch (stepType) {
-      case WorkflowStepType.CODE:
+      case WorkflowStepType.CODE_ACTION:
         return this.codeActionExecutor;
       default:
         throw new Error(

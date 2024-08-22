@@ -1,7 +1,7 @@
 import { WorkflowCodeSettings } from 'src/modules/workflow/common/types/workflow-settings.type';
 
 export enum WorkflowStepType {
-  CODE = 'CODE',
+  CODE_ACTION = 'CODE_ACTION',
 }
 
 type BaseWorkflowStep = {
@@ -11,7 +11,7 @@ type BaseWorkflowStep = {
 };
 
 export type WorkflowCodeStep = BaseWorkflowStep & {
-  type: WorkflowStepType.CODE;
+  type: WorkflowStepType.CODE_ACTION;
   settings: WorkflowCodeSettings;
 };
 
