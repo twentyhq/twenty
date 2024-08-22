@@ -30,7 +30,7 @@ export const CodeEditor = ({
   value = DEFAULT_CODE,
   onChange,
   language = 'typescript',
-  height = 500,
+  height = 450,
   options = undefined,
   header,
 }: CodeEditorProps) => {
