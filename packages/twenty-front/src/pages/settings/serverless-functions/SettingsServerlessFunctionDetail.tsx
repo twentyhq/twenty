@@ -77,6 +77,8 @@ export const SettingsServerlessFunctionDetail = () => {
     };
   };
 
+  const resetPublishDisabled = latestVersionCode === formValues.code;
+
   const handleReset = async () => {
     try {
       const newState = {
@@ -167,6 +169,7 @@ export const SettingsServerlessFunctionDetail = () => {
             handleExecute={handleExecute}
             handlePublish={handlePublish}
             handleReset={handleReset}
+            resetPublishDisabled={resetPublishDisabled}
             onChange={onChange}
           />
         );

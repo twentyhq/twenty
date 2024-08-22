@@ -16,12 +16,14 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   handleExecute,
   handlePublish,
   handleReset,
+  resetPublishDisabled,
   onChange,
 }: {
   formValues: ServerlessFunctionFormValues;
   handleExecute: () => void;
   handlePublish: () => void;
   handleReset: () => void;
+  resetPublishDisabled: boolean;
   onChange: (key: string) => (value: string) => void;
 }) => {
   const TestButton = (
@@ -41,6 +43,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
       size="small"
       Icon={IconGitCommit}
       onClick={handlePublish}
+      disabled={resetPublishDisabled}
     />
   );
   const ResetButton = (
@@ -50,6 +53,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
       size="small"
       Icon={IconRestore}
       onClick={handleReset}
+      disabled={resetPublishDisabled}
     />
   );
 
@@ -65,7 +69,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   const Header = (
     <CoreEditorHeader
       leftNodes={[HeaderTabList]}
-      rightNodes={[TestButton, PublishButton, ResetButton]}
+      rightNodes={[ResetButton, PublishButton, TestButton]}
     />
   );
 
