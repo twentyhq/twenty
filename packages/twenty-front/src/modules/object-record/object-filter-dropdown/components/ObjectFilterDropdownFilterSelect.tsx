@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
 
@@ -8,12 +8,12 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
-import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useIsListSelectedItem } from '@/ui/layout/selectable-list/hooks/useIsListSelectedItem';
+import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
+import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -57,7 +57,7 @@ export const ObjectFilterDropdownFilterSelect = () => {
   const { getIcon } = useIcons();
 
   const setHotkeyScope = useSetHotkeyScope();
-  const isListSelectedItem = useIsListSelectedItem({
+  const { isListSelectedItem } = useIsListSelectedItem({
     selectableListId: OBJECT_FILTER_DROPDOWN_ID,
   });
 
