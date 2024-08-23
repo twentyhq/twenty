@@ -1,86 +1,74 @@
 import { GoogleCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/types/google-calendar-error.type';
 import {
-  CalendarEventError,
+  CalendarException,
   CalendarExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar.exception';
 
 export const parseGoogleCalendarError = (
   error: GoogleCalendarError,
-): CalendarEventError => {
+): CalendarException => {
   const { code, reason, message } = error;
 
   switch (code) {
     case 400:
       if (reason === 'invalid_grant') {
-        return {
-          code: CalendarExceptionCode.INSUFFICIENT_PERMISSIONS,
+        return new CalendarException(
           message,
-        };
+          CalendarExceptionCode.INSUFFICIENT_PERMISSIONS,
+        );
       }
       if (reason === 'failedPrecondition') {
-        return {
-          code: CalendarExceptionCode.TEMPORARY_ERROR,
+        return new CalendarException(
           message,
-        };
+          CalendarExceptionCode.TEMPORARY_ERROR,
+        );
       }
 
-      return {
-        code: CalendarExceptionCode.UNKNOWN,
-        message,
-      };
+      return new CalendarException(message, CalendarExceptionCode.UNKNOWN);
 
     case 404:
-      return {
-        code: CalendarExceptionCode.NOT_FOUND,
-        message,
-      };
+      return new CalendarException(message, CalendarExceptionCode.NOT_FOUND);
 
     case 429:
-      return {
-        code: CalendarExceptionCode.TEMPORARY_ERROR,
+      return new CalendarException(
         message,
-      };
+        CalendarExceptionCode.TEMPORARY_ERROR,
+      );
 
     case 403:
       if (
         reason === 'rateLimitExceeded' ||
         reason === 'userRateLimitExceeded'
       ) {
-        return {
-          code: CalendarExceptionCode.TEMPORARY_ERROR,
+        return new CalendarException(
           message,
-        };
+          CalendarExceptionCode.TEMPORARY_ERROR,
+        );
       } else {
-        return {
-          code: CalendarExceptionCode.INSUFFICIENT_PERMISSIONS,
+        return new CalendarException(
           message,
-        };
+          CalendarExceptionCode.INSUFFICIENT_PERMISSIONS,
+        );
       }
 
     case 401:
-      return {
-        code: CalendarExceptionCode.INSUFFICIENT_PERMISSIONS,
+      return new CalendarException(
         message,
-      };
+        CalendarExceptionCode.INSUFFICIENT_PERMISSIONS,
+      );
     case 500:
       if (reason === 'backendError') {
-        return {
-          code: CalendarExceptionCode.TEMPORARY_ERROR,
+        return new CalendarException(
           message,
-        };
+          CalendarExceptionCode.TEMPORARY_ERROR,
+        );
       } else {
-        return {
-          code: CalendarExceptionCode.UNKNOWN,
-          message,
-        };
+        return new CalendarException(message, CalendarExceptionCode.UNKNOWN);
       }
 
     default:
       break;
   }
 
-  return {
-    code: CalendarExceptionCode.UNKNOWN,
-    message,
-  };
+  return new CalendarException(message, CalendarExceptionCode.UNKNOWN);
 };
