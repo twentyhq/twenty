@@ -29,7 +29,7 @@ export class MessagingFullMessageListFetchService {
 
   constructor(
     private readonly gmailClientProvider: MessagingGmailClientProvider,
-    @InjectCacheStorage(CacheStorageNamespace.Messaging)
+    @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly gmailErrorHandlingService: MessagingErrorHandlingService,

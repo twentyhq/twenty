@@ -3,7 +3,6 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Outlet,
-  redirect,
   Route,
   RouterProvider,
   Routes,
@@ -59,7 +58,7 @@ import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccoun
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 import { SettingsCRMMigration } from '~/pages/settings/crm-migration/SettingsCRMMigration';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
-import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
+import { SettingsObjectDetailPage } from '~/pages/settings/data-model/SettingsObjectDetailPage';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
 import { SettingsObjectFieldEdit } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 import { SettingsObjectNewFieldStep1 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
@@ -192,14 +191,12 @@ const createRouter = (
                   path={SettingsPath.AccountsEmails}
                   element={<SettingsAccountsEmails />}
                 />
-                <Route
-                  path={SettingsPath.Billing}
-                  element={<SettingsBilling />}
-                  loader={() => {
-                    if (!isBillingEnabled) return redirect(AppPath.Index);
-                    return null;
-                  }}
-                />
+                {isBillingEnabled && (
+                  <Route
+                    path={SettingsPath.Billing}
+                    element={<SettingsBilling />}
+                  />
+                )}
                 <Route
                   path={SettingsPath.WorkspaceMembersPage}
                   element={<SettingsWorkspaceMembers />}
@@ -218,7 +215,7 @@ const createRouter = (
                 />
                 <Route
                   path={SettingsPath.ObjectDetail}
-                  element={<SettingsObjectDetail />}
+                  element={<SettingsObjectDetailPage />}
                 />
                 <Route
                   path={SettingsPath.ObjectEdit}
@@ -324,15 +321,19 @@ const createRouter = (
 
 export const App = () => {
   const billing = useRecoilValue(billingState);
+  const isFreeAccessEnabled = useIsFeatureEnabled('IS_FREE_ACCESS_ENABLED');
   const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
   const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
     'IS_FUNCTION_SETTINGS_ENABLED',
   );
 
+  const isBillingPageEnabled =
+    billing?.isBillingEnabled && !isFreeAccessEnabled;
+
   return (
     <RouterProvider
       router={createRouter(
-        billing?.isBillingEnabled,
+        isBillingPageEnabled,
         isCRMMigrationEnabled,
         isServerlessFunctionSettingsEnabled,
       )}

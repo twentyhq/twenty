@@ -90,6 +90,7 @@ export {
   IconFocusCentered,
   IconForbid,
   IconFunction,
+  IconGitCommit,
   IconGripVertical,
   IconH1,
   IconH2,
@@ -146,6 +147,7 @@ export {
   IconRelationOneToOne,
   IconReload,
   IconRepeat,
+  IconRestore,
   IconRocket,
   IconRotate,
   IconSearch,
@@ -174,4 +176,5 @@ export {
   IconWorld,
   IconX,
 } from '@tabler/icons-react';
+
 export type { TablerIconsProps } from '@tabler/icons-react';

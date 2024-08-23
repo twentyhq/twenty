@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ColumnType, EntitySchemaColumnOptions } from 'typeorm';
 
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
@@ -22,11 +22,17 @@ type EntitySchemaColumnMap = {
 export class EntitySchemaColumnFactory {
   create(
     fieldMetadataCollection: FieldMetadataEntity[],
+    softDelete: boolean,
   ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
     for (const fieldMetadata of fieldMetadataCollection) {
       const key = fieldMetadata.name;
+
+      // Skip deletedAt column if soft delete is not enabled
+      if (!softDelete && key === 'deletedAt') {
+        continue;
+      }
 
       if (isRelationFieldMetadataType(fieldMetadata.type)) {
         const relationMetadata =
@@ -99,11 +105,11 @@ export class EntitySchemaColumnFactory {
     fieldMetadata: FieldMetadataEntity,
   ): EntitySchemaColumnMap {
     const entitySchemaColumnMap: EntitySchemaColumnMap = {};
-    const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+    const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
     if (!compositeType) {
       throw new Error(
-        `Composite type ${fieldMetadata.type} is not defined in compositeTypeDefintions`,
+        `Composite type ${fieldMetadata.type} is not defined in compositeTypeDefinitions`,
       );
     }
 

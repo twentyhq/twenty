@@ -8,6 +8,7 @@ import {
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -16,12 +17,11 @@ import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
-import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceStatusModule } from 'src/engine/workspace-manager/workspace-status/workspace-manager.module';
-import { CreatedByPreQueryHook } from 'src/engine/metadata-modules/field-metadata/query-hooks/created-by.pre-query-hook';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 import { FieldMetadataService } from './field-metadata.service';
@@ -38,16 +38,13 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         WorkspaceStatusModule,
         TwentyORMModule,
         WorkspaceMigrationRunnerModule,
-        WorkspaceCacheVersionModule,
+        WorkspaceMetadataVersionModule,
         ObjectMetadataModule,
         DataSourceModule,
         TypeORMModule,
+        ActorModule,
       ],
-      services: [
-        IsFieldMetadataDefaultValue,
-        FieldMetadataService,
-        CreatedByPreQueryHook,
-      ],
+      services: [IsFieldMetadataDefaultValue, FieldMetadataService],
       resolvers: [
         {
           EntityClass: FieldMetadataEntity,

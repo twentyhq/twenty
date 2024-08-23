@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconSettings, IconTrash } from 'twenty-ui';
+import { H2Title, IconCode, IconTrash } from 'twenty-ui';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -9,7 +9,6 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { Button } from '@/ui/input/button/components/Button';
@@ -88,23 +87,27 @@ export const SettingsDevelopersWebhooksDetail = () => {
   return (
     <>
       {webhookData?.targetUrl && (
-        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SubMenuTopBarContainer
+          Icon={IconCode}
+          title={
+            <Breadcrumb
+              links={[
+                { children: 'Developers', href: '/settings/developers' },
+                { children: 'Webhook' },
+              ]}
+            />
+          }
+          actionButton={
+            <SaveAndCancelButtons
+              isSaveDisabled={!isDirty}
+              onCancel={() => {
+                navigate('/settings/developers');
+              }}
+              onSave={handleSave}
+            />
+          }
+        >
           <SettingsPageContainer>
-            <SettingsHeaderContainer>
-              <Breadcrumb
-                links={[
-                  { children: 'Developers', href: '/settings/developers' },
-                  { children: 'Webhook' },
-                ]}
-              />
-              <SaveAndCancelButtons
-                isSaveDisabled={!isDirty}
-                onCancel={() => {
-                  navigate('/settings/developers');
-                }}
-                onSave={handleSave}
-              />
-            </SettingsHeaderContainer>
             <Section>
               <H2Title
                 title="Endpoint URL"

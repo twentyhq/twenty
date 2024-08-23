@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import rehypeStringify from 'rehype-stringify';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
-import { H1Title, IconSettings } from 'twenty-ui';
+import { H1Title, IconRocket } from 'twenty-ui';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
@@ -108,10 +108,10 @@ export const Releases = () => {
   }, []);
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Releases">
+    <SubMenuTopBarContainer Icon={IconRocket} title="Releases">
       <SettingsPageContainer>
         <StyledH1Title title="Releases" />
-        <ScrollWrapper>
+        <ScrollWrapper contextProviderName="releases">
           <StyledReleaseContainer>
             {releases.map((release) => (
               <React.Fragment key={release.slug}>

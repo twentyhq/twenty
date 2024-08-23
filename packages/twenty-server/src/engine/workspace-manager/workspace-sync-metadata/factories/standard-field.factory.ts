@@ -150,6 +150,14 @@ export class StandardFieldFactory {
       return [];
     }
 
+    if (
+      workspaceFieldMetadataArgs.name === 'deletedAt' &&
+      workspaceEntityMetadataArgs &&
+      !workspaceEntityMetadataArgs.softDelete
+    ) {
+      return [];
+    }
+
     return [
       {
         type: workspaceFieldMetadataArgs.type,
@@ -164,6 +172,7 @@ export class StandardFieldFactory {
         isNullable: workspaceFieldMetadataArgs.isNullable,
         isCustom: workspaceFieldMetadataArgs.isDeprecated ? true : false,
         isSystem: workspaceFieldMetadataArgs.isSystem ?? false,
+        isActive: workspaceFieldMetadataArgs.isActive ?? true,
       },
     ];
   }
@@ -214,6 +223,7 @@ export class StandardFieldFactory {
         isCustom: false,
         isSystem: true,
         isNullable: workspaceRelationMetadataArgs.isNullable,
+        isActive: workspaceRelationMetadataArgs.isActive ?? true,
       });
     }
 
@@ -231,6 +241,7 @@ export class StandardFieldFactory {
         workspaceEntityMetadataArgs?.isSystem ||
         workspaceRelationMetadataArgs.isSystem,
       isNullable: true,
+      isActive: workspaceRelationMetadataArgs.isActive ?? true,
     });
 
     return fieldMetadataCollection;

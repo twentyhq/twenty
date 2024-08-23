@@ -18,11 +18,10 @@ import {
   RelationMetadataException,
   RelationMetadataExceptionCode,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.exception';
-import {
-  InvalidStringException,
-  validateMetadataNameOrThrow,
-} from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
-import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
+import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
+import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
+import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -50,7 +49,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
-    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {
     super(relationMetadataRepository);
   }
@@ -63,8 +62,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     );
 
     try {
-      validateMetadataNameOrThrow(relationMetadataInput.fromName);
-      validateMetadataNameOrThrow(relationMetadataInput.toName);
+      validateMetadataNameValidityOrThrow(relationMetadataInput.fromName);
+      validateMetadataNameValidityOrThrow(relationMetadataInput.toName);
     } catch (error) {
       if (error instanceof InvalidStringException) {
         throw new RelationMetadataException(
@@ -120,7 +119,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       relationMetadataInput.workspaceId,
     );
 
-    await this.workspaceCacheVersionService.incrementVersion(
+    await this.workspaceMetadataVersionService.incrementMetadataVersion(
       relationMetadataInput.workspaceId,
     );
 
@@ -160,6 +159,15 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       relationMetadataInput,
       objectMetadataMap,
       'to',
+    );
+
+    validateFieldNameAvailabilityOrThrow(
+      relationMetadataInput.fromName,
+      objectMetadataMap[relationMetadataInput.fromObjectMetadataId],
+    );
+    validateFieldNameAvailabilityOrThrow(
+      relationMetadataInput.toName,
+      objectMetadataMap[relationMetadataInput.toObjectMetadataId],
     );
   }
 
@@ -394,7 +402,9 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       relationMetadata.workspaceId,
     );
 
-    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+    await this.workspaceMetadataVersionService.incrementMetadataVersion(
+      workspaceId,
+    );
 
     // TODO: Return id for delete endpoints
     return relationMetadata;
