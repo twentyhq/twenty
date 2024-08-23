@@ -1,7 +1,7 @@
 import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
-import { generateWorklowDiagram } from '../generateWorkflowDiagram';
+import { generateWorkflowDiagram } from '../generateWorkflowDiagram';
 
-describe('generateWorklowDiagram', () => {
+describe('generateWorkflowDiagram', () => {
   it('should generate a single trigger node when no step is provided', () => {
     const trigger: WorkflowTrigger = {
       type: 'DATABASE_EVENT',
@@ -11,7 +11,7 @@ describe('generateWorklowDiagram', () => {
     };
     const steps: WorkflowStep[] = [];
 
-    const result = generateWorklowDiagram({ trigger, steps });
+    const result = generateWorkflowDiagram({ trigger, steps });
 
     expect(result.nodes).toHaveLength(1);
     expect(result.edges).toHaveLength(0);
@@ -60,7 +60,7 @@ describe('generateWorklowDiagram', () => {
       },
     ];
 
-    const result = generateWorklowDiagram({ trigger, steps });
+    const result = generateWorkflowDiagram({ trigger, steps });
 
     expect(result.nodes).toHaveLength(steps.length + 1); // All steps + trigger
     expect(result.edges).toHaveLength(steps.length - 1 + 1); // Edges are one less than nodes + the edge from the trigger to the first node
@@ -111,7 +111,7 @@ describe('generateWorklowDiagram', () => {
       },
     ];
 
-    const result = generateWorklowDiagram({ trigger, steps });
+    const result = generateWorkflowDiagram({ trigger, steps });
 
     expect(result.edges[0].source).toEqual(result.nodes[0].id);
     expect(result.edges[0].target).toEqual(result.nodes[1].id);

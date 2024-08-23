@@ -7,7 +7,7 @@ import {
 import { MarkerType } from '@xyflow/react';
 import { v4 } from 'uuid';
 
-export const generateWorklowDiagram = ({
+export const generateWorkflowDiagram = ({
   trigger,
   steps,
 }: {
