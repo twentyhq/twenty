@@ -35,7 +35,7 @@ export const SettingsNavigationDrawerItems = () => {
   );
   const isFreeAccessEnabled = useIsFeatureEnabled('IS_FREE_ACCESS_ENABLED');
   const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
-  const isBillingEnabled = billing?.isBillingEnabled && !isFreeAccessEnabled;
+  const isBillingPageEnabled = billing?.isBillingEnabled && !isFreeAccessEnabled;
 
   return (
     <>
@@ -86,7 +86,7 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
         />
-        {isBillingEnabled && (
+        {isBillingPageEnabled && (
           <SettingsNavigationDrawerItem
             label="Billing"
             path={SettingsPath.Billing}

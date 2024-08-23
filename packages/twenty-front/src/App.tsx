@@ -327,12 +327,12 @@ export const App = () => {
     'IS_FUNCTION_SETTINGS_ENABLED',
   );
 
-  const isBillingEnabled = billing?.isBillingEnabled && !isFreeAccessEnabled;
+  const isBillingPageEnabled = billing?.isBillingEnabled && !isFreeAccessEnabled;
 
   return (
     <RouterProvider
       router={createRouter(
-        isBillingEnabled,
+        isBillingPageEnabled,
         isCRMMigrationEnabled,
         isServerlessFunctionSettingsEnabled,
       )}
