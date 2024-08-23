@@ -34,7 +34,7 @@ export const SettingsPageContainer = ({
 }: {
   children: ReactNode;
 }) => (
-  <StyledScrollWrapper>
+  <StyledScrollWrapper contextProviderName="settingsPageContainer">
     <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
   </StyledScrollWrapper>
 );

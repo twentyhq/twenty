@@ -6,6 +6,7 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
@@ -23,6 +24,7 @@ export class MessagingOngoingStaleCronJob {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(MessagingOngoingStaleCronJob.name)
@@ -34,12 +36,20 @@ export class MessagingOngoingStaleCronJob {
     });
 
     for (const activeWorkspace of activeWorkspaces) {
-      await this.messageQueueService.add<MessagingOngoingStaleJobData>(
-        MessagingOngoingStaleJob.name,
-        {
-          workspaceId: activeWorkspace.id,
-        },
-      );
+      try {
+        await this.messageQueueService.add<MessagingOngoingStaleJobData>(
+          MessagingOngoingStaleJob.name,
+          {
+            workspaceId: activeWorkspace.id,
+          },
+        );
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          user: {
+            workspaceId: activeWorkspace.id,
+          },
+        });
+      }
     }
   }
 }

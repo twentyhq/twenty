@@ -5,6 +5,8 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { MessagingMessagesImportCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-messages-import.cron.job';
 
+const MESSAGING_MESSAGES_IMPORT_CRON_PATTERN = '*/1 * * * *';
+
 @Command({
   name: 'cron:messaging:messages-import',
   description: 'Starts a cron job to fetch all messages from cache',
@@ -23,7 +25,7 @@ export class MessagingMessagesImportCronCommand extends CommandRunner {
       undefined,
       {
         repeat: {
-          every: 30000,
+          pattern: MESSAGING_MESSAGES_IMPORT_CRON_PATTERN,
         },
       },
     );

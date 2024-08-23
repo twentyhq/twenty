@@ -78,4 +78,9 @@ export interface WorkspaceFieldMetadataArgs {
    * Is deprecated field.
    */
   readonly isDeprecated?: boolean;
+
+  /**
+   * Is active field.
+   */
+  readonly isActive?: boolean;
 }

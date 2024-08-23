@@ -1,11 +1,13 @@
 import { renderHook } from '@testing-library/react';
 
-import { Providers } from '@/spreadsheet-import/components/Providers';
+import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
 import { mockedSpreadsheetOptions } from '@/spreadsheet-import/hooks/__tests__/useSpreadsheetImport.test';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <Providers values={mockedSpreadsheetOptions}>{children}</Providers>
+  <ReactSpreadsheetImportContextProvider values={mockedSpreadsheetOptions}>
+    {children}
+  </ReactSpreadsheetImportContextProvider>
 );
 
 describe('useSpreadsheetImportInternal', () => {

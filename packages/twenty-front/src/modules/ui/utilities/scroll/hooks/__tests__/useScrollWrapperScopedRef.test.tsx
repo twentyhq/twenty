@@ -12,7 +12,7 @@ jest.mock('react', () => {
 
 describe('useScrollWrapperScopedRef', () => {
   it('should return the scrollWrapperRef if available', () => {
-    const { result } = renderHook(() => useScrollWrapperScopedRef());
+    const { result } = renderHook(() => useScrollWrapperScopedRef('test'));
 
     expect(result.current).toBeDefined();
   });
