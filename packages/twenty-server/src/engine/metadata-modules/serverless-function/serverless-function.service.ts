@@ -6,6 +6,7 @@ import { FileUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
 import { ServerlessExecuteResult } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
+import { FileStorageExceptionCode } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
@@ -41,31 +42,42 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     id: string,
     version: string,
   ) {
-    const serverlessFunction = await this.serverlessFunctionRepository.findOne({
-      where: {
-        id,
-        workspaceId,
-      },
-    });
+    try {
+      const serverlessFunction =
+        await this.serverlessFunctionRepository.findOne({
+          where: {
+            id,
+            workspaceId,
+          },
+        });
 
-    if (!serverlessFunction) {
-      throw new ServerlessFunctionException(
-        `Function does not exist`,
-        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-      );
+      if (!serverlessFunction) {
+        throw new ServerlessFunctionException(
+          `Function does not exist`,
+          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        );
+      }
+
+      const folderPath = getServerlessFolder({
+        serverlessFunction,
+        version,
+      });
+
+      const fileStream = await this.fileStorageService.read({
+        folderPath,
+        filename: SOURCE_FILE_NAME,
+      });
+
+      return await readFileContent(fileStream);
+    } catch (error) {
+      if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
+        throw new ServerlessFunctionException(
+          `Function Version '${version}' does not exist`,
+          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        );
+      }
+      throw error;
     }
-
-    const folderPath = getServerlessFolder({
-      serverlessFunction,
-      version,
-    });
-
-    const fileStream = await this.fileStorageService.read({
-      folderPath,
-      filename: SOURCE_FILE_NAME,
-    });
-
-    return await readFileContent(fileStream);
   }
 
   async executeOneServerlessFunction(
