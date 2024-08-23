@@ -30,6 +30,7 @@
     "workerDirectory": "public"
   },
   "dependencies": {
+    "@xyflow/react": "^12.0.4",
     "transliteration": "^2.3.5"
   }
 }
