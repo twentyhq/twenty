@@ -12,10 +12,7 @@ import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessageImportErrorHandlerService,
-  MessageImportSyncStep,
-} from 'src/modules/messaging/message-import-manager/services/message-import-error-handling.service';
+import { MessageImportErrorHandlerService } from 'src/modules/messaging/message-import-manager/services/message-import-error-handling.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
@@ -96,22 +93,12 @@ export class MessagingMessagesImportJob {
     ) {
       return;
     }
-    try {
-      await this.messagingMessagesImportService.processMessageBatchImport(
-        messageChannel,
-        connectedAccount,
-        workspaceId,
-      );
-    } catch (error) {
-      await this.messageImportErrorHandlerService.handleError(
-        error,
-        MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
-        messageChannel,
-        workspaceId,
-      );
 
-      return;
-    }
+    await this.messagingMessagesImportService.processMessageBatchImport(
+      messageChannel,
+      connectedAccount,
+      workspaceId,
+    );
 
     console.timeEnd('MessagingMessagesImportJob time');
   }

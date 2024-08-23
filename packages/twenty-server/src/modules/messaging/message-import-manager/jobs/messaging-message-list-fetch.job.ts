@@ -12,10 +12,7 @@ import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessageImportErrorHandlerService,
-  MessageImportSyncStep,
-} from 'src/modules/messaging/message-import-manager/services/message-import-error-handling.service';
+import { MessageImportErrorHandlerService } from 'src/modules/messaging/message-import-manager/services/message-import-error-handling.service';
 import { MessagingFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-full-message-list-fetch.service';
 import { MessagingPartialMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-partial-message-list-fetch.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
@@ -107,22 +104,11 @@ export class MessagingMessageListFetchJob {
           messageChannelId: messageChannel.id,
         });
 
-        try {
-          await this.messagingPartialMessageListFetchService.processMessageListFetch(
-            messageChannel,
-            connectedAccount,
-            workspaceId,
-          );
-        } catch (error) {
-          await this.messageImportErrorHandlerService.handleError(
-            error,
-            MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
-            messageChannel,
-            workspaceId,
-          );
-
-          return;
-        }
+        await this.messagingPartialMessageListFetchService.processMessageListFetch(
+          messageChannel,
+          connectedAccount,
+          workspaceId,
+        );
 
         await this.messagingTelemetryService.track({
           eventName: 'partial_message_list_fetch.completed',
@@ -145,22 +131,11 @@ export class MessagingMessageListFetchJob {
           messageChannelId: messageChannel.id,
         });
 
-        try {
-          await this.messagingFullMessageListFetchService.processMessageListFetch(
-            messageChannel,
-            connectedAccount,
-            workspaceId,
-          );
-        } catch (error) {
-          await this.messageImportErrorHandlerService.handleError(
-            error,
-            MessageImportSyncStep.FULL_MESSAGE_LIST_FETCH,
-            messageChannel,
-            workspaceId,
-          );
-
-          return;
-        }
+        await this.messagingFullMessageListFetchService.processMessageListFetch(
+          messageChannel,
+          connectedAccount,
+          workspaceId,
+        );
 
         await this.messagingTelemetryService.track({
           eventName: 'full_message_list_fetch.completed',

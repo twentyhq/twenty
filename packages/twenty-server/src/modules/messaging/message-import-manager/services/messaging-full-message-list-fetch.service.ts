@@ -10,6 +10,10 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageImportErrorHandlerService,
+  MessageImportSyncStep,
+} from 'src/modules/messaging/message-import-manager/services/message-import-error-handling.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 
 @Injectable()
@@ -20,6 +24,7 @@ export class MessagingFullMessageListFetchService {
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
+    private readonly messageImportErrorHandlerService: MessageImportErrorHandlerService,
   ) {}
 
   public async processMessageListFetch(
@@ -27,70 +32,79 @@ export class MessagingFullMessageListFetchService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
-    await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
-      messageChannel.id,
-    );
-
-    const { messageExternalIds, nextSyncCursor } =
-      await this.messagingGetMessageListService.getFullMessageList(
-        connectedAccount,
+    try {
+      await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
+        messageChannel.id,
       );
 
-    const messageChannelMessageAssociationRepository =
-      await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-        'messageChannelMessageAssociation',
+      const { messageExternalIds, nextSyncCursor } =
+        await this.messagingGetMessageListService.getFullMessageList(
+          connectedAccount,
+        );
+
+      const messageChannelMessageAssociationRepository =
+        await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          'messageChannelMessageAssociation',
+        );
+
+      const existingMessageChannelMessageAssociations =
+        await messageChannelMessageAssociationRepository.find({
+          where: {
+            messageChannelId: messageChannel.id,
+            messageExternalId: Any(messageExternalIds),
+          },
+        });
+
+      const existingMessageChannelMessageAssociationsExternalIds =
+        existingMessageChannelMessageAssociations.map(
+          (messageChannelMessageAssociation) =>
+            messageChannelMessageAssociation.messageExternalId,
+        );
+
+      const messageIdsToImport = messageExternalIds.filter(
+        (messageExternalId) =>
+          !existingMessageChannelMessageAssociationsExternalIds.includes(
+            messageExternalId,
+          ),
       );
 
-    const existingMessageChannelMessageAssociations =
-      await messageChannelMessageAssociationRepository.find({
-        where: {
-          messageChannelId: messageChannel.id,
-          messageExternalId: Any(messageExternalIds),
+      if (messageIdsToImport.length) {
+        await this.cacheStorage.setAdd(
+          `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
+          messageIdsToImport,
+        );
+      }
+
+      const messageChannelRepository =
+        await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+          'messageChannel',
+        );
+
+      await messageChannelRepository.update(
+        {
+          id: messageChannel.id,
         },
-      });
-
-    const existingMessageChannelMessageAssociationsExternalIds =
-      existingMessageChannelMessageAssociations.map(
-        (messageChannelMessageAssociation) =>
-          messageChannelMessageAssociation.messageExternalId,
+        {
+          throttleFailureCount: 0,
+          syncStageStartedAt: null,
+          syncCursor:
+            !messageChannel.syncCursor ||
+            nextSyncCursor > messageChannel.syncCursor
+              ? nextSyncCursor
+              : messageChannel.syncCursor,
+        },
       );
 
-    const messageIdsToImport = messageExternalIds.filter(
-      (messageExternalId) =>
-        !existingMessageChannelMessageAssociationsExternalIds.includes(
-          messageExternalId,
-        ),
-    );
-
-    if (messageIdsToImport.length) {
-      await this.cacheStorage.setAdd(
-        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
-        messageIdsToImport,
+      await this.messageChannelSyncStatusService.scheduleMessagesImport(
+        messageChannel.id,
+      );
+    } catch (error) {
+      await this.messageImportErrorHandlerService.handleError(
+        error,
+        MessageImportSyncStep.FULL_MESSAGE_LIST_FETCH,
+        messageChannel,
+        workspaceId,
       );
     }
-
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
-
-    await messageChannelRepository.update(
-      {
-        id: messageChannel.id,
-      },
-      {
-        throttleFailureCount: 0,
-        syncStageStartedAt: null,
-        syncCursor:
-          !messageChannel.syncCursor ||
-          nextSyncCursor > messageChannel.syncCursor
-            ? nextSyncCursor
-            : messageChannel.syncCursor,
-      },
-    );
-
-    await this.messageChannelSyncStatusService.scheduleMessagesImport(
-      messageChannel.id,
-    );
   }
 }

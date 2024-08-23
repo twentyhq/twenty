@@ -12,7 +12,6 @@ import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { RefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/services/refresh-access-token.service';
 import { RefreshAccessTokenErrorCode } from 'src/modules/connected-account/refresh-access-token-manager/types/refresh-access-token-error.type';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
@@ -20,6 +19,10 @@ import {
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
+import {
+  MessageImportErrorHandlerService,
+  MessageImportSyncStep,
+} from 'src/modules/messaging/message-import-manager/services/message-import-error-handling.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { MessagingErrorCode } from 'src/modules/messaging/message-import-manager/types/messaging-error.type';
@@ -41,10 +44,9 @@ export class MessagingMessagesImportService {
     private readonly blocklistRepository: BlocklistRepository,
     private readonly emailAliasManagerService: EmailAliasManagerService,
     private readonly isFeatureEnabledService: IsFeatureEnabledService,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messagingGetMessagesService: MessagingGetMessagesService,
+    private readonly messageImportErrorHandlerService: MessageImportErrorHandlerService,
   ) {}
 
   async processMessageBatchImport(
@@ -52,89 +54,90 @@ export class MessagingMessagesImportService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ) {
-    if (
-      messageChannel.syncStage !==
-      MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
-    ) {
-      return;
-    }
-
-    await this.messagingTelemetryService.track({
-      eventName: 'messages_import.started',
-      workspaceId,
-      connectedAccountId: messageChannel.connectedAccountId,
-      messageChannelId: messageChannel.id,
-    });
-
-    this.logger.log(
-      `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} starting...`,
-    );
-
-    await this.messageChannelSyncStatusService.markAsMessagesImportOngoing(
-      messageChannel.id,
-    );
+    let messageIdsToFetch: string[] = [];
 
     try {
-      connectedAccount.accessToken =
-        await this.refreshAccessTokenService.refreshAndSaveAccessToken(
-          connectedAccount,
-          workspaceId,
-        );
-    } catch (error) {
-      switch (error.code) {
-        case (RefreshAccessTokenErrorCode.REFRESH_ACCESS_TOKEN_FAILED,
-        RefreshAccessTokenErrorCode.REFRESH_TOKEN_NOT_FOUND):
-          await this.messagingTelemetryService.track({
-            eventName: `refresh_token.error.insufficient_permissions`,
-            workspaceId,
-            connectedAccountId: messageChannel.connectedAccountId,
-            messageChannelId: messageChannel.id,
-            message: `${error.code}: ${error.reason}`,
-          });
-          throw {
-            code: MessagingErrorCode.INSUFFICIENT_PERMISSIONS,
-            message: error.message,
-          };
-        case RefreshAccessTokenErrorCode.PROVIDER_NOT_SUPPORTED:
-          throw {
-            code: MessagingErrorCode.PROVIDER_NOT_SUPPORTED,
-            message: error.message,
-          };
-        default:
-          throw error;
+      if (
+        messageChannel.syncStage !==
+        MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
+      ) {
+        return;
       }
-    }
 
-    if (
-      await this.isFeatureEnabledService.isFeatureEnabled(
-        FeatureFlagKey.IsMessagingAliasFetchingEnabled,
+      await this.messagingTelemetryService.track({
+        eventName: 'messages_import.started',
         workspaceId,
-      )
-    ) {
-      await this.emailAliasManagerService.refreshHandleAliases(
-        connectedAccount,
-        workspaceId,
+        connectedAccountId: messageChannel.connectedAccountId,
+        messageChannelId: messageChannel.id,
+      });
+
+      this.logger.log(
+        `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} starting...`,
       );
-    }
 
-    const messageIdsToFetch =
-      (await this.cacheStorage.setPop(
-        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
-        MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
-      )) ?? [];
-
-    if (!messageIdsToFetch?.length) {
-      await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+      await this.messageChannelSyncStatusService.markAsMessagesImportOngoing(
         messageChannel.id,
       );
 
-      return await this.trackMessageImportCompleted(
-        messageChannel,
-        workspaceId,
-      );
-    }
+      try {
+        connectedAccount.accessToken =
+          await this.refreshAccessTokenService.refreshAndSaveAccessToken(
+            connectedAccount,
+            workspaceId,
+          );
+      } catch (error) {
+        switch (error.code) {
+          case (RefreshAccessTokenErrorCode.REFRESH_ACCESS_TOKEN_FAILED,
+          RefreshAccessTokenErrorCode.REFRESH_TOKEN_NOT_FOUND):
+            await this.messagingTelemetryService.track({
+              eventName: `refresh_token.error.insufficient_permissions`,
+              workspaceId,
+              connectedAccountId: messageChannel.connectedAccountId,
+              messageChannelId: messageChannel.id,
+              message: `${error.code}: ${error.reason}`,
+            });
+            throw {
+              code: MessagingErrorCode.INSUFFICIENT_PERMISSIONS,
+              message: error.message,
+            };
+          case RefreshAccessTokenErrorCode.PROVIDER_NOT_SUPPORTED:
+            throw {
+              code: MessagingErrorCode.PROVIDER_NOT_SUPPORTED,
+              message: error.message,
+            };
+          default:
+            throw error;
+        }
+      }
 
-    try {
+      if (
+        await this.isFeatureEnabledService.isFeatureEnabled(
+          FeatureFlagKey.IsMessagingAliasFetchingEnabled,
+          workspaceId,
+        )
+      ) {
+        await this.emailAliasManagerService.refreshHandleAliases(
+          connectedAccount,
+          workspaceId,
+        );
+      }
+
+      messageIdsToFetch = await this.cacheStorage.setPop(
+        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
+        MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
+      );
+
+      if (!messageIdsToFetch?.length) {
+        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+          messageChannel.id,
+        );
+
+        return await this.trackMessageImportCompleted(
+          messageChannel,
+          workspaceId,
+        );
+      }
+
       const allMessages = await this.messagingGetMessagesService.getMessages(
         messageIdsToFetch,
         connectedAccount,
@@ -191,23 +194,17 @@ export class MessagingMessagesImportService {
         workspaceId,
       );
     } catch (error) {
-      this.logger.log(
-        `Messaging import for messageId ${
-          error.messageId
-        }, workspace ${workspaceId} and connected account ${
-          connectedAccount.id
-        } failed with error: ${JSON.stringify(error)}`,
-      );
-
       await this.cacheStorage.setAdd(
         `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
         messageIdsToFetch,
       );
 
-      if (error.code === undefined) {
-        // This should never happen as all errors must be known
-        throw error;
-      }
+      await this.messageImportErrorHandlerService.handleError(
+        error,
+        MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
+        messageChannel,
+        workspaceId,
+      );
 
       return await this.trackMessageImportCompleted(
         messageChannel,

@@ -10,6 +10,10 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageImportErrorHandlerService,
+  MessageImportSyncStep,
+} from 'src/modules/messaging/message-import-manager/services/message-import-error-handling.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 
 @Injectable()
@@ -24,6 +28,7 @@ export class MessagingPartialMessageListFetchService {
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly messageImportErrorHandlerService: MessageImportErrorHandlerService,
   ) {}
 
   public async processMessageListFetch(
@@ -31,81 +36,90 @@ export class MessagingPartialMessageListFetchService {
     connectedAccount: ConnectedAccountWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
-    await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
-      messageChannel.id,
-    );
-
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
-
-    await messageChannelRepository.update(
-      {
-        id: messageChannel.id,
-      },
-      {
-        throttleFailureCount: 0,
-        syncStageStartedAt: null,
-      },
-    );
-
-    const syncCursor = messageChannel.syncCursor;
-
-    const { messageExternalIds, messageExternalIdsToDelete, nextSyncCursor } =
-      await this.messagingGetMessageListService.getPartialMessageList(
-        connectedAccount,
-        syncCursor,
-      );
-
-    if (syncCursor === nextSyncCursor) {
-      this.logger.log(
-        `Partial message list import done with history ${syncCursor} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
-      );
-
-      await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+    try {
+      await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
         messageChannel.id,
       );
 
-      return;
-    }
+      const messageChannelRepository =
+        await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+          'messageChannel',
+        );
 
-    await this.cacheStorage.setAdd(
-      `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
-      messageExternalIds,
-    );
-
-    this.logger.log(
-      `Added ${messageExternalIds.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
-    );
-
-    const messageChannelMessageAssociationRepository =
-      await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-        'messageChannelMessageAssociation',
-      );
-
-    await messageChannelMessageAssociationRepository.delete({
-      messageChannelId: messageChannel.id,
-      messageExternalId: Any(messageExternalIdsToDelete),
-    });
-
-    this.logger.log(
-      `Deleted ${messageExternalIdsToDelete.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
-    );
-
-    if (!syncCursor || nextSyncCursor > syncCursor) {
       await messageChannelRepository.update(
         {
           id: messageChannel.id,
         },
         {
-          syncCursor: nextSyncCursor,
+          throttleFailureCount: 0,
+          syncStageStartedAt: null,
         },
       );
-    }
 
-    await this.messageChannelSyncStatusService.scheduleMessagesImport(
-      messageChannel.id,
-    );
+      const syncCursor = messageChannel.syncCursor;
+
+      const { messageExternalIds, messageExternalIdsToDelete, nextSyncCursor } =
+        await this.messagingGetMessageListService.getPartialMessageList(
+          connectedAccount,
+          syncCursor,
+        );
+
+      if (syncCursor === nextSyncCursor) {
+        this.logger.log(
+          `Partial message list import done with history ${syncCursor} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
+        );
+
+        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
+          messageChannel.id,
+        );
+
+        return;
+      }
+
+      await this.cacheStorage.setAdd(
+        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
+        messageExternalIds,
+      );
+
+      this.logger.log(
+        `Added ${messageExternalIds.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
+      );
+
+      const messageChannelMessageAssociationRepository =
+        await this.twentyORMManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          'messageChannelMessageAssociation',
+        );
+
+      await messageChannelMessageAssociationRepository.delete({
+        messageChannelId: messageChannel.id,
+        messageExternalId: Any(messageExternalIdsToDelete),
+      });
+
+      this.logger.log(
+        `Deleted ${messageExternalIdsToDelete.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
+      );
+
+      if (!syncCursor || nextSyncCursor > syncCursor) {
+        await messageChannelRepository.update(
+          {
+            id: messageChannel.id,
+          },
+          {
+            syncCursor: nextSyncCursor,
+          },
+        );
+      }
+
+      await this.messageChannelSyncStatusService.scheduleMessagesImport(
+        messageChannel.id,
+      );
+    } catch (error) {
+      await this.messageImportErrorHandlerService.handleError(
+        error,
+        MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
+        messageChannel,
+        workspaceId,
+      );
+    }
   }
 }
