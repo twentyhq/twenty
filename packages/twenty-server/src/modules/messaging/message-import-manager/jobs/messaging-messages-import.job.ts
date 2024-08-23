@@ -12,6 +12,10 @@ import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import {
+  MessageImportErrorHandlerService,
+  MessageImportSyncStep,
+} from 'src/modules/messaging/message-import-manager/services/message-import-error-handling.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
@@ -28,9 +32,10 @@ export class MessagingMessagesImportJob {
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    private readonly gmailFetchMessageContentFromCacheService: MessagingMessagesImportService,
+    private readonly messagingMessagesImportService: MessagingMessagesImportService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     private readonly twentyORMManager: TwentyORMManager,
+    private readonly messageImportErrorHandlerService: MessageImportErrorHandlerService,
   ) {}
 
   @Process(MessagingMessagesImportJob.name)
@@ -91,12 +96,22 @@ export class MessagingMessagesImportJob {
     ) {
       return;
     }
+    try {
+      await this.messagingMessagesImportService.processMessageBatchImport(
+        messageChannel,
+        connectedAccount,
+        workspaceId,
+      );
+    } catch (error) {
+      await this.messageImportErrorHandlerService.handleError(
+        error,
+        MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
+        messageChannel,
+        workspaceId,
+      );
 
-    await this.gmailFetchMessageContentFromCacheService.processMessageBatchImport(
-      messageChannel,
-      connectedAccount,
-      workspaceId,
-    );
+      return;
+    }
 
     console.timeEnd('MessagingMessagesImportJob time');
   }
