@@ -35,7 +35,8 @@ export const useDefaultHomePagePath = () => {
 
   const getFirstObjectInfo = () => {
     const [firstObjectMetadataItem] = alphaSortedActiveObjectMetadataItems;
-    const view = getViewMatchingObjectMetdataItemId(metadata.id);
+
+    const view = getViewMatchingObjectMetdataItemId(firstObjectMetadataItem.id);
     return { metadata: firstObjectMetadataItem, view };
   };
 
