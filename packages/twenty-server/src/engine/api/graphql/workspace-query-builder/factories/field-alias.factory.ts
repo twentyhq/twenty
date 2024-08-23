@@ -2,13 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { createCompositeFieldKey } from 'src/engine/api/graphql/workspace-query-builder/utils/composite-field-metadata.util';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   computeColumnName,
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 @Injectable()
 export class FieldAliasFactory {
@@ -23,7 +23,7 @@ export class FieldAliasFactory {
     }
 
     // If it's a composite field, we need to get the definition
-    const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+    const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
     if (!compositeType) {
       this.logger.error(
