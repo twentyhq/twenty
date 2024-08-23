@@ -10,19 +10,19 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
+import { RefreshAccessTokenExceptionCode } from 'src/modules/connected-account/refresh-access-token-manager/exceptions/refresh-access-token.exception';
 import { RefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/services/refresh-access-token.service';
-import { RefreshAccessTokenErrorCode } from 'src/modules/connected-account/refresh-access-token-manager/types/refresh-access-token-error.type';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
-    MessageChannelSyncStage,
-    MessageChannelWorkspaceEntity,
+  MessageChannelSyncStage,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
 import { MessagingExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/messaging.exception';
 import {
-    MessageImportExceptionHandlerService,
-    MessageImportSyncStep,
+  MessageImportExceptionHandlerService,
+  MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
@@ -87,8 +87,8 @@ export class MessagingMessagesImportService {
           );
       } catch (error) {
         switch (error.code) {
-          case (RefreshAccessTokenErrorCode.REFRESH_ACCESS_TOKEN_FAILED,
-          RefreshAccessTokenErrorCode.REFRESH_TOKEN_NOT_FOUND):
+          case (RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
+          RefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND):
             await this.messagingTelemetryService.track({
               eventName: `refresh_token.error.insufficient_permissions`,
               workspaceId,
@@ -100,7 +100,7 @@ export class MessagingMessagesImportService {
               code: MessagingExceptionCode.INSUFFICIENT_PERMISSIONS,
               message: error.message,
             };
-          case RefreshAccessTokenErrorCode.PROVIDER_NOT_SUPPORTED:
+          case RefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
             throw {
               code: MessagingExceptionCode.PROVIDER_NOT_SUPPORTED,
               message: error.message,
