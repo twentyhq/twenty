@@ -5,6 +5,7 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import {
   MessageChannelSyncStage,
@@ -175,9 +176,28 @@ export class MessageChannelSyncStatusService {
       {
         syncStage: MessageChannelSyncStage.FAILED,
         syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-        connectedAccount: {
-          authFailedAt: new Date(),
-        },
+      },
+    );
+
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
+      );
+
+    const messageChannel = await messageChannelRepository.findOne({
+      where: { id: messageChannelId },
+    });
+
+    if (!messageChannel) {
+      return;
+    }
+
+    const connectedAccountId = messageChannel.connectedAccountId;
+
+    await connectedAccountRepository.update(
+      { id: connectedAccountId },
+      {
+        authFailedAt: new Date(),
       },
     );
 
