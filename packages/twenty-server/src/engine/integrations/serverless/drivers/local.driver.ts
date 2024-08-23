@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { promises as fs } from 'fs';
@@ -137,7 +138,7 @@ export class LocalDriver
           });
         }
         child.kill();
-        fs.unlink(tmpFilePath);
+        fs.unlink(tmpFilePath).catch(console.error);
       });
 
       child.stderr?.on('data', (data) => {
@@ -169,19 +170,19 @@ export class LocalDriver
           },
         });
         child.kill();
-        fs.unlink(tmpFilePath);
+        fs.unlink(tmpFilePath).catch(console.error);
       });
 
       child.on('error', (error) => {
         reject(error);
         child.kill();
-        fs.unlink(tmpFilePath);
+        fs.unlink(tmpFilePath).catch(console.error);
       });
 
       child.on('exit', (code) => {
         if (code && code !== 0) {
           reject(new Error(`Child process exited with code ${code}`));
-          fs.unlink(tmpFilePath);
+          fs.unlink(tmpFilePath).catch(console.error);
         }
       });
 
