@@ -22,6 +22,7 @@ import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { useDebouncedCallback } from 'use-debounce';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
+import { useState } from 'react';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -32,6 +33,7 @@ export const SettingsServerlessFunctionDetail = () => {
     TAB_LIST_COMPONENT_ID,
   );
   const activeTabId = useRecoilValue(activeTabIdState);
+  const [isCodeValid, setIsCodeValid] = useState(true);
   const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const { publishOneServerlessFunction } = usePublishOneServerlessFunction();
@@ -80,7 +82,7 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const resetDisabled =
     !isDefined(latestVersionCode) || latestVersionCode === formValues.code;
-  const publishDisabled = latestVersionCode === formValues.code;
+  const publishDisabled = !isCodeValid || latestVersionCode === formValues.code;
 
   const handleReset = async () => {
     try {
@@ -175,6 +177,7 @@ export const SettingsServerlessFunctionDetail = () => {
             resetDisabled={resetDisabled}
             publishDisabled={publishDisabled}
             onChange={onChange}
+            setIsCodeValid={setIsCodeValid}
           />
         );
       case 'test':

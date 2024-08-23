@@ -19,6 +19,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   resetDisabled,
   publishDisabled,
   onChange,
+  setIsCodeValid,
 }: {
   formValues: ServerlessFunctionFormValues;
   handleExecute: () => void;
@@ -27,6 +28,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   resetDisabled: boolean;
   publishDisabled: boolean;
   onChange: (key: string) => (value: string) => void;
+  setIsCodeValid: (isCodeValid: boolean) => void;
 }) => {
   const TestButton = (
     <Button
@@ -84,6 +86,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
       <CodeEditor
         value={formValues.code}
         onChange={onChange('code')}
+        setIsCodeValid={setIsCodeValid}
         header={Header}
       />
     </Section>
