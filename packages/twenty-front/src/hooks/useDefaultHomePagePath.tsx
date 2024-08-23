@@ -34,10 +34,9 @@ export const useDefaultHomePagePath = () => {
   };
 
   const getFirstObjectInfo = () => {
-    const [metadata] = alphaSortedActiveObjectMetadataItems;
-
+    const [firstObjectMetadataItem] = alphaSortedActiveObjectMetadataItems;
     const view = getViewMatchingObjectMetdataItemId(metadata.id);
-    return { metadata, view };
+    return { metadata: firstObjectMetadataItem, view };
   };
 
   const getViewMatchingObjectMetdataItemId = (objectMetadataId: string) =>
