@@ -1,14 +1,12 @@
-import { useRecoilValue } from 'recoil';
-
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { AppPath } from '@/types/AppPath';
 import { isNull, isUndefined } from '@sniptt/guards';
+import { useCallback, useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
 export const useDefaultHomePagePath = () => {
@@ -18,56 +16,66 @@ export const useDefaultHomePagePath = () => {
   const { records: views } = usePrefetchedData(PrefetchKey.AllViews);
   const { lastVisitedObjectMetadataItemId } =
     useLastVisitedObjectMetadataItem();
-  let objectMetadata: {
-    view?: ObjectRecord;
-    metadata: ObjectMetadataItem;
-  };
 
-  if (!isDefined(currentUser)) {
-    return { defaultHomePagePath: AppPath.SignInUp };
-  }
+  const getActiveObjectMetadataItemMatchingId = useCallback(
+    (objectMetadataId: string) => {
+      return activeObjectMetadataItems.find(
+        (item) => item.id === objectMetadataId,
+      );
+    },
+    [activeObjectMetadataItems],
+  );
 
-  const getActiveObjectMetadataItemMatchingId = (objectMetadataId: string) => {
-    return activeObjectMetadataItems.find(
-      (item) => item.id === objectMetadataId,
-    );
-  };
+  const getViewMatchingObjectMetdataItemId = useCallback(
+    (objectMetadataId: string) =>
+      views.find((view: any) => view?.objectMetadataId === objectMetadataId),
+    [views],
+  );
 
-  const getFirstObjectInfo = () => {
+  const getFirstObjectInfo = useCallback(() => {
     const [firstObjectMetadataItem] = alphaSortedActiveObjectMetadataItems;
-
     const view = getViewMatchingObjectMetdataItemId(firstObjectMetadataItem.id);
-    return { metadata: firstObjectMetadataItem, view };
-  };
+    return { objectMetadataItem: firstObjectMetadataItem, view };
+  }, [
+    alphaSortedActiveObjectMetadataItems,
+    getViewMatchingObjectMetdataItemId,
+  ]);
 
-  const getViewMatchingObjectMetdataItemId = (objectMetadataId: string) =>
-    views.find((view: any) => view?.objectMetadataId === objectMetadataId);
-
-  // last visited page exist in localstorage
-  if (!isNull(lastVisitedObjectMetadataItemId)) {
-    const lastVisitedObjectMetadataItem = getActiveObjectMetadataItemMatchingId(
-      lastVisitedObjectMetadataItemId,
-    );
-
-    // and last visited page is still active
-    if (!isUndefined(lastVisitedObjectMetadataItem)) {
-      objectMetadata = {
-        view: getViewMatchingObjectMetdataItemId(
-          lastVisitedObjectMetadataItemId,
-        ),
-        metadata: lastVisitedObjectMetadataItem,
-      };
-    } else {
-      // if not fallback to alphabetically first
-      objectMetadata = getFirstObjectInfo();
+  const defaultHomePagePath = useMemo(() => {
+    if (!isDefined(currentUser)) {
+      return AppPath.SignInUp;
     }
-  } else {
-    objectMetadata = getFirstObjectInfo();
-  }
 
-  const { view, metadata } = objectMetadata;
+    const { view, objectMetadataItem } = !isNull(
+      lastVisitedObjectMetadataItemId,
+    ) // last visited page exist in localstorage
+      ? (() => {
+          const lastVisitedObjectMetadataItem =
+            getActiveObjectMetadataItemMatchingId(
+              lastVisitedObjectMetadataItemId,
+            );
+          // and last visited page is still active
+          if (!isUndefined(lastVisitedObjectMetadataItem)) {
+            return {
+              view: getViewMatchingObjectMetdataItemId(
+                lastVisitedObjectMetadataItemId,
+              ),
+              objectMetadataItem: lastVisitedObjectMetadataItem,
+            };
+          }
+          // if not fallback to alphabetically first
+          return getFirstObjectInfo();
+        })()
+      : getFirstObjectInfo();
 
-  return {
-    defaultHomePagePath: `/objects/${metadata.namePlural}${view ? `?view=${view?.id}` : ''}`,
-  };
+    return `/objects/${objectMetadataItem.namePlural}${view ? `?view=${view.id}` : ''}`;
+  }, [
+    currentUser,
+    lastVisitedObjectMetadataItemId,
+    getFirstObjectInfo,
+    getActiveObjectMetadataItemMatchingId,
+    getViewMatchingObjectMetdataItemId,
+  ]);
+
+  return { defaultHomePagePath };
 };
