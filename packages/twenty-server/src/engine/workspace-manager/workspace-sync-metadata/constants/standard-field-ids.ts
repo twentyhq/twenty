@@ -425,6 +425,7 @@ export const WORKFLOW_VERSION_STANDARD_FIELD_IDS = {
   workflow: '20202020-afa3-46c3-91b0-0631ca6aa1c8',
   trigger: '20202020-4eae-43e7-86e0-212b41a30b48',
   runs: '20202020-1d08-46df-901a-85045f18099a',
+  steps: '20202020-5988-4a64-b94a-1f9b7b989039',
 };
 
 export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
