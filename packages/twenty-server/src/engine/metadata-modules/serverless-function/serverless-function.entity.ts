@@ -17,7 +17,6 @@ export enum ServerlessFunctionRuntime {
 }
 
 @Entity('serverlessFunction')
-@Unique('IndexOnNameAndWorkspaceIdUnique', ['name', 'workspaceId'])
 export class ServerlessFunctionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

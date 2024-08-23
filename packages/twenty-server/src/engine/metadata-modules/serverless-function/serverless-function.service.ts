@@ -240,18 +240,6 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     code: FileUpload | string,
     workspaceId: string,
   ) {
-    const existingServerlessFunction =
-      await this.serverlessFunctionRepository.findOne({
-        where: { name: serverlessFunctionInput.name, workspaceId },
-      });
-
-    if (existingServerlessFunction) {
-      throw new ServerlessFunctionException(
-        `Function already exists`,
-        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_ALREADY_EXIST,
-      );
-    }
-
     let typescriptCode: string;
 
     if (typeof code === 'string') {

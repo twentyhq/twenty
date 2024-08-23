@@ -42,7 +42,7 @@ describe('useServerlessFunctionUpdateFormState', () => {
       },
     );
 
-    const [formValues] = result.current;
+    const { formValues } = result.current;
 
     expect(formValues).toEqual({ name: '', description: '', code: '' });
   });
