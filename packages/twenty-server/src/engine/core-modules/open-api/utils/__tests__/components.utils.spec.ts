@@ -7,9 +7,11 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 describe('computeSchemaComponents', () => {
-  it('should test all field types', () => {
+  it('should test all non-deprecated field types', () => {
     expect(fields.map((field) => field.type)).toEqual(
-      Object.keys(FieldMetadataType),
+      Object.keys(FieldMetadataType).filter(
+        (key) => key !== FieldMetadataType.LINK,
+      ),
     );
   });
   it('should compute schema components', () => {
