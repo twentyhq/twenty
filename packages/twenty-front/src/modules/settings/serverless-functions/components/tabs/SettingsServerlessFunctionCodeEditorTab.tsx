@@ -16,7 +16,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   handleExecute,
   handlePublish,
   handleReset,
-                                                          resetDisabled,
+  resetDisabled,
   publishDisabled,
   onChange,
 }: {
