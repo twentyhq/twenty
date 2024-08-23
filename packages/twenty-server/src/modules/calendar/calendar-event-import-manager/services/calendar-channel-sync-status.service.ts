@@ -10,6 +10,7 @@ import {
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 
 @Injectable()
@@ -159,10 +160,29 @@ export class CalendarChannelSyncStatusService {
     await calendarChannelRepository.update(calendarChannelId, {
       syncStatus: CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
       syncStage: CalendarChannelSyncStage.FAILED,
-      connectedAccount: {
+    });
+
+    const connectedAccountRepository =
+      await this.twentyORMManager.getRepository<ConnectedAccountWorkspaceEntity>(
+        'connectedAccount',
+      );
+
+    const calendarChannel = await calendarChannelRepository.findOne({
+      where: { id: calendarChannelId },
+    });
+
+    if (!calendarChannel) {
+      return;
+    }
+
+    const connectedAccountId = calendarChannel.connectedAccountId;
+
+    await connectedAccountRepository.update(
+      { id: connectedAccountId },
+      {
         authFailedAt: new Date(),
       },
-    });
+    );
 
     await this.addToAccountsToReconnect(calendarChannelId, workspaceId);
   }
