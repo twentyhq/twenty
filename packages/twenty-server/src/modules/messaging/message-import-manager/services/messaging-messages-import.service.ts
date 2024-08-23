@@ -11,6 +11,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { RefreshAccessTokenService } from 'src/modules/connected-account/refresh-access-token-manager/services/refresh-access-token.service';
+import { RefreshAccessTokenErrorCode } from 'src/modules/connected-account/refresh-access-token-manager/types/refresh-access-token-error.type';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
@@ -21,6 +22,7 @@ import {
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
+import { MessagingErrorCode } from 'src/modules/messaging/message-import-manager/types/messaging-error.type';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
@@ -79,25 +81,28 @@ export class MessagingMessagesImportService {
           workspaceId,
         );
     } catch (error) {
-      await this.messagingTelemetryService.track({
-        eventName: `refresh_token.error.insufficient_permissions`,
-        workspaceId,
-        connectedAccountId: messageChannel.connectedAccountId,
-        messageChannelId: messageChannel.id,
-        message: `${error.code}: ${error.reason}`,
-      });
-
-      await this.messageChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
-        messageChannel.id,
-        workspaceId,
-      );
-
-      await this.connectedAccountRepository.updateAuthFailedAt(
-        messageChannel.connectedAccountId,
-        workspaceId,
-      );
-
-      return;
+      switch (error.code) {
+        case (RefreshAccessTokenErrorCode.REFRESH_ACCESS_TOKEN_FAILED,
+        RefreshAccessTokenErrorCode.REFRESH_TOKEN_NOT_FOUND):
+          await this.messagingTelemetryService.track({
+            eventName: `refresh_token.error.insufficient_permissions`,
+            workspaceId,
+            connectedAccountId: messageChannel.connectedAccountId,
+            messageChannelId: messageChannel.id,
+            message: `${error.code}: ${error.reason}`,
+          });
+          throw {
+            code: MessagingErrorCode.INSUFFICIENT_PERMISSIONS,
+            message: error.message,
+          };
+        case RefreshAccessTokenErrorCode.PROVIDER_NOT_SUPPORTED:
+          throw {
+            code: MessagingErrorCode.PROVIDER_NOT_SUPPORTED,
+            message: error.message,
+          };
+        default:
+          throw error;
+      }
     }
 
     if (

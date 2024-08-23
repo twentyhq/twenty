@@ -28,9 +28,7 @@ export class MessageChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
@@ -44,9 +42,7 @@ export class MessageChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
       },
@@ -60,9 +56,7 @@ export class MessageChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
       },
@@ -83,9 +77,7 @@ export class MessageChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncCursor: '',
         syncStageStartedAt: null,
@@ -103,9 +95,7 @@ export class MessageChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
         syncStatus: MessageChannelSyncStatus.ONGOING,
@@ -122,9 +112,7 @@ export class MessageChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStatus: MessageChannelSyncStatus.ACTIVE,
       },
@@ -140,9 +128,7 @@ export class MessageChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
       },
@@ -163,9 +149,7 @@ export class MessageChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.FAILED,
         syncStatus: MessageChannelSyncStatus.FAILED_UNKNOWN,
@@ -187,12 +171,13 @@ export class MessageChannelSyncStatusService {
       );
 
     await messageChannelRepository.update(
-      {
-        id: messageChannelId,
-      },
+      { id: messageChannelId },
       {
         syncStage: MessageChannelSyncStage.FAILED,
         syncStatus: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+        connectedAccount: {
+          authFailedAt: new Date(),
+        },
       },
     );
 
@@ -209,9 +194,7 @@ export class MessageChannelSyncStatusService {
       );
 
     const messageChannel = await messageChannelRepository.findOne({
-      where: {
-        id: messageChannelId,
-      },
+      where: { id: messageChannelId },
       relations: {
         connectedAccount: {
           accountOwner: true,

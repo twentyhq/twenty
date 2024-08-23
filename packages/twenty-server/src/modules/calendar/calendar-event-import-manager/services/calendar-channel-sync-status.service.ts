@@ -159,6 +159,9 @@ export class CalendarChannelSyncStatusService {
     await calendarChannelRepository.update(calendarChannelId, {
       syncStatus: CalendarChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
       syncStage: CalendarChannelSyncStage.FAILED,
+      connectedAccount: {
+        authFailedAt: new Date(),
+      },
     });
 
     await this.addToAccountsToReconnect(calendarChannelId, workspaceId);

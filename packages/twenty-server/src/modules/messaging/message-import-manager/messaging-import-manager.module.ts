@@ -25,6 +25,7 @@ import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-impo
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
 import { MessagingOngoingStaleJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-ongoing-stale.job';
 import { MessagingMessageImportManagerMessageChannelListener } from 'src/modules/messaging/message-import-manager/listeners/messaging-import-manager-message-channel.listener';
+import { MessageImportErrorHandlerService } from 'src/modules/messaging/message-import-manager/services/message-import-error-handling.service';
 import { MessagingFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/services/messaging-full-message-list-fetch.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
@@ -71,6 +72,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingSaveMessagesAndEnqueueContactCreationService,
     MessagingGetMessageListService,
     MessagingGetMessagesService,
+    MessageImportErrorHandlerService,
   ],
   exports: [],
 })
