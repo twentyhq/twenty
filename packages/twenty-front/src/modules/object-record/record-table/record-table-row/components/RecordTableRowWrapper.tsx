@@ -10,7 +10,7 @@ import { RecordTableContext } from '@/object-record/record-table/contexts/Record
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
-import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 
 export const RecordTableRowWrapper = ({
   recordId,
@@ -31,10 +31,12 @@ export const RecordTableRowWrapper = ({
   const { isRowSelectedFamilyState } = useRecordTableStates();
   const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
 
-  const scrollWrapperRef = useContext(ScrollWrapperContext);
+  const scrollWrapperRef = useContext(
+    RecordTableWithWrappersScrollWrapperContext,
+  );
 
   const { ref: elementRef, inView } = useInView({
-    root: scrollWrapperRef.current?.querySelector(
+    root: scrollWrapperRef.ref.current?.querySelector(
       '[data-overlayscrollbars-viewport="scrollbarHidden"]',
     ),
     rootMargin: '1000px',

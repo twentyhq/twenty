@@ -90,6 +90,7 @@ export {
   IconFocusCentered,
   IconForbid,
   IconFunction,
+  IconGitCommit,
   IconGripVertical,
   IconH1,
   IconH2,

@@ -1,13 +1,13 @@
+import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
-import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { GRAY_SCALE } from 'twenty-ui';
 
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 
 type RecordTableBodyFetchMoreLoaderProps = {
   objectNameSingular: string;
@@ -40,12 +40,14 @@ export const RecordTableBodyFetchMoreLoader = ({
     [setRecordTableLastRowVisible],
   );
 
-  const scrollWrapperRef = useContext(ScrollWrapperContext);
+  const scrollWrapperRef = useContext(
+    RecordTableWithWrappersScrollWrapperContext,
+  );
 
   const { ref: tbodyRef } = useInView({
     onChange: onLastRowVisible,
     rootMargin: '1000px',
-    root: scrollWrapperRef.current?.querySelector(
+    root: scrollWrapperRef?.ref.current?.querySelector(
       '[data-overlayscrollbars-viewport="scrollbarHidden"]',
     ),
   });

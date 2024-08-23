@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
 import { AISQLQueryModule } from 'src/engine/core-modules/ai-sql-query/ai-sql-query.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
@@ -11,7 +12,7 @@ import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timel
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
 import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
-import { WorkflowTriggerCoreModule } from 'src/engine/core-modules/workflow/core-workflow-trigger.module';
+import { WorkflowTriggerApiModule } from 'src/engine/core-modules/workflow/workflow-trigger-api.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 
@@ -36,8 +37,9 @@ import { FileModule } from './file/file.module';
     WorkspaceModule,
     AISQLQueryModule,
     PostgresCredentialsModule,
-    WorkflowTriggerCoreModule,
+    WorkflowTriggerApiModule,
     WorkspaceEventEmitterModule,
+    ActorModule,
   ],
   exports: [
     AnalyticsModule,

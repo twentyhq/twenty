@@ -187,6 +187,42 @@ export class S3Driver implements StorageDriver {
     }
   }
 
+  async copy(params: {
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
+  }): Promise<void> {
+    const fromKey = `${params.from.folderPath}/${params.from.filename || ''}`;
+    const toKey = `${params.to.folderPath}/${params.to.filename || ''}`;
+
+    try {
+      // Check if the source file exists
+      await this.s3Client.send(
+        new HeadObjectCommand({
+          Bucket: this.bucketName,
+          Key: fromKey,
+        }),
+      );
+
+      // Copy the object to the new location
+      await this.s3Client.send(
+        new CopyObjectCommand({
+          CopySource: `${this.bucketName}/${fromKey}`,
+          Bucket: this.bucketName,
+          Key: toKey,
+        }),
+      );
+    } catch (error) {
+      if (error.name === 'NotFound') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+      // For other errors, throw the original error
+      throw error;
+    }
+  }
+
   async checkBucketExists(args: HeadBucketCommandInput) {
     try {
       await this.s3Client.headBucket(args);

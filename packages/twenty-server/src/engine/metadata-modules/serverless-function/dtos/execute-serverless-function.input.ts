@@ -1,11 +1,11 @@
-import { ArgsType, Field } from '@nestjs/graphql';
+import { ArgsType, Field, InputType } from '@nestjs/graphql';
 
 import { IsNotEmpty, IsObject, IsOptional, IsUUID } from 'class-validator';
 import graphqlTypeJson from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@ArgsType()
+@InputType()
 export class ExecuteServerlessFunctionInput {
   @Field(() => UUIDScalarType, {
     description: 'Id of the serverless function to execute',
@@ -21,4 +21,11 @@ export class ExecuteServerlessFunctionInput {
   @IsObject()
   @IsOptional()
   payload?: JSON;
+
+  @Field(() => String, {
+    nullable: false,
+    description: 'Version of the serverless function to execute',
+    defaultValue: 'latest',
+  })
+  version: string;
 }
