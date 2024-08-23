@@ -2,8 +2,8 @@ import { GaxiosError } from 'gaxios';
 
 import {
   CalendarEventError,
-  CalendarEventErrorCode,
-} from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-error.type';
+  CalendarExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar.exception';
 
 export const parseGaxiosError = (error: GaxiosError): CalendarEventError => {
   const { code } = error;
@@ -15,13 +15,13 @@ export const parseGaxiosError = (error: GaxiosError): CalendarEventError => {
     case 'ETIMEDOUT':
     case 'ERR_NETWORK':
       return {
-        code: CalendarEventErrorCode.TEMPORARY_ERROR,
+        code: CalendarExceptionCode.TEMPORARY_ERROR,
         message: error.message,
       };
 
     default:
       return {
-        code: CalendarEventErrorCode.UNKNOWN,
+        code: CalendarExceptionCode.UNKNOWN,
         message: error.message,
       };
   }
