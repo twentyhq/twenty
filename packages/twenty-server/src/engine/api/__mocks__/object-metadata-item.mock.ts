@@ -2,7 +2,7 @@ import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/com
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-export const FIELD_LINKS_MOCK_NAME = 'fieldLink';
+export const FIELD_LINKS_MOCK_NAME = 'fieldLinks';
 export const FIELD_CURRENCY_MOCK_NAME = 'fieldCurrency';
 export const FIELD_ADDRESS_MOCK_NAME = 'fieldAddress';
 export const FIELD_ACTOR_MOCK_NAME = 'fieldActor';

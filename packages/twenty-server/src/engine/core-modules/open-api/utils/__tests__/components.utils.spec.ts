@@ -55,13 +55,6 @@ describe('computeSchemaComponents', () => {
           fieldNumeric: {
             type: 'number',
           },
-          fieldLink: {
-            properties: {
-              label: { type: 'string' },
-              url: { type: 'string' },
-            },
-            type: 'object',
-          },
           fieldLinks: {
             properties: {
               primaryLinkLabel: { type: 'string' },
