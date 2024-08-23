@@ -111,7 +111,7 @@ export class CalendarEventParticipantService {
 
     await this.matchParticipantService.matchParticipants(
       savedParticipants,
-      'messageParticipant',
+      'calendarEventParticipant',
       transactionManager,
     );
   }

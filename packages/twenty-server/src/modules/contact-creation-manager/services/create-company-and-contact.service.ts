@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chunk from 'lodash.chunk';
@@ -11,6 +10,7 @@ import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/com
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CONTACTS_CREATION_BATCH_SIZE } from 'src/modules/contact-creation-manager/constants/contacts-creation-batch-size.constant';
@@ -32,7 +32,7 @@ export class CreateCompanyAndContactService {
     private readonly createCompaniesService: CreateCompanyService,
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberRepository: WorkspaceMemberRepository,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -191,18 +191,21 @@ export class CreateCompanyAndContactService {
         source,
       );
 
-      for (const createdPerson of createdPeople) {
-        this.eventEmitter.emit('person.created', {
-          name: 'person.created',
-          workspaceId,
-          // FixMe: TypeORM typing issue... id is always returned when using save
-          recordId: createdPerson.id as string,
-          objectMetadata,
-          properties: {
-            after: createdPerson,
-          },
-        } satisfies ObjectRecordCreateEvent<any>);
-      }
+      this.workspaceEventEmitter.emit(
+        'person.created',
+        createdPeople.map(
+          (createdPerson) =>
+            ({
+              // FixMe: TypeORM typing issue... id is always returned when using save
+              recordId: createdPerson.id as string,
+              objectMetadata,
+              properties: {
+                after: createdPerson,
+              },
+            }) satisfies ObjectRecordCreateEvent<any>,
+        ),
+        workspaceId,
+      );
     }
   }
 }

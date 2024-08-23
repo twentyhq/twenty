@@ -6506,14 +6506,14 @@ __metadata:
 
 "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
   version: 2.1.0
-  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch::version=2.1.0&hash=194cbb&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch::version=2.1.0&hash=96a960&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
   peerDependencies:
     "@nestjs/common": ^10.0.0
     "@nestjs/core": ^10.0.0
     "@nestjs/graphql": ^12.0.0
     graphql: ^15.0.0 || ^16.0.0
     graphql-yoga: ^4.0.4
-  checksum: 10c0/f0529bfae125d22569dd5dbd7d06ac8e70315d720df5a315a644d9acf2d81d7d0d845967336b358dd11b29bab9920f38eff4c9ee774dd838aefc78dba6c91546
+  checksum: 10c0/d7a9f1ff65642cf64e942ef1caf2596b0b2866118bd95200fc2112902e71d4aeb00fe436d5d253f2415f51cf79c48417f3859fae8ed4beaf2ac7e52d49eef3a1
   languageName: node
   linkType: hard
 
