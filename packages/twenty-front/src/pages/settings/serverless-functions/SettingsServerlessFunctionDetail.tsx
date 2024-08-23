@@ -23,6 +23,7 @@ import { isDefined } from '~/utils/isDefined';
 import { useDebouncedCallback } from 'use-debounce';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
 import { useState } from 'react';
+import isEmpty from 'lodash.isempty';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -37,7 +38,7 @@ export const SettingsServerlessFunctionDetail = () => {
   const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const { publishOneServerlessFunction } = usePublishOneServerlessFunction();
-  const [formValues, setFormValues] =
+  const { formValues, setFormValues, loading } =
     useServerlessFunctionUpdateFormState(serverlessFunctionId);
   const { code: latestVersionCode } = useGetOneServerlessFunctionSourceCode({
     id: serverlessFunctionId,
@@ -52,6 +53,9 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const save = async () => {
     try {
+      if (isEmpty(formValues.name)) {
+        return;
+      }
       await updateOneServerlessFunction({
         id: serverlessFunctionId,
         name: formValues.name,
@@ -201,7 +205,7 @@ export const SettingsServerlessFunctionDetail = () => {
   };
 
   return (
-    formValues.name && (
+    !loading && (
       <SubMenuTopBarContainer
         Icon={IconFunction}
         title={
