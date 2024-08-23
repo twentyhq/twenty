@@ -327,7 +327,8 @@ export const App = () => {
     'IS_FUNCTION_SETTINGS_ENABLED',
   );
 
-  const isBillingPageEnabled = billing?.isBillingEnabled && !isFreeAccessEnabled;
+  const isBillingPageEnabled =
+    billing?.isBillingEnabled && !isFreeAccessEnabled;
 
   return (
     <RouterProvider
