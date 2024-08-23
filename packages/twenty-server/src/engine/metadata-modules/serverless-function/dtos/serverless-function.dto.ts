@@ -62,7 +62,7 @@ export class ServerlessFunctionDTO {
   @Field()
   runtime: string;
 
-  @IsNumber()
+  @IsString()
   @Field({ nullable: true })
   latestVersion: string;
 
