@@ -65,18 +65,22 @@ export class BillingPortalWorkspaceService {
     return session.url;
   }
 
-  async computeBillingPortalSessionURL(
+  async computeBillingPortalSessionURLOrThrow(
     workspaceId: string,
     returnUrlPath?: string,
   ) {
-    const currentSubscriptionItem =
+    const currentSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         {
           workspaceId,
         },
       );
 
-    const stripeCustomerId = currentSubscriptionItem.stripeCustomerId;
+    if (!currentSubscription) {
+      throw new Error('Error: missing subscription');
+    }
+
+    const stripeCustomerId = currentSubscription.stripeCustomerId;
 
     if (!stripeCustomerId) {
       throw new Error('Error: missing stripeCustomerId');

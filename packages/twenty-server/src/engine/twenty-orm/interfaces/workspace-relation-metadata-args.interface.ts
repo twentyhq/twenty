@@ -81,4 +81,9 @@ export interface WorkspaceRelationMetadataArgs {
    * Field gate.
    */
   readonly gate?: Gate;
+
+  /**
+   * Is active field.
+   */
+  readonly isActive?: boolean;
 }

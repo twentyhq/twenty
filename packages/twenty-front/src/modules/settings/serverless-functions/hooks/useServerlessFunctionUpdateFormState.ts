@@ -1,7 +1,7 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
-import { isDefined } from '~/utils/isDefined';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
+import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
+import { FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -28,30 +28,21 @@ export const useServerlessFunctionUpdateFormState = (
   const { serverlessFunction } =
     useGetOneServerlessFunction(serverlessFunctionId);
 
-  useEffect(() => {
-    const getFileContent = async () => {
-      const resp = await fetch(
-        getFileAbsoluteURI(serverlessFunction?.sourceCodeFullPath),
-      );
-      if (resp.status !== 200) {
-        throw new Error('Network response was not ok');
-      } else {
-        const result = await resp.text();
-        const newState = {
-          code: result,
-          name: serverlessFunction?.name || '',
-          description: serverlessFunction?.description || '',
-        };
-        setFormValues((prevState) => ({
-          ...prevState,
-          ...newState,
-        }));
-      }
-    };
-    if (isDefined(serverlessFunction?.sourceCodeFullPath)) {
-      getFileContent();
-    }
-  }, [serverlessFunction, setFormValues]);
+  useGetOneServerlessFunctionSourceCode({
+    id: serverlessFunctionId,
+    version: 'draft',
+    onCompleted: (data: FindOneServerlessFunctionSourceCodeQuery) => {
+      const newState = {
+        code: data?.getServerlessFunctionSourceCode || '',
+        name: serverlessFunction?.name || '',
+        description: serverlessFunction?.description || '',
+      };
+      setFormValues((prevState) => ({
+        ...prevState,
+        ...newState,
+      }));
+    },
+  });
 
   return [formValues, setFormValues];
 };

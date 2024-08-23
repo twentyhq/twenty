@@ -1,5 +1,5 @@
 import Editor, { Monaco, EditorProps } from '@monaco-editor/react';
-import { editor } from 'monaco-editor';
+import { editor, MarkerSeverity } from 'monaco-editor';
 import { codeEditorTheme } from '@/ui/input/code-editor/theme/CodeEditorTheme';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -24,17 +24,20 @@ const StyledEditor = styled(Editor)`
 type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
   header: React.ReactNode;
   onChange?: (value: string) => void;
+  setIsCodeValid?: (isCodeValid: boolean) => void;
 };
 
 export const CodeEditor = ({
   value = DEFAULT_CODE,
   onChange,
+  setIsCodeValid,
   language = 'typescript',
-  height = 500,
+  height = 450,
   options = undefined,
   header,
 }: CodeEditorProps) => {
   const theme = useTheme();
+
   const handleEditorDidMount = (
     editor: editor.IStandaloneCodeEditor,
     monaco: Monaco,
@@ -42,6 +45,17 @@ export const CodeEditor = ({
     monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
     monaco.editor.setTheme('codeEditorTheme');
   };
+
+  const handleEditorValidation = (markers: editor.IMarker[]) => {
+    for (const marker of markers) {
+      if (marker.severity === MarkerSeverity.Error) {
+        setIsCodeValid?.(false);
+        return;
+      }
+    }
+    setIsCodeValid?.(true);
+  };
+
   useEffect(() => {
     const style = document.createElement('style');
     style.innerHTML = `
@@ -63,6 +77,7 @@ export const CodeEditor = ({
         value={value}
         onMount={handleEditorDidMount}
         onChange={(value?: string) => value && onChange?.(value)}
+        onValidate={handleEditorValidation}
         options={{
           ...options,
           overviewRulerLanes: 0,
