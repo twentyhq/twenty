@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -7,6 +6,7 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
@@ -24,19 +24,19 @@ import {
 
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessagesImportCronJob {
-  private readonly logger = new Logger(MessagingMessagesImportCronJob.name);
-
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   @Process(MessagingMessagesImportCronJob.name)
   async handle(): Promise<void> {
     console.time('MessagingMessagesImportCronJob time');
+
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -44,22 +44,21 @@ export class MessagingMessagesImportCronJob {
     });
 
     for (const activeWorkspace of activeWorkspaces) {
-      const messageChannelRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-          activeWorkspace.id,
-          'messageChannel',
-        );
+      try {
+        const messageChannelRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
+            activeWorkspace.id,
+            'messageChannel',
+          );
 
-      const messageChannels = await messageChannelRepository.find({
-        select: ['id', 'isSyncEnabled', 'syncStage'],
-      });
+        const messageChannels = await messageChannelRepository.find({
+          where: {
+            isSyncEnabled: true,
+            syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
+          },
+        });
 
-      for (const messageChannel of messageChannels) {
-        if (
-          messageChannel.isSyncEnabled &&
-          messageChannel.syncStage ===
-            MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
-        ) {
+        for (const messageChannel of messageChannels) {
           await this.messageQueueService.add<MessagingMessagesImportJobData>(
             MessagingMessagesImportJob.name,
             {
@@ -68,6 +67,12 @@ export class MessagingMessagesImportCronJob {
             },
           );
         }
+      } catch (error) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          user: {
+            workspaceId: activeWorkspace.id,
+          },
+        });
       }
     }
 

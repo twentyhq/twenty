@@ -27,9 +27,9 @@ export function assertWorkflowVersionIsValid(
     );
   }
 
-  if (!workflowVersion.trigger.nextAction) {
+  if (!workflowVersion.steps || workflowVersion.steps.length === 0) {
     throw new WorkflowTriggerException(
-      'No next action provided in trigger',
+      'No steps provided in workflow version',
       WorkflowTriggerExceptionCode.INVALID_WORKFLOW_TRIGGER,
     );
   }
