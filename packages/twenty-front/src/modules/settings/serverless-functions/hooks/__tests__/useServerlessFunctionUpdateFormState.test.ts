@@ -9,6 +9,13 @@ jest.mock(
   }),
 );
 
+jest.mock(
+  '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode',
+  () => ({
+    useGetOneServerlessFunctionSourceCode: jest.fn(),
+  }),
+);
+
 describe('useServerlessFunctionUpdateFormState', () => {
   test('should return a form', () => {
     const serverlessFunctionId = 'serverlessFunctionId';
@@ -18,6 +25,14 @@ describe('useServerlessFunctionUpdateFormState', () => {
     useGetOneServerlessFunctionMock.useGetOneServerlessFunction.mockReturnValue(
       {
         serverlessFunction: { sourceCodeFullPath: undefined },
+      },
+    );
+    const useGetOneServerlessFunctionSourceCodeMock = jest.requireMock(
+      '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode',
+    );
+    useGetOneServerlessFunctionSourceCodeMock.useGetOneServerlessFunctionSourceCode.mockReturnValue(
+      {
+        code: 'export const handler = () => {}',
       },
     );
     const { result } = renderHook(

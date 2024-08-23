@@ -16,9 +16,14 @@ export type ServerlessExecuteResult = {
 
 export interface ServerlessDriver {
   delete(serverlessFunction: ServerlessFunctionEntity): Promise<void>;
-  build(serverlessFunction: ServerlessFunctionEntity): Promise<void>;
+  build(
+    serverlessFunction: ServerlessFunctionEntity,
+    version: string,
+  ): Promise<void>;
+  publish(serverlessFunction: ServerlessFunctionEntity): Promise<string>;
   execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object | undefined,
+    version: string,
   ): Promise<ServerlessExecuteResult>;
 }

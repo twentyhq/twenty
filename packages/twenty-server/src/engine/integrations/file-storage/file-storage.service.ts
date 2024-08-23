@@ -33,4 +33,11 @@ export class FileStorageService implements StorageDriver {
   }): Promise<void> {
     return this.driver.move(params);
   }
+
+  copy(params: {
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
+  }): Promise<void> {
+    return this.driver.copy(params);
+  }
 }

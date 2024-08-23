@@ -10,6 +10,7 @@ import {
   ServerlessExecuteError,
   ServerlessExecuteResult,
 } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
+import { FileStorageExceptionCode } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
 
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
@@ -17,6 +18,11 @@ import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless
 import { BUILD_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/build-file-name';
 import { BaseServerlessDriver } from 'src/engine/integrations/serverless/drivers/base-serverless.driver';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
+import {
+  ServerlessFunctionException,
+  ServerlessFunctionExceptionCode,
+} from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
+import { getServerlessFolder } from 'src/engine/integrations/serverless/utils/serverless-get-folder.utils';
 
 export interface LocalDriverOptions {
   fileStorageService: FileStorageService;
@@ -33,11 +39,7 @@ export class LocalDriver
     this.fileStorageService = options.fileStorageService;
   }
 
-  async delete(serverlessFunction: ServerlessFunctionEntity) {
-    await this.fileStorageService.delete({
-      folderPath: this.getFolderPath(serverlessFunction),
-    });
-  }
+  async delete() {}
 
   async build(serverlessFunction: ServerlessFunctionEntity) {
     const javascriptCode = await this.getCompiledCode(
@@ -49,20 +51,48 @@ export class LocalDriver
       file: javascriptCode,
       name: BUILD_FILE_NAME,
       mimeType: undefined,
-      folder: this.getFolderPath(serverlessFunction),
+      folder: getServerlessFolder({
+        serverlessFunction,
+        version: 'draft',
+      }),
     });
+  }
+
+  async publish(serverlessFunction: ServerlessFunctionEntity) {
+    await this.build(serverlessFunction);
+
+    return serverlessFunction.latestVersion
+      ? `${parseInt(serverlessFunction.latestVersion, 10) + 1}`
+      : '1';
   }
 
   async execute(
     serverlessFunction: ServerlessFunctionEntity,
     payload: object | undefined = undefined,
+    version: string,
   ): Promise<ServerlessExecuteResult> {
     const startTime = Date.now();
-    const fileStream = await this.fileStorageService.read({
-      folderPath: this.getFolderPath(serverlessFunction),
-      filename: BUILD_FILE_NAME,
-    });
-    const fileContent = await readFileContent(fileStream);
+    let fileContent = '';
+
+    try {
+      const fileStream = await this.fileStorageService.read({
+        folderPath: getServerlessFolder({
+          serverlessFunction,
+          version,
+        }),
+        filename: BUILD_FILE_NAME,
+      });
+
+      fileContent = await readFileContent(fileStream);
+    } catch (error) {
+      if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
+        throw new ServerlessFunctionException(
+          `Function Version '${version}' does not exist`,
+          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+        );
+      }
+      throw error;
+    }
 
     const tmpFilePath = join(tmpdir(), `${v4()}.js`);
 

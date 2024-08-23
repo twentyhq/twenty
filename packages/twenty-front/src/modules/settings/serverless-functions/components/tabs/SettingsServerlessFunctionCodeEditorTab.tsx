@@ -1,4 +1,4 @@
-import { H2Title, IconPlayerPlay } from 'twenty-ui';
+import { H2Title, IconPlayerPlay, IconGitCommit, IconRestore } from 'twenty-ui';
 import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import { Section } from '@/ui/layout/section/components/Section';
 import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
@@ -14,13 +14,23 @@ const StyledTabList = styled(TabList)`
 export const SettingsServerlessFunctionCodeEditorTab = ({
   formValues,
   handleExecute,
+  handlePublish,
+  handleReset,
+  resetDisabled,
+  publishDisabled,
   onChange,
+  setIsCodeValid,
 }: {
   formValues: ServerlessFunctionFormValues;
   handleExecute: () => void;
+  handlePublish: () => void;
+  handleReset: () => void;
+  resetDisabled: boolean;
+  publishDisabled: boolean;
   onChange: (key: string) => (value: string) => void;
+  setIsCodeValid: (isCodeValid: boolean) => void;
 }) => {
-  const HeaderButton = (
+  const TestButton = (
     <Button
       title="Test"
       variant="primary"
@@ -28,6 +38,26 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
       size="small"
       Icon={IconPlayerPlay}
       onClick={handleExecute}
+    />
+  );
+  const PublishButton = (
+    <Button
+      title="Publish"
+      variant="secondary"
+      size="small"
+      Icon={IconGitCommit}
+      onClick={handlePublish}
+      disabled={publishDisabled}
+    />
+  );
+  const ResetButton = (
+    <Button
+      title="Reset"
+      variant="secondary"
+      size="small"
+      Icon={IconRestore}
+      onClick={handleReset}
+      disabled={resetDisabled}
     />
   );
 
@@ -41,7 +71,10 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   );
 
   const Header = (
-    <CoreEditorHeader leftNodes={[HeaderTabList]} rightNodes={[HeaderButton]} />
+    <CoreEditorHeader
+      leftNodes={[HeaderTabList]}
+      rightNodes={[ResetButton, PublishButton, TestButton]}
+    />
   );
 
   return (
@@ -53,6 +86,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
       <CodeEditor
         value={formValues.code}
         onChange={onChange('code')}
+        setIsCodeValid={setIsCodeValid}
         header={Header}
       />
     </Section>
