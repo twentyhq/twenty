@@ -11,8 +11,8 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-    MessageImportExceptionHandlerService,
-    MessageImportSyncStep,
+  MessageImportExceptionHandlerService,
+  MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 
