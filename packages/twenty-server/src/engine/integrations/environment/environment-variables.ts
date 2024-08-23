@@ -421,6 +421,10 @@ export class EnvironmentVariables {
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
   CHROME_EXTENSION_ID: string;
+
+  LAMBDA_FUNCTION_THROTTLE_LIMIT = 10;
+
+  LAMBDA_FUNCTION_THROTTLE_TTL = 1000;
 }
 
 export const validate = (
