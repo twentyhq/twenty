@@ -19,6 +19,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
+import { isDefined } from '~/utils/isDefined';
 import { useDebouncedCallback } from 'use-debounce';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
 
@@ -77,7 +78,9 @@ export const SettingsServerlessFunctionDetail = () => {
     };
   };
 
-  const resetPublishDisabled = latestVersionCode === formValues.code;
+  const resetDisabled =
+    !isDefined(latestVersionCode) || latestVersionCode === formValues.code;
+  const publishDisabled = latestVersionCode === formValues.code;
 
   const handleReset = async () => {
     try {
@@ -169,7 +172,8 @@ export const SettingsServerlessFunctionDetail = () => {
             handleExecute={handleExecute}
             handlePublish={handlePublish}
             handleReset={handleReset}
-            resetPublishDisabled={resetPublishDisabled}
+            resetDisabled={resetDisabled}
+            publishDisabled={publishDisabled}
             onChange={onChange}
           />
         );
