@@ -136,7 +136,7 @@ export class LocalDriver implements StorageDriver {
     const toPath = join(
       `${this.options.storagePath}/`,
       params.to.folderPath,
-      params.from.filename || '',
+      params.to.filename || '',
     );
 
     try {
