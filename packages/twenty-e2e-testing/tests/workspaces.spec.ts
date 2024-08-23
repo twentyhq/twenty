@@ -1,11 +1,20 @@
 import { test, expect } from '@playwright/test';
 import { sh } from '../drivers/shell_driver';
+import path from 'path';
 
 const date = new Date();
 
-test.afterEach(async ({ page, browserName }) => {
+test.afterEach(async ({ page, browserName }, workerInfo) => {
   await page.screenshot({
-    path: `./packages/twenty-e2e-testing/results/screenshots/${browserName}/${date.toISOString()}.png`,
+    path: path.resolve(
+      __dirname,
+      '..',
+      'results',
+      'screenshots',
+      browserName,
+      `${workerInfo.project.name}`,
+      `${date.toISOString()}.png`,
+    ),
   });
 });
 
@@ -17,14 +26,14 @@ test.describe('', () => {
     await page.getByRole('button', { name: 'Continue' }).click();
     await page.getByPlaceholder('Password').fill('Applecar2025');
     await page.getByRole('button', { name: 'Sign in' }).click();
+    expect(page.url()).not.toContain('/welcome');
     await page.getByRole('link', { name: 'Opportunities' }).click();
     await expect(page.locator('tbody > tr')).toHaveCount(4);
-    expect(page.url()).not.toContain('/welcome');
   });
 
   test('Creating new workspace', async ({ page, browserName }) => {
     // this test must use only 1 browser, otherwise it will lead to success and fail (1 workspace is created instead of x workspaces)
-    if (browserName == 'firefox') {
+    if (browserName == 'chromium') {
       await page.goto('/');
       await page.getByRole('button', { name: 'Continue With Email' }).click();
       await page.getByPlaceholder('Email').fill('test@apple.dev'); // email must be changed each time test is run
@@ -50,7 +59,7 @@ test.describe('', () => {
   });
 
   test('Resetting database', async ({ page, browserName }) => {
-    if (browserName === 'firefox') {
+    if (browserName === 'chromium') {
       await sh('yarn nx database:reset twenty-server'); // if this command fails for any reason, database must be restarted manually using the same command because database is in unstable state
       await page.goto('/');
       await page.getByRole('button', { name: 'Continue With Email' }).click();
@@ -65,7 +74,7 @@ test.describe('', () => {
   });
 
   test('Seeding database', async ({ page, browserName }) => {
-    if (browserName === 'firefox') {
+    if (browserName === 'chromium') {
       await sh('npx nx workspace:seed:demo');
       await page.goto('/');
     }
