@@ -6,6 +6,10 @@ import { StepNavigationButton } from '@/spreadsheet-import/components/StepNaviga
 import { ImportedRow } from '@/spreadsheet-import/types';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
+
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { SelectHeaderTable } from './components/SelectHeaderTable';
 
 const StyledHeading = styled(Heading)`
@@ -20,23 +24,56 @@ const StyledTableContainer = styled.div`
 
 type SelectHeaderStepProps = {
   importedRows: ImportedRow[];
-  onContinue: (
-    headerValues: ImportedRow,
-    importedRows: ImportedRow[],
-  ) => Promise<void>;
+  setCurrentStepState: (currentStepState: SpreadsheetImportStep) => void;
+  nextStep: () => void;
+  setPreviousStepState: (currentStepState: SpreadsheetImportStep) => void;
+  errorToast: (message: string) => void;
   onBack: () => void;
+  currentStepState: SpreadsheetImportStep;
 };
 
 export const SelectHeaderStep = ({
   importedRows,
-  onContinue,
+  setCurrentStepState,
+  nextStep,
+  setPreviousStepState,
+  errorToast,
   onBack,
+  currentStepState,
 }: SelectHeaderStepProps) => {
   const [selectedRowIndexes, setSelectedRowIndexes] = useState<
     ReadonlySet<number>
   >(new Set([0]));
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const { selectHeaderStepHook } = useSpreadsheetImportInternal();
+
+  const onContinue = useCallback(
+    async (...args: Parameters<typeof selectHeaderStepHook>) => {
+      try {
+        const { importedRows: data, headerRow: headerValues } =
+          await selectHeaderStepHook(...args);
+        setCurrentStepState({
+          type: SpreadsheetImportStepType.matchColumns,
+          data,
+          headerValues,
+        });
+        setPreviousStepState(currentStepState);
+        nextStep();
+      } catch (e) {
+        errorToast((e as Error).message);
+      }
+    },
+    [
+      errorToast,
+      nextStep,
+      selectHeaderStepHook,
+      setPreviousStepState,
+      setCurrentStepState,
+      currentStepState,
+    ],
+  );
 
   const handleContinue = useCallback(async () => {
     const [selectedRowIndex] = Array.from(new Set(selectedRowIndexes));

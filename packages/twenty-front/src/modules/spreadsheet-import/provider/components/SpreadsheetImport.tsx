@@ -1,6 +1,6 @@
 import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
-import { Providers } from '@/spreadsheet-import/components/Providers';
-import { Steps } from '@/spreadsheet-import/steps/components/Steps';
+import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
+import { SpreadsheetImportStepperContainer } from '@/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer';
 import { SpreadsheetImportDialogOptions as SpreadsheetImportProps } from '@/spreadsheet-import/types';
 
 export const defaultSpreadsheetImportProps: Partial<
@@ -25,11 +25,11 @@ export const SpreadsheetImport = <T extends string>(
   props: SpreadsheetImportProps<T>,
 ) => {
   return (
-    <Providers values={props}>
+    <ReactSpreadsheetImportContextProvider values={props}>
       <ModalWrapper isOpen={props.isOpen} onClose={props.onClose}>
-        <Steps />
+        <SpreadsheetImportStepperContainer />
       </ModalWrapper>
-    </Providers>
+    </ReactSpreadsheetImportContextProvider>
   );
 };
 

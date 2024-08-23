@@ -108,5 +108,8 @@ export default defineConfig(({ command, mode }) => {
         localsConvention: 'camelCaseOnly',
       },
     },
+    optimizeDeps: {
+      exclude: ['@tabler/icons-react'],
+    },
   };
 });

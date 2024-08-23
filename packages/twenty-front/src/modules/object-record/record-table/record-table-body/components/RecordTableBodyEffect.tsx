@@ -10,8 +10,8 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { isRecordTableScrolledTopComponentState } from '@/object-record/record-table/states/isRecordTableScrolledTopComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
-import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
+import { useScrollLeftValue } from '@/ui/utilities/scroll/hooks/useScrollLeftValue';
+import { useScrollTopValue } from '@/ui/utilities/scroll/hooks/useScrollTopValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
@@ -38,7 +38,7 @@ export const RecordTableBodyEffect = () => {
 
   const tableLastRowVisible = useRecoilValue(tableLastRowVisibleState);
 
-  const scrollTop = useRecoilValue(scrollTopState);
+  const scrollTop = useScrollTopValue('recordTableWithWrappers');
   const setIsRecordTableScrolledTop = useSetRecoilComponentState(
     isRecordTableScrolledTopComponentState,
   );
@@ -57,7 +57,7 @@ export const RecordTableBodyEffect = () => {
     }
   }, [scrollTop, setIsRecordTableScrolledTop]);
 
-  const scrollLeft = useRecoilValue(scrollLeftState);
+  const scrollLeft = useScrollLeftValue('recordTableWithWrappers');
 
   const setIsRecordTableScrolledLeft = useSetRecoilComponentState(
     isRecordTableScrolledLeftComponentState,
