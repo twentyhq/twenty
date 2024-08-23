@@ -19,9 +19,9 @@ describe('generateWorkflowDiagram', () => {
     expect(result.nodes[0]).toMatchObject({
       data: {
         label: trigger.settings.eventName,
-        nodeType: "trigger"
+        nodeType: 'trigger',
       },
-    })
+    });
   });
 
   it('should generate a diagram with nodes and edges corresponding to the steps', () => {
@@ -32,30 +32,30 @@ describe('generateWorkflowDiagram', () => {
       },
     };
     const steps: WorkflowStep[] = [
-      { 
-        id: 'step1', 
-        name: 'Step 1', 
-        type: 'CODE_ACTION', 
-        valid: true, 
+      {
+        id: 'step1',
+        name: 'Step 1',
+        type: 'CODE_ACTION',
+        valid: true,
         settings: {
           errorHandlingOptions: {
             retryOnFailure: { value: true },
-            continueOnFailure: { value: false }
+            continueOnFailure: { value: false },
           },
-          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997'
+          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
         },
       },
-      { 
-        id: 'step2', 
-        name: 'Step 2', 
-        type: 'CODE_ACTION', 
-        valid: true, 
+      {
+        id: 'step2',
+        name: 'Step 2',
+        type: 'CODE_ACTION',
+        valid: true,
         settings: {
           errorHandlingOptions: {
             retryOnFailure: { value: true },
-            continueOnFailure: { value: false }
+            continueOnFailure: { value: false },
           },
-          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997'
+          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
         },
       },
     ];
@@ -65,12 +65,12 @@ describe('generateWorkflowDiagram', () => {
     expect(result.nodes).toHaveLength(steps.length + 1); // All steps + trigger
     expect(result.edges).toHaveLength(steps.length - 1 + 1); // Edges are one less than nodes + the edge from the trigger to the first node
 
-    expect(result.nodes[0].data.nodeType).toBe("trigger")
+    expect(result.nodes[0].data.nodeType).toBe('trigger');
 
-    const stepNodes = result.nodes.slice(1)
+    const stepNodes = result.nodes.slice(1);
 
     for (const [index, step] of steps.entries()) {
-      expect(stepNodes[index].data.nodeType).toBe("action");
+      expect(stepNodes[index].data.nodeType).toBe('action');
       expect(stepNodes[index].data.label).toBe(step.name);
     }
   });
@@ -83,30 +83,30 @@ describe('generateWorkflowDiagram', () => {
       },
     };
     const steps: WorkflowStep[] = [
-      { 
-        id: 'step1', 
-        name: 'Step 1', 
-        type: 'CODE_ACTION', 
-        valid: true, 
+      {
+        id: 'step1',
+        name: 'Step 1',
+        type: 'CODE_ACTION',
+        valid: true,
         settings: {
           errorHandlingOptions: {
             retryOnFailure: { value: true },
-            continueOnFailure: { value: false }
+            continueOnFailure: { value: false },
           },
-          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997'
+          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
         },
       },
-      { 
-        id: 'step2', 
-        name: 'Step 2', 
-        type: 'CODE_ACTION', 
-        valid: true, 
+      {
+        id: 'step2',
+        name: 'Step 2',
+        type: 'CODE_ACTION',
+        valid: true,
         settings: {
           errorHandlingOptions: {
             retryOnFailure: { value: true },
-            continueOnFailure: { value: false }
+            continueOnFailure: { value: false },
           },
-          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997'
+          serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
         },
       },
     ];
