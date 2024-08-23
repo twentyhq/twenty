@@ -15,17 +15,17 @@ import { RefreshAccessTokenErrorCode } from 'src/modules/connected-account/refre
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
-  MessageChannelSyncStage,
-  MessageChannelWorkspaceEntity,
+    MessageChannelSyncStage,
+    MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
+import { MessagingExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/messaging.exception';
 import {
-  MessageImportErrorHandlerService,
-  MessageImportSyncStep,
-} from 'src/modules/messaging/message-import-manager/services/message-import-error-handling.service';
+    MessageImportExceptionHandlerService,
+    MessageImportSyncStep,
+} from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
-import { MessagingErrorCode } from 'src/modules/messaging/message-import-manager/types/messaging-error.type';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
 import { MessagingTelemetryService } from 'src/modules/messaging/monitoring/services/messaging-telemetry.service';
 
@@ -46,7 +46,7 @@ export class MessagingMessagesImportService {
     private readonly isFeatureEnabledService: IsFeatureEnabledService,
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messagingGetMessagesService: MessagingGetMessagesService,
-    private readonly messageImportErrorHandlerService: MessageImportErrorHandlerService,
+    private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
   ) {}
 
   async processMessageBatchImport(
@@ -97,12 +97,12 @@ export class MessagingMessagesImportService {
               message: `${error.code}: ${error.reason}`,
             });
             throw {
-              code: MessagingErrorCode.INSUFFICIENT_PERMISSIONS,
+              code: MessagingExceptionCode.INSUFFICIENT_PERMISSIONS,
               message: error.message,
             };
           case RefreshAccessTokenErrorCode.PROVIDER_NOT_SUPPORTED:
             throw {
-              code: MessagingErrorCode.PROVIDER_NOT_SUPPORTED,
+              code: MessagingExceptionCode.PROVIDER_NOT_SUPPORTED,
               message: error.message,
             };
           default:
@@ -199,7 +199,7 @@ export class MessagingMessagesImportService {
         messageIdsToFetch,
       );
 
-      await this.messageImportErrorHandlerService.handleError(
+      await this.messageImportErrorHandlerService.handleException(
         error,
         MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
         messageChannel,

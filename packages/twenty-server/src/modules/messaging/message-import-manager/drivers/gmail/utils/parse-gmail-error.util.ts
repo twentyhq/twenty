@@ -1,85 +1,73 @@
 import { GmailError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-error.type';
 import {
-  MessagingError,
-  MessagingErrorCode,
-} from 'src/modules/messaging/message-import-manager/types/messaging-error.type';
+  MessagingException,
+  MessagingExceptionCode,
+} from 'src/modules/messaging/message-import-manager/exceptions/messaging.exception';
 
-export const parseGmailError = (error: GmailError): MessagingError => {
+export const parseGmailError = (error: GmailError): MessagingException => {
   const { code, reason, message } = error;
 
   switch (code) {
     case 400:
       if (reason === 'invalid_grant') {
-        return {
-          code: MessagingErrorCode.INSUFFICIENT_PERMISSIONS,
+        return new MessagingException(
           message,
-        };
+          MessagingExceptionCode.INSUFFICIENT_PERMISSIONS,
+        );
       }
       if (reason === 'failedPrecondition') {
-        return {
-          code: MessagingErrorCode.TEMPORARY_ERROR,
+        return new MessagingException(
           message,
-        };
+          MessagingExceptionCode.TEMPORARY_ERROR,
+        );
       }
 
-      return {
-        code: MessagingErrorCode.UNKNOWN,
-        message,
-      };
+      return new MessagingException(message, MessagingExceptionCode.UNKNOWN);
 
     case 404:
-      return {
-        code: MessagingErrorCode.NOT_FOUND,
-        message,
-      };
+      return new MessagingException(message, MessagingExceptionCode.NOT_FOUND);
 
     case 429:
-      return {
-        code: MessagingErrorCode.TEMPORARY_ERROR,
+      return new MessagingException(
         message,
-      };
+        MessagingExceptionCode.TEMPORARY_ERROR,
+      );
 
     case 403:
       if (
         reason === 'rateLimitExceeded' ||
         reason === 'userRateLimitExceeded'
       ) {
-        return {
-          code: MessagingErrorCode.TEMPORARY_ERROR,
+        return new MessagingException(
           message,
-        };
+          MessagingExceptionCode.TEMPORARY_ERROR,
+        );
       } else {
-        return {
-          code: MessagingErrorCode.INSUFFICIENT_PERMISSIONS,
+        return new MessagingException(
           message,
-        };
+          MessagingExceptionCode.INSUFFICIENT_PERMISSIONS,
+        );
       }
 
     case 401:
-      return {
-        code: MessagingErrorCode.INSUFFICIENT_PERMISSIONS,
+      return new MessagingException(
         message,
-      };
+        MessagingExceptionCode.INSUFFICIENT_PERMISSIONS,
+      );
 
     case 500:
       if (reason === 'backendError') {
-        return {
-          code: MessagingErrorCode.TEMPORARY_ERROR,
+        return new MessagingException(
           message,
-        };
+          MessagingExceptionCode.TEMPORARY_ERROR,
+        );
       } else {
-        return {
-          code: MessagingErrorCode.UNKNOWN,
-          message,
-        };
+        return new MessagingException(message, MessagingExceptionCode.UNKNOWN);
       }
 
     default:
       break;
   }
 
-  return {
-    code: MessagingErrorCode.UNKNOWN,
-    message,
-  };
+  return new MessagingException(message, MessagingExceptionCode.UNKNOWN);
 };

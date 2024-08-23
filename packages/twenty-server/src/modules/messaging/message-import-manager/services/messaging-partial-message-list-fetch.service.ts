@@ -11,9 +11,9 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-  MessageImportErrorHandlerService,
-  MessageImportSyncStep,
-} from 'src/modules/messaging/message-import-manager/services/message-import-error-handling.service';
+    MessageImportExceptionHandlerService,
+    MessageImportSyncStep,
+} from 'src/modules/messaging/message-import-manager/services/message-import-exception-handler.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class MessagingPartialMessageListFetchService {
     private readonly messagingGetMessageListService: MessagingGetMessageListService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly messageImportErrorHandlerService: MessageImportErrorHandlerService,
+    private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
   ) {}
 
   public async processMessageListFetch(
@@ -114,7 +114,7 @@ export class MessagingPartialMessageListFetchService {
         messageChannel.id,
       );
     } catch (error) {
-      await this.messageImportErrorHandlerService.handleError(
+      await this.messageImportErrorHandlerService.handleException(
         error,
         MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
         messageChannel,

@@ -1,11 +1,11 @@
 import { GaxiosError } from 'gaxios';
 
 import {
-  MessagingError,
-  MessagingErrorCode,
-} from 'src/modules/messaging/message-import-manager/types/messaging-error.type';
+  MessagingException,
+  MessagingExceptionCode,
+} from 'src/modules/messaging/message-import-manager/exceptions/messaging.exception';
 
-export const parseGaxiosError = (error: GaxiosError): MessagingError => {
+export const parseGaxiosError = (error: GaxiosError): MessagingException => {
   const { code } = error;
 
   switch (code) {
@@ -14,15 +14,15 @@ export const parseGaxiosError = (error: GaxiosError): MessagingError => {
     case 'ECONNABORTED':
     case 'ETIMEDOUT':
     case 'ERR_NETWORK':
-      return {
-        code: MessagingErrorCode.TEMPORARY_ERROR,
-        message: error.message,
-      };
+      return new MessagingException(
+        error.message,
+        MessagingExceptionCode.TEMPORARY_ERROR,
+      );
 
     default:
-      return {
-        code: MessagingErrorCode.UNKNOWN,
-        message: error.message,
-      };
+      return new MessagingException(
+        error.message,
+        MessagingExceptionCode.UNKNOWN,
+      );
   }
 };

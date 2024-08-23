@@ -4,7 +4,7 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessagingError } from 'src/modules/messaging/message-import-manager/types/messaging-error.type';
+import { MessagingException } from 'src/modules/messaging/message-import-manager/exceptions/messaging.exception';
 
 export enum MessageImportSyncStep {
   FULL_MESSAGE_LIST_FETCH = 'FULL_MESSAGE_LIST_FETCH',
@@ -13,14 +13,14 @@ export enum MessageImportSyncStep {
 }
 
 @Injectable()
-export class MessageImportErrorHandlerService {
+export class MessageImportExceptionHandlerService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
-  public async handleError(
-    error: MessagingError,
+  public async handleException(
+    exception: MessagingException,
     syncStep: MessageImportSyncStep,
     messageChannel: Pick<
       MessageChannelWorkspaceEntity,
@@ -28,28 +28,40 @@ export class MessageImportErrorHandlerService {
     >,
     workspaceId: string,
   ): Promise<void> {
-    switch (error.code) {
+    switch (exception.code) {
       case 'NOT_FOUND':
-        await this.handleNotFoundError(syncStep, messageChannel, workspaceId);
+        await this.handleNotFoundException(
+          syncStep,
+          messageChannel,
+          workspaceId,
+        );
         break;
       case 'TEMPORARY_ERROR':
-        await this.handleTemporaryError(syncStep, messageChannel, workspaceId);
+        await this.handleTemporaryException(
+          syncStep,
+          messageChannel,
+          workspaceId,
+        );
         break;
       case 'INSUFFICIENT_PERMISSIONS':
-        await this.handleInsufficientPermissionsError(
+        await this.handleInsufficientPermissionsException(
           messageChannel,
           workspaceId,
         );
         break;
       case 'UNKNOWN':
-        await this.handleUnknownError(error, messageChannel, workspaceId);
+        await this.handleUnknownException(
+          exception,
+          messageChannel,
+          workspaceId,
+        );
         break;
       default:
-        throw error;
+        throw exception;
     }
   }
 
-  private async handleTemporaryError(
+  private async handleTemporaryException(
     syncStep: MessageImportSyncStep,
     messageChannel: Pick<
       MessageChannelWorkspaceEntity,
@@ -103,7 +115,7 @@ export class MessageImportErrorHandlerService {
     }
   }
 
-  private async handleInsufficientPermissionsError(
+  private async handleInsufficientPermissionsException(
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
@@ -113,8 +125,8 @@ export class MessageImportErrorHandlerService {
     );
   }
 
-  private async handleUnknownError(
-    error: MessagingError,
+  private async handleUnknownException(
+    exception: MessagingException,
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
@@ -124,11 +136,11 @@ export class MessageImportErrorHandlerService {
     );
 
     throw new Error(
-      `Unknown error occurred while importing calendar events for calendar channel ${messageChannel.id} in workspace ${workspaceId}: ${error.message}`,
+      `Unknown error occurred while importing calendar events for calendar channel ${messageChannel.id} in workspace ${workspaceId}: ${exception.message}`,
     );
   }
 
-  private async handleNotFoundError(
+  private async handleNotFoundException(
     syncStep: MessageImportSyncStep,
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
