@@ -4,38 +4,14 @@ import { showPageWorkflowDiagramState } from '@/workflow/states/showPageWorkflow
 import { showPageWorkflowErrorState } from '@/workflow/states/showPageWorkflowErrorState';
 import { showPageWorkflowLoadingState } from '@/workflow/states/showPageWorkflowLoadingState';
 import { Workflow } from '@/workflow/types/Workflow';
-import { WorkflowDiagram } from '@/workflow/types/WorkflowDiagram';
 import { addCreateStepNodes } from '@/workflow/utils/addCreateStepNodes';
-import { generateWorklowDiagram } from '@/workflow/utils/generateWorkflowDiagram';
+import { getWorkflowLastDiagramVersion } from '@/workflow/utils/getWorkflowLastDiagramVersion';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 type WorkflowShowPageEffectProps = {
   workflowId: string;
-};
-
-const EMPTY_FLOW_DATA: WorkflowDiagram = {
-  nodes: [],
-  edges: [],
-};
-
-const getFlowLastVersion = (
-  workflow: Workflow | undefined,
-): WorkflowDiagram => {
-  if (!isDefined(workflow)) {
-    return EMPTY_FLOW_DATA;
-  }
-
-  const lastVersion = workflow.versions.at(-1);
-  if (!isDefined(lastVersion) || !isDefined(lastVersion.trigger)) {
-    return EMPTY_FLOW_DATA;
-  }
-
-  return generateWorklowDiagram({
-    trigger: lastVersion.trigger,
-    steps: lastVersion.steps,
-  });
 };
 
 export const WorkflowShowPageEffect = ({
@@ -65,7 +41,7 @@ export const WorkflowShowPageEffect = ({
   const setCurrentWorkflowError = useSetRecoilState(showPageWorkflowErrorState);
 
   useEffect(() => {
-    const flowLastVersion = getFlowLastVersion(workflow);
+    const flowLastVersion = getWorkflowLastDiagramVersion(workflow);
     const flowWithCreateStepNodes = addCreateStepNodes(flowLastVersion);
 
     setCurrentWorkflowData(
