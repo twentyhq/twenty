@@ -259,7 +259,9 @@ export const RichTextEditor = ({
   const handleEditorChange = () => {
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
 
-    setActivityBody(newStringifiedBody);
+    setTimeout(() => {
+      setActivityBody(newStringifiedBody);
+    }, 100);
 
     handleBodyChangeDebounced(newStringifiedBody);
   };
