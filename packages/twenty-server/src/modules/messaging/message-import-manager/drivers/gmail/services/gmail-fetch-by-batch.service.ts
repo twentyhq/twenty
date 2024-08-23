@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 import { AxiosResponse } from 'axios';
 
-import { GmailMessageParsedResponse } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message-parsed-response';
+import { GmailMessageParsedResponse } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message-parsed-response.type';
 import { createQueriesFromMessageIds } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/create-queries-from-message-ids.util';
 import { BatchQueries } from 'src/modules/messaging/message-import-manager/types/batch-queries';
 

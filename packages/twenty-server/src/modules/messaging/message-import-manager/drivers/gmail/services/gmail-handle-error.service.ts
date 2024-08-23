@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { GaxiosError } from 'gaxios';
-
 import { parseGaxiosError } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/parse-gaxios-error.util';
 import { GmailError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-error.type';
 import { parseGmailError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-error.util';
@@ -10,7 +8,7 @@ import { parseGmailError } from 'src/modules/messaging/message-import-manager/dr
 export class GmailHandleErrorService {
   constructor() {}
 
-  public handleError(error: GaxiosError, messageExternalId?: string): void {
+  public handleError(error: any, messageExternalId?: string): void {
     if (
       error.code &&
       [

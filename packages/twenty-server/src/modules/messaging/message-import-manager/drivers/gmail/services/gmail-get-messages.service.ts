@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { AxiosResponse } from 'axios';
+import { gmail_v1 as gmailV1 } from 'googleapis';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
@@ -86,7 +87,10 @@ export class GmailGetMessagesService {
         );
       }
 
-      return parseAndFormatGmailMessage(response, connectedAccount);
+      return parseAndFormatGmailMessage(
+        response as gmailV1.Schema$Message,
+        connectedAccount,
+      );
     });
 
     return messages.filter(isDefined);

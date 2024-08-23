@@ -44,6 +44,8 @@ export class MessageImportErrorHandlerService {
       case 'UNKNOWN':
         await this.handleUnknownError(error, messageChannel, workspaceId);
         break;
+      default:
+        await this.handleUnknownError(error, messageChannel, workspaceId);
     }
   }
 

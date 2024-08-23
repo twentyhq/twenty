@@ -19,7 +19,7 @@ import {
 import {
   Participant,
   ParticipantWithMessageId,
-} from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
+} from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
