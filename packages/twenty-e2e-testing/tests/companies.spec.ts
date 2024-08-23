@@ -16,10 +16,15 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(async ({ page, browserName }, workerInfo) => {
   await page.screenshot({
-    path:
-      `./packages/twenty-e2e-testing/results/screenshots/${browserName}/` +
-      workerInfo.project.name +
+    path: path.resolve(
+      __dirname,
+      '..',
+      'results',
+      'screenshots',
+      browserName,
+      `${workerInfo.project.name}`,
       `${date.toISOString()}.png`,
+    ),
   });
 });
 
