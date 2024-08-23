@@ -3,7 +3,6 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   Outlet,
-  redirect,
   Route,
   RouterProvider,
   Routes,
@@ -192,14 +191,12 @@ const createRouter = (
                   path={SettingsPath.AccountsEmails}
                   element={<SettingsAccountsEmails />}
                 />
-                <Route
-                  path={SettingsPath.Billing}
-                  element={<SettingsBilling />}
-                  loader={() => {
-                    if (!isBillingEnabled) return redirect(AppPath.Index);
-                    return null;
-                  }}
-                />
+                {isBillingEnabled && (
+                  <Route
+                    path={SettingsPath.Billing}
+                    element={<SettingsBilling />}
+                  />
+                )}
                 <Route
                   path={SettingsPath.WorkspaceMembersPage}
                   element={<SettingsWorkspaceMembers />}
@@ -324,15 +321,19 @@ const createRouter = (
 
 export const App = () => {
   const billing = useRecoilValue(billingState);
+  const isFreeAccessEnabled = useIsFeatureEnabled('IS_FREE_ACCESS_ENABLED');
   const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
   const isServerlessFunctionSettingsEnabled = useIsFeatureEnabled(
     'IS_FUNCTION_SETTINGS_ENABLED',
   );
 
+  const isBillingPageEnabled =
+    billing?.isBillingEnabled && !isFreeAccessEnabled;
+
   return (
     <RouterProvider
       router={createRouter(
-        billing?.isBillingEnabled,
+        isBillingPageEnabled,
         isCRMMigrationEnabled,
         isServerlessFunctionSettingsEnabled,
       )}

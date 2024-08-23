@@ -24,7 +24,7 @@ describe('useServerlessFunctionUpdateFormState', () => {
     );
     useGetOneServerlessFunctionMock.useGetOneServerlessFunction.mockReturnValue(
       {
-        serverlessFunction: { sourceCodeFullPath: undefined },
+        serverlessFunction: { name: 'name' },
       },
     );
     const useGetOneServerlessFunctionSourceCodeMock = jest.requireMock(
