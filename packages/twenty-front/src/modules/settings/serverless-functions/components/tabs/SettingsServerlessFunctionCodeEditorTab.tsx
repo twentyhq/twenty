@@ -11,7 +11,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
-import { H2Title, IconPlayerPlay } from 'twenty-ui';
+import { H2Title, IconGitCommit, IconPlayerPlay, IconRestore } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 const StyledTabList = styled(TabList)`
