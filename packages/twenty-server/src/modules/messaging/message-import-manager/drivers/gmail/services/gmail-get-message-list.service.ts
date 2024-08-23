@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { error } from 'console';
-
 import { gmail_v1 as gmailV1 } from 'googleapis';
 
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -142,10 +140,6 @@ export class GmailGetMessageListService {
         ['messageAdded'],
         computeGmailCategoryLabelId(category),
       );
-
-      if (error) {
-        throw error;
-      }
 
       const emailIdsFromCategory = history
         .map((history) => history.messagesAdded)
