@@ -16,8 +16,8 @@ export type WorkflowCodeSettingsType = WorkflowBaseSettingsType & {
 export type WorkflowActionType = 'CODE_ACTION';
 
 type CommonWorkflowAction = {
+  id: string;
   name: string;
-  displayName: string;
   valid: boolean;
 };
 
