@@ -4,6 +4,8 @@ import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
+import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
+import { convertToUndefinedForWhitespaces } from '~/utils/string/convertToUndefinedForWhitespaces';
 import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type TextFieldInputProps = {
@@ -27,35 +29,35 @@ export const TextFieldInput = ({
   const persistField = usePersistField();
 
   const handleEnter = (newText: string) => {
-    onEnter?.(() => persistField(newText));
+    // have change like handleChange here too
+    onEnter?.(() => persistField(convertToEmptyStringForWhitespaces(newText)));
   };
 
   const handleEscape = (newText: string) => {
-    onEscape?.(() => persistField(newText));
+    onEscape?.(() => persistField(convertToEmptyStringForWhitespaces(newText)));
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    onClickOutside?.(() => persistField(newText));
+    onClickOutside?.(() =>
+      persistField(convertToEmptyStringForWhitespaces(newText)),
+    );
   };
 
   const handleTab = (newText: string) => {
-    onTab?.(() => persistField(newText));
+    onTab?.(() => persistField(convertToEmptyStringForWhitespaces(newText)));
   };
 
   const handleShiftTab = (newText: string) => {
-    onShiftTab?.(() => persistField(newText));
+    onShiftTab?.(() =>
+      persistField(convertToEmptyStringForWhitespaces(newText)),
+    );
   };
 
   const handleChange = (newText: string) => {
-    // draft value when string getting "" isn't resettings to undefined -> need to have a look on how this can be generalised and when to put.
-    if (newText.trim() === '') {
-      setDraftValue(undefined);
-    } else {
-      setDraftValue(newText);
-    }
+    setDraftValue(convertToUndefinedForWhitespaces(newText));
   };
 
   return (
