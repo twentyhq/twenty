@@ -17,6 +17,8 @@ interface SetMessageDirectionCommandOptions {
   workspaceId?: string;
 }
 
+const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE = 10;
+
 @Command({
   name: 'upgrade-0.24:migrate-message-direction',
   description: 'Migrate message direction',
@@ -80,82 +82,125 @@ export class SetMessageDirectionCommand extends CommandRunner {
             'messageChannelMessageAssociation',
           );
 
-        const messageChannelMessageAssociations =
-          await messageChannelMessageAssociationRepository.find({
-            where: {
-              message: {
-                messageParticipants: {
-                  role: 'from',
+        const workspaceDataSource =
+          await this.twentyORMGlobalManager.getDataSourceForWorkspace(
+            workspaceId,
+          );
+
+        await workspaceDataSource.transaction(async (transactionManager) => {
+          try {
+            const messageChannelMessageAssociationCount =
+              await messageChannelMessageAssociationRepository.count(
+                {},
+                transactionManager,
+              );
+
+            for (
+              let i = 0;
+              i < messageChannelMessageAssociationCount;
+              i += MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE
+            ) {
+              const messageChannelMessageAssociationsPage =
+                await messageChannelMessageAssociationRepository.find(
+                  {
+                    where: {
+                      message: {
+                        messageParticipants: {
+                          role: 'from',
+                        },
+                      },
+                    },
+                    relations: {
+                      message: {
+                        messageParticipants: true,
+                      },
+                      messageChannel: {
+                        connectedAccount: true,
+                      },
+                    },
+                    take: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE,
+                    skip: i,
+                  },
+                  transactionManager,
+                );
+
+              const { incoming, outgoing } =
+                messageChannelMessageAssociationsPage.reduce(
+                  (
+                    acc: {
+                      incoming: string[];
+                      outgoing: string[];
+                    },
+                    messageChannelMessageAssociation,
+                  ) => {
+                    const connectedAccountHandle =
+                      messageChannelMessageAssociation?.messageChannel
+                        ?.connectedAccount?.handle;
+                    const connectedAccountHanldeAliases =
+                      messageChannelMessageAssociation?.messageChannel
+                        ?.connectedAccount?.handleAliases;
+                    const fromHandle =
+                      messageChannelMessageAssociation?.message
+                        ?.messageParticipants?.[0]?.handle ?? '';
+
+                    if (
+                      connectedAccountHandle === fromHandle ||
+                      connectedAccountHanldeAliases?.includes(fromHandle)
+                    ) {
+                      acc.outgoing.push(messageChannelMessageAssociation.id);
+                    } else {
+                      acc.incoming.push(messageChannelMessageAssociation.id);
+                    }
+
+                    return acc;
+                  },
+                  { incoming: [], outgoing: [] },
+                );
+
+              await messageChannelMessageAssociationRepository.update(
+                {
+                  id: Any(incoming),
                 },
-              },
-            },
-            relations: {
-              message: {
-                messageParticipants: true,
-              },
-              messageChannel: {
-                connectedAccount: true,
-              },
-            },
-          });
-
-        try {
-          const { incoming, outgoing } =
-            messageChannelMessageAssociations.reduce(
-              (
-                acc: {
-                  incoming: string[];
-                  outgoing: string[];
+                {
+                  direction: 'incoming',
                 },
-                messageChannelMessageAssociation,
-              ) => {
-                const connectedAccountHandle =
-                  messageChannelMessageAssociation?.messageChannel
-                    ?.connectedAccount?.handle;
-                const connectedAccountHanldeAliases =
-                  messageChannelMessageAssociation?.messageChannel
-                    ?.connectedAccount?.handleAliases;
-                const fromHandle =
-                  messageChannelMessageAssociation?.message
-                    ?.messageParticipants?.[0]?.handle ?? '';
+                transactionManager,
+              );
 
-                if (
-                  connectedAccountHandle === fromHandle ||
-                  connectedAccountHanldeAliases?.includes(fromHandle)
-                ) {
-                  acc.outgoing.push(messageChannelMessageAssociation.id);
-                } else {
-                  acc.incoming.push(messageChannelMessageAssociation.id);
-                }
+              await messageChannelMessageAssociationRepository.update(
+                {
+                  id: Any(outgoing),
+                },
+                {
+                  direction: 'outgoing',
+                },
+                transactionManager,
+              );
 
-                return acc;
-              },
-              { incoming: [], outgoing: [] },
+              const numberOfProcessedAssociations =
+                i + MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE;
+
+              if (
+                numberOfProcessedAssociations %
+                  (MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE * 10) ===
+                  0 ||
+                numberOfProcessedAssociations >=
+                  messageChannelMessageAssociationCount
+              ) {
+                this.logger.log(
+                  chalk.green(
+                    `Processed ${Math.min(numberOfProcessedAssociations, messageChannelMessageAssociationCount)} of ${messageChannelMessageAssociationCount} message channel message associations`,
+                  ),
+                );
+              }
+            }
+          } catch (error) {
+            this.logger.log(
+              chalk.red(`Running command on workspace ${workspaceId} failed`),
             );
-
-          await messageChannelMessageAssociationRepository.update(
-            {
-              id: Any(incoming),
-            },
-            {
-              direction: 'incoming',
-            },
-          );
-
-          await messageChannelMessageAssociationRepository.update(
-            {
-              id: Any(outgoing),
-            },
-            {
-              direction: 'outgoing',
-            },
-          );
-        } catch (error) {
-          this.logger.log(
-            chalk.red(`Running command on workspace ${workspaceId} failed`),
-          );
-          throw error;
-        }
+            throw error;
+          }
+        });
 
         await this.workspaceMetadataVersionService.incrementMetadataVersion(
           workspaceId,
