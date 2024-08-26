@@ -12,6 +12,7 @@ test.beforeEach(async ({ page }) => {
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await page.getByPlaceholder('Password').fill(process.env.DEFAULT_PASSWORD);
   await page.getByRole('button', { name: 'Sign in' }).click();
+  await expect(page.getByText('Welcome to Twenty')).not.toBeVisible();
 });
 
 test.afterEach(async ({ page, browserName }, workerInfo) => {
