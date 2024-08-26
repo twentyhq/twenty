@@ -21,18 +21,14 @@ export const QueryParamsViewIdEffect = () => {
     useFilteredObjectMetadataItems();
   const objectMetadataItemId =
     findObjectMetadataItemByNamePlural(objectNamePlural);
-  const {
-    getLastVisitedViewIdFromPluralName,
-    setLastVisitedViewForObjectNamePlural,
-  } = useLastVisitedView();
-  const {
-    lastVisitedObjectMetadataItemId,
-    setLastVisitedObjectMetadataItemForPluralName,
-  } = useLastVisitedObjectMetadataItem();
+  const { getLastVisitedViewIdFromObjectNamePlural, setLastVisitedView } =
+    useLastVisitedView();
+  const { lastVisitedObjectMetadataItemId, setLastVisitedObjectMetadataItem } =
+    useLastVisitedObjectMetadataItem();
 
   const lastVisitedViewId =
-    getLastVisitedViewIdFromPluralName(objectNamePlural);
-  const isLastVisitedObjectMetadataItemNotEqual = !isDeeplyEqual(
+    getLastVisitedViewIdFromObjectNamePlural(objectNamePlural);
+  const isLastVisitedObjectMetadataItemDifferent = !isDeeplyEqual(
     objectMetadataItemId?.id,
     lastVisitedObjectMetadataItemId,
   );
@@ -41,9 +37,9 @@ export const QueryParamsViewIdEffect = () => {
     const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
 
     if (isUndefined(viewIdQueryParam) && isDefined(lastVisitedViewId)) {
-      if (isLastVisitedObjectMetadataItemNotEqual) {
-        setLastVisitedObjectMetadataItemForPluralName(objectNamePlural);
-        setLastVisitedViewForObjectNamePlural({
+      if (isLastVisitedObjectMetadataItemDifferent) {
+        setLastVisitedObjectMetadataItem(objectNamePlural);
+        setLastVisitedView({
           objectNamePlural,
           viewId: lastVisitedViewId,
         });
@@ -53,11 +49,11 @@ export const QueryParamsViewIdEffect = () => {
     }
 
     if (isDefined(viewIdQueryParam)) {
-      if (isLastVisitedObjectMetadataItemNotEqual) {
-        setLastVisitedObjectMetadataItemForPluralName(objectNamePlural);
+      if (isLastVisitedObjectMetadataItemDifferent) {
+        setLastVisitedObjectMetadataItem(objectNamePlural);
       }
       if (!isDeeplyEqual(viewIdQueryParam, lastVisitedViewId)) {
-        setLastVisitedViewForObjectNamePlural({
+        setLastVisitedView({
           objectNamePlural,
           viewId: viewIdQueryParam,
         });
@@ -67,11 +63,11 @@ export const QueryParamsViewIdEffect = () => {
     }
 
     if (isDefined(indexView)) {
-      if (isLastVisitedObjectMetadataItemNotEqual) {
-        setLastVisitedObjectMetadataItemForPluralName(objectNamePlural);
+      if (isLastVisitedObjectMetadataItemDifferent) {
+        setLastVisitedObjectMetadataItem(objectNamePlural);
       }
       if (!isDeeplyEqual(indexView.id, lastVisitedViewId)) {
-        setLastVisitedViewForObjectNamePlural({
+        setLastVisitedView({
           objectNamePlural,
           viewId: indexView.id,
         });
@@ -82,13 +78,13 @@ export const QueryParamsViewIdEffect = () => {
   }, [
     currentViewId,
     getFiltersFromQueryParams,
-    isLastVisitedObjectMetadataItemNotEqual,
+    isLastVisitedObjectMetadataItemDifferent,
     lastVisitedViewId,
     objectMetadataItemId?.id,
     objectNamePlural,
     setCurrentViewId,
-    setLastVisitedObjectMetadataItemForPluralName,
-    setLastVisitedViewForObjectNamePlural,
+    setLastVisitedObjectMetadataItem,
+    setLastVisitedView,
     viewIdQueryParam,
     viewsOnCurrentObject,
   ]);

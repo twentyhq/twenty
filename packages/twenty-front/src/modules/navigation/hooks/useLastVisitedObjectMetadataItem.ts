@@ -49,9 +49,7 @@ export const useLastVisitedObjectMetadataItem = () => {
     }
   };
 
-  const setLastVisitedObjectMetadataItemForPluralName = (
-    objectNamePlural: string,
-  ) => {
+  const setLastVisitedObjectMetadataItem = (objectNamePlural: string) => {
     const fallbackObjectMetadataItem =
       findActiveObjectMetadataItemBySlug(objectNamePlural);
 
@@ -61,7 +59,7 @@ export const useLastVisitedObjectMetadataItem = () => {
 
   return {
     lastVisitedObjectMetadataItemId,
-    setLastVisitedObjectMetadataItemForPluralName,
+    setLastVisitedObjectMetadataItem,
     setFallbackForLastVisitedObjectMetadataItem,
   };
 };

@@ -41,7 +41,7 @@ export const useLastVisitedView = () => {
     });
   };
 
-  const setLastVisitedViewForObjectNamePlural = ({
+  const setLastVisitedView = ({
     objectNamePlural,
     viewId,
   }: {
@@ -68,7 +68,9 @@ export const useLastVisitedView = () => {
     }
   };
 
-  const getLastVisitedViewIdFromPluralName = (objectNamePlural: string) => {
+  const getLastVisitedViewIdFromObjectNamePlural = (
+    objectNamePlural: string,
+  ) => {
     const objectMetadataItemId: string | undefined =
       findActiveObjectMetadataItemBySlug(objectNamePlural)?.id;
     return objectMetadataItemId
@@ -82,8 +84,8 @@ export const useLastVisitedView = () => {
     return lastVisitedViewPerObjectMetadataItem?.[objectMetadataItemId];
   };
   return {
-    setLastVisitedViewForObjectNamePlural,
-    getLastVisitedViewIdFromPluralName,
+    setLastVisitedView,
+    getLastVisitedViewIdFromObjectNamePlural,
     getLastVisitedViewIdFromObjectMetadataItemId,
     setFallbackForLastVisitedView,
   };
