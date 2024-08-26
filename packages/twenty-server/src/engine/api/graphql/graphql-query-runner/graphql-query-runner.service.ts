@@ -13,22 +13,20 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-query.parser';
+import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/apply-range-filter.util';
 import {
   createConnection,
   decodeCursor,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/connection.util';
 import { convertObjectMetadataToMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
-import {
-  applyRangeFilter,
-  parseFilter,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/filter-parser.util';
-import { parseOrder } from 'src/engine/api/graphql/graphql-query-runner/utils/order-parser.util';
-import { parseSelectedFields } from 'src/engine/api/graphql/graphql-query-runner/utils/selected-field-parser.util';
 import { LogExecutionTime } from 'src/engine/decorators/observability/timed.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 @Injectable()
 export class GraphqlQueryRunnerService {
+  private graphqlQueryParser: GraphqlQueryParser;
+
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
@@ -66,17 +64,23 @@ export class GraphqlQueryRunnerService {
       fieldMetadataCollection.map((metadata) => [metadata.name, metadata]),
     );
 
-    const { select, relations } = parseSelectedFields(
-      objectMetadataItem,
-      selectedFields,
+    this.graphqlQueryParser = new GraphqlQueryParser(
+      fieldMetadataMap,
       objectMetadataMap,
     );
 
+    const { select, relations } = this.graphqlQueryParser.parseSelectedFields(
+      objectMetadataItem,
+      selectedFields,
+    );
+
     const order = args.orderBy
-      ? parseOrder(args.orderBy, fieldMetadataMap)
+      ? this.graphqlQueryParser.parseOrder(args.orderBy)
       : undefined;
 
-    const where = args.filter ? parseFilter(args.filter, fieldMetadataMap) : {};
+    const where = args.filter
+      ? this.graphqlQueryParser.parseFilter(args.filter)
+      : {};
 
     let cursor: Record<string, any> | undefined;
 
@@ -86,20 +90,31 @@ export class GraphqlQueryRunnerService {
       cursor = decodeCursor(args.before);
     }
 
-    if (cursor) {
-      applyRangeFilter(where, order, cursor);
-    }
+    const take = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
     const findOptions: FindManyOptions<ObjectLiteral> = {
       where,
       order,
       select,
       relations,
-      take: args.first ?? args.last ?? QUERY_MAX_RECORDS,
+      take,
     };
 
-    const [items, totalCount] = await repository.findAndCount(findOptions);
+    const totalCount = await repository.count({
+      where,
+    });
 
-    return createConnection((items as ObjectRecord[]) ?? [], totalCount, order);
+    if (cursor) {
+      applyRangeFilter(where, order, cursor);
+    }
+
+    const objectRecods = await repository.find(findOptions);
+
+    return createConnection(
+      (objectRecods as ObjectRecord[]) ?? [],
+      take,
+      totalCount,
+      order,
+    );
   }
 }

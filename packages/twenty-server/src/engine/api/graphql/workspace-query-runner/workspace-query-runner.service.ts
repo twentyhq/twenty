@@ -139,8 +139,14 @@ export class WorkspaceQueryRunnerService {
       },
     );
     const start = performance.now();
+    const startLog = performance.now();
 
     const result = await this.execute(query, authContext.workspace.id);
+
+    const endLog = performance.now();
+
+    console.log('Count performance', endLog - startLog);
+
     const end = performance.now();
 
     this.logger.log(
