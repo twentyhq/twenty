@@ -24,17 +24,8 @@ export class GmailHandleErrorService {
     if (error.response?.status !== 410) {
       const gmailError: GmailError = {
         code: error.response?.status,
-        reason:
-          error.response?.data?.error?.errors?.[0].reason ||
-          error.response?.data?.error ||
-          '',
-        message:
-          error.response?.data?.error?.errors?.[0].message ||
-          error.response?.data?.error_description ||
-          '' +
-            (messageExternalId
-              ? ` for message with externalId: ${messageExternalId}`
-              : ''),
+        reason: `${error.response?.data?.error?.errors?.[0].reason || error.response?.data?.error || ''}`,
+        message: `${error.response?.data?.error?.errors?.[0].message || error.response?.data?.error_description || ''}${messageExternalId ? ` for message with externalId: ${messageExternalId}` : ''}`,
       };
 
       throw parseGmailError(gmailError);
