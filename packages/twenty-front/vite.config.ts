@@ -15,7 +15,12 @@ export default defineConfig(({ command, mode }) => {
   /*
     Using explicit env variables, there is no need to expose all of them (security).
   */
-  const { REACT_APP_SERVER_BASE_URL, VITE_BUILD_SOURCEMAP } = env;
+  const {
+    REACT_APP_SERVER_BASE_URL,
+    VITE_BUILD_SOURCEMAP,
+    VITE_DISABLE_TYPESCRIPT_CHECKER,
+    VITE_DISABLE_ESLINT_CHECKER,
+  } = env;
 
   const isBuildCommand = command === 'build';
 
@@ -24,13 +29,16 @@ export default defineConfig(({ command, mode }) => {
     : path.resolve(__dirname, './tsconfig.dev.json');
 
   const checkers: Checkers = {
-    typescript: {
-      tsconfigPath: tsConfigPath,
-    },
     overlay: false,
   };
 
-  if (!isBuildCommand) {
+  if (VITE_DISABLE_TYPESCRIPT_CHECKER !== 'true') {
+    checkers['typescript'] = {
+      tsconfigPath: tsConfigPath,
+    };
+  }
+
+  if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
     checkers['eslint'] = {
       lintCommand:
         'eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
