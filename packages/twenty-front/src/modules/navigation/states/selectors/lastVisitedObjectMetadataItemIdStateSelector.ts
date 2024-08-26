@@ -1,4 +1,4 @@
-import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemState';
+import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
 import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 
 export const lastVisitedObjectMetadataItemIdStateSelector =

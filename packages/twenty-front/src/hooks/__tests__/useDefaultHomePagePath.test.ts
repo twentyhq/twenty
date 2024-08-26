@@ -2,11 +2,11 @@ import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { AppPath } from '@/types/AppPath';
-import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { mockedUserData } from '~/testing/mock-data/users';
 
 const objectMetadataItem = getObjectMetadataItemsMock()[0];
