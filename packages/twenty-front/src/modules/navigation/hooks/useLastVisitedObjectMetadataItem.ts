@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { lastVisitedObjectMetadataItemStateSelector } from '@/navigation/states/selectors/lastVisitedObjectMetadataItemStateSelector';
+import { lastVisitedObjectMetadataItemIdStateSelector } from '@/navigation/states/selectors/lastVisitedObjectMetadataItemIdStateSelector';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -11,13 +11,13 @@ export const useLastVisitedObjectMetadataItem = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const scopeId = currentWorkspace?.id ?? '';
 
-  const lastVisitedObjectMetadataItemState = extractComponentState(
-    lastVisitedObjectMetadataItemStateSelector,
+  const lastVisitedObjectMetadataItemIdState = extractComponentState(
+    lastVisitedObjectMetadataItemIdStateSelector,
     scopeId,
   );
 
-  const [lastVisitedObjectMetadataItem, setLastVisitedObjectMetadataItem] =
-    useRecoilState(lastVisitedObjectMetadataItemState);
+  const [lastVisitedObjectMetadataItemId, setLastVisitedObjectMetadataItemId] =
+    useRecoilState(lastVisitedObjectMetadataItemIdState);
 
   const {
     findActiveObjectMetadataItemBySlug,
@@ -27,8 +27,6 @@ export const useLastVisitedObjectMetadataItem = () => {
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
   );
-
-  const lastVisitedObjectMetadataItemId = lastVisitedObjectMetadataItem ?? null;
 
   const setFallbackForLastVisitedObjectMetadataItem = (
     objectMetadataItemId: string,
@@ -44,7 +42,7 @@ export const useLastVisitedObjectMetadataItem = () => {
       );
 
     if (isDeactivateDefault) {
-      setLastVisitedObjectMetadataItem(newFallbackObjectMetadataItem.id);
+      setLastVisitedObjectMetadataItemId(newFallbackObjectMetadataItem.id);
       setNavigationMemorizedUrl(
         `/objects/${newFallbackObjectMetadataItem.namePlural}`,
       );
@@ -58,7 +56,7 @@ export const useLastVisitedObjectMetadataItem = () => {
       findActiveObjectMetadataItemBySlug(objectNamePlural);
 
     if (isDefined(fallbackObjectMetadataItem))
-      setLastVisitedObjectMetadataItem(fallbackObjectMetadataItem.id);
+      setLastVisitedObjectMetadataItemId(fallbackObjectMetadataItem.id);
   };
 
   return {

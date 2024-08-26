@@ -1,13 +1,13 @@
-import { lastVisitedObjectMetadataItemState } from '@/navigation/states/lastVisitedObjectMetadataItemState';
+import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemState';
 import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 
-export const lastVisitedObjectMetadataItemStateSelector =
+export const lastVisitedObjectMetadataItemIdStateSelector =
   createComponentSelector<string | null>({
-    key: 'lastVisitedObjectMetadataItemStateSelector',
+    key: 'lastVisitedObjectMetadataItemIdStateSelector',
     get:
       ({ scopeId }: { scopeId: string }) =>
       ({ get }) => {
-        const state = get(lastVisitedObjectMetadataItemState({ scopeId }));
+        const state = get(lastVisitedObjectMetadataItemIdState({ scopeId }));
         return state?.['last_visited_object']
           ? state['last_visited_object']
           : null;
@@ -15,7 +15,7 @@ export const lastVisitedObjectMetadataItemStateSelector =
     set:
       ({ scopeId }: { scopeId: string }) =>
       ({ set }, newValue) => {
-        set(lastVisitedObjectMetadataItemState({ scopeId }), {
+        set(lastVisitedObjectMetadataItemIdState({ scopeId }), {
           ...(typeof newValue === 'string' && {
             last_visited_object: newValue,
           }),

@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { lastVisitedObjectMetadataItemStateSelector } from '@/navigation/states/selectors/lastVisitedObjectMetadataItemStateSelector';
+import { lastVisitedObjectMetadataItemIdStateSelector } from '@/navigation/states/selectors/lastVisitedObjectMetadataItemIdStateSelector';
 import { lastVisitedViewPerObjectMetadataItemStateSelector } from '@/navigation/states/selectors/lastVisitedViewPerObjectMetadataItemStateSelector';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -11,7 +11,7 @@ export const useLastVisitedView = () => {
   const scopeId = currentWorkspace?.id ?? '';
 
   const lastVisitedObjectMetadataItemState = extractComponentState(
-    lastVisitedObjectMetadataItemStateSelector,
+    lastVisitedObjectMetadataItemIdStateSelector,
     scopeId,
   );
 
