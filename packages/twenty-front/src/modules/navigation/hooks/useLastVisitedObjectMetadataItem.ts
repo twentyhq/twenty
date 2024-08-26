@@ -53,8 +53,9 @@ export const useLastVisitedObjectMetadataItem = () => {
     const fallbackObjectMetadataItem =
       findActiveObjectMetadataItemBySlug(objectNamePlural);
 
-    if (isDefined(fallbackObjectMetadataItem))
+    if (isDefined(fallbackObjectMetadataItem)) {
       setLastVisitedObjectMetadataItemId(fallbackObjectMetadataItem.id);
+    }
   };
 
   return {
