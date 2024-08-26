@@ -28,20 +28,24 @@ export const useDefaultHomePagePath = () => {
   );
 
   const getFirstView = useCallback(
-    (objectMetadataItemId: string) =>
+    (objectMetadataItemId: string | undefined | null) =>
       views.find((view) => view.objectMetadataId === objectMetadataItemId),
     [views],
   );
 
-  const firstObjectPathInfo = useMemo<ObjectPathInfo>(() => {
+  const firstObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
     const [firstObjectMetadataItem] = alphaSortedActiveObjectMetadataItems;
 
-    const view = getFirstView(firstObjectMetadataItem.id);
+    if (!isDefined(firstObjectMetadataItem)) {
+      return null;
+    }
+
+    const view = getFirstView(firstObjectMetadataItem?.id);
 
     return { objectMetadataItem: firstObjectMetadataItem, view };
   }, [alphaSortedActiveObjectMetadataItems, getFirstView]);
 
-  const defaultObjectPathInfo = useMemo<ObjectPathInfo>(() => {
+  const defaultObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
     if (!isDefined(lastVisitedObjectMetadataItemId)) {
       return firstObjectPathInfo;
     }
@@ -70,7 +74,11 @@ export const useDefaultHomePagePath = () => {
       return AppPath.SignInUp;
     }
 
-    const namePlural = defaultObjectPathInfo.objectMetadataItem.namePlural;
+    if (!isDefined(defaultObjectPathInfo)) {
+      return AppPath.NotFound;
+    }
+
+    const namePlural = defaultObjectPathInfo.objectMetadataItem?.namePlural;
     const viewParam = defaultObjectPathInfo.view
       ? `?view=${defaultObjectPathInfo.view.id}`
       : '';

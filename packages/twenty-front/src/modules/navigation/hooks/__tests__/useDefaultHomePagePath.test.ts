@@ -4,6 +4,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { AppPath } from '@/types/AppPath';
@@ -35,6 +36,12 @@ const renderHooks = (withCurrentUser: boolean) => {
   const { result } = renderHook(
     () => {
       const setCurrentUser = useSetRecoilState(currentUserState);
+      const setObjectMetadataItems = useSetRecoilState(
+        objectMetadataItemsState,
+      );
+
+      setObjectMetadataItems(getObjectMetadataItemsMock());
+
       if (withCurrentUser) {
         setCurrentUser(mockedUserData);
       }
