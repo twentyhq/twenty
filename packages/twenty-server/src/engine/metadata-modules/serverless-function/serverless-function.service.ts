@@ -279,8 +279,8 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     try {
       await this.throttlerService.throttle(
         `${workspaceId}-serverless-function-execution`,
-        this.environmentService.get('LAMBDA_FUNCTION_THROTTLE_LIMIT'),
-        this.environmentService.get('LAMBDA_FUNCTION_THROTTLE_TTL'),
+        this.environmentService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT'),
+        this.environmentService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL'),
       );
     } catch (error) {
       throw new ServerlessFunctionException(
