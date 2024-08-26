@@ -1,19 +1,14 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
+import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useIsListSelectedItem } from '@/ui/layout/selectable-list/hooks/useIsListSelectedItem';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
-import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 export const StyledInput = styled.input`
   background: transparent;
@@ -43,23 +38,12 @@ export const StyledInput = styled.input`
 
 export const ObjectFilterDropdownFilterSelect = () => {
   const [searchText, setSearchText] = useState('');
-  const {
-    setFilterDefinitionUsedInDropdown,
-    setSelectedOperandInDropdown,
-    setObjectFilterDropdownSearchInput,
-    availableFilterDefinitionsState,
-  } = useFilterDropdown();
+
+  const { availableFilterDefinitionsState } = useFilterDropdown();
 
   const availableFilterDefinitions = useRecoilValue(
     availableFilterDefinitionsState,
   );
-
-  const { getIcon } = useIcons();
-
-  const setHotkeyScope = useSetHotkeyScope();
-  const { isListSelectedItem } = useIsListSelectedItem({
-    selectableListId: OBJECT_FILTER_DROPDOWN_ID,
-  });
 
   const sortedAvailableFilterDefinitions = [...availableFilterDefinitions]
     .sort((a, b) => a.label.localeCompare(b.label))
@@ -87,32 +71,9 @@ export const ObjectFilterDropdownFilterSelect = () => {
         <DropdownMenuItemsContainer>
           {sortedAvailableFilterDefinitions.map(
             (availableFilterDefinition, index) => (
-              <MenuItemSelect
+              <ObjectFilterDropdownFilterSelectMenuItem
                 key={`select-filter-${index}`}
-                selected={false}
-                hovered={isListSelectedItem(
-                  availableFilterDefinition.fieldMetadataId,
-                )}
-                onClick={() => {
-                  setFilterDefinitionUsedInDropdown(availableFilterDefinition);
-
-                  if (
-                    availableFilterDefinition.type === 'RELATION' ||
-                    availableFilterDefinition.type === 'SELECT'
-                  ) {
-                    setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
-                  }
-
-                  setSelectedOperandInDropdown(
-                    getOperandsForFilterType(
-                      availableFilterDefinition.type,
-                    )?.[0],
-                  );
-
-                  setObjectFilterDropdownSearchInput('');
-                }}
-                LeftIcon={getIcon(availableFilterDefinition.iconName)}
-                text={availableFilterDefinition.label}
+                filterDefinition={availableFilterDefinition}
               />
             ),
           )}
