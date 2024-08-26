@@ -8,6 +8,7 @@ import {
   CallWebhookJob,
   CallWebhookJobData,
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook.job';
+import { User } from 'src/engine/core-modules/user/user.entity';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
@@ -27,6 +28,7 @@ export type CallWebhookJobsJobData = {
   objectMetadataItem: ObjectMetadataInterface;
   record: any;
   operation: CallWebhookJobsJobOperation;
+  creatorDetails: Pick<User, 'firstName' | 'lastName'>
 };
 
 @Processor(MessageQueue.webhookQueue)
@@ -50,6 +52,7 @@ export class CallWebhookJobsJob {
     const nameSingular = data.objectMetadataItem.nameSingular;
     const operation = data.operation;
     const eventName = `${nameSingular}.${operation}`;
+    const creatorDetails = data.creatorDetails;
 
     const webhooks = await webhookRepository.find({
       where: [
@@ -74,6 +77,7 @@ export class CallWebhookJobsJob {
           webhookId: webhook.id,
           eventDate: new Date(),
           record: data.record,
+          creatorDetails,
         },
         { retryLimit: 3 },
       );
