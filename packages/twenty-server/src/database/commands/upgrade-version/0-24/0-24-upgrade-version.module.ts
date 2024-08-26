@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { SetMessageDirectionCommand } from 'src/database/commands/upgrade-version/0-24/0-24-set-message-direction.command';
 import { UpgradeTo0_24Command } from 'src/database/commands/upgrade-version/0-24/0-24-upgrade-version.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
@@ -33,6 +34,6 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
     ),
     TypeORMModule,
   ],
-  providers: [UpgradeTo0_24Command],
+  providers: [UpgradeTo0_24Command, SetMessageDirectionCommand],
 })
 export class UpgradeTo0_24CommandModule {}

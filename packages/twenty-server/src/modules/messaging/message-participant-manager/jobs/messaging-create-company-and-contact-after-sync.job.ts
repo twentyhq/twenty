@@ -89,8 +89,8 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
         message: {
           messageChannelMessageAssociations: {
             messageChannelId,
+            direction: directionFilter,
           },
-          direction: directionFilter,
         },
         personId: IsNull(),
         workspaceMemberId: IsNull(),

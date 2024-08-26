@@ -115,7 +115,6 @@ export class MessagingMessageService {
           headerMessageId: message.headerMessageId,
           subject: message.subject,
           receivedAt: new Date(parseInt(message.internalDate)),
-          direction: messageDirection,
           text: message.text,
           messageThreadId: newOrExistingMessageThreadId,
         },
@@ -130,6 +129,7 @@ export class MessagingMessageService {
           messageId: newMessageId,
           messageExternalId: message.externalId,
           messageThreadExternalId: message.messageThreadExternalId,
+          direction: messageDirection,
         },
         transactionManager,
       );
