@@ -7,11 +7,11 @@ import { Processor } from 'src/engine/integrations/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
+import { isSyncStale } from 'src/modules/calendar/calendar-event-import-manager/utils/is-sync-stale.util';
 import {
   CalendarChannelSyncStage,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { isSyncStale } from 'src/modules/messaging/message-import-manager/utils/is-sync-stale.util';
 
 export type CalendarOngoingStaleJobData = {
   workspaceId: string;
@@ -52,7 +52,7 @@ export class CalendarOngoingStaleJob {
         isSyncStale(calendarChannel.syncStageStartedAt)
       ) {
         this.logger.log(
-          `Sync for message channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGES_IMPORT_PENDING`,
+          `Sync for message channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to pending`,
         );
 
         switch (calendarChannel.syncStage) {

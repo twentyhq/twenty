@@ -12,7 +12,10 @@ import { Process } from 'src/engine/integrations/message-queue/decorators/proces
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { CalendarOngoingStaleJobData } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
+import {
+  CalendarOngoingStaleJob,
+  CalendarOngoingStaleJobData,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
 
 @Processor(MessageQueue.cronQueue)
 export class CalendarOngoingStaleCronJob {
@@ -35,7 +38,7 @@ export class CalendarOngoingStaleCronJob {
     for (const activeWorkspace of activeWorkspaces) {
       try {
         await this.messageQueueService.add<CalendarOngoingStaleJobData>(
-          CalendarOngoingStaleCronJob.name,
+          CalendarOngoingStaleJob.name,
           {
             workspaceId: activeWorkspace.id,
           },
