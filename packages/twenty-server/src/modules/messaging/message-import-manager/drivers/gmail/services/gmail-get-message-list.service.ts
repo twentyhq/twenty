@@ -75,10 +75,14 @@ export class GmailGetMessageListService {
       messageExternalIds.push(...messages.map((message) => message.id));
     }
 
-    const firstMessageContent = await gmailClient.users.messages.get({
-      userId: 'me',
-      id: firstMessageExternalId,
-    });
+    const firstMessageContent = await gmailClient.users.messages
+      .get({
+        userId: 'me',
+        id: firstMessageExternalId,
+      })
+      .catch((error) => {
+        this.gmailHandleErrorService.handleError(error);
+      });
 
     const nextSyncCursor = firstMessageContent?.data?.historyId;
 
