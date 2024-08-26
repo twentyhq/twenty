@@ -32,6 +32,12 @@ export const FullNameFieldInput = ({
 
   const persistField = usePersistField();
 
+  const isTrimmedFieldDoubleTextEmpty = (newDoubleText: FieldDoubleText) => {
+    const { firstValue, secondValue } = newDoubleText;
+    const totalLength = firstValue.trim().length + secondValue.trim().length;
+    return totalLength ? false : true;
+  };
+
   const convertToFullName = (newDoubleText: FieldDoubleText) => {
     return {
       firstName: newDoubleText.firstValue.trim(),
@@ -39,35 +45,55 @@ export const FullNameFieldInput = ({
     };
   };
 
+  const getRequiredValuetoPersistFromDoubleText = (
+    newDoubleText: FieldDoubleText,
+  ) => {
+    return isTrimmedFieldDoubleTextEmpty(newDoubleText)
+      ? undefined
+      : convertToFullName(newDoubleText);
+  };
+
   const handleEnter = (newDoubleText: FieldDoubleText) => {
-    onEnter?.(() => persistField(convertToFullName(newDoubleText)));
+    onEnter?.(() =>
+      persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
+    );
   };
 
   const handleEscape = (newDoubleText: FieldDoubleText) => {
-    onEscape?.(() => persistField(convertToFullName(newDoubleText)));
+    onEscape?.(() =>
+      persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
+    );
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newDoubleText: FieldDoubleText,
   ) => {
-    onClickOutside?.(() => persistField(convertToFullName(newDoubleText)));
+    onClickOutside?.(() =>
+      persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
+    );
   };
 
   const handleTab = (newDoubleText: FieldDoubleText) => {
-    onTab?.(() => persistField(convertToFullName(newDoubleText)));
+    onTab?.(
+      () => () =>
+        persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
+    );
   };
 
   const handleShiftTab = (newDoubleText: FieldDoubleText) => {
-    onShiftTab?.(() => persistField(convertToFullName(newDoubleText)));
+    onShiftTab?.(
+      () => () =>
+        persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
+    );
   };
 
   const handleChange = (newDoubleText: FieldDoubleText) => {
-    setDraftValue(convertToFullName(newDoubleText));
+    setDraftValue(getRequiredValuetoPersistFromDoubleText(newDoubleText));
   };
 
   const handlePaste = (newDoubleText: FieldDoubleText) => {
-    setDraftValue(convertToFullName(newDoubleText));
+    setDraftValue(getRequiredValuetoPersistFromDoubleText(newDoubleText));
   };
 
   return (
