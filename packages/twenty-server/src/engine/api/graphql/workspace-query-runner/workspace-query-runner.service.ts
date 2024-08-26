@@ -100,6 +100,7 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<Record> | undefined> {
     const { authContext, objectMetadataItem } = options;
+    const start = performance.now();
 
     const isQueryRunnerTwentyORMEnabled =
       await this.featureFlagRepository.findOne({
@@ -138,14 +139,8 @@ export class WorkspaceQueryRunnerService {
         withSoftDeleted: withSoftDeleted(args.filter),
       },
     );
-    const start = performance.now();
-    const startLog = performance.now();
 
     const result = await this.execute(query, authContext.workspace.id);
-
-    const endLog = performance.now();
-
-    console.log('Count performance', endLog - startLog);
 
     const end = performance.now();
 
