@@ -75,16 +75,14 @@ export const FullNameFieldInput = ({
   };
 
   const handleTab = (newDoubleText: FieldDoubleText) => {
-    onTab?.(
-      () => () =>
-        persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
+    onTab?.(() =>
+      persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
     );
   };
 
   const handleShiftTab = (newDoubleText: FieldDoubleText) => {
-    onShiftTab?.(
-      () => () =>
-        persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
+    onShiftTab?.(() =>
+      persistField(getRequiredValuetoPersistFromDoubleText(newDoubleText)),
     );
   };
 

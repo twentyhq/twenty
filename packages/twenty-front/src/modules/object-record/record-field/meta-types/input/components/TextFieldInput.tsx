@@ -29,7 +29,6 @@ export const TextFieldInput = ({
   const persistField = usePersistField();
 
   const handleEnter = (newText: string) => {
-    // have change like handleChange here too
     onEnter?.(() => persistField(convertToEmptyStringForWhitespaces(newText)));
   };
 
