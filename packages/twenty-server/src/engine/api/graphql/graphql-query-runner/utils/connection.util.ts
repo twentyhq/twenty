@@ -4,6 +4,10 @@ import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builde
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 
 import { CONNECTION_MAX_DEPTH } from 'src/engine/api/graphql/graphql-query-runner/constants/connection-max-depth.constant';
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 
 /**
  * Creates a connection object from an array of object records, with support for nested connections.
@@ -54,7 +58,7 @@ export const createConnection = <ObjectRecord extends IRecord = IRecord>(
  * @param order - The order object to use for encoding the cursor.
  * @param depth - The current depth of the nested connections.
  * @returns The processed object record.
- * @throws {Error} If the maximum depth of nested connections is reached.
+ * @throws {GraphqlQueryRunnerException} If the maximum depth of nested connections is reached.
  */
 const processNestedConnections = <T extends Record<string, any>>(
   objectRecord: T,
@@ -64,7 +68,10 @@ const processNestedConnections = <T extends Record<string, any>>(
   depth = 0,
 ): T => {
   if (depth >= CONNECTION_MAX_DEPTH) {
-    throw new Error(`Maximum depth of ${CONNECTION_MAX_DEPTH} reached`);
+    throw new GraphqlQueryRunnerException(
+      `Maximum depth of ${CONNECTION_MAX_DEPTH} reached`,
+      GraphqlQueryRunnerExceptionCode.ERR_GRAPHQL_QUERY_RUNNER_MAX_DEPTH_REACHED,
+    );
   }
 
   const processedObjectRecords: Record<string, any> = { ...objectRecord };
@@ -109,7 +116,10 @@ export const decodeCursor = (cursor: string): Record<string, any> => {
   try {
     return JSON.parse(Buffer.from(cursor, 'base64').toString());
   } catch (err) {
-    throw new Error('Cursor is invalid');
+    throw new GraphqlQueryRunnerException(
+      `Invalid cursor: ${cursor}`,
+      GraphqlQueryRunnerExceptionCode.ERR_GRAPHQL_QUERY_RUNNER_INVALID_CURSOR,
+    );
   }
 };
 

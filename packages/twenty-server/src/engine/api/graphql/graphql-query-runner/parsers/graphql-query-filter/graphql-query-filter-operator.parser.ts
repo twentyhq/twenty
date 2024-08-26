@@ -11,6 +11,11 @@ import {
   Not,
 } from 'typeorm';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+
 export class GraphqlQueryFilterOperatorParser {
   private operatorMap: { [key: string]: (value: any) => FindOperator<any> };
 
@@ -51,6 +56,9 @@ export class GraphqlQueryFilterOperatorParser {
       return isNegated ? Not(operatorFunction(value)) : operatorFunction(value);
     }
 
-    throw new Error(`Operator not supported: ${operator}`);
+    throw new GraphqlQueryRunnerException(
+      `Operator "${operator}" is not supported`,
+      GraphqlQueryRunnerExceptionCode.ERR_GRAPHQL_QUERY_RUNNER_UNSUPPORTED_OPERATOR,
+    );
   }
 }

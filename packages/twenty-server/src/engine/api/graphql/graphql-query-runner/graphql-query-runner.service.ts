@@ -13,6 +13,10 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-query.parser';
 import { applyRangeFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/apply-range-filter.util';
 import {
@@ -92,7 +96,10 @@ export class GraphqlQueryRunnerService {
     }
 
     if (args.first && args.last) {
-      throw new Error('Cannot set both first and last');
+      throw new GraphqlQueryRunnerException(
+        'Cannot provide both first and last',
+        GraphqlQueryRunnerExceptionCode.ERR_GRAPHQL_QUERY_RUNNER_ARGS_CONFLICT,
+      );
     }
 
     const take = args.first ?? args.last ?? QUERY_MAX_RECORDS;

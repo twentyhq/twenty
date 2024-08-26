@@ -6,6 +6,10 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { FieldMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -122,7 +126,10 @@ export class GraphqlQueryOrderFieldParser {
       case OrderByDirection.DescNullsLast:
         return { direction: 'DESC', nulls: 'LAST' };
       default:
-        throw new Error(`Unknown order by direction: ${direction}`);
+        throw new GraphqlQueryRunnerException(
+          `Invalid direction: ${direction}`,
+          GraphqlQueryRunnerExceptionCode.ERR_GRAPHQL_QUERY_RUNNER_INVALID_DIRECTION,
+        );
     }
   }
 }
