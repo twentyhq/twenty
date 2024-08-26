@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   DEFAULT_OUTPUT_VALUE,
@@ -13,11 +13,16 @@ export const SettingsServerlessFunctionTestTabEffect = () => {
   const setSettingsServerlessFunctionCodeEditorOutputParams = useSetRecoilState(
     settingsServerlessFunctionCodeEditorOutputParamsState,
   );
-  if (settingsServerlessFunctionOutput.data !== DEFAULT_OUTPUT_VALUE) {
-    setSettingsServerlessFunctionCodeEditorOutputParams({
-      language: 'json',
-      height: 300,
-    });
-  }
+  useEffect(() => {
+    if (settingsServerlessFunctionOutput.data !== DEFAULT_OUTPUT_VALUE) {
+      setSettingsServerlessFunctionCodeEditorOutputParams({
+        language: 'json',
+        height: 300,
+      });
+    }
+  }, [
+    settingsServerlessFunctionOutput.data,
+    setSettingsServerlessFunctionCodeEditorOutputParams,
+  ]);
   return <></>;
 };

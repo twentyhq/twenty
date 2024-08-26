@@ -70,6 +70,13 @@ export class LocalDriver implements StorageDriver {
       params.filename,
     );
 
+    if (!existsSync(filePath)) {
+      throw new FileStorageException(
+        'File not found',
+        FileStorageExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
     try {
       return createReadStream(filePath);
     } catch (error) {
@@ -104,6 +111,36 @@ export class LocalDriver implements StorageDriver {
 
     try {
       await fs.rename(fromPath, toPath);
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        throw new FileStorageException(
+          'File not found',
+          FileStorageExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      throw error;
+    }
+  }
+
+  async copy(params: {
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
+  }): Promise<void> {
+    const fromPath = join(
+      `${this.options.storagePath}/`,
+      params.from.folderPath,
+      params.from.filename || '',
+    );
+
+    const toPath = join(
+      `${this.options.storagePath}/`,
+      params.to.folderPath,
+      params.to.filename || '',
+    );
+
+    try {
+      await fs.cp(fromPath, toPath, { recursive: true });
     } catch (error) {
       if (error.code === 'ENOENT') {
         throw new FileStorageException(

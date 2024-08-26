@@ -3,7 +3,7 @@ import { RecoilRoot, useRecoilState } from 'recoil';
 
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
-import { StepType } from '@/spreadsheet-import/steps/components/UploadFlow';
+import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import {
   ImportedRow,
   SpreadsheetImportDialogOptions,
@@ -38,7 +38,7 @@ export const mockedSpreadsheetOptions: SpreadsheetImportDialogOptions<Spreadshee
     autoMapHeaders: true,
     autoMapDistance: 1,
     initialStepState: {
-      type: StepType.upload,
+      type: SpreadsheetImportStepType.upload,
     },
     dateFormat: 'MM/DD/YY',
     parseRaw: true,

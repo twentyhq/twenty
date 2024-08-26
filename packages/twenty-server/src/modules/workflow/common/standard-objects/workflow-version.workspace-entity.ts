@@ -21,6 +21,7 @@ import {
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { WorkflowStep } from 'src/modules/workflow/common/types/workflow-step.type';
 import { WorkflowTrigger } from 'src/modules/workflow/common/types/workflow-trigger.type';
 
 @WorkspaceEntity({
@@ -51,10 +52,18 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.RAW_JSON,
     label: 'Version trigger',
     description: 'Json object to provide trigger',
-    icon: 'IconPlayerPlay',
   })
   @WorkspaceIsNullable()
   trigger: WorkflowTrigger | null;
+
+  @WorkspaceField({
+    standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.steps,
+    type: FieldMetadataType.RAW_JSON,
+    label: 'Version steps',
+    description: 'Json object to provide steps',
+  })
+  @WorkspaceIsNullable()
+  steps: WorkflowStep[] | null;
 
   // Relations
   @WorkspaceRelation({

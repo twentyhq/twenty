@@ -13,6 +13,7 @@ export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
   if (error instanceof ServerlessFunctionException) {
     switch (error.code) {
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND:
+      case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_VERSION_NOT_FOUND:
         throw new NotFoundError(error.message);
       case ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_ALREADY_EXIST:
         throw new ConflictError(error.message);

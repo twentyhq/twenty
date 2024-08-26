@@ -7,11 +7,15 @@ import { useNavigate } from 'react-router-dom';
 import { SettingsServerlessFunctionNewForm } from '@/settings/serverless-functions/components/SettingsServerlessFunctionNewForm';
 import { useCreateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useCreateOneServerlessFunction';
 import { ServerlessFunctionNewFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
+import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DEFAULT_CODE } from '@/ui/input/code-editor/components/CodeEditor';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { IconFunction } from 'twenty-ui';
+import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { isDefined } from '~/utils/isDefined';
 
 export const SettingsServerlessFunctionsNew = () => {
@@ -51,6 +55,28 @@ export const SettingsServerlessFunctionsNew = () => {
   };
 
   const canSave = !!formValues.name && createOneServerlessFunction;
+
+  useHotkeyScopeOnMount(
+    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
+  );
+
+  useScopedHotkeys(
+    [Key.Enter],
+    () => {
+      if (canSave !== false) {
+        handleSave();
+      }
+    },
+    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
+    [canSave],
+  );
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      navigate(getSettingsPagePath(SettingsPath.ServerlessFunctions));
+    },
+    SettingsServerlessFunctionHotkeyScope.ServerlessFunctionNew,
+  );
 
   return (
     <SubMenuTopBarContainer
