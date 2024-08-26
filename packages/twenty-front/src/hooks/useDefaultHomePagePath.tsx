@@ -4,6 +4,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { AppPath } from '@/types/AppPath';
+import { View } from '@/views/types/View';
 import { isNull, isUndefined } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -13,7 +14,7 @@ export const useDefaultHomePagePath = () => {
   const currentUser = useRecoilValue(currentUserState);
   const { activeObjectMetadataItems, alphaSortedActiveObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const { records: views } = usePrefetchedData(PrefetchKey.AllViews);
+  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const { lastVisitedObjectMetadataItemId } =
     useLastVisitedObjectMetadataItem();
 
@@ -28,7 +29,7 @@ export const useDefaultHomePagePath = () => {
 
   const getViewMatchingObjectMetdataItemId = useCallback(
     (objectMetadataId: string) =>
-      views.find((view: any) => view?.objectMetadataId === objectMetadataId),
+      views.find((view) => view.objectMetadataId === objectMetadataId),
     [views],
   );
 
