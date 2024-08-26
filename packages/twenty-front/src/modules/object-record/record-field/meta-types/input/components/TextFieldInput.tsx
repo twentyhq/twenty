@@ -50,7 +50,12 @@ export const TextFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
-    setDraftValue(newText);
+    // draft value when string getting "" isn't resettings to undefined -> need to have a look on how this can be generalised and when to put.
+    if (newText.trim() === '') {
+      setDraftValue(undefined);
+    } else {
+      setDraftValue(newText);
+    }
   };
 
   return (
