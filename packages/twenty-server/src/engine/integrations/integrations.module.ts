@@ -19,7 +19,6 @@ import { llmTracingModuleFactory } from 'src/engine/integrations/llm-tracing/llm
 import { ServerlessModule } from 'src/engine/integrations/serverless/serverless.module';
 import { serverlessModuleFactory } from 'src/engine/integrations/serverless/serverless-module.factory';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
-import { BuildDirectoryManagerService } from 'src/engine/integrations/serverless/drivers/services/build-directory-manager.service';
 
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
@@ -71,7 +70,6 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
       inject: [
         EnvironmentService,
         FileStorageService,
-        BuildDirectoryManagerService,
       ],
     }),
   ],
