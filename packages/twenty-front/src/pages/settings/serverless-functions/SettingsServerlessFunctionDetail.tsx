@@ -4,9 +4,10 @@ import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-fun
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
 import { SettingsServerlessFunctionTestTabEffect } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTabEffect';
 import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteOneServerlessFunction';
+import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
+import { usePublishOneServerlessFunction } from '@/settings/serverless-functions/hooks/usePublishOneServerlessFunction';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { usePublishOneServerlessFunction } from '@/settings/serverless-functions/hooks/usePublishOneServerlessFunction';
 import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
 import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -16,14 +17,14 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import isEmpty from 'lodash.isempty';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCode, IconFunction, IconSettings, IconTestPipe } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
 import { useDebouncedCallback } from 'use-debounce';
-import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
-import { useState } from 'react';
-import isEmpty from 'lodash.isempty';
+import { isDefined } from '~/utils/isDefined';
+import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -75,10 +76,10 @@ export const SettingsServerlessFunctionDetail = () => {
   const handleSave = useDebouncedCallback(save, 500);
 
   const onChange = (key: string) => {
-    return async (value: string | undefined) => {
+    return async (value: string) => {
       setFormValues((prevState) => ({
         ...prevState,
-        [key]: value,
+        [key]: convertToEmptyStringForWhitespaces(value),
       }));
       await handleSave();
     };

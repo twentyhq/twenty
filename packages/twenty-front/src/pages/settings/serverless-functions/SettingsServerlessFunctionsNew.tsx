@@ -17,6 +17,7 @@ import { Key } from 'ts-key-enum';
 import { IconFunction } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 import { isDefined } from '~/utils/isDefined';
+import { convertToEmptyStringForWhitespaces } from '~/utils/string/convertToEmptyStringForWhitespaces';
 
 export const SettingsServerlessFunctionsNew = () => {
   const navigate = useNavigate();
@@ -46,10 +47,10 @@ export const SettingsServerlessFunctionsNew = () => {
   };
 
   const onChange = (key: string) => {
-    return (value: string | undefined) => {
+    return (value: string) => {
       setFormValues((prevState) => ({
         ...prevState,
-        [key]: value,
+        [key]: convertToEmptyStringForWhitespaces(value),
       }));
     };
   };
