@@ -10,7 +10,7 @@ export const useLastVisitedView = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const scopeId = currentWorkspace?.id ?? '';
 
-  const lastVisitedObjectMetadataItemState = extractComponentState(
+  const lastVisitedObjectMetadataItemIdState = extractComponentState(
     lastVisitedObjectMetadataItemIdStateSelector,
     scopeId,
   );
@@ -20,10 +20,9 @@ export const useLastVisitedView = () => {
     scopeId,
   );
 
-  const lastVisitedObjectMetadataItem = useRecoilValue(
-    lastVisitedObjectMetadataItemState,
+  const lastVisitedObjectMetadataItemId = useRecoilValue(
+    lastVisitedObjectMetadataItemIdState,
   );
-  const lastVisitedObjectMetadataItemId = lastVisitedObjectMetadataItem ?? null;
 
   const [
     lastVisitedViewPerObjectMetadataItem,
