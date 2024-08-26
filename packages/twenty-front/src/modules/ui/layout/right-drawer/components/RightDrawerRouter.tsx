@@ -12,6 +12,7 @@ import { ComponentByRightDrawerPage } from '@/ui/layout/right-drawer/types/Compo
 import { isDefined } from 'twenty-ui';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';
+import { RightDrawerWorkflow } from '@/workflow/components/RightDrawerWorkflow';
 
 const StyledRightDrawerPage = styled.div`
   display: flex;
@@ -35,6 +36,7 @@ const RIGHT_DRAWER_PAGES_CONFIG: ComponentByRightDrawerPage = {
   [RightDrawerPages.ViewCalendarEvent]: <RightDrawerCalendarEvent />,
   [RightDrawerPages.ViewRecord]: <RightDrawerRecord />,
   [RightDrawerPages.Copilot]: <RightDrawerAIChat />,
+  [RightDrawerPages.Workflow]: <RightDrawerWorkflow />,
 };
 
 export const RightDrawerRouter = () => {
