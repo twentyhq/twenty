@@ -26,7 +26,6 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
     DataSourceModule,
     WorkspaceMetadataVersionModule,
     FieldMetadataModule,
-    DataSourceModule,
     WorkspaceStatusModule,
     TypeOrmModule.forFeature(
       [FieldMetadataEntity, ObjectMetadataEntity],

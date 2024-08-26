@@ -20,8 +20,8 @@ interface SetMessageDirectionCommandOptions {
 const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE = 10;
 
 @Command({
-  name: 'upgrade-0.24:migrate-message-direction',
-  description: 'Migrate message direction',
+  name: 'upgrade-0.24:set-message-direction',
+  description: 'Set message direction',
 })
 export class SetMessageDirectionCommand extends CommandRunner {
   private readonly logger = new Logger(SetMessageDirectionCommand.name);
@@ -136,7 +136,7 @@ export class SetMessageDirectionCommand extends CommandRunner {
                     const connectedAccountHandle =
                       messageChannelMessageAssociation?.messageChannel
                         ?.connectedAccount?.handle;
-                    const connectedAccountHanldeAliases =
+                    const connectedAccountHandleAliases =
                       messageChannelMessageAssociation?.messageChannel
                         ?.connectedAccount?.handleAliases;
                     const fromHandle =
@@ -145,7 +145,7 @@ export class SetMessageDirectionCommand extends CommandRunner {
 
                     if (
                       connectedAccountHandle === fromHandle ||
-                      connectedAccountHanldeAliases?.includes(fromHandle)
+                      connectedAccountHandleAliases?.includes(fromHandle)
                     ) {
                       acc.outgoing.push(messageChannelMessageAssociation.id);
                     } else {
