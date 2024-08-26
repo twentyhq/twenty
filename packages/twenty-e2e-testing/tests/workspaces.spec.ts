@@ -1,22 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { sh } from '../drivers/shell_driver';
-import path from 'path';
-
-const date = new Date();
-
-test.afterEach(async ({ page, browserName }, workerInfo) => {
-  await page.screenshot({
-    path: path.resolve(
-      __dirname,
-      '..',
-      'results',
-      'screenshots',
-      browserName,
-      `${workerInfo.project.name}`,
-      `${date.toISOString()}.png`,
-    ),
-  });
-});
 
 test.describe('', () => {
   test('Testing logging', async ({ page }) => {

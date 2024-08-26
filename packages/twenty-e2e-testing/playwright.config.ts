@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { config } from 'dotenv';
+import path from 'path';
 
 config();
 
@@ -15,7 +16,7 @@ export default defineConfig({
   fullyParallel: true, // false only for specific tests, overwritten in specific projects or global setups of projects
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined, // undefined = amount of projects
+  workers: process.env.CI ? 1 : undefined, // undefined = amount of projects * amount of tests
   timeout: 30 * 1000, // timeout can be changed
   use: {
     baseURL: process.env.CI
@@ -36,12 +37,24 @@ export default defineConfig({
   reporter: [['html', { open: 'never' }]],
   projects: [
     {
+      name: 'Login setup',
+      testMatch: /login\.setup\.ts/, // finds all tests matching this regex, in this case only 1 test should be found
+    },
+    {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: path.resolve(__dirname, '.auth', 'user.json'), // takes saved cookies from directory
+      },
+      dependencies: ['Login setup'], // forces to run login setup before running tests from this project - CASE SENSITIVE
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        storageState: path.resolve(__dirname, '.auth', 'user.json'),
+      },
+      dependencies: ['Login setup'],
     },
 
     //{
