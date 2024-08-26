@@ -54,11 +54,11 @@ const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
 export const RecordTableHeaderLastColumn = () => {
   const { theme } = useContext(ThemeContext);
 
-  const scrollWrapper = useScrollWrapperScopedRef();
+  const scrollWrapper = useScrollWrapperScopedRef('recordTableWithWrappers');
 
   const isTableWiderThanScreen =
-    (scrollWrapper.current?.clientWidth ?? 0) <
-    (scrollWrapper.current?.scrollWidth ?? 0);
+    (scrollWrapper.ref.current?.clientWidth ?? 0) <
+    (scrollWrapper.ref.current?.scrollWidth ?? 0);
 
   const { hiddenTableColumnsSelector } = useRecordTableStates();
 

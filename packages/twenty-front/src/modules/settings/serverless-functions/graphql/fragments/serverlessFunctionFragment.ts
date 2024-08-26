@@ -6,9 +6,9 @@ export const SERVERLESS_FUNCTION_FRAGMENT = gql`
     name
     description
     sourceCodeHash
-    sourceCodeFullPath
     runtime
     syncStatus
+    latestVersion
     createdAt
     updatedAt
   }

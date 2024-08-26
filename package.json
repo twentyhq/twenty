@@ -71,7 +71,6 @@
     "apollo-server-express": "^3.12.0",
     "apollo-upload-client": "^17.0.0",
     "archiver": "^7.0.1",
-    "aws-sdk": "^2.1658.0",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
     "better-sqlite3": "^9.2.2",

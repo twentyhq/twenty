@@ -24,7 +24,7 @@ import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -697,7 +697,7 @@ export class WorkspaceRepository<
         continue;
       }
 
-      const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+      const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
       if (!compositeType) {
         continue;
@@ -751,7 +751,7 @@ export class WorkspaceRepository<
 
     const compositeFieldMetadataMap = new Map(
       compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
-        const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+        const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
         if (!compositeType) return [];
 

@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -46,7 +46,7 @@ export const ShowPageLeftContainer = ({
           {children}
         </StyledInnerContainer>
       ) : (
-        <ScrollWrapper>
+        <ScrollWrapper contextProviderName="showPageLeftContainer">
           <StyledIntermediateContainer>
             <StyledInnerContainer isMobile={isMobile}>
               {children}

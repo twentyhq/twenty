@@ -43,7 +43,7 @@ export class BillingResolver {
     @Args() { returnUrlPath }: BillingSessionInput,
   ) {
     return {
-      url: await this.billingPortalWorkspaceService.computeBillingPortalSessionURL(
+      url: await this.billingPortalWorkspaceService.computeBillingPortalSessionURLOrThrow(
         user.defaultWorkspaceId,
         returnUrlPath,
       ),

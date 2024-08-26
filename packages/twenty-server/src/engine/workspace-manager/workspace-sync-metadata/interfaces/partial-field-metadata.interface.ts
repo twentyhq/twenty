@@ -15,6 +15,7 @@ export type PartialFieldMetadata = Omit<
   isSystem?: boolean;
   workspaceId: string;
   objectMetadataId?: string;
+  isActive?: boolean;
 };
 
 export type PartialComputedFieldMetadata = {

@@ -5,5 +5,6 @@ import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-
 export type AuthContext = {
   user?: User | null | undefined;
   apiKey?: ApiKeyWorkspaceEntity | null | undefined;
+  workspaceMemberId?: string;
   workspace: Workspace;
 };
