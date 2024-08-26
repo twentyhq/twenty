@@ -12,8 +12,9 @@ export const useCurrencySettingsFormInitialValues = ({
 }) => {
   const initialAmountMicrosValue =
     (fieldMetadataItem?.defaultValue?.amountMicros as number | null) ?? null;
-  const initialCurrencyCodeValue = 
-    fieldMetadataItem?.defaultValue?.currencyCode ?? applySimpleQuotesToString(CurrencyCode.USD);
+  const initialCurrencyCodeValue =
+    fieldMetadataItem?.defaultValue?.currencyCode ??
+    applySimpleQuotesToString(CurrencyCode.USD);
   const initialDefaultValue = {
     amountMicros: initialAmountMicrosValue,
     currencyCode: initialCurrencyCodeValue,
