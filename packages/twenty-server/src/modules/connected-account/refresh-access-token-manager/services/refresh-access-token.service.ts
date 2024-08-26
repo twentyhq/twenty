@@ -30,15 +30,19 @@ export class RefreshAccessTokenService {
       );
     }
 
-    const accessToken = await this.refreshAccessToken(
-      connectedAccount,
-      refreshToken,
-    ).catch((error) => {
+    let accessToken: string;
+
+    try {
+      accessToken = await this.refreshAccessToken(
+        connectedAccount,
+        refreshToken,
+      );
+    } catch (error) {
       throw new RefreshAccessTokenException(
         `Error refreshing access token for connected account ${connectedAccount.id} in workspace ${workspaceId}: ${error.message}`,
         RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
       );
-    });
+    }
 
     await this.connectedAccountRepository.updateAccessToken(
       accessToken,
