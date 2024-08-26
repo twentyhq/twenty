@@ -95,9 +95,10 @@ export const SettingsDevelopersApiKeysNew = () => {
               }
             }}
             onChange={(value) => {
+              const name = value.trim().length ? value : '';
               setFormValues((prevState) => ({
                 ...prevState,
-                name: value,
+                name,
               }));
             }}
             fullWidth

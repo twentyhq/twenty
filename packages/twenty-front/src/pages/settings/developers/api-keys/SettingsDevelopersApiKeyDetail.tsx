@@ -173,7 +173,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 apiKeyName={apiKeyName}
                 apiKeyId={apiKeyData?.id}
                 disabled={loading}
-                onNameUpdate={setApiKeyName}
+                onNameUpdate={(value: string) => {
+                  const apiKeyNameValue = value.trim().length ? value : '';
+                  setApiKeyName(apiKeyNameValue);
+                }}
               />
             </Section>
             <Section>
