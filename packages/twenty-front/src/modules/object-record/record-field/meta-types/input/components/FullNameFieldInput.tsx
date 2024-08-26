@@ -34,8 +34,8 @@ export const FullNameFieldInput = ({
 
   const convertToFullName = (newDoubleText: FieldDoubleText) => {
     return {
-      firstName: newDoubleText.firstValue,
-      lastName: newDoubleText.secondValue,
+      firstName: newDoubleText.firstValue.trim(),
+      lastName: newDoubleText.secondValue.trim(),
     };
   };
 
