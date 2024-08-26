@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLSchema, printSchema } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import { GraphQLSchema, printSchema } from 'graphql';
 import { gql } from 'graphql-tag';
 
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-explorer.service';
-import { WorkspaceGraphQLSchemaFactory } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 import { WorkspaceResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver.factory';
+import { WorkspaceGraphQLSchemaFactory } from 'src/engine/api/graphql/workspace-schema-builder/workspace-graphql-schema.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class WorkspaceSchemaFactory {

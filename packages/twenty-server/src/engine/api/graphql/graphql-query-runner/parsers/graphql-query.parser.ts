@@ -8,24 +8,27 @@ import {
   RecordFilter,
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { GraphqlQueryFilterConditionParser as GraphqlQueryFilterParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser as GraphqlQueryOrderParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-query-order/graphql-query-order.parser';
 import { GraphQLSelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-selected-fields/graphql-selected-fields.parser';
+import {
+  FieldMetadataMap,
+  ObjectMetadataMap,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 
 /**
  * Provides methods for parsing GraphQL query data, including filters, order, and selected fields.
  * The parser uses metadata about the data model to correctly interpret the GraphQL query.
  */
 export class GraphqlQueryParser {
-  private fieldMetadataMap: Map<string, FieldMetadataInterface>;
-  private objectMetadataMap: Record<string, any>;
+  private fieldMetadataMap: FieldMetadataMap;
+  private objectMetadataMap: ObjectMetadataMap;
 
   constructor(
-    fieldMetadataMap: Map<string, FieldMetadataInterface>,
-    objectMetadataMap: Record<string, any>,
+    fieldMetadataMap: FieldMetadataMap,
+    objectMetadataMap: ObjectMetadataMap,
   ) {
     this.objectMetadataMap = objectMetadataMap;
     this.fieldMetadataMap = fieldMetadataMap;

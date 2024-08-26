@@ -13,7 +13,7 @@ export type CompositeFieldsDefinitionFunction = (
   fieldMetadata?: FieldMetadataInterface,
 ) => FieldMetadataInterface[];
 
-export const compositeTypeDefintions = new Map<
+export const compositeTypeDefinitions = new Map<
   FieldMetadataType,
   CompositeType
 >([

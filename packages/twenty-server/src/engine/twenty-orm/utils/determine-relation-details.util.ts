@@ -36,15 +36,15 @@ export async function determineRelationDetails(
     );
   }
 
-  const toFieldMetadata = toObjectMetadata?.fields.find((field) =>
+  if (!fromObjectMetadata || !toObjectMetadata) {
+    throw new Error('Object metadata not found');
+  }
+
+  const toFieldMetadata = toObjectMetadata.fields.find((field) =>
     relationType === 'many-to-one'
       ? field.id === relationMetadata.fromFieldMetadataId
       : field.id === relationMetadata.toFieldMetadataId,
   );
-
-  if (!fromObjectMetadata || !toObjectMetadata) {
-    throw new Error('Object metadata not found');
-  }
 
   if (!toFieldMetadata) {
     throw new Error('To field metadata not found');
@@ -58,7 +58,7 @@ export async function determineRelationDetails(
   return {
     relationType,
     target: toObjectMetadata.nameSingular,
-    inverseSide: toFieldMetadata?.name,
+    inverseSide: toFieldMetadata.name,
     joinColumn:
       // TODO: This will work for now but we need to handle this better in the future for custom names on the join column
       relationType === 'many-to-one' ||

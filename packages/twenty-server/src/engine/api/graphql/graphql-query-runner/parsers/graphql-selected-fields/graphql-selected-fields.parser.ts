@@ -1,7 +1,8 @@
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { GraphqlSelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-selected-fields/graphql-selected-fields-relation.parser';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { ObjectMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
@@ -10,7 +11,7 @@ import { capitalize } from 'src/utils/capitalize';
 export class GraphQLSelectedFieldsParser {
   private graphqlSelectedFieldsRelationParser: GraphqlSelectedFieldsRelationParser;
 
-  constructor(objectMetadataMap: Record<string, any>) {
+  constructor(objectMetadataMap: ObjectMetadataMap) {
     this.graphqlSelectedFieldsRelationParser =
       new GraphqlSelectedFieldsRelationParser(objectMetadataMap);
   }
@@ -90,7 +91,7 @@ export class GraphQLSelectedFieldsParser {
     fieldMetadata: FieldMetadataInterface,
     fieldValue: any,
   ): Record<string, any> {
-    const compositeType = compositeTypeDefintions.get(
+    const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
     );
 

@@ -2,14 +2,19 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 
 import { GraphQLSelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-selected-fields/graphql-selected-fields.parser';
 import {
+  ObjectMetadataMap,
+  ObjectMetadataMapItem,
+} from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import {
   deduceRelationDirection,
   RelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
 
 export class GraphqlSelectedFieldsRelationParser {
-  private objectMetadataMap: Record<string, any>;
+  private objectMetadataMap: ObjectMetadataMap;
 
-  constructor(objectMetadataMap: Record<string, any>) {
+  constructor(objectMetadataMap: ObjectMetadataMap) {
     this.objectMetadataMap = objectMetadataMap;
   }
 
@@ -71,11 +76,11 @@ export class GraphqlSelectedFieldsRelationParser {
    * @throws Error if the referenced object metadata is not found.
    */
   private getReferencedObjectMetadata(
-    relationMetadata: any,
+    relationMetadata: RelationMetadataEntity,
     relationDirection: RelationDirection,
-  ): any {
+  ): ObjectMetadataMapItem {
     const referencedObjectMetadata =
-      relationDirection == RelationDirection.TO
+      relationDirection === RelationDirection.TO
         ? this.objectMetadataMap[relationMetadata.fromObjectMetadataId]
         : this.objectMetadataMap[relationMetadata.toObjectMetadataId];
 

@@ -8,7 +8,7 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -485,7 +485,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await fieldMetadataRepository.delete(fieldMetadata.id);
 
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-        const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+        const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
         if (!compositeType) {
           throw new Error(

@@ -126,7 +126,7 @@ export const encodeCursor = <ObjectRecord extends IRecord = IRecord>(
 ): string => {
   const cursor = {};
 
-  Object.keys(order ?? []).map((key) => {
+  Object.keys(order ?? []).forEach((key) => {
     cursor[key] = objectRecord[key];
   });
 

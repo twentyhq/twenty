@@ -1,15 +1,16 @@
 import { FindOptionsWhere, ObjectLiteral } from 'typeorm';
 
 import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+
+import { FieldMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 
 import { GraphqlQueryFilterFieldParser } from './graphql-query-filter-field.parser';
 
 export class GraphqlQueryFilterConditionParser {
-  private fieldMetadataMap: Map<string, FieldMetadataInterface>;
+  private fieldMetadataMap: FieldMetadataMap;
   private fieldConditionParser: GraphqlQueryFilterFieldParser;
 
-  constructor(fieldMetadataMap: Map<string, FieldMetadataInterface>) {
+  constructor(fieldMetadataMap: FieldMetadataMap) {
     this.fieldMetadataMap = fieldMetadataMap;
     this.fieldConditionParser = new GraphqlQueryFilterFieldParser(
       this.fieldMetadataMap,

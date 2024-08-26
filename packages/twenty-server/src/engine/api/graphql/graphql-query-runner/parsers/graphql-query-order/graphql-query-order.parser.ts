@@ -6,15 +6,16 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { capitalize } from 'src/utils/capitalize';
 
 export class GraphqlQueryOrderFieldParser {
-  private fieldMetadataMap: Map<string, FieldMetadataInterface>;
+  private fieldMetadataMap: FieldMetadataMap;
 
-  constructor(fieldMetadataMap: Map<string, FieldMetadataInterface>) {
+  constructor(fieldMetadataMap: FieldMetadataMap) {
     this.fieldMetadataMap = fieldMetadataMap;
   }
 
@@ -29,7 +30,7 @@ export class GraphqlQueryOrderFieldParser {
     return orderBy.reduce(
       (acc, item) => {
         Object.entries(item).forEach(([key, value]) => {
-          const fieldMetadata = this.fieldMetadataMap.get(key);
+          const fieldMetadata = this.fieldMetadataMap[key];
 
           if (!fieldMetadata || value === undefined) return;
 
@@ -63,7 +64,7 @@ export class GraphqlQueryOrderFieldParser {
     fieldMetadata: FieldMetadataInterface,
     value: any,
   ): Record<string, FindOptionsOrderValue> {
-    const compositeType = compositeTypeDefintions.get(
+    const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
     );
 
@@ -87,9 +88,13 @@ export class GraphqlQueryOrderFieldParser {
 
         const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
-        acc[fullFieldName] = this.convertOrderByToFindOptionsOrder(
-          subFieldValue as OrderByDirection,
-        );
+        if (!isOrderByDirection(subFieldValue)) {
+          throw new Error(
+            `Sub field order by value must be of type OrderByDirection, but got: ${subFieldValue}`,
+          );
+        }
+        acc[fullFieldName] =
+          this.convertOrderByToFindOptionsOrder(subFieldValue);
 
         return acc;
       },
@@ -121,3 +126,6 @@ export class GraphqlQueryOrderFieldParser {
     }
   }
 }
+
+const isOrderByDirection = (value: unknown): value is OrderByDirection =>
+  Object.values(OrderByDirection).includes(value as OrderByDirection);

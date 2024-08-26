@@ -9,7 +9,7 @@ import {
   computeOrderByParameters,
   computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { capitalize } from 'src/utils/capitalize';
@@ -74,7 +74,7 @@ const getSchemaComponentsProperties = (
       case FieldMetadataType.ACTOR:
         itemProperty = {
           type: 'object',
-          properties: compositeTypeDefintions
+          properties: compositeTypeDefinitions
             .get(field.type)
             ?.properties?.reduce((properties, property) => {
               properties[property.name] = getFieldProperties(property.type);

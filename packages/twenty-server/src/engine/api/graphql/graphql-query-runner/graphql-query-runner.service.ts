@@ -40,13 +40,8 @@ export class GraphqlQueryRunnerService {
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<ObjectRecord>> {
-    const {
-      authContext,
-      objectMetadataItem,
-      info,
-      objectMetadataCollection,
-      fieldMetadataCollection,
-    } = options;
+    const { authContext, objectMetadataItem, info, objectMetadataCollection } =
+      options;
 
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
@@ -60,9 +55,15 @@ export class GraphqlQueryRunnerService {
       objectMetadataCollection,
     );
 
-    const fieldMetadataMap = new Map(
-      fieldMetadataCollection.map((metadata) => [metadata.name, metadata]),
-    );
+    const objectMetadata = objectMetadataMap[objectMetadataItem.nameSingular];
+
+    if (!objectMetadata) {
+      throw new Error(
+        `Object metadata for ${objectMetadataItem.nameSingular} not found`,
+      );
+    }
+
+    const fieldMetadataMap = objectMetadata.fields;
 
     this.graphqlQueryParser = new GraphqlQueryParser(
       fieldMetadataMap,
@@ -90,6 +91,10 @@ export class GraphqlQueryRunnerService {
       cursor = decodeCursor(args.before);
     }
 
+    if (args.first && args.last) {
+      throw new Error('Cannot set both first and last');
+    }
+
     const take = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
     const findOptions: FindManyOptions<ObjectLiteral> = {
@@ -108,10 +113,10 @@ export class GraphqlQueryRunnerService {
       applyRangeFilter(where, order, cursor);
     }
 
-    const objectRecods = await repository.find(findOptions);
+    const objectRecords = await repository.find(findOptions);
 
     return createConnection(
-      (objectRecods as ObjectRecord[]) ?? [],
+      (objectRecords as ObjectRecord[]) ?? [],
       take,
       totalCount,
       order,

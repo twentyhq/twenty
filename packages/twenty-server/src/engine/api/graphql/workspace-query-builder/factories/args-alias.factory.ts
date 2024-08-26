@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
@@ -52,7 +52,7 @@ export class ArgsAliasFactory {
         isCompositeFieldMetadataType(fieldMetadata.type)
       ) {
         // Get composite type definition
-        const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
+        const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
 
         if (!compositeType) {
           this.logger.error(

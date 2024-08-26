@@ -3,7 +3,8 @@ import { FindOptionsWhere, Not, ObjectLiteral } from 'typeorm';
 import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { capitalize } from 'src/utils/capitalize';
@@ -12,10 +13,10 @@ import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condit
 import { GraphqlQueryFilterOperatorParser } from './graphql-query-filter-operator.parser';
 
 export class GraphqlQueryFilterFieldParser {
-  private fieldMetadataMap: Map<string, FieldMetadataInterface>;
+  private fieldMetadataMap: FieldMetadataMap;
   private operatorParser: GraphqlQueryFilterOperatorParser;
 
-  constructor(fieldMetadataMap: Map<string, FieldMetadataInterface>) {
+  constructor(fieldMetadataMap: FieldMetadataMap) {
     this.fieldMetadataMap = fieldMetadataMap;
     this.operatorParser = new GraphqlQueryFilterOperatorParser();
   }
@@ -31,11 +32,11 @@ export class GraphqlQueryFilterFieldParser {
     value: any,
     isNegated: boolean,
   ): FindOptionsWhere<ObjectLiteral> {
-    const fieldMetadata = this.fieldMetadataMap.get(key);
+    const fieldMetadata = this.fieldMetadataMap[key];
 
     if (!fieldMetadata) {
       return {
-        [key]: (value: RecordFilter, isNegated: boolean | undefined) => {
+        [key]: (value: RecordFilter, isNegated: boolean) => {
           const conditionParser = new GraphqlQueryFilterConditionParser(
             this.fieldMetadataMap,
           );
@@ -67,7 +68,7 @@ export class GraphqlQueryFilterFieldParser {
     fieldValue: any,
     isNegated: boolean,
   ): FindOptionsWhere<ObjectLiteral> {
-    const compositeType = compositeTypeDefintions.get(
+    const compositeType = compositeTypeDefinitions.get(
       fieldMetadata.type as CompositeFieldMetadataType,
     );
 

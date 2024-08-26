@@ -24,12 +24,12 @@ export const applyRangeFilter = (
 
   const orderEntries = Object.entries(order);
 
-  orderEntries.forEach(([column, config], index) => {
-    if (typeof config !== 'object' || !('direction' in config)) {
+  orderEntries.forEach(([column, order], index) => {
+    if (typeof order !== 'object' || !('direction' in order)) {
       return;
     }
     where[column] =
-      config.direction === 'ASC'
+      order.direction === 'ASC'
         ? MoreThan(cursor[index])
         : LessThan(cursor[index]);
   });

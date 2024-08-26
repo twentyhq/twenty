@@ -1,36 +1,35 @@
 import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/parsers/graphql-query-order/graphql-query-order.parser';
+import { FieldMetadataMap } from 'src/engine/api/graphql/graphql-query-runner/utils/convert-object-metadata-to-map.util';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 describe('GraphqlQueryOrderFieldParser', () => {
   let parser: GraphqlQueryOrderFieldParser;
-  let fieldMetadataMap: Map<string, FieldMetadataInterface>;
+  const fieldMetadataMap: FieldMetadataMap = {};
 
   beforeEach(() => {
-    fieldMetadataMap = new Map<string, FieldMetadataInterface>();
-    fieldMetadataMap.set('name', {
+    fieldMetadataMap['name'] = {
       id: 'name-id',
       name: 'name',
       type: FieldMetadataType.TEXT,
       label: 'Name',
       objectMetadataId: 'object-id',
-    });
-    fieldMetadataMap.set('age', {
+    };
+    fieldMetadataMap['age'] = {
       id: 'age-id',
       name: 'age',
       type: FieldMetadataType.NUMBER,
       label: 'Age',
       objectMetadataId: 'object-id',
-    });
-    fieldMetadataMap.set('address', {
+    };
+    fieldMetadataMap['address'] = {
       id: 'address-id',
       name: 'address',
       type: FieldMetadataType.ADDRESS,
       label: 'Address',
       objectMetadataId: 'object-id',
-    });
+    };
 
     parser = new GraphqlQueryOrderFieldParser(fieldMetadataMap);
   });
