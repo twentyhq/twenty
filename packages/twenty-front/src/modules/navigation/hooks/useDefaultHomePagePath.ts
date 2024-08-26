@@ -1,11 +1,11 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
+import { ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { AppPath } from '@/types/AppPath';
 import { View } from '@/views/types/View';
-import { isNull, isUndefined } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
@@ -27,19 +27,42 @@ export const useDefaultHomePagePath = () => {
     [activeObjectMetadataItems],
   );
 
-  const getViewMatchingObjectMetdataItemId = useCallback(
-    (objectMetadataId: string) =>
-      views.find((view) => view.objectMetadataId === objectMetadataId),
+  const getFirstView = useCallback(
+    (objectMetadataItemId: string) =>
+      views.find((view) => view.objectMetadataId === objectMetadataItemId),
     [views],
   );
 
-  const getFirstObjectInfo = useCallback(() => {
+  const firstObjectPathInfo = useMemo<ObjectPathInfo>(() => {
     const [firstObjectMetadataItem] = alphaSortedActiveObjectMetadataItems;
-    const view = getViewMatchingObjectMetdataItemId(firstObjectMetadataItem.id);
+
+    const view = getFirstView(firstObjectMetadataItem.id);
+
     return { objectMetadataItem: firstObjectMetadataItem, view };
+  }, [alphaSortedActiveObjectMetadataItems, getFirstView]);
+
+  const defaultObjectPathInfo = useMemo<ObjectPathInfo>(() => {
+    if (!isDefined(lastVisitedObjectMetadataItemId)) {
+      return firstObjectPathInfo;
+    }
+
+    const lastVisitedObjectMetadataItem = getActiveObjectMetadataItemMatchingId(
+      lastVisitedObjectMetadataItemId,
+    );
+
+    if (isDefined(lastVisitedObjectMetadataItem)) {
+      return {
+        view: getFirstView(lastVisitedObjectMetadataItemId),
+        objectMetadataItem: lastVisitedObjectMetadataItem,
+      };
+    }
+
+    return firstObjectPathInfo;
   }, [
-    alphaSortedActiveObjectMetadataItems,
-    getViewMatchingObjectMetdataItemId,
+    firstObjectPathInfo,
+    getActiveObjectMetadataItemMatchingId,
+    getFirstView,
+    lastVisitedObjectMetadataItemId,
   ]);
 
   const defaultHomePagePath = useMemo(() => {
@@ -47,36 +70,13 @@ export const useDefaultHomePagePath = () => {
       return AppPath.SignInUp;
     }
 
-    const { view, objectMetadataItem } = !isNull(
-      lastVisitedObjectMetadataItemId,
-    ) // last visited page exist in localstorage
-      ? (() => {
-          const lastVisitedObjectMetadataItem =
-            getActiveObjectMetadataItemMatchingId(
-              lastVisitedObjectMetadataItemId,
-            );
-          // and last visited page is still active
-          if (!isUndefined(lastVisitedObjectMetadataItem)) {
-            return {
-              view: getViewMatchingObjectMetdataItemId(
-                lastVisitedObjectMetadataItemId,
-              ),
-              objectMetadataItem: lastVisitedObjectMetadataItem,
-            };
-          }
-          // if not fallback to alphabetically first
-          return getFirstObjectInfo();
-        })()
-      : getFirstObjectInfo();
+    const namePlural = defaultObjectPathInfo.objectMetadataItem.namePlural;
+    const viewParam = defaultObjectPathInfo.view
+      ? `?view=${defaultObjectPathInfo.view.id}`
+      : '';
 
-    return `/objects/${objectMetadataItem.namePlural}${view ? `?view=${view.id}` : ''}`;
-  }, [
-    currentUser,
-    lastVisitedObjectMetadataItemId,
-    getFirstObjectInfo,
-    getActiveObjectMetadataItemMatchingId,
-    getViewMatchingObjectMetdataItemId,
-  ]);
+    return `/objects/${namePlural}${viewParam}`;
+  }, [currentUser, defaultObjectPathInfo]);
 
   return { defaultHomePagePath };
 };
