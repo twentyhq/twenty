@@ -42,22 +42,21 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     id: string,
     version: string,
   ) {
+    const serverlessFunction = await this.serverlessFunctionRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+    });
+
+    if (!serverlessFunction) {
+      throw new ServerlessFunctionException(
+        `Function does not exist`,
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
+      );
+    }
+
     try {
-      const serverlessFunction =
-        await this.serverlessFunctionRepository.findOne({
-          where: {
-            id,
-            workspaceId,
-          },
-        });
-
-      if (!serverlessFunction) {
-        throw new ServerlessFunctionException(
-          `Function does not exist`,
-          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-        );
-      }
-
       const folderPath = getServerlessFolder({
         serverlessFunction,
         version,
@@ -71,10 +70,7 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       return await readFileContent(fileStream);
     } catch (error) {
       if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
-        throw new ServerlessFunctionException(
-          `Function Version '${version}' does not exist`,
-          ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_NOT_FOUND,
-        );
+        return;
       }
       throw error;
     }
@@ -138,8 +134,8 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
       );
 
       if (
-        serverlessFunctionCreateHash(latestCode) ===
-        serverlessFunctionCreateHash(draftCode)
+        serverlessFunctionCreateHash(latestCode || '') ===
+        serverlessFunctionCreateHash(draftCode || '')
       ) {
         throw new Error(
           'Cannot publish a new version when code has not changed',
