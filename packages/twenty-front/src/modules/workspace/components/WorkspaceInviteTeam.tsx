@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { IconMail, IconSend } from 'twenty-ui';
 import { z } from 'zod';
@@ -71,13 +71,16 @@ export const WorkspaceInviteTeam = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [sendInviteLink] = useSendInviteLinkMutation();
 
-  const { reset, handleSubmit, control, formState } = useForm<FormInput>({
-    mode: 'onSubmit',
-    resolver: zodResolver(validationSchema()),
-    defaultValues: {
-      emails: '',
+  const { reset, handleSubmit, control, formState, watch } = useForm<FormInput>(
+    {
+      mode: 'onSubmit',
+      resolver: zodResolver(validationSchema()),
+      defaultValues: {
+        emails: '',
+      },
     },
-  });
+  );
+  const isEmailsEmpty = !watch('emails');
 
   const submit = handleSubmit(async (data) => {
     const emailsList = sanitizeEmailList(data.emails.split(','));
@@ -97,7 +100,7 @@ export const WorkspaceInviteTeam = () => {
     }
   };
 
-  const { isSubmitSuccessful } = formState;
+  const { isSubmitSuccessful, errors } = formState;
 
   useEffect(() => {
     if (isSubmitSuccessful) {
@@ -133,6 +136,7 @@ export const WorkspaceInviteTeam = () => {
           accent="blue"
           title="Invite"
           type="submit"
+          disabled={isEmailsEmpty || !!errors.emails}
         />
       </StyledContainer>
     </form>
