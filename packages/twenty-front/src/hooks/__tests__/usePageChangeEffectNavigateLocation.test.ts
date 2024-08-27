@@ -39,7 +39,7 @@ const setupMockIsLogged = (isLogged: boolean) => {
 
 const defaultHomePagePath = '/objects/companies';
 
-jest.mock('~/hooks/useDefaultHomePagePath');
+jest.mock('@/navigation/hooks/useDefaultHomePagePath');
 jest.mocked(useDefaultHomePagePath).mockReturnValue({
   defaultHomePagePath,
 });
