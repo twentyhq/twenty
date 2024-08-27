@@ -39,6 +39,10 @@ export class MessagingErrorHandlingService {
   ): Promise<void> {
     const { code, reason } = error;
 
+    console.log('does this service run?');
+
+    console.log(error);
+
     switch (code) {
       case 400:
         if (reason === 'invalid_grant') {
