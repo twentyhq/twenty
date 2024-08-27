@@ -52,7 +52,7 @@ export class CalendarOngoingStaleJob {
         isSyncStale(calendarChannel.syncStageStartedAt)
       ) {
         this.logger.log(
-          `Sync for message channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to pending`,
+          `Sync for calendar channel ${calendarChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to pending`,
         );
         await this.calendarChannelSyncStatusService.resetSyncStageStartedAt(
           calendarChannel.id,
