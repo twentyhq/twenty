@@ -29,8 +29,6 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 
 @Injectable()
 export class GraphqlQueryRunnerService {
-  private graphqlQueryParser: GraphqlQueryParser;
-
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
@@ -69,22 +67,22 @@ export class GraphqlQueryRunnerService {
 
     const fieldMetadataMap = objectMetadata.fields;
 
-    this.graphqlQueryParser = new GraphqlQueryParser(
+    const graphqlQueryParser = new GraphqlQueryParser(
       fieldMetadataMap,
       objectMetadataMap,
     );
 
-    const { select, relations } = this.graphqlQueryParser.parseSelectedFields(
+    const { select, relations } = graphqlQueryParser.parseSelectedFields(
       objectMetadataItem,
       selectedFields,
     );
 
     const order = args.orderBy
-      ? this.graphqlQueryParser.parseOrder(args.orderBy)
+      ? graphqlQueryParser.parseOrder(args.orderBy)
       : undefined;
 
     const where = args.filter
-      ? this.graphqlQueryParser.parseFilter(args.filter)
+      ? graphqlQueryParser.parseFilter(args.filter)
       : {};
 
     let cursor: Record<string, any> | undefined;
