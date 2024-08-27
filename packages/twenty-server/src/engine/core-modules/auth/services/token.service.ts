@@ -175,11 +175,7 @@ export class TokenService {
     };
   }
 
-  async generateInvitationToken(
-    workspaceId: string,
-    email: string,
-    invitationId: string,
-  ) {
+  async generateInvitationToken(workspaceId: string, email: string) {
     const expiresIn = this.environmentService.get(
       'INVITATION_TOKEN_EXPIRES_IN',
     );
@@ -197,7 +193,6 @@ export class TokenService {
       workspaceId,
       expiresAt,
       type: AppTokenType.InvitationToken,
-      invitationId: invitationId,
       context: {
         email,
       },

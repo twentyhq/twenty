@@ -9,7 +9,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Relation,
-  OneToOne,
 } from 'typeorm';
 import { BeforeCreateOne, IDField } from '@ptc-org/nestjs-query-graphql';
 
@@ -17,7 +16,6 @@ import { BeforeCreateOneAppToken } from 'src/engine/core-modules/app-token/hooks
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { Invitation } from 'src/engine/core-modules/invitation/invitation.entity';
 export enum AppTokenType {
   RefreshToken = 'REFRESH_TOKEN',
   CodeChallenge = 'CODE_CHALLENGE',
@@ -42,15 +40,6 @@ export class AppToken {
 
   @Column({ nullable: true })
   userId: string | null;
-
-  @OneToOne(() => Invitation, (invitation) => invitation.appToken, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'invitationId' })
-  invitation: Relation<Invitation>;
-
-  @Column({ nullable: true })
-  invitationId: string | null;
 
   @ManyToOne(() => Workspace, (workspace) => workspace.appTokens, {
     onDelete: 'CASCADE',
