@@ -14,7 +14,7 @@ export class InvitationResolver {
 
   @Mutation(() => String)
   @UseGuards(JwtAuthGuard)
-  async deleteCustomInvitation(
+  async deleteWorkspaceInvitation(
     @Args('invitationId') invitationId: string,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
