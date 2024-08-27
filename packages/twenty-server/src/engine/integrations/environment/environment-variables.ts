@@ -422,8 +422,11 @@ export class EnvironmentVariables {
 
   CHROME_EXTENSION_ID: string;
 
+  @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT = 10;
 
+  // milliseconds
+  @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
 }
 
