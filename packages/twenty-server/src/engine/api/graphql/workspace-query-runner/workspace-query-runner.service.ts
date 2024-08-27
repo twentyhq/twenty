@@ -1012,7 +1012,9 @@ export class WorkspaceQueryRunnerService {
       return;
     }
     jobsData.forEach((jobData) => {
-      const jobDataObj = {
+      this.messageQueueService.add<CallWebhookJobsJobData>(
+        CallWebhookJobsJob.name,
+        {
           record: jobData,
           workspaceId: options.authContext.workspace.id,
           operation,
@@ -1021,12 +1023,7 @@ export class WorkspaceQueryRunnerService {
             firstName: options.authContext.user?.firstName as string, 
             lastName: options.authContext.user?.lastName as string,
           }
-        };
-        
-        console.log(jobDataObj);
-      this.messageQueueService.add<CallWebhookJobsJobData>(
-        CallWebhookJobsJob.name,
-        jobDataObj,
+        },
         { retryLimit: 3 },
       );
     });
