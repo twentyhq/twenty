@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
 import {
-  CalendarDriverException,
-  CalendarDriverExceptionCode,
-} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-driver.exception';
+  CalendarEventImportDriverException,
+  CalendarEventImportDriverExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-channel-sync-status.service';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
@@ -23,7 +23,7 @@ export class CalendarEventImportErrorHandlerService {
   ) {}
 
   public async handleException(
-    exception: CalendarDriverException,
+    exception: CalendarEventImportDriverException,
     syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<
       CalendarChannelWorkspaceEntity,
@@ -32,34 +32,34 @@ export class CalendarEventImportErrorHandlerService {
     workspaceId: string,
   ): Promise<void> {
     switch (exception.code) {
-      case CalendarDriverExceptionCode.NOT_FOUND:
+      case CalendarEventImportDriverExceptionCode.NOT_FOUND:
         await this.handleNotFoundException(
           syncStep,
           calendarChannel,
           workspaceId,
         );
         break;
-      case CalendarDriverExceptionCode.TEMPORARY_ERROR:
+      case CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR:
         await this.handleTemporaryException(
           syncStep,
           calendarChannel,
           workspaceId,
         );
         break;
-      case CalendarDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
+      case CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
         await this.handleInsufficientPermissionsException(
           calendarChannel,
           workspaceId,
         );
         break;
-      case CalendarDriverExceptionCode.UNKNOWN:
+      case CalendarEventImportDriverExceptionCode.UNKNOWN:
         await this.handleUnknownException(
           exception,
           calendarChannel,
           workspaceId,
         );
         break;
-      case CalendarDriverExceptionCode.PROVIDER_NOT_SUPPORTED:
+      case CalendarEventImportDriverExceptionCode.PROVIDER_NOT_SUPPORTED:
         throw exception;
       default:
         throw exception;
@@ -133,7 +133,7 @@ export class CalendarEventImportErrorHandlerService {
   }
 
   private async handleUnknownException(
-    exception: CalendarDriverException,
+    exception: CalendarEventImportDriverException,
     calendarChannel: Pick<CalendarChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {

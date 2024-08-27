@@ -1,13 +1,13 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class CalendarDriverException extends CustomException {
-  code: CalendarDriverExceptionCode;
-  constructor(message: string, code: CalendarDriverExceptionCode) {
+export class MessageImportDriverException extends CustomException {
+  code: MessageImportDriverExceptionCode;
+  constructor(message: string, code: MessageImportDriverExceptionCode) {
     super(message, code);
   }
 }
 
-export enum CalendarDriverExceptionCode {
+export enum MessageImportDriverExceptionCode {
   NOT_FOUND = 'NOT_FOUND',
   TEMPORARY_ERROR = 'TEMPORARY_ERROR',
   INSUFFICIENT_PERMISSIONS = 'INSUFFICIENT_PERMISSIONS',

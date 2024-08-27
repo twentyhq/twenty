@@ -1,13 +1,13 @@
 import { GaxiosError } from 'gaxios';
 
 import {
-  CalendarDriverException,
-  CalendarDriverExceptionCode,
-} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-driver.exception';
+  CalendarEventImportDriverException,
+  CalendarEventImportDriverExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 
 export const parseGaxiosError = (
   error: GaxiosError,
-): CalendarDriverException => {
+): CalendarEventImportDriverException => {
   const { code } = error;
 
   switch (code) {
@@ -16,15 +16,15 @@ export const parseGaxiosError = (
     case 'ECONNABORTED':
     case 'ETIMEDOUT':
     case 'ERR_NETWORK':
-      return new CalendarDriverException(
+      return new CalendarEventImportDriverException(
         error.message,
-        CalendarDriverExceptionCode.TEMPORARY_ERROR,
+        CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
       );
 
     default:
-      return new CalendarDriverException(
+      return new CalendarEventImportDriverException(
         error.message,
-        CalendarDriverExceptionCode.UNKNOWN,
+        CalendarEventImportDriverExceptionCode.UNKNOWN,
       );
   }
 };

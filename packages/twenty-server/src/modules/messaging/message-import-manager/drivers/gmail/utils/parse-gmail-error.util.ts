@@ -1,45 +1,45 @@
 import {
-  MessagingDriverException,
-  MessagingDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/messaging-driver.exception';
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 
 export const parseGmailError = (error: {
   code?: number;
   reason: string;
   message: string;
-}): MessagingDriverException => {
+}): MessageImportDriverException => {
   const { code, reason, message } = error;
 
   switch (code) {
     case 400:
       if (reason === 'invalid_grant') {
-        return new MessagingDriverException(
+        return new MessageImportDriverException(
           message,
-          MessagingDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+          MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
         );
       }
       if (reason === 'failedPrecondition') {
-        return new MessagingDriverException(
+        return new MessageImportDriverException(
           message,
-          MessagingDriverExceptionCode.TEMPORARY_ERROR,
+          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
 
-      return new MessagingDriverException(
+      return new MessageImportDriverException(
         message,
-        MessagingDriverExceptionCode.UNKNOWN,
+        MessageImportDriverExceptionCode.UNKNOWN,
       );
 
     case 404:
-      return new MessagingDriverException(
+      return new MessageImportDriverException(
         message,
-        MessagingDriverExceptionCode.NOT_FOUND,
+        MessageImportDriverExceptionCode.NOT_FOUND,
       );
 
     case 429:
-      return new MessagingDriverException(
+      return new MessageImportDriverException(
         message,
-        MessagingDriverExceptionCode.TEMPORARY_ERROR,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       );
 
     case 403:
@@ -47,33 +47,33 @@ export const parseGmailError = (error: {
         reason === 'rateLimitExceeded' ||
         reason === 'userRateLimitExceeded'
       ) {
-        return new MessagingDriverException(
+        return new MessageImportDriverException(
           message,
-          MessagingDriverExceptionCode.TEMPORARY_ERROR,
+          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       } else {
-        return new MessagingDriverException(
+        return new MessageImportDriverException(
           message,
-          MessagingDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+          MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
         );
       }
 
     case 401:
-      return new MessagingDriverException(
+      return new MessageImportDriverException(
         message,
-        MessagingDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
 
     case 500:
       if (reason === 'backendError') {
-        return new MessagingDriverException(
+        return new MessageImportDriverException(
           message,
-          MessagingDriverExceptionCode.TEMPORARY_ERROR,
+          MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       } else {
-        return new MessagingDriverException(
+        return new MessageImportDriverException(
           message,
-          MessagingDriverExceptionCode.UNKNOWN,
+          MessageImportDriverExceptionCode.UNKNOWN,
         );
       }
 
@@ -81,8 +81,8 @@ export const parseGmailError = (error: {
       break;
   }
 
-  return new MessagingDriverException(
+  return new MessageImportDriverException(
     message,
-    MessagingDriverExceptionCode.UNKNOWN,
+    MessageImportDriverExceptionCode.UNKNOWN,
   );
 };

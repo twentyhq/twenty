@@ -4,7 +4,7 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { MessagingDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/messaging-driver.exception';
+import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 
 export enum MessageImportSyncStep {
   FULL_MESSAGE_LIST_FETCH = 'FULL_MESSAGE_LIST_FETCH',
@@ -20,7 +20,7 @@ export class MessageImportExceptionHandlerService {
   ) {}
 
   public async handleException(
-    exception: MessagingDriverException,
+    exception: MessageImportDriverException,
     syncStep: MessageImportSyncStep,
     messageChannel: Pick<
       MessageChannelWorkspaceEntity,
@@ -126,7 +126,7 @@ export class MessageImportExceptionHandlerService {
   }
 
   private async handleUnknownException(
-    exception: MessagingDriverException,
+    exception: MessageImportDriverException,
     messageChannel: Pick<MessageChannelWorkspaceEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {

@@ -1,11 +1,13 @@
 import { GaxiosError } from 'gaxios';
 
 import {
-  MessagingDriverException,
-  MessagingDriverExceptionCode,
-} from 'src/modules/messaging/message-import-manager/drivers/exceptions/messaging-driver.exception';
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 
-export const parseGaxiosError = (error: GaxiosError): MessagingDriverException => {
+export const parseGaxiosError = (
+  error: GaxiosError,
+): MessageImportDriverException => {
   const { code } = error;
 
   switch (code) {
@@ -14,15 +16,15 @@ export const parseGaxiosError = (error: GaxiosError): MessagingDriverException =
     case 'ECONNABORTED':
     case 'ETIMEDOUT':
     case 'ERR_NETWORK':
-      return new MessagingDriverException(
+      return new MessageImportDriverException(
         error.message,
-        MessagingDriverExceptionCode.TEMPORARY_ERROR,
+        MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       );
 
     default:
-      return new MessagingDriverException(
+      return new MessageImportDriverException(
         error.message,
-        MessagingDriverExceptionCode.UNKNOWN,
+        MessageImportDriverExceptionCode.UNKNOWN,
       );
   }
 };
