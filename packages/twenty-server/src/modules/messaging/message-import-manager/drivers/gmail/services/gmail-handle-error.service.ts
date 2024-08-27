@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { GmailError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-error.type';
 import { parseGaxiosError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gaxios-error.util';
 import { parseGmailError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-error.util';
 
@@ -22,7 +21,7 @@ export class GmailHandleErrorService {
       throw parseGaxiosError(error);
     }
     if (error.response?.status !== 410) {
-      const gmailError: GmailError = {
+      const gmailError = {
         code: error.response?.status,
         reason: `${error.response?.data?.error?.errors?.[0].reason || error.response?.data?.error || ''}`,
         message: `${error.response?.data?.error?.errors?.[0].message || error.response?.data?.error_description || ''}${messageExternalId ? ` for message with externalId: ${messageExternalId}` : ''}`,
