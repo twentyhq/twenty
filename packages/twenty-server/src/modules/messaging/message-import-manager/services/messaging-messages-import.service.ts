@@ -18,8 +18,8 @@ import {
   MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessagingDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/messaging-driver.exception';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
-import { MessagingExceptionCode } from 'src/modules/messaging/message-import-manager/exceptions/messaging.exception';
 import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
@@ -97,12 +97,12 @@ export class MessagingMessagesImportService {
               message: `${error.code}: ${error.reason}`,
             });
             throw {
-              code: MessagingExceptionCode.INSUFFICIENT_PERMISSIONS,
+              code: MessagingDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
               message: error.message,
             };
           case RefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
             throw {
-              code: MessagingExceptionCode.PROVIDER_NOT_SUPPORTED,
+              code: MessagingDriverExceptionCode.PROVIDER_NOT_SUPPORTED,
               message: error.message,
             };
           default:

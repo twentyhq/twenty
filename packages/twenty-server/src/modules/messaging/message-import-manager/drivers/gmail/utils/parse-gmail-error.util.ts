@@ -1,36 +1,45 @@
-import { GmailError } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-error.type';
 import {
-  MessagingException,
-  MessagingExceptionCode,
-} from 'src/modules/messaging/message-import-manager/exceptions/messaging.exception';
+  MessagingDriverException,
+  MessagingDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/messaging-driver.exception';
 
-export const parseGmailError = (error: GmailError): MessagingException => {
+export const parseGmailError = (error: {
+  code?: number;
+  reason: string;
+  message: string;
+}): MessagingDriverException => {
   const { code, reason, message } = error;
 
   switch (code) {
     case 400:
       if (reason === 'invalid_grant') {
-        return new MessagingException(
+        return new MessagingDriverException(
           message,
-          MessagingExceptionCode.INSUFFICIENT_PERMISSIONS,
+          MessagingDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
         );
       }
       if (reason === 'failedPrecondition') {
-        return new MessagingException(
+        return new MessagingDriverException(
           message,
-          MessagingExceptionCode.TEMPORARY_ERROR,
+          MessagingDriverExceptionCode.TEMPORARY_ERROR,
         );
       }
 
-      return new MessagingException(message, MessagingExceptionCode.UNKNOWN);
+      return new MessagingDriverException(
+        message,
+        MessagingDriverExceptionCode.UNKNOWN,
+      );
 
     case 404:
-      return new MessagingException(message, MessagingExceptionCode.NOT_FOUND);
+      return new MessagingDriverException(
+        message,
+        MessagingDriverExceptionCode.NOT_FOUND,
+      );
 
     case 429:
-      return new MessagingException(
+      return new MessagingDriverException(
         message,
-        MessagingExceptionCode.TEMPORARY_ERROR,
+        MessagingDriverExceptionCode.TEMPORARY_ERROR,
       );
 
     case 403:
@@ -38,36 +47,42 @@ export const parseGmailError = (error: GmailError): MessagingException => {
         reason === 'rateLimitExceeded' ||
         reason === 'userRateLimitExceeded'
       ) {
-        return new MessagingException(
+        return new MessagingDriverException(
           message,
-          MessagingExceptionCode.TEMPORARY_ERROR,
+          MessagingDriverExceptionCode.TEMPORARY_ERROR,
         );
       } else {
-        return new MessagingException(
+        return new MessagingDriverException(
           message,
-          MessagingExceptionCode.INSUFFICIENT_PERMISSIONS,
+          MessagingDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
         );
       }
 
     case 401:
-      return new MessagingException(
+      return new MessagingDriverException(
         message,
-        MessagingExceptionCode.INSUFFICIENT_PERMISSIONS,
+        MessagingDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
 
     case 500:
       if (reason === 'backendError') {
-        return new MessagingException(
+        return new MessagingDriverException(
           message,
-          MessagingExceptionCode.TEMPORARY_ERROR,
+          MessagingDriverExceptionCode.TEMPORARY_ERROR,
         );
       } else {
-        return new MessagingException(message, MessagingExceptionCode.UNKNOWN);
+        return new MessagingDriverException(
+          message,
+          MessagingDriverExceptionCode.UNKNOWN,
+        );
       }
 
     default:
       break;
   }
 
-  return new MessagingException(message, MessagingExceptionCode.UNKNOWN);
+  return new MessagingDriverException(
+    message,
+    MessagingDriverExceptionCode.UNKNOWN,
+  );
 };
