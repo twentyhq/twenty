@@ -99,6 +99,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
     Icon: IconRelationManyToMany,
   },
   [FieldMetadataType.Email]: { label: 'Email', Icon: IconMail },
+  [FieldMetadataType.Emails]: {
+    label: 'Emails',
+    Icon: IconMail,
+    exampleValue: { primaryEmail: 'john@twenty.com' },
+  },
   [FieldMetadataType.Phone]: {
     label: 'Phone',
     Icon: IconPhone,
