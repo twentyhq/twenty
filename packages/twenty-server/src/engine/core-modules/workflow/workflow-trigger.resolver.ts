@@ -27,6 +27,15 @@ export class WorkflowTriggerResolver {
     );
   }
 
+  @Mutation(() => Boolean)
+  async disableWorkflowTrigger(
+    @Args('workflowVersionId') workflowVersionId: string,
+  ) {
+    return await this.workflowTriggerWorkspaceService.disableWorkflowTrigger(
+      workflowVersionId,
+    );
+  }
+
   @Mutation(() => WorkflowRunDTO)
   async runWorkflowVersion(
     @AuthWorkspaceMemberId() workspaceMemberId: string,

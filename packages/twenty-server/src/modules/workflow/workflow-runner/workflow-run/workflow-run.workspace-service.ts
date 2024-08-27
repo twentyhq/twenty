@@ -6,7 +6,7 @@ import {
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workflow-common.workspace-service';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
@@ -14,7 +14,10 @@ import {
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
-  constructor(private readonly twentyORMManager: TwentyORMManager) {}
+  constructor(
+    private readonly twentyORMManager: TwentyORMManager,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+  ) {}
 
   async createWorkflowRun(workflowVersionId: string, createdBy: ActorMetadata) {
     const workflowRunRepository =
@@ -22,21 +25,10 @@ export class WorkflowRunWorkspaceService {
         'workflowRun',
       );
 
-    const workflowVersionRepository =
-      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
-        'workflowVersion',
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersion(
+        workflowVersionId,
       );
-
-    const workflowVersion = await workflowVersionRepository.findOneBy({
-      id: workflowVersionId,
-    });
-
-    if (!workflowVersion) {
-      throw new WorkflowRunException(
-        'Workflow version id is invalid',
-        WorkflowRunExceptionCode.INVALID_INPUT,
-      );
-    }
 
     return (
       await workflowRunRepository.save({
