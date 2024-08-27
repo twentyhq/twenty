@@ -5,10 +5,11 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useCreateNode } from '@/workflow/hooks/useCreateNode';
 import { createStepFromStepState } from '@/workflow/states/createStepFromStepState';
+import { showPageWorkflowDiagramTriggerNodeSelectionState } from '@/workflow/states/showPageWorkflowDiagramTriggerNodeSelectionState';
 import { showPageWorkflowIdState } from '@/workflow/states/showPageWorkflowIdState';
 import { Workflow } from '@/workflow/types/Workflow';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   IconPlaystationSquare,
   IconPlug,
@@ -50,9 +51,13 @@ const StyledActionListContainer = styled.div`
 
 export const TAB_LIST_COMPONENT_ID = 'workflow-page-right-tab-list';
 
-export const RightDrawerSelectAction = () => {
+export const RightDrawerWorkflowSelectAction = () => {
   const createStepFromStep = useRecoilValue(createStepFromStepState);
   const showPageWorkflowId = useRecoilValue(showPageWorkflowIdState);
+
+  const setShowPageWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
+    showPageWorkflowDiagramTriggerNodeSelectionState,
+  );
 
   const {
     record: workflow,
@@ -120,10 +125,12 @@ export const RightDrawerSelectAction = () => {
         throw new Error('Select a step to create a new step from first.');
       }
 
+      const newNodeId = v4();
+
       await createNode({
         parentNodeId: createStepFromStep,
         nodeToAdd: {
-          id: v4(),
+          id: newNodeId,
           name: actionId,
           type: 'CODE_ACTION',
           valid: true,
@@ -140,6 +147,8 @@ export const RightDrawerSelectAction = () => {
           },
         },
       });
+
+      setShowPageWorkflowDiagramTriggerNodeSelection(newNodeId);
     } catch (err) {
       console.error('Failed to create a node', err);
     }
