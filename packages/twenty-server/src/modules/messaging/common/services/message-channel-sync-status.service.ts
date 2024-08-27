@@ -93,6 +93,20 @@ export class MessageChannelSyncStatusService {
     await this.scheduleFullMessageListFetch(messageChannelId);
   }
 
+  public async resetSyncStageStartedAt(messageChannelId: string) {
+    const messageChannelRepository =
+      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
+        'messageChannel',
+      );
+
+    await messageChannelRepository.update(
+      { id: messageChannelId },
+      {
+        syncStageStartedAt: null,
+      },
+    );
+  }
+
   public async markAsMessagesListFetchOngoing(messageChannelId: string) {
     const messageChannelRepository =
       await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
