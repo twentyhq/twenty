@@ -72,7 +72,7 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
         color: 'blue',
       },
     ],
-    defaultValue: MessageDirection.INCOMING,
+    defaultValue: `'${MessageDirection.INCOMING}'`,
   })
   direction: MessageDirection;
 

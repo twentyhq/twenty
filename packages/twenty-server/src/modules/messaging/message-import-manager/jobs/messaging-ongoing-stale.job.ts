@@ -55,7 +55,7 @@ export class MessagingOngoingStaleJob {
           `Sync for message channel ${messageChannel.id} and workspace ${workspaceId} is stale. Setting sync stage to MESSAGES_IMPORT_PENDING`,
         );
 
-        await this.messagingChannelSyncStatusService.resetSyncStageStartedAt(
+        await this.messageChannelSyncStatusService.resetSyncStageStartedAt(
           messageChannel.id,
         );
 
