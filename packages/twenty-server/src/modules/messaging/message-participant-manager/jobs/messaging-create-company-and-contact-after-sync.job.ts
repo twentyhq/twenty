@@ -11,6 +11,7 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/contact-creation-manager/services/create-company-and-contact.service';
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import {
   MessageChannelContactAutoCreationPolicy,
   MessageChannelWorkspaceEntity,
@@ -81,16 +82,16 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
     const directionFilter =
       contactAutoCreationPolicy ===
       MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED
-        ? Any(['incoming', 'outgoing'])
-        : 'outgoing';
+        ? Any([MessageDirection.INCOMING, MessageDirection.OUTGOING])
+        : MessageDirection.OUTGOING;
 
     const contactsToCreate = await messageParticipantRepository.find({
       where: {
         message: {
           messageChannelMessageAssociations: {
             messageChannelId,
+            direction: directionFilter,
           },
-          direction: directionFilter,
         },
         personId: IsNull(),
         workspaceMemberId: IsNull(),

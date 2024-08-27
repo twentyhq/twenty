@@ -1,13 +1,13 @@
 import {
-  ServerlessFunctionException,
-  ServerlessFunctionExceptionCode,
-} from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import {
   ConflictError,
   ForbiddenError,
   InternalServerError,
   NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  ServerlessFunctionException,
+  ServerlessFunctionExceptionCode,
+} from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 
 export const serverlessFunctionGraphQLApiExceptionHandler = (error: any) => {
   if (error instanceof ServerlessFunctionException) {
