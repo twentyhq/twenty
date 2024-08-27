@@ -5,13 +5,16 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FileUpload } from 'graphql-upload';
 import { Repository } from 'typeorm';
 
-import { ServerlessExecuteResult } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 import { FileStorageExceptionCode } from 'src/engine/integrations/file-storage/interfaces/file-storage-exception';
+import { ServerlessExecuteResult } from 'src/engine/integrations/serverless/drivers/interfaces/serverless-driver.interface';
 
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { FileStorageService } from 'src/engine/integrations/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/integrations/file-storage/utils/read-file-content';
 import { SOURCE_FILE_NAME } from 'src/engine/integrations/serverless/drivers/constants/source-file-name';
 import { ServerlessService } from 'src/engine/integrations/serverless/serverless.service';
+import { getServerlessFolder } from 'src/engine/integrations/serverless/utils/serverless-get-folder.utils';
 import { CreateServerlessFunctionFromFileInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function-from-file.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
@@ -24,7 +27,6 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { serverlessFunctionCreateHash } from 'src/engine/metadata-modules/serverless-function/utils/serverless-function-create-hash.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { getServerlessFolder } from 'src/engine/integrations/serverless/utils/serverless-get-folder.utils';
 
 @Injectable()
 export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFunctionEntity> {
@@ -33,6 +35,8 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     private readonly serverlessService: ServerlessService,
     @InjectRepository(ServerlessFunctionEntity, 'metadata')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
+    private readonly throttlerService: ThrottlerService,
+    private readonly environmentService: EnvironmentService,
   ) {
     super(serverlessFunctionRepository);
   }
@@ -86,6 +90,8 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     payload: object | undefined = undefined,
     version = 'latest',
   ): Promise<ServerlessExecuteResult> {
+    await this.throttleExecution(workspaceId);
+
     const functionToExecute = await this.serverlessFunctionRepository.findOne({
       where: {
         id,
@@ -267,5 +273,20 @@ export class ServerlessFunctionService extends TypeOrmQueryService<ServerlessFun
     });
 
     return await this.findById(createdServerlessFunction.id);
+  }
+
+  private async throttleExecution(workspaceId: string) {
+    try {
+      await this.throttlerService.throttle(
+        `${workspaceId}-serverless-function-execution`,
+        this.environmentService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_LIMIT'),
+        this.environmentService.get('SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL'),
+      );
+    } catch (error) {
+      throw new ServerlessFunctionException(
+        'Serverless function execution rate limit exceeded',
+        ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED,
+      );
+    }
   }
 }
