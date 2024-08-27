@@ -132,7 +132,6 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowWorkspaceEntity,
     inverseSideFieldKey: 'runs',
   })
-  @WorkspaceIsNullable()
   workflow: Relation<WorkflowWorkspaceEntity>;
 
   @WorkspaceJoinColumn('workflow')

@@ -6,6 +6,7 @@ import {
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
@@ -21,10 +22,27 @@ export class WorkflowRunWorkspaceService {
         'workflowRun',
       );
 
+    const workflowVersionRepository =
+      await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        'workflowVersion',
+      );
+
+    const workflowVersion = await workflowVersionRepository.findOneBy({
+      id: workflowVersionId,
+    });
+
+    if (!workflowVersion) {
+      throw new WorkflowRunException(
+        'Workflow version id is invalid',
+        WorkflowRunExceptionCode.INVALID_INPUT,
+      );
+    }
+
     return (
       await workflowRunRepository.save({
         workflowVersionId,
         createdBy,
+        workflowId: workflowVersion.workflowId,
         status: WorkflowRunStatus.NOT_STARTED,
       })
     ).id;
