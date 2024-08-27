@@ -1,7 +1,12 @@
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import { useStartNodeCreation } from '@/workflow/hooks/useStartNodeCreation';
 import { showPageWorkflowDiagramTriggerNodeSelectionState } from '@/workflow/states/showPageWorkflowDiagramTriggerNodeSelectionState';
 import { showPageWorkflowSelectedNodeState } from '@/workflow/states/showPageWorkflowSelectedNodeState';
+import {
+  WorkflowDiagramEdge,
+  WorkflowDiagramNode,
+} from '@/workflow/types/WorkflowDiagram';
 import {
   OnSelectionChangeParams,
   useOnSelectionChange,
@@ -12,7 +17,9 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const WorkflowShowPageDiagramEffect = () => {
-  const reactflow = useReactFlow();
+  const reactflow = useReactFlow<WorkflowDiagramNode, WorkflowDiagramEdge>();
+
+  const { startNodeCreation } = useStartNodeCreation();
 
   const { openRightDrawer, closeRightDrawer } = useRightDrawer();
   const setShowPageWorkflowSelectedNode = useSetRecoilState(
@@ -25,7 +32,7 @@ export const WorkflowShowPageDiagramEffect = () => {
 
   const handleSelectionChange = useCallback(
     ({ nodes }: OnSelectionChangeParams) => {
-      const selectedNode = nodes[0];
+      const selectedNode = nodes[0] as WorkflowDiagramNode;
       const isClosingStep = isDefined(selectedNode) === false;
 
       if (isClosingStep === true) {
@@ -34,9 +41,13 @@ export const WorkflowShowPageDiagramEffect = () => {
         return;
       }
 
-      const isCustomNode = isDefined(selectedNode.type) === true;
-      if (isCustomNode === true) {
-        // For now, custom nodes implement a custom click handler and we shouldn't override their behavior.
+      const isCreateStepNode = selectedNode.type === 'create-step';
+      if (isCreateStepNode === true) {
+        if (selectedNode.data.nodeType !== 'create-step') {
+          throw new Error('Expected selected node to be a create step node.');
+        }
+
+        startNodeCreation(selectedNode.data.parentNodeId);
 
         return;
       }
@@ -44,7 +55,12 @@ export const WorkflowShowPageDiagramEffect = () => {
       setShowPageWorkflowSelectedNode(selectedNode.id);
       openRightDrawer(RightDrawerPages.WorkflowEditStep);
     },
-    [closeRightDrawer, openRightDrawer, setShowPageWorkflowSelectedNode],
+    [
+      closeRightDrawer,
+      openRightDrawer,
+      setShowPageWorkflowSelectedNode,
+      startNodeCreation,
+    ],
   );
 
   useOnSelectionChange({
