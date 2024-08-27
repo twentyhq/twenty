@@ -10,8 +10,12 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import {
+  MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
+  MESSAGE_STANDARD_FIELD_IDS,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
@@ -47,6 +51,30 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   })
   @WorkspaceIsNullable()
   messageThreadExternalId: string | null;
+
+  @WorkspaceField({
+    standardId: MESSAGE_STANDARD_FIELD_IDS.direction,
+    type: FieldMetadataType.SELECT,
+    label: 'Direction',
+    description: 'Message Direction',
+    icon: 'IconDirection',
+    options: [
+      {
+        value: MessageDirection.INCOMING,
+        label: 'Incoming',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: MessageDirection.OUTGOING,
+        label: 'Outgoing',
+        position: 1,
+        color: 'blue',
+      },
+    ],
+    defaultValue: MessageDirection.INCOMING,
+  })
+  direction: MessageDirection;
 
   @WorkspaceRelation({
     standardId:

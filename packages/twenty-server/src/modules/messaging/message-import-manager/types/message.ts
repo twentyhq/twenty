@@ -1,3 +1,4 @@
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
@@ -16,6 +17,7 @@ export type Message = Omit<
   }[];
   externalId: string;
   messageThreadExternalId: string;
+  direction: MessageDirection;
 };
 
 export type MessageParticipant = Omit<

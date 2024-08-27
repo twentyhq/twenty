@@ -104,7 +104,6 @@ export class MessagingMessageService {
           headerMessageId: message.headerMessageId,
           subject: message.subject,
           receivedAt: message.receivedAt,
-          direction: message.direction,
           text: message.text,
           messageThreadId: newOrExistingMessageThreadId,
         },
@@ -119,6 +118,7 @@ export class MessagingMessageService {
           messageId: newMessageId,
           messageExternalId: message.externalId,
           messageThreadExternalId: message.messageThreadExternalId,
+          direction: message.direction,
         },
         transactionManager,
       );
